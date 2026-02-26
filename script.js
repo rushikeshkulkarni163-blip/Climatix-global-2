@@ -20,29 +20,6 @@
    Values are intentionally realistic for FY2024 context.
 ══════════════════════════════════════════════════════════ */
 
-<script>
-  function calculateEmissions() {
-    const visitors = Number(document.getElementById("visitors").value) || 0;
-    const pageSize = Number(document.getElementById("pageSize").value) || 0;
-    const pages = Number(document.getElementById("pagesPerVisit").value) || 0;
-    const regionFactor = Number(document.getElementById("region").value);
-
-    // Data transfer (GB)
-    const dataGB = (visitors * pages * pageSize) / 1024;
-
-    // Energy intensity: ~0.81 kWh per GB (global avg)
-    const energy = dataGB * 0.81;
-
-    // CO2 emissions (kg)
-    const co2 = energy * regionFactor;
-
-    document.getElementById("energy").innerText = energy.toFixed(1);
-    document.getElementById("co2").innerText = co2.toFixed(1);
-  }
-
-  document.querySelectorAll("#calculator input, #calculator select")
-    .forEach(el => el.addEventListener("input", calculateEmissions));
-</script>
 
 const DATA_PROFILES = {
 
