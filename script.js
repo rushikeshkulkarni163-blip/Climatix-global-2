@@ -328,16 +328,3 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(tick, 1000);
   }
 });
-<script>
-function toggleImpact() {
-  const panel = document.getElementById("impactPanel");
-  panel.style.display = panel.style.display === "block" ? "none" : "block";
-}
-
-// Optional live counter
-let ghg = 2.40;
-setInterval(() => {
-  ghg += 0.01;
-  document.getElementById("ghgValue").innerText = ghg.toFixed(2) + " tCO₂e";
-}, 3000);
-</script>
