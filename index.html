@@ -615,5 +615,272 @@ Rushikesh’s work is driven by a focus on bridging knowledge, communication, an
     let mi=0;
     setInterval(()=>{const el=document.getElementById('loadingMsg');if(el){mi=(mi+1)%msgs.length;el.textContent=msgs[mi];}},350);
   </script>
+
+  <!-- FLOATING CLIMATE GLOBE -->
+  <style>
+    #climate-globe-widget {
+      position: fixed;
+      bottom: 28px;
+      left: 24px;
+      z-index: 9990;
+      background: rgba(5, 10, 26, 0.93);
+      border: 1px solid rgba(0, 180, 255, 0.22);
+      border-radius: 18px;
+      padding: 13px 13px 10px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 40px rgba(0, 80, 200, 0.18), 0 0 0 1px rgba(255,255,255,0.04), inset 0 1px 0 rgba(255,255,255,0.06);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      transition: all 0.3s cubic-bezier(.4,0,.2,1);
+      animation: globeFloat 6s ease-in-out infinite;
+    }
+    @keyframes globeFloat {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-6px); }
+    }
+    #globe-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 9px;
+      color: #8ec8ff;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .globe-live-dot {
+      width: 7px; height: 7px;
+      background: #00ff99;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: glp 2.2s ease-in-out infinite;
+    }
+    @keyframes glp {
+      0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(0,255,153,.5); }
+      50%      { opacity:.7; box-shadow: 0 0 0 5px rgba(0,255,153,0); }
+    }
+    #globe-toggle {
+      margin-left: auto;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.55);
+      width: 19px; height: 19px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 15px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+    #globe-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    #globeCanvas {
+      display: block;
+      border-radius: 10px;
+      cursor: grab;
+    }
+    #globeCanvas:active { cursor: grabbing; }
+    #globe-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 9px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .globe-legend-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 9.5px; color: rgba(180,210,255,.7); font-weight: 500;
+    }
+    .globe-legend-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .globe-legend-dot.risk { background: #ff4422; box-shadow: 0 0 5px #ff4422; }
+    .globe-legend-dot.mit  { background: #00ff88; box-shadow: 0 0 5px #00ff88; }
+    #climate-globe-widget.collapsed #globeCanvas,
+    #climate-globe-widget.collapsed #globe-legend { display: none; }
+    #climate-globe-widget.collapsed { animation: none; }
+  </style>
+
+  <div id="climate-globe-widget">
+    <div id="globe-header">
+      <span class="globe-live-dot"></span>
+      <span>Climate Risk &amp; Mitigation · Global</span>
+      <button id="globe-toggle" title="Minimize">−</button>
+    </div>
+    <canvas id="globeCanvas" width="224" height="224"></canvas>
+    <div id="globe-legend">
+      <div class="globe-legend-item"><span class="globe-legend-dot risk"></span> Risk Zones</div>
+      <div class="globe-legend-item"><span class="globe-legend-dot mit"></span> Mitigation Leaders</div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    s.onload = initClimateGlobe;
+    document.head.appendChild(s);
+
+    function initClimateGlobe() {
+      const canvas = document.getElementById('globeCanvas');
+      if (!canvas) return;
+      const W = 224, H = 224;
+      const scene = new THREE.Scene();
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(W, H);
+      renderer.setClearColor(0x000000, 0);
+      const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+      camera.position.z = 2.85;
+
+      /* ── Earth texture via canvas ── */
+      const tc = document.createElement('canvas');
+      tc.width = 1024; tc.height = 512;
+      const cx = tc.getContext('2d');
+      cx.fillStyle = '#040d1e'; cx.fillRect(0,0,1024,512);
+      // subtle ocean shimmer
+      for(let i=0;i<1800;i++){
+        cx.fillStyle=`rgba(10,40,90,${Math.random()*.25})`;
+        cx.beginPath();cx.arc(Math.random()*1024,Math.random()*512,Math.random()*1.8,0,Math.PI*2);cx.fill();
+      }
+      cx.fillStyle='#0c3a20';
+      function ll2tc(la,ln){return{x:((ln+180)/360)*1024,y:((90-la)/180)*512};}
+      function poly(pts){
+        cx.beginPath();
+        pts.forEach(([la,ln],i)=>{const p=ll2tc(la,ln);i===0?cx.moveTo(p.x,p.y):cx.lineTo(p.x,p.y);});
+        cx.closePath();cx.fill();
+      }
+      // North America
+      poly([[72,-141],[71,-96],[60,-85],[50,-80],[47,-75],[40,-70],[35,-76],[25,-80],[10,-85],[8,-77],[5,-78],[3,-77],[14,-87],[22,-106],[23,-110],[30,-116],[34,-120],[48,-124],[55,-131],[60,-141],[72,-141]]);
+      // Greenland
+      poly([[83,-40],[76,-18],[72,-24],[65,-43],[65,-52],[68,-56],[76,-69],[82,-52],[83,-40]]);
+      // South America
+      poly([[12,-72],[10,-62],[8,-60],[3,-52],[-5,-35],[-15,-38],[-23,-43],[-34,-52],[-55,-68],[-56,-72],[-40,-73],[-20,-70],[-5,-80],[5,-77],[12,-72]]);
+      // Europe
+      poly([[71,28],[65,14],[58,8],[51,2],[43,-9],[36,-9],[36,3],[37,14],[40,18],[37,23],[38,26],[41,29],[44,28],[46,30],[48,38],[43,44],[47,53],[55,37],[59,28],[65,25],[68,29],[71,28]]);
+      // Africa
+      poly([[37,-5],[37,10],[33,12],[28,33],[22,37],[15,42],[12,43],[10,42],[3,40],[-5,40],[-10,38],[-18,35],[-25,33],[-35,26],[-35,20],[-30,17],[-15,13],[-5,9],[0,9],[3,-10],[5,-15],[10,-17],[15,-17],[28,-14],[33,-5],[37,-5]]);
+      // Asia
+      poly([[70,30],[70,80],[70,140],[60,160],[50,140],[40,130],[35,125],[22,114],[10,104],[1,104],[-8,115],[-8,132],[0,130],[5,118],[10,108],[20,107],[25,90],[22,88],[22,80],[28,72],[22,60],[20,57],[22,55],[28,50],[35,36],[35,28],[40,26],[42,44],[47,53],[55,60],[55,80],[65,80],[70,60],[70,30]]);
+      // Australia
+      poly([[-15,130],[-15,140],[-18,146],[-22,150],[-34,151],[-38,147],[-38,140],[-35,137],[-32,116],[-22,113],[-15,130]]);
+      // Japan (simplified)
+      poly([[40,140],[37,137],[34,131],[31,130],[32,131],[33,131],[36,136],[38,141],[40,141],[41,140],[40,140]]);
+
+      const texture = new THREE.CanvasTexture(tc);
+
+      const earthGeo = new THREE.SphereGeometry(1, 56, 56);
+      const earthMat = new THREE.MeshPhongMaterial({
+        map: texture, specular: new THREE.Color(0x1a4466), shininess: 10
+      });
+      const earth = new THREE.Mesh(earthGeo, earthMat);
+      scene.add(earth);
+
+      // Atmosphere layers
+      [[1.06, 0x0055aa, 0.13, THREE.BackSide],[1.14, 0x002244, 0.05, THREE.BackSide]].forEach(([r,c,o,side])=>{
+        const m = new THREE.MeshPhongMaterial({color:c,transparent:true,opacity:o,side});
+        scene.add(new THREE.Mesh(new THREE.SphereGeometry(r,32,32),m));
+      });
+
+      // Lights
+      scene.add(new THREE.AmbientLight(0x334466, 0.9));
+      const sun = new THREE.DirectionalLight(0x7799cc, 2.2);
+      sun.position.set(5,3,5); scene.add(sun);
+      const fill = new THREE.DirectionalLight(0x112233, 0.4);
+      fill.position.set(-5,-3,-5); scene.add(fill);
+
+      /* ── helpers ── */
+      function ll2v(la,ln,r=1.015){
+        const phi=(90-la)*(Math.PI/180), theta=(ln+180)*(Math.PI/180);
+        return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(theta), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(theta));
+      }
+
+      /* ── climate data ── */
+      const riskPts=[
+        {la:23.7,ln:90.4,label:'Bangladesh · Flooding'},
+        {la:-8.5,ln:179.2,label:'Pacific Islands · Sea-level Rise'},
+        {la:-3.5,ln:-60,label:'Amazon · Deforestation'},
+        {la:12,ln:17,label:'Sahel · Desertification'},
+        {la:30,ln:70,label:'Pakistan · Extreme Heat'},
+        {la:13,ln:122,label:'Philippines · Typhoons'},
+        {la:18.5,ln:-70,label:'Caribbean · Hurricanes'},
+        {la:78,ln:15,label:'Arctic · Ice Melt'},
+        {la:5,ln:46,label:'East Africa · Drought'},
+      ];
+      const mitPts=[
+        {la:51,ln:10,label:'Germany · Energiewende'},
+        {la:35,ln:105,label:'China · Largest Solar+Wind'},
+        {la:39,ln:-98,label:'USA · IRA Clean Energy'},
+        {la:20,ln:78,label:'India · National Solar Mission'},
+        {la:31,ln:-8,label:'Morocco · Noor Solar'},
+        {la:65,ln:-18,label:'Iceland · Geothermal'},
+        {la:10,ln:-84,label:'Costa Rica · 100% Renewable'},
+        {la:56,ln:10,label:'Denmark · Offshore Wind'},
+      ];
+
+      const pulsers=[];
+      function addMarker(d,color,glowColor){
+        const pos=ll2v(d.la,d.ln);
+        const dot=new THREE.Mesh(new THREE.SphereGeometry(0.021,8,8),new THREE.MeshBasicMaterial({color}));
+        dot.position.copy(pos); earth.add(dot);
+        const rMat=new THREE.MeshBasicMaterial({color:glowColor,transparent:true,opacity:.55,side:THREE.DoubleSide});
+        const ring=new THREE.Mesh(new THREE.RingGeometry(0.034,0.054,16),rMat);
+        ring.position.copy(pos); ring.lookAt(new THREE.Vector3(0,0,0));
+        earth.add(ring);
+        pulsers.push({mat:rMat,phase:Math.random()*Math.PI*2});
+      }
+      riskPts.forEach(d=>addMarker(d,0xff3311,0xff6633));
+      mitPts.forEach(d=>addMarker(d,0x00ff88,0x44ffaa));
+
+      /* ── grid lines ── */
+      const gridMat=new THREE.LineBasicMaterial({color:0x1a3a6a,transparent:true,opacity:.22});
+      for(let la=-60;la<=60;la+=30){
+        const pts=[];
+        for(let ln=0;ln<=360;ln+=4) pts.push(ll2v(la,ln-180,1.002));
+        earth.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat));
+      }
+      for(let ln=0;ln<360;ln+=30){
+        const pts=[];
+        for(let la=-90;la<=90;la+=4) pts.push(ll2v(la,ln-180,1.002));
+        earth.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),gridMat));
+      }
+
+      /* ── interaction ── */
+      let dragging=false,px=0,py=0,vy=0.002;
+      canvas.addEventListener('mousedown',e=>{dragging=true;px=e.clientX;py=e.clientY;vy=0;});
+      window.addEventListener('mousemove',e=>{
+        if(!dragging)return;
+        const dx=e.clientX-px,dy=e.clientY-py;
+        earth.rotation.y+=dx*.012;
+        earth.rotation.x=Math.max(-.5,Math.min(.5,earth.rotation.x+dy*.005));
+        vy=dx*.003; px=e.clientX; py=e.clientY;
+      });
+      window.addEventListener('mouseup',()=>{dragging=false;});
+      canvas.addEventListener('touchstart',e=>{dragging=true;px=e.touches[0].clientX;vy=0;},{passive:true});
+      canvas.addEventListener('touchmove',e=>{
+        if(!dragging)return;
+        earth.rotation.y+=(e.touches[0].clientX-px)*.012;
+        px=e.touches[0].clientX;
+      },{passive:true});
+      canvas.addEventListener('touchend',()=>{dragging=false;});
+
+      /* ── minimize toggle ── */
+      const widget=document.getElementById('climate-globe-widget');
+      document.getElementById('globe-toggle').addEventListener('click',function(){
+        widget.classList.toggle('collapsed');
+        this.textContent=widget.classList.contains('collapsed')?'+':'−';
+      });
+
+      /* ── render loop ── */
+      let t=0;
+      (function loop(){
+        requestAnimationFrame(loop);
+        t+=0.016;
+        if(!dragging){earth.rotation.y+=0.0025;}
+        pulsers.forEach(({mat,phase})=>{mat.opacity=.25+.35*Math.sin(t*2.2+phase);});
+        renderer.render(scene,camera);
+      })();
+    }
+  })();
+  </script>
 </body>
 </html>
