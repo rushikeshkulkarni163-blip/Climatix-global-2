@@ -1213,7 +1213,9 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
     /* ── LOADING ── */
     if (view==='loading') return (
       <div className="loading-state">
-        <div className="loading-orb"/>
+        <div className="loading-orb">
+          <div className="loading-dot"/>
+        </div>
         <div className="loading-title">Generating your ESG report…</div>
         <div className="loading-steps">
           {LOADING_MSGS.slice(0,loadIdx+1).map((msg,i)=>(
@@ -1222,9 +1224,11 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
             </div>
           ))}
         </div>
-        <p style={{fontFamily:'var(--font-b)',fontSize:12,color:'var(--ink-muted)',marginTop:8}}>
-          Mapping to TCFD · GRI · UN SDGs · GHG Protocol…
-        </p>
+        <div style={{display:'flex',gap:18,marginTop:12,flexWrap:'wrap',justifyContent:'center'}}>
+          {['TCFD','GRI','UN SDGs','GHG Protocol'].map(f=>(
+            <span key={f} style={{fontFamily:'var(--font-b)',fontSize:11,fontWeight:600,color:'var(--teal-bright)',background:'var(--teal-pale)',border:'1px solid rgba(15,118,110,.2)',padding:'3px 11px',borderRadius:100,letterSpacing:'.06em'}}>{f}</span>
+          ))}
+        </div>
       </div>
     );
 
@@ -1306,9 +1310,24 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
 
               <div className="report-sidebar">
                 <div className="score-card">
-                  <div className="score-label">Report Completeness</div>
-                  <div className="score-val">{completeness>=8?'High':'Good'}</div>
-                  <div className="score-desc">All five ESG sections covered. Framework alignment applied across TCFD, GRI, and UN SDGs.</div>
+                  <div className="score-label">Data Completeness</div>
+                  <div className="score-ring-wrap">
+                    <svg className="score-ring" width="68" height="68" viewBox="0 0 68 68">
+                      <circle cx="34" cy="34" r="26" fill="none" stroke="rgba(255,255,255,.12)" strokeWidth="4.5"/>
+                      <circle cx="34" cy="34" r="26" fill="none" stroke="white" strokeWidth="4.5"
+                        strokeDasharray={`${strokeDash} ${circumference}`}
+                        strokeLinecap="round"
+                        transform="rotate(-90 34 34)"
+                        style={{transition:'stroke-dasharray .8s ease'}}
+                      />
+                      <text x="34" y="39" textAnchor="middle" fill="white" fontSize="13" fontWeight="700" fontFamily="var(--font-b)">{completenessScore}%</text>
+                    </svg>
+                    <div>
+                      <div className="score-val">{completenessScore>=80?'High':completenessScore>=50?'Good':'Fair'}</div>
+                      <div className="score-desc">ESG data coverage across all five sections.</div>
+                    </div>
+                  </div>
+                  <div className="score-desc" style={{marginTop:4}}>Framework alignment applied across TCFD, GRI, and UN SDGs.</div>
                 </div>
                 <div className="sidebar-card">
                   <div className="sc-title">UN SDGs Referenced</div>
