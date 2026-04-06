@@ -17,6 +17,9 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
 
+  <!-- PDF generation (html2pdf.js = html2canvas + jsPDF) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin></script>
+
   <style>
   /* ═══════════════════════════════════════════════════════════
      CLIMACTIX MVP — ESG NARRATIVE ENGINE
@@ -325,13 +328,31 @@
     background: var(--bg);
   }
   #cx-mvp-root .loading-orb {
-    width: 72px; height: 72px;
-    border: 3px solid var(--teal-light);
+    position: relative; width: 80px; height: 80px;
+  }
+  #cx-mvp-root .loading-orb::before,
+  #cx-mvp-root .loading-orb::after {
+    content: ''; position: absolute; border-radius: 50%;
+  }
+  #cx-mvp-root .loading-orb::before {
+    inset: 0;
+    border: 3px solid rgba(15,118,110,.15);
     border-top-color: var(--teal);
-    border-radius: 50%;
-    animation: mvpSpin 1.2s linear infinite;
+    animation: mvpSpin 1.4s linear infinite;
+  }
+  #cx-mvp-root .loading-orb::after {
+    inset: 12px;
+    border: 2.5px solid rgba(15,118,110,.1);
+    border-bottom-color: var(--teal-bright);
+    animation: mvpSpin .9s linear infinite reverse;
   }
   @keyframes mvpSpin { to { transform: rotate(360deg); } }
+  #cx-mvp-root .loading-dot {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--teal); animation: mvpPulse 1.4s ease infinite;
+  }
   #cx-mvp-root .loading-title {
     font-family: var(--font-d); font-size: 26px;
     color: var(--ink); text-align: center; letter-spacing: -.01em;
@@ -351,9 +372,11 @@
   #cx-mvp-root .report-section { padding: 32px 0 100px; }
 
   #cx-mvp-root .report-header {
-    background: var(--teal); border-radius: var(--r-xl);
-    padding: 44px 48px; margin-bottom: 28px;
+    background: linear-gradient(135deg, var(--teal) 0%, #0c4a48 50%, var(--teal-mid) 100%);
+    border-radius: var(--r-xl);
+    padding: 48px 52px; margin-bottom: 28px;
     position: relative; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(10,61,60,.22);
   }
   #cx-mvp-root .report-header::before {
     content: ''; position: absolute; top: -80px; right: -80px;
@@ -421,22 +444,28 @@
   #cx-mvp-root .report-main { display: flex; flex-direction: column; gap: 18px; }
   #cx-mvp-root .report-card {
     background: white; border: 1px solid var(--border);
+    border-left: 3px solid var(--teal-bright);
     border-radius: var(--r-lg); padding: 34px 38px;
     box-shadow: var(--sh-sm); animation: mvpSlide .4s ease;
+    transition: box-shadow .2s ease;
   }
+  #cx-mvp-root .report-card:hover { box-shadow: var(--sh-md); }
   @media (max-width: 768px) { #cx-mvp-root .report-card { padding: 22px 18px; } }
   #cx-mvp-root .rc-num {
-    font-family: var(--font-b); font-size: 10px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font-b); font-size: 9.5px; font-weight: 700;
     letter-spacing: .14em; text-transform: uppercase;
-    color: var(--teal-bright); margin-bottom: 7px; display: block;
+    color: white; background: var(--teal-bright);
+    padding: 3px 10px; border-radius: 100px; margin-bottom: 12px;
   }
   #cx-mvp-root .rc-title {
-    font-family: var(--font-d); font-size: 21px; font-weight: 400;
-    color: var(--ink); margin-bottom: 18px; letter-spacing: -.01em;
+    font-family: var(--font-d); font-size: 22px; font-weight: 400;
+    color: var(--ink); margin-bottom: 6px; letter-spacing: -.015em;
+    line-height: 1.2;
   }
   #cx-mvp-root .rc-bar {
-    height: 2px; width: 44px;
-    background: linear-gradient(to right, var(--teal), transparent);
+    height: 2px; width: 40px;
+    background: linear-gradient(to right, var(--teal-bright), transparent);
     margin-bottom: 20px; border-radius: 1px;
   }
   #cx-mvp-root .rc-content {
@@ -454,9 +483,11 @@
   #cx-mvp-root .report-sidebar { display: flex; flex-direction: column; gap: 14px; }
   #cx-mvp-root .sidebar-card {
     background: white; border: 1px solid var(--border);
-    border-radius: var(--r-lg); padding: 22px;
+    border-radius: var(--r-lg); padding: 22px 24px;
     box-shadow: var(--sh-sm);
+    transition: box-shadow .2s ease;
   }
+  #cx-mvp-root .sidebar-card:hover { box-shadow: var(--sh-md); }
   #cx-mvp-root .sc-title {
     font-family: var(--font-b); font-size: 10.5px; font-weight: 700;
     letter-spacing: .1em; text-transform: uppercase;
@@ -477,10 +508,12 @@
     display: flex; align-items: center; justify-content: center;
     color: var(--teal-bright); font-size: 9px; font-weight: 700; flex-shrink: 0;
   }
-  #cx-mvp-root .score-card { background: var(--teal); border-radius: var(--r-lg); padding: 22px; }
-  #cx-mvp-root .score-label { font-family: var(--font-b); font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 3px; }
-  #cx-mvp-root .score-val { font-family: var(--font-d); font-size: 36px; color: white; line-height: 1; margin-bottom: 7px; }
-  #cx-mvp-root .score-desc { font-family: var(--font-b); font-size: 11.5px; color: rgba(255,255,255,.6); font-weight: 300; line-height: 1.5; }
+  #cx-mvp-root .score-card { background: linear-gradient(135deg, var(--teal) 0%, var(--teal-mid) 100%); border-radius: var(--r-lg); padding: 24px; }
+  #cx-mvp-root .score-label { font-family: var(--font-b); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 14px; }
+  #cx-mvp-root .score-ring-wrap { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+  #cx-mvp-root .score-ring { flex-shrink: 0; filter: drop-shadow(0 2px 6px rgba(0,0,0,.2)); }
+  #cx-mvp-root .score-val { font-family: var(--font-d); font-size: 28px; color: white; line-height: 1.1; margin-bottom: 4px; }
+  #cx-mvp-root .score-desc { font-family: var(--font-b); font-size: 11px; color: rgba(255,255,255,.58); font-weight: 300; line-height: 1.5; }
 
   /* Disclosure note */
   #cx-mvp-root .disclosure-note {
@@ -890,6 +923,91 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
   }
 
   /* ─────────────────────────────────────────────
+     PDF BUILDER — branded, print-ready HTML
+  ───────────────────────────────────────────── */
+  function buildPdfHtml(f, sections, generatedAt) {
+    const dateStr = generatedAt.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+    const purposeLabel = {
+      investor:   'Investor Communication',
+      government: 'Regulatory Submission',
+      internal:   'Internal Strategy',
+    }[f.goals.purpose] || 'General ESG Report';
+    const sectionAccents = ['#0A3D3C','#0F5E5B','#0F766E','#1E3A52','#374151'];
+
+    function renderMd(text) {
+      if (!text) return '';
+      const lines = text.split('\n');
+      let html = ''; let inList = false;
+      lines.forEach(line => {
+        const t = line.trim();
+        if (!t) { if (inList) { html += '</ul>'; inList = false; } return; }
+        const inlined = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="color:#0A1628;font-weight:600;">$1</strong>');
+        if (t.startsWith('- ') || t.startsWith('• ')) {
+          if (!inList) { html += '<ul style="padding-left:20px;margin:8px 0 14px 0;">'; inList = true; }
+          html += `<li style="margin-bottom:7px;font-size:13px;color:#4A6278;line-height:1.75;">${inlined.replace(/^[-•]\s/,'')}</li>`;
+        } else {
+          if (inList) { html += '</ul>'; inList = false; }
+          html += `<p style="margin:0 0 12px 0;font-size:13.5px;color:#4A6278;line-height:1.82;">${inlined}</p>`;
+        }
+      });
+      if (inList) html += '</ul>';
+      return html;
+    }
+
+    const frameworkBadges = ['TCFD Aligned','GRI Referenced','GHG Protocol','UN SDGs Mapped','ESG Best Practice']
+      .map(fw => `<span style="display:inline-block;font-size:10px;font-weight:600;letter-spacing:.07em;padding:4px 12px;border-radius:100px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.82);margin:3px 3px 0 0;">${fw}</span>`)
+      .join('');
+
+    const sectionCards = SECTION_TITLES.map((title, i) => `
+      <div style="background:white;border-radius:10px;padding:34px 38px;margin-bottom:22px;border:1px solid #E2EDE9;border-left:4px solid ${sectionAccents[i]};box-shadow:0 1px 4px rgba(10,61,60,.06);">
+        <span style="display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:white;background:${sectionAccents[i]};padding:3px 11px;border-radius:100px;margin-bottom:12px;">Section 0${i+1}</span>
+        <div style="font-family:Georgia,'Times New Roman',serif;font-size:21px;font-weight:400;color:#0A1628;margin-bottom:6px;letter-spacing:-.015em;line-height:1.2;">${title}</div>
+        <div style="height:2px;width:38px;background:${sectionAccents[i]};border-radius:1px;margin-bottom:18px;opacity:.7;"></div>
+        ${renderMd(sections[title] || '')}
+      </div>
+    `).join('');
+
+    const sizeLabel = f.profile.size ? f.profile.size.charAt(0).toUpperCase() + f.profile.size.slice(1) + ' Organisation' : '';
+
+    return `
+      <div style="font-family:'DM Sans',Arial,Helvetica,sans-serif;color:#0A1628;background:#FAFCFC;width:780px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+
+        <!-- Cover Page -->
+        <div style="background:linear-gradient(135deg,#0A3D3C 0%,#0c4a48 55%,#0F5E5B 100%);color:white;padding:64px 52px 56px;position:relative;overflow:hidden;page-break-after:always;">
+          <div style="position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none;"></div>
+          <div style="position:absolute;bottom:-80px;right:60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.03);pointer-events:none;"></div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:52px;">CLIMACTIX GLOBAL · ESG INTELLIGENCE PLATFORM</div>
+          <div style="font-size:13px;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,.55);margin-bottom:10px;text-transform:uppercase;">${purposeLabel}</div>
+          <div style="font-family:Georgia,'Times New Roman',serif;font-size:40px;font-weight:400;line-height:1.15;margin-bottom:14px;letter-spacing:-.02em;">${f.profile.name || 'Organisation'}</div>
+          <div style="font-size:14px;color:rgba(255,255,255,.6);margin-bottom:52px;font-weight:300;">${f.profile.location}${f.profile.location && sizeLabel ? ' · ' : ''}${sizeLabel}${(f.profile.location || sizeLabel) && f.profile.sector ? ' · ' : ''}${f.profile.sector}</div>
+          <div style="font-family:Georgia,'Times New Roman',serif;font-size:25px;font-weight:400;margin-bottom:7px;letter-spacing:-.01em;">ESG & Climate Narrative Report</div>
+          <div style="font-size:12.5px;color:rgba(255,255,255,.48);font-weight:300;margin-bottom:36px;">Generated ${dateStr}</div>
+          <div style="margin-top:8px;">${frameworkBadges}</div>
+        </div>
+
+        <!-- Report Body -->
+        <div style="padding:36px 40px 48px;">
+          ${sectionCards}
+
+          <!-- Disclosure Note -->
+          <div style="background:#F4F9F8;border:1px solid #E2EDE9;border-radius:10px;padding:22px 26px;margin-top:8px;">
+            <p style="font-size:11px;color:#7A9AB0;line-height:1.75;font-style:italic;margin:0;">
+              <strong style="font-style:normal;color:#4A6278;font-weight:600;">Disclosure Note:</strong>
+              This report was generated by Climactix using AI-assisted narrative synthesis based on information provided by the organisation. All data points, targets, and statements reflect inputs as submitted. This document does not constitute independent ESG assurance or third-party verification. For formal regulatory submissions, organisations should seek independent review. Generated ${dateStr}.
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="text-align:center;margin-top:36px;padding-top:22px;border-top:1px solid #E2EDE9;">
+            <div style="font-size:10.5px;color:#7A9AB0;font-weight:600;letter-spacing:.1em;text-transform:uppercase;">Generated by Climactix Global</div>
+            <div style="font-size:10px;color:#C5D9D3;margin-top:3px;">${dateStr}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* ─────────────────────────────────────────────
      MAIN APP
   ───────────────────────────────────────────── */
   function App() {
@@ -940,21 +1058,36 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
       setToast(true); setTimeout(()=>setToast(false),2500);
     };
 
-    const handleDownload = () => {
-      if (!report) return;
-      const { fd:f, raw } = report;
-      const blob = new Blob([
-        `CLIMACTIX — ESG & CLIMATE NARRATIVE REPORT\n`,
-        `Organisation: ${f.profile.name}\n`,
-        `Generated: ${report.generatedAt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}\n`,
-        `Report Purpose: ${f.goals.purpose}\n\n`,
-        `${'─'.repeat(60)}\n\n${raw||''}\n\n${'─'.repeat(60)}\n`,
-        `Generated by Climactix Global · climactix.io\n`,
-      ], { type:'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `Climactix_ESG_${f.profile.name.replace(/\s+/g,'_')}.txt`;
-      a.click();
+    const [pdfLoading, setPdfLoading] = React.useState(false);
+
+    const handleDownload = async () => {
+      if (!report || pdfLoading) return;
+      setPdfLoading(true);
+      const { fd:f, sections, generatedAt } = report;
+
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'position:fixed;left:-99999px;top:0;z-index:-1;width:780px;';
+      wrapper.innerHTML = buildPdfHtml(f, sections, generatedAt);
+      document.body.appendChild(wrapper);
+
+      const safeName = (f.profile.name || 'Report').replace(/[^a-zA-Z0-9_\-]/g, '_');
+      const opt = {
+        margin:     [0, 0, 0, 0],
+        filename:   `Climactix_ESG_${safeName}_${generatedAt.getFullYear()}.pdf`,
+        image:      { type: 'jpeg', quality: 0.97 },
+        html2canvas:{ scale: 2, useCORS: true, logging: false, backgroundColor: '#FAFCFC' },
+        jsPDF:      { unit: 'px', format: [780, 1103], orientation: 'portrait', hotfixes: ['px_scaling'] },
+        pagebreak:  { mode: ['css','legacy'], before: '.page-break-before', after: '.page-break-after' },
+      };
+
+      try {
+        await window.html2pdf().set(opt).from(wrapper.firstElementChild).save();
+      } catch(e) {
+        console.error('PDF generation failed:', e);
+      } finally {
+        document.body.removeChild(wrapper);
+        setPdfLoading(false);
+      }
     };
 
     /* ── LANDING ── */
@@ -1100,7 +1233,11 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
       const { sections, fd:f } = report;
       const purposeLabel = {investor:'Investor Communication',government:'Regulatory Submission',internal:'Internal Strategy'}[f.goals.purpose]||'General ESG Report';
       const sdgs = SDG_MAP[f.goals.purpose]||SDG_MAP.investor;
-      const completeness = Object.values(f).reduce((a,s)=>a+Object.values(s).filter(v=>v&&v!=='').length,0);
+      const rawCompleteness = Object.values(f).reduce((a,s)=>a+Object.values(s).filter(v=>v&&v!=='').length,0);
+      const completeness = rawCompleteness;
+      const completenessScore = Math.min(100, Math.round((rawCompleteness / 13) * 100));
+      const circumference = 2 * Math.PI * 26; // r=26
+      const strokeDash = Math.round((completenessScore / 100) * circumference);
 
       return (
         <section className="report-section" ref={reportRef}>
@@ -1127,9 +1264,18 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
 
             {/* Actions */}
             <div className="report-actions">
-              <button className="btn-dl" onClick={handleDownload}>
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M4 7l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Download Report
+              <button className="btn-dl" onClick={handleDownload} disabled={pdfLoading} style={pdfLoading?{opacity:.7,cursor:'not-allowed'}:{}}>
+                {pdfLoading ? (
+                  <>
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{animation:'mvpSpin 1s linear infinite'}}><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" strokeDasharray="20 18" fill="none"/></svg>
+                    Generating PDF…
+                  </>
+                ) : (
+                  <>
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M4 7l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    Download PDF
+                  </>
+                )}
               </button>
               <button className="btn-copy-r" onClick={handleCopy}>
                 <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.5"/><path d="M3 11V3h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
