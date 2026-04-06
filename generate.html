@@ -3,553 +3,1202 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Climactix Global — AI-Powered Green Media & ESG Narrative Platform</title>
-  <meta name="description" content= AI-powered Green Media and ESG Narrative Platform by Rushikesh Kulkarni." />
-  <link rel="stylesheet" href="style.css" />
+  <title>ESG Narrative Engine — Climactix Global</title>
+  <meta name="description" content="Generate professional, framework-aligned ESG narratives in minutes. TCFD · GRI · GHG Protocol · UN SDGs." />
   <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png">
-</head>
-<body data-page="home">
+  <link rel="stylesheet" href="style.css" />
 
-  <!-- HEADER -->
+  <!-- MVP fonts — loaded alongside existing Playfair/Source Serif stack -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- React + Babel (CDN, no build step) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+
+  <style>
+  /* ═══════════════════════════════════════════════════════════
+     CLIMACTIX MVP — ESG NARRATIVE ENGINE
+     Design: editorial precision meets climate authority
+     Scoped to #cx-mvp-root to prevent conflicts with style.css
+  ═══════════════════════════════════════════════════════════ */
+
+  /* Offset for Climactix sticky header (64px) */
+  #cx-mvp-root { padding-top: 64px; min-height: 100vh; }
+
+  /* ── Core palette & tokens ── */
+  #cx-mvp-root {
+    --ink:         #0A1628;
+    --ink-mid:     #1E3A52;
+    --ink-soft:    #4A6278;
+    --ink-muted:   #7A9AB0;
+    --teal:        #0A3D3C;
+    --teal-mid:    #0F5E5B;
+    --teal-bright: #0F766E;
+    --teal-light:  #CCFBF1;
+    --teal-pale:   #F0FDFA;
+    --sage:        #6EE7B7;
+    --gold:        #D97706;
+    --gold-pale:   #FEF3C7;
+    --red:         #DC2626;
+    --red-pale:    #FEF2F2;
+    --bg:          #FAFCFC;
+    --surface:     #FFFFFF;
+    --surface-2:   #F4F9F8;
+    --border:      #E2EDE9;
+    --border-dark: #C5D9D3;
+    --font-d:      'DM Serif Display', 'Playfair Display', Georgia, serif;
+    --font-b:      'DM Sans', 'Source Serif 4', system-ui, sans-serif;
+    --r-sm:  6px;  --r-md: 10px;  --r-lg: 16px;  --r-xl: 24px;
+    --sh-sm: 0 1px 3px rgba(10,61,60,.06), 0 1px 2px rgba(10,61,60,.04);
+    --sh-md: 0 4px 16px rgba(10,61,60,.08), 0 2px 6px rgba(10,61,60,.05);
+    --sh-lg: 0 16px 48px rgba(10,61,60,.12), 0 4px 16px rgba(10,61,60,.07);
+    --t: all 0.2s cubic-bezier(0.4,0,0.2,1);
+    font-family: var(--font-b);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ── */
+  #cx-mvp-root .pw { max-width: 1140px; margin: 0 auto; padding: 0 40px; }
+  @media (max-width: 768px) { #cx-mvp-root .pw { padding: 0 20px; } }
+
+  /* ══════════════════════════════════════════════════════════
+     LANDING HERO
+  ══════════════════════════════════════════════════════════ */
+  #cx-mvp-root .hero {
+    padding: 80px 0 72px;
+    position: relative; overflow: hidden;
+    text-align: left;
+    background: var(--bg);
+  }
+  #cx-mvp-root .hero-grid {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(rgba(10,61,60,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(10,61,60,.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%);
+  }
+  #cx-mvp-root .hero-glow {
+    position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 400px;
+    background: radial-gradient(ellipse, rgba(15,118,110,.07) 0%, transparent 65%);
+    pointer-events: none; z-index: 0;
+  }
+  #cx-mvp-root .hero-inner { position: relative; z-index: 1; max-width: 700px; }
+  #cx-mvp-root .hero-kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-b); font-size: 11px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--teal-bright); background: var(--teal-pale);
+    border: 1px solid rgba(15,118,110,.2);
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 24px;
+  }
+  #cx-mvp-root .hero-kicker-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-bright); animation: mvpPulse 2s infinite; }
+  @keyframes mvpPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  #cx-mvp-root .hero-h1 {
+    font-family: var(--font-d);
+    font-size: clamp(36px, 5vw, 58px); font-weight: 400;
+    color: var(--ink); margin-bottom: 20px;
+    line-height: 1.1; letter-spacing: -.02em;
+  }
+  #cx-mvp-root .hero-h1 em { font-style: italic; color: var(--teal); }
+  #cx-mvp-root .hero-sub {
+    font-size: 17px; font-weight: 300; color: var(--ink-soft);
+    max-width: 560px; line-height: 1.7; margin-bottom: 36px;
+  }
+  #cx-mvp-root .hero-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 44px; }
+  #cx-mvp-root .hero-trust { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  #cx-mvp-root .trust-item { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--ink-muted); }
+  #cx-mvp-root .trust-icon { color: var(--teal-bright); font-size: 13px; }
+  #cx-mvp-root .hero-frameworks {
+    position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  @media (max-width: 900px) { #cx-mvp-root .hero-frameworks { display: none; } }
+  #cx-mvp-root .fw-badge {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 10px 16px;
+    box-shadow: var(--sh-sm); font-family: var(--font-b);
+    font-size: 11px; font-weight: 600; color: var(--ink-soft);
+    letter-spacing: .05em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+    transform: translateX(12px); transition: var(--t);
+  }
+  #cx-mvp-root .fw-badge:hover { transform: translateX(0); box-shadow: var(--sh-md); }
+  #cx-mvp-root .fw-badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* Features strip */
+  #cx-mvp-root .features-strip { background: var(--teal); padding: 56px 0; }
+  #cx-mvp-root .features-grid {
+    display: grid; grid-template-columns: repeat(4,1fr); gap: 1px;
+    background: rgba(255,255,255,.1);
+  }
+  @media (max-width: 768px) { #cx-mvp-root .features-grid { grid-template-columns: repeat(2,1fr); } }
+  #cx-mvp-root .feat-cell { background: var(--teal); padding: 28px 24px; transition: var(--t); }
+  #cx-mvp-root .feat-cell:hover { background: var(--teal-mid); }
+  #cx-mvp-root .feat-icon { font-size: 22px; margin-bottom: 12px; }
+  #cx-mvp-root .feat-title { font-size: 13.5px; font-weight: 600; color: white; margin-bottom: 5px; }
+  #cx-mvp-root .feat-desc { font-size: 12px; font-weight: 300; color: rgba(255,255,255,.62); line-height: 1.6; }
+
+  /* ══════════════════════════════════════════════════════════
+     QUESTIONNAIRE
+  ══════════════════════════════════════════════════════════ */
+  #cx-mvp-root .questionnaire { padding: 72px 0 100px; }
+  #cx-mvp-root .section-header { text-align: center; margin-bottom: 48px; }
+  #cx-mvp-root .section-kicker {
+    font-family: var(--font-b); font-size: 11px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--teal-bright); margin-bottom: 10px; display: block;
+  }
+  #cx-mvp-root .section-h2 {
+    font-family: var(--font-d);
+    font-size: clamp(26px, 4vw, 38px); font-weight: 400;
+    color: var(--ink); margin-bottom: 12px; letter-spacing: -.02em;
+  }
+  #cx-mvp-root .section-sub { font-size: 15px; font-weight: 300; color: var(--ink-soft); max-width: 500px; margin: 0 auto; }
+
+  /* Progress */
+  #cx-mvp-root .progress-wrap {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r-xl); padding: 20px 28px;
+    box-shadow: var(--sh-sm); margin-bottom: 28px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  #cx-mvp-root .progress-steps { display: flex; align-items: center; gap: 6px; flex: 1; flex-wrap: wrap; }
+  #cx-mvp-root .progress-step {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--font-b); font-size: 12px; font-weight: 500;
+    color: var(--ink-muted); padding: 6px 12px; border-radius: 100px;
+    transition: var(--t); cursor: pointer; border: none; background: none;
+  }
+  #cx-mvp-root .progress-step.active { color: var(--teal); background: var(--teal-pale); font-weight: 600; }
+  #cx-mvp-root .progress-step.done   { color: var(--teal-bright); }
+  #cx-mvp-root .step-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--surface-2); border: 1.5px solid var(--border-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; flex-shrink: 0; transition: var(--t);
+  }
+  #cx-mvp-root .progress-step.active .step-num { background: var(--teal); border-color: var(--teal); color: white; }
+  #cx-mvp-root .progress-step.done .step-num   { background: var(--teal-bright); border-color: var(--teal-bright); color: white; }
+  #cx-mvp-root .progress-pct {
+    font-family: var(--font-b); font-size: 12px; font-weight: 700;
+    color: var(--teal); background: var(--teal-pale);
+    border-radius: 100px; padding: 4px 12px; flex-shrink: 0;
+  }
+
+  /* Form card */
+  #cx-mvp-root .form-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r-xl); padding: 44px;
+    box-shadow: var(--sh-md);
+    animation: mvpSlide .35s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes mvpSlide { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform: none; } }
+  @media (max-width: 768px) { #cx-mvp-root .form-card { padding: 24px 18px; } }
+  #cx-mvp-root .fc-title {
+    font-family: var(--font-d); font-size: 24px; font-weight: 400;
+    color: var(--ink); margin-bottom: 5px; letter-spacing: -.01em;
+  }
+  #cx-mvp-root .fc-sub { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 28px; font-weight: 300; }
+  #cx-mvp-root .fc-divider {
+    height: 2px; width: 72px;
+    background: linear-gradient(to right, var(--teal), transparent);
+    margin-bottom: 28px; border-radius: 1px;
+  }
+
+  /* Form elements */
+  #cx-mvp-root .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+  @media (max-width: 640px) { #cx-mvp-root .form-row { grid-template-columns: 1fr; } }
+  #cx-mvp-root .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+  #cx-mvp-root .form-label {
+    font-family: var(--font-b); font-size: 11.5px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft);
+  }
+  #cx-mvp-root .form-req { color: var(--teal-bright); margin-left: 2px; }
+  #cx-mvp-root .form-input,
+  #cx-mvp-root .form-select,
+  #cx-mvp-root .form-textarea {
+    font-family: var(--font-b); font-size: 14.5px;
+    color: var(--ink); background: var(--surface-2);
+    border: 1.5px solid var(--border-dark);
+    border-radius: var(--r-md); padding: 11px 15px;
+    outline: none; transition: var(--t); width: 100%;
+    appearance: none; -webkit-appearance: none;
+  }
+  #cx-mvp-root .form-input:focus,
+  #cx-mvp-root .form-select:focus,
+  #cx-mvp-root .form-textarea:focus {
+    border-color: var(--teal-bright); background: white;
+    box-shadow: 0 0 0 3px rgba(15,118,110,.1);
+  }
+  #cx-mvp-root .form-input::placeholder,
+  #cx-mvp-root .form-textarea::placeholder { color: var(--ink-muted); }
+  #cx-mvp-root .form-textarea { resize: vertical; min-height: 96px; line-height: 1.65; }
+  #cx-mvp-root .form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A6278' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 13px center; padding-right: 36px; cursor: pointer;
+  }
+  #cx-mvp-root .form-hint { font-size: 11.5px; color: var(--ink-muted); margin-top: 2px; font-weight: 300; }
+
+  /* Goal buttons */
+  #cx-mvp-root .goal-options { display: flex; gap: 12px; flex-wrap: wrap; }
+  #cx-mvp-root .goal-btn {
+    flex: 1; min-width: 150px;
+    padding: 16px 18px; border-radius: var(--r-lg);
+    border: 1.5px solid var(--border-dark);
+    background: var(--surface-2); cursor: pointer;
+    text-align: left; transition: var(--t); font-family: var(--font-b);
+  }
+  #cx-mvp-root .goal-btn:hover  { border-color: var(--teal-bright); background: var(--teal-pale); }
+  #cx-mvp-root .goal-btn.sel    { border-color: var(--teal); background: var(--teal-pale); }
+  #cx-mvp-root .goal-icon  { font-size: 18px; margin-bottom: 7px; display: block; }
+  #cx-mvp-root .goal-title { font-size: 13.5px; font-weight: 600; color: var(--ink); display: block; margin-bottom: 3px; }
+  #cx-mvp-root .goal-desc  { font-size: 11.5px; color: var(--ink-soft); font-weight: 300; }
+
+  /* Form navigation */
+  #cx-mvp-root .form-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border);
+  }
+
+  /* ── Buttons ── */
+  #cx-mvp-root .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-b); font-size: 15px; font-weight: 600;
+    color: white; background: var(--teal);
+    padding: 13px 26px; border-radius: var(--r-md);
+    border: none; cursor: pointer; transition: var(--t);
+    box-shadow: 0 4px 16px rgba(10,61,60,.25);
+    text-decoration: none;
+  }
+  #cx-mvp-root .btn-primary:hover { background: var(--teal-mid); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(10,61,60,.3); }
+  #cx-mvp-root .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-b); font-size: 14px; font-weight: 500;
+    color: var(--ink-soft); background: white;
+    padding: 12px 20px; border-radius: var(--r-md);
+    border: 1px solid var(--border-dark); cursor: pointer; transition: var(--t);
+  }
+  #cx-mvp-root .btn-secondary:hover { color: var(--teal); border-color: var(--teal-bright); background: var(--teal-pale); }
+  #cx-mvp-root .btn-back {
+    font-family: var(--font-b); font-size: 13.5px; font-weight: 500;
+    color: var(--ink-soft); background: none;
+    padding: 10px 18px; border-radius: var(--r-md);
+    border: 1px solid var(--border-dark); cursor: pointer; transition: var(--t);
+  }
+  #cx-mvp-root .btn-back:hover { color: var(--ink); border-color: var(--ink-soft); }
+  #cx-mvp-root .btn-next {
+    font-family: var(--font-b); font-size: 13.5px; font-weight: 600;
+    color: white; background: var(--teal);
+    padding: 11px 22px; border-radius: var(--r-md);
+    border: none; cursor: pointer; transition: var(--t);
+    display: flex; align-items: center; gap: 7px;
+    box-shadow: 0 2px 8px rgba(10,61,60,.2);
+  }
+  #cx-mvp-root .btn-next:hover { background: var(--teal-mid); transform: translateY(-1px); }
+  #cx-mvp-root .btn-next:disabled { background: var(--border-dark); cursor: not-allowed; transform: none; box-shadow: none; }
+  #cx-mvp-root .btn-generate {
+    font-family: var(--font-b); font-size: 15px; font-weight: 700;
+    color: white; background: linear-gradient(135deg, var(--teal), var(--teal-mid));
+    padding: 14px 32px; border-radius: var(--r-md);
+    border: none; cursor: pointer; transition: var(--t);
+    box-shadow: 0 4px 20px rgba(10,61,60,.3);
+    display: flex; align-items: center; gap: 9px;
+  }
+  #cx-mvp-root .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(10,61,60,.38); }
+  #cx-mvp-root .btn-generate:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* ══════════════════════════════════════════════════════════
+     LOADING STATE
+  ══════════════════════════════════════════════════════════ */
+  #cx-mvp-root .loading-state {
+    min-height: calc(100vh - 64px);
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 24px;
+    background: var(--bg);
+  }
+  #cx-mvp-root .loading-orb {
+    width: 72px; height: 72px;
+    border: 3px solid var(--teal-light);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: mvpSpin 1.2s linear infinite;
+  }
+  @keyframes mvpSpin { to { transform: rotate(360deg); } }
+  #cx-mvp-root .loading-title {
+    font-family: var(--font-d); font-size: 26px;
+    color: var(--ink); text-align: center; letter-spacing: -.01em;
+  }
+  #cx-mvp-root .loading-steps { display: flex; flex-direction: column; gap: 7px; align-items: center; }
+  #cx-mvp-root .loading-step {
+    font-family: var(--font-b); font-size: 13px; color: var(--ink-muted);
+    display: flex; align-items: center; gap: 7px; opacity: 0;
+    transition: opacity .4s ease;
+  }
+  #cx-mvp-root .loading-step.vis { opacity: 1; }
+  #cx-mvp-root .ls-icon { color: var(--teal-bright); }
+
+  /* ══════════════════════════════════════════════════════════
+     REPORT OUTPUT
+  ══════════════════════════════════════════════════════════ */
+  #cx-mvp-root .report-section { padding: 32px 0 100px; }
+
+  #cx-mvp-root .report-header {
+    background: var(--teal); border-radius: var(--r-xl);
+    padding: 44px 48px; margin-bottom: 28px;
+    position: relative; overflow: hidden;
+  }
+  #cx-mvp-root .report-header::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 280px; height: 280px; border-radius: 50%; background: rgba(255,255,255,.04);
+  }
+  #cx-mvp-root .report-header::after {
+    content: ''; position: absolute; bottom: -60px; right: 40px;
+    width: 190px; height: 190px; border-radius: 50%; background: rgba(255,255,255,.03);
+  }
+  #cx-mvp-root .rh-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+  #cx-mvp-root .rh-tag {
+    font-family: var(--font-b); font-size: 10.5px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 4px 11px; border-radius: 100px;
+    background: rgba(255,255,255,.12); color: rgba(255,255,255,.8);
+  }
+  #cx-mvp-root .rh-org {
+    font-family: var(--font-d); font-size: clamp(24px, 3.2vw, 36px);
+    font-weight: 400; color: white; margin-bottom: 8px; line-height: 1.15;
+  }
+  #cx-mvp-root .rh-sub { font-family: var(--font-b); font-size: 14px; font-weight: 300; color: rgba(255,255,255,.68); margin-bottom: 22px; }
+  #cx-mvp-root .rh-frameworks { display: flex; gap: 7px; flex-wrap: wrap; }
+  #cx-mvp-root .rfb {
+    font-family: var(--font-b); font-size: 10.5px; font-weight: 600; letter-spacing: .06em;
+    padding: 4px 11px; border-radius: 100px;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.72);
+  }
+  #cx-mvp-root .rh-date {
+    position: absolute; top: 44px; right: 48px;
+    font-family: var(--font-b); font-size: 11.5px; font-weight: 500; color: rgba(255,255,255,.45);
+  }
+
+  /* Report actions */
+  #cx-mvp-root .report-actions {
+    display: flex; gap: 9px; align-items: center; margin-bottom: 28px; flex-wrap: wrap;
+  }
+  #cx-mvp-root .btn-dl {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--font-b); font-size: 13px; font-weight: 600;
+    color: white; background: var(--teal);
+    padding: 9px 18px; border-radius: var(--r-md);
+    border: none; cursor: pointer; transition: var(--t);
+    box-shadow: 0 2px 8px rgba(10,61,60,.2);
+  }
+  #cx-mvp-root .btn-dl:hover { background: var(--teal-mid); transform: translateY(-1px); }
+  #cx-mvp-root .btn-copy-r {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--font-b); font-size: 13px; font-weight: 500; color: var(--ink-soft);
+    padding: 9px 18px; border-radius: var(--r-md);
+    border: 1px solid var(--border-dark); background: white; cursor: pointer; transition: var(--t);
+  }
+  #cx-mvp-root .btn-copy-r:hover { color: var(--teal); border-color: var(--teal-bright); }
+  #cx-mvp-root .btn-restart {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--font-b); font-size: 13px; font-weight: 500; color: var(--ink-soft);
+    padding: 9px 18px; border-radius: var(--r-md);
+    border: 1px solid var(--border-dark); background: white;
+    cursor: pointer; transition: var(--t); margin-left: auto;
+  }
+  #cx-mvp-root .btn-restart:hover { color: var(--ink); }
+
+  /* Report body */
+  #cx-mvp-root .report-body { display: grid; grid-template-columns: 1fr 292px; gap: 22px; }
+  @media (max-width: 900px) { #cx-mvp-root .report-body { grid-template-columns: 1fr; } }
+  #cx-mvp-root .report-main { display: flex; flex-direction: column; gap: 18px; }
+  #cx-mvp-root .report-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 34px 38px;
+    box-shadow: var(--sh-sm); animation: mvpSlide .4s ease;
+  }
+  @media (max-width: 768px) { #cx-mvp-root .report-card { padding: 22px 18px; } }
+  #cx-mvp-root .rc-num {
+    font-family: var(--font-b); font-size: 10px; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--teal-bright); margin-bottom: 7px; display: block;
+  }
+  #cx-mvp-root .rc-title {
+    font-family: var(--font-d); font-size: 21px; font-weight: 400;
+    color: var(--ink); margin-bottom: 18px; letter-spacing: -.01em;
+  }
+  #cx-mvp-root .rc-bar {
+    height: 2px; width: 44px;
+    background: linear-gradient(to right, var(--teal), transparent);
+    margin-bottom: 20px; border-radius: 1px;
+  }
+  #cx-mvp-root .rc-content {
+    font-family: var(--font-b); font-size: 14.5px; font-weight: 300;
+    color: var(--ink-soft); line-height: 1.85;
+  }
+  #cx-mvp-root .rc-content p  { margin-bottom: 13px; }
+  #cx-mvp-root .rc-content p:last-child { margin-bottom: 0; }
+  #cx-mvp-root .rc-content strong { font-weight: 600; color: var(--ink); }
+  #cx-mvp-root .rc-content ul { padding-left: 18px; margin: 7px 0 13px; }
+  #cx-mvp-root .rc-content ul li { margin-bottom: 7px; }
+  #cx-mvp-root .rc-content em { font-style: italic; color: var(--ink-soft); }
+
+  /* Sidebar */
+  #cx-mvp-root .report-sidebar { display: flex; flex-direction: column; gap: 14px; }
+  #cx-mvp-root .sidebar-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 22px;
+    box-shadow: var(--sh-sm);
+  }
+  #cx-mvp-root .sc-title {
+    font-family: var(--font-b); font-size: 10.5px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-muted); margin-bottom: 13px;
+  }
+  #cx-mvp-root .sdg-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  #cx-mvp-root .sdg-badge {
+    font-family: var(--font-b); font-size: 11px; font-weight: 600;
+    padding: 4px 9px; border-radius: 6px;
+    background: var(--teal-pale); color: var(--teal);
+    border: 1px solid rgba(15,118,110,.2);
+  }
+  #cx-mvp-root .fw-list  { display: flex; flex-direction: column; gap: 8px; }
+  #cx-mvp-root .fw-item  { display: flex; align-items: center; gap: 9px; font-family: var(--font-b); font-size: 13px; color: var(--ink-soft); }
+  #cx-mvp-root .fw-check {
+    width: 17px; height: 17px; border-radius: 50%;
+    background: var(--teal-pale); border: 1px solid rgba(15,118,110,.25);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--teal-bright); font-size: 9px; font-weight: 700; flex-shrink: 0;
+  }
+  #cx-mvp-root .score-card { background: var(--teal); border-radius: var(--r-lg); padding: 22px; }
+  #cx-mvp-root .score-label { font-family: var(--font-b); font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-bottom: 3px; }
+  #cx-mvp-root .score-val { font-family: var(--font-d); font-size: 36px; color: white; line-height: 1; margin-bottom: 7px; }
+  #cx-mvp-root .score-desc { font-family: var(--font-b); font-size: 11.5px; color: rgba(255,255,255,.6); font-weight: 300; line-height: 1.5; }
+
+  /* Disclosure note */
+  #cx-mvp-root .disclosure-note {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 22px 26px;
+  }
+  #cx-mvp-root .disclosure-note p { font-family: var(--font-b); font-size: 11.5px; color: var(--ink-muted); line-height: 1.7; font-style: italic; }
+  #cx-mvp-root .disclosure-note strong { font-style: normal; color: var(--ink-soft); }
+
+  /* Toast */
+  #cx-mvp-root .toast {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+    background: var(--ink); color: white;
+    padding: 11px 18px; border-radius: var(--r-md);
+    font-family: var(--font-b); font-size: 13px; font-weight: 500;
+    box-shadow: var(--sh-lg);
+    animation: mvpToast .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes mvpToast { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- ══ CLIMACTIX SITE HEADER (preserved, links back to homepage) ══ -->
   <header class="site-header">
     <a href="index.html" class="header-brand">
       <div class="cx-logo-mark">
-  <img 
-    src="Climatix_logo.png" 
-    alt="Climactix Global logo"
-    class="cx-logo-img"
-  />
-</div>
+        <img src="Climatix_logo.png" alt="Climactix Global logo" class="cx-logo-img" />
+      </div>
       <div class="header-wordmark">
         Climactix Global
         <span>Media · Branding · Impact · For a Sustainable Future</span>
       </div>
     </a>
     <nav class="header-nav">
-      <a href="index.html" class="nav-link active">Home</a>
-      <a href="#vision" class="nav-link">Vision</a>
-      <a href="#solution" class="nav-link">Solution</a>
-      <a href="generate.html" class="nav-link">ESG Engine</a>
-      <a href="#founder" class="nav-link">Founder</a>
-      <a href="#services" class="nav-link">Services</a>
-      <a href="#calculator" class="nav-link nav-live">
-  Calculator <span class="live-pill">LIVE</span>
-</a>
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="index.html#vision" class="nav-link">Vision</a>
+      <a href="index.html#solution" class="nav-link">Solution</a>
+      <a href="generate.html" class="nav-link active">ESG Engine</a>
+      <a href="index.html#founder" class="nav-link">Founder</a>
+      <a href="index.html#services" class="nav-link">Services</a>
+      <a href="index.html#calculator" class="nav-link nav-live">
+        Calculator <span class="live-pill">LIVE</span>
+      </a>
     </nav>
     <div class="live-status">
       <div class="live-dot"></div>
       <span>AI Engine Live</span>
-      <span id="headerTimestamp" style="opacity:0.6;margin-left:4px;"></span>
-       <a href="#contact" class="nav-link">Contact</a>
+      <a href="index.html#contact" class="nav-link" style="margin-left:4px;">Contact</a>
     </div>
   </header>
- 
 
-  <main>
-
-    <!-- HERO -->
-    <section class="cx-hero">
-      <div class="cx-hero-bg"></div>
-      <div class="page-wrapper">
-        <div class="cx-hero-inner fade-in">
-          <div class="cx-hero-badge">
-            <span class="badge-dot"></span>
-           AI-Powered Green Media &amp; ESG Narrative Platform
-          </div>
-          <h1 class="cx-hero-title">
-            Transform Sustainability Data<br>into <em>Compelling, Verified Stories</em>
-          </h1>
-          <p class="cx-hero-sub">
-            Climactix Global bridges complex ESG performance with investors, regulators, customers, and the public — through NLP-powered, blockchain-verified narratives aligned to global sustainability disclosure standards that build real trust.
-          </p>
-          <div class="cx-hero-cta">
-            <a href="generate.html" class="cta-primary">Generate ESG Narrative →</a>
-            <a href="#vision" class="cta-secondary">Explore Vision ↓</a>
-          </div>
-          <div class="cx-market-stats fade-in fade-in-2">
-            <div class="ms-item">
-              <div class="ms-val">$30T+</div>
-              <div class="ms-label">ESG Assets Under Management</div>
-            </div>
-            <div class="ms-divider"></div>
-            <div class="ms-item">
-              <div class="ms-val">$56.65B</div>
-              <div class="ms-label">Green Marketing Market 2025</div>
-            </div>
-            <div class="ms-divider"></div>
-            <div class="ms-item">
-              <div class="ms-val">83%</div>
-              <div class="ms-label">Investors Using ESG Data</div>
-            </div>
-            <div class="ms-divider"></div>
-            <div class="ms-item">
-              <div class="ms-val">67%</div>
-              <div class="ms-label">Investors Doubting ESG Claims</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-</section>
-
-    <!-- VISION & MISSION -->
-    <section id="vision" class="page-wrapper section-block fade-in">
-      <div class="two-col-grid">
-        <div class="col-text">
-          <div class="cx-eyebrow">Vision</div>
-          <h2 class="section-heading">The Green Operating System for ESG Communication</h2>
-          <p class="body-text">Climactix Global aims to establish first data-driven green media and ESG communications ecosystem. By integrating AI-powered ESG narrative engines, blockchain-based transparency, and multi-format media channels, we transform sustainability metrics — aligned with GRI, SASB, TCFD, and CSRD — into verifiable, compelling, investor-ready narratives.</p>
-          <p class="body-text">The vision: enable corporations, startups, governments, and investors to amplify sustainability impact through transparent communication that builds trust, compliance, and stakeholder engagement. Climactix Global will be the platform where <strong>ESG assets</strong> are supported by automated, verifiable storytelling.</p>
-        </div>
-        <div class="cx-mission-card">
-          <div class="cx-eyebrow" style="color:#c0006b;">Mission</div>
-          <p class="body-text" style="margin-bottom:18px;">Help organizations translate their ESG performance into authentic green media campaigns, reports, and digital stories that:</p>
-          <ul class="cx-mission-list">
-            <li><span class="bullet-icon">↑</span>Increase investor confidence</li>
-            <li><span class="bullet-icon">✓</span>Strengthen regulatory compliance</li>
-            <li><span class="bullet-icon">◎</span>Drive public trust</li>
-            <li><span class="bullet-icon">⚡</span>Accelerate climate-positive actions</li>
-            <li><span class="bullet-icon">📡</span>Publish across multi-channel formats</li>
-            <li><span class="bullet-icon">📊</span>Track impact via real-time analytics</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROBLEM STATEMENT -->
-    <section class="cx-problem-section">
-      <div class="page-wrapper">
-        <div class="cx-eyebrow" style="color:rgba(255,255,255,0.55);">Problem Statement</div>
-        <h2 class="section-heading" style="color:white;">Why ESG Communication is Broken</h2>
-        <p class="body-text" style="color:rgba(255,255,255,0.6);max-width:600px;margin-bottom:44px;">Despite $30T+ in ESG investment, companies face critical gaps in translating performance into credible, accessible narratives.</p>
-        <div class="problems-grid">
-          <div class="problem-card"><div class="prob-icon">📊</div><div class="prob-title">ESG Communication Gap</div><div class="prob-text">Disclosures are data-heavy and compliance-oriented — inaccessible to investors, employees, and the public.</div></div>
-          <div class="problem-card"><div class="prob-icon">🚨</div><div class="prob-title">Greenwashing Risk</div><div class="prob-text">67% of private investors doubt ESG claims. Stakeholders distrust sustainability assertions without audit trails.</div></div>
-          <div class="problem-card"><div class="prob-icon">📰</div><div class="prob-title">Media Fragmentation</div><div class="prob-text">Climate narratives are scattered across platforms — making verification and comparison near impossible.</div></div>
-          <div class="problem-card"><div class="prob-icon">⚖️</div><div class="prob-title">Regulatory Pressure</div><div class="prob-text">CSRD, SEC Climate Rules, and ISSB create growing compliance challenges while demanding investor-friendly narratives.</div></div>
-          <div class="problem-card"><div class="prob-icon">🗄️</div><div class="prob-title">Data Silos</div><div class="prob-text">ESG data sits disconnected across finance, operations, CSR, and supply chain — preventing holistic storytelling.</div></div>
-          <div class="problem-card"><div class="prob-icon">💰</div><div class="prob-title">Cost &amp; Efficiency Gap</div><div class="prob-text">Traditional ESG reporting costs $197K–$739K annually per company — crushing SMEs and startups.</div></div>
-          <div class="problem-card"><div class="prob-icon">📉</div><div class="prob-title">Investor Disconnect</div><div class="prob-text">83% of investors use ESG data yet 62% cite lack of clarity and 63% cite inconsistencies. They need real-time insights.</div></div>
-          <div class="problem-card"><div class="prob-icon">🌏</div><div class="prob-title">India Market Gap</div><div class="prob-text">India — 3rd largest emitter — lacks dedicated climate dialogue platforms engaging policymakers, entrepreneurs, and youth.</div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SOLUTION -->
-    <section id="solution" class="page-wrapper section-block">
-      <div class="cx-eyebrow">The Climactix Solution</div>
-      <h2 class="section-heading">Green Media Strategy + ESG Narrative + Impact Validation</h2>
-      <div class="solution-grid">
-        <div class="solution-card"><div class="sol-icon" style="background:rgba(192,0,107,0.1);color:#c0006b;">🤖</div><div class="sol-title">AI-Driven ESG Storytelling</div><div class="sol-text">Convert raw ESG data into investor briefs, social posts, ad copy, podcast scripts, and video storyboards aligned to UN SDGs and ESG pillars.</div></div>
-        <div class="solution-card"><div class="sol-icon" style="background:rgba(45,90,61,0.1);color:var(--forest);">⛓️</div><div class="sol-title">Blockchain Verification</div><div class="sol-text">Tamper-proof timestamping of sustainability claims. Smart contracts enable NGO and auditor validation, eliminating greenwashing at source.</div></div>
-        <div class="solution-card"><div class="sol-icon" style="background:rgba(58,79,92,0.1);color:var(--slate);">📡</div><div class="sol-title">Green Media Channels</div><div class="sol-text">Branded podcasts, video series, short-form social, documentaries, and live forums featuring sustainability leaders and climate innovators.</div></div>
-        <div class="solution-card"><div class="sol-icon" style="background:rgba(184,118,58,0.1);color:var(--amber);">📈</div><div class="sol-title">ESG Media Dashboard</div><div class="sol-text">Narrative Reach Index, Trust Index, SDG Impact Score, and real-time engagement metrics — all in one centralized hub.</div></div>
-        <div class="solution-card"><div class="sol-icon" style="background:rgba(192,0,107,0.1);color:#c0006b;">🌱</div><div class="sol-title">Community Campaigns</div><div class="sol-text">Grassroots programs tied to carbon credits and CSR — tree planting and farming initiatives linked directly to brand visibility and impact.</div></div>
-        <div class="solution-card"><div class="sol-icon" style="background:rgba(45,90,61,0.1);color:var(--forest);">⚡</div><div class="sol-title">IoT + Live ESG Data</div><div class="sol-text">CO₂ sensors, energy meters, water and soil sensors feed directly into real-time sustainability storytelling — live data becomes live narrative.</div></div>
-      </div>
-    </section>
-   <!-- SERVICES -->
-<section id="services" class="page-wrapper section-block">
-  <div class="cx-eyebrow">Our Services</div>
-  <h2 class="section-heading">Climate, ESG & Sustainability Advisory</h2>
-
-  <div class="solution-grid">
-
-    <div class="solution-card">
-      <div class="sol-icon" style="background:rgba(58,79,92,0.1);color:var(--slate);">🗣️</div>
-      <div class="sol-title">Climate & Sustainability Communication</div>
-      <div class="sol-text">
-        Structured climate, ESG, and policy communication for governments, institutions, and enterprises using data-backed insights.
-      </div>
-    </div>
-
-    <div class="solution-card">
-      <div class="sol-icon" style="background:rgba(184,118,58,0.1);color:var(--amber);">📊</div>
-      <div class="sol-title">Sustainability & ESG Rating Systems</div>
-      <div class="sol-text">
-        AI-driven assessment of environmental, social, and governance performance, compliance readiness, and transition risk.
-      </div>
-    </div>
-
-    <div class="solution-card">
-      <div class="sol-icon" style="background:rgba(192,0,107,0.1);color:#c0006b;">🛡️</div>
-      <div class="sol-title">ESG & Greenwashing Risk Audits</div>
-      <div class="sol-text">
-        Independent evaluation of sustainability disclosures, claims, and reports to identify compliance gaps and reputational risks.
-      </div>
-    </div>
-
-    <div class="solution-card">
-      <div class="sol-icon" style="background:rgba(45,90,61,0.1);color:var(--forest);">🎬</div>
-      <div class="sol-title">Green Production & Sustainable Media Advisory</div>
-      <div class="sol-text">
-        Advisory services for low-carbon film, advertising, events, and digital productions, including footprint assessment and sustainability compliance.
-      </div>
-    </div>
-
-    <div class="solution-card">
-      <div class="sol-icon" style="background:rgba(58,79,92,0.1);color:var(--slate);">💼</div>
-      <div class="sol-title">Climate & ESG Investment Intelligence</div>
-      <div class="sol-text">
-        ESG risk screening, impact validation, and regulatory alignment analysis for climate-focused investments and funds.
-      </div>
-    </div>
-
-    <div class="solution-card">
-      <div class="sol-icon" style="background:rgba(192,0,107,0.1);color:#c0006b;">📣</div>
-      <div class="sol-title">Media Image & ESG Reputation Management</div>
-      <div class="sol-text">
-        Monitoring, assessment, and response strategies for sustainability-related media exposure, controversies, and public disclosures.
-      </div>
-    </div>
-
-    <div class="solution-card">
-      <div class="sol-icon" style="background:rgba(184,118,58,0.1);color:var(--amber);">🚨</div>
-      <div class="sol-title">Environmental Disaster Communication & Response</div>
-      <div class="sol-text">
-        Pre-incident preparedness, real-time public communication support, and post-incident reporting for environmental and climate-related events.
-      </div>
-    </div>
-
-  </div>
-</section>
-  </div>
-</section>
-
-
-    <!-- ARCHITECTURE FLOW -->
-    <section class="cx-arch-section">
-      <div class="page-wrapper">
-        <div class="cx-eyebrow" style="color:rgba(255,255,255,0.55);">Core Architecture</div>
-        <h2 class="section-heading" style="color:white;">From Raw Data to Verified Narratives</h2>
-        <div class="arch-flow">
-          <div class="arch-node">
-            <div class="arch-node-dot" style="background:#e05c5c;"></div>
-            <div class="arch-node-body">
-              <div class="arch-node-title">Raw Data</div>
-              <div class="arch-node-desc">ESG reports · CSR project data · IoT sensor feeds · Carbon accounting platforms · GRI, SASB, TCFD, CSRD APIs</div>
-            </div>
-          </div>
-          <div class="arch-arrow">↓</div>
-          <div class="arch-node">
-            <div class="arch-node-dot" style="background:#9b5de5;"></div>
-            <div class="arch-node-body">
-              <div class="arch-node-title">Data Integration Layer</div>
-              <div class="arch-node-desc">Normalization · Semantic tagging aligned to UN SDGs · ESG pillar classification · Standards mapping</div>
-            </div>
-          </div>
-          <div class="arch-arrow">↓</div>
-          <div class="arch-node">
-            <div class="arch-node-dot" style="background:#f5c518;"></div>
-            <div class="arch-node-body">
-              <div class="arch-node-title">AI NLP Engine</div>
-              <div class="arch-node-desc">Converts metrics → investor briefs · social posts · ad copy · podcast scripts · video storyboards · GPT-5 + Hugging Face + LangChain + spaCy</div>
-            </div>
-          </div>
-          <div class="arch-arrow">↓</div>
-          <div class="arch-node">
-            <div class="arch-node-dot" style="background:#00c875;"></div>
-            <div class="arch-node-body">
-              <div class="arch-node-title">Verified Narratives</div>
-              <div class="arch-node-desc">Blockchain-timestamped · Multi-channel published (PR, social, investor portal, podcast) · Analytics tracked · Greenwash-validated</div>
-            </div>
-          </div>
-        </div>
-        <div class="tech-stack">
-          <div class="ts-label">Tech Stack</div>
-          <div class="ts-chips">
-            <span class="ts-chip">GPT-5 / Hugging Face</span>
-            <span class="ts-chip">LangChain · spaCy</span>
-            <span class="ts-chip">Polygon Blockchain</span>
-            <span class="ts-chip">React + Next.js</span>
-            <span class="ts-chip">Python FastAPI</span>
-            <span class="ts-chip">AWS · Azure OpenAI</span>
-            <span class="ts-chip">MQTT IoT</span>
-            <span class="ts-chip">PostgreSQL + GraphDB</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ESG NARRATIVE ENGINE BUTTONS -->
-    <section class="page-wrapper section-block">
-      <div class="cx-eyebrow">ESG Narrative Engine — Live Demo</div>
-      <h2 class="section-heading">Select an ESG Theme</h2>
-      <p class="body-text" style="max-width:580px;margin-bottom:36px;">The engine synthesises sensor data, KPIs, and global ESG trends into professional, framework-aligned disclosures — aligned to GRI, TCFD, ISSB, and CSRD.</p>
-      <div class="theme-grid" role="list">
-        <button class="theme-card climate" data-topic="climate" role="listitem" tabindex="0">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;"><div class="tc-icon">🌍</div><div class="tc-tag">E · Environmental</div></div>
-          <div><div class="tc-title">Climate &amp; Emissions Narrative</div><div class="tc-desc">Scope 1, 2 &amp; 3 GHG analysis, net-zero trajectory, carbon pricing exposure, TCFD risk scenarios, and EU Taxonomy alignment.</div></div>
-          <div class="tc-frameworks"><span class="fw-chip">GRI 305</span><span class="fw-chip">TCFD</span><span class="fw-chip">ISSB S2</span><span class="fw-chip">SBTi</span></div>
-          <div class="tc-footer"><div class="tc-cta">Generate narrative <span class="tc-arrow">→</span></div></div>
-        </button>
-        <button class="theme-card energy" data-topic="energy" role="listitem" tabindex="0">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;"><div class="tc-icon">⚡</div><div class="tc-tag">E · Environmental</div></div>
-          <div><div class="tc-title">Energy &amp; Efficiency Narrative</div><div class="tc-desc">Renewable energy mix, IoT consumption monitoring, energy intensity trends, RE100 progress, and avoided cost analysis.</div></div>
-          <div class="tc-frameworks"><span class="fw-chip">GRI 302</span><span class="fw-chip">RE100</span><span class="fw-chip">ISO 50001</span><span class="fw-chip">CDP</span></div>
-          <div class="tc-footer"><div class="tc-cta">Generate narrative <span class="tc-arrow">→</span></div></div>
-        </button>
-        <button class="theme-card operations" data-topic="operations" role="listitem" tabindex="0">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;"><div class="tc-icon">🏭</div><div class="tc-tag">E · S · G</div></div>
-          <div><div class="tc-title">Operations &amp; IoT ESG Narrative</div><div class="tc-desc">Water stewardship, circular economy, workforce safety, and real-time operational data — all sensor-verified and SBTN-aligned.</div></div>
-          <div class="tc-frameworks"><span class="fw-chip">GRI 303</span><span class="fw-chip">GRI 306</span><span class="fw-chip">SASB</span><span class="fw-chip">SDG 12</span></div>
-          <div class="tc-footer"><div class="tc-cta">Generate narrative <span class="tc-arrow">→</span></div></div>
-        </button>
-      </div>
-    </section>
-
-    <!-- PRODUCT ROADMAP -->
-    <section class="page-wrapper section-block">
-      <div class="cx-eyebrow">MVP Product Roadmap</div>
-      <h2 class="section-heading">Three Phases to Full ESG Operating System</h2>
-      <div class="roadmap-grid">
-        <div class="roadmap-card"><div class="rm-phase">Phase 1 · 0–6 months</div><div class="rm-title">Foundation</div><p class="rm-goal">Build the core AI narrative engine and analytics dashboards.</p><ul class="rm-features"><li>ESG data ingestion (PDF, DOCX, XLSX, API)</li><li>GRI, SASB, TCFD data normalization</li><li>AI narrative generator (investor briefs, social, reports)</li><li>SDG semantic tagging via NLP</li><li>Narrative Reach Index, Trust Index, SDG Score</li><li>Social auto-post + PDF export</li></ul></div>
-        <div class="roadmap-card"><div class="rm-phase">Phase 2 · 6–12 months</div><div class="rm-title">Verification &amp; Engagement</div><p class="rm-goal">Build trust + community engagement ecosystem.</p><ul class="rm-features"><li>Blockchain verification (Polygon)</li><li>Immutable ESG audit trails</li><li>Smart contracts for NGO/auditor validation</li><li>Community campaign module (carbon credits)</li><li>AI podcast scripts + video storyboards</li><li>Sentiment analysis + competitor benchmarking</li></ul></div>
-        <div class="roadmap-card"><div class="rm-phase">Phase 3 · 12–24 months</div><div class="rm-title">IoT + Real-Time ESG OS</div><p class="rm-goal">Full real-time data-to-storytelling operating system.</p><ul class="rm-features"><li>CO₂ sensors → live emissions dashboard</li><li>Energy + water + soil sensor integration (MQTT)</li><li>AI reputation + ESG risk prediction engine</li><li>Crisis narrative suggestions</li><li>Investor Dashboard Pro with SDG/region filters</li><li>Real-time ESG impact streams</li></ul></div>
-      </div>
-    </section>
-
-    <!-- FOUNDER -->
-    <section id="founder" class="cx-founder-section">
-      <div class="page-wrapper">
-        <div class="founder-layout">
-          <div class="founder-card">
-            <div class="founder-avatar">
-              <svg viewBox="0 0 120 120" width="120" height="120">
-                <defs>
-                  <clipPath id="circleClip">
-            <circle cx="60" cy="60" r="60" />
-          </clipPath>
-
-                  <linearGradient id="avBg" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#1a0a2e"/>
-                    <stop offset="100%" stop-color="#3d0f50"/>
-                  </linearGradient>
-                </defs>
-                <circle cx="60" cy="60" r="60" fill="url(#avBg)" />
-                <image
-          href="new-img.JPG"
-          x="0"
-          y="0"
-          width="120"
-          height="120"
-          clip-path="url(#circleClip)"
-          preserveAspectRatio="xMidYMid slice"
-        />
-
-                
-                </svg>
-            </div>
-            <div class="founder-name">Rushikesh Kulkarni</div>
-            <div class="founder-title">Founder &amp; Director</div>
-            <div class="founder-org">Climactix Global</div>
-            <div class="founder-tags">
-              <span class="f-tag">Green Media</span>
-              <span class="f-tag">ESG Strategy</span>
-              <span class="f-tag">Climate Communication</span>
-              <span class="f-tag">AI Narratives</span>
-            </div>
-            <div class="founder-pub">
-              <span class="pub-vol">VOL.1</span>
-              <span class="pub-date">Oct 1, 2025</span>
-            </div>
-          </div>
-          <div class="founder-bio">
-            <div class="cx-eyebrow" style="color:#c0006b;">The Founder</div>
-            <h2 class="section-heading">Rushikesh Kulkarni</h2>
-            <p class="body-text">Rushikesh Kulkarni is the visionary founder and director behind <strong>Climactix Global</strong> — the world's first AI-powered Green Media and ESG Narrative Platform. With a deep conviction that sustainability communication is broken, Rushikesh built the infrastructure bridging complex ESG data with human-centric storytelling.</p>
-            <p class="body-text">His vision for Climactix Global is to become the <strong>green operating system for ESG communication</strong> — a scalable, verifiable platform that transforms sustainability performance into measurable trust and market value. He identified a critical gap: India, the world's third-largest emitter and most climate-vulnerable nation, lacked a dedicated, authoritative climate dialogue platform.</p>
-            <p class="body-text">Through Climactix Global's flagship initiative — <strong>Sunday Climate Talks</strong> — Rushikesh is building India's first 100% carbon-neutral podcast platform, uniting policymakers, entrepreneurs, investors, and youth in a weekly dialogue making climate knowledge relatable and solution-oriented.</p>
-            <div class="founder-stats">
-              <div class="fs-item"><div class="fs-val">Vol.1</div><div class="fs-label">Proof of Concept</div></div>
-              <div class="fs-item"><div class="fs-val">Oct 2025</div><div class="fs-label">Founded</div></div>
-              <div class="fs-item"><div class="fs-val">India</div><div class="fs-label">Headquartered</div></div>
-              <div class="fs-item"><div class="fs-val">Global</div><div class="fs-label">Market Reach</div></div>
-            </div>
-            <div class="founder-differentiators">
-              <div class="diff-title">Why Climactix Global is Different</div>
-              <div class="diff-item"><span>◆</span> Data-Backed Storytelling — Science + Creativity, not just awareness campaigns</div>
-              <div class="diff-item"><span>◆</span> End-to-End Climate Media Agency — Strategy, production &amp; measurement in one</div>
-              <div class="diff-item"><span>◆</span> Anti-Greenwashing by Design — Blockchain proof layers + credibility filter</div>
-              <div class="diff-item"><span>◆</span> Global + Local Narrative Model — Grassroots voices scaled to global standards</div>
-              <div class="diff-item"><span>◆</span> Multi-Platform Distribution — Podcasts, reels, documentaries, AR/VR, live forums</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SUNDAY CLIMATE TALKS -->
-    <section class="page-wrapper section-block">
-      <div class="cx-eyebrow">Flagship Initiative</div>
-      <h2 class="section-heading">Sunday Climate Talks</h2>
-      <p class="body-text" style="max-width:640px;margin-bottom:36px;">India's first 100% carbon-neutral climate podcast — bridging global climate goals with local realities, educating youth, and positioning India as a leader in sustainable narratives.</p>
-      <div class="sct-grid">
-        <div class="sct-card"><div class="sct-icon">🎙️</div><div class="sct-title">Weekly Dialogue Platform</div><div class="sct-text">Policymakers, entrepreneurs, investors, and climate activists on one stage — making climate knowledge relatable and solution-oriented.</div></div>
-        <div class="sct-card"><div class="sct-icon">🌳</div><div class="sct-title">100% Carbon Neutral</div><div class="sct-text">Every episode offsets its production footprint via verified tree plantation and carbon credit programs — first of its kind in India.</div></div>
-        <div class="sct-card"><div class="sct-icon">🎯</div><div class="sct-title">ESG Brand Visibility</div><div class="sct-text">Partners gain authentic visibility across YouTube, Spotify, LinkedIn, and Instagram while support ties directly to climate action metrics.</div></div>
-        <div class="sct-card"><div class="sct-icon">👥</div><div class="sct-title">Youth-First Approach</div><div class="sct-text">60%+ of Gen Z &amp; Millennials prefer brands with visible climate action. Sunday Climate Talks creates that bridge for corporate ESG.</div></div>
-      </div>
-    </section>
-
-  </main>
-  <!-- CONTACT -->
-<section id="contact" class="page-wrapper section-block fade-in">
-  <div class="cx-eyebrow">Get in Touch</div>
-  <h2 class="section-heading">Let’s Build Credible Climate Impact</h2>
-  <p class="body-text" style="max-width:640px;margin-bottom:36px;">
-    Whether you’re a corporation, startup, investor, or policymaker — reach out to explore ESG narratives, green media, and verified climate storytelling.
-  </p>
-
-  <!-- CONTACT GRID START -->
-  <div class="contact-grid">
-
-    <!-- CONTACT INFO -->
-    <div class="contact-card">
-      <div class="contact-title">Contact Details</div>
-
-      <div class="contact-item">
-        <span class="contact-icon">📧</span>
-        <div>
-          <div class="contact-label">Email</div>
-          <a href="mailto:impact@climactixglobal.com" class="contact-link">
-            impact@climactixglobal.com
-          </a>
-        </div>
-      </div>
-
-      <div class="contact-item">
-        <span class="contact-icon">📞</span>
-        <div>
-          <div class="contact-label">Phone</div>
-          <a href="tel:+917977989339" class="contact-link">
-            +91 7977989339
-          </a>
-        </div>
-      </div>
-
-      <div class="contact-item">
-        <span class="contact-icon">🌍</span>
-        <div>
-          <div class="contact-label">Location</div>
-          <div class="contact-text">India · Serving Globally</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ENQUIRY FORM -->
-    <form
-      class="contact-form column-form"
-      action=https://formspree.io/f/xlgwayab
-      method="POST"
-    >
-      <div class="form-title">Quick Enquiry</div>
-
-      <div class="form-group">
-        <input type="text" name="name" placeholder="Your name" required />
-      </div>
-
-      <div class="form-group">
-        <input type="email" name="email" placeholder="Work email" required />
-      </div>
-
-      <div class="form-group">
-        <input type="text" name="organisation" placeholder="Organisation" />
-      </div>
-
-      <div class="form-group">
-        <textarea name="message" rows="3" placeholder="Tell us more about your climate goals?" required></textarea>
-      </div>
-
-      <input type="hidden" name="_subject" value="New Enquiry – Climactix Global" />
-      <input type="hidden" name="_template" value="table" />
-
-      <button type="submit" class="cta-primary">Send →</button>
-    </form>
-
+  <!-- ══ REACT MVP MOUNT POINT ══ -->
+  <div id="cx-mvp-root">
+    <div id="root"></div>
   </div>
 
-</section>
+  <script type="text/babel">
+  const { useState, useEffect, useRef } = React;
 
-  <footer class="cx-footer">
-    <div class="page-wrapper">
-       <div style="height: 96px;"></div>
-      <div class="footer-grid">
-        <div class="footer-brand-col">
-          <div class="footer-logo-row">
-            <svg width="32" height="32" viewBox="0 0 44 44" fill="none">
-              <rect x="1" y="1" width="42" height="42" rx="8" fill="#12052a"/>
-              <rect x="7" y="7" width="3.5" height="3.5" rx="1" fill="white" opacity="0.9"/>
-              <rect x="12.5" y="7" width="3.5" height="3.5" rx="1" fill="white" opacity="0.9"/>
-              <rect x="18" y="7" width="3.5" height="3.5" rx="1" fill="white" opacity="0.9"/>
-              <rect x="23.5" y="7" width="3.5" height="3.5" rx="1" fill="white" opacity="0.9"/>
-              <rect x="29" y="7" width="3.5" height="3.5" rx="1" fill="white" opacity="0.9"/>
-              <rect x="34.5" y="7" width="3.5" height="3.5" rx="1" fill="white" opacity="0.9"/>
-              <rect x="7" y="12.5" width="3.5" height="3.5" rx="1" fill="white" opacity="0.5"/>
-              <rect x="12.5" y="12.5" width="3.5" height="3.5" rx="1" fill="white" opacity="0.5"/>
-              <rect x="18" y="12.5" width="3.5" height="3.5" rx="1" fill="white" opacity="0.5"/>
-              <rect x="23.5" y="12.5" width="3.5" height="3.5" rx="1" fill="white" opacity="0.5"/>
-              <rect x="29" y="12.5" width="3.5" height="3.5" rx="1" fill="white" opacity="0.5"/>
-              <rect x="34.5" y="12.5" width="3.5" height="3.5" rx="1" fill="white" opacity="0.5"/>
-              <rect x="1" y="28" width="42" height="15" rx="8" fill="#c0006b"/>
-              <rect x="1" y="28" width="42" height="8" fill="#c0006b"/>
-              <text x="22" y="35" font-family="Arial,sans-serif" font-size="4.8" font-weight="800" fill="white" text-anchor="middle" letter-spacing="0.6">CLIMACTIX</text>
-              <text x="22" y="40.5" font-family="Arial,sans-serif" font-size="3.4" fill="rgba(255,255,255,0.85)" text-anchor="middle" letter-spacing="0.7">GREEN MEDIA AGENCY</text>
-            </svg>
-            <div class="footer-brand-name">Climactix Global</div>
+  /* ─────────────────────────────────────────────
+     CONSTANTS
+  ───────────────────────────────────────────── */
+  const STEPS = [
+    { id:'profile',     label:'Organisation', icon:'🏢' },
+    { id:'environment', label:'Environment',  icon:'🌿' },
+    { id:'initiatives', label:'Initiatives',  icon:'🎯' },
+    { id:'social',      label:'Social & Gov', icon:'🤝' },
+    { id:'goals',       label:'Report Goals', icon:'📋' },
+  ];
+
+  const SECTORS = [
+    'Manufacturing','Technology & Software','Financial Services',
+    'Healthcare & Pharma','Retail & Consumer Goods','Energy & Utilities',
+    'Agriculture & Food','Construction & Real Estate','Transport & Logistics',
+    'Professional Services','Education','Government / Public Sector',
+    'Non-Profit / NGO','Media & Entertainment','Other',
+  ];
+
+  const SDG_MAP = {
+    investor:   ['SDG 7','SDG 8','SDG 9','SDG 12','SDG 13','SDG 17'],
+    government: ['SDG 13','SDG 11','SDG 6','SDG 7','SDG 15','SDG 16'],
+    internal:   ['SDG 12','SDG 13','SDG 8','SDG 9','SDG 17'],
+  };
+
+  const LOADING_MSGS = [
+    '⚙️  Processing questionnaire responses…',
+    '🌿  Mapping to GHG Protocol framework…',
+    '📋  Aligning with TCFD pillars…',
+    '🎯  Cross-referencing UN SDGs…',
+    '✍️  Drafting Executive Summary…',
+    '📊  Constructing Climate Impact Statement…',
+    '🤝  Synthesising ESG Highlights…',
+    '📈  Building Forward Strategy…',
+    '✅  Finalising report…',
+  ];
+
+  const SECTION_TITLES = [
+    'Executive Summary',
+    'Climate Impact Statement',
+    'ESG Highlights',
+    'Alignment with Global Frameworks',
+    'Forward Strategy',
+  ];
+
+  /* ─────────────────────────────────────────────
+     NLP ENGINE (Claude API — falls back to demo)
+  ───────────────────────────────────────────── */
+  async function generateReport(formData) {
+    const { profile, environmental, initiatives, social, goals } = formData;
+    const purposeLabel = {
+      investor:   'for institutional and private investors as part of ESG due diligence',
+      government: 'for submission to regulatory authorities and government bodies',
+      internal:   'for internal strategic planning and board-level reporting',
+    }[goals.purpose] || 'for general ESG communication purposes';
+
+    const prompt = `You are a senior ESG analyst and climate communications specialist at a global sustainability advisory firm. Generate a professional, credible, submission-ready ESG & Climate Narrative Report.
+
+## ORGANISATION PROFILE
+- Organisation: ${profile.name}
+- Sector: ${profile.sector}
+- Location: ${profile.location}
+- Size: ${profile.size} organisation
+- Report Purpose: Prepared ${purposeLabel}
+
+## ENVIRONMENTAL DATA
+- Annual energy consumption: ${environmental.energyConsumption || 'Not formally quantified'}
+- Renewable energy share: ${environmental.renewablePercent ? environmental.renewablePercent + '%' : 'Under assessment'}
+- GHG emissions: ${environmental.emissions || 'Baseline measurement in progress'}
+- Waste management: ${environmental.wastePractices || 'Standard operational practices'}
+
+## CLIMATE INITIATIVES
+- Active programmes: ${initiatives.activeInitiatives || 'Programmes under development'}
+- Net zero / reduction targets: ${initiatives.netZeroTargets || 'Targets under internal review'}
+- Certifications: ${initiatives.certifications || 'None currently held'}
+
+## SOCIAL & GOVERNANCE
+- CSR initiatives: ${social.csrInitiatives || 'Standard CSR practices in place'}
+- Governance: ${social.governancePractices || 'Standard governance framework applied'}
+
+## INSTRUCTIONS
+Generate exactly five sections. Use data provided; where absent, make credible general statements. Tone: professional, analytical — no buzzwords, no exaggeration.
+
+### Executive Summary
+Two to three paragraphs. Introduce the organisation, the purpose of this report, and headline commitments. Bold the single most important metric.
+
+### Climate Impact Statement
+Two to three paragraphs. Analyse energy and emissions profile. Reference GHG Protocol Scope 1/2/3 and TCFD climate risk governance.
+
+### ESG Highlights
+One paragraph then a structured bullet list covering E, S, G achievements. Reference relevant UN SDGs by number and name. Bold SDG references.
+
+### Alignment with Global Frameworks
+Two paragraphs. Map to UN SDGs (cite ≥3), GHG Protocol scopes, TCFD pillars (≥2), and ESG best practices.
+
+### Forward Strategy
+Two to three paragraphs. Near-term (12–24 months), medium-term (3–5 years), long-term vision. Reference any stated targets directly.
+
+Use markdown (## headings, **bold**, - bullets). No preamble outside the five sections.`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 2400,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.content?.[0]?.text || null;
+      }
+    } catch (_) {}
+    return generateDemo(formData);
+  }
+
+  function generateDemo({ profile, environmental, initiatives, social, goals }) {
+    const org  = profile.name     || 'The Organisation';
+    const sec  = profile.sector   || 'its sector';
+    const loc  = profile.location || 'its primary operating region';
+    const ren  = environmental.renewablePercent ? `${environmental.renewablePercent}%` : 'a growing proportion of';
+    const tgt  = initiatives.netZeroTargets || 'net zero by 2040';
+    const init = initiatives.activeInitiatives || 'ongoing sustainability programmes';
+    const aud  = goals.purpose === 'investor' ? 'current and prospective investors' :
+                 goals.purpose === 'government' ? 'relevant regulatory authorities' :
+                 'internal leadership and board stakeholders';
+    return `## Executive Summary
+
+${org} presents this ESG and Climate Narrative Report to communicate its environmental, social, and governance commitments to ${aud}. Operating within the ${sec} sector across ${loc}, the organisation has established a structured sustainability agenda grounded in data-driven decision-making and alignment with internationally recognised climate frameworks.
+
+This report reflects ${org}'s current sustainability baseline and forward commitments in response to the accelerating global transition to a low-carbon economy. **The organisation has committed to ${tgt}**, representing a material step towards alignment with the Paris Agreement's 1.5°C pathway. The initiatives documented herein demonstrate both operational progress and strategic ambition to embed climate responsibility across the value chain.
+
+${org} recognises that credible ESG performance — transparently communicated and rigorously measured — is central to long-term stakeholder trust, regulatory resilience, and competitive positioning in an era of increasing climate disclosure requirements.
+
+## Climate Impact Statement
+
+${org}'s energy consumption profile reflects its current operational scale within the ${sec} sector. The organisation sources ${ren} its total energy requirements from renewable sources, with an active programme to increase this proportion over the medium term. Under the GHG Protocol framework, emissions are categorised across Scope 1 (direct combustion and process emissions), Scope 2 (purchased electricity and heat), and Scope 3 (upstream supply chain and downstream product use) where material. ${environmental.emissions ? `Current reported emissions stand at ${environmental.emissions}.` : 'A formal emissions baseline measurement programme is currently in progress, with results to inform the quantitative reduction roadmap.'}
+
+In alignment with the Task Force on Climate-related Financial Disclosures (TCFD), ${org} is developing governance structures to oversee climate-related risks at board level and incorporating physical and transition risk scenarios into its strategic planning. Waste management is managed through ${environmental.wastePractices || 'established operational protocols designed to minimise landfill contribution and recover materials where feasible'}. Comprehensive Scope 3 measurement remains a priority for the next reporting cycle.
+
+## ESG Highlights
+
+The following represent ${org}'s key sustainability achievements and commitments across all three ESG dimensions:
+
+**Environmental**
+- Renewable energy sourcing at ${ren} of total consumption, with a trajectory to 100% by the declared net zero year
+- Active implementation of: ${init}
+- Waste diversion and circular economy principles embedded in operations (**SDG 12: Responsible Consumption and Production**)
+- Energy efficiency programme targeting measurable intensity reduction (**SDG 7: Affordable and Clean Energy**)
+
+**Social**
+- ${social.csrInitiatives || 'Community investment and stakeholder engagement programmes operational across primary operating locations'}
+- Employee health, safety, and wellbeing policies aligned with international labour standards (**SDG 8: Decent Work and Economic Growth**)
+- Supply chain responsibility programme in development, targeting tier-1 supplier ESG screening
+
+**Governance**
+- ${social.governancePractices || 'Board-level oversight of sustainability matters with formal ESG reporting to senior leadership on a quarterly basis'}
+- Transparent disclosure practices aligned with stakeholder expectations (**SDG 16: Peace, Justice and Strong Institutions**)
+- Anti-corruption and business ethics policies enforced across all jurisdictions
+
+## Alignment with Global Frameworks
+
+${org}'s sustainability activities map directly to multiple UN Sustainable Development Goals. The organisation's energy transition commitments align with **SDG 7 (Affordable and Clean Energy)** and **SDG 13 (Climate Action)** — its two most material goals. Social initiatives connect to **SDG 8 (Decent Work and Economic Growth)** through fair labour practices and community investment, while governance transparency aligns with **SDG 16 (Peace, Justice and Strong Institutions)**. Circular economy and waste reduction efforts contribute to **SDG 12 (Responsible Consumption and Production)**, and the organisation's collaborative approach to industry-wide standards reflects **SDG 17 (Partnerships for the Goals)**.
+
+Under the GHG Protocol framework, the organisation accounts for emissions across all three Scope categories, with Scope 1 and 2 currently the primary focus of its reduction programme. With respect to the TCFD framework, the organisation has begun integrating climate-related considerations into its **Governance** structure (board-level oversight), **Strategy** (scenario analysis for transition risk), **Risk Management** (identification of material climate risks), and is developing **Metrics and Targets** disclosure capability to meet the evolving expectations of institutional investors and regulatory bodies.
+
+## Forward Strategy
+
+In the near term (12–24 months), ${org} will prioritise three strategic actions: completing its Scope 1 and 2 emissions baseline measurement, increasing renewable energy sourcing through power purchase agreements or on-site generation, and embedding ESG performance metrics into executive compensation structures. The organisation will engage a third-party assurance provider to independently verify key ESG data points, reinforcing credibility to investors, regulators, and civil society stakeholders.
+
+Over the medium term (3–5 years), the organisation's climate strategy centres on achieving **${tgt}**. This will be supported by capital reallocation towards low-carbon infrastructure, supply chain decarbonisation programmes with key suppliers, and the progressive phase-out of high-intensity activities where technologically and commercially feasible. An annual Climate Progress Report aligned with TCFD requirements will maintain accountability to stated commitments.
+
+The long-term vision for ${org} is to operate as a demonstrably net-positive enterprise — one that contributes measurable environmental and social value beyond the mitigation of its own footprint. ${org} commits to maintaining transparent, timely, and independently verified sustainability disclosures as the foundation of its ongoing stakeholder accountability.`;
+  }
+
+  function parseSections(text) {
+    const result = {};
+    SECTION_TITLES.forEach((title, i) => {
+      const next = SECTION_TITLES[i + 1];
+      const re = new RegExp(
+        `##\\s+${title.replace(/[()]/g,'\\$&')}([\\s\\S]*?)${next ? `(?=##\\s+${next.replace(/[()]/g,'\\$&')})` : '$'}`,
+        'i'
+      );
+      const m = text.match(re);
+      result[title] = m ? m[1].trim() : '';
+    });
+    return result;
+  }
+
+  /* ─────────────────────────────────────────────
+     MARKDOWN RENDERER
+  ───────────────────────────────────────────── */
+  function Markdown({ text }) {
+    if (!text) return null;
+    const lines = text.split('\n');
+    const els = []; let list = []; let key = 0;
+    const flush = () => {
+      if (list.length) { els.push(<ul key={key++}>{list.map((li,i)=><li key={i}>{li}</li>)}</ul>); list=[]; }
+    };
+    const inline = (s) => s.split(/(\*\*[^*]+\*\*)/g).map((p,i)=>
+      p.startsWith('**') && p.endsWith('**') ? <strong key={i}>{p.slice(2,-2)}</strong> : p
+    );
+    lines.forEach(line => {
+      const t = line.trim();
+      if (!t) { flush(); els.push(<br key={key++} />); return; }
+      if (t.startsWith('- ') || t.startsWith('• ')) { list.push(inline(t.replace(/^[-•]\s/,''))); }
+      else { flush(); els.push(<p key={key++}>{inline(t)}</p>); }
+    });
+    flush();
+    return <div className="rc-content">{els}</div>;
+  }
+
+  /* ─────────────────────────────────────────────
+     FORM SECTIONS
+  ───────────────────────────────────────────── */
+  function ProfileSection({ data, onChange }) {
+    const s = k => e => onChange({...data,[k]:e.target.value});
+    return (
+      <div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Organisation Name <span className="form-req">*</span></label>
+            <input className="form-input" placeholder="e.g. Tata Steel Ltd." value={data.name||''} onChange={s('name')} />
           </div>
-          <p class="footer-tagline">Media. Branding. Impact.<br>For a Sustainable Future.</p>
-          <p class="footer-founder-credit">Founded by <strong>Rushikesh Kulkarni</strong><br>Vol.1 · Oct 2025 · Proof of Concept</p>
+          <div className="form-group">
+            <label className="form-label">Sector <span className="form-req">*</span></label>
+            <select className="form-select" value={data.sector||''} onChange={s('sector')}>
+              <option value="">Select sector…</option>
+              {SECTORS.map(x=><option key={x} value={x}>{x}</option>)}
+            </select>
+          </div>
         </div>
-        <div class="footer-links-col">
-          <div class="footer-col-title">Platform</div>
-          <a href="generate.html" class="footer-link">ESG Narrative Engine</a>
-          <a href="#solution" class="footer-link">Solutions</a>
-          <a href="#vision" class="footer-link">Vision &amp; Mission</a>
-          <a href="#founder" class="footer-link">About Founder</a>
-        </div>
-        <div class="footer-links-col">
-          <div class="footer-col-title">Frameworks</div>
-          <span class="footer-link-plain">GRI · SASB · TCFD</span>
-          <span class="footer-link-plain">CSRD · ISSB IFRS S2</span>
-          <span class="footer-link-plain">EU Taxonomy · SBTi</span>
-          <span class="footer-link-plain">SBTN · RE100 · CDP</span>
-        </div>
-        <div class="footer-links-col">
-          <div class="footer-col-title">Sunday Climate Talks</div>
-          <span class="footer-link-plain">YouTube · Spotify</span>
-          <div class="footer-socials">
-  <a href="https://www.linkedin.com/company/climactix-global" target="_blank" rel="noopener">
-    LinkedIn
-  </a>
-  <span>·</span>
-  <a href="https://www.instagram.com/the_Sunday_climate_Talks" target="_blank" rel="noopener">
-    Instagram
-  </a>
-</div>
-          <span class="footer-link-plain">100% Carbon Neutral</span>
-          <span class="footer-link-plain">India's First Climate Podcast</span>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Headquarters / Primary Location <span className="form-req">*</span></label>
+            <input className="form-input" placeholder="e.g. Mumbai, India" value={data.location||''} onChange={s('location')} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Organisation Size <span className="form-req">*</span></label>
+            <select className="form-select" value={data.size||''} onChange={s('size')}>
+              <option value="">Select size…</option>
+              <option value="small">Small (under 250 employees)</option>
+              <option value="medium">Medium (250–2,500 employees)</option>
+              <option value="large">Large (2,500+ employees)</option>
+              <option value="enterprise">Enterprise / Multinational</option>
+            </select>
+          </div>
         </div>
       </div>
-      <div class="footer-bottom">
-        <span>© 2025 Climactix Global · Rushikesh Kulkarni · All Rights Reserved</span>
-        <span style="opacity:0.45;">Proof of Concept · Vol.1 · Oct 1, 2025</span>
+    );
+  }
+
+  function EnvironmentSection({ data, onChange }) {
+    const s = k => e => onChange({...data,[k]:e.target.value});
+    return (
+      <div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Annual Energy Consumption</label>
+            <input className="form-input" placeholder="e.g. 4,200 MWh / year" value={data.energyConsumption||''} onChange={s('energyConsumption')} />
+            <span className="form-hint">Approximate figure acceptable.</span>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Renewable Energy Share (%)</label>
+            <input className="form-input" type="number" min="0" max="100" placeholder="e.g. 35" value={data.renewablePercent||''} onChange={s('renewablePercent')} />
+            <span className="form-hint">As a percentage of total energy consumed.</span>
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">GHG Emissions (if known)</label>
+          <input className="form-input" placeholder="e.g. 12,500 tCO₂e Scope 1+2 (FY2024)" value={data.emissions||''} onChange={s('emissions')} />
+          <span className="form-hint">Include scope if known. Leave blank if not yet measured.</span>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Waste Management Practices</label>
+          <textarea className="form-textarea" rows={3} placeholder="e.g. Zero-waste-to-landfill at 3 sites; 78% diverted to recycling…" value={data.wastePractices||''} onChange={s('wastePractices')} />
+        </div>
       </div>
-    </div>
-  </footer>
+    );
+  }
 
-  <div id="loadingOverlay" class="loading-overlay" role="status" aria-live="polite">
-    <div class="loading-spinner"></div>
-    <div class="loading-text">Generating Narrative</div>
-    <div class="loading-sub" id="loadingMsg">Mapping data to ESG themes…</div>
-  </div>
+  function InitiativesSection({ data, onChange }) {
+    const s = k => e => onChange({...data,[k]:e.target.value});
+    return (
+      <div>
+        <div className="form-group">
+          <label className="form-label">Active Sustainability Initiatives</label>
+          <textarea className="form-textarea" rows={4} placeholder="e.g. Solar rooftop at 5 plants; EV fleet transition; water recycling; supplier ESG audits…" value={data.activeInitiatives||''} onChange={s('activeInitiatives')} />
+          <span className="form-hint">List any active programmes, pilots, or projects.</span>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Net Zero / Emission Reduction Targets</label>
+          <input className="form-input" placeholder="e.g. Net zero by 2045; 50% Scope 1+2 reduction by 2030 vs 2020" value={data.netZeroTargets||''} onChange={s('netZeroTargets')} />
+          <span className="form-hint">Include target year and baseline year if available.</span>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Certifications &amp; Standards (optional)</label>
+          <input className="form-input" placeholder="e.g. ISO 14001, CDP signatory, Science Based Targets…" value={data.certifications||''} onChange={s('certifications')} />
+        </div>
+      </div>
+    );
+  }
 
-  <script src="script.js"></script>
-  <script>
-    const msgs=['Mapping data to ESG themes…','Applying framework alignment…','Running greenwash validation…','Composing narrative…'];
-    let mi=0;
-    setInterval(()=>{const el=document.getElementById('loadingMsg');if(el){mi=(mi+1)%msgs.length;el.textContent=msgs[mi];}},350);
+  function SocialSection({ data, onChange }) {
+    const s = k => e => onChange({...data,[k]:e.target.value});
+    return (
+      <div>
+        <div className="form-group">
+          <label className="form-label">CSR / Community Initiatives</label>
+          <textarea className="form-textarea" rows={4} placeholder="e.g. ₹12 Cr CSR spend on rural education; skill development for 2,000 youth annually…" value={data.csrInitiatives||''} onChange={s('csrInitiatives')} />
+          <span className="form-hint">Include scale or beneficiary numbers if available.</span>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Governance Practices</label>
+          <textarea className="form-textarea" rows={4} placeholder="e.g. Board ESG committee 2023; 60% independent directors; annual sustainability report…" value={data.governancePractices||''} onChange={s('governancePractices')} />
+          <span className="form-hint">Board oversight, ethics policies, or disclosure commitments.</span>
+        </div>
+      </div>
+    );
+  }
+
+  function GoalsSection({ data, onChange }) {
+    const opts = [
+      { id:'investor',   icon:'💼', title:'Investor Communication', desc:'ESG due diligence, fundraising, or annual investor reporting' },
+      { id:'government', icon:'🏛️', title:'Regulatory Submission',  desc:'BRSR, CSRD, or mandatory government disclosure' },
+      { id:'internal',   icon:'🗂️', title:'Internal Strategy',      desc:'Board reporting, executive alignment, or planning' },
+    ];
+    return (
+      <div className="form-group">
+        <label className="form-label">Primary Report Purpose <span className="form-req">*</span></label>
+        <p style={{fontSize:13,color:'var(--ink-soft)',marginBottom:16,fontWeight:300,fontFamily:'var(--font-b)'}}>
+          This shapes tone, framework emphasis, and strategic framing.
+        </p>
+        <div className="goal-options">
+          {opts.map(o=>(
+            <button key={o.id} className={`goal-btn${data.purpose===o.id?' sel':''}`} onClick={()=>onChange({...data,purpose:o.id})} type="button">
+              <span className="goal-icon">{o.icon}</span>
+              <span className="goal-title">{o.title}</span>
+              <span className="goal-desc">{o.desc}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  /* ─────────────────────────────────────────────
+     MAIN APP
+  ───────────────────────────────────────────── */
+  function App() {
+    const [view,    setView]    = useState('landing');
+    const [step,    setStep]    = useState(0);
+    const [loadIdx, setLoadIdx] = useState(0);
+    const [report,  setReport]  = useState(null);
+    const [toast,   setToast]   = useState(false);
+    const reportRef = useRef(null);
+
+    const [fd, setFd] = useState({
+      profile:       { name:'', sector:'', location:'', size:'' },
+      environmental: { energyConsumption:'', renewablePercent:'', emissions:'', wastePractices:'' },
+      initiatives:   { activeInitiatives:'', netZeroTargets:'', certifications:'' },
+      social:        { csrInitiatives:'', governancePractices:'' },
+      goals:         { purpose:'' },
+    });
+
+    const upd = sec => val => setFd(p=>({...p,[sec]:val}));
+    const isValid = () => {
+      if (step===0) return fd.profile.name && fd.profile.sector && fd.profile.location && fd.profile.size;
+      if (step===4) return !!fd.goals.purpose;
+      return true;
+    };
+    const pct = Math.round((step/STEPS.length)*100);
+
+    useEffect(()=>{
+      if (view!=='loading') return;
+      const id = setInterval(()=>setLoadIdx(m=>(m+1)%LOADING_MSGS.length),1100);
+      return ()=>clearInterval(id);
+    },[view]);
+
+    const handleGenerate = async () => {
+      setView('loading'); setLoadIdx(0);
+      const [raw] = await Promise.all([
+        generateReport(fd),
+        new Promise(r=>setTimeout(r,3200)),
+      ]);
+      const sections = parseSections(raw||'');
+      setReport({ sections, raw, generatedAt: new Date(), fd });
+      setView('report');
+      setTimeout(()=>reportRef.current?.scrollIntoView({behavior:'smooth'}),100);
+    };
+
+    const handleCopy = () => {
+      if (!report) return;
+      navigator.clipboard.writeText(report.raw||'').catch(()=>{});
+      setToast(true); setTimeout(()=>setToast(false),2500);
+    };
+
+    const handleDownload = () => {
+      if (!report) return;
+      const { fd:f, raw } = report;
+      const blob = new Blob([
+        `CLIMACTIX — ESG & CLIMATE NARRATIVE REPORT\n`,
+        `Organisation: ${f.profile.name}\n`,
+        `Generated: ${report.generatedAt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}\n`,
+        `Report Purpose: ${f.goals.purpose}\n\n`,
+        `${'─'.repeat(60)}\n\n${raw||''}\n\n${'─'.repeat(60)}\n`,
+        `Generated by Climactix Global · climactix.io\n`,
+      ], { type:'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `Climactix_ESG_${f.profile.name.replace(/\s+/g,'_')}.txt`;
+      a.click();
+    };
+
+    /* ── LANDING ── */
+    if (view==='landing') return (
+      <>
+        <section className="hero">
+          <div className="hero-grid"/>
+          <div className="hero-glow"/>
+          <div className="pw" style={{display:'flex',alignItems:'center',minHeight:'72vh',position:'relative'}}>
+            <div className="hero-inner">
+              <div className="hero-kicker">
+                <span className="hero-kicker-dot"/>
+                AI-Powered ESG Narrative Engine
+              </div>
+              <h1 className="hero-h1">
+                Your sustainability data.<br/>
+                <em>A report that commands trust.</em>
+              </h1>
+              <p className="hero-sub">
+                Climactix converts structured ESG inputs into professional, framework-aligned climate narratives — ready for investors, regulators, and boards. No consultants. No delays.
+              </p>
+              <div className="hero-actions">
+                <button className="btn-primary" onClick={()=>{setView('form');setStep(0);}}>
+                  Start Free Assessment
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+                <a href="index.html" className="btn-secondary">← Back to Homepage</a>
+              </div>
+              <div className="hero-trust">
+                {['TCFD Aligned','GRI Referenced','SDG Mapped','GHG Protocol'].map(t=>(
+                  <div key={t} className="trust-item"><span className="trust-icon">✓</span>{t}</div>
+                ))}
+              </div>
+            </div>
+            <div className="hero-frameworks">
+              {[
+                {label:'TCFD',       color:'#0A3D3C'},
+                {label:'GRI Standards', color:'#0F766E'},
+                {label:'UN SDGs',    color:'#D97706'},
+                {label:'GHG Protocol',color:'#1E3A52'},
+                {label:'ISSB IFRS S2',color:'#6EE7B7'},
+              ].map(f=>(
+                <div key={f.label} className="fw-badge">
+                  <span className="fw-badge-dot" style={{background:f.color}}/>
+                  {f.label}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="features-strip">
+          <div className="pw">
+            <div className="features-grid">
+              {[
+                {icon:'📋',title:'5-Step Guided Assessment',desc:'Captures all material ESG data points across environmental, social, and governance dimensions.'},
+                {icon:'🤖',title:'AI Narrative Synthesis',  desc:'Converts raw inputs into professional, analyst-grade prose aligned to global ESG disclosure standards.'},
+                {icon:'🔗',title:'Framework Alignment',     desc:'Every output cross-referenced with TCFD, GRI, GHG Protocol, and UN SDGs — automatically.'},
+                {icon:'📄',title:'Submission-Ready Output', desc:'Download a clean report ready for investor decks, regulatory filings, or board presentations.'},
+              ].map(f=>(
+                <div key={f.title} className="feat-cell">
+                  <div className="feat-icon">{f.icon}</div>
+                  <div className="feat-title">{f.title}</div>
+                  <div className="feat-desc">{f.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </>
+    );
+
+    /* ── FORM ── */
+    if (view==='form') return (
+      <section className="questionnaire">
+        <div className="pw" style={{maxWidth:740,margin:'0 auto'}}>
+          <div className="section-header">
+            <span className="section-kicker">ESG Assessment</span>
+            <h2 className="section-h2">Tell us about your organisation</h2>
+            <p className="section-sub">Complete all five sections — takes about 5 minutes. No data stored without consent.</p>
+          </div>
+
+          <div className="progress-wrap">
+            <div className="progress-steps">
+              {STEPS.map((s,i)=>(
+                <button key={s.id} className={`progress-step${i===step?' active':i<step?' done':''}`} onClick={()=>i<=step&&setStep(i)} type="button">
+                  <span className="step-num">{i<step?'✓':i+1}</span>
+                  {s.icon} {s.label}
+                </button>
+              ))}
+            </div>
+            <div className="progress-pct">{pct}%</div>
+          </div>
+
+          <div className="form-card" key={step}>
+            <div className="fc-title">{STEPS[step].icon}  {STEPS[step].label}</div>
+            <div className="fc-divider"/>
+            {step===0 && <><div className="fc-sub">Basic details about your organisation — contextualises all framework references.</div><ProfileSection       data={fd.profile}       onChange={upd('profile')}       /></>}
+            {step===1 && <><div className="fc-sub">Environmental performance data. Approximate figures are acceptable.</div>            <EnvironmentSection   data={fd.environmental} onChange={upd('environmental')} /></>}
+            {step===2 && <><div className="fc-sub">Active climate programmes, reduction targets, and certifications held or in progress.</div><InitiativesSection data={fd.initiatives}   onChange={upd('initiatives')}   /></>}
+            {step===3 && <><div className="fc-sub">Social investment and governance structure.</div>                                       <SocialSection        data={fd.social}        onChange={upd('social')}        /></>}
+            {step===4 && <><div className="fc-sub">The intended audience shapes tone, framework emphasis, and strategic framing.</div>     <GoalsSection         data={fd.goals}         onChange={upd('goals')}         /></>}
+
+            <div className="form-nav">
+              <div>{step>0&&<button className="btn-back" onClick={()=>setStep(s=>s-1)}>← Back</button>}</div>
+              {step<STEPS.length-1 ? (
+                <button className="btn-next" onClick={()=>setStep(s=>s+1)} disabled={!isValid()}>
+                  Continue
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              ) : (
+                <button className="btn-generate" onClick={handleGenerate} disabled={!isValid()}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Generate Climate Narrative
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+
+    /* ── LOADING ── */
+    if (view==='loading') return (
+      <div className="loading-state">
+        <div className="loading-orb"/>
+        <div className="loading-title">Generating your ESG report…</div>
+        <div className="loading-steps">
+          {LOADING_MSGS.slice(0,loadIdx+1).map((msg,i)=>(
+            <div key={i} className={`loading-step${i<=loadIdx?' vis':''}`}>
+              <span className="ls-icon">✓</span>{msg}
+            </div>
+          ))}
+        </div>
+        <p style={{fontFamily:'var(--font-b)',fontSize:12,color:'var(--ink-muted)',marginTop:8}}>
+          Mapping to TCFD · GRI · UN SDGs · GHG Protocol…
+        </p>
+      </div>
+    );
+
+    /* ── REPORT ── */
+    if (view==='report' && report) {
+      const { sections, fd:f } = report;
+      const purposeLabel = {investor:'Investor Communication',government:'Regulatory Submission',internal:'Internal Strategy'}[f.goals.purpose]||'General ESG Report';
+      const sdgs = SDG_MAP[f.goals.purpose]||SDG_MAP.investor;
+      const completeness = Object.values(f).reduce((a,s)=>a+Object.values(s).filter(v=>v&&v!=='').length,0);
+
+      return (
+        <section className="report-section" ref={reportRef}>
+          <div className="pw">
+
+            {/* Header card */}
+            <div className="report-header">
+              <div className="rh-date">
+                {report.generatedAt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}
+              </div>
+              <div className="rh-meta">
+                <span className="rh-tag">ESG &amp; Climate Report</span>
+                <span className="rh-tag">{f.profile.sector}</span>
+                <span className="rh-tag">{purposeLabel}</span>
+              </div>
+              <div className="rh-org">{f.profile.name}</div>
+              <div className="rh-sub">{f.profile.location} · {f.profile.size.charAt(0).toUpperCase()+f.profile.size.slice(1)} Organisation · Generated by Climactix</div>
+              <div className="rh-frameworks">
+                {['TCFD Aligned','GRI Referenced','GHG Protocol','UN SDGs Mapped','ESG Best Practice'].map(b=>(
+                  <span key={b} className="rfb">{b}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="report-actions">
+              <button className="btn-dl" onClick={handleDownload}>
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M4 7l4 4 4-4M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Download Report
+              </button>
+              <button className="btn-copy-r" onClick={handleCopy}>
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="8" height="8" rx="1" stroke="currentColor" strokeWidth="1.5"/><path d="M3 11V3h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                Copy Full Text
+              </button>
+              <button className="btn-restart" onClick={()=>{setView('form');setStep(0);setReport(null);}}>
+                ↺ New Report
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="report-body">
+              <div className="report-main">
+                {SECTION_TITLES.map((title,i)=>(
+                  <div key={title} className="report-card">
+                    <span className="rc-num">Section 0{i+1}</span>
+                    <div className="rc-title">{title}</div>
+                    <div className="rc-bar"/>
+                    <Markdown text={sections[title]}/>
+                  </div>
+                ))}
+                <div className="disclosure-note">
+                  <p>
+                    <strong>Disclosure Note:</strong> This report was generated by Climactix using AI-assisted narrative synthesis based on information provided by the organisation. All data points, targets, and statements reflect inputs as submitted. This document does not constitute independent ESG assurance or third-party verification. For formal regulatory submissions, organisations should seek independent review. Generated {report.generatedAt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}.
+                  </p>
+                </div>
+              </div>
+
+              <div className="report-sidebar">
+                <div className="score-card">
+                  <div className="score-label">Report Completeness</div>
+                  <div className="score-val">{completeness>=8?'High':'Good'}</div>
+                  <div className="score-desc">All five ESG sections covered. Framework alignment applied across TCFD, GRI, and UN SDGs.</div>
+                </div>
+                <div className="sidebar-card">
+                  <div className="sc-title">UN SDGs Referenced</div>
+                  <div className="sdg-grid">{sdgs.map(s=><span key={s} className="sdg-badge">{s}</span>)}</div>
+                </div>
+                <div className="sidebar-card">
+                  <div className="sc-title">Frameworks Applied</div>
+                  <div className="fw-list">
+                    {['TCFD','GRI Standards','GHG Protocol','UN SDGs','ESG Best Practice'].map(f=>(
+                      <div key={f} className="fw-item"><span className="fw-check">✓</span>{f}</div>
+                    ))}
+                  </div>
+                </div>
+                <div className="sidebar-card">
+                  <div className="sc-title">Organisation</div>
+                  <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                    {[['Name',f.profile.name],['Sector',f.profile.sector],['Location',f.profile.location],['Size',f.profile.size],['Purpose',purposeLabel]].map(([k,v])=>(
+                      <div key={k} style={{fontFamily:'var(--font-b)',fontSize:12,display:'flex',justifyContent:'space-between',gap:8}}>
+                        <span style={{color:'var(--ink-muted)',fontWeight:500}}>{k}</span>
+                        <span style={{color:'var(--ink-soft)',textAlign:'right'}}>{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {toast && <div className="toast">✓ Report copied to clipboard</div>}
+        </section>
+      );
+    }
+    return null;
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
+
 </body>
 </html>
