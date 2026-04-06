@@ -210,6 +210,14 @@
     color: var(--ink); margin-bottom: 5px; letter-spacing: -.01em;
   }
   #cx-mvp-root .fc-sub { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 28px; font-weight: 300; }
+  #cx-mvp-root .fc-sub-head {
+    font-family: var(--font-b); font-size: 10.5px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--teal-bright);
+    margin: 20px 0 12px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  #cx-mvp-root .fc-sub-head:first-child { margin-top: 0; }
+
   #cx-mvp-root .fc-divider {
     height: 2px; width: 72px;
     background: linear-gradient(to right, var(--teal), transparent);
@@ -579,11 +587,12 @@
      CONSTANTS
   ───────────────────────────────────────────── */
   const STEPS = [
-    { id:'profile',     label:'Organisation', icon:'🏢' },
-    { id:'environment', label:'Environment',  icon:'🌿' },
-    { id:'initiatives', label:'Initiatives',  icon:'🎯' },
-    { id:'social',      label:'Social & Gov', icon:'🤝' },
-    { id:'goals',       label:'Report Goals', icon:'📋' },
+    { id:'profile',     label:'Organisation',    icon:'🏢' },
+    { id:'environment', label:'Environmental',   icon:'🌿' },
+    { id:'social',      label:'Social',          icon:'🤝' },
+    { id:'governance',  label:'Governance',      icon:'🏛️' },
+    { id:'climate',     label:'Climate Strategy',icon:'🎯' },
+    { id:'goals',       label:'Report Purpose',  icon:'📋' },
   ];
 
   const SECTORS = [
@@ -595,9 +604,9 @@
   ];
 
   const SDG_MAP = {
-    investor:   ['SDG 7','SDG 8','SDG 9','SDG 12','SDG 13','SDG 17'],
-    government: ['SDG 13','SDG 11','SDG 6','SDG 7','SDG 15','SDG 16'],
-    internal:   ['SDG 12','SDG 13','SDG 8','SDG 9','SDG 17'],
+    investor:   ['SDG 7','SDG 8','SDG 9','SDG 12','SDG 13','SDG 16','SDG 17'],
+    government: ['SDG 6','SDG 7','SDG 11','SDG 13','SDG 15','SDG 16','SDG 17'],
+    internal:   ['SDG 5','SDG 8','SDG 10','SDG 12','SDG 13','SDG 16','SDG 17'],
   };
 
   const LOADING_MSGS = [
@@ -606,25 +615,32 @@
     '📋  Aligning with TCFD pillars…',
     '🎯  Cross-referencing UN SDGs…',
     '✍️  Drafting Executive Summary…',
-    '📊  Constructing Climate Impact Statement…',
-    '🤝  Synthesising ESG Highlights…',
-    '📈  Building Forward Strategy…',
+    '📊  Constructing Environmental Impact Assessment…',
+    '🤝  Synthesising Social Responsibility Overview…',
+    '🏛️  Documenting Governance Practices…',
+    '🌡️  Analysing Climate Strategy & Risks…',
+    '✨  Composing ESG Highlights…',
+    '🔗  Mapping Framework Alignment…',
+    '📈  Building Forward-Looking Recommendations…',
     '✅  Finalising report…',
   ];
 
   const SECTION_TITLES = [
     'Executive Summary',
-    'Climate Impact Statement',
+    'Environmental Impact Assessment',
+    'Social Responsibility Overview',
+    'Governance Practices',
+    'Climate Strategy & Risks',
     'ESG Highlights',
-    'Alignment with Global Frameworks',
-    'Forward Strategy',
+    'Framework Alignment',
+    'Forward-Looking Recommendations',
   ];
 
   /* ─────────────────────────────────────────────
      NLP ENGINE (Claude API — falls back to demo)
   ───────────────────────────────────────────── */
   async function generateReport(formData) {
-    const { profile, environmental, initiatives, social, goals } = formData;
+    const { profile, environment, social, governance, climate, goals } = formData;
     const purposeLabel = {
       investor:   'for institutional and private investors as part of ESG due diligence',
       government: 'for submission to regulatory authorities and government bodies',
@@ -638,42 +654,81 @@
 - Sector: ${profile.sector}
 - Location: ${profile.location}
 - Size: ${profile.size} organisation
+- Operational Footprint: ${profile.footprint || 'Single/multi-location operations'}
 - Report Purpose: Prepared ${purposeLabel}
 
-## ENVIRONMENTAL DATA
-- Annual energy consumption: ${environmental.energyConsumption || 'Not formally quantified'}
-- Renewable energy share: ${environmental.renewablePercent ? environmental.renewablePercent + '%' : 'Under assessment'}
-- GHG emissions: ${environmental.emissions || 'Baseline measurement in progress'}
-- Waste management: ${environmental.wastePractices || 'Standard operational practices'}
+## SECTION B — ENVIRONMENTAL
+Energy:
+- Annual energy consumption: ${environment.energyConsumption || 'Not formally quantified'}
+- Renewable energy share: ${environment.renewablePercent ? environment.renewablePercent + '%' : 'Under assessment'}
+- Energy efficiency initiatives: ${environment.energyEfficiency || 'Programmes under development'}
 
-## CLIMATE INITIATIVES
-- Active programmes: ${initiatives.activeInitiatives || 'Programmes under development'}
-- Net zero / reduction targets: ${initiatives.netZeroTargets || 'Targets under internal review'}
-- Certifications: ${initiatives.certifications || 'None currently held'}
+Emissions:
+- Scope 1 (direct): ${environment.scope1 || 'Baseline measurement in progress'}
+- Scope 2 (indirect/electricity): ${environment.scope2 || 'Baseline measurement in progress'}
+- Carbon reduction targets: ${environment.carbonTargets || 'Under internal review'}
 
-## SOCIAL & GOVERNANCE
-- CSR initiatives: ${social.csrInitiatives || 'Standard CSR practices in place'}
-- Governance: ${social.governancePractices || 'Standard governance framework applied'}
+Water:
+- Total water usage: ${environment.waterUsage || 'Not formally tracked'}
+- Water conservation practices: ${environment.waterConservation || 'Standard practices in place'}
+
+Waste:
+- Waste generated: ${environment.wasteGenerated || 'Not formally quantified'}
+- Recycled / treated: ${environment.recyclePercent ? environment.recyclePercent + '%' : 'Under assessment'}
+- Circular economy initiatives: ${environment.circularInitiatives || 'In development'}
+
+Biodiversity:
+- Impact / conservation: ${environment.biodiversity || 'No material biodiversity impact identified'}
+
+## SECTION C — SOCIAL
+- Employee strength: ${social.employeeCount || 'Not specified'}
+- Health & safety practices: ${social.healthSafety || 'Standard practices in place'}
+- Diversity & inclusion: ${social.diversityInclusion || 'Policies under development'}
+- CSR / climate initiatives: ${social.csrInitiatives || 'Standard CSR practices in place'}
+- Community engagement: ${social.communityEngagement || 'Ongoing engagement with local communities'}
+
+## SECTION D — GOVERNANCE
+- Board structure: ${governance.boardStructure || 'Standard board structure in place'}
+- ESG oversight: ${governance.esgOversight || 'Under development'}
+- Anti-corruption / ethics: ${governance.antiCorruption || 'Policies in place'}
+- Compliance practices: ${governance.compliance || 'Standard compliance framework applied'}
+- Transparency / disclosures: ${governance.transparency || 'Annual reporting in place'}
+
+## SECTION E — CLIMATE STRATEGY
+- Net Zero targets: ${climate.netZeroTargets || 'Targets under internal review'}
+- Climate risk awareness: ${climate.climateRiskAwareness || 'Risk identification in progress'}
+- Adaptation / resilience: ${climate.adaptationInitiatives || 'Initiatives under development'}
+- Renewable technologies in use: ${climate.renewableTechnologies || 'Transition plan in development'}
+- Certifications: ${climate.certifications || 'None currently held'}
 
 ## INSTRUCTIONS
-Generate exactly five sections. Use data provided; where absent, make credible general statements. Tone: professional, analytical — no buzzwords, no exaggeration.
+Generate exactly eight sections using the headings below. Use data provided; where data is absent, make credible, conservative professional statements. Tone: analytical, consulting-grade — no buzzwords, no exaggeration, no fabricated numbers.
 
 ### Executive Summary
-Two to three paragraphs. Introduce the organisation, the purpose of this report, and headline commitments. Bold the single most important metric.
+Two to three paragraphs. Introduce the organisation, report purpose, and headline commitments. Bold the single most important sustainability metric or target.
 
-### Climate Impact Statement
-Two to three paragraphs. Analyse energy and emissions profile. Reference GHG Protocol Scope 1/2/3 and TCFD climate risk governance.
+### Environmental Impact Assessment
+Two to three paragraphs. Analyse energy, emissions (Scope 1, 2, 3), water, and waste performance. Reference the GHG Protocol. Note where data gaps exist — do not invent figures.
+
+### Social Responsibility Overview
+Two paragraphs. Cover workforce health & safety, diversity & inclusion, CSR investment, and community impact. Reference relevant UN SDGs (SDG 3, 4, 5, 8, 10).
+
+### Governance Practices
+Two paragraphs. Describe board structure, ESG oversight mechanisms, anti-corruption stance, compliance framework, and disclosure practices. Reference SDG 16 and TCFD Governance pillar.
+
+### Climate Strategy & Risks
+Two to three paragraphs. Analyse Net Zero targets against Paris Agreement 1.5°C pathway, TCFD physical and transition risks, adaptation measures, and renewable technology deployment.
 
 ### ESG Highlights
-One paragraph then a structured bullet list covering E, S, G achievements. Reference relevant UN SDGs by number and name. Bold SDG references.
+One short paragraph then a bullet list covering top 3–4 achievements under each of E, S, G. Bold all UN SDG references.
 
-### Alignment with Global Frameworks
-Two paragraphs. Map to UN SDGs (cite ≥3), GHG Protocol scopes, TCFD pillars (≥2), and ESG best practices.
+### Framework Alignment
+Two paragraphs. Systematically map activities to: UN SDGs (cite ≥5 by number and name), GHG Protocol scopes, TCFD pillars (all four: Governance, Strategy, Risk Management, Metrics & Targets), BRSR (if India-based), and ESG best practices.
 
-### Forward Strategy
-Two to three paragraphs. Near-term (12–24 months), medium-term (3–5 years), long-term vision. Reference any stated targets directly.
+### Forward-Looking Recommendations
+Three paragraphs: near-term (12–24 months), medium-term (3–5 years), long-term vision. Reference stated targets and data gaps to address.
 
-Use markdown (## headings, **bold**, - bullets). No preamble outside the five sections.`;
+Use markdown (## headings, **bold**, - bullets). No preamble outside the eight sections.`;
 
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -681,7 +736,7 @@ Use markdown (## headings, **bold**, - bullets). No preamble outside the five se
         headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
-          max_tokens: 2400,
+          max_tokens: 3600,
           messages: [{ role: 'user', content: prompt }],
         }),
       });
@@ -693,63 +748,104 @@ Use markdown (## headings, **bold**, - bullets). No preamble outside the five se
     return generateDemo(formData);
   }
 
-  function generateDemo({ profile, environmental, initiatives, social, goals }) {
+  function generateDemo({ profile, environment, social, governance, climate, goals }) {
     const org  = profile.name     || 'The Organisation';
     const sec  = profile.sector   || 'its sector';
     const loc  = profile.location || 'its primary operating region';
-    const ren  = environmental.renewablePercent ? `${environmental.renewablePercent}%` : 'a growing proportion of';
-    const tgt  = initiatives.netZeroTargets || 'net zero by 2040';
-    const init = initiatives.activeInitiatives || 'ongoing sustainability programmes';
-    const aud  = goals.purpose === 'investor' ? 'current and prospective investors' :
-                 goals.purpose === 'government' ? 'relevant regulatory authorities' :
-                 'internal leadership and board stakeholders';
+    const size = profile.size     || 'medium';
+    const fp   = profile.footprint ? `, operating across ${profile.footprint}` : '';
+    const ren  = environment.renewablePercent ? `${environment.renewablePercent}%` : 'a growing share of';
+    const s1   = environment.scope1  || 'under active measurement';
+    const s2   = environment.scope2  || 'under active measurement';
+    const tgt  = climate.netZeroTargets || 'net zero by 2045';
+    const renT = climate.renewableTechnologies || 'solar, wind, and energy efficiency measures';
+    const emp  = social.employeeCount ? `${social.employeeCount} employees` : 'its workforce';
+    const hns  = social.healthSafety || 'robust health, safety, and wellbeing policies aligned with ILO standards';
+    const dei  = social.diversityInclusion || 'a formal Diversity, Equity & Inclusion policy with measurable targets';
+    const csr  = social.csrInitiatives || 'structured community investment and climate education programmes';
+    const com  = social.communityEngagement || 'active engagement with local communities through stakeholder forums and social impact initiatives';
+    const brd  = governance.boardStructure || 'an independent board with a dedicated ESG / Sustainability Committee';
+    const esg  = governance.esgOversight === 'yes' ? 'A formal ESG Committee at board level oversees all sustainability risks and opportunities on a quarterly basis.' : 'ESG oversight mechanisms are currently being formalised at senior leadership level.';
+    const eth  = governance.antiCorruption || 'a zero-tolerance anti-corruption and business ethics policy enforced across all jurisdictions';
+    const comp = governance.compliance || 'established compliance frameworks, including mandatory disclosures and third-party audits';
+    const risk = climate.climateRiskAwareness || 'physical risks (flooding, heat stress, water scarcity) and transition risks (regulatory tightening, carbon pricing, stranded assets)';
+    const adap = climate.adaptationInitiatives || 'resilience assessments, asset-level climate stress testing, and operational continuity planning';
+    const aud  = goals.purpose === 'investor'   ? 'current and prospective investors'
+               : goals.purpose === 'government' ? 'relevant regulatory authorities'
+               :                                  'internal leadership and board stakeholders';
+    const india = loc.toLowerCase().includes('india');
+
     return `## Executive Summary
 
-${org} presents this ESG and Climate Narrative Report to communicate its environmental, social, and governance commitments to ${aud}. Operating within the ${sec} sector across ${loc}, the organisation has established a structured sustainability agenda grounded in data-driven decision-making and alignment with internationally recognised climate frameworks.
+${org} presents this ESG and Climate Narrative Report to communicate its environmental, social, and governance commitments to ${aud}. Operating within the ${sec} sector${fp ? fp : ''} across ${loc}, the organisation has established a structured sustainability agenda grounded in data-driven decision-making and alignment with internationally recognised climate and disclosure frameworks.
 
-This report reflects ${org}'s current sustainability baseline and forward commitments in response to the accelerating global transition to a low-carbon economy. **The organisation has committed to ${tgt}**, representing a material step towards alignment with the Paris Agreement's 1.5°C pathway. The initiatives documented herein demonstrate both operational progress and strategic ambition to embed climate responsibility across the value chain.
+**The organisation has committed to ${tgt}**, representing a material step towards alignment with the Paris Agreement's 1.5°C pathway. This report reflects ${org}'s current sustainability baseline, performance data, and forward commitments in response to the accelerating global transition to a low-carbon economy.
 
-${org} recognises that credible ESG performance — transparently communicated and rigorously measured — is central to long-term stakeholder trust, regulatory resilience, and competitive positioning in an era of increasing climate disclosure requirements.
+${org} recognises that credible ESG performance — transparently communicated and rigorously measured — is central to long-term stakeholder trust, regulatory resilience, and competitive positioning in an era of increasing mandatory climate disclosure requirements worldwide.
 
-## Climate Impact Statement
+## Environmental Impact Assessment
 
-${org}'s energy consumption profile reflects its current operational scale within the ${sec} sector. The organisation sources ${ren} its total energy requirements from renewable sources, with an active programme to increase this proportion over the medium term. Under the GHG Protocol framework, emissions are categorised across Scope 1 (direct combustion and process emissions), Scope 2 (purchased electricity and heat), and Scope 3 (upstream supply chain and downstream product use) where material. ${environmental.emissions ? `Current reported emissions stand at ${environmental.emissions}.` : 'A formal emissions baseline measurement programme is currently in progress, with results to inform the quantitative reduction roadmap.'}
+${org}'s energy profile reflects its current operational scale within the ${sec} sector${fp ? fp : ''}. The organisation sources ${ren} its total energy requirements from renewable sources${environment.energyConsumption ? `, with total annual energy consumption of ${environment.energyConsumption}` : ''}, with an active programme to accelerate this share through power purchase agreements and on-site renewable generation.
 
-In alignment with the Task Force on Climate-related Financial Disclosures (TCFD), ${org} is developing governance structures to oversee climate-related risks at board level and incorporating physical and transition risk scenarios into its strategic planning. Waste management is managed through ${environmental.wastePractices || 'established operational protocols designed to minimise landfill contribution and recover materials where feasible'}. Comprehensive Scope 3 measurement remains a priority for the next reporting cycle.
+Under the GHG Protocol Corporate Accounting and Reporting Standard, ${org}'s greenhouse gas inventory covers Scope 1 direct emissions${environment.scope1 ? ` (reported at ${s1})` : ' (baseline measurement in progress)'}, Scope 2 market-based emissions from purchased electricity${environment.scope2 ? ` (reported at ${s2})` : ' (baseline in progress)'}, and Scope 3 value chain emissions where material. ${environment.carbonTargets ? `The organisation has established carbon reduction targets: ${environment.carbonTargets}.` : 'A quantified carbon reduction pathway is currently being developed.'}
+
+Water stewardship is ${environment.waterUsage ? `actively tracked, with total consumption of ${environment.waterUsage}. ${environment.waterConservation || 'Conservation measures are in place.'}` : 'being integrated into the organisation\'s environmental management system, with consumption baselines currently under measurement.'} Waste management practices ${environment.recyclePercent ? `achieve a ${environment.recyclePercent}% diversion rate from landfill, with ${environment.circularInitiatives || 'circular economy principles being embedded across operations'}` : 'are aligned with waste minimisation and resource recovery objectives, with formal diversion metrics to be reported in the next cycle'}. ${environment.biodiversity ? `On biodiversity: ${environment.biodiversity}.` : 'No material biodiversity impacts have been identified at current operating locations.'}
+
+## Social Responsibility Overview
+
+${org} employs ${emp} and maintains ${hns}. The organisation has implemented ${dei}, with reporting on gender diversity, inclusion metrics, and equitable pay practices incorporated into its annual ESG disclosure cycle. These commitments align with **SDG 3 (Good Health and Well-being)**, **SDG 5 (Gender Equality)**, and **SDG 8 (Decent Work and Economic Growth)**.
+
+The organisation's social investment strategy is anchored by ${csr}, reflecting a commitment to climate-aware community development that extends beyond operational boundaries. ${com} ensures that the organisation's sustainability agenda is co-designed with the communities it serves, aligning with **SDG 10 (Reduced Inequalities)** and **SDG 11 (Sustainable Cities and Communities)**. Supply chain social responsibility — including tier-1 supplier human rights due diligence — is a near-term priority.
+
+## Governance Practices
+
+${org} is governed by ${brd}, ensuring independent oversight of executive management on material sustainability matters. ${esg} The integration of ESG risk and opportunity into the board's risk register reflects alignment with the TCFD's **Governance** pillar, which requires disclosure of board-level oversight of climate-related risks and management's role in assessing and managing those risks.
+
+The organisation upholds ${eth}, supported by ${comp}. ${governance.transparency || 'Annual ESG disclosures are made publicly available to all stakeholders, with an ambition to achieve third-party assurance of key metrics within the medium term.'}${india ? ' In the Indian regulatory context, alignment with Business Responsibility and Sustainability Reporting (BRSR) requirements is a governance priority for the forthcoming reporting cycle.' : ''} These practices align with **SDG 16 (Peace, Justice and Strong Institutions)** and reinforce the organisation's commitment to accountable, transparent, and ethical operations.
+
+## Climate Strategy & Risks
+
+${org}'s climate strategy is anchored by its commitment to **${tgt}**. This target is grounded in a science-aligned emissions reduction pathway consistent with limiting global warming to 1.5°C above pre-industrial levels, in line with the goals of the Paris Agreement. Deployment of ${renT} forms the cornerstone of the near-term decarbonisation roadmap, with capital allocation to low-carbon assets being progressively scaled.
+
+In accordance with the Task Force on Climate-related Financial Disclosures (TCFD), ${org} has undertaken a structured assessment of climate-related risks across both physical and transition dimensions. Physical risks include ${risk}. Transition risks — including regulatory tightening, carbon pricing mechanisms, and potential stranded asset exposure — are integrated into strategic scenario planning and capital allocation decisions. The organisation's climate adaptation programme encompasses ${adap}, ensuring operational continuity under a range of climate scenarios.
+
+${climate.certifications ? `The organisation holds or is pursuing the following certifications and voluntary standards: ${climate.certifications}. These commitments provide independent credibility to ${org}'s sustainability claims and reinforce its standing with institutional investors and regulatory bodies.` : 'The organisation is evaluating alignment with Science Based Targets initiative (SBTi) criteria and CDP reporting as priority commitments in the next reporting cycle, to further substantiate its decarbonisation ambition with independent verification.'}
 
 ## ESG Highlights
 
-The following represent ${org}'s key sustainability achievements and commitments across all three ESG dimensions:
+The following summarises ${org}'s key sustainability achievements and commitments across the three ESG dimensions:
 
 **Environmental**
-- Renewable energy sourcing at ${ren} of total consumption, with a trajectory to 100% by the declared net zero year
-- Active implementation of: ${init}
-- Waste diversion and circular economy principles embedded in operations (**SDG 12: Responsible Consumption and Production**)
-- Energy efficiency programme targeting measurable intensity reduction (**SDG 7: Affordable and Clean Energy**)
+- Renewable energy share of ${ren} total energy consumption, with a trajectory to 100% by the net zero year (**SDG 7: Affordable and Clean Energy**)
+- ${environment.energyEfficiency || 'Energy efficiency programme targeting measurable reduction in energy intensity per unit of output'}
+- ${environment.circularInitiatives || 'Circular economy and waste diversion initiatives targeting zero-waste-to-landfill'} (**SDG 12: Responsible Consumption and Production**)
+- Scope 1 and 2 emissions measurement in place; Scope 3 mapping in progress (**SDG 13: Climate Action**)
 
 **Social**
-- ${social.csrInitiatives || 'Community investment and stakeholder engagement programmes operational across primary operating locations'}
-- Employee health, safety, and wellbeing policies aligned with international labour standards (**SDG 8: Decent Work and Economic Growth**)
-- Supply chain responsibility programme in development, targeting tier-1 supplier ESG screening
+- ${emp} supported by ${hns}
+- ${dei} with public reporting commitments (**SDG 5: Gender Equality**, **SDG 8: Decent Work**)
+- ${csr} (**SDG 3: Good Health and Well-being**, **SDG 11: Sustainable Cities**)
+- Community engagement embedded in local operations (**SDG 10: Reduced Inequalities**)
 
 **Governance**
-- ${social.governancePractices || 'Board-level oversight of sustainability matters with formal ESG reporting to senior leadership on a quarterly basis'}
-- Transparent disclosure practices aligned with stakeholder expectations (**SDG 16: Peace, Justice and Strong Institutions**)
-- Anti-corruption and business ethics policies enforced across all jurisdictions
+- ${brd} with formal ESG accountability
+- ${eth} across all jurisdictions (**SDG 16: Peace, Justice and Strong Institutions**)
+- ${comp}
+- ${governance.transparency || 'Annual ESG disclosures aligned with emerging mandatory reporting requirements'}
 
-## Alignment with Global Frameworks
+## Framework Alignment
 
-${org}'s sustainability activities map directly to multiple UN Sustainable Development Goals. The organisation's energy transition commitments align with **SDG 7 (Affordable and Clean Energy)** and **SDG 13 (Climate Action)** — its two most material goals. Social initiatives connect to **SDG 8 (Decent Work and Economic Growth)** through fair labour practices and community investment, while governance transparency aligns with **SDG 16 (Peace, Justice and Strong Institutions)**. Circular economy and waste reduction efforts contribute to **SDG 12 (Responsible Consumption and Production)**, and the organisation's collaborative approach to industry-wide standards reflects **SDG 17 (Partnerships for the Goals)**.
+${org}'s sustainability activities map across multiple international frameworks. Under the **UN Sustainable Development Goals**, the organisation's most material alignments are: **SDG 7 (Affordable and Clean Energy)** through its renewable sourcing programme; **SDG 8 (Decent Work and Economic Growth)** through fair employment and supply chain standards; **SDG 12 (Responsible Consumption and Production)** through waste reduction and circular economy practices; **SDG 13 (Climate Action)** through its Net Zero commitment and emissions reduction roadmap; **SDG 16 (Peace, Justice and Strong Institutions)** through transparent governance and anti-corruption policies; and **SDG 17 (Partnerships for the Goals)** through industry collaboration and stakeholder engagement. ${india ? '**SDG 6 (Clean Water and Sanitation)** and **SDG 11 (Sustainable Cities and Communities)** are additionally relevant given the organisation\'s Indian operating context and BRSR obligations.' : ''}
 
-Under the GHG Protocol framework, the organisation accounts for emissions across all three Scope categories, with Scope 1 and 2 currently the primary focus of its reduction programme. With respect to the TCFD framework, the organisation has begun integrating climate-related considerations into its **Governance** structure (board-level oversight), **Strategy** (scenario analysis for transition risk), **Risk Management** (identification of material climate risks), and is developing **Metrics and Targets** disclosure capability to meet the evolving expectations of institutional investors and regulatory bodies.
+Under the **TCFD** framework, ${org} is building disclosure capability across all four pillars: **Governance** (board-level ESG Committee and management accountability), **Strategy** (scenario analysis for physical and transition risk), **Risk Management** (climate risk integrated into enterprise risk framework), and **Metrics & Targets** (Scope 1, 2, and 3 measurement and Net Zero targets). The **GHG Protocol** provides the accounting foundation for the organisation's emissions inventory. ${india ? 'Compliance with India\'s **Business Responsibility and Sustainability Reporting (BRSR)** framework — mandatory for SEBI-listed entities — is a near-term regulatory priority.' : 'Alignment with **GRI Standards** for sustainability disclosure is being developed as a medium-term commitment.'}
 
-## Forward Strategy
+## Forward-Looking Recommendations
 
-In the near term (12–24 months), ${org} will prioritise three strategic actions: completing its Scope 1 and 2 emissions baseline measurement, increasing renewable energy sourcing through power purchase agreements or on-site generation, and embedding ESG performance metrics into executive compensation structures. The organisation will engage a third-party assurance provider to independently verify key ESG data points, reinforcing credibility to investors, regulators, and civil society stakeholders.
+In the near term (12–24 months), ${org} should prioritise three actions: completing a fully quantified Scope 1, 2, and material Scope 3 emissions baseline; formalising and publishing its Net Zero roadmap with interim 2030 milestones aligned to the SBTi criteria; and establishing board-level KPIs linking executive remuneration to ESG performance. Immediate data gaps — particularly in water, waste quantification, and Scope 3 — should be addressed to support full TCFD and${india ? ' BRSR' : ' GRI'} disclosure in the next annual report.
 
-Over the medium term (3–5 years), the organisation's climate strategy centres on achieving **${tgt}**. This will be supported by capital reallocation towards low-carbon infrastructure, supply chain decarbonisation programmes with key suppliers, and the progressive phase-out of high-intensity activities where technologically and commercially feasible. An annual Climate Progress Report aligned with TCFD requirements will maintain accountability to stated commitments.
+Over the medium term (3–5 years), the climate strategy should centre on transitioning energy procurement to 100% renewable sources through a combination of power purchase agreements, on-site generation, and renewable energy certificates. Supply chain decarbonisation — engaging tier-1 and tier-2 suppliers on emissions reporting and reduction targets — will be critical to addressing Scope 3 exposure. The organisation should seek independent third-party assurance for all material ESG metrics, reinforcing the credibility of its disclosures to investors and regulators alike. Social programmes should be scaled with measurable community impact metrics reported annually.
 
-The long-term vision for ${org} is to operate as a demonstrably net-positive enterprise — one that contributes measurable environmental and social value beyond the mitigation of its own footprint. ${org} commits to maintaining transparent, timely, and independently verified sustainability disclosures as the foundation of its ongoing stakeholder accountability.`;
+The long-term vision for ${org} is to operate as a demonstrably net-positive enterprise — one that contributes measurable environmental and social value beyond the mitigation of its own footprint. Achieving **${tgt}** will require sustained capital commitment, innovation in low-carbon technologies, and active participation in cross-sector climate partnerships. ${org} commits to maintaining transparent, timely, and independently verified sustainability disclosures as the foundation of its ongoing stakeholder accountability and its contribution to a resilient, equitable, and low-carbon global economy.`;
   }
 
   function parseSections(text) {
@@ -790,8 +886,10 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
   }
 
   /* ─────────────────────────────────────────────
-     FORM SECTIONS
+     FORM SECTIONS  (A → F)
   ───────────────────────────────────────────── */
+
+  /* Section A — Organisation Profile */
   function ProfileSection({ data, onChange }) {
     const s = k => e => onChange({...data,[k]:e.target.value});
     return (
@@ -802,7 +900,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
             <input className="form-input" placeholder="e.g. Tata Steel Ltd." value={data.name||''} onChange={s('name')} />
           </div>
           <div className="form-group">
-            <label className="form-label">Sector <span className="form-req">*</span></label>
+            <label className="form-label">Sector / Industry <span className="form-req">*</span></label>
             <select className="form-select" value={data.sector||''} onChange={s('sector')}>
               <option value="">Select sector…</option>
               {SECTORS.map(x=><option key={x} value={x}>{x}</option>)}
@@ -812,87 +910,207 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
         <div className="form-row">
           <div className="form-group">
             <label className="form-label">Headquarters / Primary Location <span className="form-req">*</span></label>
-            <input className="form-input" placeholder="e.g. Mumbai, India" value={data.location||''} onChange={s('location')} />
+            <input className="form-input" placeholder="e.g. Mumbai, Maharashtra, India" value={data.location||''} onChange={s('location')} />
+            <span className="form-hint">City, state, and country helps apply region-specific frameworks (e.g. BRSR for India).</span>
           </div>
           <div className="form-group">
             <label className="form-label">Organisation Size <span className="form-req">*</span></label>
             <select className="form-select" value={data.size||''} onChange={s('size')}>
               <option value="">Select size…</option>
-              <option value="small">Small (under 250 employees)</option>
-              <option value="medium">Medium (250–2,500 employees)</option>
-              <option value="large">Large (2,500+ employees)</option>
-              <option value="enterprise">Enterprise / Multinational</option>
+              <option value="SME (under 250 employees)">SME (under 250 employees)</option>
+              <option value="mid-sized (250–2,500 employees)">Mid-sized (250–2,500 employees)</option>
+              <option value="large (2,500+ employees)">Large (2,500+ employees)</option>
+              <option value="enterprise / multinational">Enterprise / Multinational</option>
             </select>
           </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Operational Footprint</label>
+          <select className="form-select" value={data.footprint||''} onChange={s('footprint')}>
+            <option value="">Select footprint…</option>
+            <option value="a single location">Single location</option>
+            <option value="multiple domestic locations">Multiple domestic locations</option>
+            <option value="domestic and international locations">Domestic and international locations</option>
+            <option value="global operations across multiple continents">Global operations (multi-continent)</option>
+          </select>
+          <span className="form-hint">Affects scope of Scope 3 and supply chain disclosures.</span>
         </div>
       </div>
     );
   }
 
+  /* Section B — Environmental */
   function EnvironmentSection({ data, onChange }) {
     const s = k => e => onChange({...data,[k]:e.target.value});
     return (
       <div>
+        <div className="fc-sub-head">⚡ Energy</div>
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label">Annual Energy Consumption</label>
+            <label className="form-label">Total Energy Consumption</label>
             <input className="form-input" placeholder="e.g. 4,200 MWh / year" value={data.energyConsumption||''} onChange={s('energyConsumption')} />
             <span className="form-hint">Approximate figure acceptable.</span>
           </div>
           <div className="form-group">
             <label className="form-label">Renewable Energy Share (%)</label>
             <input className="form-input" type="number" min="0" max="100" placeholder="e.g. 35" value={data.renewablePercent||''} onChange={s('renewablePercent')} />
-            <span className="form-hint">As a percentage of total energy consumed.</span>
+            <span className="form-hint">% of total energy from renewable sources.</span>
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">GHG Emissions (if known)</label>
-          <input className="form-input" placeholder="e.g. 12,500 tCO₂e Scope 1+2 (FY2024)" value={data.emissions||''} onChange={s('emissions')} />
-          <span className="form-hint">Include scope if known. Leave blank if not yet measured.</span>
+          <label className="form-label">Energy Efficiency Initiatives</label>
+          <textarea className="form-textarea" rows={2} placeholder="e.g. LED lighting across all facilities; ISO 50001 certified; variable frequency drives on motors…" value={data.energyEfficiency||''} onChange={s('energyEfficiency')} />
+        </div>
+
+        <div className="fc-sub-head">💨 Emissions (GHG Protocol)</div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Scope 1 — Direct Emissions</label>
+            <input className="form-input" placeholder="e.g. 8,400 tCO₂e (FY2024)" value={data.scope1||''} onChange={s('scope1')} />
+            <span className="form-hint">Combustion, process, fugitive emissions.</span>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Scope 2 — Purchased Electricity</label>
+            <input className="form-input" placeholder="e.g. 4,100 tCO₂e market-based (FY2024)" value={data.scope2||''} onChange={s('scope2')} />
+            <span className="form-hint">Market-based or location-based method.</span>
+          </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Waste Management Practices</label>
-          <textarea className="form-textarea" rows={3} placeholder="e.g. Zero-waste-to-landfill at 3 sites; 78% diverted to recycling…" value={data.wastePractices||''} onChange={s('wastePractices')} />
+          <label className="form-label">Carbon Reduction Targets</label>
+          <input className="form-input" placeholder="e.g. 40% Scope 1+2 reduction by 2030 vs 2020 baseline" value={data.carbonTargets||''} onChange={s('carbonTargets')} />
+        </div>
+
+        <div className="fc-sub-head">💧 Water</div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Total Water Usage</label>
+            <input className="form-input" placeholder="e.g. 28,000 kL / year" value={data.waterUsage||''} onChange={s('waterUsage')} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Water Conservation Practices</label>
+            <input className="form-input" placeholder="e.g. Rainwater harvesting; effluent recycling…" value={data.waterConservation||''} onChange={s('waterConservation')} />
+          </div>
+        </div>
+
+        <div className="fc-sub-head">♻️ Waste</div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Waste Generated</label>
+            <input className="form-input" placeholder="e.g. 620 tonnes / year" value={data.wasteGenerated||''} onChange={s('wasteGenerated')} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Recycled / Treated (%)</label>
+            <input className="form-input" type="number" min="0" max="100" placeholder="e.g. 72" value={data.recyclePercent||''} onChange={s('recyclePercent')} />
+          </div>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Circular Economy Initiatives</label>
+          <input className="form-input" placeholder="e.g. Zero-waste-to-landfill target; material reuse programme…" value={data.circularInitiatives||''} onChange={s('circularInitiatives')} />
+        </div>
+
+        <div className="fc-sub-head">🌱 Biodiversity (if applicable)</div>
+        <div className="form-group">
+          <label className="form-label">Impact or Conservation Initiatives</label>
+          <textarea className="form-textarea" rows={2} placeholder="e.g. No operations in ecologically sensitive areas; tree plantation of 5,000 trees annually…" value={data.biodiversity||''} onChange={s('biodiversity')} />
+          <span className="form-hint">Leave blank if no material biodiversity impact identified.</span>
         </div>
       </div>
     );
   }
 
-  function InitiativesSection({ data, onChange }) {
-    const s = k => e => onChange({...data,[k]:e.target.value});
-    return (
-      <div>
-        <div className="form-group">
-          <label className="form-label">Active Sustainability Initiatives</label>
-          <textarea className="form-textarea" rows={4} placeholder="e.g. Solar rooftop at 5 plants; EV fleet transition; water recycling; supplier ESG audits…" value={data.activeInitiatives||''} onChange={s('activeInitiatives')} />
-          <span className="form-hint">List any active programmes, pilots, or projects.</span>
-        </div>
-        <div className="form-group">
-          <label className="form-label">Net Zero / Emission Reduction Targets</label>
-          <input className="form-input" placeholder="e.g. Net zero by 2045; 50% Scope 1+2 reduction by 2030 vs 2020" value={data.netZeroTargets||''} onChange={s('netZeroTargets')} />
-          <span className="form-hint">Include target year and baseline year if available.</span>
-        </div>
-        <div className="form-group">
-          <label className="form-label">Certifications &amp; Standards (optional)</label>
-          <input className="form-input" placeholder="e.g. ISO 14001, CDP signatory, Science Based Targets…" value={data.certifications||''} onChange={s('certifications')} />
-        </div>
-      </div>
-    );
-  }
-
+  /* Section C — Social */
   function SocialSection({ data, onChange }) {
     const s = k => e => onChange({...data,[k]:e.target.value});
     return (
       <div>
+        <div className="form-row">
+          <div className="form-group">
+            <label className="form-label">Employee Strength</label>
+            <input className="form-input" placeholder="e.g. 3,400 full-time employees" value={data.employeeCount||''} onChange={s('employeeCount')} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Health &amp; Safety Practices</label>
+            <input className="form-input" placeholder="e.g. ISO 45001; LTIFR of 0.12; safety training hours…" value={data.healthSafety||''} onChange={s('healthSafety')} />
+          </div>
+        </div>
         <div className="form-group">
-          <label className="form-label">CSR / Community Initiatives</label>
-          <textarea className="form-textarea" rows={4} placeholder="e.g. ₹12 Cr CSR spend on rural education; skill development for 2,000 youth annually…" value={data.csrInitiatives||''} onChange={s('csrInitiatives')} />
+          <label className="form-label">Diversity &amp; Inclusion Policies</label>
+          <textarea className="form-textarea" rows={2} placeholder="e.g. 34% women in workforce; D&I committee; unconscious bias training; pay equity audit…" value={data.diversityInclusion||''} onChange={s('diversityInclusion')} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">CSR Initiatives (especially climate-related)</label>
+          <textarea className="form-textarea" rows={3} placeholder="e.g. ₹12 Cr CSR spend on rural education and renewable energy access; skill development for 2,000 youth…" value={data.csrInitiatives||''} onChange={s('csrInitiatives')} />
           <span className="form-hint">Include scale or beneficiary numbers if available.</span>
         </div>
         <div className="form-group">
-          <label className="form-label">Governance Practices</label>
-          <textarea className="form-textarea" rows={4} placeholder="e.g. Board ESG committee 2023; 60% independent directors; annual sustainability report…" value={data.governancePractices||''} onChange={s('governancePractices')} />
-          <span className="form-hint">Board oversight, ethics policies, or disclosure commitments.</span>
+          <label className="form-label">Community Engagement</label>
+          <textarea className="form-textarea" rows={2} placeholder="e.g. Stakeholder forums; local employment priority; community welfare fund…" value={data.communityEngagement||''} onChange={s('communityEngagement')} />
+        </div>
+      </div>
+    );
+  }
+
+  /* Section D — Governance */
+  function GovernanceSection({ data, onChange }) {
+    const s = k => e => onChange({...data,[k]:e.target.value});
+    return (
+      <div>
+        <div className="form-group">
+          <label className="form-label">Board Structure</label>
+          <input className="form-input" placeholder="e.g. 10-member board; 60% independent directors; 3 women directors…" value={data.boardStructure||''} onChange={s('boardStructure')} />
+          <span className="form-hint">Basic composition. Specific numbers add credibility to the report.</span>
+        </div>
+        <div className="form-group">
+          <label className="form-label">ESG / Sustainability Oversight</label>
+          <select className="form-select" value={data.esgOversight||''} onChange={s('esgOversight')}>
+            <option value="">Select…</option>
+            <option value="yes">Yes — formal ESG committee or board-level oversight in place</option>
+            <option value="in-progress">In progress — ESG governance being formalised</option>
+            <option value="no">No — not yet established</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Anti-Corruption &amp; Ethics Policy</label>
+          <textarea className="form-textarea" rows={2} placeholder="e.g. Zero-tolerance anti-bribery policy; whistleblower mechanism; Code of Conduct mandatory training…" value={data.antiCorruption||''} onChange={s('antiCorruption')} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Compliance Practices</label>
+          <input className="form-input" placeholder="e.g. Third-party audits; SEBI BRSR filing; POSH compliance; regulatory monitoring…" value={data.compliance||''} onChange={s('compliance')} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Transparency &amp; Disclosures</label>
+          <textarea className="form-textarea" rows={2} placeholder="e.g. Annual Sustainability Report published; GRI-referenced disclosures; CDP response submitted…" value={data.transparency||''} onChange={s('transparency')} />
+        </div>
+      </div>
+    );
+  }
+
+  /* Section E — Climate Strategy */
+  function ClimateSection({ data, onChange }) {
+    const s = k => e => onChange({...data,[k]:e.target.value});
+    return (
+      <div>
+        <div className="form-group">
+          <label className="form-label">Net Zero / Emission Reduction Targets</label>
+          <input className="form-input" placeholder="e.g. Net zero by 2045; 50% Scope 1+2 reduction by 2030 vs 2020 baseline" value={data.netZeroTargets||''} onChange={s('netZeroTargets')} />
+          <span className="form-hint">Include target year and baseline year if available.</span>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Climate Risk Awareness</label>
+          <textarea className="form-textarea" rows={2} placeholder="e.g. Physical risks: flooding, water scarcity. Transition risks: carbon pricing, regulatory changes, stranded assets…" value={data.climateRiskAwareness||''} onChange={s('climateRiskAwareness')} />
+          <span className="form-hint">TCFD categorises risks as physical (acute/chronic) and transition.</span>
+        </div>
+        <div className="form-group">
+          <label className="form-label">Adaptation &amp; Resilience Initiatives</label>
+          <textarea className="form-textarea" rows={2} placeholder="e.g. Climate scenario analysis; asset-level heat stress assessment; flood-resilient infrastructure upgrades…" value={data.adaptationInitiatives||''} onChange={s('adaptationInitiatives')} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Renewable Technologies in Use</label>
+          <input className="form-input" placeholder="e.g. Solar rooftop (2.4 MW); EV fleet transition; green hydrogen pilot; BESS…" value={data.renewableTechnologies||''} onChange={s('renewableTechnologies')} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Certifications &amp; Standards (optional)</label>
+          <input className="form-input" placeholder="e.g. ISO 14001, ISO 50001, CDP signatory, SBTi committed…" value={data.certifications||''} onChange={s('certifications')} />
         </div>
       </div>
     );
@@ -933,7 +1151,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
       government: 'Regulatory Submission',
       internal:   'Internal Strategy',
     }[f.goals.purpose] || 'General ESG Report';
-    const sectionAccents = ['#0A3D3C','#0F5E5B','#0F766E','#1E3A52','#374151'];
+    const sectionAccents = ['#0A3D3C','#0F5E5B','#0F766E','#0D5E59','#1E3A52','#155E4A','#274A37','#374151'];
 
     function renderMd(text) {
       if (!text) return '';
@@ -955,7 +1173,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
       return html;
     }
 
-    const frameworkBadges = ['TCFD Aligned','GRI Referenced','GHG Protocol','UN SDGs Mapped','ESG Best Practice']
+    const frameworkBadges = ['TCFD Aligned','GRI Referenced','GHG Protocol','UN SDGs Mapped','BRSR Referenced','ESG Best Practice']
       .map(fw => `<span style="display:inline-block;font-size:10px;font-weight:600;letter-spacing:.07em;padding:4px 12px;border-radius:100px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.82);margin:3px 3px 0 0;">${fw}</span>`)
       .join('');
 
@@ -968,7 +1186,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
       </div>
     `).join('');
 
-    const sizeLabel = f.profile.size ? f.profile.size.charAt(0).toUpperCase() + f.profile.size.slice(1) + ' Organisation' : '';
+    const sizeLabel = f.profile.size ? f.profile.size.charAt(0).toUpperCase() + f.profile.size.slice(1) : '';
 
     return `
       <div style="font-family:'DM Sans',Arial,Helvetica,sans-serif;color:#0A1628;background:#FAFCFC;width:780px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
@@ -1020,17 +1238,18 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
     const reportRef = useRef(null);
 
     const [fd, setFd] = useState({
-      profile:       { name:'', sector:'', location:'', size:'' },
-      environmental: { energyConsumption:'', renewablePercent:'', emissions:'', wastePractices:'' },
-      initiatives:   { activeInitiatives:'', netZeroTargets:'', certifications:'' },
-      social:        { csrInitiatives:'', governancePractices:'' },
-      goals:         { purpose:'' },
+      profile:    { name:'', sector:'', location:'', size:'', footprint:'' },
+      environment:{ energyConsumption:'', renewablePercent:'', energyEfficiency:'', scope1:'', scope2:'', carbonTargets:'', waterUsage:'', waterConservation:'', wasteGenerated:'', recyclePercent:'', circularInitiatives:'', biodiversity:'' },
+      social:     { employeeCount:'', healthSafety:'', diversityInclusion:'', csrInitiatives:'', communityEngagement:'' },
+      governance: { boardStructure:'', esgOversight:'', antiCorruption:'', compliance:'', transparency:'' },
+      climate:    { netZeroTargets:'', climateRiskAwareness:'', adaptationInitiatives:'', renewableTechnologies:'', certifications:'' },
+      goals:      { purpose:'' },
     });
 
     const upd = sec => val => setFd(p=>({...p,[sec]:val}));
     const isValid = () => {
       if (step===0) return fd.profile.name && fd.profile.sector && fd.profile.location && fd.profile.size;
-      if (step===4) return !!fd.goals.purpose;
+      if (step===5) return !!fd.goals.purpose;
       return true;
     };
     const pct = Math.round((step/STEPS.length)*100);
@@ -1118,15 +1337,16 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
                 <a href="index.html" className="btn-secondary">← Back to Homepage</a>
               </div>
               <div className="hero-trust">
-                {['TCFD Aligned','GRI Referenced','SDG Mapped','GHG Protocol'].map(t=>(
+                {['TCFD Aligned','GRI Referenced','SDG Mapped','GHG Protocol','BRSR Referenced'].map(t=>(
                   <div key={t} className="trust-item"><span className="trust-icon">✓</span>{t}</div>
                 ))}
               </div>
             </div>
             <div className="hero-frameworks">
               {[
-                {label:'TCFD',       color:'#0A3D3C'},
+                {label:'TCFD',          color:'#0A3D3C'},
                 {label:'GRI Standards', color:'#0F766E'},
+                {label:'BRSR',          color:'#D97706'},
                 {label:'UN SDGs',    color:'#D97706'},
                 {label:'GHG Protocol',color:'#1E3A52'},
                 {label:'ISSB IFRS S2',color:'#6EE7B7'},
@@ -1144,7 +1364,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
           <div className="pw">
             <div className="features-grid">
               {[
-                {icon:'📋',title:'5-Step Guided Assessment',desc:'Captures all material ESG data points across environmental, social, and governance dimensions.'},
+                {icon:'📋',title:'6-Step Guided Assessment',desc:'Captures all material ESG data points across environmental, social, governance, and climate strategy dimensions.'},
                 {icon:'🤖',title:'AI Narrative Synthesis',  desc:'Converts raw inputs into professional, analyst-grade prose aligned to global ESG disclosure standards.'},
                 {icon:'🔗',title:'Framework Alignment',     desc:'Every output cross-referenced with TCFD, GRI, GHG Protocol, and UN SDGs — automatically.'},
                 {icon:'📄',title:'Submission-Ready Output', desc:'Download a clean report ready for investor decks, regulatory filings, or board presentations.'},
@@ -1168,7 +1388,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
           <div className="section-header">
             <span className="section-kicker">ESG Assessment</span>
             <h2 className="section-h2">Tell us about your organisation</h2>
-            <p className="section-sub">Complete all five sections — takes about 5 minutes. No data stored without consent.</p>
+            <p className="section-sub">Complete all six sections — takes about 8 minutes. No data stored without consent.</p>
           </div>
 
           <div className="progress-wrap">
@@ -1186,11 +1406,12 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
           <div className="form-card" key={step}>
             <div className="fc-title">{STEPS[step].icon}  {STEPS[step].label}</div>
             <div className="fc-divider"/>
-            {step===0 && <><div className="fc-sub">Basic details about your organisation — contextualises all framework references.</div><ProfileSection       data={fd.profile}       onChange={upd('profile')}       /></>}
-            {step===1 && <><div className="fc-sub">Environmental performance data. Approximate figures are acceptable.</div>            <EnvironmentSection   data={fd.environmental} onChange={upd('environmental')} /></>}
-            {step===2 && <><div className="fc-sub">Active climate programmes, reduction targets, and certifications held or in progress.</div><InitiativesSection data={fd.initiatives}   onChange={upd('initiatives')}   /></>}
-            {step===3 && <><div className="fc-sub">Social investment and governance structure.</div>                                       <SocialSection        data={fd.social}        onChange={upd('social')}        /></>}
-            {step===4 && <><div className="fc-sub">The intended audience shapes tone, framework emphasis, and strategic framing.</div>     <GoalsSection         data={fd.goals}         onChange={upd('goals')}         /></>}
+            {step===0 && <><div className="fc-sub">Basic details about your organisation — contextualises all framework references and region-specific requirements.</div><ProfileSection    data={fd.profile}     onChange={upd('profile')}     /></>}
+            {step===1 && <><div className="fc-sub">Environmental performance across energy, emissions, water, waste, and biodiversity. Approximate figures are acceptable.</div>  <EnvironmentSection data={fd.environment} onChange={upd('environment')} /></>}
+            {step===2 && <><div className="fc-sub">Workforce, health &amp; safety, diversity, CSR investment, and community engagement programmes.</div>                         <SocialSection      data={fd.social}      onChange={upd('social')}      /></>}
+            {step===3 && <><div className="fc-sub">Board structure, ESG oversight, ethics policies, compliance, and disclosure commitments.</div>                               <GovernanceSection  data={fd.governance}  onChange={upd('governance')}  /></>}
+            {step===4 && <><div className="fc-sub">Net Zero targets, climate risk assessment, adaptation initiatives, and renewable technologies in use.</div>                  <ClimateSection     data={fd.climate}     onChange={upd('climate')}     /></>}
+            {step===5 && <><div className="fc-sub">The intended audience shapes tone, framework emphasis, and strategic framing of your report.</div>                          <GoalsSection       data={fd.goals}       onChange={upd('goals')}       /></>}
 
             <div className="form-nav">
               <div>{step>0&&<button className="btn-back" onClick={()=>setStep(s=>s-1)}>← Back</button>}</div>
@@ -1239,8 +1460,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
       const purposeLabel = {investor:'Investor Communication',government:'Regulatory Submission',internal:'Internal Strategy'}[f.goals.purpose]||'General ESG Report';
       const sdgs = SDG_MAP[f.goals.purpose]||SDG_MAP.investor;
       const rawCompleteness = Object.values(f).reduce((a,s)=>a+Object.values(s).filter(v=>v&&v!=='').length,0);
-      const completeness = rawCompleteness;
-      const completenessScore = Math.min(100, Math.round((rawCompleteness / 13) * 100));
+      const completenessScore = Math.min(100, Math.round((rawCompleteness / 28) * 100));
       const circumference = 2 * Math.PI * 26; // r=26
       const strokeDash = Math.round((completenessScore / 100) * circumference);
 
@@ -1259,9 +1479,9 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
                 <span className="rh-tag">{purposeLabel}</span>
               </div>
               <div className="rh-org">{f.profile.name}</div>
-              <div className="rh-sub">{f.profile.location} · {f.profile.size.charAt(0).toUpperCase()+f.profile.size.slice(1)} Organisation · Generated by Climactix</div>
+              <div className="rh-sub">{f.profile.location} · {f.profile.size} · Generated by Climactix</div>
               <div className="rh-frameworks">
-                {['TCFD Aligned','GRI Referenced','GHG Protocol','UN SDGs Mapped','ESG Best Practice'].map(b=>(
+                {['TCFD Aligned','GRI Referenced','GHG Protocol','UN SDGs Mapped','BRSR Referenced','ESG Best Practice'].map(b=>(
                   <span key={b} className="rfb">{b}</span>
                 ))}
               </div>
@@ -1328,7 +1548,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
                       <div className="score-desc">ESG data coverage across all five sections.</div>
                     </div>
                   </div>
-                  <div className="score-desc" style={{marginTop:4}}>Framework alignment applied across TCFD, GRI, and UN SDGs.</div>
+                  <div className="score-desc" style={{marginTop:4}}>Framework alignment applied across TCFD, GRI, GHG Protocol, and UN SDGs.</div>
                 </div>
                 <div className="sidebar-card">
                   <div className="sc-title">UN SDGs Referenced</div>
@@ -1337,7 +1557,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
                 <div className="sidebar-card">
                   <div className="sc-title">Frameworks Applied</div>
                   <div className="fw-list">
-                    {['TCFD','GRI Standards','GHG Protocol','UN SDGs','ESG Best Practice'].map(f=>(
+                    {['TCFD','GRI Standards','GHG Protocol','UN SDGs','BRSR','ESG Best Practice'].map(f=>(
                       <div key={f} className="fw-item"><span className="fw-check">✓</span>{f}</div>
                     ))}
                   </div>
@@ -1345,7 +1565,7 @@ The long-term vision for ${org} is to operate as a demonstrably net-positive ent
                 <div className="sidebar-card">
                   <div className="sc-title">Organisation</div>
                   <div style={{display:'flex',flexDirection:'column',gap:6}}>
-                    {[['Name',f.profile.name],['Sector',f.profile.sector],['Location',f.profile.location],['Size',f.profile.size],['Purpose',purposeLabel]].map(([k,v])=>(
+                    {[['Name',f.profile.name],['Sector',f.profile.sector],['Location',f.profile.location],['Size',f.profile.size],['Footprint',f.profile.footprint||'—'],['Purpose',purposeLabel]].map(([k,v])=>(
                       <div key={k} style={{fontFamily:'var(--font-b)',fontSize:12,display:'flex',justifyContent:'space-between',gap:8}}>
                         <span style={{color:'var(--ink-muted)',fontWeight:500}}>{k}</span>
                         <span style={{color:'var(--ink-soft)',textAlign:'right'}}>{v}</span>
