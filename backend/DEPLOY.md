@@ -121,7 +121,7 @@ CORS_ORIGINS=https://climactixglobal.com,https://www.climactixglobal.com
 
 | Issue | Fix |
 |-------|-----|
-| `ANTHROPIC_API_KEY not set` | AYOUR_API_KEY_HERE
+| `ANTHROPIC_API_KEY not set` | YOUR_API_KEY_HERE
 | `pymupdf` import error | Run `pip install pymupdf` |
 | CORS errors in browser | Check `CORS_ORIGINS` env var |
 | PDF upload fails | Check file size < 10 MB |
