@@ -8,11 +8,13 @@ import json
 import os
 import re
 
+from typing import Optional
+
 import anthropic
 
 MODEL = os.getenv("CLAUDE_MODEL", "claude-opus-4-6")
 
-_client: anthropic.Anthropic | None = None
+_client: Optional[anthropic.Anthropic] = None
 
 
 def _get_client() -> anthropic.Anthropic:
