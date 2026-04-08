@@ -1,46 +1,36 @@
-# Climactix AI Backend — Deployment Guide
+# Climactix AI — Backend Deployment Guide
 
-## Local Development (5 minutes)
-
-### 1. Prerequisites
-- Python 3.10+
-- An Anthropic API key → https://console.anthropic.com
-
-### 2. Setup
+## Quick Start (Local Development)
 
 ```bash
-# From the project root
-cd backend
-
-# Create virtual environment
-python -m venv .venv
+# 1. Create virtual environment
+python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
-# Install dependencies
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# Configure environment
+# 3. Configure environment
 cp .env.example .env
-# Edit .env and paste your ANTHROPIC_API_KEY
-```
+# Edit .env and add your ANTHROPIC_API_KEY
 
-### 3. Start the server
-
-```bash
+# 4. Start server
 uvicorn main:app --reload --port 8000
 ```
 
-The API is now running at **http://localhost:8000**
+Server runs at: `http://localhost:8000`
 
-### 4. Open the frontend
+---
 
-Open `climactix-ai.html` in your browser (or serve via any static file server):
+## Environment Variables
 
-```bash
-# Simple static server from project root
-python -m http.server 3000
-# Then visit http://localhost:3000/climactix-ai.html
-```
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `ANTHROPIC_API_KEY` | Yes | — | Your Anthropic API key from console.anthropic.com |
+| `CLAUDE_MODEL` | No | `claude-opus-4-6` | Claude model to use |
+| `CORS_ORIGINS` | No | `*` | Allowed CORS origins |
+| `HOST` | No | `0.0.0.0` | Server host |
+| `PORT` | No | `8000` | Server port |
 
 ---
 
@@ -48,49 +38,37 @@ python -m http.server 3000
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/health` | Health check |
-| POST | `/api/upload` | Upload PDF/DOCX/XLSX → extracted text |
-| POST | `/api/generate` | ESG text → narratives + scores |
-| POST | `/api/export/pdf` | Narratives → PDF download |
-| POST | `/api/export/docx` | Narratives → DOCX download |
+| `GET` | `/health` | Health check |
+| `POST` | `/api/upload` | Upload ESG document (PDF/DOCX/XLSX) |
+| `POST` | `/api/generate` | Generate all ESG narratives |
+| `POST` | `/api/export/pdf` | Export results as PDF |
+| `POST` | `/api/export/docx` | Export results as DOCX |
 
 ### Example: Generate narratives
 
 ```bash
 curl -X POST http://localhost:8000/api/generate \
   -H "Content-Type: application/json" \
-  -d '{
-    "text": "Scope 1 emissions: 18,450 tCO2e (-11%). Renewable energy: 42%. TRIR: 0.38.",
-    "company_name": "Acme Corp",
-    "report_year": "2024"
-  }'
+  -d '{"text": "Your ESG report text here...", "company_name": "Acme Corp", "report_year": "2024"}'
 ```
 
 ---
 
 ## Production Deployment
 
-### Option A: Railway (recommended, free tier)
+### Railway
+1. Push repo to GitHub
+2. Connect repo in Railway dashboard
+3. Add environment variables in Railway settings
+4. Deploy
 
-1. Push `backend/` to a GitHub repo
-2. Connect to [Railway](https://railway.app)
-3. Add env var: `ANTHROPIC_API_KEY=your_key`
-4. Deploy — Railway auto-detects FastAPI
-
-Update `API_URL` in `climactix-ai.html`:
-```js
-const DEFAULT_API = 'https://your-app.railway.app';
-```
-
-### Option B: Render
-
+### Render
 1. New Web Service → connect GitHub repo
 2. Build command: `pip install -r requirements.txt`
 3. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Add env var: `ANTHROPIC_API_KEY`
+4. Add environment variables
 
-### Option C: Docker
-
+### Docker
 ```dockerfile
 FROM python:3.11-slim
 WORKDIR /app
@@ -100,28 +78,13 @@ COPY . .
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-```bash
-docker build -t climactix-ai .
-docker run -e ANTHROPIC_API_KEY=your_key -p 8000:8000 climactix-ai
-```
-
----
-
-## CORS Configuration
-
-For production, set `CORS_ORIGINS` in `.env` to your frontend domain:
-
-```
-CORS_ORIGINS=https://climactixglobal.com,https://www.climactixglobal.com
-```
-
 ---
 
 ## Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
-| `ANTHROPIC_API_KEY not set` | YOUR_API_KEY_HERE
+| `ANTHROPIC_API_KEY not set` | Add your key to `backend/.env` file |
 | `pymupdf` import error | Run `pip install pymupdf` |
 | CORS errors in browser | Check `CORS_ORIGINS` env var |
 | PDF upload fails | Check file size < 10 MB |
