@@ -894,6 +894,242 @@
       </div>
     </section>
 
+    <!-- CARBON OFFSET CALCULATOR -->
+    <section id="calculator" class="cx-calc-section">
+      <div class="page-wrapper cx-calc-wrapper">
+
+        <div class="cx-calc-header">
+          <div class="cx-eyebrow">Live Tool</div>
+          <h2 class="section-heading">Estimate Your Carbon Footprint</h2>
+          <p class="cx-calc-sub">Enter your organisation's annual activity data below. Results are calculated instantly using IPCC-aligned emission factors.</p>
+        </div>
+
+        <div class="cx-calc-layout">
+
+          <!-- INPUT FORM -->
+          <div class="cx-calc-form-card">
+            <div class="cx-calc-form-title">Activity Data</div>
+
+            <div class="cx-calc-field">
+              <label class="cx-calc-label" for="calc-electricity">
+                Electricity Consumption
+                <span class="cx-calc-unit">kWh / year</span>
+              </label>
+              <input class="cx-calc-input" type="number" id="calc-electricity" placeholder="e.g. 150,000" min="0" />
+            </div>
+
+            <div class="cx-calc-field">
+              <label class="cx-calc-label" for="calc-fuel">
+                Fuel Consumption
+                <span class="cx-calc-unit">litres / year</span>
+              </label>
+              <input class="cx-calc-input" type="number" id="calc-fuel" placeholder="e.g. 12,000" min="0" />
+            </div>
+
+            <div class="cx-calc-field">
+              <label class="cx-calc-label" for="calc-travel">
+                Business Travel
+                <span class="cx-calc-unit">km / year</span>
+              </label>
+              <input class="cx-calc-input" type="number" id="calc-travel" placeholder="e.g. 200,000" min="0" />
+            </div>
+
+            <div class="cx-calc-row">
+              <div class="cx-calc-field">
+                <label class="cx-calc-label" for="calc-employees">
+                  Employees
+                </label>
+                <input class="cx-calc-input" type="number" id="calc-employees" placeholder="e.g. 250" min="1" />
+              </div>
+              <div class="cx-calc-field">
+                <label class="cx-calc-label" for="calc-industry">
+                  Industry
+                </label>
+                <select class="cx-calc-input cx-calc-select" id="calc-industry">
+                  <option value="services">Services</option>
+                  <option value="it">Technology / IT</option>
+                  <option value="finance">Finance</option>
+                  <option value="healthcare">Healthcare</option>
+                  <option value="retail">Retail</option>
+                  <option value="manufacturing">Manufacturing</option>
+                  <option value="energy">Energy</option>
+                  <option value="logistics">Logistics</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cx-calc-factors">
+              <div class="cx-calc-factor-title">Emission factors applied</div>
+              <div class="cx-calc-factor-row">
+                <span>Electricity</span><span>0.70 kg CO₂ / kWh</span>
+              </div>
+              <div class="cx-calc-factor-row">
+                <span>Fuel</span><span>2.31 kg CO₂ / litre</span>
+              </div>
+              <div class="cx-calc-factor-row">
+                <span>Travel</span><span>0.15 kg CO₂ / km</span>
+              </div>
+            </div>
+
+            <button class="cx-calc-btn" id="cx-calc-submit" onclick="cxRunCalc()">
+              Calculate Emissions →
+            </button>
+          </div>
+
+          <!-- RESULTS PANEL -->
+          <div class="cx-calc-results" id="cx-calc-results">
+
+            <!-- Idle state -->
+            <div class="cx-calc-idle" id="cx-calc-idle">
+              <div class="cx-calc-idle-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                  <circle cx="24" cy="24" r="23" stroke="var(--grey-mid)" stroke-width="1.5"/>
+                  <path d="M24 14v10l6 4" stroke="var(--grey-border)" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <p class="cx-calc-idle-text">Enter your activity data and click <strong>Calculate Emissions</strong> to see your organisation's estimated carbon footprint.</p>
+            </div>
+
+            <!-- Active results (hidden until calculated) -->
+            <div class="cx-calc-output" id="cx-calc-output" style="display:none;">
+
+              <div class="cx-calc-result-label">Estimated Annual Emissions</div>
+              <div class="cx-calc-big-number" id="cx-res-tonnes">—</div>
+              <div class="cx-calc-big-unit">tonnes CO₂e / year</div>
+
+              <div class="cx-calc-divider"></div>
+
+              <div class="cx-calc-stats-grid">
+                <div class="cx-calc-stat">
+                  <div class="cx-calc-stat-val" id="cx-res-trees">—</div>
+                  <div class="cx-calc-stat-label">Trees required<br>to offset</div>
+                </div>
+                <div class="cx-calc-stat">
+                  <div class="cx-calc-stat-val" id="cx-res-homes">—</div>
+                  <div class="cx-calc-stat-label">Equivalent homes<br>powered / year</div>
+                </div>
+                <div class="cx-calc-stat">
+                  <div class="cx-calc-stat-val" id="cx-res-per-emp">—</div>
+                  <div class="cx-calc-stat-label">Tonnes CO₂e<br>per employee</div>
+                </div>
+              </div>
+
+              <div class="cx-calc-insight" id="cx-calc-insight">—</div>
+
+              <div class="cx-calc-scope-bar">
+                <div class="cx-calc-scope-label">Emission breakdown</div>
+                <div class="cx-calc-bar-row">
+                  <span class="cx-calc-bar-name">Electricity</span>
+                  <div class="cx-calc-bar-track">
+                    <div class="cx-calc-bar-fill cx-bar-elec" id="cx-bar-elec"></div>
+                  </div>
+                  <span class="cx-calc-bar-pct" id="cx-pct-elec">—</span>
+                </div>
+                <div class="cx-calc-bar-row">
+                  <span class="cx-calc-bar-name">Fuel</span>
+                  <div class="cx-calc-bar-track">
+                    <div class="cx-calc-bar-fill cx-bar-fuel" id="cx-bar-fuel"></div>
+                  </div>
+                  <span class="cx-calc-bar-pct" id="cx-pct-fuel">—</span>
+                </div>
+                <div class="cx-calc-bar-row">
+                  <span class="cx-calc-bar-name">Travel</span>
+                  <div class="cx-calc-bar-track">
+                    <div class="cx-calc-bar-fill cx-bar-travel" id="cx-bar-travel"></div>
+                  </div>
+                  <span class="cx-calc-bar-pct" id="cx-pct-travel">—</span>
+                </div>
+              </div>
+
+              <a href="#contact" class="cx-calc-cta-btn">Get Your Offset Plan →</a>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <script>
+    (function() {
+      // Emission factors (IPCC-aligned)
+      var EF = { elec: 0.70, fuel: 2.31, travel: 0.15 };
+
+      // Industry intensity multipliers (Scope 1+2 proxy)
+      var INDUSTRY = {
+        manufacturing: 1.45, energy: 1.65, logistics: 1.35,
+        retail: 1.05, healthcare: 1.10, it: 0.85,
+        finance: 0.70, services: 0.80, other: 1.00
+      };
+
+      window.cxRunCalc = function() {
+        var elec   = parseFloat(document.getElementById('calc-electricity').value) || 0;
+        var fuel   = parseFloat(document.getElementById('calc-fuel').value)        || 0;
+        var travel = parseFloat(document.getElementById('calc-travel').value)      || 0;
+        var emps   = Math.max(1, parseInt(document.getElementById('calc-employees').value) || 1);
+        var ind    = document.getElementById('calc-industry').value;
+        var mult   = INDUSTRY[ind] || 1.0;
+
+        // kg CO₂ per source
+        var kgElec   = elec   * EF.elec   * mult;
+        var kgFuel   = fuel   * EF.fuel   * mult;
+        var kgTravel = travel * EF.travel * mult;
+        var totalKg  = kgElec + kgFuel + kgTravel;
+
+        if (totalKg <= 0) {
+          var btn = document.getElementById('cx-calc-submit');
+          btn.textContent = 'Please enter at least one value';
+          btn.style.background = '#6B7280';
+          setTimeout(function() {
+            btn.textContent = 'Calculate Emissions →';
+            btn.style.background = '';
+          }, 2000);
+          return;
+        }
+
+        var totalTonnes = totalKg / 1000;
+        var trees       = Math.ceil(totalKg / 21);      // 1 tree ≈ 21 kg CO₂/yr
+        var homes       = Math.round(totalTonnes / 4.3); // avg home ≈ 4.3 t CO₂/yr
+        var perEmp      = (totalTonnes / emps).toFixed(1);
+
+        // Percentages for breakdown bars
+        var pctElec   = totalKg > 0 ? (kgElec   / totalKg * 100).toFixed(0) : 0;
+        var pctFuel   = totalKg > 0 ? (kgFuel   / totalKg * 100).toFixed(0) : 0;
+        var pctTravel = totalKg > 0 ? (kgTravel / totalKg * 100).toFixed(0) : 0;
+
+        // Insight copy
+        var insight = '';
+        if (totalTonnes < 50)        insight = 'Your footprint is below the SME average. Focus on energy efficiency to reach net-zero faster.';
+        else if (totalTonnes < 500)  insight = 'Mid-range footprint. Switching to renewable electricity would likely reduce emissions by 30–50%.';
+        else if (totalTonnes < 5000) insight = 'Significant footprint. A Science-Based Target (SBTi) aligned reduction plan is recommended.';
+        else                         insight = 'High-intensity footprint. An immediate materiality assessment and transition roadmap is advised.';
+
+        // Render
+        document.getElementById('cx-res-tonnes').textContent  = totalTonnes >= 1000
+          ? (totalTonnes / 1000).toFixed(1) + 'k'
+          : totalTonnes.toFixed(1);
+        document.getElementById('cx-res-trees').textContent   = trees.toLocaleString();
+        document.getElementById('cx-res-homes').textContent   = homes.toLocaleString();
+        document.getElementById('cx-res-per-emp').textContent = perEmp;
+        document.getElementById('cx-calc-insight').textContent = insight;
+
+        // Bars
+        document.getElementById('cx-bar-elec').style.width   = pctElec   + '%';
+        document.getElementById('cx-bar-fuel').style.width   = pctFuel   + '%';
+        document.getElementById('cx-bar-travel').style.width = pctTravel + '%';
+        document.getElementById('cx-pct-elec').textContent   = pctElec   + '%';
+        document.getElementById('cx-pct-fuel').textContent   = pctFuel   + '%';
+        document.getElementById('cx-pct-travel').textContent = pctTravel + '%';
+
+        // Show results, hide idle
+        document.getElementById('cx-calc-idle').style.display   = 'none';
+        document.getElementById('cx-calc-output').style.display = 'block';
+        document.getElementById('cx-calc-output').classList.add('cx-fade-in');
+      };
+    })();
+    </script>
+
     <!-- PROBLEM STATEMENT -->
     <section class="cx-problem-section">
       <div class="page-wrapper">
