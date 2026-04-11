@@ -760,6 +760,7 @@
       <div class="live-dot"></div>
       <span>ERI 2.0 Aligned</span>
     </div>
+    <button onclick="signOut()" title="Sign out" style="margin-left:16px;padding:7px 14px;background:transparent;border:1.5px solid rgba(11,61,46,0.25);border-radius:7px;font-size:12px;font-weight:600;color:#0B3D2E;cursor:pointer;font-family:inherit;transition:background .2s,color .2s;" onmouseover="this.style.background='#0B3D2E';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#0B3D2E'">Sign Out</button>
   </header>
 
   <!-- PROGRESS BAR -->
@@ -774,56 +775,15 @@
   </div>
 
   <!-- ═══ LOGIN SCREEN (outside shell) ═══ -->
-  <div id="step-login" class="assess-login-wrap">
-    <div class="assess-login-card">
+  <!-- Auth guard: replaced by real JWT system. Redirect happens in <script> below if not authenticated. -->
+  <div id="step-login" class="assess-login-wrap" style="display:none;">
+    <div class="assess-login-card" style="text-align:center;">
       <div class="assess-login-logo">
         <img src="Climatix_logo.png" alt="Climactix" />
         <span>Climactix Global · ERI Assessment Portal</span>
       </div>
-      <h2>Sign In to Continue</h2>
-      <p class="login-sub">Access the ESG &amp; Green Rating Self-Assessment. Your progress and responses are saved to your session.</p>
-      <div class="assess-login-err" id="loginErr">Invalid credentials. Please check your ERI ID and password.</div>
-      <div class="assess-login-field">
-        <label>Full Name</label>
-        <input type="text" id="li-name" placeholder="e.g. Priya Sharma" autocomplete="name" />
-      </div>
-      <div class="assess-login-field">
-        <label>Company / Organisation Name</label>
-        <input type="text" id="li-company" placeholder="e.g. Tata Steel Limited" autocomplete="organization" />
-      </div>
-      <div class="assess-login-field">
-        <label>Role / Designation</label>
-        <select id="li-role">
-          <option value="">Select your role…</option>
-          <option>Chief Sustainability Officer (CSO)</option>
-          <option>Chief Executive Officer (CEO)</option>
-          <option>Chief Financial Officer (CFO)</option>
-          <option>Head of EHS / Environment</option>
-          <option>ESG Manager / Analyst</option>
-          <option>Sustainability Consultant</option>
-          <option>Compliance Officer</option>
-          <option>Operations Director</option>
-          <option>Board Member / Director</option>
-          <option>Investor / Fund Manager</option>
-          <option>Auditor / Assessor</option>
-          <option>Other</option>
-        </select>
-      </div>
-      <div class="assess-login-field">
-        <label>Company ERI ID</label>
-        <input type="text" id="li-eriid" placeholder="e.g. ERI-2025-IND-004521" autocomplete="off" />
-        <div class="field-hint">Your organisation's ERI Registry ID. Enter DEMO-001 for demo access.</div>
-      </div>
-      <div class="assess-login-field">
-        <label>Password</label>
-        <input type="password" id="li-password" placeholder="Enter your access password" autocomplete="current-password" />
-        <div class="field-hint">Demo password: <strong>climatix2025</strong></div>
-      </div>
-      <button class="assess-login-btn" onclick="doLogin()">Access Assessment →</button>
-      <div class="assess-login-footer">
-        🔒 Your data never leaves your browser. Sessions are not stored on any server.<br>
-        ERI 2.0 aligned · MoEFCC / DPIIT · NABCB Accredited Framework
-      </div>
+      <h2>Checking authentication…</h2>
+      <p class="login-sub">Please wait while we verify your session.</p>
     </div>
   </div>
 
@@ -1082,42 +1042,54 @@
   // Demo credentials (in production replace with real auth API)
   const VALID_PASSWORDS = ['climatix2025', 'Climatix2025', 'CLIMATIX2025'];
 
-  function doLogin() {
-    const name    = document.getElementById('li-name').value.trim();
-    const company = document.getElementById('li-company').value.trim();
-    const role    = document.getElementById('li-role').value;
-    const eriid   = document.getElementById('li-eriid').value.trim();
-    const pass    = document.getElementById('li-password').value;
-    const err     = document.getElementById('loginErr');
-
-    if (!name || !company || !role || !eriid || !pass) {
-      err.textContent = 'All fields are required to continue.';
-      err.style.display = 'block'; return;
+  // ── JWT Auth Guard ──────────────────────────────────────
+  // Checks localStorage for a valid token from login.html.
+  // If missing/expired → redirects to login.html.
+  // If valid → populates state.user from stored user data.
+  function initAuth() {
+    const stored = localStorage.getItem('cx_auth');
+    if (!stored) {
+      location.href = 'login.html?redirect=assessment.html';
+      return false;
     }
-    if (!VALID_PASSWORDS.includes(pass)) {
-      err.textContent = 'Invalid password. Use demo password: climatix2025';
-      err.style.display = 'block'; return;
+    try {
+      const auth = JSON.parse(stored);
+      if (!auth.token || !auth.user) throw new Error('invalid');
+      // Decode JWT expiry (no signature verify needed client-side; server validates on API calls)
+      const payload = JSON.parse(atob(auth.token.split('.')[1]));
+      if (payload.exp * 1000 < Date.now()) throw new Error('expired');
+      // Populate state from real user
+      state.user = {
+        name:    auth.user.fullName || auth.user.name || 'User',
+        company: auth.user.companyName || '',
+        role:    auth.user.role || 'ESG Professional',
+        eriid:   auth.user.id || '',
+        email:   auth.user.email || ''
+      };
+      state.authToken = auth.token;
+      return true;
+    } catch (e) {
+      localStorage.removeItem('cx_auth');
+      location.href = 'login.html?redirect=assessment.html';
+      return false;
     }
-    err.style.display = 'none';
-    state.user = { name, company, role, eriid };
-
-    // Hide login, show app shell
-    document.getElementById('step-login').style.display = 'none';
-    document.getElementById('assessShell').classList.remove('assess-hidden');
-
-    // Pre-fill company info from login
-    setTimeout(() => {
-      const el = document.getElementById('ci-name');
-      if (el) el.value = company;
-    }, 100);
-
-    goToWelcome();
   }
 
-  // Allow Enter key on password field
+  function signOut() {
+    localStorage.removeItem('cx_auth');
+    location.href = 'login.html';
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
-    const pw = document.getElementById('li-password');
-    if (pw) pw.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    if (!initAuth()) return;
+    // Auth passed — show shell, start assessment
+    document.getElementById('assessShell').classList.remove('assess-hidden');
+    // Pre-fill company name field if available
+    setTimeout(() => {
+      const el = document.getElementById('ci-name');
+      if (el && state.user.company) el.value = state.user.company;
+    }, 100);
+    goToWelcome();
   });
 
   /* ── QUESTION TYPE DEFINITIONS ──
