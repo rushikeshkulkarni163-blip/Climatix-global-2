@@ -1044,12 +1044,8 @@
   // Unverified or not-logged-in users → redirect to login.html.
 
   function signOut() {
-    // signOut is called from the header button; imported firebase signOut runs async
-    if (window._firebaseAuth) {
-      window._firebaseAuth.signOut().finally(() => { location.href = 'login.html'; });
-    } else {
-      location.href = 'login.html';
-    }
+    localStorage.removeItem('cx_session');
+    location.href = 'login.html';
   }
 
   function _launchAssessment(user) {
@@ -2107,36 +2103,23 @@
     }
   </style>
 
-  <!-- Firebase Auth Guard — must be type="module" -->
+  <!-- Auth Guard -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { firebaseConfig } from "./firebase-config.js";
+    import { getSession } from './auth.js';
 
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Expose auth globally so signOut() button can call it
-    window._firebaseAuth = auth;
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        // Not logged in — send to login
-        location.href = 'login.html?redirect=assessment.html';
-        return;
-      }
-      if (!user.emailVerified) {
-        // Logged in but not verified — send to login with warning
-        auth.signOut().then(() => {
-          location.href = 'login.html?redirect=assessment.html';
-        });
-        return;
-      }
-      // All good — launch assessment
+    const session = getSession();
+    if (!session || !session.verified) {
+      location.href = 'login.html?redirect=assessment.html';
+    } else {
+      // Build a user-like object for _launchAssessment
       if (typeof _launchAssessment === 'function') {
-        _launchAssessment(user);
+        _launchAssessment({
+          displayName: session.fullName + (session.companyName ? `|${session.companyName}` : ''),
+          email: session.email,
+          uid: session.uid
+        });
       }
-    });
+    }
   </script>
 
 </body>
