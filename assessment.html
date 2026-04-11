@@ -1038,59 +1038,37 @@
   //  ERI 2.0 · GRI · TCFD · ISSB · CSRD · SBTi · CDP · BRSR
   // ═══════════════════════════════════════════════════════════
 
-  /* ── LOGIN ── */
-  // Demo credentials (in production replace with real auth API)
-  const VALID_PASSWORDS = ['climatix2025', 'Climatix2025', 'CLIMATIX2025'];
-
-  // ── JWT Auth Guard ──────────────────────────────────────
-  // Checks localStorage for a valid token from login.html.
-  // If missing/expired → redirects to login.html.
-  // If valid → populates state.user from stored user data.
-  function initAuth() {
-    const stored = localStorage.getItem('cx_auth');
-    if (!stored) {
-      location.href = 'login.html?redirect=assessment.html';
-      return false;
-    }
-    try {
-      const auth = JSON.parse(stored);
-      if (!auth.token || !auth.user) throw new Error('invalid');
-      // Decode JWT expiry (no signature verify needed client-side; server validates on API calls)
-      const payload = JSON.parse(atob(auth.token.split('.')[1]));
-      if (payload.exp * 1000 < Date.now()) throw new Error('expired');
-      // Populate state from real user
-      state.user = {
-        name:    auth.user.fullName || auth.user.name || 'User',
-        company: auth.user.companyName || '',
-        role:    auth.user.role || 'ESG Professional',
-        eriid:   auth.user.id || '',
-        email:   auth.user.email || ''
-      };
-      state.authToken = auth.token;
-      return true;
-    } catch (e) {
-      localStorage.removeItem('cx_auth');
-      location.href = 'login.html?redirect=assessment.html';
-      return false;
-    }
-  }
+  // ── Firebase Auth Guard (no backend server needed) ──────
+  // Uses Firebase SDK loaded below. onAuthStateChanged fires
+  // once Firebase resolves the session from localStorage/IndexedDB.
+  // Unverified or not-logged-in users → redirect to login.html.
 
   function signOut() {
-    localStorage.removeItem('cx_auth');
-    location.href = 'login.html';
+    // signOut is called from the header button; imported firebase signOut runs async
+    if (window._firebaseAuth) {
+      window._firebaseAuth.signOut().finally(() => { location.href = 'login.html'; });
+    } else {
+      location.href = 'login.html';
+    }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    if (!initAuth()) return;
-    // Auth passed — show shell, start assessment
+  function _launchAssessment(user) {
+    // Parse displayName stored as "Full Name|Company Name"
+    const parts = (user.displayName || '').split('|');
+    state.user = {
+      name:    parts[0] || user.email.split('@')[0],
+      company: parts[1] || '',
+      role:    'ESG Professional',
+      email:   user.email,
+      uid:     user.uid
+    };
     document.getElementById('assessShell').classList.remove('assess-hidden');
-    // Pre-fill company name field if available
     setTimeout(() => {
       const el = document.getElementById('ci-name');
       if (el && state.user.company) el.value = state.user.company;
     }, 100);
     goToWelcome();
-  });
+  }
 
   /* ── QUESTION TYPE DEFINITIONS ──
      Each question can have:
@@ -2128,6 +2106,38 @@
       .assess-disclaimer { margin-top: 20px; }
     }
   </style>
+
+  <!-- Firebase Auth Guard — must be type="module" -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Expose auth globally so signOut() button can call it
+    window._firebaseAuth = auth;
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // Not logged in — send to login
+        location.href = 'login.html?redirect=assessment.html';
+        return;
+      }
+      if (!user.emailVerified) {
+        // Logged in but not verified — send to login with warning
+        auth.signOut().then(() => {
+          location.href = 'login.html?redirect=assessment.html';
+        });
+        return;
+      }
+      // All good — launch assessment
+      if (typeof _launchAssessment === 'function') {
+        _launchAssessment(user);
+      }
+    });
+  </script>
 
 </body>
 </html>
