@@ -10,75 +10,46 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --primary: #0B3D2E;
-      --primary-hover: #0d4f3a;
-      --accent: #22C55E;
-      --text: #0F172A;
-      --muted: #64748B;
-      --border: #E2E8F0;
-      --bg: #F0F4F2;
-      --card: #ffffff;
-      --error: #EF4444;
-      --success: #22C55E;
-      --input-focus: #0B3D2E;
+      --primary: #0B3D2E; --primary-hover: #0d4f3a;
+      --text: #0F172A; --muted: #64748B; --border: #E2E8F0;
+      --bg: #F0F4F2; --card: #ffffff; --error: #EF4444; --success: #22C55E;
     }
     body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
-
     .auth-top { text-align: center; margin-bottom: 32px; }
-    .auth-top a { display: inline-block; }
     .auth-top img { height: 52px; width: auto; }
     .auth-top p { color: var(--muted); font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 10px; font-weight: 500; }
-
     .auth-card { background: var(--card); border-radius: 20px; padding: 44px 48px; width: 100%; max-width: 440px; box-shadow: 0 4px 32px rgba(11,61,46,0.10); border: 1px solid rgba(11,61,46,0.06); animation: fadeUp .4s ease both; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-
     .auth-title { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
     .auth-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
-
     .field { margin-bottom: 20px; }
-    .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 7px; letter-spacing: 0.2px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 7px; }
     .field input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--text); background: #FAFAFA; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
-    .field input:focus { border-color: var(--input-focus); background: #fff; box-shadow: 0 0 0 3px rgba(11,61,46,0.08); }
-    .field input.error-input { border-color: var(--error); }
-
+    .field input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(11,61,46,0.08); }
     .field-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
     .field-row label { margin-bottom: 0; }
     .field-row a { font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 500; }
     .field-row a:hover { text-decoration: underline; }
-
     .remember-row { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
     .remember-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
     .remember-row label { font-size: 13px; color: var(--muted); cursor: pointer; }
-
-    .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: background .2s, transform .1s, box-shadow .2s; letter-spacing: 0.2px; }
+    .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: background .2s, box-shadow .2s; }
     .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 16px rgba(11,61,46,0.25); }
-    .btn-primary:active { transform: scale(0.99); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
-
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
     .alert { border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 500; margin-bottom: 20px; display: none; }
     .alert.error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
     .alert.success { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+    .alert.warning { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
     .alert.show { display: block; }
-
-    .unverified-box { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; display: none; }
-    .unverified-box.show { display: block; }
-    .unverified-box p { font-size: 13px; color: #92400E; margin-bottom: 8px; }
-    .unverified-box button { font-size: 12px; font-weight: 600; color: var(--primary); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
-
     .auth-switch { text-align: center; margin-top: 28px; font-size: 13px; color: var(--muted); }
     .auth-switch a { color: var(--primary); font-weight: 600; text-decoration: none; }
     .auth-switch a:hover { text-decoration: underline; }
-
-    .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; }
-    .divider span { font-size: 12px; color: var(--muted); white-space: nowrap; }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
     .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 8px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .footer-links { text-align: center; margin-top: 32px; }
     .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; margin: 0 8px; }
     .footer-links a:hover { color: var(--primary); }
+    .resend-btn { background: none; border: none; color: var(--primary); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0; font-family: inherit; }
   </style>
 </head>
 <body>
@@ -94,31 +65,24 @@
 
     <div class="alert error" id="errorAlert"></div>
     <div class="alert success" id="successAlert"></div>
-
-    <div class="unverified-box" id="unverifiedBox">
-      <p>Your email is not verified. Please check your inbox.</p>
-      <button onclick="resendVerification()">Resend verification email →</button>
-    </div>
+    <div class="alert warning" id="warningAlert"></div>
 
     <form id="loginForm" novalidate>
       <div class="field">
         <label for="email">Email address</label>
-        <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" required />
+        <input type="email" id="email" placeholder="you@company.com" autocomplete="email" required />
       </div>
-
       <div class="field">
         <div class="field-row">
           <label for="password">Password</label>
           <a href="forgot-password.html">Forgot password?</a>
         </div>
-        <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
       </div>
-
       <div class="remember-row">
-        <input type="checkbox" id="rememberMe" name="rememberMe" />
-        <label for="rememberMe">Remember me for 30 days</label>
+        <input type="checkbox" id="rememberMe" />
+        <label for="rememberMe">Keep me signed in</label>
       </div>
-
       <button type="submit" class="btn-primary" id="submitBtn">Sign In →</button>
     </form>
 
@@ -128,107 +92,97 @@
   <div class="footer-links">
     <a href="index.html">← Back to site</a>
     <a href="assessment.html">Assessment</a>
-    <a href="mailto:hello@climactixglobal.com">Support</a>
   </div>
 
-  <script>
-    const API = 'http://localhost:3001/api/auth';
-    let unverifiedEmail = '';
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth, signInWithEmailAndPassword,
+      setPersistence, browserLocalPersistence, browserSessionPersistence,
+      sendEmailVerification
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
 
-    // Check if already logged in
-    (function () {
-      const stored = localStorage.getItem('cx_auth');
-      if (stored) {
-        try {
-          const { token } = JSON.parse(stored);
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          if (payload.exp * 1000 > Date.now()) {
-            const redirect = new URLSearchParams(location.search).get('redirect') || 'assessment.html';
-            location.href = redirect;
-          }
-        } catch (e) { localStorage.removeItem('cx_auth'); }
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // If already signed in and verified, redirect
+    auth.onAuthStateChanged(user => {
+      if (user && user.emailVerified) {
+        const redirect = new URLSearchParams(location.search).get('redirect') || 'assessment.html';
+        location.href = redirect;
       }
-    })();
+    });
 
     function showError(msg) {
-      const el = document.getElementById('errorAlert');
-      el.textContent = msg; el.classList.add('show');
+      document.getElementById('errorAlert').textContent = msg;
+      document.getElementById('errorAlert').classList.add('show');
       document.getElementById('successAlert').classList.remove('show');
+      document.getElementById('warningAlert').classList.remove('show');
     }
     function showSuccess(msg) {
-      const el = document.getElementById('successAlert');
-      el.textContent = msg; el.classList.add('show');
+      document.getElementById('successAlert').textContent = msg;
+      document.getElementById('successAlert').classList.add('show');
       document.getElementById('errorAlert').classList.remove('show');
     }
-    function clearAlerts() {
+    function showWarning(html) {
+      document.getElementById('warningAlert').innerHTML = html;
+      document.getElementById('warningAlert').classList.add('show');
       document.getElementById('errorAlert').classList.remove('show');
-      document.getElementById('successAlert').classList.remove('show');
-      document.getElementById('unverifiedBox').classList.remove('show');
     }
-    function setLoading(loading) {
+    function setLoading(on) {
       const btn = document.getElementById('submitBtn');
-      btn.disabled = loading;
-      btn.innerHTML = loading ? '<span class="spinner"></span>Signing in…' : 'Sign In →';
+      btn.disabled = on;
+      btn.innerHTML = on ? '<span class="spinner"></span>Signing in…' : 'Sign In →';
+    }
+
+    function friendlyError(code) {
+      const map = {
+        'auth/invalid-credential':     'Incorrect email or password.',
+        'auth/user-not-found':          'No account found with this email.',
+        'auth/wrong-password':          'Incorrect password.',
+        'auth/too-many-requests':       'Too many attempts. Please try again later or reset your password.',
+        'auth/user-disabled':           'This account has been disabled.',
+        'auth/invalid-email':           'Please enter a valid email address.',
+        'auth/network-request-failed':  'Network error. Check your internet connection.'
+      };
+      return map[code] || 'Sign in failed. Please try again.';
     }
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      clearAlerts();
-
-      const email = document.getElementById('email').value.trim();
+      const email    = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      const rememberMe = document.getElementById('rememberMe').checked;
+      const remember = document.getElementById('rememberMe').checked;
 
       if (!email || !password) { showError('Please enter your email and password.'); return; }
 
       setLoading(true);
       try {
-        const res = await fetch(`${API}/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, rememberMe })
-        });
-        const data = await res.json();
+        await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+        const { user } = await signInWithEmailAndPassword(auth, email, password);
 
-        if (!res.ok) {
-          if (data.unverified) {
-            unverifiedEmail = data.email || email;
-            document.getElementById('unverifiedBox').classList.add('show');
-          } else {
-            showError(data.error || 'Login failed. Please try again.');
-          }
+        if (!user.emailVerified) {
+          showWarning(`Your email isn't verified yet. <button class="resend-btn" id="resendBtn">Resend verification email</button>`);
+          document.getElementById('resendBtn').onclick = async () => {
+            await sendEmailVerification(user);
+            showSuccess('Verification email sent! Check your inbox.');
+          };
+          await auth.signOut();
           return;
         }
-
-        // Store auth
-        localStorage.setItem('cx_auth', JSON.stringify({ token: data.token, user: data.user }));
 
         showSuccess('Signed in! Redirecting…');
         setTimeout(() => {
           const redirect = new URLSearchParams(location.search).get('redirect') || 'assessment.html';
           location.href = redirect;
-        }, 800);
+        }, 700);
       } catch (err) {
-        showError('Cannot connect to server. Make sure the auth server is running.');
+        showError(friendlyError(err.code));
       } finally {
         setLoading(false);
       }
     });
-
-    async function resendVerification() {
-      if (!unverifiedEmail) return;
-      try {
-        await fetch(`${API}/resend-verification`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: unverifiedEmail })
-        });
-        showSuccess('Verification email sent. Please check your inbox.');
-        document.getElementById('unverifiedBox').classList.remove('show');
-      } catch (e) {
-        showError('Failed to resend. Please try again.');
-      }
-    }
   </script>
 </body>
 </html>
