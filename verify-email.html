@@ -9,31 +9,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --primary: #0B3D2E; --text: #0F172A; --muted: #64748B; --bg: #F0F4F2; --card: #ffffff; --error: #EF4444; --success: #22C55E; --border: #E2E8F0; }
+    :root { --primary: #0B3D2E; --text: #0F172A; --muted: #64748B; --bg: #F0F4F2; --card: #ffffff; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
-
     .auth-top { text-align: center; margin-bottom: 32px; }
     .auth-top img { height: 52px; width: auto; }
     .auth-top p { color: var(--muted); font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 10px; font-weight: 500; }
-
-    .auth-card { background: var(--card); border-radius: 20px; padding: 52px 48px; width: 100%; max-width: 440px; box-shadow: 0 4px 32px rgba(11,61,46,0.10); border: 1px solid rgba(11,61,46,0.06); text-align: center; animation: fadeUp .4s ease both; }
+    .auth-card { background: var(--card); border-radius: 20px; padding: 52px 48px; width: 100%; max-width: 420px; box-shadow: 0 4px 32px rgba(11,61,46,0.10); border: 1px solid rgba(11,61,46,0.06); text-align: center; animation: fadeUp .4s ease both; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-
-    .state-icon { font-size: 56px; margin-bottom: 20px; display: block; }
-    .state-title { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .state-text { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 28px; }
-
-    .loading-ring { width: 56px; height: 56px; border: 4px solid rgba(11,61,46,0.12); border-top-color: var(--primary); border-radius: 50%; animation: spin .9s linear infinite; margin: 0 auto 24px; }
+    .state-icon { font-size: 52px; margin-bottom: 16px; display: block; }
+    .state-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .state-text { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+    .ring { width: 52px; height: 52px; border: 4px solid rgba(11,61,46,0.12); border-top-color: var(--primary); border-radius: 50%; animation: spin .9s linear infinite; margin: 0 auto 24px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .btn-primary { display: inline-block; padding: 14px 36px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none; transition: background .2s, box-shadow .2s; }
-    .btn-primary:hover { background: #0d4f3a; box-shadow: 0 4px 16px rgba(11,61,46,0.25); }
-
-    .btn-outline { display: inline-block; padding: 12px 28px; border: 1.5px solid var(--primary); color: var(--primary); border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background .2s, color .2s; cursor: pointer; font-family: 'Inter', sans-serif; background: none; margin-top: 12px; }
-    .btn-outline:hover { background: var(--primary); color: #fff; }
-
-    .back-link { display: block; margin-top: 20px; font-size: 13px; color: var(--muted); text-decoration: none; }
-    .back-link:hover { color: var(--primary); }
+    .btn { display: inline-block; padding: 13px 32px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none; transition: background .2s; }
+    .btn:hover { background: #0d4f3a; }
+    .link { display: block; margin-top: 16px; font-size: 13px; color: var(--muted); text-decoration: none; }
+    .link:hover { color: var(--primary); }
   </style>
 </head>
 <body>
@@ -43,77 +34,83 @@
     <p>ESG Intelligence Platform</p>
   </div>
 
-  <div class="auth-card" id="card">
-    <!-- Loading state -->
+  <div class="auth-card">
     <div id="stateLoading">
-      <div class="loading-ring"></div>
+      <div class="ring"></div>
       <p class="state-title">Verifying your email…</p>
-      <p class="state-text">Please wait while we confirm your email address.</p>
+      <p class="state-text">Please wait a moment.</p>
     </div>
-
-    <!-- Success state -->
     <div id="stateSuccess" style="display:none;">
       <span class="state-icon">✅</span>
       <p class="state-title">Email verified!</p>
-      <p class="state-text">Your account is now active. You're being redirected to the assessment…</p>
-      <a href="assessment.html" class="btn-primary">Start Assessment →</a>
+      <p class="state-text">Your account is active. Redirecting you to the assessment…</p>
+      <a href="assessment.html" class="btn">Start Assessment →</a>
     </div>
-
-    <!-- Error state -->
+    <div id="stateAlready" style="display:none;">
+      <span class="state-icon">✅</span>
+      <p class="state-title">Already verified</p>
+      <p class="state-text">Your email is already confirmed. You can sign in and start the assessment.</p>
+      <a href="login.html" class="btn">Sign In →</a>
+    </div>
     <div id="stateError" style="display:none;">
       <span class="state-icon">❌</span>
-      <p class="state-title" id="errorTitle">Verification failed</p>
-      <p class="state-text" id="errorText">This link is invalid or has expired. Please request a new verification email.</p>
-      <a href="signup.html" class="btn-primary">Back to Sign Up</a>
-      <a href="login.html" class="back-link">Sign in to resend verification</a>
-    </div>
-
-    <!-- No token state -->
-    <div id="stateNoToken" style="display:none;">
-      <span class="state-icon">🔗</span>
-      <p class="state-title">No verification token</p>
-      <p class="state-text">This page is accessed via the link in your verification email. Please check your inbox.</p>
-      <a href="signup.html" class="btn-primary">Create an account</a>
-      <a href="login.html" class="back-link">Already have an account? Sign in</a>
+      <p class="state-title">Verification failed</p>
+      <p class="state-text" id="errMsg">The link may have expired. Please sign up again or request a new link.</p>
+      <a href="signup.html" class="btn">Back to Sign Up</a>
+      <a href="login.html" class="link">← Sign in</a>
     </div>
   </div>
 
-  <script>
-    const API = 'http://localhost:3001/api/auth';
+  <script type="module">
+    import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth, applyActionCode, onAuthStateChanged, reload
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
     function show(id) {
-      ['stateLoading','stateSuccess','stateError','stateNoToken'].forEach(s => {
-        document.getElementById(s).style.display = s === id ? 'block' : 'none';
-      });
+      ['stateLoading','stateSuccess','stateAlready','stateError'].forEach(s =>
+        document.getElementById(s).style.display = s === id ? 'block' : 'none'
+      );
     }
 
-    (async function () {
-      const token = new URLSearchParams(location.search).get('token');
-      if (!token) { show('stateNoToken'); return; }
+    // Firebase email verification links contain ?mode=verifyEmail&oobCode=...
+    const params = new URLSearchParams(location.search);
+    const mode   = params.get('mode');
+    const oobCode = params.get('oobCode');
 
-      try {
-        const res = await fetch(`${API}/verify-email`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token })
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          document.getElementById('errorText').textContent = data.error || 'Verification failed. Please try again.';
+    if (mode === 'verifyEmail' && oobCode) {
+      applyActionCode(auth, oobCode)
+        .then(async () => {
+          // Reload user if signed in
+          const user = auth.currentUser;
+          if (user) await reload(user);
+          show('stateSuccess');
+          setTimeout(() => { location.href = 'assessment.html'; }, 2500);
+        })
+        .catch(err => {
+          if (err.code === 'auth/invalid-action-code') {
+            document.getElementById('errMsg').textContent = 'This link is invalid or already used. Please sign in — if your email is verified you can proceed, otherwise sign up again.';
+          }
           show('stateError');
-          return;
+        });
+    } else if (mode === 'resetPassword') {
+      // Firebase redirected a password reset link here — send to correct page
+      location.href = `reset-password.html${location.search}`;
+    } else {
+      // Check if already verified
+      onAuthStateChanged(auth, user => {
+        if (user && user.emailVerified) {
+          show('stateAlready');
+        } else {
+          show('stateError');
+          document.getElementById('errMsg').textContent = 'No verification token found. Please use the link from your email.';
         }
-
-        // Store auth and redirect
-        localStorage.setItem('cx_auth', JSON.stringify({ token: data.token, user: data.user }));
-        show('stateSuccess');
-        setTimeout(() => { location.href = 'assessment.html'; }, 2500);
-      } catch (err) {
-        document.getElementById('errorText').textContent = 'Cannot connect to server. Please try again later.';
-        show('stateError');
-      }
-    })();
+      });
+    }
   </script>
 </body>
 </html>
