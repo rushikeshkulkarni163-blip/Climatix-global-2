@@ -1,25 +1,21 @@
 // ── Climactix Global · Firebase Configuration ──────────────
-// Setup steps:
+//
+// HOW TO SET UP (5 minutes):
 // 1. Go to https://console.firebase.google.com
-// 2. Create a project (e.g. "climatix-global")
-// 3. Go to Project Settings → General → Your apps → Add app → Web (</>)
-// 4. Copy the firebaseConfig object and paste your values below
-// 5. In Firebase console: Authentication → Sign-in method → Enable "Email/Password"
-// 6. In Firebase console: Authentication → Settings → Enable "Email link" (optional)
+// 2. Click "Add project" → name it "climatix-global" → Create
+// 3. In the project: click the </> (Web) icon → register app → copy the config
+// 4. Replace the values below with YOUR config values
+// 5. Go to Authentication → Sign-in method → Enable "Email/Password"
+// 6. Go to Authentication → Settings → Authorized domains → add your domain
+//
+// The config values are NOT secret — they are safe to commit to git.
+// Security is enforced by Firebase Security Rules, not by hiding the config.
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT.firebaseapp.com",
+  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
   projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT.appspot.com",
+  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
   messagingSenderId: "YOUR_SENDER_ID",
   appId:             "YOUR_APP_ID"
 };
-
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-export { auth };
