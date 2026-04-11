@@ -16,100 +16,68 @@
     .auth-top p { color: var(--muted); font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 10px; font-weight: 500; }
     .auth-card { background: var(--card); border-radius: 20px; padding: 52px 48px; width: 100%; max-width: 420px; box-shadow: 0 4px 32px rgba(11,61,46,0.10); border: 1px solid rgba(11,61,46,0.06); text-align: center; animation: fadeUp .4s ease both; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    .state-icon { font-size: 52px; margin-bottom: 16px; display: block; }
-    .state-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .state-text { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+    .s-icon { font-size: 52px; margin-bottom: 16px; display: block; }
+    .s-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .s-text { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
     .ring { width: 52px; height: 52px; border: 4px solid rgba(11,61,46,0.12); border-top-color: var(--primary); border-radius: 50%; animation: spin .9s linear infinite; margin: 0 auto 24px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .btn { display: inline-block; padding: 13px 32px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none; transition: background .2s; }
+    .btn { display: inline-block; padding: 13px 32px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none; }
     .btn:hover { background: #0d4f3a; }
     .link { display: block; margin-top: 16px; font-size: 13px; color: var(--muted); text-decoration: none; }
     .link:hover { color: var(--primary); }
   </style>
 </head>
 <body>
-
   <div class="auth-top">
     <a href="index.html"><img src="Climatix_logo.png" alt="Climactix Global" /></a>
     <p>ESG Intelligence Platform</p>
   </div>
-
   <div class="auth-card">
-    <div id="stateLoading">
-      <div class="ring"></div>
-      <p class="state-title">Verifying your email…</p>
-      <p class="state-text">Please wait a moment.</p>
-    </div>
+    <div id="stateLoading"><div class="ring"></div><p class="s-title">Verifying…</p></div>
     <div id="stateSuccess" style="display:none;">
-      <span class="state-icon">✅</span>
-      <p class="state-title">Email verified!</p>
-      <p class="state-text">Your account is active. Redirecting you to the assessment…</p>
+      <span class="s-icon">✅</span>
+      <p class="s-title">Email verified!</p>
+      <p class="s-text">Your account is active. Redirecting to the assessment…</p>
       <a href="assessment.html" class="btn">Start Assessment →</a>
     </div>
-    <div id="stateAlready" style="display:none;">
-      <span class="state-icon">✅</span>
-      <p class="state-title">Already verified</p>
-      <p class="state-text">Your email is already confirmed. You can sign in and start the assessment.</p>
-      <a href="login.html" class="btn">Sign In →</a>
-    </div>
     <div id="stateError" style="display:none;">
-      <span class="state-icon">❌</span>
-      <p class="state-title">Verification failed</p>
-      <p class="state-text" id="errMsg">The link may have expired. Please sign up again or request a new link.</p>
+      <span class="s-icon">❌</span>
+      <p class="s-title">Verification failed</p>
+      <p class="s-text" id="errMsg">The link is invalid or expired.</p>
       <a href="signup.html" class="btn">Back to Sign Up</a>
       <a href="login.html" class="link">← Sign in</a>
     </div>
   </div>
 
   <script type="module">
-    import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth, applyActionCode, onAuthStateChanged, reload
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { firebaseConfig } from "./firebase-config.js";
+    import { verifyEmail, getSession } from './auth.js';
 
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    // Already verified and logged in?
+    if (getSession()) { location.href = 'assessment.html'; }
 
     function show(id) {
-      ['stateLoading','stateSuccess','stateAlready','stateError'].forEach(s =>
+      ['stateLoading','stateSuccess','stateError'].forEach(s =>
         document.getElementById(s).style.display = s === id ? 'block' : 'none'
       );
     }
 
-    // Firebase email verification links contain ?mode=verifyEmail&oobCode=...
     const params = new URLSearchParams(location.search);
-    const mode   = params.get('mode');
-    const oobCode = params.get('oobCode');
+    const email  = params.get('email');
+    const token  = params.get('token');
 
-    if (mode === 'verifyEmail' && oobCode) {
-      applyActionCode(auth, oobCode)
-        .then(async () => {
-          // Reload user if signed in
-          const user = auth.currentUser;
-          if (user) await reload(user);
+    if (!email || !token) {
+      show('stateError');
+      document.getElementById('errMsg').textContent = 'No verification data found. Please use the link from your signup page.';
+    } else {
+      verifyEmail(email, token)
+        .then(() => {
           show('stateSuccess');
-          setTimeout(() => { location.href = 'assessment.html'; }, 2500);
+          setTimeout(() => { location.href = 'assessment.html'; }, 2000);
         })
         .catch(err => {
-          if (err.code === 'auth/invalid-action-code') {
-            document.getElementById('errMsg').textContent = 'This link is invalid or already used. Please sign in — if your email is verified you can proceed, otherwise sign up again.';
-          }
+          document.getElementById('errMsg').textContent = err.message || 'Verification failed.';
           show('stateError');
         });
-    } else if (mode === 'resetPassword') {
-      // Firebase redirected a password reset link here — send to correct page
-      location.href = `reset-password.html${location.search}`;
-    } else {
-      // Check if already verified
-      onAuthStateChanged(auth, user => {
-        if (user && user.emailVerified) {
-          show('stateAlready');
-        } else {
-          show('stateError');
-          document.getElementById('errMsg').textContent = 'No verification token found. Please use the link from your email.';
-        }
-      });
     }
   </script>
 </body>

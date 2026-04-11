@@ -20,7 +20,7 @@
     .auth-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
     .field { margin-bottom: 18px; }
     .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 7px; }
-    .field-optional { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 4px; }
+    .field-opt { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 4px; }
     .field input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--text); background: #FAFAFA; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
     .field input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(11,61,46,0.08); }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -30,8 +30,8 @@
     .pw-rule::before { content: '○'; font-size: 10px; }
     .pw-rule.met::before { content: '●'; }
     .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: background .2s, box-shadow .2s; margin-top: 8px; }
-    .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 16px rgba(11,61,46,0.25); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); box-shadow: 0 4px 16px rgba(11,61,46,0.25); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
     .alert { border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 500; margin-bottom: 20px; display: none; }
     .alert.error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
     .alert.show { display: block; }
@@ -39,15 +39,16 @@
     .auth-switch a { color: var(--primary); font-weight: 600; text-decoration: none; }
     .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 8px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .success-state { text-align: center; padding: 12px 0; }
-    .success-icon { font-size: 52px; margin-bottom: 16px; }
-    .success-state h2 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .success-state p { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
-    .email-highlight { font-weight: 600; color: var(--primary); }
-    .btn-outline { display: inline-block; padding: 11px 24px; border: 1.5px solid var(--primary); color: var(--primary); border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; font-family: 'Inter', sans-serif; background: none; transition: background .2s, color .2s; }
-    .btn-outline:hover { background: var(--primary); color: #fff; }
-    .terms { font-size: 12px; color: var(--muted); text-align: center; margin-top: 16px; line-height: 1.6; }
-    .terms a { color: var(--primary); text-decoration: none; }
+    /* Success view */
+    .success-view { text-align: center; padding: 8px 0; }
+    .s-icon { font-size: 52px; margin-bottom: 16px; }
+    .s-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+    .s-text { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+    .email-hl { font-weight: 600; color: var(--primary); }
+    .verify-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .verify-box p { font-size: 13px; color: #15803D; margin-bottom: 12px; line-height: 1.5; }
+    .btn-verify { width: 100%; padding: 13px; background: #15803D; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: background .2s; }
+    .btn-verify:hover { background: #166534; }
     .footer-links { text-align: center; margin-top: 32px; }
     .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; margin: 0 8px; }
     .footer-links a:hover { color: var(--primary); }
@@ -61,6 +62,7 @@
   </div>
 
   <div class="auth-card">
+    <!-- Form -->
     <div id="formView">
       <h1 class="auth-title">Create your account</h1>
       <p class="auth-sub">Free access to the Climactix Global ESG Assessment platform</p>
@@ -72,7 +74,7 @@
             <input type="text" id="fullName" placeholder="Jane Doe" autocomplete="name" required />
           </div>
           <div class="field">
-            <label for="companyName">Company <span class="field-optional">optional</span></label>
+            <label for="companyName">Company <span class="field-opt">optional</span></label>
             <input type="text" id="companyName" placeholder="Acme Corp" autocomplete="organization" />
           </div>
         </div>
@@ -96,18 +98,19 @@
         </div>
         <button type="submit" class="btn-primary" id="submitBtn">Create Account →</button>
       </form>
-      <p class="terms">By signing up you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
       <div class="auth-switch">Already have an account? <a href="login.html">Sign in</a></div>
     </div>
 
-    <div id="successView" style="display:none;">
-      <div class="success-state">
-        <div class="success-icon">📬</div>
-        <h2>Check your inbox</h2>
-        <p>We sent a verification link to<br><span class="email-highlight" id="sentEmail"></span><br><br>Click the link to activate your account. Check your spam folder if you don't see it.</p>
-        <button class="btn-outline" id="resendBtn">Resend email</button>
-        <div style="margin-top:16px;"><a href="login.html" style="font-size:13px;color:var(--muted);text-decoration:none;">← Back to sign in</a></div>
+    <!-- Success + one-click verify -->
+    <div id="successView" style="display:none;" class="success-view">
+      <div class="s-icon">🎉</div>
+      <h2 class="s-title">Account created!</h2>
+      <p class="s-text">Welcome to Climactix Global,<br><span class="email-hl" id="welcomeName"></span></p>
+      <div class="verify-box">
+        <p>Click below to verify your email and access the ESG Assessment instantly.</p>
+        <button class="btn-verify" id="verifyNowBtn">Verify Email &amp; Continue →</button>
       </div>
+      <p style="font-size:12px;color:var(--muted);">In production, a verification link would be sent to your inbox.</p>
     </div>
   </div>
 
@@ -132,17 +135,9 @@
   </script>
 
   <script type="module">
-    import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth, createUserWithEmailAndPassword,
-      updateProfile, sendEmailVerification
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { firebaseConfig } from "./firebase-config.js";
+    import { signUp, verifyEmail } from './auth.js';
 
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    let createdUser = null;
+    let pendingEmail = '', pendingToken = '';
 
     function showError(msg) {
       const el = document.getElementById('errorAlert');
@@ -153,57 +148,51 @@
       btn.disabled = on;
       btn.innerHTML = on ? '<span class="spinner"></span>Creating account…' : 'Create Account →';
     }
-    function friendlyError(code) {
-      const map = {
-        'auth/email-already-in-use':   'An account with this email already exists.',
-        'auth/invalid-email':           'Please enter a valid email address.',
-        'auth/weak-password':           'Password is too weak. Use at least 8 characters.',
-        'auth/network-request-failed':  'Network error. Check your internet connection.'
-      };
-      return map[code] || 'Sign up failed. Please try again.';
-    }
 
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      document.getElementById('errorAlert').classList.remove('show');
+
       const fullName    = document.getElementById('fullName').value.trim();
       const email       = document.getElementById('email').value.trim();
       const password    = document.getElementById('password').value;
       const confirm     = document.getElementById('confirmPassword').value;
       const companyName = document.getElementById('companyName').value.trim();
 
-      if (!fullName || !email || !password || !confirm) { showError('Please fill in all required fields.'); return; }
-      if (password !== confirm)          { showError('Passwords do not match.'); return; }
-      if (password.length < 8)          { showError('Password must be at least 8 characters.'); return; }
-      if (!/[A-Z]/.test(password))      { showError('Password must contain an uppercase letter.'); return; }
-      if (!/[0-9]/.test(password))      { showError('Password must contain a number.'); return; }
+      if (!fullName)      { showError('Please enter your full name.'); return; }
+      if (!email)         { showError('Please enter your email address.'); return; }
+      if (!password)      { showError('Please enter a password.'); return; }
+      if (!confirm)       { showError('Please confirm your password.'); return; }
+      if (password !== confirm)     { showError('Passwords do not match.'); return; }
+      if (password.length < 8)     { showError('Password must be at least 8 characters.'); return; }
+      if (!/[A-Z]/.test(password)) { showError('Password must contain at least one uppercase letter.'); return; }
+      if (!/[0-9]/.test(password)) { showError('Password must contain at least one number.'); return; }
 
       setLoading(true);
       try {
-        const { user } = await createUserWithEmailAndPassword(auth, email, password);
-        // Store display name (and company in displayName for now)
-        await updateProfile(user, { displayName: fullName + (companyName ? `|${companyName}` : '') });
-        // Send verification email
-        await sendEmailVerification(user);
-        createdUser = user;
+        const result = await signUp({ fullName, email, companyName, password });
+        pendingEmail = result.email;
+        pendingToken = result.verifyToken;
 
-        document.getElementById('sentEmail').textContent = email;
+        document.getElementById('welcomeName').textContent = fullName;
         document.getElementById('formView').style.display = 'none';
         document.getElementById('successView').style.display = 'block';
       } catch (err) {
-        showError(friendlyError(err.code));
+        showError(err.message || 'Sign up failed. Please try again.');
       } finally {
         setLoading(false);
       }
     });
 
-    document.getElementById('resendBtn').addEventListener('click', async () => {
-      if (!createdUser) return;
+    document.getElementById('verifyNowBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('verifyNowBtn');
+      btn.disabled = true; btn.textContent = 'Verifying…';
       try {
-        await sendEmailVerification(createdUser);
-        document.getElementById('resendBtn').textContent = 'Sent! Check your inbox.';
-        document.getElementById('resendBtn').disabled = true;
-      } catch (e) {
-        alert('Could not resend. Please wait a minute and try again.');
+        await verifyEmail(pendingEmail, pendingToken);
+        location.href = 'assessment.html';
+      } catch (err) {
+        btn.disabled = false; btn.textContent = 'Verify Email & Continue →';
+        alert(err.message || 'Verification failed. Please try signing in.');
       }
     });
   </script>

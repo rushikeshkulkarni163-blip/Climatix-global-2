@@ -9,11 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --primary: #0B3D2E; --primary-hover: #0d4f3a;
-      --text: #0F172A; --muted: #64748B; --border: #E2E8F0;
-      --bg: #F0F4F2; --card: #ffffff; --error: #EF4444; --success: #22C55E;
-    }
+    :root { --primary: #0B3D2E; --primary-hover: #0d4f3a; --text: #0F172A; --muted: #64748B; --border: #E2E8F0; --bg: #F0F4F2; --card: #ffffff; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
     .auth-top { text-align: center; margin-bottom: 32px; }
     .auth-top img { height: 52px; width: auto; }
@@ -34,10 +30,10 @@
     .remember-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
     .remember-row label { font-size: 13px; color: var(--muted); cursor: pointer; }
     .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: background .2s, box-shadow .2s; }
-    .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 4px 16px rgba(11,61,46,0.25); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
-    .alert { border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 500; margin-bottom: 20px; display: none; }
-    .alert.error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); box-shadow: 0 4px 16px rgba(11,61,46,0.25); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .alert { border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 500; margin-bottom: 20px; display: none; line-height: 1.5; }
+    .alert.error   { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
     .alert.success { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
     .alert.warning { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
     .alert.show { display: block; }
@@ -49,7 +45,6 @@
     .footer-links { text-align: center; margin-top: 32px; }
     .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; margin: 0 8px; }
     .footer-links a:hover { color: var(--primary); }
-    .resend-btn { background: none; border: none; color: var(--primary); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0; font-family: inherit; }
   </style>
 </head>
 <body>
@@ -63,7 +58,7 @@
     <h1 class="auth-title">Welcome back</h1>
     <p class="auth-sub">Sign in to your Climactix Global account</p>
 
-    <div class="alert error" id="errorAlert"></div>
+    <div class="alert error"   id="errorAlert"></div>
     <div class="alert success" id="successAlert"></div>
     <div class="alert warning" id="warningAlert"></div>
 
@@ -81,7 +76,7 @@
       </div>
       <div class="remember-row">
         <input type="checkbox" id="rememberMe" />
-        <label for="rememberMe">Keep me signed in</label>
+        <label for="rememberMe">Keep me signed in for 30 days</label>
       </div>
       <button type="submit" class="btn-primary" id="submitBtn">Sign In →</button>
     </form>
@@ -95,27 +90,16 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth, signInWithEmailAndPassword,
-      setPersistence, browserLocalPersistence, browserSessionPersistence,
-      sendEmailVerification
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { firebaseConfig } from "./firebase-config.js";
+    import { signIn, getSession } from './auth.js';
 
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // If already signed in and verified, redirect
-    auth.onAuthStateChanged(user => {
-      if (user && user.emailVerified) {
-        const redirect = new URLSearchParams(location.search).get('redirect') || 'assessment.html';
-        location.href = redirect;
-      }
-    });
+    // Already logged in? Skip to assessment
+    if (getSession()) {
+      const redirect = new URLSearchParams(location.search).get('redirect') || 'assessment.html';
+      location.href = redirect;
+    }
 
     function showError(msg) {
-      document.getElementById('errorAlert').textContent = msg;
+      document.getElementById('errorAlert').innerHTML = msg;
       document.getElementById('errorAlert').classList.add('show');
       document.getElementById('successAlert').classList.remove('show');
       document.getElementById('warningAlert').classList.remove('show');
@@ -125,8 +109,8 @@
       document.getElementById('successAlert').classList.add('show');
       document.getElementById('errorAlert').classList.remove('show');
     }
-    function showWarning(html) {
-      document.getElementById('warningAlert').innerHTML = html;
+    function showWarning(msg) {
+      document.getElementById('warningAlert').innerHTML = msg;
       document.getElementById('warningAlert').classList.add('show');
       document.getElementById('errorAlert').classList.remove('show');
     }
@@ -136,52 +120,40 @@
       btn.innerHTML = on ? '<span class="spinner"></span>Signing in…' : 'Sign In →';
     }
 
-    function friendlyError(code) {
-      const map = {
-        'auth/invalid-credential':     'Incorrect email or password.',
-        'auth/user-not-found':          'No account found with this email.',
-        'auth/wrong-password':          'Incorrect password.',
-        'auth/too-many-requests':       'Too many attempts. Please try again later or reset your password.',
-        'auth/user-disabled':           'This account has been disabled.',
-        'auth/invalid-email':           'Please enter a valid email address.',
-        'auth/network-request-failed':  'Network error. Check your internet connection.'
-      };
-      return map[code] || 'Sign in failed. Please try again.';
-    }
-
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      document.getElementById('errorAlert').classList.remove('show');
+      document.getElementById('warningAlert').classList.remove('show');
+
       const email    = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
       const remember = document.getElementById('rememberMe').checked;
 
-      if (!email || !password) { showError('Please enter your email and password.'); return; }
+      if (!email)    { showError('Please enter your email address.'); return; }
+      if (!password) { showError('Please enter your password.'); return; }
 
       setLoading(true);
       try {
-        await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
-        const { user } = await signInWithEmailAndPassword(auth, email, password);
-
-        if (!user.emailVerified) {
-          showWarning(`Your email isn't verified yet. <button class="resend-btn" id="resendBtn">Resend verification email</button>`);
-          document.getElementById('resendBtn').onclick = async () => {
-            await sendEmailVerification(user);
-            showSuccess('Verification email sent! Check your inbox.');
-          };
-          await auth.signOut();
-          return;
-        }
-
+        await signIn({ email, password, remember });
         showSuccess('Signed in! Redirecting…');
         setTimeout(() => {
           const redirect = new URLSearchParams(location.search).get('redirect') || 'assessment.html';
           location.href = redirect;
-        }, 700);
+        }, 600);
       } catch (err) {
-        showError(friendlyError(err.code));
+        if (err.code === 'not-verified') {
+          showWarning(`Your email isn't verified yet. <a href="verify-email.html?email=${encodeURIComponent(err.email)}&token=${err.token}" style="color:#0B3D2E;font-weight:600;">Click here to verify →</a>`);
+        } else {
+          showError(err.message || 'Sign in failed. Please try again.');
+        }
       } finally {
         setLoading(false);
       }
+    });
+
+    // Allow Enter key
+    document.getElementById('password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('loginForm').requestSubmit();
     });
   </script>
 </body>
