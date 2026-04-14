@@ -682,10 +682,43 @@ function CompRow({ c }) {
 /* ════════════════════════════════════════════════════════════
    MAIN APP
 ════════════════════════════════════════════════════════════ */
+/* ── Live data constants ── */
+const AI_API = localStorage.getItem('climactix_api_url') || 'http://localhost:8000';
+
 function App() {
   const [view, setView] = useState('investor');
   const clock = useClock();
-  const sc = D.score;
+
+  // Live AI data overlay (null = showing mock data)
+  const [liveData,    setLiveData]    = useState(null);
+  const [liveStatus,  setLiveStatus]  = useState('idle'); // idle | loading | loaded | error
+
+  async function loadLiveData() {
+    setLiveStatus('loading');
+    try {
+      const res = await fetch(`${AI_API}/investor-summary`, { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) throw new Error('No report generated yet');
+      const json = await res.json();
+      setLiveData(json);
+      setLiveStatus('loaded');
+    } catch (e) {
+      setLiveStatus('error');
+      setTimeout(() => setLiveStatus('idle'), 4000);
+    }
+  }
+
+  // Build score object: merge live AI scores over mock baseline
+  const sc = liveData ? {
+    total:      liveData.scores?.esg_score          ?? D.score.total,
+    grade:      liveData.investor_output?.esg_grade  ?? D.score.grade,
+    e:          liveData.scores?.environmental_score ?? D.score.e,
+    s:          liveData.scores?.social_score        ?? D.score.s,
+    g:          liveData.scores?.governance_score    ?? D.score.g,
+    trend:      D.score.trend,
+    percentile: D.score.percentile,
+    sectorAvg:  D.score.sectorAvg,
+    globalAvg:  D.score.globalAvg,
+  } : D.score;
 
   const esgBars = [
     { lbl:'Environmental (E)', val:sc.e, color:'#00E5A0', wt:'40%' },
@@ -723,6 +756,21 @@ function App() {
 
         <div className="tb-right">
           <span className="tb-clock">{clock}</span>
+          {liveStatus === 'loaded'
+            ? <span className="tb-live" style={{cursor:'pointer',background:'rgba(0,229,160,.12)',padding:'3px 10px',borderRadius:'4px'}} onClick={() => { setLiveData(null); setLiveStatus('idle'); }}>
+                <span className="live-dot"/>AI LIVE · Reset
+              </span>
+            : liveStatus === 'loading'
+            ? <span className="tb-live" style={{opacity:.6}}>⟳ Loading…</span>
+            : liveStatus === 'error'
+            ? <span style={{fontFamily:'var(--mono)',fontSize:'10px',color:'var(--r)',padding:'3px 10px'}}>⚠ No AI report yet</span>
+            : <button onClick={loadLiveData} style={{
+                fontFamily:'var(--mono)',fontSize:'9px',fontWeight:600,
+                letterSpacing:'.08em',textTransform:'uppercase',
+                background:'rgba(0,229,160,.12)',border:'1px solid rgba(0,229,160,.3)',
+                color:'var(--g)',borderRadius:'4px',padding:'4px 10px',cursor:'pointer',
+              }}>✦ Load AI Data</button>
+          }
           <span className="tb-live"><span className="live-dot"/>LIVE</span>
         </div>
       </div>
@@ -740,6 +788,11 @@ function App() {
               {D.co.name}
               <span className="co-ticker">{D.co.ticker}</span>
             </div>
+            {liveData?.investor_output?.investment_thesis && (
+              <div style={{fontFamily:'var(--mono)',fontSize:'9px',color:'var(--g)',margin:'4px 0 6px',opacity:.8,maxWidth:'420px',lineHeight:1.4}}>
+                ✦ {liveData.investor_output.investment_thesis}
+              </div>
+            )}
             <div className="co-meta">
               <span>{D.co.sector}</span>
               <span className="sep">·</span>
@@ -752,14 +805,17 @@ function App() {
           </div>
 
           <div className="hd-score">
-            <div className="hd-sc-lbl">CLIMACTIX SCORE</div>
+            <div className="hd-sc-lbl">{liveData ? 'AI ESG SCORE' : 'CLIMACTIX SCORE'}</div>
             <div style={{display:'flex',alignItems:'baseline',gap:6,justifyContent:'center'}}>
               <span className="hd-sc-num">{sc.total}</span>
               <span className="hd-sc-den">/100</span>
             </div>
             <div className="hd-sc-meta">
               <span className="hd-grade">{sc.grade}</span>
-              <span className="hd-delta">↑ +{sc.trend}pts vs FY24</span>
+              {liveData
+                ? <span style={{fontFamily:'var(--mono)',fontSize:'9px',color:'var(--g)',marginLeft:6}}>✦ AI</span>
+                : <span className="hd-delta">↑ +{sc.trend}pts vs FY24</span>
+              }
             </div>
             <div className="hd-pctile">
               Top {100 - sc.percentile}% in sector · Sector avg {sc.sectorAvg} · Global avg {sc.globalAvg}

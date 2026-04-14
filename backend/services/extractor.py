@@ -17,6 +17,8 @@ def extract_text(content: bytes, filename: str, content_type: str = "") -> str:
         return _extract_docx(content)
     elif fn.endswith(".xlsx") or "spreadsheet" in content_type or "excel" in content_type:
         return _extract_xlsx(content)
+    elif fn.endswith(".csv") or "text/csv" in content_type or "csv" in content_type:
+        return _extract_csv(content)
     elif fn.endswith(".txt") or "text/plain" in content_type:
         return content.decode("utf-8", errors="replace")
     else:
@@ -88,6 +90,37 @@ def _extract_xlsx(content: bytes) -> str:
         return _clean_text("\n".join(parts))
     except ImportError:
         raise RuntimeError("openpyxl not installed. Run: pip install openpyxl")
+
+
+def _extract_csv(content: bytes) -> str:
+    """Extract text from CSV — renders as labelled rows for the AI."""
+    import csv
+
+    try:
+        text = content.decode("utf-8", errors="replace")
+        reader = csv.reader(text.splitlines())
+        rows   = list(reader)
+        if not rows:
+            return ""
+
+        headers = rows[0] if rows else []
+        parts   = []
+
+        for row in rows[1:]:
+            if not any(cell.strip() for cell in row):
+                continue
+            # Pair each cell with its header for readable context
+            pairs = []
+            for i, cell in enumerate(row):
+                if cell.strip():
+                    label = headers[i].strip() if i < len(headers) else f"Column {i+1}"
+                    pairs.append(f"{label}: {cell.strip()}")
+            if pairs:
+                parts.append(" | ".join(pairs))
+
+        return _clean_text("\n".join(parts))
+    except Exception as e:
+        raise RuntimeError(f"CSV extraction failed: {e}")
 
 
 def _clean_text(text: str) -> str:

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ company_name }} ESG Intelligence Report {{ report_year }}</title>
+  <style>
+    /* ════════════════════════════════════════════════════
+       CLIMACTIX AI — Premium ESG Report Template
+       BCG / McKinsey-grade document design
+       Rendered via WeasyPrint → PDF
+    ════════════════════════════════════════════════════ */
+
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --forest:    #2d5a3d;
+      --forest-md: #3a7a55;
+      --forest-lt: #4dcc8f;
+      --env:       #2d8a5e;
+      --soc:       #1a6b8a;
+      --gov:       #b8763a;
+      --ink:       #1a1a14;
+      --ink-soft:  #4a4a38;
+      --muted:     #7a7a68;
+      --cream:     #f5f2eb;
+      --cream-dk:  #ede9e0;
+      --border:    #d8d4c8;
+      --danger:    #cc3311;
+      --warn:      #dd8800;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 10pt;
+      color: var(--ink);
+      background: white;
+      line-height: 1.6;
+    }
+
+    /* ── PAGE SETUP ── */
+    @page {
+      size: A4;
+      margin: 18mm 20mm 20mm 20mm;
+      @bottom-center {
+        content: "Climactix AI  ·  " attr(data-company) "  ·  Page " counter(page) " of " counter(pages);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 7pt;
+        color: #aaa;
+      }
+    }
+
+    /* ── COVER PAGE ── */
+    .cover {
+      height: 250mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--forest);
+      padding-bottom: 20mm;
+      page-break-after: always;
+    }
+    .cover-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40mm;
+    }
+    .cover-brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 14pt;
+      font-weight: 700;
+      color: var(--forest);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .cover-brand-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .cover-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .cover-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 30pt;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .cover-subtitle {
+      font-size: 11pt;
+      color: var(--ink-soft);
+      margin-bottom: 28px;
+    }
+    .cover-grade-row {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .cover-grade {
+      font-family: 'Playfair Display', serif;
+      font-size: 56pt;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1;
+    }
+    .cover-grade-info { flex: 1; }
+    .cover-grade-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .cover-positioning {
+      font-size: 10pt;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .cover-scores-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    .cover-scores-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: white;
+      background: var(--forest);
+      padding: 7px 10px;
+      text-align: center;
+    }
+    .cover-scores-table td {
+      font-family: 'Playfair Display', serif;
+      font-size: 18pt;
+      font-weight: 700;
+      text-align: center;
+      padding: 10px;
+      background: var(--cream);
+    }
+    .cover-scores-table td.env { color: var(--env); }
+    .cover-scores-table td.soc { color: var(--soc); }
+    .cover-scores-table td.gov { color: var(--gov); }
+    .cover-scores-table td.esg { color: var(--forest); }
+    .cover-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section-header {
+      border-top: 2px solid var(--forest);
+      padding-top: 10px;
+      margin-top: 24px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .section-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 22pt;
+      color: var(--cream-dk);
+      font-weight: 700;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 14pt;
+      font-weight: 700;
+      color: var(--forest);
+    }
+
+    h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 9pt;
+      font-weight: 700;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    p { margin-bottom: 8px; font-size: 10pt; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── HEADLINE QUOTE ── */
+    .headline-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 13pt;
+      font-weight: 700;
+      color: var(--ink);
+      border-left: 4px solid var(--forest);
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      background: var(--cream);
+    }
+
+    /* ── METRIC TAGS ── */
+    .metrics-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .metric-tag {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      color: var(--forest);
+    }
+
+    /* ── LISTS ── */
+    ul.esg-list {
+      list-style: none;
+      padding: 0;
+      margin: 6px 0 12px 0;
+    }
+    ul.esg-list li {
+      padding: 5px 0 5px 16px;
+      border-bottom: 1px solid var(--cream-dk);
+      font-size: 9.5pt;
+      color: var(--ink-soft);
+      position: relative;
+    }
+    ul.esg-list li:last-child { border-bottom: none; }
+    ul.esg-list li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--forest);
+      font-size: 12pt;
+      line-height: 1.3;
+    }
+    ul.esg-list.risks li::before   { content: '→'; color: var(--danger); }
+    ul.esg-list.opps li::before    { content: '✓'; color: var(--env); font-size: 9pt; }
+
+    /* ── RECOMMENDATION BOX ── */
+    .rec-box {
+      background: var(--cream);
+      border-left: 3px solid var(--forest);
+      padding: 10px 14px;
+      font-style: italic;
+      color: var(--forest);
+      font-size: 9.5pt;
+      margin-top: 12px;
+    }
+
+    /* ── PILLAR CARDS ── */
+    .pillar-row {
+      display: flex;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .pillar-card {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .pillar-card-head {
+      padding: 8px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: white;
+    }
+    .pillar-card-head.env { background: var(--env); }
+    .pillar-card-head.soc { background: var(--soc); }
+    .pillar-card-head.gov { background: var(--gov); }
+    .pillar-card-body {
+      padding: 10px 12px;
+      background: var(--cream);
+    }
+    .pillar-card-score {
+      font-family: 'Playfair Display', serif;
+      font-size: 26pt;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .pillar-card-score.env { color: var(--env); }
+    .pillar-card-score.soc { color: var(--soc); }
+    .pillar-card-score.gov { color: var(--gov); }
+    .pillar-card-rationale {
+      font-size: 7.5pt;
+      color: var(--ink-soft);
+      margin-top: 4px;
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    /* ── RISK FLAGS ── */
+    .risk-item {
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .risk-item:last-child { margin-bottom: 0; }
+    .risk-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      background: var(--cream);
+    }
+    .sev-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 6.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+    .sev-badge.High   { background: rgba(204,51,17,0.15);  color: var(--danger); }
+    .sev-badge.Medium { background: rgba(221,136,0,0.15);  color: var(--warn); }
+    .sev-badge.Low    { background: rgba(90,110,90,0.12);  color: var(--muted); }
+    .risk-title-text {
+      font-weight: 600;
+      font-size: 9.5pt;
+      flex: 1;
+    }
+    .risk-cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .risk-body { padding: 10px 14px; }
+    .risk-desc { font-size: 9pt; color: var(--ink-soft); margin-bottom: 6px; }
+    .risk-mit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      color: var(--forest);
+      background: rgba(45,90,61,0.06);
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+
+    /* ── KPI GRID ── */
+    .kpi-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .kpi-chip {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 7px 10px;
+      background: var(--cream);
+      min-width: 100px;
+    }
+    .kpi-chip-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 6.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .kpi-chip-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 13pt;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1;
+    }
+    .kpi-chip-unit  { font-size: 7pt; color: var(--muted); }
+    .trend-up   { color: var(--env); }
+    .trend-down { color: var(--danger); }
+    .trend-flat { color: var(--muted); }
+
+    /* ── INSIGHTS ── */
+    .insights-two-col {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .insights-col { flex: 1; }
+    .insights-col-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 6px 10px;
+      border-radius: 3px 3px 0 0;
+    }
+    .insights-col-head.improving { background: rgba(45,138,94,0.12); color: var(--env); }
+    .insights-col-head.attention { background: rgba(204,68,17,0.10);  color: var(--danger); }
+    .insight-item {
+      border: 1px solid var(--border);
+      border-top: none;
+      padding: 8px 10px;
+    }
+    .insight-item-title { font-weight: 600; font-size: 9pt; margin-bottom: 3px; }
+    .insight-item-detail { font-size: 8.5pt; color: var(--ink-soft); line-height: 1.4; }
+    .insight-metric {
+      display: inline-block;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      color: var(--forest);
+      margin-top: 4px;
+    }
+    .urgency-pill {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 6.5pt;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .urgency-pill.High   { background: rgba(204,51,17,0.12); color: var(--danger); }
+    .urgency-pill.Medium { background: rgba(221,136,0,0.12); color: var(--warn); }
+    .urgency-pill.Low    { background: rgba(90,110,90,0.10); color: var(--muted); }
+
+    /* ── SDG CARDS ── */
+    .sdg-item {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .sdg-item:last-child { margin-bottom: 0; }
+    .sdg-icon { font-size: 18pt; flex-shrink: 0; line-height: 1; }
+    .sdg-body { flex: 1; }
+    .sdg-name-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .sdg-name { font-weight: 700; font-size: 9.5pt; }
+    .sdg-num  { font-family: 'JetBrains Mono', monospace; font-size: 7.5pt; color: var(--muted); }
+    .sdg-explanation { font-size: 8.5pt; color: var(--ink-soft); line-height: 1.45; }
+    .sdg-evidence {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      color: var(--forest);
+      background: var(--cream);
+      padding: 4px 8px;
+      border-radius: 3px;
+      margin-top: 5px;
+      display: inline-block;
+    }
+    .sdg-score {
+      font-family: 'Playfair Display', serif;
+      font-size: 18pt;
+      font-weight: 700;
+      color: var(--forest);
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .sdg-relevance {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      text-align: right;
+      margin-top: 2px;
+    }
+    .sdg-relevance.High     { color: var(--env); }
+    .sdg-relevance.Medium   { color: var(--warn); }
+    .sdg-relevance.Moderate { color: var(--muted); }
+
+    /* ── SOCIAL MEDIA ── */
+    .social-item {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .social-head {
+      background: var(--cream-dk);
+      padding: 7px 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-soft);
+    }
+    .social-body {
+      padding: 10px 14px;
+      font-size: 9pt;
+      color: var(--ink-soft);
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+
+    /* ── PAGE BREAK HINTS ── */
+    .page-break { page-break-before: always; }
+    .avoid-break { page-break-inside: avoid; }
+
+    /* ── FOOTER LINE ── */
+    .report-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+      margin-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body data-company="{{ company_name }}">
+
+<!-- ══════════════════════════════════
+     COVER PAGE
+══════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-brand">
+    <div>
+      <div class="cover-brand-name">Climactix AI</div>
+      <div class="cover-brand-sub">ESG Intelligence Platform</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="cover-eyebrow">ESG Intelligence Report · {{ report_year }}</div>
+    <div class="cover-title">{{ report_title }}</div>
+    <div class="cover-subtitle">Prepared by Climactix AI for {{ company_name }} · {{ report_year }}</div>
+
+    {% if investor_output %}
+    <div class="cover-grade-row">
+      <div class="cover-grade">{{ investor_output.esg_grade or '—' }}</div>
+      <div class="cover-grade-info">
+        <div class="cover-grade-label">ESG Grade</div>
+        <div class="cover-positioning">{{ investor_output.sustainability_positioning or '' }}</div>
+      </div>
+    </div>
+    {% endif %}
+
+    <table class="cover-scores-table">
+      <tr>
+        <th>ESG Score</th>
+        <th>Environmental</th>
+        <th>Social</th>
+        <th>Governance</th>
+        <th>SDG Alignment</th>
+      </tr>
+      <tr>
+        <td class="esg">{{ scores.esg_score }}/100</td>
+        <td class="env">{{ scores.environmental_score }}/100</td>
+        <td class="soc">{{ scores.social_score }}/100</td>
+        <td class="gov">{{ scores.governance_score }}/100</td>
+        <td class="esg">{{ scores.sdg_alignment }}/100</td>
+      </tr>
+    </table>
+
+    <div class="cover-meta">
+      Frameworks: GRI · TCFD · ISSB IFRS S1/S2 · CSRD/ESRS · UN SDGs &nbsp;·&nbsp;
+      Generated {{ generated_date }} &nbsp;·&nbsp; Powered by Claude AI
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     1. INVESTOR BRIEF
+══════════════════════════════════ -->
+{% set ib = narratives.investor_brief %}
+{% if ib %}
+<div class="avoid-break">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title">Investor Brief</span>
+  </div>
+
+  {% if ib.headline %}
+  <div class="headline-quote">{{ ib.headline }}</div>
+  {% endif %}
+
+  {% if ib.executive_summary %}
+  {% for para in ib.executive_summary.split('\n\n') %}
+  {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+  {% endfor %}
+  {% endif %}
+
+  {% if ib.key_metrics %}
+  <h3>Key Metrics</h3>
+  <div class="metrics-row">
+    {% for m in ib.key_metrics %}
+    <span class="metric-tag">{{ m }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if ib.risks %}
+  <h3>Risks</h3>
+  <ul class="esg-list risks">
+    {% for r in ib.risks %}<li>{{ r }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if ib.opportunities %}
+  <h3>Opportunities</h3>
+  <ul class="esg-list opps">
+    {% for o in ib.opportunities %}<li>{{ o }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if ib.recommendation %}
+  <div class="rec-box">{{ ib.recommendation }}</div>
+  {% endif %}
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════
+     2. INVESTOR OUTPUT
+══════════════════════════════════ -->
+{% set io = narratives.investor_output %}
+{% if io %}
+<div class="page-break avoid-break">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title">Investor Output — Sustainability Positioning</span>
+  </div>
+
+  {% if io.investment_thesis %}
+  <h3>Investment Thesis</h3>
+  <p>{{ io.investment_thesis }}</p>
+  {% endif %}
+
+  <div class="pillar-row">
+    <div class="pillar-card">
+      <div class="pillar-card-head env">🌿 Environmental</div>
+      <div class="pillar-card-body">
+        <div class="pillar-card-score env">{{ scores.environmental_score }}</div>
+        <div class="pillar-card-rationale">{{ io.e_score_rationale or '' }}</div>
+      </div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-card-head soc">👥 Social</div>
+      <div class="pillar-card-body">
+        <div class="pillar-card-score soc">{{ scores.social_score }}</div>
+        <div class="pillar-card-rationale">{{ io.s_score_rationale or '' }}</div>
+      </div>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-card-head gov">⚖️ Governance</div>
+      <div class="pillar-card-body">
+        <div class="pillar-card-score gov">{{ scores.governance_score }}</div>
+        <div class="pillar-card-rationale">{{ io.g_score_rationale or '' }}</div>
+      </div>
+    </div>
+  </div>
+
+  {% if io.growth_opportunities %}
+  <h3>Growth Opportunities</h3>
+  <ul class="esg-list opps">
+    {% for o in io.growth_opportunities %}<li>{{ o }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if io.key_risks %}
+  <h3>Key Risks</h3>
+  <ul class="esg-list risks">
+    {% for r in io.key_risks %}<li>{{ r }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if io.peer_comparison %}
+  <div class="rec-box">{{ io.peer_comparison }}</div>
+  {% endif %}
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════
+     3. RISK FLAGS
+══════════════════════════════════ -->
+{% if narratives.risk_flags %}
+<div class="avoid-break">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title">ESG Risk Flags</span>
+  </div>
+  {% for flag in narratives.risk_flags %}
+  <div class="risk-item">
+    <div class="risk-head">
+      <span class="sev-badge {{ flag.severity }}">{{ flag.severity }}</span>
+      <span class="risk-title-text">{{ flag.title }}</span>
+      <span class="risk-cat">{{ flag.category }}</span>
+    </div>
+    <div class="risk-body">
+      <div class="risk-desc">{{ flag.description }}</div>
+      {% if flag.mitigation %}
+      <div class="risk-mit">✦ Mitigation: {{ flag.mitigation }}</div>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════
+     4. ESG STRUCTURED DATA
+══════════════════════════════════ -->
+{% set st = narratives.esg_structured %}
+{% if st %}
+<div class="page-break">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title">Structured ESG Data</span>
+  </div>
+
+  {% for pillar_key, pillar_label, pillar_cls in [('environmental','Environmental','env'),('social','Social','soc'),('governance','Governance','gov')] %}
+  {% set p = st[pillar_key] if pillar_key in st else {} %}
+  {% if p %}
+  <h3 class="{{ pillar_cls }}">{{ pillar_label }}</h3>
+  {% if p.kpis %}
+  <div class="kpi-grid">
+    {% for k in p.kpis %}
+    <div class="kpi-chip">
+      <div class="kpi-chip-label">{{ k.label }}</div>
+      <div class="kpi-chip-value">
+        {{ k.value }}
+        {% if k.trend == 'improving' %}<span class="trend-up"> ↑</span>
+        {% elif k.trend == 'declining' %}<span class="trend-down"> ↓</span>
+        {% else %}<span class="trend-flat"> →</span>{% endif %}
+      </div>
+      <div class="kpi-chip-unit">{{ k.unit }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if p.missing_fields %}
+  <p style="font-family:'JetBrains Mono',monospace;font-size:7.5pt;color:#b8763a;margin-top:4px;">
+    Not disclosed: {{ p.missing_fields | join(' · ') }}
+  </p>
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+
+  {% if st.data_completeness %}
+  <p style="font-family:'JetBrains Mono',monospace;font-size:8pt;color:#7a7a68;margin-top:8px;">
+    Data completeness: {{ st.data_completeness }}% · {{ st.total_kpis_found }} KPIs extracted
+  </p>
+  {% endif %}
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════
+     5. ESG INSIGHTS
+══════════════════════════════════ -->
+{% set ins = narratives.insights %}
+{% if ins %}
+<div class="avoid-break">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title">ESG Insights</span>
+  </div>
+
+  <div class="insights-two-col">
+    <div class="insights-col">
+      <div class="insights-col-head improving">↑ What's Improving</div>
+      {% for item in ins.improving %}
+      <div class="insight-item">
+        <div class="insight-item-title">{{ item.title }}</div>
+        <div class="insight-item-detail">{{ item.detail }}</div>
+        {% if item.metric %}<span class="insight-metric">{{ item.metric }}</span>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="insights-col">
+      <div class="insights-col-head attention">! Needs Attention</div>
+      {% for item in ins.needs_attention %}
+      <div class="insight-item">
+        <div class="insight-item-title">{{ item.title }}</div>
+        <div class="insight-item-detail">{{ item.detail }}</div>
+        {% if item.urgency %}<span class="urgency-pill {{ item.urgency }}">{{ item.urgency }}</span>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if ins.strategic_narrative %}
+  <div class="rec-box" style="margin-top:12px;">{{ ins.strategic_narrative }}</div>
+  {% endif %}
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════
+     6. ESG EXECUTIVE SUMMARY
+══════════════════════════════════ -->
+{% set es = narratives.esg_summary %}
+{% if es %}
+<div class="page-break">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-title">ESG Executive Summary</span>
+  </div>
+
+  {% if es.executive_summary %}
+  {% for para in es.executive_summary.split('\n\n') %}
+  {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+  {% endfor %}
+  {% endif %}
+
+  {% for key, label in [('environmental','🌿 Environmental'),('social','👥 Social'),('governance','⚖️ Governance'),('forward_guidance','Forward Guidance')] %}
+  {% if es[key] if key in es else False %}
+  <h3>{{ label }}</h3>
+  <p>{{ es[key] }}</p>
+  {% endif %}
+  {% endfor %}
+
+  {% if es.frameworks_applied %}
+  <div class="metrics-row" style="margin-top:12px;">
+    {% for fw in es.frameworks_applied %}
+    <span class="metric-tag">{{ fw }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════
+     7. SDG MAPPING
+══════════════════════════════════ -->
+{% set sdg = narratives.sdg_mapping %}
+{% if sdg %}
+<div class="page-break avoid-break">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <span class="section-title">UN SDG Alignment</span>
+  </div>
+
+  {% if sdg.alignment_summary %}
+  <p style="font-style:italic;color:var(--forest);margin-bottom:14px;">{{ sdg.alignment_summary }}</p>
+  {% endif %}
+
+  {% for s in sdg.top_sdgs %}
+  <div class="sdg-item avoid-break">
+    <div>
+      <div class="sdg-icon">{{ s.icon }}</div>
+    </div>
+    <div class="sdg-body">
+      <div class="sdg-name-row">
+        <span class="sdg-name">{{ s.name }}</span>
+        <span class="sdg-num">SDG {{ s.number }}</span>
+      </div>
+      <div class="sdg-explanation">{{ s.explanation }}</div>
+      {% if s.evidence %}
+      <div class="sdg-evidence">📊 {{ s.evidence }}</div>
+      {% endif %}
+    </div>
+    <div>
+      <div class="sdg-score">{{ s.relevance_score }}</div>
+      <div class="sdg-relevance {{ s.relevance_label }}">{{ s.relevance_label }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════
+     8. MARKETING NARRATIVE
+══════════════════════════════════ -->
+{% set mn = narratives.marketing_narrative %}
+{% if mn %}
+<div class="page-break">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <span class="section-title">Marketing Narrative</span>
+  </div>
+
+  {% if mn.headline %}<div class="headline-quote">{{ mn.headline }}</div>{% endif %}
+
+  {% if mn.story %}
+  {% for para in mn.story.split('\n\n') %}
+  {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+  {% endfor %}
+  {% endif %}
+
+  {% if mn.impact_statement %}
+  <div class="rec-box" style="font-style:normal;font-weight:600;">{{ mn.impact_statement }}</div>
+  {% endif %}
+
+  {% if mn.tagline %}
+  <h3>Brand Tagline</h3>
+  <p style="font-family:'Playfair Display',serif;font-size:13pt;color:var(--forest);font-weight:700;">"{{ mn.tagline }}"</p>
+  {% endif %}
+
+  {% if mn.brand_pillars %}
+  <h3>Brand Pillars</h3>
+  <ul class="esg-list">
+    {% for bp in mn.brand_pillars %}<li>{{ bp }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════
+     9. SOCIAL MEDIA CONTENT
+══════════════════════════════════ -->
+{% set sm = narratives.social_media %}
+{% if sm %}
+<div class="avoid-break">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <span class="section-title">Social Media Content</span>
+  </div>
+
+  {% if sm.linkedin %}
+  <div class="social-item">
+    <div class="social-head">💼 LinkedIn Post</div>
+    <div class="social-body">{{ sm.linkedin }}</div>
+  </div>
+  {% endif %}
+
+  {% if sm.instagram %}
+  <div class="social-item">
+    <div class="social-head">📸 Instagram Caption</div>
+    <div class="social-body">{{ sm.instagram }}</div>
+  </div>
+  {% endif %}
+
+  {% if sm.twitter_thread %}
+  <div class="social-item">
+    <div class="social-head">𝕏 X / Twitter Thread</div>
+    {% for tweet in sm.twitter_thread %}
+    <div style="padding:8px 14px;border-bottom:1px solid var(--border);font-size:8.5pt;color:var(--ink-soft);">{{ tweet }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+
+<!-- FOOTER -->
+<div class="report-footer">
+  Generated by Climactix AI · climactixglobal.com · Powered by Claude ·
+  {{ company_name }} ESG Intelligence Report {{ report_year }}
+</div>
+
+</body>
+</html>

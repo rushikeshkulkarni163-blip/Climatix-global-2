@@ -1013,6 +1013,39 @@
         <div id="eriBreakdownContainer"></div>
       </div>
 
+      <!-- AI Engine Bridge CTA -->
+      <div id="aiEngineCTA" style="
+        background: linear-gradient(135deg, #1a3d2a 0%, #2d5a3d 100%);
+        border-radius: 12px;
+        padding: 28px 28px 24px;
+        margin-bottom: 20px;
+        color: white;
+      ">
+        <div style="display:flex;align-items:flex-start;gap:16px;">
+          <div style="font-size:32px;flex-shrink:0;">✦</div>
+          <div style="flex:1;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:6px;">
+              Next Step · AI-Powered Analysis
+            </div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:6px;">
+              Generate Your Full ESG Intelligence Report
+            </div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.55;margin-bottom:18px;">
+              Your assessment answers are ready. Send them to the Climactix AI Engine to generate:
+              investor brief, E/S/G pillar breakdown, risk flags, SDG mapping, and a downloadable PDF — in under 45 seconds.
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button onclick="sendToAIEngine()" style="
+                background:#4dcc8f;color:#0a1a10;border:none;border-radius:6px;
+                padding:11px 22px;font-family:'JetBrains Mono',monospace;
+                font-size:11px;font-weight:700;letter-spacing:.05em;
+                cursor:pointer;text-transform:uppercase;
+              ">→ Analyse with AI Engine</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Export -->
       <div class="assess-export-row">
         <button class="assess-btn-export primary-exp" onclick="printReport()">
@@ -2072,6 +2105,90 @@
 
   function printReport() {
     window.print();
+  }
+
+  /* ── AI ENGINE BRIDGE ──────────────────────────────────────────────
+     Converts assessment answers into a structured ESG text payload
+     and opens climactix-ai.html with the data pre-filled.
+  ─────────────────────────────────────────────────────────────────── */
+  function sendToAIEngine() {
+    const catScores = {};
+    CATEGORIES.forEach(cat => { catScores[cat.id] = calcCategoryScore(cat.id); });
+    const fwScores = {};
+    FRAMEWORKS.forEach(fw => { fwScores[fw.id] = calcFwScore(fw.id); });
+    const eriScore = calcERIScore(catScores);
+    const tier = getERITier(eriScore);
+
+    const co = state.company.name || 'The Company';
+    const yr = state.company.year || new Date().getFullYear();
+    const ind = state.company.industry || 'Industry';
+
+    // ── Build structured ESG text for the AI ──
+    const lines = [
+      `Company: ${co}`,
+      `Industry: ${ind}`,
+      `Reporting Year: ${yr}`,
+      `ERI 2.0 Score: ${eriScore}/100`,
+      `Sustainability Tier: ${tier.name} — ${tier.desc}`,
+      ``,
+      `=== ESG SELF-ASSESSMENT RESULTS ===`,
+      ``,
+    ];
+
+    // Category scores → environmental / social / governance mapping
+    const envCats = ['energy','water','waste','air','ghg','biodiversity','noise','procurement'];
+    const socCats = ['wellbeing','sustainability'];
+    const govCats = ['compliance'];
+
+    const envScores = envCats.map(id => catScores[id]).filter(s => s !== undefined);
+    const socScores = socCats.map(id => catScores[id]).filter(s => s !== undefined);
+    const govScores = govCats.map(id => catScores[id]).filter(s => s !== undefined);
+    const avg = arr => arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0;
+
+    lines.push(`Environmental Performance Score: ${avg(envScores)}%`);
+    lines.push(`Social Performance Score: ${avg(socScores)}%`);
+    lines.push(`Governance Performance Score: ${avg(govScores)}%`);
+    lines.push(``);
+
+    // Detailed category breakdown
+    lines.push(`=== CATEGORY BREAKDOWN ===`);
+    CATEGORIES.forEach(cat => {
+      lines.push(`${cat.title}: ${catScores[cat.id]}%`);
+    });
+    lines.push(``);
+
+    // Framework readiness
+    lines.push(`=== FRAMEWORK READINESS ===`);
+    FRAMEWORKS.forEach(fw => {
+      const s = fwScores[fw.id];
+      const status = s >= 70 ? 'Ready' : s >= 40 ? 'Partial' : 'Gap';
+      lines.push(`${fw.name}: ${s}% (${status})`);
+    });
+    lines.push(``);
+
+    // Significant answers (non-N/A, non-empty)
+    lines.push(`=== KEY DISCLOSURES ===`);
+    Object.entries(state.answers).forEach(([key, val]) => {
+      if (val && val !== 'na' && key.includes('_written')) {
+        lines.push(`${key.replace(/_written$/,'').replace(/_/g,' ')}: ${val}`);
+      }
+    });
+    Object.entries(state.answers).forEach(([key, val]) => {
+      if (val && val !== 'na' && !key.includes('_written') && !key.includes('_numeric')) {
+        const answer = val === 'yes' ? 'Yes' : val === 'no' ? 'No' : val === 'partial' ? 'Partial' : val;
+        lines.push(`${key.replace(/_/g,' ')}: ${answer}`);
+      }
+    });
+
+    const esgText = lines.join('\n');
+
+    // Store in sessionStorage for the AI page to pick up
+    sessionStorage.setItem('climactix_prefill_text',    esgText);
+    sessionStorage.setItem('climactix_prefill_company', co);
+    sessionStorage.setItem('climactix_prefill_year',    String(yr));
+
+    // Navigate to AI Engine
+    window.location.href = 'climactix-ai.html?source=assessment';
   }
 
   function retakeAssessment() {

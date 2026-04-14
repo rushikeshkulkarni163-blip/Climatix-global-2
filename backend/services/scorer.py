@@ -1,10 +1,13 @@
 """
 Climactix AI — ESG Scoring Service
-Produces three lightweight scores from the extracted ESG text and generated narratives:
-  • ESG Score        (0–100) — how strong and comprehensive the ESG data is
-  • SDG Alignment    (0–100) — breadth and depth of UN SDG coverage
-  • Readability      (0–100) — how clear and accessible the generated content is
-  • Content Quality  (0–100) — depth, specificity, and professional calibre
+Produces seven scores from the extracted ESG text and generated narratives:
+  • ESG Score            (0–100) — overall ESG performance
+  • Environmental Score  (0–100) — depth of environmental data
+  • Social Score         (0–100) — depth of social data
+  • Governance Score     (0–100) — depth of governance data
+  • SDG Alignment        (0–100) — breadth and depth of UN SDG coverage
+  • Readability          (0–100) — how clear and accessible the generated content is
+  • Content Quality      (0–100) — depth, specificity, and professional calibre
 """
 
 import re
@@ -16,25 +19,30 @@ _ENV_KEYWORDS = [
     "emission", "carbon", "co2", "ghg", "scope 1", "scope 2", "scope 3",
     "net-zero", "net zero", "renewable", "solar", "wind", "energy", "water",
     "waste", "circular", "biodiversity", "deforestation", "climate", "tcfd",
-    "sbti", "science-based", "paris", "temperature", "decarboni",
+    "sbti", "science-based", "paris", "temperature", "decarboni", "recycl",
+    "landfill", "effluent", "kwh", "mwh", "fugitive", "refrigerant",
 ]
 
 _SOC_KEYWORDS = [
     "employee", "worker", "gender", "diversity", "inclusion", "health",
     "safety", "trir", "training", "community", "human rights", "supply chain",
-    "labour", "labor", "living wage", "wellbeing", "engagement",
+    "labour", "labor", "living wage", "wellbeing", "engagement", "turnover",
+    "parental", "disability", "indigenous", "modern slavery", "fatality",
+    "accident", "injury", "pay gap", "ethnicity", "volunteer",
 ]
 
 _GOV_KEYWORDS = [
     "board", "governance", "audit", "compliance", "policy", "transparency",
     "disclosure", "reporting", "framework", "assurance", "verification",
     "independent", "third-party", "executive", "remuneration", "ethics",
-    "anti-corruption", "whistleblower", "risk management",
+    "anti-corruption", "whistleblower", "risk management", "director",
+    "committee", "shareholder", "fiduciary", "regulatory", "code of conduct",
+    "bribery", "data privacy", "cybersecurity", "supply chain due diligence",
 ]
 
 _POSITIVE_SIGNALS = [
     r"\d+%",           # percentage figures
-    r"−\d",           # reductions
+    r"−\d",            # reductions
     r"reduced",
     r"decreased",
     r"improved",
@@ -53,23 +61,31 @@ _POSITIVE_SIGNALS = [
     r"iso 50001",
     r"target",
     r"commitment",
+    r"aligned",
+    r"milestone",
 ]
 
 
 # ── Public API ─────────────────────────────────────────────────────────────────
 
 def calculate_scores(esg_text: str, narratives: dict) -> dict:
-    """Return all four scores as a dict."""
-    esg = _esg_score(esg_text)
-    sdg = _sdg_score(narratives.get("sdg_mapping", {}))
+    """Return all seven scores as a dict."""
+    esg  = _esg_score(esg_text)
+    env  = _pillar_score(esg_text, _ENV_KEYWORDS, 50, base=44)
+    soc  = _pillar_score(esg_text, _SOC_KEYWORDS, 35, base=42)
+    gov  = _pillar_score(esg_text, _GOV_KEYWORDS, 30, base=40)
+    sdg  = _sdg_score(narratives.get("sdg_mapping", {}))
     read = _readability_score(narratives)
     qual = _content_quality_score(narratives)
 
     return {
-        "esg_score": esg,
-        "sdg_alignment": sdg,
-        "readability": read,
-        "content_quality": qual,
+        "esg_score":           esg,
+        "environmental_score": env,
+        "social_score":        soc,
+        "governance_score":    gov,
+        "sdg_alignment":       sdg,
+        "readability":         read,
+        "content_quality":     qual,
     }
 
 
@@ -77,7 +93,7 @@ def calculate_scores(esg_text: str, narratives: dict) -> dict:
 
 def _esg_score(text: str) -> int:
     """
-    Rule-based ESG score using keyword density across E, S, G pillars
+    Composite ESG score using keyword density across E, S, G pillars
     plus positive signal count.
     """
     lower = text.lower()
@@ -95,13 +111,32 @@ def _esg_score(text: str) -> int:
     pillar_score = e_norm + s_norm + g_norm  # 0–100
 
     # Bonus for positive signals
-    signal_hits = sum(
-        len(re.findall(pat, lower)) for pat in _POSITIVE_SIGNALS
-    )
+    signal_hits  = sum(len(re.findall(pat, lower)) for pat in _POSITIVE_SIGNALS)
     signal_bonus = min(signal_hits * 1.5, 20)
 
     raw = pillar_score * 0.75 + signal_bonus
-    return _clamp(int(raw) + 42, 55, 97)   # floor at 55, cap at 97
+    return _clamp(int(raw) + 42, 55, 97)
+
+
+def _pillar_score(text: str, keywords: list, saturation: int, base: int = 40) -> int:
+    """
+    Score a single E, S, or G pillar using keyword density.
+    saturation  — keyword count per 1000 words considered "full coverage"
+    base        — floor offset so sparse data doesn't read as zero
+    """
+    lower = text.lower()
+    words = len(lower.split()) or 1
+
+    hits    = sum(lower.count(kw) for kw in keywords)
+    density = hits / words * 1000                         # per 1000 words
+    norm    = min(density / saturation * 55, 55)          # 0–55 from density
+
+    # Small bonus from positive signals
+    signal_hits  = sum(len(re.findall(pat, lower)) for pat in _POSITIVE_SIGNALS)
+    signal_bonus = min(signal_hits * 0.6, 12)
+
+    raw = norm + signal_bonus
+    return _clamp(int(raw) + base, 38, 97)
 
 
 def _sdg_score(sdg_mapping: dict) -> int:
@@ -111,8 +146,8 @@ def _sdg_score(sdg_mapping: dict) -> int:
         return 58
 
     relevance_scores = [s.get("relevance_score", 70) for s in top_sdgs]
-    avg_relevance = sum(relevance_scores) / len(relevance_scores)
-    breadth_bonus = min(len(top_sdgs) * 4, 20)  # up to +20 for 5 SDGs
+    avg_relevance    = sum(relevance_scores) / len(relevance_scores)
+    breadth_bonus    = min(len(top_sdgs) * 4, 20)  # up to +20 for 5 SDGs
 
     raw = avg_relevance * 0.8 + breadth_bonus
     return _clamp(int(raw), 50, 96)
@@ -134,15 +169,10 @@ def _readability_score(narratives: dict) -> int:
 
     avg_words = sum(len(s.split()) for s in sentences) / len(sentences)
 
-    # Target: 15–22 words per sentence = excellent readability
-    if avg_words <= 18:
-        score = 90
-    elif avg_words <= 24:
-        score = 82
-    elif avg_words <= 30:
-        score = 74
-    else:
-        score = 65
+    if   avg_words <= 18: score = 90
+    elif avg_words <= 24: score = 82
+    elif avg_words <= 30: score = 74
+    else:                 score = 65
 
     return _clamp(score, 60, 95)
 
@@ -156,17 +186,17 @@ def _content_quality_score(narratives: dict) -> int:
         return 68
 
     word_count = len(all_text.split())
-    lower = all_text.lower()
+    lower      = all_text.lower()
 
-    # Professional specificity signals
     specificity_terms = [
         "material", "trajectory", "disclosure", "alignment", "framework",
         "target", "commitment", "pathway", "quantif", "assur",
         "metric", "baseline", "benchmark", "verified", "audit",
+        "investor", "risk", "opportunity", "strategy", "governance",
     ]
     specificity_hits = sum(lower.count(t) for t in specificity_terms)
 
-    length_score = min(word_count / 30, 60)           # 1800 words → 60 pts
+    length_score      = min(word_count / 30, 60)          # 1800 words → 60 pts
     specificity_score = min(specificity_hits * 1.8, 35)
 
     raw = length_score + specificity_score
