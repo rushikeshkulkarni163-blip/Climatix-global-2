@@ -87,6 +87,68 @@ def health():
     }
 
 
+# ── Climate Data ───────────────────────────────────────────────────────────────
+
+from services.climate_data import get_layer, LAYER_META, refresh_all as _refresh_climate
+
+_VALID_LAYERS = list(LAYER_META.keys())
+
+
+@app.on_event("startup")
+async def _warm_climate_cache():
+    """Pre-generate synthetic climate data on startup so first request is instant."""
+    import asyncio, concurrent.futures
+    loop = asyncio.get_event_loop()
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        await loop.run_in_executor(pool, _refresh_climate)
+
+
+@app.get("/api/climate-data")
+def climate_data(layer: str = "temperature"):
+    """
+    Return a compact 72×36 normalised climate grid for the requested layer.
+
+    Layers: temperature | co2 | sea_level | arctic_ice
+
+    Response shape:
+        {
+          "layer": "temperature",
+          "meta": { label, unit, source, description, legend, updated, data_source },
+          "grid": { "rows": 36, "cols": 72, "values": [0.0–1.0 × 2592] }
+        }
+    """
+    if layer not in _VALID_LAYERS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown layer '{layer}'. Valid values: {_VALID_LAYERS}",
+        )
+    try:
+        data = get_layer(layer)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Climate data error: {exc}")
+
+    return JSONResponse(content=data)
+
+
+@app.get("/api/climate-layers")
+def climate_layers():
+    """List all available climate layers with metadata."""
+    return JSONResponse(content={
+        "layers": [
+            {
+                "id":          k,
+                "label":       v["label"],
+                "unit":        v["unit"],
+                "source":      v["source"],
+                "description": v["description"],
+                "color_scale": v["color_scale"],
+                "legend":      v["legend"],
+            }
+            for k, v in LAYER_META.items()
+        ]
+    })
+
+
 # ── Upload ─────────────────────────────────────────────────────────────────────
 
 async def _handle_upload(file: UploadFile) -> dict:
