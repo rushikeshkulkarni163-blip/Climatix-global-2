@@ -2418,6 +2418,60 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
        A. HERO GLOBE — Three.js
     ══════════════════════════════════════════════ */
     /* ── Climate API URL (auto-detect dev vs production) ── */
+    /* ── OpenEO JS client (lazy-loaded) ──────────────────────────────────────
+       Copernicus Data Space — free registration: https://dataspace.copernicus.eu/
+       The JS client lets the browser query Sentinel data directly without a
+       Python backend. Used as a third-tier fallback after the Climactix API.
+    ──────────────────────────────────────────────────────────────────────── */
+    const OPENEO_BACKEND = 'https://openeo.dataspace.copernicus.eu';
+    let   _openeoConn    = null;
+
+    function _loadOpenEOScript() {
+      return new Promise((resolve, reject) => {
+        if (window.OpenEO) { resolve(); return; }
+        /* axios is required by the openEO JS client */
+        const ax = document.createElement('script');
+        ax.src = 'https://cdn.jsdelivr.net/npm/axios@0.21/dist/axios.min.js';
+        ax.onload = () => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/@openeo/js-client@2/openeo.min.js';
+          s.onload  = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        };
+        ax.onerror = reject;
+        document.head.appendChild(ax);
+      });
+    }
+
+    async function _connectOpenEO() {
+      if (_openeoConn) return _openeoConn;
+      await _loadOpenEOScript();
+      /* Connect anonymously — discovery works without auth.
+         Full data access requires free CDSE account credentials. */
+      _openeoConn = await window.OpenEO.OpenEO.connect(OPENEO_BACKEND);
+      return _openeoConn;
+    }
+
+    /* Expose a global helper so developers can explore from the console:
+       climactixOpenEO.explore()  — lists all collections
+       climactixOpenEO.connect()  — returns authenticated connection
+    */
+    window.climactixOpenEO = {
+      connect: _connectOpenEO,
+      explore: async function() {
+        const conn = await _connectOpenEO();
+        const cols = await conn.listCollections();
+        console.table(
+          (cols.collections || [])
+            .filter(c => /sentinel|era5|copernicus|cams/i.test(c.id))
+            .map(c => ({ id: c.id, title: c.title, keywords: (c.keywords||[]).join(', ') }))
+        );
+        return conn;
+      },
+    };
+
+    /* ── Climactix backend API URL ─────────────────────────────────────────── */
     const CLIMATE_API = (
       window.location.hostname === 'localhost' ||
       window.location.hostname === '127.0.0.1'
