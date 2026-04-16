@@ -117,15 +117,20 @@ def get_layer(layer: str) -> dict:
     """
     Return processed climate layer data as a JSON-serialisable dict.
 
-    Checks the on-disk cache first (24-hour TTL).  If stale or absent,
-    attempts a live CDS download; falls back to synthetic data on any failure.
+    Priority chain (first success wins):
+      1. On-disk cache   — 24-hour TTL, sub-millisecond reads
+      2. Copernicus CDS  — requires ~/.cdsapirc  (classic API)
+      3. OpenEO / CDSE   — requires OPENEO_USERNAME + OPENEO_PASSWORD env vars
+                           OR a ~/.openeo/auth-config.json token file
+                           Free registration: https://dataspace.copernicus.eu/
+      4. Synthetic model — always works, scientifically grounded fallback
     """
     if layer not in LAYER_META:
         raise ValueError(f"Unknown layer '{layer}'. Valid: {list(LAYER_META)}")
 
     cache_file = _CACHE_DIR / f"{layer}.json"
 
-    # ── Serve from cache if fresh ──────────────────────────────────────────────
+    # ── 1. Serve from cache if fresh ───────────────────────────────────────────
     if cache_file.exists():
         age = time.time() - cache_file.stat().st_mtime
         if age < _CACHE_TTL_SECONDS:
@@ -133,18 +138,27 @@ def get_layer(layer: str) -> dict:
             with open(cache_file) as f:
                 return json.load(f)
 
-    # ── Try live CDS download ──────────────────────────────────────────────────
     payload: Optional[dict] = None
+
+    # ── 2. Try Copernicus CDS ──────────────────────────────────────────────────
     try:
         payload = _fetch_from_cds(layer)
         log.info("climate_data: CDS download succeeded for '%s'", layer)
     except Exception as exc:
-        log.warning("climate_data: CDS unavailable for '%s' (%s), using fallback", layer, exc)
+        log.info("climate_data: CDS not available for '%s' (%s)", layer, exc)
 
-    # ── Synthetic fallback ─────────────────────────────────────────────────────
+    # ── 3. Try OpenEO / Copernicus Data Space ─────────────────────────────────
+    if payload is None:
+        try:
+            payload = _fetch_from_openeo(layer)
+            log.info("climate_data: OpenEO download succeeded for '%s'", layer)
+        except Exception as exc:
+            log.info("climate_data: OpenEO not available for '%s' (%s)", layer, exc)
+
+    # ── 4. Synthetic fallback ──────────────────────────────────────────────────
     if payload is None:
         payload = _generate_synthetic(layer)
-        log.info("climate_data: synthetic fallback generated for '%s'", layer)
+        log.info("climate_data: using synthetic model for '%s'", layer)
 
     # ── Persist to cache ───────────────────────────────────────────────────────
     try:
