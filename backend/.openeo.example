@@ -1,0 +1,77 @@
+# OpenEO / Copernicus Data Space Ecosystem — Setup Guide
+# ========================================================
+# This is the RECOMMENDED free data source for Climactix climate layers.
+# No quota limits for Sentinel data. No credit card required.
+#
+# ── STEP 1: Register (free, 2 minutes) ────────────────────────────────────────
+#   → https://dataspace.copernicus.eu/
+#   Click "Register" → enter email + password → verify email
+#   That's it. Same account works for:
+#     • openEO API (what we use here)
+#     • Copernicus Browser (visual explorer)
+#     • Sentinel Hub
+#
+# ── STEP 2: Set environment variables ─────────────────────────────────────────
+#   Add to backend/.env (already in .gitignore):
+#
+#     OPENEO_USERNAME=your@email.com
+#     OPENEO_PASSWORD=yourpassword
+#     OPENEO_BACKEND=https://openeo.dataspace.copernicus.eu
+#
+# ── STEP 3: Verify it works ───────────────────────────────────────────────────
+#   cd backend
+#   python3 -c "
+#   import openeo, os
+#   from dotenv import load_dotenv; load_dotenv()
+#   conn = openeo.connect(os.getenv('OPENEO_BACKEND','https://openeo.dataspace.copernicus.eu'))
+#   conn.authenticate_basic(os.getenv('OPENEO_USERNAME'), os.getenv('OPENEO_PASSWORD'))
+#   print('Connected:', conn.describe_account())
+#   cols = conn.list_collections()
+#   print('Collections:', len(cols), 'available')
+#   "
+#
+# ── STEP 4 (optional): Token-file login (no env vars needed after this) ───────
+#   python3 -m openeo auth login
+#   # Follow the browser prompt — token saved to ~/.openeo/auth-config.json
+#
+# ── Data collections used by Climactix ────────────────────────────────────────
+#
+#   Layer           Collection ID                   Sensor        Resolution
+#   -----------     ----------------------------    ---------     ----------
+#   temperature     SENTINEL3_SLSTR_L2_LST          Sentinel-3    500 m
+#   co2             SENTINEL_5P_L2_CH4              Sentinel-5P   5.6 km
+#   sea_level       SENTINEL6_P4_HR_ALT_NTC         Sentinel-6    ~1 km
+#   arctic_ice      (synthetic model — best for ice)
+#
+# ── What data is available (free forever) ─────────────────────────────────────
+#
+#   Satellite       Data type                       Coverage      Revisit
+#   ---------       ---------                       --------      -------
+#   Sentinel-1      SAR (radar) imagery             Global        6 days
+#   Sentinel-2      Optical RGB + multispectral      Global        5 days
+#   Sentinel-3      Sea/land surface temperature     Global        ~2 days
+#   Sentinel-5P     Atmospheric: NO2, CO, CH4, O3   Global        Daily
+#   Sentinel-6      Sea surface height (altimetry)  ±66° lat      10 days
+#   Landsat-5/7/8/9 Optical imagery (archive)       Global        16 days
+#   SRTM            Digital elevation model         ±60° lat      Once
+#
+# ── JavaScript client (use directly in browser) ───────────────────────────────
+#
+#   <script src="https://cdn.jsdelivr.net/npm/axios@0.21/dist/axios.min.js"></script>
+#   <script src="https://cdn.jsdelivr.net/npm/@openeo/js-client@2/openeo.min.js"></script>
+#
+#   <script>
+#   const { OpenEO } = window.OpenEO;
+#   const conn = await OpenEO.connect("https://openeo.dataspace.copernicus.eu");
+#   await conn.authenticateBasic("your@email.com", "yourpassword");
+#   const caps = await conn.capabilities();
+#   console.log("Backend:", caps.title());
+#   const collections = await conn.listCollections();
+#   console.log("Collections:", collections.collections.length);
+#   </script>
+#
+# ── Further reading ───────────────────────────────────────────────────────────
+#   openEO Python docs:  https://open-eo.github.io/openeo-python-client/
+#   openEO JS docs:      https://openeo.org/documentation/1.0/javascript/
+#   CDSE collections:    https://documentation.dataspace.copernicus.eu/APIs/openEO/Collections.html
+#   openEO Hub:          https://hub.openeo.org/  (browse all backends + collections)
