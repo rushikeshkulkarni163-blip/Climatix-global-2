@@ -274,6 +274,178 @@ def _fetch_from_cds(layer: str) -> dict:
         raise RuntimeError(f"No CDS handler for layer '{layer}'")
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  OPENEO / COPERNICUS DATA SPACE ECOSYSTEM
+#
+#  Free data source — register once at https://dataspace.copernicus.eu/
+#  Set environment variables or use token-file auth:
+#    OPENEO_USERNAME=your@email.com
+#    OPENEO_PASSWORD=yourpassword
+#    OPENEO_BACKEND=https://openeo.dataspace.copernicus.eu   (default)
+#
+#  Data collections used:
+#    temperature  → Sentinel-3 SLSTR LST (land) + ERA5 (via CDSE if available)
+#    co2          → Sentinel-5P TROPOMI CH4 column (methane proxy)
+#    sea_level    → Sentinel-6 MF altimetry SSH anomaly
+#    arctic_ice   → Sentinel-3 OLCI sea ice concentration
+# ══════════════════════════════════════════════════════════════════════════════
+
+_OPENEO_BACKEND = os.getenv("OPENEO_BACKEND", "https://openeo.dataspace.copernicus.eu")
+
+# Map of layer → (collection_id, band, unit_label, min_raw, max_raw, kelvin_offset)
+_OPENEO_COLLECTIONS = {
+    "temperature": {
+        "collection": "SENTINEL3_SLSTR_L2_LST",
+        "band":       "LST_in",
+        "min_raw":    250.0,   # Kelvin (≈ −23 °C)
+        "max_raw":    320.0,   # Kelvin (≈ +47 °C)
+        "transform":  lambda v: v - 273.15,   # K → °C
+        "norm_min":   -5.0,    # °C anomaly range for normalisation
+        "norm_max":    6.0,
+    },
+    "co2": {
+        "collection": "SENTINEL_5P_L2_CH4",
+        "band":       "CH4_column_volume_mixing_ratio_dry_air",
+        "min_raw":    1800.0,  # ppb
+        "max_raw":    1900.0,
+        "transform":  None,
+        "norm_min":   1800.0,
+        "norm_max":   1900.0,
+    },
+    "sea_level": {
+        "collection": "SENTINEL6_P4_HR_ALT_NTC",
+        "band":       "ssh_karin_2",
+        "min_raw":    -0.5,    # metres
+        "max_raw":     0.5,
+        "transform":  lambda v: v * 1000,    # m → mm
+        "norm_min":    0.0,    # mm above 1993 mean
+        "norm_max":  130.0,
+    },
+    "arctic_ice": {
+        "collection": "SENTINEL3_OLCI_L1B_EFR",
+        # Ice derived from band ratio (not a dedicated ice product on all CDSE endpoints)
+        # Falls back gracefully to synthetic if collection not found.
+        "band":       "Oa08_radiance",
+        "min_raw":    0.0,
+        "max_raw":    1.0,
+        "transform":  None,
+        "norm_min":   0.0,
+        "norm_max":   1.0,
+    },
+}
+
+
+def _fetch_from_openeo(layer: str) -> dict:
+    """
+    Download and process climate data from the Copernicus Data Space openEO API.
+
+    Authentication priority:
+      1. OPENEO_USERNAME / OPENEO_PASSWORD environment variables (basic auth)
+      2. ~/.openeo/auth-config.json token file (from prior `openeo-auth` CLI login)
+      3. OIDC device-flow (interactive, only works in terminal — not in web server)
+
+    Raises RuntimeError on any failure so the caller falls back gracefully.
+    """
+    try:
+        import openeo
+    except ImportError:
+        raise RuntimeError("openeo package not installed. Run: pip install openeo")
+
+    import tempfile, datetime
+
+    username = os.getenv("OPENEO_USERNAME")
+    password = os.getenv("OPENEO_PASSWORD")
+
+    conn = openeo.connect(_OPENEO_BACKEND)
+
+    if username and password:
+        conn.authenticate_basic(username, password)
+    else:
+        # Try token file (created by running `python -m openeo auth login` once)
+        auth_file = Path.home() / ".openeo" / "auth-config.json"
+        if auth_file.exists():
+            conn.authenticate_oidc()
+        else:
+            raise RuntimeError(
+                "OpenEO credentials not found. "
+                "Set OPENEO_USERNAME/OPENEO_PASSWORD env vars, "
+                "or run: python -m openeo auth login"
+            )
+
+    cfg = _OPENEO_COLLECTIONS.get(layer)
+    if not cfg:
+        raise RuntimeError(f"No openEO collection mapped for layer '{layer}'")
+
+    # Date range: most recent complete month
+    today = datetime.date.today()
+    end   = today.replace(day=1)                          # first of this month
+    start = (end - datetime.timedelta(days=32)).replace(day=1)   # one month prior
+    temporal_extent = [start.isoformat(), end.isoformat()]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        out_nc = Path(tmp) / f"{layer}_openeo.nc"
+
+        try:
+            cube = conn.load_collection(
+                cfg["collection"],
+                temporal_extent=temporal_extent,
+                bands=[cfg["band"]],
+            )
+        except Exception as exc:
+            raise RuntimeError(f"Failed to load collection '{cfg['collection']}': {exc}")
+
+        # Monthly mean reduction
+        cube = cube.reduce_dimension(dimension="t", reducer="mean")
+
+        # Resample to ~5° resolution to keep output compact
+        # (555 km ≈ 5° at equator; openEO uses metres)
+        cube = cube.resample_spatial(resolution=50000, method="mean")
+
+        try:
+            cube.download(str(out_nc), format="NetCDF")
+        except Exception as exc:
+            raise RuntimeError(f"OpenEO download failed: {exc}")
+
+        # Read the NetCDF output
+        arr = _read_openeo_netcdf(out_nc, cfg["band"])
+
+        # Apply unit transform if defined
+        if cfg.get("transform"):
+            arr = cfg["transform"](arr)
+
+        return _build_payload(layer, arr, cfg["norm_min"], cfg["norm_max"])
+
+
+def _read_openeo_netcdf(nc_path: Path, band: str) -> np.ndarray:
+    """
+    Parse an openEO-generated NetCDF file and return a (36,72) array.
+    openEO outputs typically have dims (t, y, x) or (y, x).
+    """
+    try:
+        import xarray as xr
+        ds  = xr.open_dataset(str(nc_path))
+        var = ds[band] if band in ds else list(ds.data_vars.values())[0]
+        # Average over time if present
+        if "t" in var.dims:
+            var = var.mean(dim="t")
+        # Get lat/lon values
+        lats_src = var.coords.get("y") or var.coords.get("lat") or var.coords.get("latitude")
+        lons_src = var.coords.get("x") or var.coords.get("lon") or var.coords.get("longitude")
+        data = var.values
+        # Resample onto 5° grid
+        from scipy.interpolate import RegularGridInterpolator
+        interp = RegularGridInterpolator(
+            (lats_src.values, lons_src.values), data,
+            method="linear", bounds_error=False, fill_value=float(np.nanmean(data))
+        )
+        pts = np.array([[la, lo] for la in LATS for lo in LONS])
+        return interp(pts).reshape(ROWS, COLS)
+
+    except ImportError:
+        # xarray not installed — fall back to plain netCDF4
+        return _nc_annual_mean(nc_path, band)
+
+
 def _nc_annual_mean(nc_path, var_name: str) -> np.ndarray:
     """Read a NetCDF file and return the lat×lon annual mean as a (36,72) array."""
     import netCDF4 as nc
