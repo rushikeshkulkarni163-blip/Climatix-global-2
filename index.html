@@ -2417,6 +2417,110 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
     /* ══════════════════════════════════════════════
        A. HERO GLOBE — Three.js
     ══════════════════════════════════════════════ */
+    /* ── Climate API URL (auto-detect dev vs production) ── */
+    const CLIMATE_API = (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1'
+    ) ? 'http://localhost:8000' : '';  /* set to your deployed backend URL */
+
+    /* ── Layer configuration for frontend ── */
+    const LAYER_CONFIG = {
+      temperature: {
+        label: 'Temperature Anomaly',
+        unit:  '°C anomaly',
+        badge: [
+          { val: '+3.2°C', loc: 'Arctic Circle' },
+          { val: '+2.9°C', loc: 'Middle East'   },
+          { val: '+1.9°C', loc: 'South Asia'    },
+        ],
+        colorFn: function(v) {
+          /* RdYlBu_r: 0=deep blue (cold) → 0.5=neutral → 1=deep red (hot) */
+          const dev = Math.abs(v - 0.5);
+          const a = Math.min(230, Math.round(18 + dev * 480));
+          if (v < 0.10) return [5,   48,  97,  a];
+          if (v < 0.22) return [33,  102, 172, a];
+          if (v < 0.35) return [92,  173, 209, a];
+          if (v < 0.46) return [171, 217, 233, a];
+          if (v < 0.54) return [224, 243, 248, Math.min(a, 60)];
+          if (v < 0.62) return [254, 224, 144, a];
+          if (v < 0.72) return [253, 174, 97,  a];
+          if (v < 0.83) return [244, 109, 67,  a];
+          if (v < 0.92) return [215, 48,  39,  a];
+          return               [165, 0,   38,  a];
+        },
+        rawLabel: function(v, minR, maxR) {
+          const raw = minR + v * (maxR - minR);
+          return (raw >= 0 ? '+' : '') + raw.toFixed(1) + '°C';
+        },
+      },
+      co2: {
+        label: 'CO₂ Concentration',
+        unit:  'ppm',
+        badge: [
+          { val: '422 ppm', loc: 'East Asia'      },
+          { val: '419 ppm', loc: 'North America'  },
+          { val: '415 ppm', loc: 'Southern Ocean' },
+        ],
+        colorFn: function(v) {
+          const a = Math.min(210, Math.round(12 + v * 200));
+          if (v < 0.15) return [255, 255, 204, a];
+          if (v < 0.30) return [255, 237, 160, a];
+          if (v < 0.45) return [254, 196, 79,  a];
+          if (v < 0.60) return [253, 141, 60,  a];
+          if (v < 0.75) return [240, 59,  32,  a];
+          return               [189, 0,   38,  a];
+        },
+        rawLabel: function(v, minR, maxR) {
+          return (minR + v * (maxR - minR)).toFixed(1) + ' ppm';
+        },
+      },
+      sea_level: {
+        label: 'Sea Level Anomaly',
+        unit:  'mm',
+        badge: [
+          { val: '+98 mm',  loc: 'W. Pacific'   },
+          { val: '+87 mm',  loc: 'Indian Ocean' },
+          { val: '+72 mm',  loc: 'N. Atlantic'  },
+        ],
+        colorFn: function(v) {
+          const a = Math.min(220, Math.round(8 + v * 215));
+          if (v < 0.15) return [222, 235, 247, a];
+          if (v < 0.30) return [158, 202, 225, a];
+          if (v < 0.50) return [107, 174, 214, a];
+          if (v < 0.65) return [66,  146, 198, a];
+          if (v < 0.80) return [33,  113, 181, a];
+          return               [8,   48,  107, a];
+        },
+        rawLabel: function(v, minR, maxR) {
+          return '+' + Math.round(minR + v * (maxR - minR)) + ' mm';
+        },
+      },
+      arctic_ice: {
+        label: 'Sea Ice Coverage',
+        unit:  '% coverage',
+        badge: [
+          { val: '85%',  loc: 'Central Arctic'  },
+          { val: '42%',  loc: 'Beaufort Sea'    },
+          { val: '< 5%', loc: 'Barents Sea'     },
+        ],
+        colorFn: function(v) {
+          if (v < 0.05) return [0, 0, 0, 0];   /* transparent — ice-free */
+          const a = Math.min(220, Math.round(v * 225));
+          if (v < 0.20) return [144, 202, 230, a];
+          if (v < 0.40) return [186, 225, 246, a];
+          if (v < 0.60) return [214, 238, 250, a];
+          if (v < 0.80) return [238, 248, 255, a];
+          return               [255, 255, 255, a];
+        },
+        rawLabel: function(v) {
+          return Math.round(v * 100) + '% ice cover';
+        },
+      },
+    };
+
+    /* ═══════════════════════════════════════════
+       A. HERO GLOBE — Three.js + Climate Heatmap
+    ═══════════════════════════════════════════ */
     function initHeroGlobe() {
       const canvas = document.getElementById('heroGlobeCanvas');
       if (!canvas) return;
