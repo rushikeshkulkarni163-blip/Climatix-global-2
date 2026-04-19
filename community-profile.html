@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile · Climactix Community</title>
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:      #0B3D2E;
+      --primary-mid:  #0e4f3a;
+      --primary-tint: #EBF5F1;
+      --primary-pale: #D1FAE5;
+      --white:        #FFFFFF;
+      --off-white:    #F9FAFB;
+      --grey-light:   #F3F4F6;
+      --grey-mid:     #E5E7EB;
+      --text:         #111827;
+      --text-2:       #374151;
+      --text-muted:   #6B7280;
+      --text-faint:   #9CA3AF;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+      --radius:       12px;
+      --nav-h:        60px;
+      --transition:   0.18s cubic-bezier(0.4,0,0.2,1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--off-white); color: var(--text); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* NAV */
+    .cx-nav {
+      position: sticky; top: 0; z-index: 200;
+      height: var(--nav-h); background: var(--white);
+      border-bottom: 1px solid var(--grey-mid);
+      display: flex; align-items: center; padding: 0 20px; gap: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .cx-nav-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .cx-nav-logo img { height: 32px; }
+    .cx-nav-logo-text { font-size: 15px; font-weight: 700; color: var(--primary); }
+    .cx-nav-link {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 500;
+      color: var(--text-muted); transition: var(--transition); position: relative;
+    }
+    .cx-nav-link:hover { background: var(--grey-light); color: var(--text); }
+    .cx-nav-link.active { color: var(--primary); }
+    .cx-nav-link.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--primary); border-radius:2px 2px 0 0; }
+    .cx-nav-link .nav-icon { font-size: 20px; line-height: 1; }
+    .cx-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; flex-shrink: 0; }
+    .cx-nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .cx-avatar-btn { display: flex; align-items: center; gap: 8px; padding: 4px 10px 4px 4px; border-radius: 20px; background: none; border: 1px solid var(--grey-mid); cursor: pointer; transition: var(--transition); }
+    .cx-avatar-btn:hover { background: var(--grey-light); }
+
+    /* LAYOUT */
+    .cx-page { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+
+    /* HERO */
+    .cx-profile-hero {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 24px 0 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-profile-banner {
+      height: 160px;
+      background: linear-gradient(135deg, #0B3D2E 0%, #146248 50%, #1a7a5a 100%);
+      position: relative;
+    }
+    .cx-profile-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,0.08)'/%3E%3C/svg%3E");
+    }
+    .cx-profile-hero-body { padding: 0 24px 24px; }
+    .cx-profile-avatar-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: -44px;
+      margin-bottom: 14px;
+    }
+    .cx-profile-avatar-xl {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      border: 4px solid white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 800; color: white;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .cx-profile-actions { display: flex; gap: 10px; align-items: center; }
+    .cx-btn-primary {
+      padding: 9px 22px;
+      background: var(--primary); color: white;
+      border-radius: 20px; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .cx-btn-primary:hover { background: var(--primary-mid); }
+    .cx-btn-primary.following { background: var(--primary-tint); color: var(--primary); border: 1.5px solid var(--primary); }
+    .cx-btn-outline {
+      padding: 8px 18px;
+      background: none; color: var(--text);
+      border: 1.5px solid var(--grey-mid);
+      border-radius: 20px; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .cx-btn-outline:hover { border-color: var(--text); background: var(--grey-light); }
+    .cx-connect-btn {
+      padding: 8px 18px;
+      background: none; color: var(--primary);
+      border: 1.5px solid var(--primary);
+      border-radius: 20px; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .cx-connect-btn:hover { background: var(--primary); color: white; }
+
+    .cx-profile-name {
+      font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cx-verified { color: var(--primary); font-size: 18px; }
+
+    .cx-role-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 11.5px; font-weight: 700; letter-spacing: 0.2px;
+    }
+    .cx-profile-headline { font-size: 14px; color: var(--text-2); margin-bottom: 6px; line-height: 1.5; }
+    .cx-profile-meta { font-size: 13px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+    .cx-profile-meta-item { display: flex; align-items: center; gap: 5px; }
+
+    /* SCORE CARD */
+    .cx-score-showcase {
+      background: linear-gradient(135deg, #0B3D2E, #1a7a5a);
+      border-radius: 12px;
+      padding: 20px;
+      color: white;
+      margin: 20px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .cx-score-number {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    .cx-score-label { font-size: 12px; font-weight: 600; opacity: 0.7; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
+    .cx-score-bar { height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; margin-top: 6px; flex: 1; max-width: 160px; }
+    .cx-score-bar-fill { height: 100%; background: #00E5A0; border-radius: 3px; transition: width 1s ease; }
+    .cx-score-breakdown { display: flex; gap: 16px; flex-wrap: wrap; }
+    .cx-score-sub { text-align: center; }
+    .cx-score-sub-val { font-size: 18px; font-weight: 700; }
+    .cx-score-sub-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+
+    /* STATS ROW */
+    .cx-stats-row {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid var(--grey-mid);
+      margin-top: 20px;
+    }
+    .cx-stat-item {
+      flex: 1; text-align: center; padding: 14px 8px;
+      border-right: 1px solid var(--grey-mid);
+      cursor: pointer; transition: var(--transition);
+    }
+    .cx-stat-item:last-child { border-right: none; }
+    .cx-stat-item:hover { background: var(--grey-light); }
+    .cx-stat-val { font-size: 20px; font-weight: 800; color: var(--primary); display: block; }
+    .cx-stat-label { font-size: 11.5px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+
+    /* TWO-COL LAYOUT */
+    .cx-profile-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+
+    /* TABS */
+    .cx-tabs {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius) var(--radius) 0 0;
+      display: flex;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .cx-tab {
+      flex: 1; padding: 14px 8px; text-align: center;
+      font-size: 13.5px; font-weight: 500; color: var(--text-muted);
+      cursor: pointer; transition: var(--transition);
+      border-bottom: 2px solid transparent;
+    }
+    .cx-tab:hover { background: var(--grey-light); color: var(--text); }
+    .cx-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; background: var(--white); }
+
+    /* CONTENT SECTIONS */
+    .cx-content-section {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      min-height: 200px;
+    }
+
+    /* SIDEBAR CARDS */
+    .cx-sidebar-card {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+    .cx-sidebar-card:last-child { margin-bottom: 0; }
+    .cx-card-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+
+    /* INTEREST TAGS */
+    .cx-interest-tag {
+      display: inline-flex; align-items: center;
+      padding: 5px 12px; border-radius: 16px;
+      background: var(--primary-tint); color: var(--primary);
+      font-size: 12px; font-weight: 600;
+      margin: 3px 2px;
+    }
+
+    /* PORTFOLIO */
+    .cx-portfolio-item {
+      padding: 12px;
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+    }
+    .cx-portfolio-item:last-child { margin-bottom: 0; }
+    .cx-portfolio-name { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .cx-portfolio-impact { font-size: 12px; color: var(--primary); font-weight: 500; }
+
+    /* FEED MINI POSTS */
+    .cx-mini-post {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--grey-light);
+    }
+    .cx-mini-post:last-child { border-bottom: none; }
+    .cx-mini-post-content { font-size: 13.5px; color: var(--text-2); line-height: 1.6; margin-bottom: 8px; }
+    .cx-mini-post-meta { font-size: 12px; color: var(--text-faint); display: flex; gap: 12px; }
+
+    /* PEOPLE GRID (Network) */
+    .cx-people-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+    .cx-person-card {
+      padding: 16px; text-align: center;
+      border: 1px solid var(--grey-mid); border-radius: var(--radius);
+      transition: var(--transition); cursor: pointer;
+    }
+    .cx-person-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
+    .cx-person-card-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: white;
+      margin: 0 auto 10px;
+    }
+    .cx-person-card-name { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .cx-person-card-role { font-size: 11.5px; color: var(--text-muted); }
+    .cx-person-card-btn {
+      display: block; margin-top: 10px; padding: 6px;
+      border: 1.5px solid var(--primary); border-radius: 14px;
+      font-size: 12px; font-weight: 600; color: var(--primary);
+      transition: var(--transition); cursor: pointer;
+    }
+    .cx-person-card-btn:hover { background: var(--primary); color: white; }
+    .cx-person-card-btn.following { background: var(--primary-tint); border-color: transparent; }
+
+    /* TOAST */
+    .cx-toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1F2937; color: white;
+      padding: 12px 20px; border-radius: 10px;
+      font-size: 13.5px; font-weight: 500; z-index: 9999;
+      transition: transform 0.3s ease; white-space: nowrap;
+    }
+    .cx-toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* EDIT MODAL */
+    .cx-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 1000;
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .cx-modal-overlay.open { display: flex; }
+    .cx-modal {
+      background: var(--white); border-radius: 16px;
+      width: 100%; max-width: 520px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn { from { opacity:0;transform:scale(0.96) translateY(8px); } to { opacity:1;transform:scale(1) translateY(0); } }
+    .cx-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--grey-mid); }
+    .cx-modal-title { font-size: 16px; font-weight: 700; }
+    .cx-modal-close { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text-muted);cursor:pointer;transition:var(--transition); }
+    .cx-modal-close:hover { background: var(--grey-light); }
+    .cx-modal-body { padding: 20px; }
+    .cx-field { margin-bottom: 16px; }
+    .cx-field label { display:block;font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:6px; }
+    .cx-field input, .cx-field textarea, .cx-field select {
+      width:100%; padding:10px 14px; border:1.5px solid var(--grey-mid);
+      border-radius:8px; font-size:13.5px; font-family:'Inter',sans-serif;
+      color:var(--text); outline:none; transition:var(--transition);
+    }
+    .cx-field input:focus, .cx-field textarea:focus, .cx-field select:focus { border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,61,46,0.07); }
+    .cx-field textarea { resize:vertical; min-height:80px; }
+    .cx-modal-footer { display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--grey-mid); }
+    .cx-save-btn { padding:9px 24px;background:var(--primary);color:white;border-radius:20px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;transition:var(--transition); }
+    .cx-save-btn:hover { background: var(--primary-mid); }
+
+    @media (max-width: 768px) {
+      .cx-profile-grid { grid-template-columns: 1fr; }
+      .cx-stats-row { flex-wrap: wrap; }
+      .cx-score-showcase { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-logo">
+    <img src="Climatix_logo.png" alt="Climactix" />
+    <div style="font-size:15px;font-weight:700;color:var(--primary);">Climactix</div>
+  </a>
+  <div style="flex:1;"></div>
+  <div style="display:flex;gap:4px;">
+    <a href="community.html" class="cx-nav-link"><span class="nav-icon">🏠</span>Feed</a>
+    <a href="forum.html"     class="cx-nav-link"><span class="nav-icon">💬</span>Forum</a>
+    <a href="funding-hub.html" class="cx-nav-link"><span class="nav-icon">💰</span>Funding</a>
+    <a href="community-profile.html" class="cx-nav-link active"><span class="nav-icon">👤</span>Network</a>
+  </div>
+  <div class="cx-nav-right">
+    <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
+      <div class="cx-avatar" id="navAvatar" style="background:#0B3D2E">?</div>
+      <span style="font-size:13px;font-weight:600;" id="navName">—</span>
+    </button>
+  </div>
+</nav>
+
+<div class="cx-page">
+
+  <!-- PROFILE HERO -->
+  <div class="cx-profile-hero">
+    <div class="cx-profile-banner">
+      <div class="cx-profile-banner-overlay"></div>
+    </div>
+    <div class="cx-profile-hero-body">
+      <div class="cx-profile-avatar-row">
+        <div class="cx-profile-avatar-xl" id="profileAvatar" style="background:#0B3D2E">?</div>
+        <div class="cx-profile-actions" id="profileActions">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <div class="cx-profile-name">
+        <span id="profileName">—</span>
+        <span class="cx-verified" id="profileVerified" style="display:none">✓</span>
+        <span class="cx-role-badge" id="profileRoleBadge"></span>
+      </div>
+      <div class="cx-profile-headline" id="profileBio">—</div>
+      <div class="cx-profile-meta" id="profileMeta">—</div>
+
+      <!-- Climate Score Showcase -->
+      <div class="cx-score-showcase" id="scoreShowcase">
+        <div>
+          <div class="cx-score-label">Climactix Score</div>
+          <div class="cx-score-number" id="scoreNumber">—</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+            <div class="cx-score-bar">
+              <div class="cx-score-bar-fill" id="scoreBarFill" style="width:0%"></div>
+            </div>
+            <span style="font-size:12px;opacity:0.8;" id="scorePercentile">—</span>
+          </div>
+        </div>
+        <div class="cx-score-breakdown" id="scoreBreakdown">
+          <div class="cx-score-sub"><div class="cx-score-sub-val" id="envScore">—</div><div class="cx-score-sub-label">Environmental</div></div>
+          <div class="cx-score-sub"><div class="cx-score-sub-val" id="socScore">—</div><div class="cx-score-sub-label">Social</div></div>
+          <div class="cx-score-sub"><div class="cx-score-sub-val" id="govScore">—</div><div class="cx-score-sub-label">Governance</div></div>
+          <div class="cx-score-sub"><div class="cx-score-sub-val" id="impactScore">—</div><div class="cx-score-sub-label">Impact</div></div>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="cx-stats-row">
+        <div class="cx-stat-item" onclick="switchTab('posts')">
+          <span class="cx-stat-val" id="statPosts">0</span>
+          <div class="cx-stat-label">Posts</div>
+        </div>
+        <div class="cx-stat-item" onclick="showFollowers()">
+          <span class="cx-stat-val" id="statFollowers">0</span>
+          <div class="cx-stat-label">Followers</div>
+        </div>
+        <div class="cx-stat-item" onclick="showFollowing()">
+          <span class="cx-stat-val" id="statFollowing">0</span>
+          <div class="cx-stat-label">Following</div>
+        </div>
+        <div class="cx-stat-item">
+          <span class="cx-stat-val" id="statViews">0</span>
+          <div class="cx-stat-label">Profile Views</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE GRID -->
+  <div class="cx-profile-grid" style="margin-bottom:40px;">
+
+    <!-- LEFT: Tabs + Content -->
+    <div>
+      <div class="cx-tabs">
+        <div class="cx-tab active" onclick="switchTab('posts')" data-tab="posts">Posts</div>
+        <div class="cx-tab" onclick="switchTab('about')" data-tab="about">About</div>
+        <div class="cx-tab" onclick="switchTab('network')" data-tab="network">Network</div>
+        <div class="cx-tab" onclick="switchTab('funding')" data-tab="funding">Funding</div>
+      </div>
+
+      <!-- Posts Tab -->
+      <div class="cx-content-section" id="tab-posts">
+        <div id="profilePosts">
+          <div style="text-align:center;padding:40px 20px;color:#9CA3AF;">
+            <div style="font-size:32px;margin-bottom:12px;">📝</div>
+            <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:4px;">No posts yet</div>
+            <div style="font-size:13px;">Posts and updates will appear here.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Tab -->
+      <div class="cx-content-section" id="tab-about" style="display:none;">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;color:#111;">About</h3>
+        <div style="font-size:14px;color:#374151;line-height:1.7;margin-bottom:20px;" id="aboutBio">—</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#9CA3AF;margin-bottom:8px;">Location</div>
+            <div style="font-size:13.5px;color:#374151;" id="aboutLocation">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#9CA3AF;margin-bottom:8px;">Organization</div>
+            <div style="font-size:13.5px;color:#374151;" id="aboutCompany">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#9CA3AF;margin-bottom:8px;">Website</div>
+            <div style="font-size:13.5px;" id="aboutWebsite">—</div>
+          </div>
+        </div>
+
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#9CA3AF;margin-bottom:10px;">Climate Focus Areas</div>
+        <div id="aboutInterests"></div>
+
+        <div style="margin-top:20px;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#9CA3AF;margin-bottom:10px;">Portfolio & Projects</div>
+        <div id="aboutPortfolio"></div>
+      </div>
+
+      <!-- Network Tab -->
+      <div class="cx-content-section" id="tab-network" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+          <h3 style="font-size:15px;font-weight:700;color:#111;">Climate Network</h3>
+          <span style="font-size:12.5px;color:#6B7280;" id="networkCount">0 connections</span>
+        </div>
+        <div class="cx-people-grid" id="networkGrid"></div>
+      </div>
+
+      <!-- Funding Tab -->
+      <div class="cx-content-section" id="tab-funding" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+          <h3 style="font-size:15px;font-weight:700;color:#111;">Funding Activity</h3>
+          <a href="funding-hub.html" style="font-size:12.5px;color:#0B3D2E;font-weight:600;">View Hub →</a>
+        </div>
+        <div id="fundingContent"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div>
+      <!-- Intro Card -->
+      <div class="cx-sidebar-card">
+        <div class="cx-card-title">Intro</div>
+        <div id="introContent" style="font-size:13.5px;color:#374151;line-height:1.65;"></div>
+      </div>
+
+      <!-- Climate Interests -->
+      <div class="cx-sidebar-card">
+        <div class="cx-card-title">Climate Focus</div>
+        <div id="interestTags"></div>
+      </div>
+
+      <!-- Verification & Trust -->
+      <div class="cx-sidebar-card">
+        <div class="cx-card-title">Trust & Verification</div>
+        <div id="trustItems"></div>
+      </div>
+
+      <!-- Similar Profiles -->
+      <div class="cx-sidebar-card">
+        <div class="cx-card-title">Similar Profiles</div>
+        <div id="similarProfiles"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="cx-modal-overlay" id="editModalOverlay" onclick="if(event.target===this)closeEditModal()">
+  <div class="cx-modal">
+    <div class="cx-modal-header">
+      <div class="cx-modal-title">Edit Profile</div>
+      <button class="cx-modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="cx-modal-body">
+      <div class="cx-field">
+        <label>Full Name</label>
+        <input type="text" id="editName" placeholder="Your full name" />
+      </div>
+      <div class="cx-field">
+        <label>Role</label>
+        <select id="editRole">
+          <option value="individual">Individual</option>
+          <option value="startup">Climate Startup</option>
+          <option value="corporate">Corporate / ESG</option>
+          <option value="investor">Investor / VC</option>
+          <option value="researcher">Researcher / NGO</option>
+        </select>
+      </div>
+      <div class="cx-field">
+        <label>Bio / Headline</label>
+        <textarea id="editBio" placeholder="Your professional bio and what you're working on in climate..."></textarea>
+      </div>
+      <div class="cx-field">
+        <label>Location</label>
+        <input type="text" id="editLocation" placeholder="City, Country" />
+      </div>
+      <div class="cx-field">
+        <label>Organization</label>
+        <input type="text" id="editCompany" placeholder="Company or institution" />
+      </div>
+      <div class="cx-field">
+        <label>Climate Interests (comma-separated)</label>
+        <input type="text" id="editInterests" placeholder="Solar Energy, Carbon Markets, ESG..." />
+      </div>
+    </div>
+    <div class="cx-modal-footer">
+      <button class="cx-modal-close" onclick="closeEditModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#374151;background:#F3F4F6;">Cancel</button>
+      <button class="cx-save-btn" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="cx-toast" id="toast"></div>
+
+<script type="module">
+import {
+  initCommunity, getProfiles, getProfile, updateProfile,
+  getCurrentUserProfile, isFollowing, toggleFollow,
+  getPosts, getSuggestedProfiles, getFundingRequests,
+  getRoleConfig, getAvatarColor, getInitials, timeAgo, formatCount,
+  ROLES, SEED_FUNDING, SEED_THREADS
+} from './community.js';
+
+let currentUser = null;
+let viewProfile = null;
+let isOwnProfile = false;
+
+initCommunity();
+currentUser = getCurrentUserProfile();
+
+// Determine which profile to show (URL param ?uid=xxx or own profile)
+const urlParams = new URLSearchParams(window.location.search);
+const uidParam = urlParams.get('uid');
+viewProfile = uidParam ? getProfile(uidParam) : currentUser;
+isOwnProfile = !uidParam || (currentUser && viewProfile && viewProfile.uid === currentUser.uid);
+
+if (!viewProfile) {
+  viewProfile = getProfiles()[0]; // Fallback to first profile
+}
+
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+function setupNav() {
+  if (!currentUser) return;
+  document.getElementById('navAvatar').textContent = currentUser.avatar;
+  document.getElementById('navAvatar').style.background = getAvatarColor(currentUser.role);
+  document.getElementById('navName').textContent = currentUser.fullName.split(' ')[0];
+}
+
+function renderProfile() {
+  if (!viewProfile) return;
+  const { uid, fullName, role, bio, location, company, website, avatar, verified,
+          climateScore, followersCount, followingCount, postsCount, interests, portfolio } = viewProfile;
+
+  const roleConf = getRoleConfig(role);
+  const avatarColor = getAvatarColor(role);
+
+  // Avatar & name
+  document.getElementById('profileAvatar').textContent = avatar;
+  document.getElementById('profileAvatar').style.background = avatarColor;
+  document.getElementById('profileName').textContent = fullName;
+  if (verified) document.getElementById('profileVerified').style.display = 'inline';
+  const rb = document.getElementById('profileRoleBadge');
+  rb.textContent = roleConf.label;
+  rb.style.background = roleConf.bg;
+  rb.style.color = roleConf.color;
+
+  // Bio & meta
+  document.getElementById('profileBio').textContent = bio || 'Climate professional on Climactix Global';
+  const metaItems = [];
+  if (location) metaItems.push(`📍 ${location}`);
+  if (company) metaItems.push(`🏢 ${company}`);
+  if (website) metaItems.push(`🌐 ${website}`);
+  metaItems.push(`⚡ Climactix Score: ${climateScore}`);
+  document.getElementById('profileMeta').innerHTML = metaItems.map(m =>
+    `<span class="cx-profile-meta-item">${escHtml(m)}</span>`
+  ).join('');
+
+  // Score
+  document.getElementById('scoreNumber').textContent = climateScore;
+  document.getElementById('scoreBarFill').style.width = climateScore + '%';
+  document.getElementById('scorePercentile').textContent = climateScore >= 80 ? 'Top 10%' : climateScore >= 60 ? 'Top 30%' : 'Top 50%';
+  document.getElementById('envScore').textContent = Math.round(climateScore * 0.35 + Math.random() * 5) + '/35';
+  document.getElementById('socScore').textContent = Math.round(climateScore * 0.25 + Math.random() * 3) + '/25';
+  document.getElementById('govScore').textContent = Math.round(climateScore * 0.25 + Math.random() * 3) + '/25';
+  document.getElementById('impactScore').textContent = Math.round(climateScore * 0.15 + Math.random() * 2) + '/15';
+
+  // Stats
+  document.getElementById('statPosts').textContent = formatCount(postsCount);
+  document.getElementById('statFollowers').textContent = formatCount(followersCount);
+  document.getElementById('statFollowing').textContent = formatCount(followingCount);
+  document.getElementById('statViews').textContent = formatCount(Math.floor(followersCount * 3.2));
+
+  // Actions
+  const actionsEl = document.getElementById('profileActions');
+  if (isOwnProfile) {
+    actionsEl.innerHTML = `
+      <button class="cx-btn-outline" onclick="openEditModal()">✏️ Edit Profile</button>
+      <button class="cx-btn-outline" onclick="window.location.href='dashboard.html'">📊 Dashboard</button>`;
+  } else {
+    const uid_c = currentUser?.uid || '';
+    const following = isFollowing(uid, uid_c);
+    actionsEl.innerHTML = `
+      <button class="cx-btn-primary ${following ? 'following' : ''}" id="followBtn"
+        onclick="handleFollow('${uid}')">
+        ${following ? '✓ Following' : '+ Follow'}
+      </button>
+      <button class="cx-connect-btn">💬 Connect</button>
+      <button class="cx-btn-outline">⋯</button>`;
+  }
+
+  // About tab content
+  document.getElementById('aboutBio').textContent = bio || '—';
+  document.getElementById('aboutLocation').textContent = location || '—';
+  document.getElementById('aboutCompany').textContent = company || '—';
+  if (website) {
+    document.getElementById('aboutWebsite').innerHTML = `<a href="https://${website}" target="_blank" style="color:#0B3D2E;">${escHtml(website)} ↗</a>`;
+  }
+
+  // Interests
+  const interestList = interests && interests.length ? interests : ['Climate Tech', 'Sustainability'];
+  document.getElementById('aboutInterests').innerHTML = interestList.map(i =>
+    `<span class="cx-interest-tag">${escHtml(i)}</span>`
+  ).join('');
+  document.getElementById('interestTags').innerHTML = interestList.map(i =>
+    `<span class="cx-interest-tag" style="margin:2px;">${escHtml(i)}</span>`
+  ).join('');
+
+  // Portfolio
+  const portList = portfolio && portfolio.length ? portfolio : [];
+  document.getElementById('aboutPortfolio').innerHTML = portList.length
+    ? portList.map(p => `
+      <div class="cx-portfolio-item">
+        <div class="cx-portfolio-name">${escHtml(p.name)}</div>
+        <div class="cx-portfolio-impact">🎯 ${escHtml(p.impact)}</div>
+      </div>`).join('')
+    : '<div style="color:#9CA3AF;font-size:13px;">No portfolio items added yet.</div>';
+
+  // Intro sidebar
+  document.getElementById('introContent').innerHTML = `
+    ${location ? `<div style="margin-bottom:8px;">📍 <strong>${escHtml(location)}</strong></div>` : ''}
+    ${company ? `<div style="margin-bottom:8px;">🏢 <strong>${escHtml(company)}</strong></div>` : ''}
+    <div style="margin-bottom:8px;">⚡ Climate Score: <strong>${climateScore}/100</strong></div>
+    <div>👥 <strong>${formatCount(followersCount)}</strong> followers · <strong>${formatCount(followingCount)}</strong> following</div>`;
+
+  // Trust
+  document.getElementById('trustItems').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
+        ${verified ? '✅' : '⬜'} <span style="color:${verified ? '#0B3D2E' : '#9CA3AF'}">Profile ${verified ? 'Verified' : 'Unverified'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
+        ${climateScore > 0 ? '✅' : '⬜'} <span style="color:${climateScore > 0 ? '#0B3D2E' : '#9CA3AF'}">Climactix Score ${climateScore > 0 ? 'Assessed' : 'Pending'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
+        ${company ? '✅' : '⬜'} <span style="color:${company ? '#0B3D2E' : '#9CA3AF'}">Organisation ${company ? 'Listed' : 'Not Listed'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
+        ⬜ <span style="color:#9CA3AF">Email Verified</span>
+      </div>
+    </div>`;
+}
+
+function renderPosts() {
+  const posts = getPosts().filter(p => p.authorId === viewProfile?.uid);
+  const container = document.getElementById('profilePosts');
+  if (!posts.length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px 20px;color:#9CA3AF;">
+      <div style="font-size:32px;margin-bottom:12px;">📝</div>
+      <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:4px;">No posts yet</div>
+      <div style="font-size:13px;">Start sharing your climate insights.</div>
+      ${isOwnProfile ? '<a href="community.html" style="display:inline-block;margin-top:14px;padding:9px 20px;background:#0B3D2E;color:white;border-radius:20px;font-size:13px;font-weight:600;">Create Post</a>' : ''}
+    </div>`;
+    return;
+  }
+  container.innerHTML = posts.map(p => `
+    <div class="cx-mini-post">
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+        <span style="font-size:10.5px;padding:2px 7px;border-radius:4px;font-weight:700;background:${p.type==='solution'?'#D1FAE5':p.type==='funding'?'#FEF3C7':p.type==='research'?'#EDE9FE':'#F3F4F6'};color:${p.type==='solution'?'#065F46':p.type==='funding'?'#92400E':p.type==='research'?'#5B21B6':'#374151'}">
+          ${p.type.toUpperCase()}
+        </span>
+        <span style="font-size:12px;color:#9CA3AF;">${timeAgo(p.timestamp)}</span>
+      </div>
+      <div class="cx-mini-post-content">${escHtml(p.content.slice(0, 220))}${p.content.length > 220 ? '…' : ''}</div>
+      <div class="cx-mini-post-meta">
+        <span>❤️ ${p.likes.length}</span>
+        <span>💬 ${p.comments.length}</span>
+        <span>👁 ${formatCount(p.views)}</span>
+        ${p.tags?.slice(0,3).map(t=>`<span style="color:#0B3D2E;">#${t}</span>`).join('') || ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderNetwork() {
+  const profiles = getProfiles().filter(p => p.uid !== viewProfile?.uid);
+  const uid = currentUser?.uid || '';
+  document.getElementById('networkCount').textContent = `${profiles.length} connections`;
+  document.getElementById('networkGrid').innerHTML = profiles.map(p => `
+    <div class="cx-person-card">
+      <div class="cx-person-card-avatar" style="background:${getAvatarColor(p.role)}">${p.avatar}</div>
+      <div class="cx-person-card-name">${escHtml(p.fullName)}</div>
+      <div class="cx-person-card-role">${getRoleConfig(p.role).label}</div>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:2px;">${formatCount(p.followersCount)} followers</div>
+      <button class="cx-person-card-btn ${isFollowing(p.uid, uid) ? 'following' : ''}"
+        onclick="handleFollowPerson('${p.uid}', this)">
+        ${isFollowing(p.uid, uid) ? 'Following' : '+ Follow'}
+      </button>
+    </div>
+  `).join('');
+}
+
+function renderFunding() {
+  const c = document.getElementById('fundingContent');
+  if (viewProfile?.role === 'startup') {
+    const items = SEED_FUNDING.filter(f => f.founderName === viewProfile.fullName);
+    if (items.length) {
+      c.innerHTML = items.map(f => `
+        <div style="padding:16px;border:1px solid #E5E7EB;border-radius:12px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div>
+              <div style="font-size:15px;font-weight:700;">${escHtml(f.startupName)}</div>
+              <div style="font-size:12px;color:#6B7280;">${escHtml(f.stage)} · ${escHtml(f.sector)}</div>
+            </div>
+            <span style="background:#EBF5F1;color:#0B3D2E;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;">⚡${f.climateScore}</span>
+          </div>
+          <div style="font-size:14px;color:#374151;margin-bottom:8px;">${escHtml(f.impact)}</div>
+          <div style="display:flex;gap:8px;">
+            <span style="background:#FEF3C7;color:#92400E;padding:4px 12px;border-radius:8px;font-size:13px;font-weight:700;">Ask: ${escHtml(f.ask)}</span>
+            <a href="funding-hub.html" style="padding:4px 12px;border:1.5px solid #0B3D2E;border-radius:8px;font-size:13px;font-weight:600;color:#0B3D2E;">View Full Pitch →</a>
+          </div>
+        </div>`).join('');
+    } else {
+      c.innerHTML = `<div style="text-align:center;padding:32px;color:#9CA3AF;">
+        <div style="font-size:28px;margin-bottom:10px;">💰</div>
+        <div style="font-size:14px;font-weight:600;color:#374151;">No funding requests yet</div>
+        <a href="funding-hub.html" style="display:inline-block;margin-top:12px;padding:8px 18px;background:#0B3D2E;color:white;border-radius:16px;font-size:13px;font-weight:600;">Post Funding Request</a>
+      </div>`;
+    }
+  } else if (viewProfile?.role === 'investor') {
+    c.innerHTML = `<div style="padding:14px;background:#EBF5F1;border-radius:12px;margin-bottom:16px;">
+      <div style="font-size:13.5px;font-weight:600;color:#0B3D2E;margin-bottom:4px;">🔍 Actively Investing</div>
+      <div style="font-size:13px;color:#374151;">Browse startups seeking funding that match this investor's focus areas.</div>
+      <a href="funding-hub.html" style="display:inline-block;margin-top:10px;padding:7px 16px;background:#0B3D2E;color:white;border-radius:14px;font-size:12.5px;font-weight:600;">Browse Startups →</a>
+    </div>`;
+  } else {
+    c.innerHTML = `<div style="text-align:center;padding:32px;color:#9CA3AF;">
+      <div style="font-size:28px;margin-bottom:10px;">💰</div>
+      <div style="font-size:14px;font-weight:600;color:#374151;">No funding activity</div>
+    </div>`;
+  }
+}
+
+function renderSimilarProfiles() {
+  const uid = viewProfile?.uid || '';
+  const similar = getProfiles()
+    .filter(p => p.uid !== uid && p.role === viewProfile?.role)
+    .slice(0, 3);
+  document.getElementById('similarProfiles').innerHTML = similar.map(p => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <div style="width:38px;height:38px;border-radius:50%;background:${getAvatarColor(p.role)};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">${p.avatar}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(p.fullName)}</div>
+        <div style="font-size:11.5px;color:#6B7280;">${getRoleConfig(p.role).label}</div>
+      </div>
+      <a href="community-profile.html?uid=${p.uid}" style="font-size:12px;font-weight:600;color:#0B3D2E;white-space:nowrap;">View →</a>
+    </div>
+  `).join('');
+}
+
+// Tabs
+window.switchTab = function(tabName) {
+  document.querySelectorAll('.cx-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
+  document.querySelectorAll('[id^="tab-"]').forEach(s => s.style.display = 'none');
+  document.getElementById(`tab-${tabName}`).style.display = 'block';
+};
+
+window.showFollowers = function() { showToast(`${viewProfile?.followersCount || 0} followers`); };
+window.showFollowing = function() { showToast(`Following ${viewProfile?.followingCount || 0} people`); };
+
+window.handleFollow = function(targetId) {
+  if (!currentUser) { showToast('Sign in to follow'); return; }
+  const following = toggleFollow(targetId, currentUser.uid);
+  const btn = document.getElementById('followBtn');
+  if (btn) { btn.textContent = following ? '✓ Following' : '+ Follow'; btn.classList.toggle('following', following); }
+  showToast(following ? 'Following!' : 'Unfollowed');
+};
+
+window.handleFollowPerson = function(targetId, btn) {
+  if (!currentUser) { showToast('Sign in to follow'); return; }
+  const following = toggleFollow(targetId, currentUser.uid);
+  btn.textContent = following ? 'Following' : '+ Follow';
+  btn.classList.toggle('following', following);
+  showToast(following ? 'Following!' : 'Unfollowed');
+};
+
+// Edit modal
+window.openEditModal = function() {
+  if (!currentUser) return;
+  document.getElementById('editName').value = currentUser.fullName || '';
+  document.getElementById('editRole').value = currentUser.role || 'individual';
+  document.getElementById('editBio').value = currentUser.bio || '';
+  document.getElementById('editLocation').value = currentUser.location || '';
+  document.getElementById('editCompany').value = currentUser.company || '';
+  document.getElementById('editInterests').value = (currentUser.interests || []).join(', ');
+  document.getElementById('editModalOverlay').classList.add('open');
+};
+
+window.closeEditModal = function() {
+  document.getElementById('editModalOverlay').classList.remove('open');
+};
+
+window.saveProfile = function() {
+  if (!currentUser) return;
+  const interests = document.getElementById('editInterests').value
+    .split(',').map(s => s.trim()).filter(Boolean);
+  updateProfile(currentUser.uid, {
+    fullName:  document.getElementById('editName').value.trim() || currentUser.fullName,
+    role:      document.getElementById('editRole').value,
+    bio:       document.getElementById('editBio').value.trim(),
+    location:  document.getElementById('editLocation').value.trim(),
+    company:   document.getElementById('editCompany').value.trim(),
+    interests,
+    avatar:    (document.getElementById('editName').value.trim() || currentUser.fullName)
+               .split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2),
+  });
+  closeEditModal();
+  location.reload();
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// Boot
+setupNav();
+renderProfile();
+renderPosts();
+renderNetwork();
+renderFunding();
+renderSimilarProfiles();
+// Animate score bar
+setTimeout(() => {
+  if (viewProfile) document.getElementById('scoreBarFill').style.width = viewProfile.climateScore + '%';
+}, 300);
+</script>
+</body>
+</html>

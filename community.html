@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community · Climactix Global</title>
+  <meta name="description" content="The global climate collaboration network. Connect with climate startups, investors, researchers, and ESG leaders." />
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:      #0B3D2E;
+      --primary-mid:  #0e4f3a;
+      --primary-tint: #EBF5F1;
+      --primary-pale: #D1FAE5;
+      --white:        #FFFFFF;
+      --off-white:    #F9FAFB;
+      --grey-light:   #F3F4F6;
+      --grey-mid:     #E5E7EB;
+      --grey-border:  #D1D5DB;
+      --text:         #111827;
+      --text-2:       #374151;
+      --text-muted:   #6B7280;
+      --text-faint:   #9CA3AF;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,0.10);
+      --radius:       12px;
+      --radius-sm:    8px;
+      --transition:   0.18s cubic-bezier(0.4,0,0.2,1);
+      --nav-h:        60px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--off-white);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input, textarea { font-family: inherit; }
+
+    /* ── NAV ── */
+    .cx-nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      height: var(--nav-h);
+      background: var(--white);
+      border-bottom: 1px solid var(--grey-mid);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .cx-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .cx-nav-logo img { height: 32px; }
+    .cx-nav-logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.3px;
+    }
+    .cx-nav-logo-sub {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+
+    .cx-nav-search {
+      flex: 1;
+      max-width: 380px;
+      position: relative;
+    }
+    .cx-nav-search input {
+      width: 100%;
+      height: 38px;
+      background: var(--grey-light);
+      border: 1px solid var(--grey-mid);
+      border-radius: 20px;
+      padding: 0 16px 0 40px;
+      font-size: 13.5px;
+      color: var(--text);
+      outline: none;
+      transition: var(--transition);
+    }
+    .cx-nav-search input:focus {
+      background: var(--white);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(11,61,46,0.08);
+    }
+    .cx-nav-search input::placeholder { color: var(--text-faint); }
+    .cx-nav-search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .cx-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 8px;
+    }
+    .cx-nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .cx-nav-link:hover { background: var(--grey-light); color: var(--text); }
+    .cx-nav-link.active { color: var(--primary); }
+    .cx-nav-link .nav-icon { font-size: 20px; line-height: 1; }
+    .cx-nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px 2px 0 0;
+    }
+    .cx-nav-link { position: relative; }
+
+    .cx-nav-notif {
+      position: relative;
+    }
+    .cx-nav-notif-dot {
+      position: absolute;
+      top: 4px;
+      right: 10px;
+      width: 8px;
+      height: 8px;
+      background: #EF4444;
+      border-radius: 50%;
+      border: 2px solid var(--white);
+    }
+
+    .cx-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .cx-avatar-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px 4px 4px;
+      border-radius: 20px;
+      background: none;
+      border: 1px solid var(--grey-mid);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cx-avatar-btn:hover { background: var(--grey-light); }
+
+    .cx-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+    .cx-avatar-lg {
+      width: 48px;
+      height: 48px;
+      font-size: 16px;
+    }
+    .cx-avatar-xl {
+      width: 72px;
+      height: 72px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .cx-nav-user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── LAYOUT ── */
+    .cx-community-layout {
+      max-width: 1160px;
+      margin: 24px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 240px 1fr 300px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR SHARED ── */
+    .cx-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--grey-mid);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .cx-left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: sticky;
+      top: calc(var(--nav-h) + 16px);
+    }
+
+    .cx-profile-mini {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-profile-mini-banner {
+      height: 56px;
+      background: linear-gradient(135deg, var(--primary) 0%, #146248 100%);
+    }
+    .cx-profile-mini-body {
+      padding: 0 16px 16px;
+    }
+    .cx-profile-mini-avatar-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: -24px;
+      margin-bottom: 10px;
+    }
+    .cx-profile-mini-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 3px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+    }
+    .cx-profile-mini-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .cx-profile-mini-role {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+    .cx-profile-mini-stats {
+      display: flex;
+      gap: 0;
+      margin-top: 12px;
+      border-top: 1px solid var(--grey-light);
+      padding-top: 12px;
+    }
+    .cx-mini-stat {
+      flex: 1;
+      text-align: center;
+      border-right: 1px solid var(--grey-light);
+      padding: 4px 0;
+      cursor: pointer;
+      transition: var(--transition);
+      border-radius: var(--radius-sm);
+    }
+    .cx-mini-stat:last-child { border-right: none; }
+    .cx-mini-stat:hover { background: var(--grey-light); }
+    .cx-mini-stat-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      display: block;
+    }
+    .cx-mini-stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .cx-score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      background: var(--primary-tint);
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .cx-left-nav {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-left-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .cx-left-nav-item:hover { background: var(--grey-light); color: var(--text); }
+    .cx-left-nav-item.active { background: var(--primary-tint); color: var(--primary); font-weight: 600; }
+    .cx-left-nav-item .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+
+    .cx-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 12px 12px 4px;
+    }
+
+    .cx-topics-list {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-topic-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      background: var(--grey-light);
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      margin: 3px 2px;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+    .cx-topic-tag:hover { background: var(--primary-tint); border-color: rgba(11,61,46,0.15); color: var(--primary); }
+    .cx-topic-tag.active { background: var(--primary); color: white; }
+
+    /* ── FEED ── */
+    .cx-feed { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+    /* ── CREATE POST ── */
+    .cx-create-post {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-create-top {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .cx-create-input {
+      flex: 1;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--grey-mid);
+      border-radius: 24px;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--off-white);
+      outline: none;
+      resize: none;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .cx-create-input:focus {
+      background: var(--white);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(11,61,46,0.07);
+      cursor: text;
+    }
+    .cx-create-input::placeholder { color: var(--text-faint); }
+
+    .cx-create-actions {
+      display: flex;
+      gap: 4px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--grey-light);
+    }
+    .cx-create-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-2);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cx-create-btn:hover { background: var(--grey-light); color: var(--text); }
+    .cx-create-btn-icon { font-size: 16px; }
+    .cx-post-btn {
+      margin-left: auto;
+      padding: 8px 20px;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cx-post-btn:hover { background: var(--primary-mid); }
+    .cx-post-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── POST CARD ── */
+    .cx-post-card {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow var(--transition);
+    }
+    .cx-post-card:hover { box-shadow: var(--shadow-md); }
+
+    .cx-post-header {
+      display: flex;
+      gap: 12px;
+      padding: 16px 16px 0;
+      align-items: flex-start;
+    }
+    .cx-post-author-info { flex: 1; min-width: 0; }
+    .cx-post-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .cx-post-name {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .cx-post-name:hover { color: var(--primary); text-decoration: underline; }
+
+    .cx-verified {
+      color: var(--primary);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .cx-role-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .cx-post-company {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+    .cx-post-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+    .cx-post-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+
+    .cx-post-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .cx-type-solution  { background: #D1FAE5; color: #065F46; }
+    .cx-type-funding   { background: #FEF3C7; color: #92400E; }
+    .cx-type-research  { background: #EDE9FE; color: #5B21B6; }
+    .cx-type-update    { background: #F3F4F6; color: #374151; }
+
+    .cx-post-more {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cx-post-more:hover { background: var(--grey-light); color: var(--text); }
+
+    .cx-post-body {
+      padding: 12px 16px 0;
+    }
+    .cx-post-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-2);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .cx-post-text-truncated { overflow: hidden; }
+    .cx-post-see-more {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 0 0;
+      display: block;
+    }
+
+    .cx-post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 10px 16px 0;
+    }
+    .cx-hashtag {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 2px 0;
+    }
+    .cx-hashtag:hover { text-decoration: underline; }
+
+    .cx-post-stats {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 16px 0;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+    .cx-post-stats-likes { cursor: pointer; }
+    .cx-post-stats-likes:hover { text-decoration: underline; color: var(--text-muted); }
+
+    .cx-post-actions {
+      display: flex;
+      gap: 2px;
+      padding: 4px 8px;
+      border-top: 1px solid var(--grey-light);
+      margin-top: 8px;
+    }
+    .cx-action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 4px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cx-action-btn:hover { background: var(--grey-light); color: var(--text); }
+    .cx-action-btn.liked { color: #EF4444; }
+    .cx-action-btn.liked:hover { background: #FEF2F2; }
+    .cx-action-btn.bookmarked { color: var(--primary); }
+    .cx-action-btn .act-icon { font-size: 17px; }
+    .cx-action-btn .act-count { font-size: 12px; }
+
+    /* ── COMMENTS ── */
+    .cx-comments-wrap {
+      border-top: 1px solid var(--grey-light);
+      padding: 12px 16px;
+      background: var(--off-white);
+      display: none;
+    }
+    .cx-comments-wrap.open { display: block; }
+    .cx-comment {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .cx-comment-bubble {
+      flex: 1;
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: 12px 12px 12px 4px;
+      padding: 10px 12px;
+    }
+    .cx-comment-author {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 3px;
+    }
+    .cx-comment-text {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+    .cx-comment-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 5px;
+      font-size: 11.5px;
+      color: var(--text-faint);
+    }
+    .cx-comment-meta button {
+      color: var(--text-faint);
+      font-size: 11.5px;
+      font-weight: 500;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: var(--transition);
+    }
+    .cx-comment-meta button:hover { color: var(--primary); }
+
+    .cx-add-comment {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      align-items: flex-start;
+    }
+    .cx-comment-input {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1.5px solid var(--grey-mid);
+      border-radius: 20px;
+      font-size: 13px;
+      outline: none;
+      transition: var(--transition);
+      background: var(--white);
+    }
+    .cx-comment-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(11,61,46,0.07);
+    }
+    .cx-comment-submit {
+      padding: 9px 16px;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cx-comment-submit:hover { background: var(--primary-mid); }
+
+    /* ── RIGHT SIDEBAR ── */
+    .cx-right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: sticky;
+      top: calc(var(--nav-h) + 16px);
+    }
+
+    .cx-sidebar-section {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cx-sidebar-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cx-sidebar-header-link {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--primary);
+      cursor: pointer;
+    }
+    .cx-sidebar-header-link:hover { text-decoration: underline; }
+
+    .cx-people-item {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .cx-people-item:last-child { margin-bottom: 0; }
+    .cx-people-info { flex: 1; min-width: 0; }
+    .cx-people-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cx-people-meta {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cx-follow-btn {
+      padding: 5px 14px;
+      border: 1.5px solid var(--primary);
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: none;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .cx-follow-btn:hover { background: var(--primary); color: white; }
+    .cx-follow-btn.following {
+      background: var(--primary-tint);
+      border-color: transparent;
+      color: var(--primary);
+    }
+
+    .cx-trending-list { display: flex; flex-direction: column; gap: 10px; }
+    .cx-trending-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding: 5px 0;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+    .cx-trending-item:hover { opacity: 0.75; }
+    .cx-trending-tag {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .cx-trending-count {
+      font-size: 11.5px;
+      color: var(--text-faint);
+    }
+
+    .cx-funding-item {
+      padding: 12px;
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cx-funding-item:last-child { margin-bottom: 0; }
+    .cx-funding-item:hover { border-color: var(--primary); background: var(--primary-tint); }
+    .cx-funding-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .cx-funding-ask {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .cx-funding-meta {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .cx-score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      background: var(--primary-tint);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* ── MODAL ── */
+    .cx-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .cx-modal-overlay.open { display: flex; }
+    .cx-modal {
+      background: var(--white);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      overflow: hidden;
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .cx-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--grey-mid);
+    }
+    .cx-modal-title { font-size: 16px; font-weight: 700; color: var(--text); }
+    .cx-modal-close {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .cx-modal-close:hover { background: var(--grey-light); color: var(--text); }
+    .cx-modal-body { padding: 20px; }
+
+    .cx-post-type-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .cx-post-type-tab {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--grey-light);
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .cx-post-type-tab.active { background: var(--primary-tint); border-color: rgba(11,61,46,0.2); color: var(--primary); }
+
+    .cx-modal-textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 14px;
+      border: 1.5px solid var(--grey-mid);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+      transition: var(--transition);
+    }
+    .cx-modal-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(11,61,46,0.07); }
+    .cx-modal-textarea::placeholder { color: var(--text-faint); }
+
+    .cx-tags-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--grey-mid);
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      outline: none;
+      transition: var(--transition);
+      margin-top: 10px;
+    }
+    .cx-tags-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(11,61,46,0.07); }
+
+    .cx-modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-top: 1px solid var(--grey-mid);
+      gap: 12px;
+    }
+
+    .cx-modal-post-btn {
+      padding: 10px 28px;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+    }
+    .cx-modal-post-btn:hover { background: var(--primary-mid); }
+    .cx-modal-post-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .cx-char-count { font-size: 12px; color: var(--text-faint); }
+
+    /* ── EMPTY STATE ── */
+    .cx-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    .cx-empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .cx-empty-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .cx-empty-sub { font-size: 13.5px; }
+
+    /* ── TOAST ── */
+    .cx-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1F2937;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+    .cx-toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── FEED FILTER TABS ── */
+    .cx-feed-filter {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-filter-tab {
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+    .cx-filter-tab.active { background: var(--primary-tint); color: var(--primary); font-weight: 600; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .cx-community-layout { grid-template-columns: 200px 1fr; }
+      .cx-right-panel { display: none; }
+    }
+    @media (max-width: 700px) {
+      .cx-community-layout { grid-template-columns: 1fr; padding: 0 12px; }
+      .cx-left-panel { display: none; }
+      .cx-nav-links { display: none; }
+    }
+
+    /* ── LOADING SKELETON ── */
+    .cx-skeleton {
+      background: linear-gradient(90deg, var(--grey-light) 25%, #eee 50%, var(--grey-light) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ──────────────────────────────────────────────────────── -->
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-logo">
+    <img src="Climatix_logo.png" alt="Climactix" />
+    <div>
+      <div class="cx-nav-logo-text">Climactix</div>
+      <div class="cx-nav-logo-sub">Community</div>
+    </div>
+  </a>
+
+  <div class="cx-nav-search">
+    <span class="cx-nav-search-icon">🔍</span>
+    <input type="text" placeholder="Search people, posts, topics..." id="searchInput" autocomplete="off" />
+  </div>
+
+  <nav class="cx-nav-links">
+    <a href="community.html" class="cx-nav-link active">
+      <span class="nav-icon">🏠</span>Feed
+    </a>
+    <a href="forum.html" class="cx-nav-link">
+      <span class="nav-icon">💬</span>Forum
+    </a>
+    <a href="funding-hub.html" class="cx-nav-link">
+      <span class="nav-icon">💰</span>Funding
+    </a>
+    <a href="community-profile.html" class="cx-nav-link">
+      <span class="nav-icon">👤</span>Network
+    </a>
+    <button class="cx-nav-link cx-nav-notif" id="notifBtn">
+      <span class="nav-icon">🔔</span>Alerts
+      <span class="cx-nav-notif-dot" id="notifDot" style="display:none"></span>
+    </button>
+  </nav>
+
+  <div class="cx-nav-right">
+    <button class="cx-avatar-btn" id="navUserBtn">
+      <div class="cx-avatar" id="navAvatar" style="background:#0B3D2E">?</div>
+      <span class="cx-nav-user-name" id="navUserName">Loading...</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── MAIN LAYOUT ──────────────────────────────────────────────────────── -->
+<main class="cx-community-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="cx-left-panel">
+
+    <!-- Mini Profile Card -->
+    <div class="cx-profile-mini" id="miniProfile">
+      <div class="cx-profile-mini-banner"></div>
+      <div class="cx-profile-mini-body">
+        <div class="cx-profile-mini-avatar-wrap">
+          <div class="cx-profile-mini-avatar cx-avatar" id="miniAvatar" style="background:#0B3D2E">?</div>
+          <div class="cx-score-badge" id="miniScore">⚡ 0</div>
+        </div>
+        <div class="cx-profile-mini-name" id="miniName">—</div>
+        <div class="cx-profile-mini-role" id="miniRole">—</div>
+        <div class="cx-profile-mini-stats">
+          <div class="cx-mini-stat">
+            <span class="cx-mini-stat-val" id="miniPosts">0</span>
+            <span class="cx-mini-stat-label">Posts</span>
+          </div>
+          <div class="cx-mini-stat">
+            <span class="cx-mini-stat-val" id="miniFollowers">0</span>
+            <span class="cx-mini-stat-label">Followers</span>
+          </div>
+          <div class="cx-mini-stat">
+            <span class="cx-mini-stat-val" id="miniFollowing">0</span>
+            <span class="cx-mini-stat-label">Following</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <div class="cx-left-nav">
+      <a href="community.html" class="cx-left-nav-item active">
+        <span class="nav-icon">🏠</span> My Feed
+      </a>
+      <a href="community-profile.html" class="cx-left-nav-item">
+        <span class="nav-icon">👤</span> My Profile
+      </a>
+      <a href="forum.html" class="cx-left-nav-item">
+        <span class="nav-icon">💬</span> Discussions
+      </a>
+      <a href="funding-hub.html" class="cx-left-nav-item">
+        <span class="nav-icon">💰</span> Funding Hub
+      </a>
+      <a href="dashboard.html" class="cx-left-nav-item">
+        <span class="nav-icon">📊</span> ESG Dashboard
+      </a>
+      <a href="climactix-ai.html" class="cx-left-nav-item">
+        <span class="nav-icon">🤖</span> AI Narrative
+      </a>
+      <div class="cx-section-title">Bookmarks</div>
+      <a href="#" class="cx-left-nav-item" id="bookmarkNavBtn">
+        <span class="nav-icon">🔖</span> Saved Posts
+      </a>
+    </div>
+
+    <!-- My Climate Interests -->
+    <div class="cx-topics-list">
+      <div class="cx-section-title">My Interests</div>
+      <div id="myInterests"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN FEED -->
+  <section class="cx-feed">
+
+    <!-- Feed Filter -->
+    <div class="cx-feed-filter">
+      <button class="cx-filter-tab active" data-filter="all">All Posts</button>
+      <button class="cx-filter-tab" data-filter="solution">Solutions</button>
+      <button class="cx-filter-tab" data-filter="funding">Funding</button>
+      <button class="cx-filter-tab" data-filter="research">Research</button>
+    </div>
+
+    <!-- Create Post Card -->
+    <div class="cx-create-post">
+      <div class="cx-create-top">
+        <div class="cx-avatar" id="createAvatar" style="width:44px;height:44px;font-size:14px;background:#0B3D2E">?</div>
+        <textarea class="cx-create-input" id="quickPostInput" rows="1"
+          placeholder="What's on your climate agenda?" readonly
+          onclick="openPostModal()"></textarea>
+      </div>
+      <div class="cx-create-actions">
+        <button class="cx-create-btn" onclick="openPostModal('solution')">
+          <span class="cx-create-btn-icon">🌱</span> Solution
+        </button>
+        <button class="cx-create-btn" onclick="openPostModal('funding')">
+          <span class="cx-create-btn-icon">💰</span> Funding
+        </button>
+        <button class="cx-create-btn" onclick="openPostModal('research')">
+          <span class="cx-create-btn-icon">📄</span> Research
+        </button>
+        <button class="cx-post-btn" onclick="openPostModal()">Post</button>
+      </div>
+    </div>
+
+    <!-- Feed Items -->
+    <div id="feedContainer">
+      <!-- Skeleton loader -->
+      <div class="cx-post-card" style="padding:16px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div class="cx-skeleton" style="width:48px;height:48px;border-radius:50%;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div class="cx-skeleton" style="height:14px;width:60%;margin-bottom:8px"></div>
+            <div class="cx-skeleton" style="height:12px;width:40%"></div>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="cx-skeleton" style="height:13px;margin-bottom:8px"></div>
+          <div class="cx-skeleton" style="height:13px;width:90%;margin-bottom:8px"></div>
+          <div class="cx-skeleton" style="height:13px;width:75%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="cx-right-panel">
+
+    <!-- People to Follow -->
+    <div class="cx-sidebar-section">
+      <div class="cx-sidebar-header">
+        People to Follow
+        <span class="cx-sidebar-header-link" onclick="window.location.href='community-profile.html'">See all</span>
+      </div>
+      <div id="suggestedPeople"></div>
+    </div>
+
+    <!-- Trending Topics -->
+    <div class="cx-sidebar-section">
+      <div class="cx-sidebar-header">Trending in Climate</div>
+      <div class="cx-trending-list" id="trendingTags"></div>
+    </div>
+
+    <!-- Funding Opportunities -->
+    <div class="cx-sidebar-section">
+      <div class="cx-sidebar-header">
+        Active Funding
+        <span class="cx-sidebar-header-link" onclick="window.location.href='funding-hub.html'">View all</span>
+      </div>
+      <div id="fundingSnippets"></div>
+    </div>
+
+    <!-- Climactix Promo -->
+    <div class="cx-sidebar-section" style="background:linear-gradient(135deg,#0B3D2E,#146248);border-color:transparent;">
+      <div style="color:white;font-size:13.5px;font-weight:700;margin-bottom:6px;">ESG Score your startup</div>
+      <div style="color:rgba(255,255,255,0.78);font-size:12.5px;line-height:1.6;margin-bottom:14px;">
+        Get your Climactix Climate Impact Score — trusted by 200+ VCs and corporates.
+      </div>
+      <a href="assessment.html" style="display:block;text-align:center;padding:9px;background:white;color:#0B3D2E;border-radius:8px;font-size:13px;font-weight:700;">
+        Start Assessment →
+      </a>
+    </div>
+
+  </aside>
+</main>
+
+<!-- ── CREATE POST MODAL ──────────────────────────────────────────────────── -->
+<div class="cx-modal-overlay" id="postModalOverlay" onclick="if(event.target===this)closePostModal()">
+  <div class="cx-modal">
+    <div class="cx-modal-header">
+      <div class="cx-modal-title">Create a Post</div>
+      <button class="cx-modal-close" onclick="closePostModal()">✕</button>
+    </div>
+    <div class="cx-modal-body">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;">
+        <div class="cx-avatar cx-avatar-lg" id="modalAvatar" style="background:#0B3D2E">?</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;" id="modalUserName">—</div>
+          <div style="font-size:12px;color:#6B7280;margin-top:1px;">Posting to Climactix Community</div>
+        </div>
+      </div>
+
+      <!-- Post type tabs -->
+      <div class="cx-post-type-tabs">
+        <button class="cx-post-type-tab active" data-type="update" onclick="setPostType('update',this)">
+          📝 Update
+        </button>
+        <button class="cx-post-type-tab" data-type="solution" onclick="setPostType('solution',this)">
+          🌱 Solution
+        </button>
+        <button class="cx-post-type-tab" data-type="funding" onclick="setPostType('funding',this)">
+          💰 Funding
+        </button>
+        <button class="cx-post-type-tab" data-type="research" onclick="setPostType('research',this)">
+          📄 Research
+        </button>
+      </div>
+
+      <!-- Content area -->
+      <textarea class="cx-modal-textarea" id="postContent"
+        placeholder="Share your climate insights, solutions, or opportunities..."
+        oninput="onPostInput()"></textarea>
+
+      <input class="cx-tags-input" id="postTags" type="text"
+        placeholder="Add hashtags: ClimateTech, NetZero, SolarEnergy (comma-separated)" />
+    </div>
+    <div class="cx-modal-footer">
+      <div class="cx-char-count" id="charCount">0 / 3000</div>
+      <div style="display:flex;gap:10px;">
+        <button class="cx-modal-close" onclick="closePostModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#374151;background:#F3F4F6;width:auto;height:auto;">
+          Cancel
+        </button>
+        <button class="cx-modal-post-btn" id="modalPostBtn" onclick="submitPost()" disabled>Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ──────────────────────────────────────────────────────────────── -->
+<div class="cx-toast" id="toast"></div>
+
+<!-- ── SCRIPTS ────────────────────────────────────────────────────────────── -->
+<script type="module">
+import {
+  initCommunity, getPosts, createPost, toggleLike, isLiked,
+  addComment, toggleBookmark, isBookmarked, toggleFollow, isFollowing,
+  getCurrentUserProfile, getSuggestedProfiles, getTrendingTags,
+  getFundingRequests, getRoleConfig, getAvatarColor, getInitials,
+  timeAgo, formatCount, ROLES, SEED_FUNDING
+} from './community.js';
+
+// ── State ────────────────────────────────────────────────────────
+let currentUser  = null;
+let currentFilter = 'all';
+let currentPostType = 'update';
+
+// ── Init ─────────────────────────────────────────────────────────
+initCommunity();
+currentUser = getCurrentUserProfile();
+
+// ── NAV / PROFILE UI ────────────────────────────────────────────
+function setupNavUser() {
+  if (!currentUser) {
+    document.getElementById('navUserName').textContent = 'Sign In';
+    return;
+  }
+  const { fullName, role, avatar, climateScore, followersCount, followingCount, postsCount } = currentUser;
+  const color = getAvatarColor(role);
+
+  // Nav
+  document.getElementById('navAvatar').textContent    = avatar;
+  document.getElementById('navAvatar').style.background = color;
+  document.getElementById('navUserName').textContent  = fullName.split(' ')[0];
+
+  // Create post avatar
+  document.getElementById('createAvatar').textContent = avatar;
+  document.getElementById('createAvatar').style.background = color;
+
+  // Modal avatar
+  document.getElementById('modalAvatar').textContent  = avatar;
+  document.getElementById('modalAvatar').style.background = color;
+  document.getElementById('modalUserName').textContent = fullName;
+
+  // Mini profile
+  document.getElementById('miniAvatar').textContent   = avatar;
+  document.getElementById('miniAvatar').style.background = color;
+  document.getElementById('miniName').textContent     = fullName;
+  document.getElementById('miniRole').textContent     = getRoleConfig(role).label + (currentUser.company ? ` · ${currentUser.company}` : '');
+  document.getElementById('miniScore').textContent    = `⚡ ${climateScore}`;
+  document.getElementById('miniPosts').textContent    = formatCount(postsCount);
+  document.getElementById('miniFollowers').textContent = formatCount(followersCount);
+  document.getElementById('miniFollowing').textContent = formatCount(followingCount);
+
+  // Interests
+  const interests = currentUser.interests || ['Solar Energy', 'Climate Tech', 'Net Zero'];
+  document.getElementById('myInterests').innerHTML = interests.map(i =>
+    `<span class="cx-topic-tag">${i}</span>`
+  ).join('');
+}
+
+// ── RENDER FEED ──────────────────────────────────────────────────
+function renderFeed(filter = 'all') {
+  const posts = getPosts();
+  const filtered = filter === 'all' ? posts : posts.filter(p => p.type === filter);
+  const container = document.getElementById('feedContainer');
+
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="cx-post-card" style="padding:40px 20px;text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🌱</div>
+        <div style="font-size:16px;font-weight:600;color:#111;margin-bottom:6px;">No posts yet</div>
+        <div style="font-size:13.5px;color:#6B7280;">Be the first to share a climate update or solution.</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(post => renderPost(post)).join('');
+
+  // Bind events
+  container.querySelectorAll('[data-like]').forEach(btn => {
+    btn.addEventListener('click', () => handleLike(btn.dataset.like));
+  });
+  container.querySelectorAll('[data-comment-toggle]').forEach(btn => {
+    btn.addEventListener('click', () => toggleComments(btn.dataset.commentToggle));
+  });
+  container.querySelectorAll('[data-bookmark]').forEach(btn => {
+    btn.addEventListener('click', () => handleBookmark(btn.dataset.bookmark));
+  });
+  container.querySelectorAll('[data-see-more]').forEach(btn => {
+    btn.addEventListener('click', () => togglePostExpand(btn.dataset.seeMore));
+  });
+  container.querySelectorAll('[data-comment-submit]').forEach(btn => {
+    btn.addEventListener('click', () => handleCommentSubmit(btn.dataset.commentSubmit));
+  });
+}
+
+function renderPost(post) {
+  const uid = currentUser?.uid || '';
+  const liked = isLiked(post.id, uid);
+  const bookmarked = isBookmarked(post.id, uid);
+  const roleConf = getRoleConfig(post.authorRole);
+  const avatarColor = getAvatarColor(post.authorRole);
+  const PREVIEW_LEN = 380;
+  const isLong = post.content.length > PREVIEW_LEN;
+  const contentHtml = isLong
+    ? `<div class="cx-post-text cx-post-text-truncated" id="text-${post.id}" style="max-height:6em;overflow:hidden;">${escHtml(post.content)}</div>
+       <button class="cx-post-see-more" data-see-more="${post.id}">…see more</button>`
+    : `<div class="cx-post-text">${escHtml(post.content)}</div>`;
+
+  const typeBadgeClass = { solution:'cx-type-solution', funding:'cx-type-funding', research:'cx-type-research', update:'cx-type-update' }[post.type] || 'cx-type-update';
+  const typeLabel = { solution:'🌱 Solution', funding:'💰 Funding', research:'📄 Research', update:'📝 Update' }[post.type] || '📝 Update';
+
+  const commentsHtml = post.comments.map(c => `
+    <div class="cx-comment">
+      <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(c.authorRole)};flex-shrink:0;">${c.authorAvatar}</div>
+      <div class="cx-comment-bubble">
+        <div class="cx-comment-author">
+          ${escHtml(c.authorName)}
+          <span class="cx-role-badge" style="background:${getRoleConfig(c.authorRole).bg};color:${getRoleConfig(c.authorRole).color}">${getRoleConfig(c.authorRole).label}</span>
+        </div>
+        <div class="cx-comment-text">${escHtml(c.content)}</div>
+        <div class="cx-comment-meta">
+          <span>${timeAgo(c.timestamp)}</span>
+          <button>👍 ${c.likes.length || ''}</button>
+          <button>Reply</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  return `
+  <div class="cx-post-card" id="post-${post.id}">
+    <div class="cx-post-header">
+      <div class="cx-avatar cx-avatar-lg" style="background:${avatarColor};flex-shrink:0;">${post.authorAvatar}</div>
+      <div class="cx-post-author-info">
+        <div class="cx-post-name-row">
+          <span class="cx-post-name">${escHtml(post.authorName)}</span>
+          ${post.authorVerified ? '<span class="cx-verified" title="Verified">✓</span>' : ''}
+          <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color}">${roleConf.label}</span>
+          <span class="cx-post-type-badge ${typeBadgeClass}">${typeLabel}</span>
+        </div>
+        ${post.authorCompany ? `<div class="cx-post-company">${escHtml(post.authorCompany)}</div>` : ''}
+        <div class="cx-post-meta">
+          <span>${timeAgo(post.timestamp)}</span>
+          <span class="cx-post-meta-dot"></span>
+          <span>${formatCount(post.views)} views</span>
+        </div>
+      </div>
+      <div class="cx-post-more">⋯</div>
+    </div>
+
+    <div class="cx-post-body">${contentHtml}</div>
+
+    ${post.tags && post.tags.length ? `
+    <div class="cx-post-tags">
+      ${post.tags.map(t => `<span class="cx-hashtag">#${escHtml(t)}</span>`).join('')}
+    </div>` : ''}
+
+    <div class="cx-post-stats">
+      <span class="cx-post-stats-likes">
+        ${post.likes.length ? `❤️ ${formatCount(post.likes.length)} like${post.likes.length !== 1 ? 's' : ''}` : ''}
+      </span>
+      <span>
+        ${post.comments.length ? `${post.comments.length} comment${post.comments.length !== 1 ? 's' : ''}` : ''}
+      </span>
+    </div>
+
+    <div class="cx-post-actions">
+      <button class="cx-action-btn ${liked ? 'liked' : ''}" data-like="${post.id}">
+        <span class="act-icon">${liked ? '❤️' : '🤍'}</span>
+        <span class="act-count">${post.likes.length ? formatCount(post.likes.length) : 'Like'}</span>
+      </button>
+      <button class="cx-action-btn" data-comment-toggle="${post.id}">
+        <span class="act-icon">💬</span>
+        <span class="act-count">${post.comments.length ? formatCount(post.comments.length) : 'Comment'}</span>
+      </button>
+      <button class="cx-action-btn" onclick="sharePost('${post.id}')">
+        <span class="act-icon">↗️</span>
+        <span class="act-count">Share</span>
+      </button>
+      <button class="cx-action-btn ${bookmarked ? 'bookmarked' : ''}" data-bookmark="${post.id}">
+        <span class="act-icon">${bookmarked ? '🔖' : '📌'}</span>
+        <span class="act-count">${bookmarked ? 'Saved' : 'Save'}</span>
+      </button>
+    </div>
+
+    <div class="cx-comments-wrap" id="comments-${post.id}">
+      <div id="comments-list-${post.id}">${commentsHtml}</div>
+      <div class="cx-add-comment">
+        <div class="cx-avatar" style="width:34px;height:34px;font-size:11px;background:${getAvatarColor(currentUser?.role)};flex-shrink:0;">${currentUser?.avatar || '?'}</div>
+        <input class="cx-comment-input" id="comment-input-${post.id}" placeholder="Add a comment…" />
+        <button class="cx-comment-submit" data-comment-submit="${post.id}">Post</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── RENDER SIDEBAR: PEOPLE ───────────────────────────────────────
+function renderSuggestedPeople() {
+  const uid = currentUser?.uid || '';
+  const people = getSuggestedProfiles(uid, 4);
+  const container = document.getElementById('suggestedPeople');
+  if (!people.length) { container.innerHTML = '<div style="color:#9CA3AF;font-size:13px;text-align:center;padding:10px;">No suggestions yet</div>'; return; }
+  container.innerHTML = people.map(p => `
+    <div class="cx-people-item">
+      <div class="cx-avatar" style="background:${getAvatarColor(p.role)};width:38px;height:38px;font-size:12px;flex-shrink:0;">${p.avatar}</div>
+      <div class="cx-people-info">
+        <div class="cx-people-name">${escHtml(p.fullName)}</div>
+        <div class="cx-people-meta">${getRoleConfig(p.role).label}${p.company ? ' · ' + escHtml(p.company) : ''}</div>
+        <div class="cx-people-meta" style="color:#9CA3AF;">${formatCount(p.followersCount)} followers</div>
+      </div>
+      <button class="cx-follow-btn ${isFollowing(p.uid, uid) ? 'following' : ''}"
+        onclick="handleFollow('${p.uid}', this)">
+        ${isFollowing(p.uid, uid) ? 'Following' : '+ Follow'}
+      </button>
+    </div>
+  `).join('');
+}
+
+// ── RENDER SIDEBAR: TRENDING ─────────────────────────────────────
+function renderTrendingTags() {
+  const tags = getTrendingTags(7);
+  document.getElementById('trendingTags').innerHTML = tags.map((t, i) => `
+    <div class="cx-trending-item" onclick="filterByTag('${t.tag}')">
+      <div>
+        <div class="cx-trending-tag">#${escHtml(t.tag)}</div>
+        <div style="font-size:11px;color:#9CA3AF;margin-top:1px;">${t.count} post${t.count !== 1 ? 's' : ''}</div>
+      </div>
+      <span style="font-size:11px;color:#D1D5DB;">#${i + 1}</span>
+    </div>
+  `).join('');
+}
+
+// ── RENDER SIDEBAR: FUNDING ──────────────────────────────────────
+function renderFundingSnippets() {
+  const funding = SEED_FUNDING.slice(0, 3);
+  document.getElementById('fundingSnippets').innerHTML = funding.map(f => `
+    <div class="cx-funding-item" onclick="window.location.href='funding-hub.html'">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+        <div class="cx-funding-name">${escHtml(f.startupName)}</div>
+        <span class="cx-score-pill">⚡${f.climateScore}</span>
+      </div>
+      <div class="cx-funding-ask">${escHtml(f.ask)} · ${escHtml(f.stage)}</div>
+      <div class="cx-funding-meta">${escHtml(f.sector)}</div>
+    </div>
+  `).join('');
+}
+
+// ── INTERACTIONS ─────────────────────────────────────────────────
+function handleLike(postId) {
+  if (!currentUser) { showToast('Sign in to like posts'); return; }
+  const result = toggleLike(postId, currentUser.uid);
+  const btn = document.querySelector(`[data-like="${postId}"]`);
+  if (btn && result) {
+    btn.classList.toggle('liked', result.liked);
+    btn.querySelector('.act-icon').textContent = result.liked ? '❤️' : '🤍';
+    btn.querySelector('.act-count').textContent = result.count ? formatCount(result.count) : 'Like';
+    // Update stats row
+    const statsLikes = document.querySelector(`#post-${postId} .cx-post-stats-likes`);
+    if (statsLikes) statsLikes.textContent = result.count ? `❤️ ${formatCount(result.count)} like${result.count !== 1 ? 's' : ''}` : '';
+  }
+}
+
+function toggleComments(postId) {
+  const wrap = document.getElementById(`comments-${postId}`);
+  if (wrap) wrap.classList.toggle('open');
+}
+
+function handleBookmark(postId) {
+  if (!currentUser) { showToast('Sign in to save posts'); return; }
+  const saved = toggleBookmark(postId, currentUser.uid);
+  const btn = document.querySelector(`[data-bookmark="${postId}"]`);
+  if (btn) {
+    btn.classList.toggle('bookmarked', saved);
+    btn.querySelector('.act-icon').textContent = saved ? '🔖' : '📌';
+    btn.querySelector('.act-count').textContent = saved ? 'Saved' : 'Save';
+    showToast(saved ? 'Post saved to bookmarks' : 'Removed from bookmarks');
+  }
+}
+
+function handleCommentSubmit(postId) {
+  if (!currentUser) { showToast('Sign in to comment'); return; }
+  const input = document.getElementById(`comment-input-${postId}`);
+  const content = input?.value.trim();
+  if (!content) return;
+
+  const comment = addComment(postId, {
+    authorId:   currentUser.uid,
+    authorName: currentUser.fullName,
+    authorRole: currentUser.role,
+    authorAvatar: currentUser.avatar,
+    content,
+  });
+
+  if (comment) {
+    input.value = '';
+    const list = document.getElementById(`comments-list-${postId}`);
+    if (list) {
+      list.insertAdjacentHTML('beforeend', `
+        <div class="cx-comment">
+          <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(comment.authorRole)};flex-shrink:0;">${comment.authorAvatar}</div>
+          <div class="cx-comment-bubble">
+            <div class="cx-comment-author">${escHtml(comment.authorName)}
+              <span class="cx-role-badge" style="background:${getRoleConfig(comment.authorRole).bg};color:${getRoleConfig(comment.authorRole).color}">${getRoleConfig(comment.authorRole).label}</span>
+            </div>
+            <div class="cx-comment-text">${escHtml(comment.content)}</div>
+            <div class="cx-comment-meta"><span>just now</span></div>
+          </div>
+        </div>`);
+    }
+    // Update comment count button
+    const toggleBtn = document.querySelector(`[data-comment-toggle="${postId}"]`);
+    if (toggleBtn) {
+      const post = getPosts().find(p => p.id === postId);
+      if (post) toggleBtn.querySelector('.act-count').textContent = formatCount(post.comments.length);
+    }
+    showToast('Comment posted');
+  }
+}
+
+window.handleFollow = function(targetId, btn) {
+  if (!currentUser) { showToast('Sign in to follow'); return; }
+  const following = toggleFollow(targetId, currentUser.uid);
+  btn.textContent = following ? 'Following' : '+ Follow';
+  btn.classList.toggle('following', following);
+  showToast(following ? 'Following!' : 'Unfollowed');
+};
+
+window.sharePost = function(postId) {
+  const url = window.location.href.split('?')[0] + `?post=${postId}`;
+  navigator.clipboard?.writeText(url).catch(() => {});
+  showToast('Link copied to clipboard');
+};
+
+window.filterByTag = function(tag) {
+  document.getElementById('searchInput').value = '#' + tag;
+  showToast(`Filtered by #${tag}`);
+};
+
+function togglePostExpand(postId) {
+  const textEl = document.getElementById(`text-${postId}`);
+  const btn = document.querySelector(`[data-see-more="${postId}"]`);
+  if (textEl && btn) {
+    if (textEl.style.maxHeight) {
+      textEl.style.maxHeight = '';
+      textEl.style.overflow = '';
+      btn.textContent = 'see less';
+    } else {
+      textEl.style.maxHeight = '6em';
+      textEl.style.overflow = 'hidden';
+      btn.textContent = '…see more';
+    }
+  }
+}
+
+// ── POST MODAL ───────────────────────────────────────────────────
+window.openPostModal = function(type = 'update') {
+  setPostType(type, document.querySelector(`[data-type="${type}"]`));
+  document.getElementById('postModalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('postContent').focus(), 100);
+};
+
+window.closePostModal = function() {
+  document.getElementById('postModalOverlay').classList.remove('open');
+  document.getElementById('postContent').value = '';
+  document.getElementById('postTags').value = '';
+  document.getElementById('charCount').textContent = '0 / 3000';
+  document.getElementById('modalPostBtn').disabled = true;
+};
+
+window.setPostType = function(type, btn) {
+  currentPostType = type;
+  document.querySelectorAll('.cx-post-type-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const placeholders = {
+    update:   'Share your climate insights, news, or perspective…',
+    solution: 'Describe your climate solution — problem, approach, impact metrics, and how others can get involved…',
+    funding:  'Share your funding opportunity — include sector, ask, impact metrics, and what kind of partners you\'re looking for…',
+    research: 'Share your research findings — include key insights, methodology highlights, and how practitioners can apply this work…',
+  };
+  document.getElementById('postContent').placeholder = placeholders[type] || placeholders.update;
+};
+
+window.onPostInput = function() {
+  const content = document.getElementById('postContent').value;
+  const count = content.length;
+  document.getElementById('charCount').textContent = `${count} / 3000`;
+  document.getElementById('modalPostBtn').disabled = count < 10;
+};
+
+window.submitPost = function() {
+  if (!currentUser) { showToast('Sign in to post'); return; }
+  const content = document.getElementById('postContent').value.trim();
+  const tagsRaw = document.getElementById('postTags').value.trim();
+  if (content.length < 10) return;
+
+  const tags = tagsRaw
+    ? tagsRaw.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean)
+    : [];
+
+  createPost({
+    authorId:       currentUser.uid,
+    authorName:     currentUser.fullName,
+    authorRole:     currentUser.role,
+    authorAvatar:   currentUser.avatar,
+    authorVerified: currentUser.verified,
+    authorCompany:  currentUser.company || '',
+    type:           currentPostType,
+    content,
+    tags,
+  });
+
+  closePostModal();
+  renderFeed(currentFilter);
+  showToast('Post published to community');
+};
+
+// ── FILTER TABS ──────────────────────────────────────────────────
+document.querySelectorAll('.cx-filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.cx-filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter = tab.dataset.filter;
+    renderFeed(currentFilter);
+  });
+});
+
+// ── SEARCH ───────────────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) { renderFeed(currentFilter); return; }
+  const posts = getPosts().filter(p =>
+    p.content.toLowerCase().includes(q) ||
+    p.authorName.toLowerCase().includes(q) ||
+    (p.tags || []).some(t => t.toLowerCase().includes(q.replace('#', '')))
+  );
+  const container = document.getElementById('feedContainer');
+  if (!posts.length) {
+    container.innerHTML = `<div class="cx-post-card" style="padding:32px;text-align:center;color:#6B7280;">No results for "<strong>${escHtml(q)}</strong>"</div>`;
+    return;
+  }
+  container.innerHTML = posts.map(post => renderPost(post)).join('');
+});
+
+// ── TOAST ────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── HELPER ───────────────────────────────────────────────────────
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ── BOOT ────────────────────────────────────────────────────────
+setupNavUser();
+renderFeed('all');
+renderSuggestedPeople();
+renderTrendingTags();
+renderFundingSnippets();
+</script>
+</body>
+</html>

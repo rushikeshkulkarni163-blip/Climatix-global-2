@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forum · Climactix Community</title>
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:      #0B3D2E;
+      --primary-mid:  #0e4f3a;
+      --primary-tint: #EBF5F1;
+      --primary-pale: #D1FAE5;
+      --white:        #FFFFFF;
+      --off-white:    #F9FAFB;
+      --grey-light:   #F3F4F6;
+      --grey-mid:     #E5E7EB;
+      --text:         #111827;
+      --text-2:       #374151;
+      --text-muted:   #6B7280;
+      --text-faint:   #9CA3AF;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+      --radius:       12px;
+      --radius-sm:    8px;
+      --nav-h:        60px;
+      --transition:   0.18s cubic-bezier(0.4,0,0.2,1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--off-white); color: var(--text); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* NAV */
+    .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--white);border-bottom:1px solid var(--grey-mid);display:flex;align-items:center;padding:0 20px;gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05); }
+    .cx-nav-logo { display:flex;align-items:center;gap:10px;flex-shrink:0; }
+    .cx-nav-logo img { height:32px; }
+    .cx-nav-link { display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:500;color:var(--text-muted);transition:var(--transition);position:relative; }
+    .cx-nav-link:hover { background:var(--grey-light);color:var(--text); }
+    .cx-nav-link.active { color:var(--primary); }
+    .cx-nav-link.active::after { content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--primary);border-radius:2px 2px 0 0; }
+    .cx-nav-link .nav-icon { font-size:20px;line-height:1; }
+    .cx-avatar { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0; }
+    .cx-nav-right { display:flex;align-items:center;gap:10px;margin-left:auto; }
+    .cx-avatar-btn { display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:20px;background:none;border:1px solid var(--grey-mid);cursor:pointer;transition:var(--transition); }
+    .cx-avatar-btn:hover { background:var(--grey-light); }
+
+    /* PAGE LAYOUT */
+    .cx-forum-layout { max-width: 1160px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr 280px; gap: 20px; }
+
+    /* SIDEBAR */
+    .cx-sidebar-card { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:14px; }
+    .cx-sidebar-card:last-child { margin-bottom:0; }
+    .cx-sidebar-title { font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px; }
+
+    .cx-community-list { display:flex;flex-direction:column;gap:2px; }
+    .cx-community-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; border-radius: 8px;
+      font-size: 13.5px; font-weight: 500; color: var(--text-2);
+      cursor: pointer; transition: var(--transition);
+      border: 1.5px solid transparent;
+    }
+    .cx-community-item:hover { background: var(--grey-light); }
+    .cx-community-item.active { background: var(--primary-tint); border-color: rgba(11,61,46,0.15); color: var(--primary); font-weight: 700; }
+    .cx-community-icon { font-size: 18px; width: 22px; text-align: center; }
+    .cx-community-name { flex: 1; }
+    .cx-community-count { font-size: 11px; color: var(--text-faint); font-weight: 500; }
+    .cx-community-badge { font-size: 10px; font-weight: 700; background: #EF4444; color: white; padding: 1px 5px; border-radius: 8px; }
+
+    .cx-create-thread-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+      margin-top: 12px;
+    }
+    .cx-create-thread-btn:hover { background: var(--primary-mid); }
+
+    /* MAIN AREA */
+    .cx-forum-main { display: flex; flex-direction: column; gap: 14px; }
+
+    /* FORUM HEADER */
+    .cx-forum-header {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-forum-header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .cx-forum-header-name { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    .cx-forum-header-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+    .cx-forum-header-stats { display: flex; gap: 20px; margin-top: 12px; font-size: 12.5px; color: var(--text-muted); }
+    .cx-forum-header-stat { display: flex; align-items: center; gap: 5px; }
+    .cx-join-btn { padding: 9px 22px; background: var(--primary); color: white; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; transition: var(--transition); flex-shrink: 0; }
+    .cx-join-btn:hover { background: var(--primary-mid); }
+    .cx-join-btn.joined { background: var(--primary-tint); color: var(--primary); }
+
+    /* SORT BAR */
+    .cx-sort-bar {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-sort-btn {
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .cx-sort-btn:hover { background: var(--grey-light); color: var(--text); }
+    .cx-sort-btn.active { background: var(--primary-tint); color: var(--primary); font-weight: 700; }
+    .cx-search-thread {
+      margin-left: auto;
+      position: relative;
+    }
+    .cx-search-thread input {
+      padding: 7px 12px 7px 34px;
+      border: 1.5px solid var(--grey-mid);
+      border-radius: 20px;
+      font-size: 13px;
+      outline: none;
+      width: 200px;
+      transition: var(--transition);
+    }
+    .cx-search-thread input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(11,61,46,0.07); }
+    .cx-search-thread-icon { position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none; }
+
+    /* THREAD CARD */
+    .cx-thread-card {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      display: flex;
+      gap: 0;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: box-shadow var(--transition), border-color var(--transition);
+    }
+    .cx-thread-card:hover { box-shadow: var(--shadow-md); border-color: #B0D4C6; }
+    .cx-thread-card.pinned { border-left: 3px solid var(--primary); }
+
+    /* VOTE COLUMN */
+    .cx-vote-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 12px;
+      background: var(--grey-light);
+      gap: 4px;
+      min-width: 60px;
+    }
+    .cx-vote-btn {
+      width: 30px; height: 30px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none; background: none;
+    }
+    .cx-vote-btn:hover { background: var(--primary-tint); }
+    .cx-vote-btn.upvoted { color: var(--primary); background: var(--primary-tint); }
+    .cx-vote-btn.downvoted { color: #EF4444; background: #FEF2F2; }
+    .cx-vote-score {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+    .cx-vote-score.positive { color: var(--primary); }
+
+    /* THREAD BODY */
+    .cx-thread-body { flex: 1; padding: 16px; min-width: 0; }
+    .cx-thread-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .cx-community-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 10px;
+      font-size: 11.5px; font-weight: 700;
+      cursor: pointer;
+    }
+    .cx-thread-author { font-size: 12px; color: var(--text-muted); }
+    .cx-pinned-badge { font-size: 10.5px; font-weight: 700; color: var(--primary); background: var(--primary-tint); padding: 2px 7px; border-radius: 6px; }
+
+    .cx-thread-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+    .cx-thread-title:hover { color: var(--primary); }
+
+    .cx-thread-preview {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .cx-thread-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .cx-thread-tag {
+      display: inline-flex; padding: 3px 9px; border-radius: 10px;
+      font-size: 11.5px; font-weight: 600;
+      background: var(--grey-light); color: var(--text-2);
+      cursor: pointer;
+    }
+    .cx-thread-tag:hover { background: var(--primary-tint); color: var(--primary); }
+
+    .cx-thread-footer {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12.5px;
+      color: var(--text-faint);
+    }
+    .cx-thread-footer-btn {
+      display: flex; align-items: center; gap: 5px;
+      cursor: pointer; padding: 4px 8px; border-radius: 6px;
+      transition: var(--transition);
+      background: none; border: none; font-size: 12.5px; color: var(--text-faint);
+    }
+    .cx-thread-footer-btn:hover { background: var(--grey-light); color: var(--text); }
+
+    /* THREAD DETAIL (expanded) */
+    .cx-thread-replies {
+      display: none;
+      border-top: 1px solid var(--grey-mid);
+      margin-top: 14px;
+      padding-top: 14px;
+    }
+    .cx-thread-replies.open { display: block; }
+    .cx-reply { display: flex; gap: 10px; margin-bottom: 14px; }
+    .cx-reply-bubble {
+      flex: 1;
+      background: var(--grey-light);
+      border-radius: 10px 10px 10px 3px;
+      padding: 11px 14px;
+    }
+    .cx-reply-author { font-size: 13px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .cx-reply-text { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+    .cx-reply-meta { font-size: 11.5px; color: var(--text-faint); margin-top: 6px; display: flex; gap: 10px; }
+    .cx-role-badge { display:inline-flex;align-items:center;padding:2px 8px;border-radius:8px;font-size:10.5px;font-weight:700; }
+
+    .cx-add-reply {
+      display: flex; gap: 10px; align-items: flex-start;
+      margin-top: 12px;
+    }
+    .cx-reply-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid var(--grey-mid);
+      border-radius: 20px;
+      font-size: 13px;
+      outline: none;
+      transition: var(--transition);
+    }
+    .cx-reply-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(11,61,46,0.07); }
+    .cx-reply-submit { padding: 10px 18px; background: var(--primary); color: white; border-radius: 20px; font-size: 12.5px; font-weight: 600; cursor: pointer; transition: var(--transition); }
+    .cx-reply-submit:hover { background: var(--primary-mid); }
+
+    /* RIGHT SIDEBAR */
+    .cx-right-sidebar { position: sticky; top: calc(var(--nav-h) + 16px); display: flex; flex-direction: column; gap: 14px; }
+
+    .cx-trending-thread { padding: 10px 0; border-bottom: 1px solid var(--grey-light); }
+    .cx-trending-thread:last-child { border-bottom: none; }
+    .cx-trending-thread-title { font-size: 13px; font-weight: 600; color: var(--text-2); line-height: 1.4; cursor: pointer; margin-bottom: 5px; }
+    .cx-trending-thread-title:hover { color: var(--primary); }
+    .cx-trending-thread-meta { font-size: 11.5px; color: var(--text-faint); }
+
+    /* TOAST */
+    .cx-toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1F2937;color:white;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:500;z-index:9999;transition:transform 0.3s ease;white-space:nowrap; }
+    .cx-toast.show { transform:translateX(-50%) translateY(0); }
+
+    /* CREATE THREAD MODAL */
+    .cx-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
+    .cx-modal-overlay.open { display:flex; }
+    .cx-modal { background:var(--white);border-radius:16px;width:100%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;animation:modalIn 0.2s ease; }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.96) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);} }
+    .cx-modal-header { display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--grey-mid); }
+    .cx-modal-title { font-size:16px;font-weight:700; }
+    .cx-modal-close { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text-muted);cursor:pointer; }
+    .cx-modal-close:hover { background:var(--grey-light); }
+    .cx-modal-body { padding:20px; }
+    .cx-field { margin-bottom:14px; }
+    .cx-field label { display:block;font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:5px; }
+    .cx-field input, .cx-field textarea, .cx-field select { width:100%;padding:10px 14px;border:1.5px solid var(--grey-mid);border-radius:8px;font-size:13.5px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:var(--transition); }
+    .cx-field input:focus, .cx-field textarea:focus, .cx-field select:focus { border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,61,46,0.07); }
+    .cx-field textarea { resize:vertical;min-height:100px; }
+    .cx-modal-footer { display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--grey-mid); }
+    .cx-post-btn { padding:10px 28px;background:var(--primary);color:white;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:var(--transition); }
+    .cx-post-btn:hover { background:var(--primary-mid); }
+
+    @media (max-width: 1024px) { .cx-forum-layout { grid-template-columns: 220px 1fr; } .cx-right-sidebar { display:none; } }
+    @media (max-width: 700px) { .cx-forum-layout { grid-template-columns: 1fr; } .cx-left-sidebar { display:none; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-logo">
+    <img src="Climatix_logo.png" alt="Climactix" />
+    <div style="font-size:15px;font-weight:700;color:var(--primary);">Climactix</div>
+  </a>
+  <div style="flex:1;"></div>
+  <div style="display:flex;gap:4px;">
+    <a href="community.html"      class="cx-nav-link"><span class="nav-icon">🏠</span>Feed</a>
+    <a href="forum.html"          class="cx-nav-link active"><span class="nav-icon">💬</span>Forum</a>
+    <a href="funding-hub.html"    class="cx-nav-link"><span class="nav-icon">💰</span>Funding</a>
+    <a href="community-profile.html" class="cx-nav-link"><span class="nav-icon">👤</span>Network</a>
+  </div>
+  <div class="cx-nav-right">
+    <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
+      <div class="cx-avatar" id="navAvatar" style="background:#0B3D2E">?</div>
+      <span style="font-size:13px;font-weight:600;" id="navName">—</span>
+    </button>
+  </div>
+</nav>
+
+<div class="cx-forum-layout">
+
+  <!-- LEFT SIDEBAR: Communities -->
+  <aside class="cx-left-sidebar">
+    <div class="cx-sidebar-card">
+      <div class="cx-sidebar-title">🌐 Communities</div>
+      <div class="cx-community-list" id="communityList"></div>
+      <button class="cx-create-thread-btn" onclick="openCreateModal()">+ New Discussion</button>
+    </div>
+
+    <div class="cx-sidebar-card">
+      <div class="cx-sidebar-title">📋 Rules</div>
+      <ol style="padding-left:16px;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-2);line-height:1.5;">
+        <li>Be professional and respectful</li>
+        <li>Back claims with data or sources</li>
+        <li>No promotional content without disclosure</li>
+        <li>Stay on climate-related topics</li>
+        <li>No personal attacks or harassment</li>
+      </ol>
+    </div>
+
+    <div class="cx-sidebar-card">
+      <div class="cx-sidebar-title">🏅 Your Standing</div>
+      <div id="userStanding" style="font-size:13.5px;color:var(--text-2);line-height:1.8;">
+        <div>Karma: <strong style="color:var(--primary);">—</strong></div>
+        <div>Posts: <strong>—</strong></div>
+        <div>Communities: <strong>—</strong></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN FORUM CONTENT -->
+  <main class="cx-forum-main">
+
+    <!-- Community Header -->
+    <div class="cx-forum-header">
+      <div class="cx-forum-header-top">
+        <div>
+          <div class="cx-forum-header-name">
+            <span id="forumCommunityIcon">🌍</span>
+            <span id="forumCommunityName">All Communities</span>
+          </div>
+          <div class="cx-forum-header-desc" id="forumCommunityDesc">
+            Explore discussions across all climate communities — from renewable energy to carbon markets, ESG reporting, and beyond.
+          </div>
+          <div class="cx-forum-header-stats">
+            <div class="cx-forum-header-stat">👥 <strong id="forumMembers">78,950</strong> members</div>
+            <div class="cx-forum-header-stat">📝 <strong id="forumPosts">2,847</strong> discussions</div>
+            <div class="cx-forum-header-stat">🔥 <strong id="forumOnline">342</strong> online now</div>
+          </div>
+        </div>
+        <button class="cx-join-btn" id="joinBtn" onclick="handleJoin()">+ Join</button>
+      </div>
+    </div>
+
+    <!-- Sort Bar -->
+    <div class="cx-sort-bar">
+      <button class="cx-sort-btn active" data-sort="hot" onclick="setSort('hot',this)">🔥 Hot</button>
+      <button class="cx-sort-btn" data-sort="new" onclick="setSort('new',this)">🆕 New</button>
+      <button class="cx-sort-btn" data-sort="top" onclick="setSort('top',this)">⬆️ Top</button>
+      <button class="cx-sort-btn" data-sort="rising" onclick="setSort('rising',this)">📈 Rising</button>
+      <div class="cx-search-thread">
+        <span class="cx-search-thread-icon">🔍</span>
+        <input type="text" id="threadSearch" placeholder="Search discussions…" oninput="renderThreads()" />
+      </div>
+    </div>
+
+    <!-- Threads Container -->
+    <div id="threadsContainer"></div>
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="cx-right-sidebar">
+    <div class="cx-sidebar-card">
+      <div class="cx-sidebar-title">🔥 Trending Discussions</div>
+      <div id="trendingThreads"></div>
+    </div>
+
+    <div class="cx-sidebar-card">
+      <div class="cx-sidebar-title">🏆 Top Contributors</div>
+      <div id="topContributors"></div>
+    </div>
+
+    <div class="cx-sidebar-card" style="background:linear-gradient(135deg,#0B3D2E,#146248);border-color:transparent;padding:18px;">
+      <div style="color:white;font-size:14px;font-weight:700;margin-bottom:6px;">Start a Discussion</div>
+      <div style="color:rgba(255,255,255,0.78);font-size:12.5px;margin-bottom:14px;line-height:1.6;">
+        Share insights, ask questions, and spark conversations with 78K+ climate professionals.
+      </div>
+      <button onclick="openCreateModal()" style="width:100%;padding:10px;background:white;color:var(--primary);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;">
+        + New Thread
+      </button>
+    </div>
+
+    <div class="cx-sidebar-card">
+      <div class="cx-sidebar-title">📅 Upcoming Events</div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;">
+        <div style="padding:10px;border:1px solid var(--grey-mid);border-radius:8px;">
+          <div style="font-weight:600;color:var(--text);">COP30 Preview Webinar</div>
+          <div style="color:var(--text-muted);font-size:12px;margin-top:2px;">May 14 · 3:00 PM IST · Online</div>
+          <a style="font-size:12px;font-weight:600;color:var(--primary);margin-top:5px;display:block;">Register →</a>
+        </div>
+        <div style="padding:10px;border:1px solid var(--grey-mid);border-radius:8px;">
+          <div style="font-weight:600;color:var(--text);">India Carbon Market Summit</div>
+          <div style="color:var(--text-muted);font-size:12px;margin-top:2px;">Jun 3–4 · Delhi · Hybrid</div>
+          <a style="font-size:12px;font-weight:600;color:var(--primary);margin-top:5px;display:block;">Register →</a>
+        </div>
+        <div style="padding:10px;border:1px solid var(--grey-mid);border-radius:8px;">
+          <div style="font-weight:600;color:var(--text);">ClimateTech Pitch Day</div>
+          <div style="color:var(--text-muted);font-size:12px;margin-top:2px;">Jun 18 · Bangalore · In-person</div>
+          <a style="font-size:12px;font-weight:600;color:var(--primary);margin-top:5px;display:block;">Apply to Pitch →</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- CREATE THREAD MODAL -->
+<div class="cx-modal-overlay" id="createModalOverlay" onclick="if(event.target===this)closeCreateModal()">
+  <div class="cx-modal">
+    <div class="cx-modal-header">
+      <div class="cx-modal-title">Start a Discussion</div>
+      <button class="cx-modal-close" onclick="closeCreateModal()">✕</button>
+    </div>
+    <div class="cx-modal-body">
+      <div class="cx-field">
+        <label>Community *</label>
+        <select id="thread-community">
+          <!-- Filled by JS -->
+        </select>
+      </div>
+      <div class="cx-field">
+        <label>Title *</label>
+        <input type="text" id="thread-title" placeholder="Ask a question or share a perspective…" maxlength="280" />
+      </div>
+      <div class="cx-field">
+        <label>Body</label>
+        <textarea id="thread-body" placeholder="Add context, data, links, or your analysis… (optional but encouraged)"></textarea>
+      </div>
+      <div class="cx-field">
+        <label>Tags (comma-separated)</label>
+        <input type="text" id="thread-tags" placeholder="BatteryStorage, India, Tenders…" />
+      </div>
+    </div>
+    <div class="cx-modal-footer">
+      <button class="cx-modal-close" onclick="closeCreateModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#374151;background:#F3F4F6;">Cancel</button>
+      <button class="cx-post-btn" onclick="submitThread()">Post Discussion</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="cx-toast" id="toast"></div>
+
+<script type="module">
+import {
+  initCommunity, getCurrentUserProfile, getThreads, voteThread,
+  getRoleConfig, getAvatarColor, getInitials, timeAgo, formatCount,
+  COMMUNITIES, SEED_THREADS, ROLES
+} from './community.js';
+
+let currentUser = null;
+let activeCommunity = null;
+let currentSort = 'hot';
+let joinedCommunities = new Set();
+let voteMap = {};
+
+initCommunity();
+currentUser = getCurrentUserProfile();
+
+function escHtml(s) { const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
+
+// Nav
+if (currentUser) {
+  document.getElementById('navAvatar').textContent = currentUser.avatar;
+  document.getElementById('navAvatar').style.background = getAvatarColor(currentUser.role);
+  document.getElementById('navName').textContent = currentUser.fullName.split(' ')[0];
+  document.getElementById('userStanding').innerHTML = `
+    <div>Karma: <strong style="color:#0B3D2E;">${Math.floor(Math.random()*500)+50}</strong></div>
+    <div>Posts: <strong>${currentUser.postsCount}</strong></div>
+    <div>Communities: <strong>${joinedCommunities.size + 2}</strong></div>`;
+}
+
+// Render community list
+function renderCommunityList() {
+  const select = document.getElementById('thread-community');
+  const list = document.getElementById('communityList');
+
+  const allItem = `
+    <div class="cx-community-item ${!activeCommunity ? 'active' : ''}" onclick="setCommunity(null, this)">
+      <span class="cx-community-icon">🌍</span>
+      <span class="cx-community-name">All Communities</span>
+    </div>`;
+
+  const communityItems = COMMUNITIES.map(c => `
+    <div class="cx-community-item ${activeCommunity === c.id ? 'active' : ''}" onclick="setCommunity('${c.id}', this)">
+      <span class="cx-community-icon">${c.icon}</span>
+      <span class="cx-community-name">${escHtml(c.name)}</span>
+      <span class="cx-community-count">${formatCount(c.members)}</span>
+    </div>`).join('');
+
+  list.innerHTML = allItem + communityItems;
+
+  // Populate modal select
+  select.innerHTML = COMMUNITIES.map(c =>
+    `<option value="${c.id}" data-color="${c.color}">${c.icon} ${c.name}</option>`
+  ).join('');
+}
+
+// Set active community
+window.setCommunity = function(id, el) {
+  activeCommunity = id;
+  document.querySelectorAll('.cx-community-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+
+  const comm = id ? COMMUNITIES.find(c => c.id === id) : null;
+  if (comm) {
+    document.getElementById('forumCommunityIcon').textContent = comm.icon;
+    document.getElementById('forumCommunityName').textContent = comm.name;
+    document.getElementById('forumCommunityDesc').textContent = getCommDesc(id);
+    document.getElementById('forumMembers').textContent = formatCount(comm.members);
+    document.getElementById('forumPosts').textContent = formatCount(Math.floor(comm.members * 0.18));
+    document.getElementById('forumOnline').textContent = formatCount(Math.floor(comm.members * 0.004));
+  } else {
+    document.getElementById('forumCommunityIcon').textContent = '🌍';
+    document.getElementById('forumCommunityName').textContent = 'All Communities';
+    document.getElementById('forumCommunityDesc').textContent = 'Explore discussions across all climate communities.';
+    document.getElementById('forumMembers').textContent = '78,950';
+    document.getElementById('forumPosts').textContent = '2,847';
+    document.getElementById('forumOnline').textContent = '342';
+  }
+  renderThreads();
+};
+
+function getCommDesc(id) {
+  const descs = {
+    'renewable-energy':   'Deep dives into solar, wind, storage, green hydrogen, and the global energy transition.',
+    'carbon-markets':     'Voluntary and compliance carbon markets — VCM, CORSIA, Article 6, MRV, and carbon credit project development.',
+    'esg-reporting':      'ISSB, GRI, CSRD, BRSR, TCFD frameworks. ESG disclosure strategy, assurance, and investor relations.',
+    'climate-finance':    'Climate capital flows, blended finance, green bonds, DFI instruments, and impact investing.',
+    'nature-solutions':   'Nature-based solutions, biodiversity credits, mangroves, reforestation, soil carbon, and blue carbon.',
+    'green-mobility':     'EV adoption, charging infrastructure, public transit electrification, and sustainable logistics.',
+    'circular-economy':   'Waste reduction, product lifecycle thinking, industrial symbiosis, and circular business models.',
+    'climate-policy':     'NDCs, carbon pricing, climate litigation, regulatory developments, and policy implementation.',
+  };
+  return descs[id] || 'Join the discussion.';
+}
+
+// Sort & Render threads
+function getSortedThreads() {
+  let threads = getThreads(activeCommunity);
+  const q = document.getElementById('threadSearch').value.toLowerCase();
+  if (q) threads = threads.filter(t =>
+    t.title.toLowerCase().includes(q) ||
+    t.body.toLowerCase().includes(q) ||
+    (t.tags||[]).some(tag => tag.toLowerCase().includes(q))
+  );
+
+  switch (currentSort) {
+    case 'hot':    return threads.sort((a,b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes));
+    case 'new':    return threads.sort((a,b) => b.timestamp - a.timestamp);
+    case 'top':    return threads.sort((a,b) => b.upvotes - a.upvotes);
+    case 'rising': return threads.sort((a,b) => b.replyCount - a.replyCount);
+    default:       return threads;
+  }
+}
+
+window.renderThreads = function() {
+  const threads = getSortedThreads();
+  const container = document.getElementById('threadsContainer');
+
+  if (!threads.length) {
+    container.innerHTML = `<div style="background:white;border:1px solid #E5E7EB;border-radius:12px;padding:40px;text-align:center;color:#9CA3AF;">
+      <div style="font-size:32px;margin-bottom:12px;">💬</div>
+      <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px;">No discussions yet</div>
+      <div style="font-size:13px;">Be the first to start a conversation in this community!</div>
+      <button onclick="openCreateModal()" style="margin-top:14px;padding:9px 20px;background:#0B3D2E;color:white;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;border:none;">Start Discussion</button>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = threads.map(t => renderThread(t)).join('');
+
+  // Bind events
+  container.querySelectorAll('[data-upvote]').forEach(btn =>
+    btn.addEventListener('click', () => handleVote(btn.dataset.upvote, 'up', btn))
+  );
+  container.querySelectorAll('[data-downvote]').forEach(btn =>
+    btn.addEventListener('click', () => handleVote(btn.dataset.downvote, 'down', btn))
+  );
+  container.querySelectorAll('[data-toggle-replies]').forEach(btn =>
+    btn.addEventListener('click', () => toggleReplies(btn.dataset.toggleReplies))
+  );
+  container.querySelectorAll('[data-reply-submit]').forEach(btn =>
+    btn.addEventListener('click', () => submitReply(btn.dataset.replySubmit))
+  );
+};
+
+function renderThread(t) {
+  const score = (voteMap[t.id] || 0) + (t.upvotes - t.downvotes);
+  const comm = COMMUNITIES.find(c => c.id === t.community);
+  const roleConf = getRoleConfig(t.authorRole);
+  const userVote = voteMap[`${t.id}_vote`];
+
+  return `
+  <div class="cx-thread-card ${t.pinned ? 'pinned' : ''}" id="thread-${t.id}">
+    <!-- Vote column -->
+    <div class="cx-vote-col">
+      <button class="cx-vote-btn ${userVote==='up'?'upvoted':''}" data-upvote="${t.id}" title="Upvote">▲</button>
+      <div class="cx-vote-score ${score>0?'positive':''}">${score}</div>
+      <button class="cx-vote-btn ${userVote==='down'?'downvoted':''}" data-downvote="${t.id}" title="Downvote">▼</button>
+    </div>
+
+    <!-- Thread body -->
+    <div class="cx-thread-body">
+      <div class="cx-thread-meta">
+        ${comm ? `<span class="cx-community-chip" style="background:${comm.color}1a;color:${comm.color};" onclick="setCommunity('${comm.id}', document.querySelector('[onclick*=${comm.id}]'))">
+          ${comm.icon} ${escHtml(comm.name)}
+        </span>` : ''}
+        ${t.pinned ? '<span class="cx-pinned-badge">📌 Pinned</span>' : ''}
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:20px;height:20px;border-radius:50%;background:${getAvatarColor(t.authorRole)};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:white;">${t.authorAvatar}</div>
+          <span class="cx-thread-author">${escHtml(t.authorName)}</span>
+          <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color}">${roleConf.label}</span>
+          <span class="cx-thread-author">· ${timeAgo(t.timestamp)}</span>
+        </div>
+      </div>
+
+      <div class="cx-thread-title" onclick="toggleReplies('${t.id}')">${escHtml(t.title)}</div>
+      <div class="cx-thread-preview">${escHtml(t.body)}</div>
+
+      <div class="cx-thread-tags">
+        ${(t.tags||[]).map(tag => `<span class="cx-thread-tag">#${escHtml(tag)}</span>`).join('')}
+      </div>
+
+      <div class="cx-thread-footer">
+        <button class="cx-thread-footer-btn" data-toggle-replies="${t.id}">
+          💬 <span id="reply-count-${t.id}">${t.replyCount}</span> ${t.replyCount === 1 ? 'reply' : 'replies'}
+        </button>
+        <button class="cx-thread-footer-btn" onclick="shareThread('${t.id}')">↗️ Share</button>
+        <button class="cx-thread-footer-btn" onclick="saveThread('${t.id}')">🔖 Save</button>
+        <button class="cx-thread-footer-btn" onclick="showToast('Report submitted for review')">⚑ Report</button>
+        <span style="margin-left:auto;font-size:11.5px;color:#9CA3AF;">👁 ${formatCount(t.replyCount * 12 + 84)} views</span>
+      </div>
+
+      <!-- Replies -->
+      <div class="cx-thread-replies" id="replies-${t.id}">
+        <div id="replies-list-${t.id}">
+          ${generateSampleReplies(t)}
+        </div>
+        <div class="cx-add-reply">
+          <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(currentUser?.role)};flex-shrink:0;">${currentUser?.avatar||'?'}</div>
+          <input class="cx-reply-input" id="reply-input-${t.id}" placeholder="Add your perspective…" />
+          <button class="cx-reply-submit" data-reply-submit="${t.id}">Reply</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function generateSampleReplies(thread) {
+  if (!thread.replyCount) return '';
+  // Generate 2 sample replies for threads that have replies
+  const profiles = [
+    { name: 'Arjun Kapoor', avatar: 'AK', role: 'investor' },
+    { name: 'Dr. Meera Nair', avatar: 'MN', role: 'researcher' },
+    { name: 'Rahul Menon', avatar: 'RM', role: 'corporate' },
+  ];
+  const replyTexts = [
+    `Great point. From our fund's perspective, this is exactly the kind of structural analysis the market needs. We've seen similar patterns in our portfolio companies operating in this space.`,
+    `The research data supports this — we've been tracking these metrics for the past 3 years and the trend is consistent with what you're describing. Happy to share our dataset with interested parties.`,
+    `This aligns with what we're seeing in practice. The key challenge remains the last-mile implementation, which is where most initiatives stall. Does anyone have data on implementation success rates?`,
+  ];
+  return profiles.slice(0, 2).map((p, i) => {
+    const roleConf = getRoleConfig(p.role);
+    return `
+      <div class="cx-reply">
+        <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(p.role)};flex-shrink:0;">${p.avatar}</div>
+        <div class="cx-reply-bubble">
+          <div class="cx-reply-author">
+            ${escHtml(p.name)}
+            <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color};font-size:10px;">${roleConf.label}</span>
+          </div>
+          <div class="cx-reply-text">${replyTexts[i % replyTexts.length]}</div>
+          <div class="cx-reply-meta">
+            <span>${timeAgo(thread.timestamp + (i+1) * 3600000)}</span>
+            <button onclick="showToast('Upvoted')">▲ ${Math.floor(Math.random()*40)+5}</button>
+            <button onclick="showToast('Reply form coming soon')">Reply</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// Vote handling
+window.handleVote = function(threadId, direction, btn) {
+  if (!currentUser) { showToast('Sign in to vote'); return; }
+  const prevVote = voteMap[`${threadId}_vote`];
+
+  if (prevVote === direction) {
+    delete voteMap[`${threadId}_vote`];
+    if (direction === 'up') voteMap[threadId] = (voteMap[threadId] || 0) - 1;
+    else voteMap[threadId] = (voteMap[threadId] || 0) + 1;
+  } else {
+    if (prevVote) {
+      if (prevVote === 'up') voteMap[threadId] = (voteMap[threadId] || 0) - 2;
+      else voteMap[threadId] = (voteMap[threadId] || 0) + 2;
+    } else {
+      if (direction === 'up') voteMap[threadId] = (voteMap[threadId] || 0) + 1;
+      else voteMap[threadId] = (voteMap[threadId] || 0) - 1;
+    }
+    voteMap[`${threadId}_vote`] = direction;
+  }
+
+  renderThreads();
+};
+
+// Toggle replies
+window.toggleReplies = function(threadId) {
+  const el = document.getElementById(`replies-${threadId}`);
+  if (el) el.classList.toggle('open');
+};
+
+// Submit reply
+window.submitReply = function(threadId) {
+  if (!currentUser) { showToast('Sign in to reply'); return; }
+  const input = document.getElementById(`reply-input-${threadId}`);
+  const content = input?.value.trim();
+  if (!content) return;
+
+  const roleConf = getRoleConfig(currentUser.role);
+  const replyHtml = `
+    <div class="cx-reply">
+      <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(currentUser.role)};flex-shrink:0;">${currentUser.avatar}</div>
+      <div class="cx-reply-bubble">
+        <div class="cx-reply-author">
+          ${escHtml(currentUser.fullName)}
+          <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color};font-size:10px;">${roleConf.label}</span>
+        </div>
+        <div class="cx-reply-text">${escHtml(content)}</div>
+        <div class="cx-reply-meta"><span>just now</span></div>
+      </div>
+    </div>`;
+
+  const list = document.getElementById(`replies-list-${threadId}`);
+  if (list) list.insertAdjacentHTML('beforeend', replyHtml);
+
+  // Update count
+  const countEl = document.getElementById(`reply-count-${threadId}`);
+  if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
+
+  input.value = '';
+  showToast('Reply posted!');
+};
+
+window.shareThread = function(id) {
+  const url = window.location.href.split('?')[0] + `?thread=${id}`;
+  navigator.clipboard?.writeText(url).catch(() => {});
+  showToast('Thread link copied!');
+};
+
+window.saveThread = function(id) {
+  showToast('Thread saved to bookmarks');
+};
+
+// Sort
+window.setSort = function(sort, btn) {
+  currentSort = sort;
+  document.querySelectorAll('.cx-sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderThreads();
+};
+
+// Join
+window.handleJoin = function() {
+  const commId = activeCommunity;
+  const btn = document.getElementById('joinBtn');
+  if (!currentUser) { showToast('Sign in to join communities'); return; }
+  if (commId) {
+    if (joinedCommunities.has(commId)) {
+      joinedCommunities.delete(commId);
+      btn.textContent = '+ Join'; btn.classList.remove('joined');
+      showToast('Left community');
+    } else {
+      joinedCommunities.add(commId);
+      btn.textContent = '✓ Joined'; btn.classList.add('joined');
+      showToast(`Joined ${COMMUNITIES.find(c=>c.id===commId)?.name}!`);
+    }
+  }
+};
+
+// Create thread modal
+window.openCreateModal = function() {
+  document.getElementById('createModalOverlay').classList.add('open');
+};
+window.closeCreateModal = function() {
+  document.getElementById('createModalOverlay').classList.remove('open');
+};
+window.submitThread = function() {
+  if (!currentUser) { showToast('Sign in to post'); return; }
+  const title = document.getElementById('thread-title').value.trim();
+  if (title.length < 10) { showToast('Please add a more descriptive title'); return; }
+  const commId = document.getElementById('thread-community').value;
+  const comm = COMMUNITIES.find(c => c.id === commId);
+
+  // Add to local state for this session
+  const newThread = {
+    id: 'f' + Date.now(),
+    community: commId,
+    communityName: comm?.name || '',
+    communityColor: comm?.color || '#0B3D2E',
+    title,
+    body: document.getElementById('thread-body').value.trim(),
+    authorId: currentUser.uid,
+    authorName: currentUser.fullName,
+    authorAvatar: currentUser.avatar,
+    authorRole: currentUser.role,
+    upvotes: 1,
+    downvotes: 0,
+    replyCount: 0,
+    tags: document.getElementById('thread-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    timestamp: Date.now(),
+    pinned: false,
+  };
+
+  // Prepend to seed threads for this session
+  SEED_THREADS.unshift(newThread);
+  closeCreateModal();
+  setCommunity(commId, document.querySelector(`[onclick*="${commId}"]`) || document.querySelector('.cx-community-item'));
+  showToast('Discussion posted!');
+};
+
+// Right sidebar: Trending
+function renderTrending() {
+  const trending = [...SEED_THREADS].sort((a,b) => b.replyCount - a.replyCount).slice(0, 4);
+  document.getElementById('trendingThreads').innerHTML = trending.map(t => `
+    <div class="cx-trending-thread" onclick="toggleReplies('${t.id}')">
+      <div class="cx-trending-thread-title">${escHtml(t.title)}</div>
+      <div class="cx-trending-thread-meta">
+        ▲ ${t.upvotes} · 💬 ${t.replyCount} replies · ${timeAgo(t.timestamp)}
+      </div>
+    </div>`).join('');
+}
+
+function renderTopContributors() {
+  const contribs = [
+    { name: 'Dr. Meera Nair', avatar: 'MN', role: 'researcher', karma: 4821 },
+    { name: 'Rahul Menon', avatar: 'RM', role: 'corporate', karma: 3240 },
+    { name: 'Arjun Kapoor', avatar: 'AK', role: 'investor', karma: 2987 },
+    { name: 'Priya Sharma', avatar: 'PS', role: 'startup', karma: 1847 },
+  ];
+  document.getElementById('topContributors').innerHTML = contribs.map((c, i) => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <span style="font-size:13px;font-weight:700;color:#9CA3AF;width:18px;">#${i+1}</span>
+      <div style="width:32px;height:32px;border-radius:50%;background:${getAvatarColor(c.role)};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;">${c.avatar}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(c.name)}</div>
+        <div style="font-size:11px;color:#9CA3AF;">${formatCount(c.karma)} karma</div>
+      </div>
+    </div>`).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// Boot
+renderCommunityList();
+renderThreads();
+renderTrending();
+renderTopContributors();
+</script>
+</body>
+</html>

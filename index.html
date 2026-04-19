@@ -358,6 +358,79 @@
     padding: 0 18px;
   }
 
+  /* ── MAP LAYER CONTROLS ── */
+  .hm-layer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .hm-layer-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    white-space: nowrap;
+  }
+  .hm-layer-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .hm-layer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.45);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .hm-layer-btn:hover {
+    background: rgba(255,255,255,0.09);
+    color: rgba(255,255,255,0.8);
+    border-color: rgba(255,255,255,0.2);
+  }
+  .hm-layer-btn.active {
+    background: rgba(90,170,128,0.18);
+    border-color: rgba(90,170,128,0.5);
+    color: #5aaa80;
+  }
+  .hm-layer-btn.active.co2   { background:rgba(253,174,97,0.15); border-color:rgba(253,174,97,0.5); color:#fdae61; }
+  .hm-layer-btn.active.sea   { background:rgba(96,165,250,0.15); border-color:rgba(96,165,250,0.5); color:#60a5fa; }
+  .hm-layer-btn.active.ice   { background:rgba(200,230,255,0.12); border-color:rgba(200,230,255,0.4); color:#c8e8ff; }
+  .hm-layer-status {
+    font-size: 9.5px;
+    color: rgba(90,170,128,0.6);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .hm-layer-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #5aaa80;
+    animation: glp 2.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  /* dynamic legend bar */
+  .hm-legend-bar.co2  { background: linear-gradient(90deg,#ffffcc 0%,#fe9929 50%,#993404 100%); }
+  .hm-legend-bar.sea  { background: linear-gradient(90deg,#deebf7 0%,#3182bd 60%,#08306b 100%); }
+  .hm-legend-bar.ice  { background: linear-gradient(90deg,#08306b 0%,#9ecae1 50%,#ffffff 100%); }
+  .hm-legend-bar.temp { background: linear-gradient(90deg, #60a5fa 0%, #fbbf24 35%, #f97316 65%, #f87171 85%, #dc2626 100%); }
+
   /* ── 3. CLIMATE CONCERNS SECTION ── */
   .cx-concerns-section {
     background: var(--white);
@@ -840,6 +913,7 @@
       <a href="#solution" class="nav-link">Solution</a>
       <a href="generate.html" class="nav-link">ESG Engine</a>
       <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="community.html" class="nav-link" style="font-weight:600;color:var(--primary);">Community</a>
       <a href="assessment.html" class="nav-link">Assessment</a>
       <a href="climactix-ai.html" class="nav-link nav-cta">AI Engine</a>
       <a href="#founder" class="nav-link">Founder</a>
@@ -999,10 +1073,24 @@
     <section class="cx-heatmap-section" id="climate-intelligence">
       <div class="page-wrapper">
         <div class="cx-section-dark-eyebrow">Physical Climate Risk · Live Intelligence Layer</div>
-        <h2 class="cx-section-dark-heading">Temperature Anomalies as Financial Risk Signals — Worldwide</h2>
-        <p class="cx-section-dark-sub">
+        <h2 class="cx-section-dark-heading" id="hmSectionHeading">Temperature Anomalies as Financial Risk Signals — Worldwide</h2>
+        <p class="cx-section-dark-sub" id="hmSectionDesc">
           Regional surface temperature deviations from the 1951–1980 baseline — mapped to transition and physical risk exposure for institutional decision-makers. Data benchmarked to IPCC AR6 and NASA GISS. Hover any hotspot to access contextual risk intelligence.
         </p>
+
+        <!-- Layer toggle bar -->
+        <div class="hm-layer-bar">
+          <div class="hm-layer-btns" id="hmLayerBtns">
+            <button class="hm-layer-btn active" data-layer="temperature">🌡 Temperature</button>
+            <button class="hm-layer-btn" data-layer="co2">🌫 CO₂ Concentration</button>
+            <button class="hm-layer-btn" data-layer="sea_level">🌊 Sea Level Rise</button>
+            <button class="hm-layer-btn" data-layer="arctic_ice">❄ Arctic Ice</button>
+          </div>
+          <div class="hm-layer-status">
+            <span class="hm-layer-dot"></span>
+            <span id="hmLayerSource">Climactix Climate Intelligence · April 2026</span>
+          </div>
+        </div>
 
         <div class="cx-heatmap-canvas-wrap">
           <canvas id="heatmapCanvas" width="1000" height="460"></canvas>
@@ -1015,32 +1103,32 @@
         </div>
 
         <div class="hm-legend">
-          <span class="hm-legend-label">Cooler</span>
-          <div>
-            <div class="hm-legend-bar"></div>
-            <div class="hm-legend-ticks">
+          <span class="hm-legend-label" id="hmLegendMin">Cooler</span>
+          <div style="flex:1;">
+            <div class="hm-legend-bar temp" id="hmLegendBar"></div>
+            <div class="hm-legend-ticks" id="hmLegendTicks">
               <span>+0.5°C</span><span>+1.0°C</span><span>+1.5°C</span><span>+2.0°C</span><span>+3.0°C+</span>
             </div>
           </div>
-          <span class="hm-legend-label">Extreme</span>
+          <span class="hm-legend-label" id="hmLegendMax">Extreme</span>
         </div>
 
         <div class="cx-hm-stats">
-          <div class="hm-stat">
-            <div class="hm-stat-val v-red">+1.45°C</div>
-            <div class="hm-stat-label">Global Avg Warming<br>Above Pre-Industrial</div>
+          <div class="hm-stat" id="hmStat1">
+            <div class="hm-stat-val v-red" id="hmStat1Val">+1.45°C</div>
+            <div class="hm-stat-label" id="hmStat1Label">Global Avg Warming<br>Above Pre-Industrial</div>
           </div>
-          <div class="hm-stat">
-            <div class="hm-stat-val v-orange">2023</div>
-            <div class="hm-stat-label">Hottest Year<br>on Record</div>
+          <div class="hm-stat" id="hmStat2">
+            <div class="hm-stat-val v-orange" id="hmStat2Val">2023</div>
+            <div class="hm-stat-label" id="hmStat2Label">Hottest Year<br>on Record</div>
           </div>
-          <div class="hm-stat">
-            <div class="hm-stat-val v-blue">3.7 mm/yr</div>
-            <div class="hm-stat-label">Current Sea Level<br>Rise Rate</div>
+          <div class="hm-stat" id="hmStat3">
+            <div class="hm-stat-val v-blue" id="hmStat3Val">3.7 mm/yr</div>
+            <div class="hm-stat-label" id="hmStat3Label">Current Sea Level<br>Rise Rate</div>
           </div>
-          <div class="hm-stat">
-            <div class="hm-stat-val v-teal">40.2 Bt</div>
-            <div class="hm-stat-label">Global CO₂ Emissions<br>2023</div>
+          <div class="hm-stat" id="hmStat4">
+            <div class="hm-stat-val v-teal" id="hmStat4Val">40.2 Bt</div>
+            <div class="hm-stat-label" id="hmStat4Label">Global CO₂ Emissions<br>2023</div>
           </div>
         </div>
       </div>
@@ -3049,21 +3137,155 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       function px(ln) { return ((ln + 180) / 360) * W; }
       function py(la) { return ((90 - la) / 180) * H; }
 
-      /* ── Climate data (mock, IPCC AR6 / NASA GISS aligned) ── */
-      const REGIONS = [
-        { name:'Arctic Circle',        la:78,  ln:10,   anomaly:+3.2, r:62, desc:'Rapid permafrost thaw, glacial retreat & sea-ice loss',   sev:'critical' },
-        { name:'Middle East',          la:27,  ln:45,   anomaly:+2.9, r:58, desc:'Record-breaking heat events, severe freshwater stress',    sev:'critical' },
-        { name:'Central Asia',         la:45,  ln:65,   anomaly:+2.8, r:55, desc:'Aral Sea collapse, desertification & crop failure',        sev:'critical' },
-        { name:'W. North America',     la:38,  ln:-115, anomaly:+2.2, r:52, desc:'Megadroughts, catastrophic wildfires & heat dome events',  sev:'high'     },
-        { name:'Mediterranean Basin',  la:38,  ln:20,   anomaly:+2.1, r:52, desc:'Extended drought seasons, worsening wildfire corridors',   sev:'high'     },
-        { name:'South Asia',           la:23,  ln:80,   anomaly:+1.9, r:52, desc:'Flooding, extreme heat waves & monsoon disruption',        sev:'high'     },
-        { name:'East Africa',          la:5,   ln:37,   anomaly:+1.8, r:50, desc:'Multi-year drought cycles, food system collapse risk',     sev:'high'     },
-        { name:'Sub-Saharan Africa',   la:10,  ln:20,   anomaly:+1.8, r:50, desc:'Agricultural heat stress, water scarcity & displacement', sev:'high'     },
-        { name:'SE Asia & Mekong',     la:13,  ln:107,  anomaly:+1.6, r:46, desc:'Sea-level rise, typhoon intensification, delta flooding',  sev:'moderate' },
-        { name:'Amazon Basin',         la:-5,  ln:-60,  anomaly:+1.4, r:48, desc:'Deforestation feedback loops accelerating local warming',  sev:'moderate' },
-        { name:'Australia',            la:-25, ln:133,  anomaly:+1.7, r:46, desc:'Extreme bushfire seasons, coral reef mass bleaching',      sev:'moderate' },
-        { name:'Northern Europe',      la:62,  ln:15,   anomaly:+1.5, r:42, desc:'Arctic influence, wetland thaw & ice sheet acceleration',  sev:'moderate' },
-      ];
+      /* ══════════════════════════════════════════════════════
+         LAYER DATA SETS — 4 climate variables
+         Each layer has: regions[], colorFn(), legend config,
+         section heading, and bottom stats row.
+      ══════════════════════════════════════════════════════ */
+
+      const ALL_LAYERS = {
+
+        /* ── 1. TEMPERATURE ─────────────────────────────── */
+        temperature: {
+          heading: 'Temperature Anomalies as Financial Risk Signals — Worldwide',
+          desc:    'Regional surface temperature deviations from the 1951–1980 baseline — mapped to transition and physical risk exposure for institutional decision-makers. Data benchmarked to IPCC AR6 and NASA GISS. Hover any hotspot to access contextual risk intelligence.',
+          regions: [
+            { name:'Arctic Circle',       la:78,  ln:10,   val:+3.2, r:62, desc:'Rapid permafrost thaw, glacial retreat & sea-ice loss',   sev:'critical' },
+            { name:'Middle East',         la:27,  ln:45,   val:+2.9, r:58, desc:'Record-breaking heat events, severe freshwater stress',   sev:'critical' },
+            { name:'Central Asia',        la:45,  ln:65,   val:+2.8, r:55, desc:'Aral Sea collapse, desertification & crop failure',       sev:'critical' },
+            { name:'W. North America',    la:38,  ln:-115, val:+2.2, r:52, desc:'Megadroughts, catastrophic wildfires & heat dome events', sev:'high'     },
+            { name:'Mediterranean Basin', la:38,  ln:20,   val:+2.1, r:52, desc:'Extended drought seasons, worsening wildfire corridors',  sev:'high'     },
+            { name:'South Asia',          la:23,  ln:80,   val:+1.9, r:52, desc:'Flooding, extreme heat waves & monsoon disruption',       sev:'high'     },
+            { name:'East Africa',         la:5,   ln:37,   val:+1.8, r:50, desc:'Multi-year drought cycles, food system collapse risk',    sev:'high'     },
+            { name:'Sub-Saharan Africa',  la:10,  ln:20,   val:+1.8, r:50, desc:'Agricultural heat stress, water scarcity & displacement',sev:'high'     },
+            { name:'SE Asia & Mekong',    la:13,  ln:107,  val:+1.6, r:46, desc:'Sea-level rise, typhoon intensification, delta flooding', sev:'moderate' },
+            { name:'Amazon Basin',        la:-5,  ln:-60,  val:+1.4, r:48, desc:'Deforestation feedback loops accelerating local warming', sev:'moderate' },
+            { name:'Australia',           la:-25, ln:133,  val:+1.7, r:46, desc:'Extreme bushfire seasons, coral reef mass bleaching',     sev:'moderate' },
+            { name:'Northern Europe',     la:62,  ln:15,   val:+1.5, r:42, desc:'Arctic influence, wetland thaw & ice sheet acceleration', sev:'moderate' },
+          ],
+          colorFn: function(v) {
+            if (v >= 2.8) return { fill:'#cc1100', glow:'#ff3311' };
+            if (v >= 2.2) return { fill:'#dd5500', glow:'#ff8800' };
+            if (v >= 1.7) return { fill:'#cc9900', glow:'#ffcc00' };
+            return               { fill:'#226699', glow:'#4a9eff' };
+          },
+          valLabel: function(v) { return '+' + v.toFixed(1) + '°C anomaly'; },
+          sevMap: { critical:'Critical Risk', high:'High Risk', moderate:'Moderate Risk' },
+          legend: { barClass:'temp', min:'Cooler', max:'Extreme', ticks:['< 0.5°C','1.0°C','1.5°C','2.0°C','> 3.0°C'] },
+          stats: [
+            { val:'+1.45°C', cls:'v-red',    label:'Global Avg Warming<br>Above Pre-Industrial' },
+            { val:'2023',    cls:'v-orange',  label:'Hottest Year<br>on Record'                  },
+            { val:'3.7 mm/yr',cls:'v-blue',  label:'Current Sea Level<br>Rise Rate'             },
+            { val:'40.2 Bt', cls:'v-teal',   label:'Global CO₂ Emissions<br>2023'               },
+          ],
+        },
+
+        /* ── 2. CO₂ CONCENTRATION ───────────────────────── */
+        co2: {
+          heading: 'Atmospheric CO₂ Concentration — Global Industrial Source Mapping',
+          desc:    'Column-mean CO₂ concentration highlighting industrial emission hotspots, deforestation corridors, and ocean carbon sink zones. Derived from Sentinel-5P TROPOMI satellite observations. Hover any hotspot to view emission context.',
+          regions: [
+            { name:'East Asia Industrial Belt', la:35,  ln:115,  val:422, r:65, desc:'World\'s largest industrial CO₂ source — coal, manufacturing, cement. China accounts for ~30% of global emissions.',             sev:'critical' },
+            { name:'South Asia',                la:22,  ln:80,   val:418, r:55, desc:'Rapidly growing emissions from industry, power generation & transport across India, Pakistan & Bangladesh.',                        sev:'critical' },
+            { name:'Amazon Deforestation Arc',  la:-10, ln:-55,  val:416, r:52, desc:'Land-use change CO₂ from agricultural burning, deforestation and soil carbon release — 2.5 Bt CO₂/yr.',                           sev:'critical' },
+            { name:'North America',             la:42,  ln:-95,  val:417, r:58, desc:'Industrial and transport emissions; partial offset by boreal forest carbon sink and growing renewables penetration.',               sev:'high'     },
+            { name:'European Industry',         la:51,  ln:10,   val:415, r:50, desc:'EU industrial zone — declining due to ETS carbon pricing but still elevated from heavy industry & gas heating.',                    sev:'high'     },
+            { name:'SE Asia & ASEAN',           la:10,  ln:105,  val:414, r:46, desc:'Deforestation in Indonesia & Malaysia, coal power expansion and palm oil cultivation releasing stored soil carbon.',                 sev:'high'     },
+            { name:'Middle East',               la:25,  ln:50,   val:413, r:44, desc:'Oil & gas flaring, petrochemical processing and LNG infrastructure — among highest per-capita emissions globally.',                  sev:'high'     },
+            { name:'Sub-Saharan Africa',        la:5,   ln:25,   val:412, r:44, desc:'Biomass burning, charcoal production and expanding agriculture releasing stored vegetation carbon across the Congo Basin.',          sev:'moderate' },
+            { name:'North Atlantic Sink',       la:55,  ln:-35,  val:408, r:44, desc:'Major ocean CO₂ sink absorbing ~25% of global emissions — at risk from warming-driven stratification reducing uptake capacity.',    sev:'moderate' },
+            { name:'Southern Ocean Sink',       la:-55, ln:0,    val:407, r:48, desc:'Largest ocean carbon sink. Warming Southern Ocean showing reduced absorption efficiency — critical to global carbon budget projections.', sev:'moderate' },
+          ],
+          colorFn: function(v) {
+            if (v >= 420) return { fill:'#9b1c1c', glow:'#ef4444' };
+            if (v >= 417) return { fill:'#c2410c', glow:'#f97316' };
+            if (v >= 414) return { fill:'#b45309', glow:'#f59e0b' };
+            return               { fill:'#1e6b4a', glow:'#34d399' };
+          },
+          valLabel: function(v) { return v.toFixed(0) + ' ppm CO₂'; },
+          sevMap: { critical:'Emission Source', high:'Elevated', moderate:'Carbon Sink' },
+          legend: { barClass:'co2', min:'Sink', max:'Source', ticks:['407 ppm','411 ppm','415 ppm','418 ppm','422+ ppm'] },
+          stats: [
+            { val:'424 ppm',  cls:'v-red',   label:'Current Global<br>Mean CO₂' },
+            { val:'421 ppm',  cls:'v-orange', label:'2023 Annual<br>Average' },
+            { val:'+2.4 ppm', cls:'v-orange', label:'Annual Growth<br>Rate'      },
+            { val:'36%',      cls:'v-teal',   label:'CO₂ From Land<br>Use Change' },
+          ],
+        },
+
+        /* ── 3. SEA LEVEL RISE ──────────────────────────── */
+        sea_level: {
+          heading: 'Sea Level Rise — Coastal & Low-Lying Asset Exposure Worldwide',
+          desc:    'Cumulative sea level anomaly above the 1993 satellite-altimetry baseline. Thermal expansion and glacier melt are accelerating exposure for coastal infrastructure, sovereign debt, and insurance portfolios globally. Hover any region for risk context.',
+          regions: [
+            { name:'Pacific Island States',     la:-8,  ln:179,  val:98,  r:55, desc:'Pacific atoll nations facing existential sea-level threat. Kiribati, Tuvalu & Marshall Islands project inundation within decades under 2°C scenarios.',    sev:'critical' },
+            { name:'Bangladesh Delta',          la:23,  ln:90,   val:90,  r:55, desc:'World\'s most sea-level-exposed megadelta. 17M+ people at risk from storm surge amplification — 1m rise floods 17% of national territory.',                 sev:'critical' },
+            { name:'Caribbean & Gulf Coast',    la:18,  ln:-70,  val:85,  r:52, desc:'Hurricane storm surge + sea-level rise compounding. Miami alone faces $400B+ real estate exposure. Insurance withdrawal accelerating.',                     sev:'critical' },
+            { name:'Bay of Bengal',             la:12,  ln:85,   val:87,  r:52, desc:'Chennai, Kolkata, Dhaka increasingly flood-prone. Asian Development Bank estimates $3T coastal asset exposure at risk by 2070.',                            sev:'critical' },
+            { name:'W. Pacific Warm Pool',      la:8,   ln:145,  val:92,  r:50, desc:'Fastest rising sea levels globally due to thermal expansion of warm equatorial water. Philippine & Indonesian coastal cities under acute risk.',             sev:'critical' },
+            { name:'North Sea & Netherlands',   la:53,  ln:5,    val:76,  r:46, desc:'European coastal cities — Amsterdam, Rotterdam, Hamburg — protected by engineering but at structural risk under 1.5–2°C scenarios.',                       sev:'high'     },
+            { name:'East China Sea',            la:30,  ln:122,  val:82,  r:46, desc:'Shanghai, Tokyo and coastal Chinese megacities facing amplified flood risk. Insurance and property valuations are systematically underpricing risk.',         sev:'high'     },
+            { name:'Gulf of Mexico',            la:26,  ln:-93,  val:78,  r:46, desc:'Subsidence + sea-level rise creating compound risk for Houston, New Orleans energy infrastructure, shipping and coastal communities.',                       sev:'high'     },
+            { name:'Mediterranean Coast',       la:35,  ln:18,   val:70,  r:44, desc:'Adriatic and Eastern Mediterranean cities — Venice, Alexandria — facing accelerating high-water events with declining storm surge protection.',              sev:'moderate' },
+            { name:'Arctic Ocean',              la:78,  ln:0,    val:40,  r:42, desc:'Arctic sea ice loss exposing new shipping routes; coastal permafrost erosion accelerating. Indigenous community relocation underway.',                       sev:'moderate' },
+          ],
+          colorFn: function(v) {
+            if (v >= 90) return { fill:'#1e3a5f', glow:'#3b82f6' };
+            if (v >= 80) return { fill:'#1e4d7a', glow:'#60a5fa' };
+            if (v >= 70) return { fill:'#1a6b8a', glow:'#7dd3fc' };
+            return              { fill:'#164e63', glow:'#a5f3fc' };
+          },
+          valLabel: function(v) { return '+' + v.toFixed(0) + ' mm above 1993'; },
+          sevMap: { critical:'Extreme Exposure', high:'High Exposure', moderate:'Moderate Exposure' },
+          legend: { barClass:'sea', min:'Lower', max:'Highest Rise', ticks:['+40 mm','+60 mm','+75 mm','+85 mm','+95 mm+'] },
+          stats: [
+            { val:'+3.7 mm', cls:'v-blue',  label:'Annual Rise Rate<br>(2014–2023)' },
+            { val:'100+ mm', cls:'v-blue',  label:'Total Rise Since<br>1993'         },
+            { val:'1B+',     cls:'v-orange',label:'People in Coastal<br>Flood Zones' },
+            { val:'$14T',    cls:'v-red',   label:'Coastal Asset<br>Exposure by 2050' },
+          ],
+        },
+
+        /* ── 4. ARCTIC ICE ──────────────────────────────── */
+        arctic_ice: {
+          heading: 'Arctic & Antarctic Sea Ice — Cryosphere Collapse as Systemic Risk',
+          desc:    'Sea ice extent showing September Arctic minimum (lowest annual coverage) and Antarctic maximum. Arctic sea ice is declining at ~13% per decade — a key driver of global albedo feedback, ocean circulation disruption, and accelerating permafrost thaw. Hover regions for risk context.',
+          regions: [
+            { name:'Central Arctic Basin',      la:85,  ln:0,    val:0.82, r:62, desc:'Last multi-year ice refuge — shrinking rapidly. September 2023 Arctic sea ice was 6th lowest on record at 4.23M km², vs 7M km² in 1980s.',         sev:'critical' },
+            { name:'Laptev Sea',                la:76,  ln:125,  val:0.65, r:50, desc:'Key Arctic ice factory — forming ice that circulates through Arctic Basin. Unprecedented open water seasons now occurring regularly.',              sev:'critical' },
+            { name:'East Siberian Sea',         la:74,  ln:170,  val:0.60, r:48, desc:'Large shallow shelf releasing methane from thawing subsea permafrost — a potentially catastrophic tipping-point feedback.',                       sev:'critical' },
+            { name:'Beaufort Sea',              la:74,  ln:-140, val:0.55, r:48, desc:'Beaufort Gyre slowing — storing less freshwater. Accelerated ice loss exposing Arctic shipping lanes and oil & gas reserves.',                    sev:'critical' },
+            { name:'Barents Sea',               la:75,  ln:40,   val:0.30, r:52, desc:'Atlantic water inflow has created a near-permanent open-water zone ("Atlantification") — ice-free even in winter in recent years.',              sev:'critical' },
+            { name:'Greenland Ice Sheet',       la:72,  ln:-40,  val:0.90, r:52, desc:'Greenland is losing 280 Gt of ice per year — contributing 0.7 mm/yr to sea level rise. Approaching potential irreversible melting thresholds.', sev:'critical' },
+            { name:'Canadian Archipelago',      la:76,  ln:-95,  val:0.50, r:46, desc:'Northwest Passage sea route opening seasonally. Indigenous community access routes collapsing; sovereign jurisdiction disputes intensifying.',      sev:'high'     },
+            { name:'Chukchi Sea',               la:69,  ln:-170, val:0.35, r:46, desc:'Persistent open water enabling Arctic shipping and drilling — raising geopolitical risks and ecosystem disruption in previously ice-covered areas.', sev:'high'     },
+            { name:'Antarctic Peninsula',       la:-65, ln:-65,  val:0.45, r:48, desc:'Fastest warming region on Earth (+3°C in 50 yrs). Larsen Ice Shelf collapse a precursor to potential West Antarctic Ice Sheet destabilisation.',  sev:'critical' },
+            { name:'Weddell Sea',               la:-72, ln:-45,  val:0.75, r:46, desc:'Antarctic ice historically stable but 2023 recorded record-low Antarctic winter sea ice — a significant scientific alarm.',                       sev:'high'     },
+            { name:'Ross Sea',                  la:-75, ln:175,  val:0.80, r:44, desc:'Buttresses the West Antarctic Ice Sheet. Collapse of Thwaites Glacier (the "Doomsday Glacier") could add 3.4m to global sea levels.',           sev:'moderate' },
+          ],
+          colorFn: function(v) {
+            if (v >= 0.75) return { fill:'#bfdbfe', glow:'#eff6ff' };
+            if (v >= 0.50) return { fill:'#7dd3fc', glow:'#bae6fd' };
+            if (v >= 0.30) return { fill:'#38bdf8', glow:'#7dd3fc' };
+            return               { fill:'#0c4a6e', glow:'#0369a1' };
+          },
+          valLabel: function(v) { return (v * 100).toFixed(0) + '% ice cover'; },
+          sevMap: { critical:'Critical Decline', high:'Elevated Loss', moderate:'Monitoring Zone' },
+          legend: { barClass:'ice', min:'Ice-Free', max:'Full Cover', ticks:['0%','25%','50%','75%','100%'] },
+          stats: [
+            { val:'−13%',   cls:'v-blue',   label:'Arctic Ice Decline<br>Per Decade'   },
+            { val:'2023',   cls:'v-red',    label:'Record Low Antarctic<br>Winter Ice' },
+            { val:'280 Gt', cls:'v-orange', label:'Greenland Annual<br>Ice Mass Loss'  },
+            { val:'+3.4 m', cls:'v-blue',   label:'Sea Level if W. Antarctic<br>Collapses' },
+          ],
+        },
+      };
+
+      /* Active layer state */
+      let _activeHmLayer = 'temperature';
+
+      /* Shared canvas for static base map (rebuilt only on first init) */
+      const REGIONS = ALL_LAYERS.temperature.regions; /* backward compat ref */
 
       /* ── Continent polygon data ── */
       const CONTINENTS = [

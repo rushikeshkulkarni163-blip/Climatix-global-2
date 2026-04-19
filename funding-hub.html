@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Funding Hub · Climactix Community</title>
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:      #0B3D2E;
+      --primary-mid:  #0e4f3a;
+      --primary-tint: #EBF5F1;
+      --primary-pale: #D1FAE5;
+      --white:        #FFFFFF;
+      --off-white:    #F9FAFB;
+      --grey-light:   #F3F4F6;
+      --grey-mid:     #E5E7EB;
+      --text:         #111827;
+      --text-2:       #374151;
+      --text-muted:   #6B7280;
+      --text-faint:   #9CA3AF;
+      --amber:        #92400E;
+      --amber-bg:     #FEF3C7;
+      --blue:         #1D4ED8;
+      --blue-bg:      #DBEAFE;
+      --purple:       #5B21B6;
+      --purple-bg:    #EDE9FE;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg:    0 8px 32px rgba(0,0,0,0.12);
+      --radius:       12px;
+      --radius-sm:    8px;
+      --nav-h:        60px;
+      --transition:   0.18s cubic-bezier(0.4,0,0.2,1);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--off-white); color: var(--text); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* NAV */
+    .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--white);border-bottom:1px solid var(--grey-mid);display:flex;align-items:center;padding:0 20px;gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05); }
+    .cx-nav-logo { display:flex;align-items:center;gap:10px;flex-shrink:0; }
+    .cx-nav-logo img { height:32px; }
+    .cx-nav-link { display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:500;color:var(--text-muted);transition:var(--transition);position:relative; }
+    .cx-nav-link:hover { background:var(--grey-light);color:var(--text); }
+    .cx-nav-link.active { color:var(--primary); }
+    .cx-nav-link.active::after { content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--primary);border-radius:2px 2px 0 0; }
+    .cx-nav-link .nav-icon { font-size:20px;line-height:1; }
+    .cx-avatar { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0; }
+    .cx-nav-right { display:flex;align-items:center;gap:10px;margin-left:auto; }
+    .cx-avatar-btn { display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:20px;background:none;border:1px solid var(--grey-mid);cursor:pointer;transition:var(--transition); }
+    .cx-avatar-btn:hover { background:var(--grey-light); }
+
+    /* HERO BANNER */
+    .cx-hub-hero {
+      background: linear-gradient(135deg, #0B3D2E 0%, #146248 50%, #1a7a5a 100%);
+      color: white;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .cx-hub-hero-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 12px;
+    }
+    .cx-hub-hero-title {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      line-height: 1.1;
+    }
+    .cx-hub-hero-sub {
+      font-size: 16px;
+      opacity: 0.8;
+      max-width: 560px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+    .cx-hub-hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .cx-hub-hero-stat { text-align: center; }
+    .cx-hub-hero-stat-val { font-size: 28px; font-weight: 800; line-height: 1; }
+    .cx-hub-hero-stat-label { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+    .cx-hub-hero-btns { display: flex; gap: 12px; justify-content: center; margin-bottom: 32px; }
+    .cx-hero-btn-primary { padding:12px 28px;background:white;color:var(--primary);border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;transition:var(--transition);border:none; }
+    .cx-hero-btn-primary:hover { transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.2); }
+    .cx-hero-btn-outline { padding:11px 24px;background:none;color:white;border:2px solid rgba(255,255,255,0.5);border-radius:24px;font-size:14px;font-weight:600;cursor:pointer;transition:var(--transition); }
+    .cx-hero-btn-outline:hover { border-color:white;background:rgba(255,255,255,0.1); }
+
+    /* LAYOUT */
+    .cx-hub-layout { max-width: 1160px; margin: 32px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+
+    /* FILTER SIDEBAR */
+    .cx-filter-sidebar { position:sticky;top:calc(var(--nav-h) + 16px);display:flex;flex-direction:column;gap:16px; }
+    .cx-filter-card { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm); }
+    .cx-filter-title { font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between; }
+    .cx-filter-reset { font-size:12px;color:var(--primary);cursor:pointer;font-weight:500; }
+    .cx-filter-reset:hover { text-decoration:underline; }
+    .cx-filter-group { margin-bottom:16px; }
+    .cx-filter-group:last-child { margin-bottom:0; }
+    .cx-filter-group-label { font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px; }
+    .cx-filter-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 6px;
+      font-size: 13px; color: var(--text-2);
+      cursor: pointer; transition: var(--transition);
+      border: 1.5px solid transparent;
+    }
+    .cx-filter-option:hover { background: var(--grey-light); }
+    .cx-filter-option.active { background: var(--primary-tint); border-color: rgba(11,61,46,0.15); color: var(--primary); font-weight: 600; }
+    .cx-filter-option input[type="radio"],
+    .cx-filter-option input[type="checkbox"] { accent-color: var(--primary); }
+    .cx-range-input { width: 100%; accent-color: var(--primary); }
+    .cx-score-range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+
+    /* MAIN CONTENT */
+    .cx-hub-main { display: flex; flex-direction: column; gap: 16px; }
+
+    /* TOOLBAR */
+    .cx-hub-toolbar {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-search-bar {
+      flex: 1;
+      position: relative;
+    }
+    .cx-search-bar input {
+      width: 100%;
+      height: 38px;
+      padding: 0 14px 0 38px;
+      border: 1.5px solid var(--grey-mid);
+      border-radius: 20px;
+      font-size: 13.5px;
+      outline: none;
+      transition: var(--transition);
+      background: var(--off-white);
+    }
+    .cx-search-bar input:focus { border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 3px rgba(11,61,46,0.07); }
+    .cx-search-icon { position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none; }
+    .cx-sort-select {
+      padding: 8px 12px;
+      border: 1.5px solid var(--grey-mid);
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      background: var(--white);
+    }
+    .cx-sort-select:focus { border-color: var(--primary); }
+    .cx-result-count { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+    .cx-view-toggle { display: flex; gap: 2px; }
+    .cx-view-btn { padding: 7px 10px; border-radius: 6px; font-size: 16px; color: var(--text-muted); cursor: pointer; transition: var(--transition); }
+    .cx-view-btn:hover { background: var(--grey-light); color: var(--text); }
+    .cx-view-btn.active { background: var(--primary-tint); color: var(--primary); }
+
+    /* STARTUP CARDS - LIST VIEW */
+    .cx-funding-card {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition), border-color var(--transition);
+    }
+    .cx-funding-card:hover { box-shadow: var(--shadow-md); border-color: #B0D4C6; }
+    .cx-funding-card-header {
+      padding: 20px 20px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--grey-light);
+    }
+    .cx-startup-logo {
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800; color: white;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #0B3D2E, #146248);
+    }
+    .cx-startup-info { flex: 1; min-width: 0; }
+    .cx-startup-name { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+    .cx-startup-tagline { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; }
+    .cx-startup-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .cx-tag {
+      display: inline-flex; padding: 3px 9px; border-radius: 10px;
+      font-size: 11.5px; font-weight: 600;
+      background: var(--grey-light); color: var(--text-2);
+    }
+    .cx-tag-green { background: var(--primary-pale); color: var(--primary); }
+
+    .cx-funding-card-stats {
+      padding: 14px 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      border-bottom: 1px solid var(--grey-light);
+    }
+    .cx-stat-block { text-align: center; }
+    .cx-stat-block-val { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+    .cx-stat-block-label { font-size: 10.5px; color: var(--text-faint); font-weight: 500; }
+    .cx-stat-block-val.highlight { color: var(--primary); }
+    .cx-stat-block-val.amber { color: var(--amber); }
+
+    .cx-funding-card-body { padding: 16px 20px; }
+    .cx-pitch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .cx-pitch-item { }
+    .cx-pitch-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
+    .cx-pitch-value { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+    .cx-pitch-value.green { color: var(--primary); font-weight: 600; }
+    .cx-impact-highlight {
+      background: var(--primary-tint);
+      border-left: 3px solid var(--primary);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+    .cx-sdg-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .cx-sdg { padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; background: var(--grey-light); color: var(--text-2); }
+
+    .cx-funding-card-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--grey-light);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .cx-interest-btn {
+      flex: 1; padding: 11px; border-radius: 20px;
+      background: var(--primary); color: white;
+      font-size: 13.5px; font-weight: 700;
+      cursor: pointer; transition: var(--transition); border: none;
+      text-align: center;
+    }
+    .cx-interest-btn:hover { background: var(--primary-mid); }
+    .cx-interest-btn.interested { background: var(--primary-tint); color: var(--primary); border: 1.5px solid var(--primary); }
+    .cx-save-btn {
+      padding: 10px 18px; border-radius: 20px;
+      background: none; border: 1.5px solid var(--grey-mid);
+      color: var(--text-2); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .cx-save-btn:hover { border-color: var(--text); background: var(--grey-light); }
+    .cx-save-btn.saved { border-color: var(--primary); color: var(--primary); background: var(--primary-tint); }
+    .cx-deck-btn {
+      padding: 10px 16px; border-radius: 20px;
+      background: none; border: 1.5px solid var(--grey-mid);
+      color: var(--text-2); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+    }
+    .cx-deck-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .cx-founder-chip {
+      display: flex; align-items: center; gap: 8px;
+      margin-left: auto;
+      font-size: 12.5px; color: var(--text-muted);
+    }
+    .cx-founder-avatar { width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;background:var(--primary); }
+
+    /* SCORE RING */
+    .cx-score-ring {
+      position: relative;
+      width: 64px; height: 64px;
+      flex-shrink: 0;
+    }
+    .cx-score-ring svg { transform: rotate(-90deg); }
+    .cx-score-ring-text {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: var(--primary);
+      line-height: 1;
+    }
+    .cx-score-ring-label { font-size: 7px; color: var(--text-muted); font-weight: 600; }
+
+    /* INVESTORS SECTION */
+    .cx-investors-section {
+      background: var(--white);
+      border: 1px solid var(--grey-mid);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .cx-investors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+    .cx-investor-card {
+      padding: 16px; border: 1px solid var(--grey-mid); border-radius: var(--radius-sm);
+      transition: var(--transition); cursor: pointer;
+    }
+    .cx-investor-card:hover { border-color: var(--primary); background: var(--primary-tint); box-shadow: var(--shadow-sm); }
+    .cx-investor-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .cx-investor-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+    .cx-investor-focus { display: flex; flex-wrap: wrap; gap: 4px; }
+    .cx-investor-focus span { font-size: 10.5px; padding: 2px 7px; border-radius: 8px; background: var(--grey-light); color: var(--text-2); }
+    .cx-investor-btn { display:block;margin-top:10px;text-align:center;padding:6px;border:1.5px solid var(--primary);border-radius:12px;font-size:12px;font-weight:600;color:var(--primary);transition:var(--transition); }
+    .cx-investor-btn:hover { background:var(--primary);color:white; }
+
+    /* TOAST */
+    .cx-toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1F2937;color:white;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:500;z-index:9999;transition:transform 0.3s ease;white-space:nowrap; }
+    .cx-toast.show { transform:translateX(-50%) translateY(0); }
+
+    /* SUBMIT MODAL */
+    .cx-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
+    .cx-modal-overlay.open { display:flex; }
+    .cx-modal { background:var(--white);border-radius:16px;width:100%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;max-height:90vh;display:flex;flex-direction:column; }
+    .cx-modal-header { display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--grey-mid);flex-shrink:0; }
+    .cx-modal-title { font-size:16px;font-weight:700; }
+    .cx-modal-close { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text-muted);cursor:pointer; }
+    .cx-modal-close:hover { background:var(--grey-light); }
+    .cx-modal-body { padding:20px;overflow-y:auto; }
+    .cx-field { margin-bottom:14px; }
+    .cx-field label { display:block;font-size:12.5px;font-weight:600;color:var(--text-2);margin-bottom:5px; }
+    .cx-field input, .cx-field textarea, .cx-field select { width:100%;padding:10px 14px;border:1.5px solid var(--grey-mid);border-radius:8px;font-size:13.5px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:var(--transition); }
+    .cx-field input:focus, .cx-field textarea:focus, .cx-field select:focus { border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,61,46,0.07); }
+    .cx-field textarea { resize:vertical;min-height:70px; }
+    .cx-field-grid { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+    .cx-modal-footer { display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--grey-mid);flex-shrink:0; }
+    .cx-submit-btn { padding:10px 28px;background:var(--primary);color:white;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:var(--transition); }
+    .cx-submit-btn:hover { background:var(--primary-mid); }
+
+    @media (max-width: 900px) { .cx-hub-layout { grid-template-columns: 1fr; } .cx-filter-sidebar { display:none; } }
+    @media (max-width: 600px) { .cx-funding-card-stats { grid-template-columns: 1fr 1fr; } .cx-pitch-grid { grid-template-columns: 1fr; } .cx-hub-hero-title { font-size:26px; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-logo">
+    <img src="Climatix_logo.png" alt="Climactix" />
+    <div style="font-size:15px;font-weight:700;color:var(--primary);">Climactix</div>
+  </a>
+  <div style="flex:1;"></div>
+  <div style="display:flex;gap:4px;">
+    <a href="community.html"      class="cx-nav-link"><span class="nav-icon">🏠</span>Feed</a>
+    <a href="forum.html"          class="cx-nav-link"><span class="nav-icon">💬</span>Forum</a>
+    <a href="funding-hub.html"    class="cx-nav-link active"><span class="nav-icon">💰</span>Funding</a>
+    <a href="community-profile.html" class="cx-nav-link"><span class="nav-icon">👤</span>Network</a>
+  </div>
+  <div class="cx-nav-right">
+    <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
+      <div class="cx-avatar" id="navAvatar" style="background:#0B3D2E">?</div>
+      <span style="font-size:13px;font-weight:600;" id="navName">—</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO BANNER -->
+<div class="cx-hub-hero">
+  <div class="cx-hub-hero-eyebrow">Climactix Funding Hub</div>
+  <h1 class="cx-hub-hero-title">Where Climate Capital<br>Meets Innovation</h1>
+  <p class="cx-hub-hero-sub">Connect vetted climate startups with aligned investors. Every startup ranked by Climactix Climate Impact Score.</p>
+  <div class="cx-hub-hero-btns">
+    <button class="cx-hero-btn-primary" onclick="openSubmitModal()">🚀 Submit Funding Request</button>
+    <button class="cx-hero-btn-outline" onclick="document.getElementById('investorsSection').scrollIntoView({behavior:'smooth'})">🔍 Browse Investors</button>
+  </div>
+  <div class="cx-hub-hero-stats">
+    <div class="cx-hub-hero-stat"><div class="cx-hub-hero-stat-val">$48M</div><div class="cx-hub-hero-stat-label">Capital Deployed</div></div>
+    <div class="cx-hub-hero-stat"><div class="cx-hub-hero-stat-val">127</div><div class="cx-hub-hero-stat-label">Active Startups</div></div>
+    <div class="cx-hub-hero-stat"><div class="cx-hub-hero-stat-val">84</div><div class="cx-hub-hero-stat-label">Investor Partners</div></div>
+    <div class="cx-hub-hero-stat"><div class="cx-hub-hero-stat-val">2.1M</div><div class="cx-hub-hero-stat-label">tCO₂e Impact/Year</div></div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="cx-hub-layout">
+
+  <!-- FILTER SIDEBAR -->
+  <aside class="cx-filter-sidebar">
+    <div class="cx-filter-card">
+      <div class="cx-filter-title">
+        Filters
+        <span class="cx-filter-reset" onclick="resetFilters()">Reset all</span>
+      </div>
+
+      <div class="cx-filter-group">
+        <div class="cx-filter-group-label">Funding Stage</div>
+        <div id="stageFilters">
+          <label class="cx-filter-option"><input type="radio" name="stage" value="" onchange="applyFilters()" checked /> All Stages</label>
+          <label class="cx-filter-option"><input type="radio" name="stage" value="Pre-Seed" onchange="applyFilters()" /> Pre-Seed</label>
+          <label class="cx-filter-option"><input type="radio" name="stage" value="Seed" onchange="applyFilters()" /> Seed</label>
+          <label class="cx-filter-option"><input type="radio" name="stage" value="Series A" onchange="applyFilters()" /> Series A</label>
+          <label class="cx-filter-option"><input type="radio" name="stage" value="Series B" onchange="applyFilters()" /> Series B+</label>
+        </div>
+      </div>
+
+      <div class="cx-filter-group">
+        <div class="cx-filter-group-label">Climate Sector</div>
+        <div id="sectorFilters">
+          <label class="cx-filter-option"><input type="checkbox" value="Solar" onchange="applyFilters()" /> Solar Energy</label>
+          <label class="cx-filter-option"><input type="checkbox" value="Carbon" onchange="applyFilters()" /> Carbon Markets</label>
+          <label class="cx-filter-option"><input type="checkbox" value="AgriTech" onchange="applyFilters()" /> AgriTech / Soil Carbon</label>
+          <label class="cx-filter-option"><input type="checkbox" value="Blue" onchange="applyFilters()" /> Blue Carbon / Ocean</label>
+          <label class="cx-filter-option"><input type="checkbox" value="Storage" onchange="applyFilters()" /> Energy Storage</label>
+          <label class="cx-filter-option"><input type="checkbox" value="Mobility" onchange="applyFilters()" /> Green Mobility</label>
+        </div>
+      </div>
+
+      <div class="cx-filter-group">
+        <div class="cx-filter-group-label">Geography</div>
+        <div id="geoFilters">
+          <label class="cx-filter-option"><input type="radio" name="geo" value="" onchange="applyFilters()" checked /> All Regions</label>
+          <label class="cx-filter-option"><input type="radio" name="geo" value="India" onchange="applyFilters()" /> India</label>
+          <label class="cx-filter-option"><input type="radio" name="geo" value="SEA" onchange="applyFilters()" /> Southeast Asia</label>
+          <label class="cx-filter-option"><input type="radio" name="geo" value="MENA" onchange="applyFilters()" /> MENA</label>
+        </div>
+      </div>
+
+      <div class="cx-filter-group">
+        <div class="cx-filter-group-label">Min. Climate Impact Score</div>
+        <input type="range" class="cx-range-input" id="scoreFilter" min="0" max="100" value="0" oninput="updateScoreLabel(this)" onchange="applyFilters()" />
+        <div class="cx-score-range-labels">
+          <span>0</span>
+          <span id="scoreFilterLabel">Any score</span>
+          <span>100</span>
+        </div>
+      </div>
+
+      <div class="cx-filter-group">
+        <div class="cx-filter-group-label">SDG Alignment</div>
+        <label class="cx-filter-option"><input type="checkbox" value="SDG7" onchange="applyFilters()" /> SDG 7 – Clean Energy</label>
+        <label class="cx-filter-option"><input type="checkbox" value="SDG13" onchange="applyFilters()" /> SDG 13 – Climate Action</label>
+        <label class="cx-filter-option"><input type="checkbox" value="SDG14" onchange="applyFilters()" /> SDG 14 – Life Below Water</label>
+        <label class="cx-filter-option"><input type="checkbox" value="SDG15" onchange="applyFilters()" /> SDG 15 – Life on Land</label>
+      </div>
+    </div>
+
+    <!-- Investor type you are -->
+    <div class="cx-filter-card">
+      <div class="cx-filter-title">I am an investor looking for…</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label class="cx-filter-option" style="font-size:12.5px;">
+          <input type="checkbox" /> High-impact first investments
+        </label>
+        <label class="cx-filter-option" style="font-size:12.5px;">
+          <input type="checkbox" /> Co-investment opportunities
+        </label>
+        <label class="cx-filter-option" style="font-size:12.5px;">
+          <input type="checkbox" /> Blended finance structures
+        </label>
+        <label class="cx-filter-option" style="font-size:12.5px;">
+          <input type="checkbox" /> Revenue-based financing
+        </label>
+      </div>
+      <button style="width:100%;margin-top:12px;padding:10px;background:var(--primary);color:white;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;" onclick="showToast('Investor profile coming soon — join the waitlist!')">
+        Set Investor Profile →
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="cx-hub-main">
+
+    <!-- Toolbar -->
+    <div class="cx-hub-toolbar">
+      <div class="cx-search-bar">
+        <span class="cx-search-icon">🔍</span>
+        <input type="text" id="fundingSearch" placeholder="Search startups, sectors, founders…" oninput="applyFilters()" />
+      </div>
+      <select class="cx-sort-select" id="sortSelect" onchange="applyFilters()">
+        <option value="score">Sort: Impact Score</option>
+        <option value="newest">Sort: Newest</option>
+        <option value="ask_hi">Sort: Largest Ask</option>
+        <option value="interest">Sort: Most Interest</option>
+      </select>
+      <span class="cx-result-count" id="resultCount">— startups</span>
+      <div class="cx-view-toggle">
+        <button class="cx-view-btn active" onclick="setView('list',this)" title="List view">☰</button>
+        <button class="cx-view-btn" onclick="setView('grid',this)" title="Grid view">⊞</button>
+      </div>
+    </div>
+
+    <!-- Funding Cards Container -->
+    <div id="fundingContainer"></div>
+
+    <!-- Investors Section -->
+    <div class="cx-investors-section" id="investorsSection">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <h2 style="font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px;">Active Investors</h2>
+          <p style="font-size:13.5px;color:var(--text-muted);">VCs and angels currently deploying climate capital</p>
+        </div>
+        <a href="community-profile.html" style="font-size:13px;font-weight:600;color:var(--primary);">View All Network →</a>
+      </div>
+      <div class="cx-investors-grid" id="investorsGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="cx-modal-overlay" id="submitModalOverlay" onclick="if(event.target===this)closeSubmitModal()">
+  <div class="cx-modal">
+    <div class="cx-modal-header">
+      <div class="cx-modal-title">Submit Funding Request</div>
+      <button class="cx-modal-close" onclick="closeSubmitModal()">✕</button>
+    </div>
+    <div class="cx-modal-body">
+      <div style="background:var(--primary-tint);border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--primary);">
+        📋 Your request will be reviewed by the Climactix team within 48 hours before going live.
+      </div>
+      <div class="cx-field-grid">
+        <div class="cx-field">
+          <label>Startup Name *</label>
+          <input type="text" id="sub-name" placeholder="GreenFuture Energy" />
+        </div>
+        <div class="cx-field">
+          <label>Funding Stage *</label>
+          <select id="sub-stage">
+            <option>Pre-Seed</option><option>Seed</option><option>Series A</option><option>Series B</option>
+          </select>
+        </div>
+        <div class="cx-field">
+          <label>Climate Sector *</label>
+          <input type="text" id="sub-sector" placeholder="Solar Energy, Carbon Markets…" />
+        </div>
+        <div class="cx-field">
+          <label>Funding Ask *</label>
+          <input type="text" id="sub-ask" placeholder="$2M or ₹15 Cr" />
+        </div>
+      </div>
+      <div class="cx-field">
+        <label>Problem Statement *</label>
+        <textarea id="sub-problem" placeholder="What problem are you solving? Include scale and urgency…"></textarea>
+      </div>
+      <div class="cx-field">
+        <label>Solution & Differentiation *</label>
+        <textarea id="sub-solution" placeholder="How does your solution work? What makes it unique?…"></textarea>
+      </div>
+      <div class="cx-field">
+        <label>Impact Metrics *</label>
+        <textarea id="sub-impact" placeholder="CO₂ avoided/sequestered, lives impacted, jobs created, etc…" style="min-height:60px;"></textarea>
+      </div>
+      <div class="cx-field-grid">
+        <div class="cx-field">
+          <label>Geography</label>
+          <input type="text" id="sub-geo" placeholder="India, Southeast Asia…" />
+        </div>
+        <div class="cx-field">
+          <label>Pre-money Valuation</label>
+          <input type="text" id="sub-val" placeholder="$5M / ₹40 Cr" />
+        </div>
+      </div>
+      <div class="cx-field">
+        <label>Traction / Milestones</label>
+        <textarea id="sub-traction" placeholder="ARR, users, pilots, grants, partnerships…" style="min-height:60px;"></textarea>
+      </div>
+      <div class="cx-field">
+        <label>Use of Funds</label>
+        <textarea id="sub-use" placeholder="How will you deploy this capital? (% breakdown preferred)" style="min-height:60px;"></textarea>
+      </div>
+    </div>
+    <div class="cx-modal-footer">
+      <button class="cx-modal-close" onclick="closeSubmitModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#374151;background:#F3F4F6;">Cancel</button>
+      <button class="cx-submit-btn" onclick="submitFundingRequest()">Submit for Review</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="cx-toast" id="toast"></div>
+
+<script type="module">
+import {
+  initCommunity, getCurrentUserProfile, getFundingRequests,
+  getProfiles, getRoleConfig, getAvatarColor, formatCount, timeAgo,
+  SEED_FUNDING, ROLES
+} from './community.js';
+
+let currentUser = null;
+let currentView = 'list';
+let savedItems = {};
+let interestedItems = {};
+
+initCommunity();
+currentUser = getCurrentUserProfile();
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
+
+// Nav
+if (currentUser) {
+  document.getElementById('navAvatar').textContent = currentUser.avatar;
+  document.getElementById('navAvatar').style.background = getAvatarColor(currentUser.role);
+  document.getElementById('navName').textContent = currentUser.fullName.split(' ')[0];
+}
+
+// Score ring SVG helper
+function scoreRing(score, size = 64) {
+  const r = (size/2) - 6;
+  const circ = 2 * Math.PI * r;
+  const fill = (score / 100) * circ;
+  return `
+    <div class="cx-score-ring" style="width:${size}px;height:${size}px;">
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+        <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#E5E7EB" stroke-width="6"/>
+        <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${score>=80?'#0B3D2E':score>=60?'#D97706':'#EF4444'}" stroke-width="6"
+          stroke-dasharray="${fill} ${circ}" stroke-linecap="round"/>
+      </svg>
+      <div class="cx-score-ring-text">
+        <span>${score}</span>
+        <span class="cx-score-ring-label">Score</span>
+      </div>
+    </div>`;
+}
+
+function renderFundingCard(f) {
+  const saved = savedItems[f.id];
+  const interested = interestedItems[f.id];
+  const logoColor = ['#0B3D2E','#1D4ED8','#5B21B6','#92400E','#065F46'][SEED_FUNDING.indexOf(f) % 5];
+
+  return `
+  <div class="cx-funding-card" id="card-${f.id}">
+    <div class="cx-funding-card-header">
+      <div class="cx-startup-logo" style="background:${logoColor};">${f.startupName.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+      <div class="cx-startup-info">
+        <div class="cx-startup-name">${escHtml(f.startupName)}</div>
+        <div class="cx-startup-tagline">${escHtml(f.problem.slice(0, 80))}…</div>
+        <div class="cx-startup-tags">
+          <span class="cx-tag" style="background:#FEF3C7;color:#92400E;font-weight:700;">${escHtml(f.stage)}</span>
+          <span class="cx-tag cx-tag-green">${escHtml(f.sector)}</span>
+          <span class="cx-tag">📍 ${escHtml(f.geography.split('–')[0].trim())}</span>
+        </div>
+      </div>
+      ${scoreRing(f.climateScore)}
+    </div>
+
+    <div class="cx-funding-card-stats">
+      <div class="cx-stat-block">
+        <div class="cx-stat-block-val amber">${escHtml(f.ask)}</div>
+        <div class="cx-stat-block-label">Funding Ask</div>
+      </div>
+      <div class="cx-stat-block">
+        <div class="cx-stat-block-val highlight">${f.expressedInterest}</div>
+        <div class="cx-stat-block-label">Investors Interested</div>
+      </div>
+      <div class="cx-stat-block">
+        <div class="cx-stat-block-val">${f.savedBy}</div>
+        <div class="cx-stat-block-label">Saved</div>
+      </div>
+      <div class="cx-stat-block">
+        <div class="cx-stat-block-val">${escHtml(f.valuationPre)}</div>
+        <div class="cx-stat-block-label">Pre-Money Val.</div>
+      </div>
+    </div>
+
+    <div class="cx-funding-card-body">
+      <div class="cx-pitch-grid">
+        <div class="cx-pitch-item">
+          <div class="cx-pitch-label">Problem</div>
+          <div class="cx-pitch-value">${escHtml(f.problem)}</div>
+        </div>
+        <div class="cx-pitch-item">
+          <div class="cx-pitch-label">Solution</div>
+          <div class="cx-pitch-value green">${escHtml(f.solution)}</div>
+        </div>
+        <div class="cx-pitch-item">
+          <div class="cx-pitch-label">Traction</div>
+          <div class="cx-pitch-value">${escHtml(f.traction)}</div>
+        </div>
+        <div class="cx-pitch-item">
+          <div class="cx-pitch-label">Use of Funds</div>
+          <div class="cx-pitch-value">${escHtml(f.useOfFunds)}</div>
+        </div>
+      </div>
+
+      <div class="cx-impact-highlight">
+        🌍 <strong>Climate Impact:</strong> ${escHtml(f.impact)}
+      </div>
+
+      <div class="cx-sdg-badges">
+        ${(f.sdgAlignment || []).map(s => `<span class="cx-sdg">${escHtml(s)}</span>`).join('')}
+        ${(f.tags || []).slice(0,4).map(t => `<span class="cx-sdg" style="background:#EBF5F1;color:#0B3D2E;">#${escHtml(t)}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="cx-funding-card-footer">
+      <button class="cx-interest-btn ${interested?'interested':''}" onclick="handleInterest('${f.id}',this)">
+        ${interested ? '✓ Interest Expressed' : '💼 Express Interest'}
+      </button>
+      <button class="cx-save-btn ${saved?'saved':''}" onclick="handleSave('${f.id}',this)">
+        ${saved ? '🔖 Saved' : '📌 Save'}
+      </button>
+      ${f.hasDeck ? `<button class="cx-deck-btn" onclick="showToast('Pitch deck request sent to ${escHtml(f.founderName)}')">📊 Request Deck</button>` : ''}
+      <div class="cx-founder-chip">
+        <div class="cx-founder-avatar">${f.founderAvatar}</div>
+        <span>${escHtml(f.founderName)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+window.applyFilters = function() {
+  const q = document.getElementById('fundingSearch').value.toLowerCase();
+  const stage = document.querySelector('input[name="stage"]:checked')?.value || '';
+  const sectors = Array.from(document.querySelectorAll('#sectorFilters input:checked')).map(i => i.value);
+  const geo = document.querySelector('input[name="geo"]:checked')?.value || '';
+  const minScore = parseInt(document.getElementById('scoreFilter').value) || 0;
+  const sort = document.getElementById('sortSelect').value;
+
+  let results = [...SEED_FUNDING];
+
+  if (q) results = results.filter(f =>
+    f.startupName.toLowerCase().includes(q) ||
+    f.sector.toLowerCase().includes(q) ||
+    f.founderName.toLowerCase().includes(q) ||
+    f.problem.toLowerCase().includes(q) ||
+    (f.tags||[]).some(t => t.toLowerCase().includes(q))
+  );
+  if (stage)   results = results.filter(f => f.stage === stage);
+  if (sectors.length) results = results.filter(f => sectors.some(s => f.sector.toLowerCase().includes(s.toLowerCase())));
+  if (geo)     results = results.filter(f => f.geography.toLowerCase().includes(geo.toLowerCase()));
+  if (minScore > 0) results = results.filter(f => f.climateScore >= minScore);
+
+  // Sort
+  if (sort === 'score')    results.sort((a,b) => b.climateScore - a.climateScore);
+  if (sort === 'newest')   results.sort((a,b) => b.timestamp - a.timestamp);
+  if (sort === 'interest') results.sort((a,b) => b.expressedInterest - a.expressedInterest);
+
+  document.getElementById('resultCount').textContent = `${results.length} startup${results.length !== 1 ? 's' : ''}`;
+  const container = document.getElementById('fundingContainer');
+
+  if (!results.length) {
+    container.innerHTML = `<div style="background:white;border:1px solid #E5E7EB;border-radius:12px;padding:40px;text-align:center;color:#9CA3AF;">
+      <div style="font-size:32px;margin-bottom:12px;">🔍</div>
+      <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px;">No startups found</div>
+      <div style="font-size:13px;">Try adjusting your filters or search term.</div>
+      <button onclick="resetFilters()" style="margin-top:14px;padding:9px 20px;background:#0B3D2E;color:white;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;border:none;">Reset Filters</button>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = `<div style="display:flex;flex-direction:column;gap:16px;">${results.map(renderFundingCard).join('')}</div>`;
+};
+
+window.resetFilters = function() {
+  document.getElementById('fundingSearch').value = '';
+  document.getElementById('scoreFilter').value = 0;
+  document.getElementById('scoreFilterLabel').textContent = 'Any score';
+  document.querySelectorAll('input[type="radio"]').forEach(r => { r.checked = r.value === ''; });
+  document.querySelectorAll('input[type="checkbox"]').forEach(c => { c.checked = false; });
+  document.getElementById('sortSelect').value = 'score';
+  applyFilters();
+};
+
+window.updateScoreLabel = function(el) {
+  document.getElementById('scoreFilterLabel').textContent = el.value > 0 ? `Min ${el.value}` : 'Any score';
+};
+
+window.handleInterest = function(id, btn) {
+  if (!currentUser) { showToast('Sign in to express interest'); return; }
+  interestedItems[id] = !interestedItems[id];
+  btn.textContent = interestedItems[id] ? '✓ Interest Expressed' : '💼 Express Interest';
+  btn.classList.toggle('interested', interestedItems[id]);
+  showToast(interestedItems[id] ? 'Interest sent to founder! They\'ll be notified.' : 'Interest withdrawn');
+};
+
+window.handleSave = function(id, btn) {
+  savedItems[id] = !savedItems[id];
+  btn.textContent = savedItems[id] ? '🔖 Saved' : '📌 Save';
+  btn.classList.toggle('saved', savedItems[id]);
+  showToast(savedItems[id] ? 'Saved to watchlist' : 'Removed from watchlist');
+};
+
+window.setView = function(view, btn) {
+  currentView = view;
+  document.querySelectorAll('.cx-view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+};
+
+// Investors
+const INVESTORS = [
+  { name: 'Arjun Kapoor', firm: 'Sequoia Climate Fund', avatar: 'AK', focus: ['Solar', 'Carbon', 'AgriTech'], ticket: '$2M–$25M', role: 'investor' },
+  { name: 'Nisha Mehta', firm: 'Lightspeed Climate', avatar: 'NM', focus: ['EV', 'Storage', 'Green H₂'], ticket: '$500K–$8M', role: 'investor' },
+  { name: 'Rohan Iyer', firm: 'Accel Sustainability', avatar: 'RI', focus: ['SaaS', 'MRV', 'ESG Tech'], ticket: '$1M–$15M', role: 'investor' },
+  { name: 'Preethi Lal', firm: 'TERI Climate Fund', avatar: 'PL', focus: ['NBS', 'Blue Carbon', 'Waste'], ticket: '$100K–$2M', role: 'investor' },
+  { name: 'Karan Seth', firm: 'Blume Ventures', avatar: 'KS', focus: ['ClimateAI', 'Satellite', 'IoT'], ticket: '$200K–$5M', role: 'investor' },
+  { name: 'Anjali Roy', firm: 'IFC (South Asia)', avatar: 'AR', focus: ['Infrastructure', 'RE', 'Adaptation'], ticket: '$5M–$50M', role: 'investor' },
+];
+
+function renderInvestors() {
+  document.getElementById('investorsGrid').innerHTML = INVESTORS.map(inv => `
+    <div class="cx-investor-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:${getAvatarColor(inv.role)};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0;">${inv.avatar}</div>
+        <div>
+          <div class="cx-investor-name">${escHtml(inv.name)}</div>
+          <div class="cx-investor-meta">${escHtml(inv.firm)}</div>
+        </div>
+      </div>
+      <div style="font-size:11.5px;color:#6B7280;margin-bottom:6px;">Ticket: <strong style="color:#374151;">${escHtml(inv.ticket)}</strong></div>
+      <div class="cx-investor-focus">${inv.focus.map(f=>`<span>${escHtml(f)}</span>`).join('')}</div>
+      <button class="cx-investor-btn" onclick="showToast('Connect request sent to ${escHtml(inv.name)}')">Connect →</button>
+    </div>
+  `).join('');
+}
+
+// Submit modal
+window.openSubmitModal = function() {
+  document.getElementById('submitModalOverlay').classList.add('open');
+};
+window.closeSubmitModal = function() {
+  document.getElementById('submitModalOverlay').classList.remove('open');
+};
+window.submitFundingRequest = function() {
+  const name = document.getElementById('sub-name').value.trim();
+  const problem = document.getElementById('sub-problem').value.trim();
+  if (!name || !problem) { showToast('Please fill in required fields'); return; }
+  closeSubmitModal();
+  showToast(`✅ "${name}" submitted for review — our team will reach out within 48 hours`);
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// Boot
+applyFilters();
+renderInvestors();
+</script>
+</body>
+</html>
