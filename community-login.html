@@ -11,25 +11,28 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --primary:        #1C6B47;
-      --primary-dark:   #0B3D2E;
-      --primary-light:  #E8F5EE;
+      --primary:        #0059B3;
+      --primary-dark:   #003D80;
+      --primary-light:  #E8F2FF;
       --text:           #0D1117;
       --text-2:         #374151;
       --muted:          #6B7280;
       --border:         #D1D5DB;
-      --border-focus:   #1C6B47;
-      --bg:             #F8FAFC;
+      --border-focus:   #0059B3;
+      --bg:             #F7F9FC;
       --white:          #FFFFFF;
       --error-bg:       #FFF5F5;
       --error-border:   #FCA5A5;
       --error-text:     #B91C1C;
-      --success-bg:     #F0FDF4;
-      --success-border: #86EFAC;
-      --success-text:   #15803D;
-      --panel-bg:       #0B3D2E;
-      --panel-border:   rgba(255,255,255,0.08);
-      --panel-muted:    rgba(255,255,255,0.50);
+      --success-bg:     #EFF6FF;
+      --success-border: #93C5FD;
+      --success-text:   #1D4ED8;
+      /* Bloomberg navy panel */
+      --panel-bg:       #07111E;
+      --panel-mid:      #0D1E35;
+      --panel-blue:     #40A8DC;
+      --panel-border:   rgba(64,168,220,0.12);
+      --panel-muted:    rgba(160,200,230,0.58);
     }
 
     html { height: 100%; }
@@ -57,9 +60,19 @@
       position: absolute;
       inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(64,168,220,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(64,168,220,0.04) 1px, transparent 1px);
       background-size: 40px 40px;
+      pointer-events: none;
+    }
+    /* Subtle blue glow at top */
+    .panel-left::after {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(0,89,179,0.22) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -76,7 +89,7 @@
     .pl-brand-tag {
       font-size: 10px; font-weight: 700;
       letter-spacing: 0.12em; text-transform: uppercase;
-      color: rgba(110,210,150,0.75);
+      color: rgba(64,168,220,0.80);
     }
 
     .pl-content { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; }
@@ -84,7 +97,7 @@
     .pl-eyebrow {
       font-size: 10px; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: rgba(110,210,150,0.8);
+      color: rgba(64,168,220,0.85);
       margin-bottom: 16px;
       display: flex; align-items: center; gap: 8px;
     }
@@ -92,7 +105,7 @@
       content: '';
       display: inline-block;
       width: 20px; height: 1px;
-      background: rgba(110,210,150,0.6);
+      background: rgba(64,168,220,0.55);
     }
 
     .pl-heading {
@@ -145,13 +158,13 @@
       margin-bottom: 40px;
     }
     .pl-stat {
-      background: rgba(255,255,255,0.03);
+      background: rgba(64,168,220,0.04);
       padding: 14px 16px;
     }
     .pl-stat-val {
       font-family: 'JetBrains Mono', monospace;
       font-size: 20px; font-weight: 700;
-      color: rgba(110,210,150,0.95);
+      color: rgba(64,168,220,0.95);
       line-height: 1;
       margin-bottom: 4px;
     }
@@ -169,8 +182,8 @@
     .pl-feature-icon {
       width: 18px; height: 18px;
       border-radius: 50%;
-      background: rgba(110,210,150,0.15);
-      border: 1px solid rgba(110,210,150,0.3);
+      background: rgba(64,168,220,0.12);
+      border: 1px solid rgba(64,168,220,0.28);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       margin-top: 1px;
@@ -258,7 +271,7 @@
       outline: none;
       transition: border-color 0.15s ease;
     }
-    .field input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(28,107,71,0.1); }
+    .field input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(0,89,179,0.10); }
     .field input::placeholder { color: #B0B7C3; }
 
     .field-row {
@@ -305,13 +318,13 @@
     /* Submit button */
     .btn-primary {
       width: 100%; padding: 10px;
-      background: var(--primary-dark); color: white;
+      background: #0059B3; color: white;
       border: none; border-radius: 4px;
       font-size: 14px; font-weight: 600;
       cursor: pointer; transition: background 0.15s ease;
       letter-spacing: 0.01em;
     }
-    .btn-primary:hover { background: #0a3226; }
+    .btn-primary:hover { background: #003D80; }
     .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
 
     /* Divider */
@@ -339,7 +352,7 @@
       font-size: 13px; color: var(--muted);
       margin-top: 20px;
     }
-    .auth-switch a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    .auth-switch a { color: #0059B3; font-weight: 600; text-decoration: none; }
     .auth-switch a:hover { text-decoration: underline; }
 
     /* Trust bar */
@@ -386,7 +399,7 @@
 
       <!-- Member avatars -->
       <div class="pl-members">
-        <div class="pl-av" style="background:#0B3D2E; z-index:8">AS</div>
+        <div class="pl-av" style="background:#003D80; z-index:8">AS</div>
         <div class="pl-av" style="background:#1D4ED8; z-index:7">PK</div>
         <div class="pl-av" style="background:#5B21B6; z-index:6">MR</div>
         <div class="pl-av" style="background:#92400E; z-index:5">NG</div>
@@ -422,19 +435,19 @@
       <ul class="pl-features">
         <li class="pl-feature">
           <span class="pl-feature-icon">
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="rgba(110,210,150,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="rgba(64,168,220,0.95)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           Forum threads across ISSB, TCFD, BRSR, green bonds &amp; more
         </li>
         <li class="pl-feature">
           <span class="pl-feature-icon">
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="rgba(110,210,150,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="rgba(64,168,220,0.95)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           Climate Funding Hub — connect startups with ESG investors
         </li>
         <li class="pl-feature">
           <span class="pl-feature-icon">
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="rgba(110,210,150,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="rgba(64,168,220,0.95)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           Verified professional profiles with Climactix Score
         </li>
