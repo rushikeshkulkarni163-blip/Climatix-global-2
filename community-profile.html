@@ -407,9 +407,9 @@
           <span class="cx-stat-val" id="statFollowing">0</span>
           <div class="cx-stat-label">Following</div>
         </div>
-        <div class="cx-stat-item">
-          <span class="cx-stat-val" id="statViews">0</span>
-          <div class="cx-stat-label">Profile Views</div>
+        <div class="cx-stat-item" onclick="switchTab('posts')">
+          <span class="cx-stat-val" id="statBookmarks">0</span>
+          <div class="cx-stat-label">Bookmarks</div>
         </div>
       </div>
     </div>
@@ -467,8 +467,13 @@
 
       <!-- Network Tab -->
       <div class="cx-content-section" id="tab-network" style="display:none;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
           <h3 style="font-size:15px;font-weight:700;color:#111;">Climate Network</h3>
+          <div style="display:flex;gap:6px;">
+            <button id="netBtn-all"       onclick="renderNetwork('all')"       style="padding:5px 14px;border-radius:14px;font-size:12.5px;font-weight:600;background:var(--primary);color:white;border:none;cursor:pointer;">All</button>
+            <button id="netBtn-followers" onclick="renderNetwork('followers')" style="padding:5px 14px;border-radius:14px;font-size:12.5px;font-weight:600;background:var(--grey-light);color:var(--text-2);border:none;cursor:pointer;">Followers</button>
+            <button id="netBtn-following" onclick="renderNetwork('following')" style="padding:5px 14px;border-radius:14px;font-size:12.5px;font-weight:600;background:var(--grey-light);color:var(--text-2);border:none;cursor:pointer;">Following</button>
+          </div>
           <span style="font-size:12.5px;color:#6B7280;" id="networkCount">0 connections</span>
         </div>
         <div class="cx-people-grid" id="networkGrid"></div>
@@ -564,11 +569,12 @@
 
 <script type="module">
 import {
-  initCommunity, getProfiles, getProfile, updateProfile,
+  initCommunity, requireAuth, getProfiles, getProfile, updateProfile,
   getCurrentUserProfile, isFollowing, toggleFollow,
-  getPosts, getSuggestedProfiles, getFundingRequests,
+  getFollowers, getFollowingList, getBookmarkedPosts,
+  getPosts, getAllFundingRequests, getSuggestedProfiles,
   getRoleConfig, getAvatarColor, getInitials, timeAgo, formatCount,
-  ROLES, SEED_FUNDING, SEED_THREADS
+  ROLES
 } from './community.js';
 
 let currentUser = null;
@@ -576,6 +582,7 @@ let viewProfile = null;
 let isOwnProfile = false;
 
 initCommunity();
+if (!requireAuth()) throw new Error('redirect');
 currentUser = getCurrentUserProfile();
 
 // Determine which profile to show (URL param ?uid=xxx or own profile)
@@ -640,10 +647,10 @@ function renderProfile() {
   document.getElementById('impactScore').textContent = Math.round(climateScore * 0.15 + Math.random() * 2) + '/15';
 
   // Stats
-  document.getElementById('statPosts').textContent = formatCount(postsCount);
+  document.getElementById('statPosts').textContent     = formatCount(postsCount);
   document.getElementById('statFollowers').textContent = formatCount(followersCount);
   document.getElementById('statFollowing').textContent = formatCount(followingCount);
-  document.getElementById('statViews').textContent = formatCount(Math.floor(followersCount * 3.2));
+  document.getElementById('statBookmarks').textContent = formatCount(getBookmarkedPosts(uid).length);
 
   // Actions
   const actionsEl = document.getElementById('profileActions');
@@ -746,28 +753,60 @@ function renderPosts() {
   `).join('');
 }
 
-function renderNetwork() {
-  const profiles = getProfiles().filter(p => p.uid !== viewProfile?.uid);
-  const uid = currentUser?.uid || '';
-  document.getElementById('networkCount').textContent = `${profiles.length} connections`;
-  document.getElementById('networkGrid').innerHTML = profiles.map(p => `
-    <div class="cx-person-card">
+window.renderNetwork = function(mode = 'all') {
+  const uid        = viewProfile?.uid   || '';
+  const currentUid = currentUser?.uid   || '';
+
+  // Update tab button states
+  ['all','followers','following'].forEach(m => {
+    const btn = document.getElementById(`netBtn-${m}`);
+    if (btn) {
+      btn.style.background = m === mode ? 'var(--primary)' : 'var(--grey-light)';
+      btn.style.color      = m === mode ? 'white'          : 'var(--text-2)';
+    }
+  });
+
+  let people, label;
+  if (mode === 'followers') {
+    people = getFollowers(uid);
+    label  = `${people.length} follower${people.length !== 1 ? 's' : ''}`;
+  } else if (mode === 'following') {
+    people = getFollowingList(uid);
+    label  = `following ${people.length} people`;
+  } else {
+    people = getProfiles().filter(p => p.uid !== uid);
+    label  = `${people.length} connections`;
+  }
+
+  document.getElementById('networkCount').textContent = label;
+
+  if (!people.length) {
+    document.getElementById('networkGrid').innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:#9CA3AF;">
+        <div style="font-size:32px;margin-bottom:10px;">👥</div>
+        <div style="font-size:14px;font-weight:600;color:#374151;">No ${mode === 'followers' ? 'followers' : mode === 'following' ? 'people following' : 'connections'} yet</div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('networkGrid').innerHTML = people.map(p => `
+    <div class="cx-person-card" onclick="window.location.href='community-profile.html?uid=${p.uid}'">
       <div class="cx-person-card-avatar" style="background:${getAvatarColor(p.role)}">${p.avatar}</div>
       <div class="cx-person-card-name">${escHtml(p.fullName)}</div>
       <div class="cx-person-card-role">${getRoleConfig(p.role).label}</div>
       <div style="font-size:11px;color:#9CA3AF;margin-top:2px;">${formatCount(p.followersCount)} followers</div>
-      <button class="cx-person-card-btn ${isFollowing(p.uid, uid) ? 'following' : ''}"
-        onclick="handleFollowPerson('${p.uid}', this)">
-        ${isFollowing(p.uid, uid) ? 'Following' : '+ Follow'}
+      <button class="cx-person-card-btn ${isFollowing(p.uid, currentUid) ? 'following' : ''}"
+        onclick="event.stopPropagation();handleFollowPerson('${p.uid}', this)">
+        ${isFollowing(p.uid, currentUid) ? 'Following' : '+ Follow'}
       </button>
     </div>
   `).join('');
-}
+};
 
 function renderFunding() {
   const c = document.getElementById('fundingContent');
   if (viewProfile?.role === 'startup') {
-    const items = SEED_FUNDING.filter(f => f.founderName === viewProfile.fullName);
+    const items = getAllFundingRequests().filter(f => f.founderName === viewProfile.fullName);
     if (items.length) {
       c.innerHTML = items.map(f => `
         <div style="padding:16px;border:1px solid #E5E7EB;border-radius:12px;margin-bottom:12px;">
@@ -829,8 +868,8 @@ window.switchTab = function(tabName) {
   document.getElementById(`tab-${tabName}`).style.display = 'block';
 };
 
-window.showFollowers = function() { showToast(`${viewProfile?.followersCount || 0} followers`); };
-window.showFollowing = function() { showToast(`Following ${viewProfile?.followingCount || 0} people`); };
+window.showFollowers = function() { switchTab('network'); renderNetwork('followers'); };
+window.showFollowing = function() { switchTab('network'); renderNetwork('following'); };
 
 window.handleFollow = function(targetId) {
   if (!currentUser) { showToast('Sign in to follow'); return; }
@@ -868,7 +907,7 @@ window.saveProfile = function() {
   if (!currentUser) return;
   const interests = document.getElementById('editInterests').value
     .split(',').map(s => s.trim()).filter(Boolean);
-  updateProfile(currentUser.uid, {
+  const updates = {
     fullName:  document.getElementById('editName').value.trim() || currentUser.fullName,
     role:      document.getElementById('editRole').value,
     bio:       document.getElementById('editBio').value.trim(),
@@ -877,9 +916,17 @@ window.saveProfile = function() {
     interests,
     avatar:    (document.getElementById('editName').value.trim() || currentUser.fullName)
                .split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2),
-  });
+  };
+  updateProfile(currentUser.uid, updates);
+  // Apply to in-memory references — no reload needed
+  Object.assign(currentUser, updates);
+  if (isOwnProfile) viewProfile = currentUser;
   closeEditModal();
-  location.reload();
+  // Re-render affected sections in place
+  renderProfile();
+  renderPosts();
+  setupNav();
+  showToast('Profile saved!');
 };
 
 function showToast(msg) {
@@ -894,7 +941,7 @@ function showToast(msg) {
 setupNav();
 renderProfile();
 renderPosts();
-renderNetwork();
+renderNetwork('all');
 renderFunding();
 renderSimilarProfiles();
 // Animate score bar

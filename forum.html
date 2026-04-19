@@ -766,46 +766,47 @@ window.toggleReplies = function(threadId) {
   if (el) el.classList.toggle('open');
 };
 
-// Submit reply
+// Submit reply — persists via addReply()
 window.submitReply = function(threadId) {
-  if (!currentUser) { showToast('Sign in to reply'); return; }
   const input = document.getElementById(`reply-input-${threadId}`);
   const content = input?.value.trim();
   if (!content) return;
 
-  const roleConf = getRoleConfig(currentUser.role);
-  const replyHtml = `
-    <div class="cx-reply">
-      <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(currentUser.role)};flex-shrink:0;">${currentUser.avatar}</div>
-      <div class="cx-reply-bubble">
-        <div class="cx-reply-author">
-          ${escHtml(currentUser.fullName)}
-          <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color};font-size:10px;">${roleConf.label}</span>
+  const reply = addReply(threadId, {
+    authorId:     currentUser.uid,
+    authorName:   currentUser.fullName,
+    authorAvatar: currentUser.avatar,
+    authorRole:   currentUser.role,
+    content,
+  });
+
+  if (reply) {
+    const roleConf = getRoleConfig(currentUser.role);
+    const replyHtml = `
+      <div class="cx-reply">
+        <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(currentUser.role)};flex-shrink:0;">${currentUser.avatar}</div>
+        <div class="cx-reply-bubble">
+          <div class="cx-reply-author">
+            ${escHtml(currentUser.fullName)}
+            <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color};font-size:10px;">${roleConf.label}</span>
+          </div>
+          <div class="cx-reply-text">${escHtml(content)}</div>
+          <div class="cx-reply-meta"><span>just now</span></div>
         </div>
-        <div class="cx-reply-text">${escHtml(content)}</div>
-        <div class="cx-reply-meta"><span>just now</span></div>
-      </div>
-    </div>`;
-
-  const list = document.getElementById(`replies-list-${threadId}`);
-  if (list) list.insertAdjacentHTML('beforeend', replyHtml);
-
-  // Update count
-  const countEl = document.getElementById(`reply-count-${threadId}`);
-  if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
-
-  input.value = '';
-  showToast('Reply posted!');
+      </div>`;
+    const list = document.getElementById(`replies-list-${threadId}`);
+    if (list) list.insertAdjacentHTML('beforeend', replyHtml);
+    const countEl = document.getElementById(`reply-count-${threadId}`);
+    if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
+    input.value = '';
+    showToast('Reply posted!');
+  }
 };
 
 window.shareThread = function(id) {
   const url = window.location.href.split('?')[0] + `?thread=${id}`;
   navigator.clipboard?.writeText(url).catch(() => {});
   showToast('Thread link copied!');
-};
-
-window.saveThread = function(id) {
-  showToast('Thread saved to bookmarks');
 };
 
 // Sort
@@ -816,22 +817,16 @@ window.setSort = function(sort, btn) {
   renderThreads();
 };
 
-// Join
+// Join community — persists via toggleJoinCommunity()
 window.handleJoin = function() {
   const commId = activeCommunity;
+  if (!commId) { showToast('Select a community to join'); return; }
   const btn = document.getElementById('joinBtn');
-  if (!currentUser) { showToast('Sign in to join communities'); return; }
-  if (commId) {
-    if (joinedCommunities.has(commId)) {
-      joinedCommunities.delete(commId);
-      btn.textContent = '+ Join'; btn.classList.remove('joined');
-      showToast('Left community');
-    } else {
-      joinedCommunities.add(commId);
-      btn.textContent = '✓ Joined'; btn.classList.add('joined');
-      showToast(`Joined ${COMMUNITIES.find(c=>c.id===commId)?.name}!`);
-    }
-  }
+  const nowJoined = toggleJoinCommunity(commId, currentUser.uid);
+  btn.textContent = nowJoined ? '✓ Joined' : '+ Join';
+  btn.classList.toggle('joined', nowJoined);
+  showToast(nowJoined ? `Joined ${COMMUNITIES.find(c=>c.id===commId)?.name}!` : 'Left community');
+  updateStanding();
 };
 
 // Create thread modal
@@ -841,45 +836,46 @@ window.openCreateModal = function() {
 window.closeCreateModal = function() {
   document.getElementById('createModalOverlay').classList.remove('open');
 };
+// Submit thread — persists via createThread()
 window.submitThread = function() {
-  if (!currentUser) { showToast('Sign in to post'); return; }
   const title = document.getElementById('thread-title').value.trim();
   if (title.length < 10) { showToast('Please add a more descriptive title'); return; }
   const commId = document.getElementById('thread-community').value;
-  const comm = COMMUNITIES.find(c => c.id === commId);
+  const comm   = COMMUNITIES.find(c => c.id === commId);
 
-  // Add to local state for this session
-  const newThread = {
-    id: 'f' + Date.now(),
-    community: commId,
-    communityName: comm?.name || '',
+  createThread({
+    community:     commId,
+    communityName: comm?.name  || '',
     communityColor: comm?.color || '#0B3D2E',
     title,
-    body: document.getElementById('thread-body').value.trim(),
-    authorId: currentUser.uid,
-    authorName: currentUser.fullName,
+    body:  document.getElementById('thread-body').value.trim(),
+    tags:  document.getElementById('thread-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+    authorId:     currentUser.uid,
+    authorName:   currentUser.fullName,
     authorAvatar: currentUser.avatar,
-    authorRole: currentUser.role,
-    upvotes: 1,
-    downvotes: 0,
-    replyCount: 0,
-    tags: document.getElementById('thread-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    timestamp: Date.now(),
-    pinned: false,
-  };
+    authorRole:   currentUser.role,
+  });
 
-  // Prepend to seed threads for this session
-  SEED_THREADS.unshift(newThread);
+  document.getElementById('thread-title').value = '';
+  document.getElementById('thread-body').value  = '';
+  document.getElementById('thread-tags').value  = '';
   closeCreateModal();
-  setCommunity(commId, document.querySelector(`[onclick*="${commId}"]`) || document.querySelector('.cx-community-item'));
+
+  // Switch to that community and re-render
+  activeCommunity = commId;
+  renderCommunityList();
+  const commEl = document.querySelector(`.cx-community-item[onclick*="${commId}"]`);
+  if (commEl) setCommunity(commId, commEl);
+  else renderThreads();
+  renderTrending();
   showToast('Discussion posted!');
 };
 
-// Right sidebar: Trending
+// Right sidebar: Trending — from live persisted data
 function renderTrending() {
-  const trending = [...SEED_THREADS].sort((a,b) => b.replyCount - a.replyCount).slice(0, 4);
+  const trending = getThreads().sort((a,b) => b.replyCount - a.replyCount).slice(0, 4);
   document.getElementById('trendingThreads').innerHTML = trending.map(t => `
-    <div class="cx-trending-thread" onclick="toggleReplies('${t.id}')">
+    <div class="cx-trending-thread" onclick="document.getElementById('thread-${t.id}')?.scrollIntoView({behavior:'smooth',block:'center'});toggleReplies('${t.id}')">
       <div class="cx-trending-thread-title">${escHtml(t.title)}</div>
       <div class="cx-trending-thread-meta">
         ▲ ${t.upvotes} · 💬 ${t.replyCount} replies · ${timeAgo(t.timestamp)}
@@ -915,9 +911,23 @@ function showToast(msg) {
 
 // Boot
 renderCommunityList();
+document.getElementById('joinBtn').style.display = 'none'; // hidden on "All Communities" view
 renderThreads();
 renderTrending();
 renderTopContributors();
+
+// Deep link: auto-scroll and open replies for ?thread=xxx
+const urlThread = new URLSearchParams(location.search).get('thread');
+if (urlThread) {
+  setTimeout(() => {
+    const el = document.getElementById(`thread-${urlThread}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.style.outline = '2px solid #0B3D2E';
+      document.getElementById(`replies-${urlThread}`)?.classList.add('open');
+    }
+  }, 500);
+}
 </script>
 </body>
 </html>

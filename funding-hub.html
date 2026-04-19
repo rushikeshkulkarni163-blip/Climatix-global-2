@@ -584,27 +584,27 @@
 
 <script type="module">
 import {
-  initCommunity, getCurrentUserProfile, getFundingRequests,
-  getProfiles, getRoleConfig, getAvatarColor, formatCount, timeAgo,
-  SEED_FUNDING, ROLES
+  initCommunity, requireAuth, getCurrentUserProfile,
+  getAllFundingRequests, createFundingRequest,
+  toggleFundingInterest, isFundingInterested,
+  toggleFundingSave, isFundingSaved,
+  getRoleConfig, getAvatarColor, formatCount, timeAgo,
+  ROLES
 } from './community.js';
 
 let currentUser = null;
 let currentView = 'list';
-let savedItems = {};
-let interestedItems = {};
 
 initCommunity();
+if (!requireAuth()) throw new Error('redirect');
 currentUser = getCurrentUserProfile();
 
 function escHtml(s) { const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
 
 // Nav
-if (currentUser) {
-  document.getElementById('navAvatar').textContent = currentUser.avatar;
-  document.getElementById('navAvatar').style.background = getAvatarColor(currentUser.role);
-  document.getElementById('navName').textContent = currentUser.fullName.split(' ')[0];
-}
+document.getElementById('navAvatar').textContent = currentUser.avatar;
+document.getElementById('navAvatar').style.background = getAvatarColor(currentUser.role);
+document.getElementById('navName').textContent = currentUser.fullName.split(' ')[0];
 
 // Score ring SVG helper
 function scoreRing(score, size = 64) {
@@ -625,10 +625,10 @@ function scoreRing(score, size = 64) {
     </div>`;
 }
 
-function renderFundingCard(f) {
-  const saved = savedItems[f.id];
-  const interested = interestedItems[f.id];
-  const logoColor = ['#0B3D2E','#1D4ED8','#5B21B6','#92400E','#065F46'][SEED_FUNDING.indexOf(f) % 5];
+function renderFundingCard(f, index) {
+  const saved      = isFundingSaved(f.id, currentUser.uid);
+  const interested = isFundingInterested(f.id, currentUser.uid);
+  const logoColor  = ['#0B3D2E','#1D4ED8','#5B21B6','#92400E','#065F46'][index % 5];
 
   return `
   <div class="cx-funding-card" id="card-${f.id}">
@@ -696,44 +696,44 @@ function renderFundingCard(f) {
     </div>
 
     <div class="cx-funding-card-footer">
-      <button class="cx-interest-btn ${interested?'interested':''}" onclick="handleInterest('${f.id}',this)">
+      <button class="cx-interest-btn ${interested?'interested':''}" id="interest-${f.id}" onclick="handleInterest('${f.id}')">
         ${interested ? '✓ Interest Expressed' : '💼 Express Interest'}
       </button>
-      <button class="cx-save-btn ${saved?'saved':''}" onclick="handleSave('${f.id}',this)">
+      <button class="cx-save-btn ${saved?'saved':''}" id="save-${f.id}" onclick="handleSave('${f.id}')">
         ${saved ? '🔖 Saved' : '📌 Save'}
       </button>
-      ${f.hasDeck ? `<button class="cx-deck-btn" onclick="showToast('Pitch deck request sent to ${escHtml(f.founderName)}')">📊 Request Deck</button>` : ''}
+      ${f.hasDeck ? `<button class="cx-deck-btn" onclick="showToast('Pitch deck request sent to ${escHtml(f.founderName||'founder')}')">📊 Request Deck</button>` : ''}
       <div class="cx-founder-chip">
-        <div class="cx-founder-avatar">${f.founderAvatar}</div>
-        <span>${escHtml(f.founderName)}</span>
+        <div class="cx-founder-avatar">${escHtml(f.founderAvatar||'?')}</div>
+        <span>${escHtml(f.founderName||'Founder')}</span>
       </div>
     </div>
   </div>`;
 }
 
 window.applyFilters = function() {
-  const q = document.getElementById('fundingSearch').value.toLowerCase();
-  const stage = document.querySelector('input[name="stage"]:checked')?.value || '';
+  const q       = document.getElementById('fundingSearch').value.toLowerCase();
+  const stage   = document.querySelector('input[name="stage"]:checked')?.value || '';
   const sectors = Array.from(document.querySelectorAll('#sectorFilters input:checked')).map(i => i.value);
-  const geo = document.querySelector('input[name="geo"]:checked')?.value || '';
+  const geo     = document.querySelector('input[name="geo"]:checked')?.value || '';
   const minScore = parseInt(document.getElementById('scoreFilter').value) || 0;
-  const sort = document.getElementById('sortSelect').value;
+  const sort    = document.getElementById('sortSelect').value;
 
-  let results = [...SEED_FUNDING];
+  // Always pull from persisted store (seed + user-submitted)
+  let results = getAllFundingRequests();
 
   if (q) results = results.filter(f =>
-    f.startupName.toLowerCase().includes(q) ||
-    f.sector.toLowerCase().includes(q) ||
-    f.founderName.toLowerCase().includes(q) ||
-    f.problem.toLowerCase().includes(q) ||
+    (f.startupName||'').toLowerCase().includes(q) ||
+    (f.sector||'').toLowerCase().includes(q) ||
+    (f.founderName||'').toLowerCase().includes(q) ||
+    (f.problem||'').toLowerCase().includes(q) ||
     (f.tags||[]).some(t => t.toLowerCase().includes(q))
   );
-  if (stage)   results = results.filter(f => f.stage === stage);
-  if (sectors.length) results = results.filter(f => sectors.some(s => f.sector.toLowerCase().includes(s.toLowerCase())));
-  if (geo)     results = results.filter(f => f.geography.toLowerCase().includes(geo.toLowerCase()));
-  if (minScore > 0) results = results.filter(f => f.climateScore >= minScore);
+  if (stage)         results = results.filter(f => f.stage === stage);
+  if (sectors.length) results = results.filter(f => sectors.some(s => (f.sector||'').toLowerCase().includes(s.toLowerCase())));
+  if (geo)           results = results.filter(f => (f.geography||'').toLowerCase().includes(geo.toLowerCase()));
+  if (minScore > 0)  results = results.filter(f => f.climateScore >= minScore);
 
-  // Sort
   if (sort === 'score')    results.sort((a,b) => b.climateScore - a.climateScore);
   if (sort === 'newest')   results.sort((a,b) => b.timestamp - a.timestamp);
   if (sort === 'interest') results.sort((a,b) => b.expressedInterest - a.expressedInterest);
@@ -751,7 +751,7 @@ window.applyFilters = function() {
     return;
   }
 
-  container.innerHTML = `<div style="display:flex;flex-direction:column;gap:16px;">${results.map(renderFundingCard).join('')}</div>`;
+  container.innerHTML = `<div style="display:flex;flex-direction:column;gap:16px;">${results.map((f, i) => renderFundingCard(f, i)).join('')}</div>`;
 };
 
 window.resetFilters = function() {
@@ -768,19 +768,25 @@ window.updateScoreLabel = function(el) {
   document.getElementById('scoreFilterLabel').textContent = el.value > 0 ? `Min ${el.value}` : 'Any score';
 };
 
-window.handleInterest = function(id, btn) {
-  if (!currentUser) { showToast('Sign in to express interest'); return; }
-  interestedItems[id] = !interestedItems[id];
-  btn.textContent = interestedItems[id] ? '✓ Interest Expressed' : '💼 Express Interest';
-  btn.classList.toggle('interested', interestedItems[id]);
-  showToast(interestedItems[id] ? 'Interest sent to founder! They\'ll be notified.' : 'Interest withdrawn');
+// Interest & Save — both persist across reloads
+window.handleInterest = function(id) {
+  const nowInterested = toggleFundingInterest(id, currentUser.uid);
+  const btn = document.getElementById(`interest-${id}`);
+  if (btn) {
+    btn.textContent = nowInterested ? '✓ Interest Expressed' : '💼 Express Interest';
+    btn.classList.toggle('interested', nowInterested);
+  }
+  showToast(nowInterested ? "Interest sent to founder! They'll be notified." : 'Interest withdrawn');
 };
 
-window.handleSave = function(id, btn) {
-  savedItems[id] = !savedItems[id];
-  btn.textContent = savedItems[id] ? '🔖 Saved' : '📌 Save';
-  btn.classList.toggle('saved', savedItems[id]);
-  showToast(savedItems[id] ? 'Saved to watchlist' : 'Removed from watchlist');
+window.handleSave = function(id) {
+  const nowSaved = toggleFundingSave(id, currentUser.uid);
+  const btn = document.getElementById(`save-${id}`);
+  if (btn) {
+    btn.textContent = nowSaved ? '🔖 Saved' : '📌 Save';
+    btn.classList.toggle('saved', nowSaved);
+  }
+  showToast(nowSaved ? 'Saved to watchlist' : 'Removed from watchlist');
 };
 
 window.setView = function(view, btn) {
@@ -824,12 +830,41 @@ window.openSubmitModal = function() {
 window.closeSubmitModal = function() {
   document.getElementById('submitModalOverlay').classList.remove('open');
 };
+// Submit funding request — persists to localStorage via createFundingRequest()
 window.submitFundingRequest = function() {
-  const name = document.getElementById('sub-name').value.trim();
+  const name    = document.getElementById('sub-name').value.trim();
   const problem = document.getElementById('sub-problem').value.trim();
   if (!name || !problem) { showToast('Please fill in required fields'); return; }
+
+  createFundingRequest({
+    startupName:  name,
+    stage:        document.getElementById('sub-stage').value,
+    sector:       document.getElementById('sub-sector').value.trim() || 'Climate Tech',
+    ask:          document.getElementById('sub-ask').value.trim()    || 'TBD',
+    problem,
+    solution:     document.getElementById('sub-solution').value.trim() || problem,
+    impact:       document.getElementById('sub-impact').value.trim()   || 'Climate positive',
+    geography:    document.getElementById('sub-geo').value.trim()      || 'India',
+    valuationPre: document.getElementById('sub-val').value.trim()      || '—',
+    traction:     document.getElementById('sub-traction').value.trim() || 'Early stage',
+    useOfFunds:   document.getElementById('sub-use').value.trim()      || 'Product & team',
+    founderName:  currentUser.fullName,
+    founderAvatar: currentUser.avatar,
+    climateScore: currentUser.climateScore || 60,
+    expressedInterest: 0,
+    savedBy:      0,
+    hasDeck:      false,
+    sdgAlignment: ['SDG 13 – Climate Action'],
+    tags:         [document.getElementById('sub-sector').value.trim().split(',')[0]].filter(Boolean),
+  });
+
+  // Clear form fields
+  ['sub-name','sub-sector','sub-ask','sub-problem','sub-solution','sub-impact','sub-geo','sub-val','sub-traction','sub-use']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+
   closeSubmitModal();
-  showToast(`✅ "${name}" submitted for review — our team will reach out within 48 hours`);
+  showToast(`✅ "${name}" live in the hub now!`);
+  applyFilters(); // Re-render so the new card appears immediately
 };
 
 function showToast(msg) {
