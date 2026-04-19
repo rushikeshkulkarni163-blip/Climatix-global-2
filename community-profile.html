@@ -6,7 +6,7 @@
   <title>Profile · Climactix Community</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -65,7 +65,7 @@
     .cx-profile-hero {
       background: var(--white);
       border: 1px solid var(--grey-mid);
-      border-radius: var(--radius);
+      border-radius: 4px;
       overflow: hidden;
       margin: 24px 0 20px;
       box-shadow: var(--shadow-sm);
@@ -185,20 +185,22 @@
 
     /* SCORE CARD */
     .cx-score-showcase {
-      background: linear-gradient(135deg, #0B3D2E, #1a7a5a);
-      border-radius: 12px;
-      padding: 20px;
+      background: #0B3D2E;
+      border-radius: 4px;
+      padding: 18px 20px;
       color: white;
       margin: 20px 0 0;
       display: flex;
       align-items: center;
       gap: 24px;
+      border: 1px solid rgba(255,255,255,0.06);
     }
     .cx-score-number {
       font-size: 52px;
       font-weight: 800;
       line-height: 1;
       letter-spacing: -2px;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
     }
     .cx-score-label { font-size: 12px; font-weight: 600; opacity: 0.7; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 4px; }
     .cx-score-bar { height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; margin-top: 6px; flex: 1; max-width: 160px; }
@@ -409,7 +411,8 @@
       <!-- Change cover button (own profile only) -->
       <button class="cx-banner-edit-btn" id="bannerEditBtn" style="display:none"
         onclick="document.getElementById('bannerFileInput').click()">
-        &#128247; Change Cover
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Change Cover
       </button>
     </div>
     <div class="cx-profile-hero-body">
@@ -419,7 +422,9 @@
           <!-- Camera edit button (own profile only) -->
           <button class="cx-avatar-edit-btn" id="avatarEditBtn" style="display:none"
             title="Change profile photo"
-            onclick="document.getElementById('avatarFileInput').click()">&#128247;</button>
+            onclick="document.getElementById('avatarFileInput').click()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
         </div>
         <div class="cx-profile-actions" id="profileActions">
           <!-- Filled by JS -->
@@ -678,8 +683,31 @@ function renderProfile() {
   const avatarColor = getAvatarColor(role);
 
   // Avatar & name
-  document.getElementById('profileAvatar').textContent = avatar;
-  document.getElementById('profileAvatar').style.background = avatarColor;
+  const avatarEl = document.getElementById('profileAvatar');
+  if (viewProfile.avatarPhoto) {
+    avatarEl.innerHTML = `<img class="cx-avatar-photo" src="${viewProfile.avatarPhoto}" alt="${escHtml(fullName)}" />`;
+    avatarEl.style.background = 'none';
+  } else {
+    avatarEl.textContent = avatar;
+    avatarEl.style.background = avatarColor;
+  }
+
+  // Banner background
+  const bannerEl = document.getElementById('profileBanner');
+  if (viewProfile.bannerPhoto) {
+    bannerEl.style.backgroundImage = `url(${viewProfile.bannerPhoto})`;
+    bannerEl.style.backgroundSize = 'cover';
+    bannerEl.style.backgroundPosition = 'center';
+  } else {
+    bannerEl.style.backgroundImage = '';
+  }
+
+  // Show edit buttons for own profile
+  const avatarEditBtn = document.getElementById('avatarEditBtn');
+  const bannerEditBtn = document.getElementById('bannerEditBtn');
+  if (avatarEditBtn) avatarEditBtn.style.display = isOwnProfile ? 'flex' : 'none';
+  if (bannerEditBtn) bannerEditBtn.style.display = isOwnProfile ? 'flex' : 'none';
+
   document.getElementById('profileName').textContent = fullName;
   if (verified) document.getElementById('profileVerified').style.display = 'inline';
   const rb = document.getElementById('profileRoleBadge');
@@ -717,8 +745,8 @@ function renderProfile() {
   const actionsEl = document.getElementById('profileActions');
   if (isOwnProfile) {
     actionsEl.innerHTML = `
-      <button class="cx-btn-outline" onclick="openEditModal()">✏️ Edit Profile</button>
-      <button class="cx-btn-outline" onclick="window.location.href='dashboard.html'">📊 Dashboard</button>`;
+      <button class="cx-btn-outline" onclick="openEditModal()">Edit Profile</button>
+      <button class="cx-btn-outline" onclick="window.location.href='dashboard.html'">Dashboard</button>`;
   } else {
     const uid_c = currentUser?.uid || '';
     const following = isFollowing(uid, uid_c);
@@ -988,6 +1016,40 @@ window.saveProfile = function() {
   renderPosts();
   setupNav();
   showToast('Profile saved!');
+};
+
+// ── Photo upload handlers ──────────────────────────────────
+window.handleAvatarUpload = function(event) {
+  const file = event.target.files[0];
+  if (!file || !currentUser) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    updateProfile(currentUser.uid, { avatarPhoto: dataUrl });
+    currentUser.avatarPhoto = dataUrl;
+    if (isOwnProfile) viewProfile = currentUser;
+    renderProfile();
+    setupNav();
+    showToast('Profile photo updated!');
+  };
+  reader.readAsDataURL(file);
+  event.target.value = ''; // reset so same file can be re-selected
+};
+
+window.handleBannerUpload = function(event) {
+  const file = event.target.files[0];
+  if (!file || !currentUser) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    updateProfile(currentUser.uid, { bannerPhoto: dataUrl });
+    currentUser.bannerPhoto = dataUrl;
+    if (isOwnProfile) viewProfile = currentUser;
+    renderProfile();
+    showToast('Cover photo updated!');
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
 };
 
 function showToast(msg) {
