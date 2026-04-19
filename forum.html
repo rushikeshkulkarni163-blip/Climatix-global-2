@@ -507,32 +507,37 @@
 
 <script type="module">
 import {
-  initCommunity, getCurrentUserProfile, getThreads, voteThread,
-  getRoleConfig, getAvatarColor, getInitials, timeAgo, formatCount,
-  COMMUNITIES, SEED_THREADS, ROLES
+  initCommunity, requireAuth, getCurrentUserProfile,
+  getThreads, createThread, voteThread, addReply,
+  getJoinedCommunities, toggleJoinCommunity,
+  getRoleConfig, getAvatarColor, timeAgo, formatCount,
+  COMMUNITIES, ROLES
 } from './community.js';
 
 let currentUser = null;
 let activeCommunity = null;
 let currentSort = 'hot';
-let joinedCommunities = new Set();
-let voteMap = {};
 
 initCommunity();
+if (!requireAuth()) throw new Error('redirect');
 currentUser = getCurrentUserProfile();
 
 function escHtml(s) { const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
 
 // Nav
-if (currentUser) {
-  document.getElementById('navAvatar').textContent = currentUser.avatar;
-  document.getElementById('navAvatar').style.background = getAvatarColor(currentUser.role);
-  document.getElementById('navName').textContent = currentUser.fullName.split(' ')[0];
+document.getElementById('navAvatar').textContent = currentUser.avatar;
+document.getElementById('navAvatar').style.background = getAvatarColor(currentUser.role);
+document.getElementById('navName').textContent = currentUser.fullName.split(' ')[0];
+
+function updateStanding() {
+  const joined = getJoinedCommunities(currentUser.uid);
+  const karma = currentUser.postsCount * 47 + (currentUser.followersCount || 0) * 12;
   document.getElementById('userStanding').innerHTML = `
-    <div>Karma: <strong style="color:#0B3D2E;">${Math.floor(Math.random()*500)+50}</strong></div>
+    <div>Karma: <strong style="color:#0B3D2E;">${formatCount(karma)}</strong></div>
     <div>Posts: <strong>${currentUser.postsCount}</strong></div>
-    <div>Communities: <strong>${joinedCommunities.size + 2}</strong></div>`;
+    <div>Communities: <strong>${joined.length}</strong></div>`;
 }
+updateStanding();
 
 // Render community list
 function renderCommunityList() {
