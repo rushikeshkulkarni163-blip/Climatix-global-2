@@ -521,7 +521,8 @@
     import { signIn, getSession } from './auth.js';
 
     if (getSession()) {
-      const redirect = new URLSearchParams(location.search).get('redirect') || 'assessment.html';
+      const p = new URLSearchParams(location.search);
+      const redirect = p.get('redirect') || p.get('next') || 'assessment.html';
       location.href = redirect;
     }
 
@@ -554,7 +555,8 @@
         await signIn({ email, password, remember });
         showAlert('successAlert','Signed in — redirecting…');
         setTimeout(() => {
-          const redirect = new URLSearchParams(location.search).get('redirect') || 'assessment.html';
+          const p = new URLSearchParams(location.search);
+          const redirect = p.get('redirect') || p.get('next') || 'assessment.html';
           location.href = redirect;
         }, 600);
       } catch (err) {

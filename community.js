@@ -333,9 +333,9 @@ export function getCurrentSession() {
   return load('cx_session', null);
 }
 
-export function requireAuth(redirectTo = 'login.html') {
+export function requireAuth(redirectTo = 'community-login.html') {
   const s = getCurrentSession();
-  if (!s) { window.location.href = redirectTo + '?next=' + encodeURIComponent(window.location.pathname); return false; }
+  if (!s) { window.location.href = redirectTo + '?next=' + encodeURIComponent(window.location.pathname + window.location.search); return false; }
   return true;
 }
 
