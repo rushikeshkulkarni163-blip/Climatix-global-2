@@ -10,31 +10,32 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --primary:      #0B3D2E;
-      --primary-mid:  #0e4f3a;
-      --primary-tint: #EBF5F1;
-      --primary-pale: #D1FAE5;
+      --primary:      #0A1F44;
+      --primary-mid:  #0D2A5C;
+      --primary-tint: #EEF4FF;
+      --primary-pale: #C3D4F0;
+      --accent:       #2F80ED;
       --white:        #FFFFFF;
-      --off-white:    #F9FAFB;
-      --grey-light:   #F3F4F6;
-      --grey-mid:     #E5E7EB;
-      --text:         #111827;
-      --text-2:       #374151;
-      --text-muted:   #6B7280;
-      --text-faint:   #9CA3AF;
+      --off-white:    #F7F9FC;
+      --grey-light:   #F4F7FA;
+      --grey-mid:     #E0E6ED;
+      --text:         #0B0B0B;
+      --text-2:       #4F4F4F;
+      --text-muted:   #6B7A8D;
+      --text-faint:   #9AACBE;
       --amber:        #92400E;
       --amber-bg:     #FEF3C7;
-      --blue:         #1D4ED8;
-      --blue-bg:      #DBEAFE;
+      --blue:         #2F80ED;
+      --blue-bg:      #EEF4FF;
       --purple:       #5B21B6;
       --purple-bg:    #EDE9FE;
       --shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
       --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
       --shadow-lg:    0 8px 32px rgba(0,0,0,0.12);
-      --radius:       12px;
-      --radius-sm:    8px;
+      --radius:       6px;
+      --radius-sm:    4px;
       --nav-h:        60px;
-      --transition:   0.18s cubic-bezier(0.4,0,0.2,1);
+      --transition:   0.15s ease;
     }
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', sans-serif; background: var(--off-white); color: var(--text); -webkit-font-smoothing: antialiased; }
@@ -57,7 +58,7 @@
 
     /* HERO BANNER */
     .cx-hub-hero {
-      background: linear-gradient(135deg, #0B3D2E 0%, #146248 50%, #1a7a5a 100%);
+      background: linear-gradient(135deg, #0A1F44 0%, #146248 50%, #1a7a5a 100%);
       color: white;
       padding: 48px 24px;
       text-align: center;
@@ -197,7 +198,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 16px; font-weight: 800; color: white;
       flex-shrink: 0;
-      background: linear-gradient(135deg, #0B3D2E, #146248);
+      background: linear-gradient(135deg, #0A1F44, #146248);
     }
     .cx-startup-info { flex: 1; min-width: 0; }
     .cx-startup-name { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
@@ -361,7 +362,7 @@
   </div>
   <div class="cx-nav-right">
     <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
-      <div class="cx-avatar" id="navAvatar" style="background:#0B3D2E">?</div>
+      <div class="cx-avatar" id="navAvatar" style="background:#0A1F44">?</div>
       <span style="font-size:13px;font-weight:600;" id="navName">—</span>
     </button>
   </div>
@@ -615,7 +616,7 @@ function scoreRing(score, size = 64) {
     <div class="cx-score-ring" style="width:${size}px;height:${size}px;">
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
         <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#E5E7EB" stroke-width="6"/>
-        <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${score>=80?'#0B3D2E':score>=60?'#D97706':'#EF4444'}" stroke-width="6"
+        <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${score>=80?'#0A1F44':score>=60?'#D97706':'#EF4444'}" stroke-width="6"
           stroke-dasharray="${fill} ${circ}" stroke-linecap="round"/>
       </svg>
       <div class="cx-score-ring-text">
@@ -628,7 +629,7 @@ function scoreRing(score, size = 64) {
 function renderFundingCard(f, index) {
   const saved      = isFundingSaved(f.id, currentUser.uid);
   const interested = isFundingInterested(f.id, currentUser.uid);
-  const logoColor  = ['#0B3D2E','#1D4ED8','#5B21B6','#92400E','#065F46'][index % 5];
+  const logoColor  = ['#0A1F44','#1D4ED8','#5B21B6','#92400E','#065F46'][index % 5];
 
   return `
   <div class="cx-funding-card" id="card-${f.id}">
@@ -691,7 +692,7 @@ function renderFundingCard(f, index) {
 
       <div class="cx-sdg-badges">
         ${(f.sdgAlignment || []).map(s => `<span class="cx-sdg">${escHtml(s)}</span>`).join('')}
-        ${(f.tags || []).slice(0,4).map(t => `<span class="cx-sdg" style="background:#EBF5F1;color:#0B3D2E;">#${escHtml(t)}</span>`).join('')}
+        ${(f.tags || []).slice(0,4).map(t => `<span class="cx-sdg" style="background:#EBF5F1;color:#0A1F44;">#${escHtml(t)}</span>`).join('')}
       </div>
     </div>
 
@@ -746,7 +747,7 @@ window.applyFilters = function() {
       <div style="font-size:32px;margin-bottom:12px;">🔍</div>
       <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px;">No startups found</div>
       <div style="font-size:13px;">Try adjusting your filters or search term.</div>
-      <button onclick="resetFilters()" style="margin-top:14px;padding:9px 20px;background:#0B3D2E;color:white;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;border:none;">Reset Filters</button>
+      <button onclick="resetFilters()" style="margin-top:14px;padding:9px 20px;background:#0A1F44;color:white;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;border:none;">Reset Filters</button>
     </div>`;
     return;
   }

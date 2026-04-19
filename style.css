@@ -1,46 +1,49 @@
 /* ============================================================
-   Climactix Global — BCG-Level Design System
-   Clean, minimal, enterprise consulting aesthetic
-   Font: Inter · Primary: #0B3D2E · White · #F5F5F5 · #111111
+   Climactix Global — Bloomberg-Grade Design System
+   Institutional finance aesthetic · Dark Navy + Blue Accent
+   Font: Inter · Primary: #0A1F44 · Accent: #2F80ED · #F7F9FC
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 /* ── CSS Variables ── */
 :root {
-  /* Core Climactix Palette — institutional green */
-  --primary:         #1C6B47;
-  --primary-dark:    #0B3D2E;
-  --primary-mid:     #0e4f3a;
-  --primary-light:   #146248;
-  --primary-tint:    #EBF5F1;
+  /* ── Bloomberg Blue Palette ── */
+  --primary:         #0A1F44;   /* deep navy — primary action / headers */
+  --primary-dark:    #07152E;   /* darker navy — hover states */
+  --primary-mid:     #0D2A5C;   /* mid navy — active/pressed */
+  --primary-light:   #123A6F;   /* secondary navy */
+  --primary-tint:    #EEF4FF;   /* very light blue — chip/badge fills */
+  --accent:          #2F80ED;   /* Bloomberg electric blue — highlights */
+  --accent-light:    #EBF4FF;   /* accent tint */
 
   --white:           #FFFFFF;
-  --off-white:       #F9FAFB;
-  --grey-light:      #F5F5F5;
-  --grey-mid:        #E5E7EB;
-  --grey-border:     #D1D5DB;
-  --grey-muted:      #9CA3AF;
-  --text-primary:    #111111;
-  --text-secondary:  #374151;
-  --text-muted:      #6B7280;
-  --text-faint:      #9CA3AF;
-  --dark:            #111111;
+  --off-white:       #F7F9FC;   /* Bloomberg light-grey background */
+  --grey-light:      #F4F7FA;
+  --grey-mid:        #E0E6ED;   /* Bloomberg border grey */
+  --grey-border:     #E0E6ED;
+  --grey-muted:      #9AACBE;
+  --text-primary:    #0B0B0B;
+  --text-secondary:  #4F4F4F;
+  --text-muted:      #6B7A8D;
+  --text-faint:      #9AACBE;
+  --dark:            #0B0B0B;
 
   /* Alias map — preserves existing class compatibility */
   --cream:           #FFFFFF;
-  --cream-dark:      #F5F5F5;
-  --parchment:       #E5E7EB;
-  --ink:             #111111;
-  --ink-soft:        #374151;
-  --ink-muted:       #6B7280;
-  --ink-faint:       #9CA3AF;
+  --cream-dark:      #F4F7FA;
+  --parchment:       #E0E6ED;
+  --ink:             #0B0B0B;
+  --ink-soft:        #4F4F4F;
+  --ink-muted:       #6B7A8D;
+  --ink-faint:       #9AACBE;
 
-  --forest:          #0B3D2E;
-  --forest-mid:      #0e4f3a;
-  --forest-light:    #146248;
-  --forest-pale:     #A8CEBC;
-  --forest-tint:     #EBF5F1;
+  /* Navy aliases (replaces --forest naming) */
+  --forest:          #0A1F44;
+  --forest-mid:      #0D2A5C;
+  --forest-light:    #123A6F;
+  --forest-pale:     #C3D4F0;   /* light blue border */
+  --forest-tint:     #EEF4FF;
 
   --slate:           #374151;
   --slate-mid:       #4B5563;
@@ -51,16 +54,16 @@
   --amber-light:     #D97706;
   --amber-tint:      #FEF3C7;
 
-  /* Dark section palette — deep green replaces purple */
-  --cx-purple:       #0B3D2E;
-  --cx-purple-mid:   #0a3228;
-  --cx-purple-light: #0e4f3a;
-  --cx-pink:         #0B3D2E;
-  --cx-pink-light:   #0e4f3a;
-  --cx-pink-tint:    #EBF5F1;
+  /* Dark section palette */
+  --cx-purple:       #0A1F44;
+  --cx-purple-mid:   #07152E;
+  --cx-purple-light: #0D2A5C;
+  --cx-pink:         #0A1F44;
+  --cx-pink-light:   #0D2A5C;
+  --cx-pink-tint:    #EEF4FF;
 
-  --border:          rgba(17,17,17,0.10);
-  --border-dark:     rgba(17,17,17,0.18);
+  --border:          rgba(10,31,68,0.10);
+  --border-dark:     rgba(10,31,68,0.18);
   --shadow-sm:       0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-md:       0 4px 14px rgba(0,0,0,0.08);
   --shadow-lg:       0 8px 32px rgba(0,0,0,0.10);
@@ -193,20 +196,14 @@ h1, h2, h3, h4, h5 {
   color: var(--text-muted);
   padding: 5px 12px;
   border: 1px solid var(--grey-border);
-  border-radius: 100px;
+  border-radius: 4px;
 }
 
 .live-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: #16a34a;
-  animation: blink 2.2s ease-in-out infinite;
+  background: var(--accent);
   flex-shrink: 0;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(22,163,74,0.4); }
-  50%       { opacity: 0.6; box-shadow: 0 0 0 4px rgba(22,163,74,0); }
 }
 
 /* Live nav pill */
@@ -274,15 +271,14 @@ h1, h2, h3, h4, h5 {
   background: var(--primary-tint);
   border: 1px solid var(--forest-pale);
   padding: 6px 16px;
-  border-radius: 100px;
+  border-radius: 4px;
   margin-bottom: 28px;
 }
 
 .badge-dot {
   width: 5px; height: 5px;
   border-radius: 50%;
-  background: var(--primary);
-  animation: blink 2s infinite;
+  background: var(--accent);
   flex-shrink: 0;
 }
 
@@ -346,7 +342,7 @@ h1, h2, h3, h4, h5 {
   background: var(--primary-mid);
   border-color: var(--primary-mid);
   transform: none;
-  box-shadow: 0 2px 10px rgba(11,61,46,0.20);
+  box-shadow: 0 2px 10px rgba(10,31,68,0.20);
 }
 
 /* Secondary CTA */
@@ -438,7 +434,7 @@ h1, h2, h3, h4, h5 {
   background: var(--primary-tint);
   border: 1px solid var(--forest-pale);
   padding: 6px 16px;
-  border-radius: 100px;
+  border-radius: 4px;
   margin-bottom: 28px;
 }
 
@@ -1187,7 +1183,7 @@ h1, h2, h3, h4, h5 {
   background: var(--primary-tint);
   border: 1px solid var(--forest-pale);
   padding: 3px 10px;
-  border-radius: 100px;
+  border-radius: 4px;
 }
 
 .founder-pub {
@@ -1498,8 +1494,8 @@ h1, h2, h3, h4, h5 {
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(11,61,46,0.08);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47,128,237,0.10);
 }
 
 .form-group input::placeholder,
