@@ -559,7 +559,6 @@ function renderCommunityList() {
 
   list.innerHTML = allItem + communityItems;
 
-  // Populate modal select
   select.innerHTML = COMMUNITIES.map(c =>
     `<option value="${c.id}" data-color="${c.color}">${c.icon} ${c.name}</option>`
   ).join('');
@@ -569,7 +568,7 @@ function renderCommunityList() {
 window.setCommunity = function(id, el) {
   activeCommunity = id;
   document.querySelectorAll('.cx-community-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
+  if (el) el.classList.add('active');
 
   const comm = id ? COMMUNITIES.find(c => c.id === id) : null;
   if (comm) {
@@ -586,6 +585,18 @@ window.setCommunity = function(id, el) {
     document.getElementById('forumMembers').textContent = '78,950';
     document.getElementById('forumPosts').textContent = '2,847';
     document.getElementById('forumOnline').textContent = '342';
+  }
+
+  // Update join button state from persisted data
+  const btn = document.getElementById('joinBtn');
+  if (id) {
+    const joined = getJoinedCommunities(currentUser.uid);
+    const isJoined = joined.includes(id);
+    btn.textContent = isJoined ? '✓ Joined' : '+ Join';
+    btn.classList.toggle('joined', isJoined);
+    btn.style.display = '';
+  } else {
+    btn.style.display = 'none';
   }
   renderThreads();
 };
@@ -641,10 +652,10 @@ window.renderThreads = function() {
 
   // Bind events
   container.querySelectorAll('[data-upvote]').forEach(btn =>
-    btn.addEventListener('click', () => handleVote(btn.dataset.upvote, 'up', btn))
+    btn.addEventListener('click', () => handleVote(btn.dataset.upvote, 'up'))
   );
   container.querySelectorAll('[data-downvote]').forEach(btn =>
-    btn.addEventListener('click', () => handleVote(btn.dataset.downvote, 'down', btn))
+    btn.addEventListener('click', () => handleVote(btn.dataset.downvote, 'down'))
   );
   container.querySelectorAll('[data-toggle-replies]').forEach(btn =>
     btn.addEventListener('click', () => toggleReplies(btn.dataset.toggleReplies))
@@ -654,30 +665,48 @@ window.renderThreads = function() {
   );
 };
 
+function renderReplies(thread) {
+  const replies = thread.replies || [];
+  if (!replies.length) return '';
+  return replies.map(r => {
+    const roleConf = getRoleConfig(r.authorRole);
+    return `
+      <div class="cx-reply">
+        <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(r.authorRole)};flex-shrink:0;">${escHtml(r.authorAvatar || (r.authorName||'?').slice(0,2))}</div>
+        <div class="cx-reply-bubble">
+          <div class="cx-reply-author">
+            ${escHtml(r.authorName)}
+            <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color};font-size:10px;">${roleConf.label}</span>
+          </div>
+          <div class="cx-reply-text">${escHtml(r.content)}</div>
+          <div class="cx-reply-meta"><span>${timeAgo(r.timestamp)}</span></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
 function renderThread(t) {
-  const score = (voteMap[t.id] || 0) + (t.upvotes - t.downvotes);
+  const score = t.upvotes - t.downvotes;
   const comm = COMMUNITIES.find(c => c.id === t.community);
   const roleConf = getRoleConfig(t.authorRole);
-  const userVote = voteMap[`${t.id}_vote`];
+  const userVote = (t.voters || {})[currentUser.uid] || null;
 
   return `
   <div class="cx-thread-card ${t.pinned ? 'pinned' : ''}" id="thread-${t.id}">
-    <!-- Vote column -->
     <div class="cx-vote-col">
       <button class="cx-vote-btn ${userVote==='up'?'upvoted':''}" data-upvote="${t.id}" title="Upvote">▲</button>
       <div class="cx-vote-score ${score>0?'positive':''}">${score}</div>
       <button class="cx-vote-btn ${userVote==='down'?'downvoted':''}" data-downvote="${t.id}" title="Downvote">▼</button>
     </div>
 
-    <!-- Thread body -->
     <div class="cx-thread-body">
       <div class="cx-thread-meta">
-        ${comm ? `<span class="cx-community-chip" style="background:${comm.color}1a;color:${comm.color};" onclick="setCommunity('${comm.id}', document.querySelector('[onclick*=${comm.id}]'))">
+        ${comm ? `<span class="cx-community-chip" style="background:${comm.color}1a;color:${comm.color};" onclick="setCommunity('${comm.id}', document.querySelector('.cx-community-item[onclick*=\\'${comm.id}\\']'))">
           ${comm.icon} ${escHtml(comm.name)}
         </span>` : ''}
         ${t.pinned ? '<span class="cx-pinned-badge">📌 Pinned</span>' : ''}
         <div style="display:flex;align-items:center;gap:6px;">
-          <div style="width:20px;height:20px;border-radius:50%;background:${getAvatarColor(t.authorRole)};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:white;">${t.authorAvatar}</div>
+          <div style="width:20px;height:20px;border-radius:50%;background:${getAvatarColor(t.authorRole)};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:white;">${escHtml(t.authorAvatar)}</div>
           <span class="cx-thread-author">${escHtml(t.authorName)}</span>
           <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color}">${roleConf.label}</span>
           <span class="cx-thread-author">· ${timeAgo(t.timestamp)}</span>
@@ -696,58 +725,24 @@ function renderThread(t) {
           💬 <span id="reply-count-${t.id}">${t.replyCount}</span> ${t.replyCount === 1 ? 'reply' : 'replies'}
         </button>
         <button class="cx-thread-footer-btn" onclick="shareThread('${t.id}')">↗️ Share</button>
-        <button class="cx-thread-footer-btn" onclick="saveThread('${t.id}')">🔖 Save</button>
+        <button class="cx-thread-footer-btn" onclick="showToast('Thread saved to bookmarks')">🔖 Save</button>
         <button class="cx-thread-footer-btn" onclick="showToast('Report submitted for review')">⚑ Report</button>
         <span style="margin-left:auto;font-size:11.5px;color:#9CA3AF;">👁 ${formatCount(t.replyCount * 12 + 84)} views</span>
       </div>
 
-      <!-- Replies -->
       <div class="cx-thread-replies" id="replies-${t.id}">
         <div id="replies-list-${t.id}">
-          ${generateSampleReplies(t)}
+          ${renderReplies(t)}
         </div>
         <div class="cx-add-reply">
-          <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(currentUser?.role)};flex-shrink:0;">${currentUser?.avatar||'?'}</div>
-          <input class="cx-reply-input" id="reply-input-${t.id}" placeholder="Add your perspective…" />
+          <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(currentUser.role)};flex-shrink:0;">${currentUser.avatar}</div>
+          <input class="cx-reply-input" id="reply-input-${t.id}" placeholder="Add your perspective…"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitReply('${t.id}');}" />
           <button class="cx-reply-submit" data-reply-submit="${t.id}">Reply</button>
         </div>
       </div>
     </div>
   </div>`;
-}
-
-function generateSampleReplies(thread) {
-  if (!thread.replyCount) return '';
-  // Generate 2 sample replies for threads that have replies
-  const profiles = [
-    { name: 'Arjun Kapoor', avatar: 'AK', role: 'investor' },
-    { name: 'Dr. Meera Nair', avatar: 'MN', role: 'researcher' },
-    { name: 'Rahul Menon', avatar: 'RM', role: 'corporate' },
-  ];
-  const replyTexts = [
-    `Great point. From our fund's perspective, this is exactly the kind of structural analysis the market needs. We've seen similar patterns in our portfolio companies operating in this space.`,
-    `The research data supports this — we've been tracking these metrics for the past 3 years and the trend is consistent with what you're describing. Happy to share our dataset with interested parties.`,
-    `This aligns with what we're seeing in practice. The key challenge remains the last-mile implementation, which is where most initiatives stall. Does anyone have data on implementation success rates?`,
-  ];
-  return profiles.slice(0, 2).map((p, i) => {
-    const roleConf = getRoleConfig(p.role);
-    return `
-      <div class="cx-reply">
-        <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(p.role)};flex-shrink:0;">${p.avatar}</div>
-        <div class="cx-reply-bubble">
-          <div class="cx-reply-author">
-            ${escHtml(p.name)}
-            <span class="cx-role-badge" style="background:${roleConf.bg};color:${roleConf.color};font-size:10px;">${roleConf.label}</span>
-          </div>
-          <div class="cx-reply-text">${replyTexts[i % replyTexts.length]}</div>
-          <div class="cx-reply-meta">
-            <span>${timeAgo(thread.timestamp + (i+1) * 3600000)}</span>
-            <button onclick="showToast('Upvoted')">▲ ${Math.floor(Math.random()*40)+5}</button>
-            <button onclick="showToast('Reply form coming soon')">Reply</button>
-          </div>
-        </div>
-      </div>`;
-  }).join('');
 }
 
 // Vote handling
