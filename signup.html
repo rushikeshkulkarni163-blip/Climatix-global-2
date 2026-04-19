@@ -6,177 +6,661 @@
   <title>Create Account · Climactix Global</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --primary: #0B3D2E; --primary-hover: #0d4f3a; --text: #0F172A; --muted: #64748B; --border: #E2E8F0; --bg: #F0F4F2; --card: #ffffff; --error: #EF4444; --success: #22C55E; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
-    .auth-top { text-align: center; margin-bottom: 32px; }
-    .auth-top img { height: 220px; width: auto; }
-    .auth-top p { color: var(--muted); font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase; margin-top: 10px; font-weight: 500; }
-    .auth-card { background: var(--card); border-radius: 20px; padding: 44px 48px; width: 100%; max-width: 480px; box-shadow: 0 4px 32px rgba(11,61,46,0.10); border: 1px solid rgba(11,61,46,0.06); animation: fadeUp .4s ease both; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    .auth-title { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .auth-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
-    .field { margin-bottom: 18px; }
-    .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 7px; }
-    .field-opt { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 4px; }
-    .field input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--text); background: #FAFAFA; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
-    .field input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(11,61,46,0.08); }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .pw-rules { margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
-    .pw-rule { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; transition: color .2s; }
+
+    :root {
+      --primary:        #1C6B47;
+      --primary-dark:   #0B3D2E;
+      --text:           #0D1117;
+      --text-2:         #374151;
+      --muted:          #6B7280;
+      --border:         #D1D5DB;
+      --border-focus:   #1C6B47;
+      --bg:             #F8FAFC;
+      --white:          #FFFFFF;
+      --success:        #16A34A;
+      --error-bg:       #FFF5F5;
+      --error-border:   #FCA5A5;
+      --error-text:     #B91C1C;
+      --panel-bg:       #0B3D2E;
+      --panel-border:   rgba(255,255,255,0.08);
+      --panel-muted:    rgba(255,255,255,0.50);
+    }
+
+    html { height: 100%; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── LEFT PANEL ─────────────────────────────────────────── */
+    .panel-left {
+      background: var(--panel-bg);
+      display: flex;
+      flex-direction: column;
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .panel-left::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .pl-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 56px;
+      position: relative;
+      z-index: 1;
+    }
+    .pl-brand-logo {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+    .pl-brand-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .pl-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pl-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(110,210,150,0.8);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pl-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 1px;
+      background: rgba(110,210,150,0.6);
+    }
+
+    .pl-heading {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+
+    .pl-sub {
+      font-size: 13.5px;
+      color: var(--panel-muted);
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .pl-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .pl-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.5;
+    }
+    .pl-check-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(110,210,150,0.15);
+      border: 1px solid rgba(110,210,150,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+      margin-top: 1px;
+      color: rgba(110,210,150,0.9);
+    }
+
+    .pl-frameworks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pl-fw-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--panel-muted);
+      width: 100%;
+      margin-bottom: 4px;
+    }
+    .pl-fw-tag {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.09);
+      padding: 3px 9px;
+      border-radius: 3px;
+      letter-spacing: 0.03em;
+    }
+
+    .pl-footer {
+      position: relative;
+      z-index: 1;
+      padding-top: 28px;
+      border-top: 1px solid var(--panel-border);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .pl-footer a {
+      font-size: 11px;
+      color: var(--panel-muted);
+      text-decoration: none;
+    }
+    .pl-footer a:hover { color: rgba(255,255,255,0.75); }
+
+    /* ── RIGHT PANEL ────────────────────────────────────────── */
+    .panel-right {
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 48px;
+      overflow-y: auto;
+      min-height: 100vh;
+    }
+
+    .auth-form-wrap {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .auth-header { margin-bottom: 32px; }
+    .auth-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .auth-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Form */
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+    .field-opt {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .field input, .field select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      font-size: 13.5px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field input::placeholder { color: #9CA3AF; }
+    .field input:focus, .field select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(28,107,71,0.10);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Password strength */
+    .pw-strength-bar {
+      display: flex;
+      gap: 3px;
+      margin-top: 8px;
+    }
+    .psb-seg {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .psb-seg.weak   { background: #EF4444; }
+    .psb-seg.fair   { background: #F59E0B; }
+    .psb-seg.strong { background: #10B981; }
+
+    .pw-rules {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 16px;
+    }
+    .pw-rule {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.2s;
+    }
     .pw-rule.met { color: var(--success); }
-    .pw-rule::before { content: '○'; font-size: 10px; }
-    .pw-rule.met::before { content: '●'; }
-    .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: background .2s, box-shadow .2s; margin-top: 8px; }
-    .btn-primary:hover:not(:disabled) { background: var(--primary-hover); box-shadow: 0 4px 16px rgba(11,61,46,0.25); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .alert { border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 500; margin-bottom: 20px; display: none; }
-    .alert.error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
+    .pw-rule-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .pw-rule.met .pw-rule-dot { background: var(--success); }
+
+    .terms-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .terms-row input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--primary-dark);
+      cursor: pointer;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+    .terms-row label {
+      font-size: 12.5px;
+      color: var(--muted);
+      cursor: pointer;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+    .terms-row a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .terms-row a:hover { text-decoration: underline; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 11px 20px;
+      background: var(--primary-dark);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.01em;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary);
+      box-shadow: 0 2px 12px rgba(11,61,46,0.20);
+    }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* Alerts */
+    .alert {
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 18px;
+      display: none;
+      line-height: 1.5;
+    }
+    .alert.error { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); border-left: 3px solid var(--error-text); }
     .alert.show { display: block; }
-    .auth-switch { text-align: center; margin-top: 24px; font-size: 13px; color: var(--muted); }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
     .auth-switch a { color: var(--primary); font-weight: 600; text-decoration: none; }
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 8px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    /* Success view */
-    .success-view { text-align: center; padding: 8px 0; }
-    .s-icon { font-size: 52px; margin-bottom: 16px; }
-    .s-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .s-text { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
-    .email-hl { font-weight: 600; color: var(--primary); }
-    .verify-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-    .verify-box p { font-size: 13px; color: #15803D; margin-bottom: 12px; line-height: 1.5; }
-    .btn-verify { width: 100%; padding: 13px; background: #15803D; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: background .2s; }
+
+    /* Success state */
+    .success-view {
+      text-align: center;
+      padding: 16px 0;
+    }
+    .sv-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #ECFDF5;
+      border: 1px solid #86EFAC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 22px;
+    }
+    .sv-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .sv-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .sv-verify-box {
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 4px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .sv-verify-box p {
+      font-size: 13px;
+      color: #15803D;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    .btn-verify {
+      width: 100%;
+      padding: 11px;
+      background: #15803D;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
     .btn-verify:hover { background: #166534; }
-    .footer-links { text-align: center; margin-top: 32px; }
-    .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; margin: 0 8px; }
-    .footer-links a:hover { color: var(--primary); }
+
+    /* Loading */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 860px) {
+      body { grid-template-columns: 1fr; }
+      .panel-left { display: none; }
+      .panel-right { padding: 40px 24px; }
+      .two-col { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="auth-top">
-    <a href="index.html"><img src="Climatix_logo.png" alt="Climactix Global" /></a>
-    <p>ESG Intelligence Platform</p>
-  </div>
-
-  <div class="auth-card">
-    <!-- Form -->
-    <div id="formView">
-      <h1 class="auth-title">Create your account</h1>
-      <p class="auth-sub">Free access to the Climactix Global ESG Assessment platform</p>
-      <div class="alert error" id="errorAlert"></div>
-      <form id="signupForm" novalidate>
-        <div class="two-col">
-          <div class="field">
-            <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" placeholder="Jane Doe" autocomplete="name" required />
-          </div>
-          <div class="field">
-            <label for="companyName">Company <span class="field-opt">optional</span></label>
-            <input type="text" id="companyName" placeholder="Acme Corp" autocomplete="organization" />
-          </div>
-        </div>
-        <div class="field">
-          <label for="email">Email address</label>
-          <input type="email" id="email" placeholder="you@company.com" autocomplete="email" required />
-        </div>
-        <div class="field">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password" required oninput="checkPw(this.value)" />
-          <div class="pw-rules">
-            <div class="pw-rule" id="r-length">At least 8 characters</div>
-            <div class="pw-rule" id="r-upper">One uppercase letter</div>
-            <div class="pw-rule" id="r-number">One number</div>
-            <div class="pw-rule" id="r-match">Passwords match</div>
-          </div>
-        </div>
-        <div class="field">
-          <label for="confirmPassword">Confirm Password</label>
-          <input type="password" id="confirmPassword" placeholder="••••••••" autocomplete="new-password" required oninput="checkMatch()" />
-        </div>
-        <button type="submit" class="btn-primary" id="submitBtn">Create Account →</button>
-      </form>
-      <div class="auth-switch">Already have an account? <a href="login.html">Sign in</a></div>
+  <!-- LEFT BRAND PANEL -->
+  <aside class="panel-left">
+    <div class="pl-brand">
+      <img src="Climatix_logo.png" alt="Climactix" class="pl-brand-logo" />
+      <div class="pl-brand-name">Climactix Global</div>
     </div>
 
-    <!-- Success + one-click verify -->
-    <div id="successView" style="display:none;" class="success-view">
-      <div class="s-icon">🎉</div>
-      <h2 class="s-title">Account created!</h2>
-      <p class="s-text">Welcome to Climactix Global,<br><span class="email-hl" id="welcomeName"></span></p>
-      <div class="verify-box">
-        <p>Click below to verify your email and access the ESG Assessment instantly.</p>
-        <button class="btn-verify" id="verifyNowBtn">Verify Email &amp; Continue →</button>
+    <div class="pl-content">
+      <div class="pl-eyebrow">Free access</div>
+      <h1 class="pl-heading">Start your ESG journey today</h1>
+      <p class="pl-sub">Join 2,400+ climate professionals using Climactix to assess, disclose, and improve ESG performance.</p>
+
+      <div class="pl-checklist">
+        <div class="pl-check">
+          <div class="pl-check-icon">✓</div>
+          <div>Full ESG assessment with TCFD, ISSB, and GRI alignment — free</div>
+        </div>
+        <div class="pl-check">
+          <div class="pl-check-icon">✓</div>
+          <div>AI-powered narrative generation for ESG disclosures</div>
+        </div>
+        <div class="pl-check">
+          <div class="pl-check-icon">✓</div>
+          <div>Access climate finance community, funding hub, and investor matching</div>
+        </div>
+        <div class="pl-check">
+          <div class="pl-check-icon">✓</div>
+          <div>Climate Impact Score benchmarked against 2,400+ peers</div>
+        </div>
+        <div class="pl-check">
+          <div class="pl-check-icon">✓</div>
+          <div>No credit card required. No trial. Fully functional.</div>
+        </div>
       </div>
-      <p style="font-size:12px;color:var(--muted);">In production, a verification link would be sent to your inbox.</p>
-    </div>
-  </div>
 
-  <div class="footer-links">
-    <a href="index.html">← Back to site</a>
-    <a href="login.html">Sign In</a>
-  </div>
+      <div class="pl-frameworks">
+        <div class="pl-fw-label">Frameworks covered</div>
+        <span class="pl-fw-tag">ISSB S1/S2</span>
+        <span class="pl-fw-tag">TCFD</span>
+        <span class="pl-fw-tag">GRI</span>
+        <span class="pl-fw-tag">SASB</span>
+        <span class="pl-fw-tag">BRSR</span>
+        <span class="pl-fw-tag">CSRD</span>
+        <span class="pl-fw-tag">SDG</span>
+        <span class="pl-fw-tag">GHG Protocol</span>
+      </div>
+    </div>
+
+    <div class="pl-footer">
+      <a href="index.html">← Back to site</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms</a>
+    </div>
+  </aside>
+
+  <!-- RIGHT FORM PANEL -->
+  <main class="panel-right">
+    <div class="auth-form-wrap">
+
+      <!-- FORM VIEW -->
+      <div id="formView">
+        <div class="auth-header">
+          <h2 class="auth-title">Create your account</h2>
+          <p class="auth-sub">Free access to the full Climactix Global ESG platform.</p>
+        </div>
+
+        <div class="alert error" id="errorAlert"></div>
+
+        <form id="signupForm" novalidate>
+          <div class="two-col">
+            <div class="field">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" placeholder="Jane Doe" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="companyName">Company <span class="field-opt">optional</span></label>
+              <input type="text" id="companyName" placeholder="Acme Corp" autocomplete="organization" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Work email address</label>
+            <input type="email" id="email" placeholder="you@company.com" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password" required oninput="checkPw(this.value)" />
+            <div class="pw-strength-bar">
+              <div class="psb-seg" id="ps1"></div>
+              <div class="psb-seg" id="ps2"></div>
+              <div class="psb-seg" id="ps3"></div>
+              <div class="psb-seg" id="ps4"></div>
+            </div>
+            <div class="pw-rules">
+              <div class="pw-rule" id="r-length"><span class="pw-rule-dot"></span>At least 8 characters</div>
+              <div class="pw-rule" id="r-upper"><span class="pw-rule-dot"></span>One uppercase letter</div>
+              <div class="pw-rule" id="r-number"><span class="pw-rule-dot"></span>One number</div>
+              <div class="pw-rule" id="r-match"><span class="pw-rule-dot"></span>Passwords match</div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" placeholder="••••••••" autocomplete="new-password" required oninput="checkMatch()" />
+          </div>
+
+          <div class="terms-row">
+            <input type="checkbox" id="termsCheck" required />
+            <label for="termsCheck">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. I understand Climactix may contact me regarding ESG updates.</label>
+          </div>
+
+          <button type="submit" class="btn-primary" id="submitBtn">Create Account</button>
+        </form>
+
+        <div class="auth-switch">
+          Already have an account? <a href="login.html">Sign in</a>
+        </div>
+      </div>
+
+      <!-- SUCCESS VIEW -->
+      <div id="successView" style="display:none;" class="success-view">
+        <div class="sv-icon-wrap">✓</div>
+        <h2 class="sv-title">Account created</h2>
+        <p class="sv-text">Welcome to Climactix Global, <strong id="welcomeName"></strong>. Your workspace is ready.</p>
+        <div class="sv-verify-box">
+          <p>Click below to verify your email address and access the full ESG Assessment platform immediately.</p>
+          <button class="btn-verify" id="verifyNowBtn">Verify Email &amp; Access Platform →</button>
+        </div>
+        <p style="font-size:12px;color:var(--muted);">In production, a verification link is sent to your registered email.</p>
+      </div>
+
+    </div>
+  </main>
 
   <script>
     function checkPw(val) {
       tog('r-length', val.length >= 8);
-      tog('r-upper',  /[A-Z]/.test(val));
+      tog('r-upper', /[A-Z]/.test(val));
       tog('r-number', /[0-9]/.test(val));
       checkMatch();
+      updateStrengthBar(val);
     }
     function checkMatch() {
       const pw = document.getElementById('password').value;
       const cp = document.getElementById('confirmPassword').value;
       tog('r-match', cp.length > 0 && pw === cp);
     }
-    function tog(id, met) { document.getElementById(id).classList.toggle('met', met); }
+    function tog(id, met) {
+      const el = document.getElementById(id);
+      el.classList.toggle('met', met);
+    }
+    function updateStrengthBar(val) {
+      const segs = [document.getElementById('ps1'), document.getElementById('ps2'), document.getElementById('ps3'), document.getElementById('ps4')];
+      let score = 0;
+      if (val.length >= 8)     score++;
+      if (/[A-Z]/.test(val))   score++;
+      if (/[0-9]/.test(val))   score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      const cls = score <= 1 ? 'weak' : score <= 2 ? 'fair' : 'strong';
+      segs.forEach((s, i) => {
+        s.className = 'psb-seg';
+        if (i < score) s.classList.add(cls);
+      });
+    }
   </script>
 
   <script type="module">
     import { signUp, verifyEmail } from './auth.js';
-
     let pendingEmail = '', pendingToken = '';
+    const $ = id => document.getElementById(id);
 
     function showError(msg) {
-      const el = document.getElementById('errorAlert');
-      el.textContent = msg; el.classList.add('show');
+      const el = $('errorAlert');
+      el.textContent = msg;
+      el.classList.add('show');
     }
     function setLoading(on) {
-      const btn = document.getElementById('submitBtn');
+      const btn = $('submitBtn');
       btn.disabled = on;
-      btn.innerHTML = on ? '<span class="spinner"></span>Creating account…' : 'Create Account →';
+      btn.innerHTML = on ? '<span class="spinner"></span>Creating account…' : 'Create Account';
     }
 
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    $('signupForm').addEventListener('submit', async e => {
       e.preventDefault();
-      document.getElementById('errorAlert').classList.remove('show');
+      $('errorAlert').classList.remove('show');
 
-      const fullName    = document.getElementById('fullName').value.trim();
-      const email       = document.getElementById('email').value.trim();
-      const password    = document.getElementById('password').value;
-      const confirm     = document.getElementById('confirmPassword').value;
-      const companyName = document.getElementById('companyName').value.trim();
+      const fullName    = $('fullName').value.trim();
+      const email       = $('email').value.trim();
+      const password    = $('password').value;
+      const confirm     = $('confirmPassword').value;
+      const companyName = $('companyName').value.trim();
 
-      if (!fullName)      { showError('Please enter your full name.'); return; }
-      if (!email)         { showError('Please enter your email address.'); return; }
-      if (!password)      { showError('Please enter a password.'); return; }
-      if (!confirm)       { showError('Please confirm your password.'); return; }
-      if (password !== confirm)     { showError('Passwords do not match.'); return; }
-      if (password.length < 8)     { showError('Password must be at least 8 characters.'); return; }
+      if (!fullName)           { showError('Please enter your full name.'); return; }
+      if (!email)              { showError('Please enter your email address.'); return; }
+      if (!password)           { showError('Please enter a password.'); return; }
+      if (password !== confirm) { showError('Passwords do not match.'); return; }
+      if (password.length < 8) { showError('Password must be at least 8 characters.'); return; }
       if (!/[A-Z]/.test(password)) { showError('Password must contain at least one uppercase letter.'); return; }
       if (!/[0-9]/.test(password)) { showError('Password must contain at least one number.'); return; }
+      if (!$('termsCheck').checked) { showError('Please accept the Terms of Service to continue.'); return; }
 
       setLoading(true);
       try {
         const result = await signUp({ fullName, email, companyName, password });
         pendingEmail = result.email;
         pendingToken = result.verifyToken;
-
-        document.getElementById('welcomeName').textContent = fullName;
-        document.getElementById('formView').style.display = 'none';
-        document.getElementById('successView').style.display = 'block';
+        $('welcomeName').textContent = fullName;
+        $('formView').style.display    = 'none';
+        $('successView').style.display = 'block';
       } catch (err) {
         showError(err.message || 'Sign up failed. Please try again.');
       } finally {
@@ -184,14 +668,15 @@
       }
     });
 
-    document.getElementById('verifyNowBtn').addEventListener('click', async () => {
-      const btn = document.getElementById('verifyNowBtn');
+    $('verifyNowBtn').addEventListener('click', async () => {
+      const btn = $('verifyNowBtn');
       btn.disabled = true; btn.textContent = 'Verifying…';
       try {
         await verifyEmail(pendingEmail, pendingToken);
         location.href = 'assessment.html';
       } catch (err) {
-        btn.disabled = false; btn.textContent = 'Verify Email & Continue →';
+        btn.disabled = false;
+        btn.textContent = 'Verify Email & Access Platform →';
         alert(err.message || 'Verification failed. Please try signing in.');
       }
     });
