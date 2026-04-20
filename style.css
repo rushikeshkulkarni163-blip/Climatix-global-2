@@ -116,7 +116,7 @@ h1, h2, h3, h4, h5 {
   height: 64px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 200;
   border-bottom: 1px solid var(--grey-mid);
   box-shadow: none;
 }
@@ -124,39 +124,19 @@ h1, h2, h3, h4, h5 {
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
   text-decoration: none;
-  color: var(--text-primary);
+  flex-shrink: 0;
 }
-
-.header-logo { width: 36px; height: 36px; flex-shrink: 0; }
 
 .cx-logo-img { width: 130px; height: 40px; object-fit: contain; display: block; flex-shrink: 0; }
-
-.header-wordmark {
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  color: var(--primary);
-}
-
-.header-wordmark span {
-  display: block;
-  font-size: 10px;
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
 
 .header-nav {
   display: flex;
   align-items: center;
   gap: 2px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .nav-link {
@@ -169,58 +149,132 @@ h1, h2, h3, h4, h5 {
   text-decoration: none;
   padding: 5px 11px;
   border-radius: var(--radius-md);
-  border: 1px solid transparent;
+  border: none;
+  background: none;
+  cursor: pointer;
   transition: var(--transition);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .nav-link:hover {
-  color: var(--text-primary);
-  background: var(--grey-light);
+  color: var(--primary);
+  background: var(--primary-tint);
 }
+
 .nav-link.active {
   color: var(--primary-dark);
   background: var(--primary-tint);
   font-weight: 600;
 }
 
-/* Live Status Pill */
-.live-status {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  padding: 5px 12px;
-  border: 1px solid var(--grey-border);
-  border-radius: 4px;
+/* Dropdown */
+.nav-dropdown {
+  position: relative;
 }
 
-.live-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
+.nav-dropdown-toggle {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 5px 11px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown:hover .nav-dropdown-toggle {
+  color: var(--primary);
+  background: var(--primary-tint);
+}
+
+.nav-chevron {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+  color: currentColor;
+  opacity: 0.6;
+}
+
+.nav-dropdown:hover .nav-chevron {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 160px;
+  background: var(--white);
+  border: 1px solid var(--grey-mid);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(10,31,68,0.10);
+  padding: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  z-index: 300;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown-item {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 7px 12px;
+  border-radius: 4px;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.nav-dropdown-item:hover {
+  background: var(--primary-tint);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* Header right actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   flex-shrink: 0;
 }
 
-/* Live nav pill */
-.nav-live { position: relative; }
-.live-pill {
-  display: inline-block;
+.hdr-cta {
   font-family: 'Inter', sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
   background: var(--primary);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 3px;
-  margin-left: 4px;
-  vertical-align: middle;
-  text-transform: uppercase;
+  text-decoration: none;
+  padding: 7px 16px;
+  border-radius: var(--radius-md);
+  transition: background 0.18s ease;
+  white-space: nowrap;
+  margin-left: 6px;
+}
+
+.hdr-cta:hover {
+  background: var(--primary-mid);
 }
 
 /* ══════════════════════════════════════════════
