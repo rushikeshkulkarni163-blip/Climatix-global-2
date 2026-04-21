@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solution Hub · Climactix Global</title>
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --bg:#060E1C; --nav-bg:#050A16;
+      --surface:#0A1628; --surface-2:#0F1E34; --surface-3:#142440;
+      --border:#1A2B40; --border-strong:#253A52;
+      --accent:#00C896; --accent-dim:#00A07A;
+      --blue:#1B75D6;
+      --gold:#E8A020;
+      --danger:#E03030; --warning:#F0A020;
+      --text:#D8E8F4; --text-2:#8AA8C4; --text-muted:#4A6478;
+      --shadow:0 4px 24px rgba(0,0,0,.5);
+      --r:8px; --r-sm:5px; --nav-h:56px; --t:.15s ease;
+    }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    a { color:inherit; text-decoration:none; }
+    button { font-family:inherit; cursor:pointer; border:none; background:none; }
+    input,textarea,select { font-family:inherit; }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--surface); }
+    ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
+
+    /* NAV */
+    .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px; }
+    .cx-nav-logo { display:flex;align-items:center;gap:9px;flex-shrink:0; }
+    .cx-nav-logo img { height:28px; }
+    .cx-nav-logo-text { font-size:14px;font-weight:700;color:var(--text); }
+    .cx-nav-logo-sub { font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);line-height:1; }
+    .cx-nav-links { display:flex;align-items:center;gap:1px;margin-left:auto; }
+    .cx-nav-link { display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 11px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--text-muted);transition:var(--t); }
+    .cx-nav-link:hover { background:var(--surface);color:var(--text); }
+    .cx-nav-link.active { color:var(--accent); }
+    .cx-nav-link .nav-icon { font-size:17px;line-height:1; }
+    .cx-nav-right { display:flex;align-items:center;gap:8px;margin-left:16px; }
+    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;border-radius:4px;background:none;border:1px solid var(--border);cursor:pointer;transition:var(--t); }
+    .cx-avatar-btn:hover { background:var(--surface); }
+    .cx-avatar { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0; }
+
+    /* PAGE */
+    .cx-page { max-width:1160px;margin:22px auto;padding:0 16px;display:grid;grid-template-columns:1fr 300px;gap:18px; }
+
+    /* CARD */
+    .cx-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--r); }
+
+    /* Hero */
+    .cx-hero { background:linear-gradient(135deg,#061830 0%,#0D2E1A 100%);border:1px solid rgba(0,200,150,.18);border-radius:var(--r);padding:22px 22px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px; }
+    .cx-hero-left h1 { font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px; }
+    .cx-hero-left p { font-size:12.5px;color:var(--text-2);margin-top:5px;max-width:500px;line-height:1.6; }
+    .cx-hero-btn { padding:10px 22px;background:var(--accent);color:#050C18;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;transition:var(--t);border:none;white-space:nowrap; }
+    .cx-hero-btn:hover { background:var(--accent-dim); }
+
+    /* Filters row */
+    .cx-filter-row { display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center; }
+    .cx-filter-pill { padding:6px 14px;border-radius:18px;font-size:12px;font-weight:600;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);cursor:pointer;transition:var(--t); }
+    .cx-filter-pill.active { background:rgba(0,200,150,.1);border-color:rgba(0,200,150,.3);color:var(--accent); }
+    .cx-filter-pill:hover:not(.active) { border-color:var(--border-strong);color:var(--text); }
+    .cx-search-sol { flex:1;max-width:280px;height:34px;padding:0 12px;background:var(--surface);border:1px solid var(--border);border-radius:4px;font-size:12.5px;color:var(--text);outline:none;transition:var(--t); }
+    .cx-search-sol:focus { border-color:var(--blue); }
+    .cx-search-sol::placeholder { color:var(--text-muted); }
+
+    /* Solutions Grid */
+    .cx-sol-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:6px; }
+
+    /* Solution Card */
+    .cx-sol-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:border-color var(--t);display:flex;flex-direction:column;gap:10px; }
+    .cx-sol-card:hover { border-color:var(--border-strong); }
+    .cx-sol-card.collab { border-left:3px solid var(--accent); }
+    .cx-sol-hdr { display:flex;justify-content:space-between;align-items:flex-start;gap:8px; }
+    .cx-sol-title { font-size:14px;font-weight:700;color:var(--text);line-height:1.4;flex:1;cursor:pointer; }
+    .cx-sol-title:hover { color:var(--accent); }
+    .cx-sol-verified { color:var(--accent);font-size:13px;flex-shrink:0; }
+    .cx-sol-author { display:flex;align-items:center;gap:7px; }
+    .cx-sol-author-name { font-size:11.5px;font-weight:600;color:var(--text-2); }
+    .cx-sol-author-role { font-size:10px;color:var(--text-muted); }
+    .cx-sol-field { font-size:11.5px;color:var(--text-2);line-height:1.5; }
+    .cx-sol-field strong { color:var(--text);font-weight:600; }
+    .cx-sol-tags { display:flex;flex-wrap:wrap;gap:4px; }
+    .cx-sol-tag { padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border); }
+    .cx-sol-industry { padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700;background:rgba(0,200,150,.1);color:var(--accent);border:1px solid rgba(0,200,150,.2); }
+    .cx-sol-footer { display:flex;align-items:center;gap:8px;margin-top:auto; }
+    .cx-sol-actions { display:flex;gap:6px;flex:1; }
+    .cx-sol-btn { display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;transition:var(--t);border:1px solid var(--border);background:none;color:var(--text-muted); }
+    .cx-sol-btn:hover { background:var(--surface-2);color:var(--text); }
+    .cx-sol-btn.upvoted { color:var(--accent);border-color:rgba(0,200,150,.3);background:rgba(0,200,150,.05); }
+    .cx-sol-btn.bookmarked { color:var(--blue);border-color:rgba(27,117,214,.3);background:rgba(27,117,214,.05); }
+    .cx-collab-badge { display:inline-flex;align-items:center;gap:3px;padding:3px 7px;background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.2);border-radius:10px;font-size:10px;font-weight:700;color:var(--accent);white-space:nowrap; }
+
+    /* Right sidebar */
+    .cx-sb { padding:14px; }
+    .cx-sb-hdr { font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center; }
+    .cx-top-sol-item { padding:10px;background:var(--surface-2);border-radius:var(--r-sm);border:1px solid var(--border);margin-bottom:7px;cursor:pointer;transition:var(--t); }
+    .cx-top-sol-item:last-child { margin-bottom:0; }
+    .cx-top-sol-item:hover { border-color:var(--accent); }
+    .cx-top-sol-name { font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.4; }
+    .cx-top-sol-meta { font-size:10.5px;color:var(--text-muted); }
+    .cx-ind-item { display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px; }
+    .cx-ind-item:last-child { border-bottom:none; }
+    .cx-ind-name { color:var(--text-2); }
+    .cx-ind-count { color:var(--accent);font-weight:700;font-family:'JetBrains Mono',monospace; }
+
+    /* Submit form in modal */
+    .cx-overlay { position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
+    .cx-overlay.open { display:flex; }
+    .cx-modal { background:var(--surface);border:1px solid var(--border-strong);border-radius:12px;width:100%;max-width:640px;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden;animation:modalIn .2s ease; }
+    @keyframes modalIn { from{opacity:0;transform:scale(.96) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);} }
+    .cx-modal-head { display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border); }
+    .cx-modal-title { font-size:14px;font-weight:700;color:var(--text); }
+    .cx-close-btn { width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text-muted);cursor:pointer; }
+    .cx-close-btn:hover { background:var(--surface-2);color:var(--text); }
+    .cx-modal-body { padding:16px;max-height:74vh;overflow-y:auto; }
+    .cx-form-step { display:none; }
+    .cx-form-step.active { display:block; }
+    .cx-step-indicator { display:flex;gap:6px;margin-bottom:16px; }
+    .cx-step-dot { flex:1;height:3px;border-radius:2px;background:var(--border);transition:var(--t); }
+    .cx-step-dot.done { background:var(--accent); }
+    .cx-form-group { margin-bottom:13px; }
+    .cx-form-label { font-size:11.5px;font-weight:600;color:var(--text-2);margin-bottom:5px;display:block; }
+    .cx-form-input { width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);background:var(--surface-2);outline:none;transition:var(--t); }
+    .cx-form-input:focus { border-color:var(--blue); }
+    .cx-form-input::placeholder { color:var(--text-muted); }
+    .cx-form-textarea { width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);background:var(--surface-2);outline:none;resize:vertical;min-height:80px;transition:var(--t); }
+    .cx-form-textarea:focus { border-color:var(--blue); }
+    .cx-form-textarea::placeholder { color:var(--text-muted); }
+    .cx-form-select { width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);background:var(--surface-2);outline:none;transition:var(--t); }
+    .cx-form-select:focus { border-color:var(--blue); }
+    .cx-modal-foot { display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-top:1px solid var(--border); }
+    .cx-btn-primary { padding:9px 22px;background:var(--accent);color:#050C18;border-radius:18px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:var(--t); }
+    .cx-btn-primary:hover { background:var(--accent-dim); }
+    .cx-btn-secondary { padding:9px 18px;background:var(--surface-2);color:var(--text-2);border-radius:18px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--border);transition:var(--t); }
+    .cx-btn-secondary:hover { background:var(--surface-3); }
+    .cx-checkbox-row { display:flex;align-items:center;gap:8px;cursor:pointer; }
+    .cx-checkbox-row input { width:16px;height:16px;accent-color:var(--accent); }
+    .cx-checkbox-row label { font-size:12.5px;color:var(--text-2);cursor:pointer; }
+
+    /* Toast */
+    .cx-toast { position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text);padding:10px 16px;border-radius:8px;font-size:12.5px;font-weight:500;z-index:9999;transition:transform .3s ease;pointer-events:none;box-shadow:var(--shadow); }
+    .cx-toast.show { transform:translateX(-50%) translateY(0); }
+
+    @media(max-width:900px){.cx-page{grid-template-columns:1fr}.cx-sol-grid{grid-template-columns:1fr}}
+    @media(max-width:700px){.cx-nav-links{display:none}.cx-filter-row{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-logo">
+    <img src="Climatix_logo.png" alt="Climactix" />
+    <div>
+      <div class="cx-nav-logo-text">Climactix</div>
+      <div class="cx-nav-logo-sub">Community</div>
+    </div>
+  </a>
+  <nav class="cx-nav-links">
+    <a href="community.html"   class="cx-nav-link"><span class="nav-icon">🏠</span>Feed</a>
+    <a href="leaderboard.html" class="cx-nav-link"><span class="nav-icon">🏆</span>Rankings</a>
+    <a href="solutions.html"   class="cx-nav-link active"><span class="nav-icon">💡</span>Solutions</a>
+    <a href="forum.html"       class="cx-nav-link"><span class="nav-icon">💬</span>Forum</a>
+    <a href="funding-hub.html" class="cx-nav-link"><span class="nav-icon">💰</span>Funding</a>
+    <a href="battles.html"     class="cx-nav-link"><span class="nav-icon">⚔️</span>Battles</a>
+  </nav>
+  <div class="cx-nav-right">
+    <div id="navGuest" style="display:flex;align-items:center;gap:7px;">
+      <a href="community-login.html" style="padding:5px 13px;font-size:12.5px;font-weight:600;color:var(--text-muted);border:1px solid var(--border);border-radius:4px;">Sign In</a>
+    </div>
+    <button class="cx-avatar-btn" id="navUserBtn" style="display:none" onclick="window.location.href='community-profile.html'">
+      <div class="cx-avatar" id="navAvatar" style="background:#0A1628">?</div>
+      <span style="font-size:12.5px;font-weight:600;" id="navUserName">—</span>
+    </button>
+  </div>
+</nav>
+
+<div style="max-width:1160px;margin:22px auto;padding:0 16px;">
+  <!-- Hero -->
+  <div class="cx-hero">
+    <div class="cx-hero-left">
+      <h1>💡 Solution Hub</h1>
+      <p>Discover, share, and collaborate on climate solutions. From energy access to carbon removal — every breakthrough starts here.</p>
+    </div>
+    <button class="cx-hero-btn" onclick="openSubmitModal()">+ Submit Solution</button>
+  </div>
+
+  <!-- Top Solutions this week banner -->
+  <div id="topThisWeek" style="display:none;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--r);padding:11px 14px;margin-bottom:16px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">⭐ Top Solutions This Week</div>
+    <div id="topWeekList" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;"></div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="cx-page">
+  <div>
+    <!-- Filter row -->
+    <div class="cx-filter-row">
+      <button class="cx-filter-pill active" data-sf="all"      onclick="setFilter('all',this)">All Solutions</button>
+      <button class="cx-filter-pill"         data-sf="collab"   onclick="setFilter('collab',this)">🤝 Open Collaboration</button>
+      <button class="cx-filter-pill"         data-sf="verified" onclick="setFilter('verified',this)">✓ Verified</button>
+      <input class="cx-search-sol" id="solSearch" type="text" placeholder="Search solutions…" oninput="onSearch(this.value)" />
+    </div>
+
+    <!-- Grid -->
+    <div class="cx-sol-grid" id="solutionsGrid"></div>
+
+    <!-- Empty state -->
+    <div id="solEmpty" style="display:none;padding:40px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);">
+      <div style="font-size:30px;margin-bottom:10px;">💡</div>
+      <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px;">No solutions found</div>
+      <div style="font-size:12.5px;color:var(--text-muted);">Try a different filter or be the first to submit!</div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside style="display:flex;flex-direction:column;gap:12px;">
+    <div class="cx-card cx-sb">
+      <div class="cx-sb-hdr">🔥 Top This Week</div>
+      <div id="sidebarTop"></div>
+    </div>
+    <div class="cx-card cx-sb">
+      <div class="cx-sb-hdr">By Industry</div>
+      <div id="industryBreakdown"></div>
+    </div>
+    <div class="cx-card" style="padding:14px;background:linear-gradient(135deg,#061830,#0D2E1A);border-color:rgba(0,200,150,.18);">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;">Share Your Solution</div>
+      <div style="font-size:11.5px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Get upvotes, connect with investors, and find collaborators for your climate solution.</div>
+      <button onclick="openSubmitModal()" style="display:block;width:100%;padding:9px;background:var(--accent);color:#050C18;border-radius:6px;font-size:12.5px;font-weight:700;border:none;cursor:pointer;">Submit a Solution →</button>
+    </div>
+  </aside>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="cx-overlay" id="submitOverlay" onclick="if(event.target===this)closeSubmitModal()">
+  <div class="cx-modal">
+    <div class="cx-modal-head">
+      <div class="cx-modal-title">💡 Submit a Climate Solution</div>
+      <button class="cx-close-btn" onclick="closeSubmitModal()">✕</button>
+    </div>
+    <div class="cx-modal-body">
+      <div class="cx-step-indicator">
+        <div class="cx-step-dot done" id="sdot1"></div>
+        <div class="cx-step-dot" id="sdot2"></div>
+        <div class="cx-step-dot" id="sdot3"></div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="cx-form-step active" id="step1">
+        <div class="cx-form-group">
+          <label class="cx-form-label">Solution Title *</label>
+          <input class="cx-form-input" id="f-title" placeholder="e.g. AI-Powered Mangrove Restoration with MRV" />
+        </div>
+        <div class="cx-form-group">
+          <label class="cx-form-label">Problem Statement *</label>
+          <textarea class="cx-form-textarea" id="f-problem" placeholder="What climate problem does this solve? Be specific."></textarea>
+        </div>
+        <div class="cx-form-group">
+          <label class="cx-form-label">Industry / Sector *</label>
+          <select class="cx-form-select" id="f-industry">
+            <option value="">Select sector…</option>
+            <option>Energy Access</option><option>Carbon Markets</option><option>Carbon Removal</option>
+            <option>AgriTech / Soil Carbon</option><option>Blue Carbon / Ocean</option>
+            <option>Green Mobility</option><option>Circular Economy</option><option>ESG / Reporting</option>
+            <option>Climate Finance</option><option>Nature-Based Solutions</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="cx-form-step" id="step2">
+        <div class="cx-form-group">
+          <label class="cx-form-label">Your Solution *</label>
+          <textarea class="cx-form-textarea" id="f-solution" placeholder="Describe your approach, technology, or model."></textarea>
+        </div>
+        <div class="cx-form-group">
+          <label class="cx-form-label">Impact Metrics *</label>
+          <textarea class="cx-form-textarea" id="f-impact" placeholder="Quantify your impact. e.g. 5,000 tCO₂/year removed, 1,200 farmers supported…" style="min-height:64px;"></textarea>
+        </div>
+        <div class="cx-form-group">
+          <label class="cx-form-label">Funding Required</label>
+          <input class="cx-form-input" id="f-funding" placeholder="e.g. $500K Seed, Research Partners, No funding needed" />
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="cx-form-step" id="step3">
+        <div class="cx-form-group">
+          <label class="cx-form-label">Tags (comma-separated)</label>
+          <input class="cx-form-input" id="f-tags" placeholder="SolarEnergy, CarbonMarkets, AI" />
+        </div>
+        <div class="cx-form-group">
+          <div class="cx-checkbox-row">
+            <input type="checkbox" id="f-collab" />
+            <label for="f-collab">Open for collaboration — allow others to request to join this project</label>
+          </div>
+        </div>
+        <div style="padding:12px;background:var(--surface-2);border-radius:var(--r-sm);font-size:12px;color:var(--text-2);line-height:1.6;">
+          Submitting earns you <strong style="color:var(--accent);">+5 Climate Score points</strong> and progress on your daily challenge.
+        </div>
+      </div>
+    </div>
+    <div class="cx-modal-foot">
+      <button class="cx-btn-secondary" id="stepBackBtn" style="display:none;" onclick="prevStep()">← Back</button>
+      <div style="font-size:11.5px;color:var(--text-muted);" id="stepLabel">Step 1 of 3</div>
+      <button class="cx-btn-primary" id="stepNextBtn" onclick="nextStep()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<div class="cx-toast" id="toast"></div>
+
+<script type="module">
+import {
+  initCommunity, requireAuth,
+  getSolutions, createSolution, toggleSolutionUpvote, toggleSolutionBookmark, isSolutionUpvoted,
+  getCurrentUserProfile, getProfile,
+  getRoleConfig, getAvatarColor, getInitials,
+  timeAgo, formatCount, updateChallengeProgress,
+} from './community.js';
+
+initCommunity();
+if (!requireAuth()) throw new Error('redirect');
+
+let currentUser = getCurrentUserProfile();
+let currentFilter = 'all';
+let searchQuery   = '';
+let formStep      = 1;
+
+// Nav
+const color = getAvatarColor(currentUser.role);
+document.getElementById('navAvatar').textContent    = currentUser.avatar;
+document.getElementById('navAvatar').style.background = color;
+document.getElementById('navUserName').textContent   = currentUser.fullName.split(' ')[0];
+document.getElementById('navGuest').style.display    = 'none';
+document.getElementById('navUserBtn').style.display  = 'flex';
+
+// ── RENDER ──────────────────────────────────────────────────────
+function getFiltered() {
+  let sols = getSolutions('all');
+  if (currentFilter === 'collab')   sols = sols.filter(s => s.collaborationOpen);
+  if (currentFilter === 'verified') sols = sols.filter(s => s.verified);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    sols = sols.filter(s =>
+      s.title.toLowerCase().includes(q) ||
+      s.problem.toLowerCase().includes(q) ||
+      s.industry.toLowerCase().includes(q) ||
+      (s.tags||[]).some(t => t.toLowerCase().includes(q))
+    );
+  }
+  return sols;
+}
+
+function render() {
+  const sols = getFiltered();
+  const grid = document.getElementById('solutionsGrid');
+  const empty = document.getElementById('solEmpty');
+  if (!sols.length) { grid.innerHTML = ''; empty.style.display = 'block'; }
+  else              { empty.style.display = 'none'; grid.innerHTML = sols.map(renderCard).join(''); }
+  bindEvents();
+  renderSidebar(sols);
+}
+
+function renderCard(s) {
+  const upvoted = isSolutionUpvoted(s.id, currentUser.uid);
+  const auth    = getProfile(s.authorId) || { role: s.authorRole || 'individual', avatar: s.authorAvatar };
+  const rc      = getRoleConfig(s.authorRole || 'individual');
+  return `
+  <div class="cx-sol-card ${s.collaborationOpen ? 'collab' : ''}" id="sol-${s.id}">
+    <div class="cx-sol-hdr">
+      <div class="cx-sol-title" onclick="void 0">${escHtml(s.title)}</div>
+      ${s.verified ? '<span class="cx-sol-verified" title="Verified Solution">✓</span>' : ''}
+    </div>
+    <div class="cx-sol-author">
+      <div class="cx-avatar" style="width:26px;height:26px;font-size:9px;background:${getAvatarColor(s.authorRole)}">${s.authorAvatar}</div>
+      <div>
+        <div class="cx-sol-author-name">${escHtml(s.authorName)}</div>
+        <div class="cx-sol-author-role">${rc.label} · ${timeAgo(s.timestamp)}</div>
+      </div>
+    </div>
+    <div class="cx-sol-field"><strong>Problem:</strong> ${escHtml(s.problem.slice(0,120))}${s.problem.length>120?'…':''}</div>
+    <div class="cx-sol-field"><strong>Solution:</strong> ${escHtml(s.solution.slice(0,120))}${s.solution.length>120?'…':''}</div>
+    <div class="cx-sol-field" style="color:var(--accent);"><strong>Impact:</strong> ${escHtml(s.impact.slice(0,100))}${s.impact.length>100?'…':''}</div>
+    <div class="cx-sol-tags">
+      <span class="cx-sol-industry">${escHtml(s.industry)}</span>
+      ${(s.tags||[]).slice(0,3).map(t=>`<span class="cx-sol-tag">${escHtml(t)}</span>`).join('')}
+    </div>
+    <div class="cx-sol-footer">
+      <div class="cx-sol-actions">
+        <button class="cx-sol-btn ${upvoted?'upvoted':''}" data-upvote="${s.id}">
+          ▲ <span class="uvcnt">${(s.upvotes||[]).length}</span>
+        </button>
+        <button class="cx-sol-btn" data-solbm="${s.id}">🔖 Save</button>
+        ${s.fundingRequired ? `<span style="font-size:10px;color:var(--gold);align-self:center;">💰 ${escHtml(s.fundingRequired)}</span>` : ''}
+      </div>
+      ${s.collaborationOpen ? '<span class="cx-collab-badge">🤝 Collab Open</span>' : ''}
+    </div>
+  </div>`;
+}
+
+function renderSidebar(sols) {
+  const top = [...sols].sort((a,b)=>(b.upvotes?.length||0)-(a.upvotes?.length||0)).slice(0,4);
+  document.getElementById('sidebarTop').innerHTML = top.map(s => `
+    <div class="cx-top-sol-item" onclick="void 0">
+      <div class="cx-top-sol-name">${escHtml(s.title)}</div>
+      <div class="cx-top-sol-meta">▲ ${(s.upvotes||[]).length} · ${escHtml(s.industry)}</div>
+    </div>`).join('') || '<div style="color:var(--text-muted);font-size:12px;">No solutions yet.</div>';
+
+  // Industry breakdown
+  const industries = {};
+  getSolutions('all').forEach(s => { industries[s.industry] = (industries[s.industry]||0)+1; });
+  const sorted = Object.entries(industries).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  document.getElementById('industryBreakdown').innerHTML = sorted.map(([ind,cnt]) => `
+    <div class="cx-ind-item">
+      <span class="cx-ind-name">${escHtml(ind)}</span>
+      <span class="cx-ind-count">${cnt}</span>
+    </div>`).join('');
+}
+
+function bindEvents() {
+  document.querySelectorAll('[data-upvote]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.upvote;
+      const now = toggleSolutionUpvote(id, currentUser.uid);
+      btn.classList.toggle('upvoted', now);
+      const sols = getSolutions('all');
+      const sol  = sols.find(s => s.id === id);
+      btn.querySelector('.uvcnt').textContent = (sol?.upvotes||[]).length;
+      showToast(now ? '▲ Upvoted!' : 'Upvote removed');
+    });
+  });
+  document.querySelectorAll('[data-solbm]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.solbm;
+      toggleSolutionBookmark(id, currentUser.uid);
+      btn.classList.toggle('bookmarked');
+      showToast('Solution saved!');
+    });
+  });
+}
+
+// ── FILTERS ──────────────────────────────────────────────────────
+window.setFilter = function(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.cx-filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+};
+window.onSearch = function(v) {
+  searchQuery = v.trim();
+  render();
+};
+
+// ── SUBMIT MODAL ─────────────────────────────────────────────────
+window.openSubmitModal = function() {
+  formStep = 1; showStep(1);
+  document.getElementById('submitOverlay').classList.add('open');
+};
+window.closeSubmitModal = function() {
+  document.getElementById('submitOverlay').classList.remove('open');
+  ['f-title','f-problem','f-solution','f-impact','f-funding','f-tags'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('f-industry').value = '';
+  document.getElementById('f-collab').checked = false;
+};
+function showStep(n) {
+  formStep = n;
+  [1,2,3].forEach(i => {
+    document.getElementById('step' + i).classList.toggle('active', i === n);
+    document.getElementById('sdot' + i).classList.toggle('done', i <= n);
+  });
+  document.getElementById('stepLabel').textContent = `Step ${n} of 3`;
+  document.getElementById('stepBackBtn').style.display = n > 1 ? '' : 'none';
+  document.getElementById('stepNextBtn').textContent = n === 3 ? 'Submit Solution' : 'Next →';
+}
+window.prevStep = function() { if (formStep > 1) showStep(formStep - 1); };
+window.nextStep = function() {
+  if (formStep < 3) { showStep(formStep + 1); return; }
+  // Submit
+  const title    = document.getElementById('f-title').value.trim();
+  const problem  = document.getElementById('f-problem').value.trim();
+  const solution = document.getElementById('f-solution').value.trim();
+  const impact   = document.getElementById('f-impact').value.trim();
+  const industry = document.getElementById('f-industry').value;
+  if (!title || !problem || !solution || !impact || !industry) {
+    showToast('Please fill all required fields'); return;
+  }
+  const tags    = document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const funding = document.getElementById('f-funding').value.trim();
+  const collab  = document.getElementById('f-collab').checked;
+  createSolution({
+    authorId: currentUser.uid, authorName: currentUser.fullName,
+    authorAvatar: currentUser.avatar, authorRole: currentUser.role,
+    title, problem, solution, impact, industry,
+    fundingRequired: funding, tags, collaborationOpen: collab,
+  });
+  closeSubmitModal();
+  render();
+  showToast('Solution submitted! +5 pts ⚡');
+};
+
+// ── TOP THIS WEEK ─────────────────────────────────────────────────
+function renderTopThisWeek() {
+  const top = getSolutions('top');
+  if (!top.length) return;
+  document.getElementById('topThisWeek').style.display = 'block';
+  document.getElementById('topWeekList').innerHTML = top.map(s => `
+    <div style="flex-shrink:0;width:200px;padding:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm);">
+      <div style="font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.4;">${escHtml(s.title)}</div>
+      <div style="font-size:10px;color:var(--accent);">▲ ${(s.upvotes||[]).length} · ${escHtml(s.industry)}</div>
+    </div>`).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s||''; return d.innerHTML; }
+
+render();
+renderTopThisWeek();
+</script>
+</body>
+</html>

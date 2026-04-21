@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Battle Mode · Climactix Community</title>
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#060E1C; --nav-bg:#050A16;
+      --surface:#0A1628; --surface-2:#0F1E34; --surface-3:#142440;
+      --border:#1A2B40; --border-strong:#253A52;
+      --accent:#00C896; --accent-dim:#00A07A;
+      --blue:#1B75D6; --blue-dim:#154FA0;
+      --gold:#E8A020; --silver:#8AA8C4; --bronze:#C27030;
+      --danger:#E03030; --warning:#F0A020; --purple:#A064FF;
+      --text:#D8E8F4; --text-2:#8AA8C4; --text-muted:#4A6478; --text-faint:#2A3C50;
+      --shadow-sm:0 2px 8px rgba(0,0,0,.3); --shadow-md:0 4px 24px rgba(0,0,0,.5);
+      --radius:8px; --radius-sm:5px; --nav-h:56px; --transition:0.15s ease;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    ::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:var(--surface); } ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
+
+    /* NAV */
+    .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px; }
+    .cx-nav-logo { display:flex;align-items:center;gap:9px;flex-shrink:0; }
+    .cx-nav-logo img { height:28px; }
+    .cx-nav-link { display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 11px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--text-muted);transition:var(--transition);position:relative; }
+    .cx-nav-link:hover { background:var(--surface);color:var(--text); }
+    .cx-nav-link.active { color:var(--accent); }
+    .cx-nav-link.active::after { content:'';position:absolute;bottom:0;left:8px;right:8px;height:2px;background:var(--accent);border-radius:1px; }
+    .cx-nav-link .nav-icon { font-size:17px;line-height:1; }
+    .cx-avatar { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0; }
+    .cx-nav-right { display:flex;align-items:center;gap:8px;margin-left:auto; }
+    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;border-radius:4px;background:none;border:1px solid var(--border);cursor:pointer;transition:var(--transition); }
+    .cx-avatar-btn:hover { background:var(--surface); }
+
+    /* HERO */
+    .cx-hero { background:linear-gradient(135deg,#0A0618 0%,#06121E 50%,#0A0618 100%);border-bottom:1px solid rgba(160,100,255,.15);padding:44px 24px 36px;text-align:center;position:relative;overflow:hidden; }
+    .cx-hero::before { content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(160,100,255,.07),transparent 70%);pointer-events:none; }
+    .cx-hero-eyebrow { font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:10px; }
+    .cx-hero-title { font-size:34px;font-weight:800;letter-spacing:-1px;margin-bottom:10px;line-height:1.15; }
+    .cx-hero-title span { color:var(--purple); }
+    .cx-hero-sub { font-size:14px;color:var(--text-2);max-width:520px;margin:0 auto 24px;line-height:1.65; }
+    .cx-hero-btn { padding:11px 26px;background:var(--purple);color:#fff;border-radius:22px;font-size:13.5px;font-weight:700;cursor:pointer;transition:var(--transition);border:none; }
+    .cx-hero-btn:hover { background:#8050D8;transform:translateY(-1px); }
+    .cx-hero-stats { display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-top:24px; }
+    .cx-hero-stat-val { font-size:24px;font-weight:800;color:var(--purple);font-family:'JetBrains Mono',monospace;line-height:1; }
+    .cx-hero-stat-label { font-size:11px;color:var(--text-muted);margin-top:3px; }
+
+    /* LAYOUT */
+    .cx-layout { max-width:1160px;margin:28px auto;padding:0 16px;display:grid;grid-template-columns:1fr 300px;gap:20px; }
+
+    /* BATTLES SECTION */
+    .cx-battles-list { display:flex;flex-direction:column;gap:16px; }
+
+    .cx-battle-card {
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color var(--transition);
+    }
+    .cx-battle-card:hover { border-color:rgba(160,100,255,.3); }
+    .cx-battle-header { padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px; }
+    .cx-battle-title { font-size:16px;font-weight:700;color:var(--text);line-height:1.35;flex:1; }
+    .cx-battle-meta { font-size:11px;color:var(--text-muted);margin-top:4px; }
+    .cx-battle-status { padding:3px 10px;border-radius:9px;font-size:10.5px;font-weight:700;background:rgba(160,100,255,.12);color:var(--purple);border:1px solid rgba(160,100,255,.22);white-space:nowrap;flex-shrink:0; }
+    .cx-battle-status.ended { background:rgba(74,100,120,.15);color:var(--text-muted);border-color:var(--border); }
+
+    .cx-battle-arena { display:grid;grid-template-columns:1fr auto 1fr;gap:12px;padding:16px 18px;align-items:stretch; }
+    .cx-battle-side { background:var(--surface-2);border:2px solid var(--border);border-radius:var(--radius);padding:14px;transition:border-color .2s,background .2s;display:flex;flex-direction:column;gap:8px; }
+    .cx-battle-side.voted { border-color:rgba(0,200,150,.4);background:rgba(0,200,150,.04); }
+    .cx-battle-side.voted-other { opacity:.65; }
+    .cx-battle-side-icon { font-size:24px;line-height:1; }
+    .cx-battle-side-label { font-size:14px;font-weight:800;color:var(--text); }
+    .cx-battle-side-desc { font-size:12px;color:var(--text-2);line-height:1.55;flex:1; }
+    .cx-vote-btn { margin-top:auto;padding:9px 14px;border-radius:16px;font-size:12.5px;font-weight:700;cursor:pointer;transition:var(--transition);border:1.5px solid var(--border-strong);color:var(--text-2);background:none; }
+    .cx-vote-btn:hover { border-color:var(--accent);color:var(--accent); }
+    .cx-vote-btn.active { background:rgba(0,200,150,.1);border-color:var(--accent);color:var(--accent); }
+
+    .cx-vs-divider { display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px; }
+    .cx-vs-label { font-size:13px;font-weight:800;color:var(--text-muted);font-family:'JetBrains Mono',monospace; }
+    .cx-vs-total { font-size:10px;color:var(--text-faint); }
+
+    .cx-battle-bar-wrap { padding:0 18px 14px; }
+    .cx-battle-bar-labels { display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:5px; }
+    .cx-battle-bar-a { font-weight:700;color:var(--accent); }
+    .cx-battle-bar-b { font-weight:700;color:var(--blue); }
+    .cx-battle-bar-track { height:6px;background:var(--surface-3);border-radius:3px;overflow:hidden;display:flex; }
+    .cx-battle-bar-fill-a { height:100%;background:var(--accent);transition:width .5s ease;border-radius:3px 0 0 3px; }
+    .cx-battle-bar-fill-b { height:100%;background:var(--blue);flex:1;transition:width .5s ease;border-radius:0 3px 3px 0; }
+
+    /* SIDEBAR */
+    .cx-sidebar { display:flex;flex-direction:column;gap:14px; }
+    .cx-side-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px; }
+    .cx-side-title { font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px; }
+    .cx-trending-item { padding:9px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;cursor:pointer;transition:var(--transition); }
+    .cx-trending-item:last-child { border-bottom:none;padding-bottom:0; }
+    .cx-trending-item:hover { opacity:.85; }
+    .cx-trending-num { font-size:14px;font-weight:800;color:var(--text-faint);font-family:'JetBrains Mono',monospace;flex-shrink:0;width:18px; }
+    .cx-trending-text { font-size:12.5px;color:var(--text-2);line-height:1.4;flex:1; }
+    .cx-trending-votes { font-size:10.5px;color:var(--text-muted);margin-top:2px; }
+    .cx-propose-btn { width:100%;padding:11px;background:var(--purple);color:#fff;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:var(--transition);border:none;margin-top:10px; }
+    .cx-propose-btn:hover { background:#8050D8; }
+    .cx-score-award { display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(0,200,150,.06);border:1px solid rgba(0,200,150,.15);border-radius:6px;margin-bottom:8px; }
+    .cx-score-award-icon { font-size:18px; }
+    .cx-score-award-text { font-size:12px;color:var(--text-2);line-height:1.4; }
+    .cx-score-award-text strong { color:var(--accent); }
+    .cx-rules-list { list-style:none;display:flex;flex-direction:column;gap:7px; }
+    .cx-rules-list li { display:flex;gap:7px;font-size:12px;color:var(--text-2);line-height:1.5; }
+    .cx-rules-list li::before { content:'→';color:var(--purple);flex-shrink:0; }
+
+    /* MODAL */
+    .cx-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
+    .cx-modal-overlay.open { display:flex; }
+    .cx-modal { background:var(--surface);border:1px solid var(--border-strong);border-radius:12px;width:100%;max-width:540px;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden;animation:modalIn .2s ease; }
+    @keyframes modalIn { from{opacity:0;transform:scale(.96) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);} }
+    .cx-modal-header { display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border); }
+    .cx-modal-title { font-size:14px;font-weight:700;color:var(--text); }
+    .cx-modal-close { width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text-muted);cursor:pointer; }
+    .cx-modal-close:hover { background:var(--surface-2);color:var(--text); }
+    .cx-modal-body { padding:18px; }
+    .cx-field { margin-bottom:12px; }
+    .cx-field label { display:block;font-size:11.5px;font-weight:600;color:var(--text-2);margin-bottom:4px; }
+    .cx-field input,.cx-field textarea { width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--surface-2);outline:none;transition:var(--transition); }
+    .cx-field input:focus,.cx-field textarea:focus { border-color:var(--purple); }
+    .cx-field input::placeholder,.cx-field textarea::placeholder { color:var(--text-muted); }
+    .cx-field textarea { resize:vertical;min-height:60px; }
+    .cx-modal-footer { display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--border); }
+    .cx-cancel-btn { padding:8px 18px;background:none;border:1px solid var(--border-strong);color:var(--text-2);border-radius:16px;font-size:13px;font-weight:600;cursor:pointer; }
+    .cx-submit-btn { padding:9px 22px;background:var(--purple);color:#fff;border-radius:16px;font-size:13.5px;font-weight:700;cursor:pointer;border:none;transition:var(--transition); }
+    .cx-submit-btn:hover { background:#8050D8; }
+
+    /* TOAST */
+    .cx-toast { position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text);padding:10px 16px;border-radius:8px;font-size:12.5px;font-weight:500;z-index:9999;transition:transform .3s ease;white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,.5); }
+    .cx-toast.show { transform:translateX(-50%) translateY(0); }
+
+    @media(max-width:900px){.cx-layout{grid-template-columns:1fr}.cx-sidebar{display:none}}
+    @media(max-width:600px){.cx-battle-arena{grid-template-columns:1fr}.cx-vs-divider{display:none}}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-logo">
+    <img src="Climatix_logo.png" alt="Climactix" />
+    <div style="font-size:15px;font-weight:700;color:var(--accent);">Climactix</div>
+  </a>
+  <div style="flex:1;"></div>
+  <div style="display:flex;gap:4px;">
+    <a href="community.html"   class="cx-nav-link"><span class="nav-icon">🏠</span>Feed</a>
+    <a href="leaderboard.html" class="cx-nav-link"><span class="nav-icon">🏆</span>Rankings</a>
+    <a href="solutions.html"   class="cx-nav-link"><span class="nav-icon">💡</span>Solutions</a>
+    <a href="forum.html"       class="cx-nav-link"><span class="nav-icon">💬</span>Forum</a>
+    <a href="funding-hub.html" class="cx-nav-link"><span class="nav-icon">💰</span>Funding</a>
+    <a href="battles.html"     class="cx-nav-link active"><span class="nav-icon">⚔️</span>Battles</a>
+  </div>
+  <div class="cx-nav-right">
+    <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
+      <div class="cx-avatar" id="navAvatar" style="background:var(--surface-3)">?</div>
+      <span style="font-size:13px;font-weight:600;color:var(--text);" id="navName">—</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="cx-hero">
+  <div class="cx-hero-eyebrow">Climactix Battle Mode</div>
+  <h1 class="cx-hero-title">Climate <span>Debates</span> That Matter</h1>
+  <p class="cx-hero-sub">Side-by-side comparisons of climate strategies, technologies, and policies. Vote, argue, and let the data decide.</p>
+  <button class="cx-hero-btn" onclick="openProposeModal()">⚔️ Propose a Battle</button>
+  <div class="cx-hero-stats">
+    <div>
+      <div class="cx-hero-stat-val" id="heroTotal">—</div>
+      <div class="cx-hero-stat-label">Active Battles</div>
+    </div>
+    <div>
+      <div class="cx-hero-stat-val" id="heroVotes">—</div>
+      <div class="cx-hero-stat-label">Total Votes Cast</div>
+    </div>
+    <div>
+      <div class="cx-hero-stat-val" id="heroParticipants">—</div>
+      <div class="cx-hero-stat-label">Participants</div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="cx-layout">
+
+  <!-- BATTLES LIST -->
+  <div class="cx-battles-list" id="battlesList">
+    <div style="text-align:center;padding:40px;color:var(--text-muted);font-size:14px;">Loading battles…</div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="cx-sidebar">
+    <!-- Trending -->
+    <div class="cx-side-card">
+      <div class="cx-side-title">🔥 Trending Battles</div>
+      <div id="trendingList">
+        <div style="color:var(--text-muted);font-size:12px;">Loading…</div>
+      </div>
+      <button class="cx-propose-btn" onclick="openProposeModal()">⚔️ Propose Battle</button>
+    </div>
+
+    <!-- Score Awards -->
+    <div class="cx-side-card">
+      <div class="cx-side-title">⭐ Score Awards</div>
+      <div class="cx-score-award">
+        <div class="cx-score-award-icon">🗳️</div>
+        <div class="cx-score-award-text">Vote in a battle → <strong>+1 score</strong></div>
+      </div>
+      <div class="cx-score-award">
+        <div class="cx-score-award-icon">⚔️</div>
+        <div class="cx-score-award-text">Propose a battle → <strong>+3 score</strong></div>
+      </div>
+      <div class="cx-score-award">
+        <div class="cx-score-award-icon">🏆</div>
+        <div class="cx-score-award-text">Your side wins → <strong>+5 bonus</strong></div>
+      </div>
+    </div>
+
+    <!-- Rules -->
+    <div class="cx-side-card">
+      <div class="cx-side-title">📋 How It Works</div>
+      <ul class="cx-rules-list">
+        <li>Each battle compares two climate approaches head-to-head</li>
+        <li>Vote once per battle — switch sides any time</li>
+        <li>Vote bars update live after you cast your vote</li>
+        <li>Top-voted battles surface on the community feed</li>
+        <li>Propose battles on any climate tech or policy topic</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<!-- PROPOSE MODAL -->
+<div class="cx-modal-overlay" id="proposeOverlay">
+  <div class="cx-modal">
+    <div class="cx-modal-header">
+      <div class="cx-modal-title">⚔️ Propose a Battle</div>
+      <div class="cx-modal-close" onclick="closeProposeModal()">✕</div>
+    </div>
+    <div class="cx-modal-body">
+      <div class="cx-field">
+        <label>Battle Title / Question *</label>
+        <input type="text" id="battleTitle" placeholder="e.g. Nuclear vs Grid-Scale Battery: Best baseload for 2035?" />
+      </div>
+      <div class="cx-field">
+        <label>Side A — Name *</label>
+        <input type="text" id="sideALabel" placeholder="e.g. Next-Gen Nuclear" />
+      </div>
+      <div class="cx-field">
+        <label>Side A — Description *</label>
+        <textarea id="sideADesc" placeholder="Key arguments, stats, or evidence for Side A…"></textarea>
+      </div>
+      <div class="cx-field">
+        <label>Side A — Icon (emoji)</label>
+        <input type="text" id="sideAIcon" placeholder="☢️" maxlength="4" style="max-width:80px;" />
+      </div>
+      <div class="cx-field" style="margin-top:4px;">
+        <label>Side B — Name *</label>
+        <input type="text" id="sideBLabel" placeholder="e.g. Grid-Scale Batteries" />
+      </div>
+      <div class="cx-field">
+        <label>Side B — Description *</label>
+        <textarea id="sideBDesc" placeholder="Key arguments, stats, or evidence for Side B…"></textarea>
+      </div>
+      <div class="cx-field">
+        <label>Side B — Icon (emoji)</label>
+        <input type="text" id="sideBIcon" placeholder="🔋" maxlength="4" style="max-width:80px;" />
+      </div>
+    </div>
+    <div class="cx-modal-footer">
+      <button class="cx-cancel-btn" onclick="closeProposeModal()">Cancel</button>
+      <button class="cx-submit-btn" onclick="submitBattle()">Launch Battle ⚔️</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="cx-toast" id="toast"></div>
+
+<script type="module">
+import {
+  getCurrentUserProfile, getProfiles, requireAuth,
+  getBattles, createBattle, voteInBattle, getUserBattleVote, getTrendingBattles,
+  updateClimateScore, SCORE_EVENTS,
+  timeAgo, getAvatarColor, getInitials, formatCount,
+} from './community.js';
+
+/* ── Auth ── */
+if (!requireAuth()) throw new Error('redirect');
+let currentUser = getCurrentUserProfile();
+
+document.getElementById('navAvatar').textContent  = getInitials(currentUser.fullName);
+document.getElementById('navAvatar').style.background = getAvatarColor(currentUser.role);
+document.getElementById('navName').textContent    = currentUser.fullName.split(' ')[0];
+
+/* ── Toast ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── Render helpers ── */
+function votePct(a, b) {
+  const total = a + b;
+  if (total === 0) return [50, 50];
+  return [Math.round((a / total) * 100), Math.round((b / total) * 100)];
+}
+
+function renderBattleCard(b) {
+  const userVote   = getUserBattleVote(b.id, currentUser.uid);
+  const total      = b.totalA + b.totalB;
+  const [pctA, pctB] = votePct(b.totalA, b.totalB);
+  const sideAClass = userVote === 'sideA' ? 'voted' : userVote === 'sideB' ? 'voted-other' : '';
+  const sideBClass = userVote === 'sideB' ? 'voted' : userVote === 'sideA' ? 'voted-other' : '';
+  const btnAClass  = userVote === 'sideA' ? 'active' : '';
+  const btnBClass  = userVote === 'sideB' ? 'active' : '';
+
+  return `
+  <div class="cx-battle-card" id="bc-${b.id}">
+    <div class="cx-battle-header">
+      <div>
+        <div class="cx-battle-title">${escHtml(b.title)}</div>
+        <div class="cx-battle-meta">${total} vote${total !== 1 ? 's' : ''} · ${timeAgo(b.timestamp)}</div>
+      </div>
+      <span class="cx-battle-status${b.status !== 'active' ? ' ended' : ''}">
+        ${b.status === 'active' ? '⚡ Live' : '🏁 Ended'}
+      </span>
+    </div>
+
+    <div class="cx-battle-arena">
+      <div class="cx-battle-side ${sideAClass}" id="sideA-${b.id}">
+        <div class="cx-battle-side-icon">${b.sideA.icon || '🔵'}</div>
+        <div class="cx-battle-side-label">${escHtml(b.sideA.label)}</div>
+        <div class="cx-battle-side-desc">${escHtml(b.sideA.desc)}</div>
+        <button class="cx-vote-btn ${btnAClass}" onclick="castVote('${b.id}','sideA')">
+          ${userVote === 'sideA' ? '✓ Voted' : '👍 Vote Side A'}
+        </button>
+      </div>
+
+      <div class="cx-vs-divider">
+        <div class="cx-vs-label">VS</div>
+        <div class="cx-vs-total">${total} votes</div>
+      </div>
+
+      <div class="cx-battle-side ${sideBClass}" id="sideB-${b.id}">
+        <div class="cx-battle-side-icon">${b.sideB.icon || '🔴'}</div>
+        <div class="cx-battle-side-label">${escHtml(b.sideB.label)}</div>
+        <div class="cx-battle-side-desc">${escHtml(b.sideB.desc)}</div>
+        <button class="cx-vote-btn ${btnBClass}" onclick="castVote('${b.id}','sideB')">
+          ${userVote === 'sideB' ? '✓ Voted' : '👍 Vote Side B'}
+        </button>
+      </div>
+    </div>
+
+    <div class="cx-battle-bar-wrap">
+      <div class="cx-battle-bar-labels">
+        <span class="cx-battle-bar-a">${escHtml(b.sideA.label)} — ${pctA}%</span>
+        <span class="cx-battle-bar-b">${pctB}% — ${escHtml(b.sideB.label)}</span>
+      </div>
+      <div class="cx-battle-bar-track">
+        <div class="cx-battle-bar-fill-a" id="barA-${b.id}" style="width:${pctA}%"></div>
+        <div class="cx-battle-bar-fill-b" id="barB-${b.id}" style="width:${pctB}%"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderBattles() {
+  const battles = getBattles();
+  const list    = document.getElementById('battlesList');
+  if (!battles.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">No battles yet. Propose the first one!</div>';
+    return;
+  }
+  list.innerHTML = battles.map(b => renderBattleCard(b)).join('');
+
+  const totalVotes = battles.reduce((s, b) => s + b.totalA + b.totalB, 0);
+  document.getElementById('heroTotal').textContent       = battles.filter(b => b.status === 'active').length;
+  document.getElementById('heroVotes').textContent       = formatCount(totalVotes);
+  document.getElementById('heroParticipants').textContent = formatCount(Math.round(totalVotes * 0.6));
+}
+
+function renderTrending() {
+  const trending = getTrendingBattles(5);
+  const el = document.getElementById('trendingList');
+  if (!trending.length) { el.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">No battles yet.</div>'; return; }
+  el.innerHTML = trending.map((b, i) => `
+    <div class="cx-trending-item" onclick="document.getElementById('bc-${b.id}')?.scrollIntoView({behavior:'smooth',block:'center'})">
+      <div class="cx-trending-num">${i + 1}</div>
+      <div>
+        <div class="cx-trending-text">${escHtml(b.title)}</div>
+        <div class="cx-trending-votes">${b.totalA + b.totalB} votes</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Vote ── */
+window.castVote = function(battleId, side) {
+  const wasVoted = getUserBattleVote(battleId, currentUser.uid);
+  const result   = voteInBattle(battleId, currentUser.uid, side);
+  if (!result) return;
+
+  if (!wasVoted) {
+    updateClimateScore(currentUser.uid, SCORE_EVENTS.REACTION_RECEIVED || 1);
+  }
+
+  const card = document.getElementById(`bc-${battleId}`);
+  if (!card) return;
+
+  const [pctA, pctB] = votePct(result.totalA, result.totalB);
+  const total = result.totalA + result.totalB;
+  const userVote = getUserBattleVote(battleId, currentUser.uid);
+
+  card.querySelector(`#barA-${battleId}`).style.width = pctA + '%';
+  card.querySelector(`#barB-${battleId}`).style.width = pctB + '%';
+  card.querySelector('.cx-battle-bar-labels').innerHTML =
+    `<span class="cx-battle-bar-a">${card.querySelector('#sideA-' + battleId + ' .cx-battle-side-label').textContent} — ${pctA}%</span>
+     <span class="cx-battle-bar-b">${pctB}% — ${card.querySelector('#sideB-' + battleId + ' .cx-battle-side-label').textContent}</span>`;
+  card.querySelector('.cx-vs-total').textContent = `${total} votes`;
+  card.querySelector('.cx-battle-meta').textContent = `${total} vote${total !== 1 ? 's' : ''} · just now`;
+
+  const sideAEl = card.querySelector(`#sideA-${battleId}`);
+  const sideBEl = card.querySelector(`#sideB-${battleId}`);
+  const btnA    = sideAEl.querySelector('.cx-vote-btn');
+  const btnB    = sideBEl.querySelector('.cx-vote-btn');
+  sideAEl.className = 'cx-battle-side' + (userVote === 'sideA' ? ' voted' : userVote === 'sideB' ? ' voted-other' : '');
+  sideBEl.className = 'cx-battle-side' + (userVote === 'sideB' ? ' voted' : userVote === 'sideA' ? ' voted-other' : '');
+  btnA.className  = 'cx-vote-btn' + (userVote === 'sideA' ? ' active' : '');
+  btnA.textContent = userVote === 'sideA' ? '✓ Voted' : '👍 Vote Side A';
+  btnB.className  = 'cx-vote-btn' + (userVote === 'sideB' ? ' active' : '');
+  btnB.textContent = userVote === 'sideB' ? '✓ Voted' : '👍 Vote Side B';
+
+  showToast(userVote ? `Voted for "${side === 'sideA' ? card.querySelector('#sideA-'+battleId+' .cx-battle-side-label').textContent : card.querySelector('#sideB-'+battleId+' .cx-battle-side-label').textContent}"` : 'Vote removed');
+  renderTrending();
+};
+
+/* ── Propose Modal ── */
+window.openProposeModal = function() {
+  document.getElementById('proposeOverlay').classList.add('open');
+};
+window.closeProposeModal = function() {
+  document.getElementById('proposeOverlay').classList.remove('open');
+};
+
+window.submitBattle = function() {
+  const title    = document.getElementById('battleTitle').value.trim();
+  const sideALbl = document.getElementById('sideALabel').value.trim();
+  const sideADsc = document.getElementById('sideADesc').value.trim();
+  const sideAIco = document.getElementById('sideAIcon').value.trim() || '🔵';
+  const sideBLbl = document.getElementById('sideBLabel').value.trim();
+  const sideBDsc = document.getElementById('sideBDesc').value.trim();
+  const sideBIco = document.getElementById('sideBIcon').value.trim() || '🔴';
+
+  if (!title || !sideALbl || !sideADsc || !sideBLbl || !sideBDsc) {
+    showToast('Please fill in all required fields.');
+    return;
+  }
+
+  createBattle({
+    title,
+    sideA: { label: sideALbl, desc: sideADsc, icon: sideAIco },
+    sideB: { label: sideBLbl, desc: sideBDsc, icon: sideBIco },
+    authorId: currentUser.uid,
+  });
+  updateClimateScore(currentUser.uid, 3);
+
+  closeProposeModal();
+  ['battleTitle','sideALabel','sideADesc','sideAIcon','sideBLabel','sideBDesc','sideBIcon'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+
+  renderBattles();
+  renderTrending();
+  showToast('⚔️ Battle launched! +3 climate score');
+};
+
+/* ── Close modal on overlay click ── */
+document.getElementById('proposeOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('proposeOverlay')) closeProposeModal();
+});
+
+function escHtml(s) {
+  const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
+}
+
+/* ── Init ── */
+renderBattles();
+renderTrending();
+setInterval(() => { renderBattles(); renderTrending(); }, 30000);
+</script>
+</body>
+</html>

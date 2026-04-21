@@ -6,14 +6,22 @@
 
 // ── Storage keys ───────────────────────────────────────────────────────────
 const CX = {
-  POSTS:     'cx_posts_v1',
-  PROFILES:  'cx_profiles_v1',
-  FOLLOWS:   'cx_follows_v1',
-  BOOKMARKS: 'cx_bookmarks_v1',
-  FORUM:     'cx_forum_v1',
-  NOTIFS:    'cx_notifs_v1',
-  FUNDING:   'cx_funding_user_v1',
-  INTERESTS: 'cx_interests_v1',
+  POSTS:      'cx_posts_v1',
+  PROFILES:   'cx_profiles_v1',
+  FOLLOWS:    'cx_follows_v1',
+  BOOKMARKS:  'cx_bookmarks_v1',
+  FORUM:      'cx_forum_v1',
+  NOTIFS:     'cx_notifs_v1',
+  FUNDING:    'cx_funding_user_v1',
+  INTERESTS:  'cx_interests_v1',
+  // ── New engines ──
+  SCORES:     'cx_scores_v2',       // Score history per user
+  CHALLENGES: 'cx_challenges_v2',   // Daily challenge state
+  REACTIONS:  'cx_reactions_v2',    // Post reactions (replaces plain likes)
+  SOLUTIONS:  'cx_solutions_v1',    // Solution Hub entries
+  PITCHES:    'cx_pitches_v1',      // VC Pitch Cards
+  BATTLES:    'cx_battles_v1',      // Battle mode
+  STREAKS:    'cx_streaks_v1',      // Daily streaks
 };
 
 // ── Role configuration ─────────────────────────────────────────────────────
@@ -32,6 +40,35 @@ export const AVATAR_COLORS = {
   investor:    '#92400E',
   researcher:  '#5B21B6',
 };
+
+// ── Climate Score config ───────────────────────────────────────────────────
+export const SCORE_EVENTS = {
+  POST_CREATED:       { delta: +2,  label: 'Post published',          icon: '📝' },
+  VERIFIED_INITIATIVE:{ delta: +10, label: 'Verified initiative',      icon: '✓'  },
+  REACTION_RECEIVED:  { delta: +1,  label: 'Engagement received',      icon: '🌱' },
+  COMMENT_RECEIVED:   { delta: +1,  label: 'Comment on your post',     icon: '💬' },
+  SOLUTION_CREATED:   { delta: +5,  label: 'Solution Hub entry',       icon: '💡' },
+  CHALLENGE_COMPLETE: { delta: +5,  label: 'Daily challenge completed', icon: '🏆' },
+  STREAK_BONUS:       { delta: +3,  label: 'Streak bonus',             icon: '🔥' },
+  PITCH_VIEWED:       { delta: +1,  label: 'Pitch deck viewed',        icon: '👁' },
+  SPAM_PENALTY:       { delta: -5,  label: 'Low-quality content flag', icon: '⚠️' },
+  FOLLOW_RECEIVED:    { delta: +1,  label: 'New follower',             icon: '👤' },
+};
+
+// ── Reaction types ─────────────────────────────────────────────────────────
+export const REACTION_TYPES = {
+  impactful:     { emoji: '🌱', label: 'Impactful',     color: '#065F46' },
+  innovative:    { emoji: '💡', label: 'Innovative',    color: '#B45309' },
+  scalable:      { emoji: '📊', label: 'Scalable',      color: '#1D4ED8' },
+  game_changing: { emoji: '🔥', label: 'Game-changing', color: '#DC2626' },
+};
+
+// ── Daily challenge definitions ────────────────────────────────────────────
+export const CHALLENGE_DEFS = [
+  { id: 'post_today',   label: 'Share a climate action',   desc: 'Publish at least one post today', icon: '📝', points: 5 },
+  { id: 'engage_three', label: 'Engage with 3 posts',      desc: 'React or comment on 3 posts',     icon: '🌱', points: 3 },
+  { id: 'upload_init',  label: 'Submit a solution',        desc: 'Add an entry to Solution Hub',    icon: '💡', points: 7 },
+];
 
 // ── Seed profiles ──────────────────────────────────────────────────────────
 const SEED_PROFILES = [
@@ -220,6 +257,7 @@ export const SEED_FUNDING = [
     tags: ['Solar', 'RuralElectrification', 'PayAsYouGo', 'SeriesA', 'WomenLed'],
     expressedInterest: 14, savedBy: 32, hasDeck: true, timestamp: Date.now() - 172800000,
     interestedUsers: ['seed_arjun'], savedByUsers: [],
+    fundingReady: true, marketSize: '$4.2B', investorViews: 47,
   },
   {
     id: 'fr002', startupName: 'CarbonTrace AI', founderName: 'Dev Krishnan', founderAvatar: 'DK', founderRole: 'startup',
@@ -233,6 +271,7 @@ export const SEED_FUNDING = [
     tags: ['CarbonMarkets', 'MRV', 'AI', 'Seed', 'SaaS'],
     expressedInterest: 8, savedBy: 19, hasDeck: true, timestamp: Date.now() - 259200000,
     interestedUsers: [], savedByUsers: [],
+    fundingReady: false, marketSize: '$850M', investorViews: 23,
   },
   {
     id: 'fr003', startupName: 'RegenSoil Tech', founderName: 'Kavita Reddy', founderAvatar: 'KR', founderRole: 'startup',
@@ -246,6 +285,7 @@ export const SEED_FUNDING = [
     tags: ['AgriTech', 'SoilCarbon', 'RegenerativeFarming', 'PreSeed', 'FPO'],
     expressedInterest: 5, savedBy: 11, hasDeck: false, timestamp: Date.now() - 432000000,
     interestedUsers: [], savedByUsers: [],
+    fundingReady: false, marketSize: '$1.1B', investorViews: 12,
   },
   {
     id: 'fr004', startupName: 'BlueTide Marine', founderName: 'Aryan Shah', founderAvatar: 'AS', founderRole: 'startup',
@@ -259,6 +299,68 @@ export const SEED_FUNDING = [
     tags: ['BlueCarbon', 'Mangroves', 'OceanResilience', 'Seed', 'NBS'],
     expressedInterest: 11, savedBy: 24, hasDeck: true, timestamp: Date.now() - 604800000,
     interestedUsers: [], savedByUsers: [],
+    fundingReady: true, marketSize: '$2.3B', investorViews: 31,
+  },
+];
+
+// ── Seed Solutions Hub ─────────────────────────────────────────────────────
+const SEED_SOLUTIONS = [
+  {
+    id: 'sol001', authorId: 'seed_priya', authorName: 'Priya Sharma', authorAvatar: 'PS', authorRole: 'startup',
+    title: 'Pay-as-you-go Solar Micro-grids for Rural India',
+    problem: '300M rural Indians lack reliable electricity, with grid extension costing $2,000+ per connection.',
+    solution: 'Community-owned solar micro-grids at $150/connection with WhatsApp-based O&M and PAYG model.',
+    impact: '18,000 tCO₂e/year avoided · 12,000 homes powered · $1.2M household savings/year',
+    industry: 'Energy Access', fundingRequired: '$6M Series A', collaborationOpen: true,
+    upvotes: ['seed_arjun', 'seed_meera', 'seed_rahul'], bookmarks: ['seed_arjun'],
+    tags: ['SolarEnergy', 'RuralElectrification', 'ImpactInvesting'],
+    timestamp: Date.now() - 86400000, verified: true,
+  },
+  {
+    id: 'sol002', authorId: 'seed_dev', authorName: 'Dev Krishnan', authorAvatar: 'DK', authorRole: 'startup',
+    title: 'AI-Powered Carbon Credit Verification (30 Days, $2K)',
+    problem: 'Carbon credit verification takes 18 months at $50K, blocking 80% of small project developers.',
+    solution: 'Satellite + IoT + AI MRV platform integrating directly with Gold Standard and Verra APIs.',
+    impact: '500+ projects unlocked · 2M tCO₂e/year newly verifiable · $40M in credits democratized',
+    industry: 'Carbon Markets', fundingRequired: '$1.5M Seed', collaborationOpen: true,
+    upvotes: ['seed_meera', 'seed_priya', 'seed_arjun'], bookmarks: ['seed_arjun', 'seed_rahul'],
+    tags: ['CarbonMarkets', 'MRV', 'AI'],
+    timestamp: Date.now() - 172800000, verified: false,
+  },
+  {
+    id: 'sol003', authorId: 'seed_meera', authorName: 'Dr. Meera Nair', authorAvatar: 'MN', authorRole: 'researcher',
+    title: 'Enhanced Weathering for Gigaton-Scale Carbon Removal',
+    problem: 'Existing CDR pathways are too expensive ($300+/tonne for DAC) to reach gigatonne scale by 2050.',
+    solution: 'Basalt application on agricultural land sequesters CO₂ at $50-120/tonne while boosting crop yields 15-25%.',
+    impact: '0.5–2.0 GtCO₂/year globally by 2050 · $120/tonne max cost · 15-25% crop yield increase',
+    industry: 'Carbon Removal', fundingRequired: 'Research Partners', collaborationOpen: true,
+    upvotes: ['seed_arjun', 'seed_rahul', 'seed_priya', 'seed_dev'], bookmarks: ['seed_arjun'],
+    tags: ['CarbonRemoval', 'EnhancedWeathering', 'IPCC'],
+    timestamp: Date.now() - 259200000, verified: true,
+  },
+];
+
+// ── Seed Battles ───────────────────────────────────────────────────────────
+const SEED_BATTLES = [
+  {
+    id: 'bat001',
+    title: 'Solar vs Wind: Best renewable for India 2030?',
+    sideA: { label: 'Utility-Scale Solar', desc: 'Lowest LCOE at Rs 2.4/kWh, deployable in 18 months, 500GW potential', icon: '☀️' },
+    sideB: { label: 'Offshore Wind',       desc: 'Higher capacity factor (40%+), 24/7 power, 70GW coastal potential', icon: '💨' },
+    criteria: ['Impact', 'Innovation', 'Scalability'],
+    votes: { sideA: { seed_priya: true, seed_dev: true }, sideB: { seed_arjun: true, seed_meera: true } },
+    totalA: 2, totalB: 2, status: 'active',
+    timestamp: Date.now() - 3600000,
+  },
+  {
+    id: 'bat002',
+    title: 'Carbon Credits vs Direct Green Investment: Which drives more impact?',
+    sideA: { label: 'Voluntary Carbon Markets', desc: 'Mobilizes $1B+ annually, additionality debate ongoing, democratizes access', icon: '🌿' },
+    sideB: { label: 'Direct Clean Investment',   desc: 'No additionality risk, builds assets, scales proven tech faster', icon: '⚡' },
+    criteria: ['Impact', 'Innovation', 'Scalability'],
+    votes: { sideA: { seed_meera: true }, sideB: { seed_rahul: true, seed_arjun: true, seed_priya: true } },
+    totalA: 1, totalB: 3, status: 'active',
+    timestamp: Date.now() - 7200000,
   },
 ];
 
@@ -313,6 +415,11 @@ export function getAvatarColor(role) {
   return AVATAR_COLORS[role] || AVATAR_COLORS.individual;
 }
 
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
 // ── Storage ────────────────────────────────────────────────────────────────
 function load(key, fallback = null) {
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
@@ -323,9 +430,11 @@ function save(key, data) {
 
 // ── Init (idempotent) ──────────────────────────────────────────────────────
 export function initCommunity() {
-  if (!load(CX.POSTS))    save(CX.POSTS,    SEED_POSTS);
-  if (!load(CX.PROFILES)) save(CX.PROFILES, SEED_PROFILES);
-  if (!load(CX.FORUM))    save(CX.FORUM,    SEED_THREADS);
+  if (!load(CX.POSTS))     save(CX.POSTS,     SEED_POSTS);
+  if (!load(CX.PROFILES))  save(CX.PROFILES,  SEED_PROFILES);
+  if (!load(CX.FORUM))     save(CX.FORUM,     SEED_THREADS);
+  if (!load(CX.SOLUTIONS)) save(CX.SOLUTIONS, SEED_SOLUTIONS);
+  if (!load(CX.BATTLES))   save(CX.BATTLES,   SEED_BATTLES);
 }
 
 // ── Auth ───────────────────────────────────────────────────────────────────
@@ -412,6 +521,10 @@ export function createPost({ authorId, authorName, authorRole, authorAvatar, aut
   };
   save(CX.POSTS, [post, ...posts]);
   _bumpProfile(authorId, 'postsCount', 1);
+  // Score event
+  updateClimateScore(authorId, SCORE_EVENTS.POST_CREATED.delta, SCORE_EVENTS.POST_CREATED.label);
+  // Challenge progress
+  updateChallengeProgress(authorId, 'post_today');
   return post;
 }
 
@@ -430,7 +543,6 @@ export function toggleLike(postId, userId) {
   if (liked) post.likes.push(userId);
   else post.likes.splice(idx, 1);
   save(CX.POSTS, posts);
-  // Notify author if liked (not self-like)
   if (liked && post.authorId !== userId) {
     const byProfile = getProfile(userId);
     addNotification(post.authorId, {
@@ -469,8 +581,13 @@ export function addComment(postId, { authorId, authorName, authorRole, authorAva
       type: 'comment', fromId: authorId,
       fromName: byProfile?.fullName || 'Someone',
       postId, message: `commented on your post`,
+      priority: 'normal',
     });
+    // Score event for post author
+    updateClimateScore(post.authorId, SCORE_EVENTS.COMMENT_RECEIVED.delta, SCORE_EVENTS.COMMENT_RECEIVED.label);
   }
+  // Challenge progress for commenter
+  updateChallengeProgress(authorId, 'engage_three');
   return comment;
 }
 
@@ -518,7 +635,6 @@ export function toggleFollow(targetId, currentUserId) {
   if (nowFollowing) follows[currentUserId].push(targetId);
   else follows[currentUserId].splice(idx, 1);
   save(CX.FOLLOWS, follows);
-  // Update counts on both profiles
   _bumpProfile(targetId,      'followersCount',  nowFollowing ? 1 : -1);
   _bumpProfile(currentUserId, 'followingCount',  nowFollowing ? 1 : -1);
   if (nowFollowing) {
@@ -526,8 +642,9 @@ export function toggleFollow(targetId, currentUserId) {
     addNotification(targetId, {
       type: 'follow', fromId: currentUserId,
       fromName: by?.fullName || 'Someone', postId: null,
-      message: 'started following you',
+      message: 'started following you', priority: 'normal',
     });
+    updateClimateScore(targetId, SCORE_EVENTS.FOLLOW_RECEIVED.delta, SCORE_EVENTS.FOLLOW_RECEIVED.label);
   }
   return nowFollowing;
 }
@@ -549,13 +666,20 @@ export function getFollowingList(uid) {
   return ids.map(id => getProfile(id)).filter(Boolean);
 }
 
-// ── Notifications ──────────────────────────────────────────────────────────
-export function addNotification(userId, { type, fromId, fromName, postId, message }) {
+// ── Notifications (enhanced) ───────────────────────────────────────────────
+export function addNotification(userId, { type, fromId, fromName, postId, message, priority = 'normal' }) {
   const notifs = load(CX.NOTIFS, {});
   if (!notifs[userId]) notifs[userId] = [];
-  notifs[userId].unshift({ id: 'n' + Date.now(), type, fromId, fromName, postId, message, read: false, timestamp: Date.now() });
+  notifs[userId].unshift({
+    id: 'n' + Date.now(), type, fromId, fromName, postId,
+    message, priority, read: false, timestamp: Date.now(),
+  });
   notifs[userId] = notifs[userId].slice(0, 50);
   save(CX.NOTIFS, notifs);
+}
+
+export function addSystemNotification(userId, { type, message, priority = 'important' }) {
+  addNotification(userId, { type, fromId: 'system', fromName: 'Climactix', postId: null, message, priority });
 }
 
 export function getNotifications(userId) {
@@ -646,6 +770,7 @@ export function createFundingRequest(data) {
     id: 'fr' + Date.now(), ...data,
     expressedInterest: 0, savedBy: 0,
     interestedUsers: [], savedByUsers: [],
+    fundingReady: false, investorViews: 0,
     timestamp: Date.now(),
   };
   save(CX.FUNDING, [req, ...existing]);
@@ -653,7 +778,6 @@ export function createFundingRequest(data) {
 }
 
 export function toggleFundingInterest(fundingId, userId) {
-  // Try user-created first, then seed
   const userCreated = load(CX.FUNDING, []);
   const uc = userCreated.find(f => f.id === fundingId);
   if (uc) {
@@ -664,7 +788,6 @@ export function toggleFundingInterest(fundingId, userId) {
     save(CX.FUNDING, userCreated);
     return idx === -1;
   }
-  // For seed items, track in a separate map
   const key = 'cx_fi_' + fundingId;
   const users = load(key, []);
   const idx = users.indexOf(userId);
@@ -721,4 +844,378 @@ export function toggleJoinCommunity(communityId, userId) {
   else joined.push(communityId);
   save(key, joined);
   return idx === -1;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ── CLIMATE SCORE ENGINE ──────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function updateClimateScore(userId, delta, reason) {
+  // Update profile score (clamped 0–100)
+  const profiles = getProfiles();
+  const idx = profiles.findIndex(p => p.uid === userId || p.email === userId);
+  if (idx === -1) return null;
+  const prev = profiles[idx].climateScore || 0;
+  const next = Math.min(100, Math.max(0, prev + delta));
+  profiles[idx].climateScore = next;
+  save(CX.PROFILES, profiles);
+
+  // Append to score history
+  const history = load(CX.SCORES, {});
+  if (!history[userId]) history[userId] = [];
+  history[userId].unshift({
+    timestamp: Date.now(),
+    delta,
+    reason,
+    scoreBefore: prev,
+    scoreAfter: next,
+  });
+  history[userId] = history[userId].slice(0, 100);
+  save(CX.SCORES, history);
+
+  // Rank change notification
+  const prevRank = getUserRank(userId);
+  if (prevRank <= 10 && delta > 0) {
+    addSystemNotification(userId, {
+      type: 'rank_change',
+      message: `You're in the Top ${prevRank} on the Climate Leaderboard 🔥`,
+      priority: 'important',
+    });
+  }
+
+  return { prev, next, delta };
+}
+
+export function getScoreHistory(userId) {
+  return (load(CX.SCORES, {})[userId] || []);
+}
+
+export function getScoreBreakdown(userId) {
+  const history = getScoreHistory(userId);
+  const profile = getProfile(userId);
+  if (!profile) return null;
+
+  const grouped = {};
+  history.forEach(h => {
+    if (!grouped[h.reason]) grouped[h.reason] = { reason: h.reason, total: 0, count: 0 };
+    grouped[h.reason].total += h.delta;
+    grouped[h.reason].count++;
+  });
+
+  const scoringRules = Object.values(SCORE_EVENTS).map(e => ({
+    label: e.label, delta: e.delta, icon: e.icon,
+  }));
+
+  return {
+    currentScore: profile.climateScore || 0,
+    history: history.slice(0, 10),
+    grouped: Object.values(grouped).sort((a, b) => b.total - a.total),
+    scoringRules,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ── LEADERBOARD ──────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function getLeaderboard(filter = 'all-time', limit = 20) {
+  const profiles = getProfiles();
+  const now = Date.now();
+  const cutoff = {
+    'all-time': 0,
+    'monthly':  now - 30 * 86400000,
+    'weekly':   now - 7  * 86400000,
+  }[filter] || 0;
+
+  let ranked;
+  if (filter === 'all-time') {
+    ranked = profiles.map(p => ({ ...p, displayScore: p.climateScore || 0 }));
+  } else {
+    const scoreMap = load(CX.SCORES, {});
+    ranked = profiles.map(p => {
+      const history = (scoreMap[p.uid] || []).filter(h => h.timestamp >= cutoff);
+      const periodDelta = history.reduce((s, h) => s + h.delta, 0);
+      return { ...p, displayScore: Math.max(0, (p.climateScore || 0) + periodDelta), periodDelta };
+    });
+  }
+
+  return ranked
+    .sort((a, b) => b.displayScore - a.displayScore)
+    .slice(0, limit)
+    .map((p, i) => ({ ...p, rank: i + 1 }));
+}
+
+export function getUserRank(userId, filter = 'all-time') {
+  const board = getLeaderboard(filter, 999);
+  const entry = board.find(p => p.uid === userId);
+  return entry ? entry.rank : null;
+}
+
+export function getRankTrend(userId) {
+  const allTime = getUserRank(userId, 'all-time');
+  const weekly  = getUserRank(userId, 'weekly');
+  if (!allTime || !weekly) return 'stable';
+  if (weekly < allTime) return 'up';
+  if (weekly > allTime) return 'down';
+  return 'stable';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ── DAILY CHALLENGES & STREAKS ────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function getDailyState(userId) {
+  const key = `cx_chal_${userId}_${todayKey()}`;
+  const existing = load(key, null);
+  if (existing) return existing;
+
+  const fresh = {
+    date: todayKey(), userId,
+    challenges: CHALLENGE_DEFS.map(c => ({
+      id: c.id, label: c.label, desc: c.desc, icon: c.icon, points: c.points,
+      progress: 0, target: c.id === 'engage_three' ? 3 : 1, completed: false,
+    })),
+    allCompleted: false, bonusAwarded: false,
+  };
+  save(key, fresh);
+  return fresh;
+}
+
+export function updateChallengeProgress(userId, challengeId) {
+  const key = `cx_chal_${userId}_${todayKey()}`;
+  const state = getDailyState(userId);
+  const ch = state.challenges.find(c => c.id === challengeId);
+  if (!ch || ch.completed) return state;
+
+  ch.progress = Math.min(ch.target, ch.progress + 1);
+  if (ch.progress >= ch.target) {
+    ch.completed = true;
+    updateClimateScore(userId, SCORE_EVENTS.CHALLENGE_COMPLETE.delta, SCORE_EVENTS.CHALLENGE_COMPLETE.label);
+    addSystemNotification(userId, {
+      type: 'challenge', message: `Challenge complete: "${ch.label}" +${ch.points} pts 🏆`,
+      priority: 'important',
+    });
+  }
+
+  state.allCompleted = state.challenges.every(c => c.completed);
+  if (state.allCompleted && !state.bonusAwarded) {
+    state.bonusAwarded = true;
+    updateClimateScore(userId, SCORE_EVENTS.STREAK_BONUS.delta, SCORE_EVENTS.STREAK_BONUS.label);
+    _incrementStreak(userId);
+  }
+
+  save(key, state);
+  return state;
+}
+
+function _incrementStreak(userId) {
+  const streaks = load(CX.STREAKS, {});
+  const today = todayKey();
+  const yesterday = (() => {
+    const d = new Date(); d.setDate(d.getDate() - 1);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  })();
+
+  if (!streaks[userId]) streaks[userId] = { current: 0, longest: 0, lastDay: null };
+  const s = streaks[userId];
+
+  if (s.lastDay === today) return;
+  if (s.lastDay === yesterday) {
+    s.current++;
+  } else {
+    s.current = 1;
+  }
+  s.lastDay = today;
+  s.longest = Math.max(s.longest, s.current);
+  save(CX.STREAKS, streaks);
+
+  addSystemNotification(userId, {
+    type: 'streak',
+    message: `${s.current}-day streak! 🔥 Keep it up!`,
+    priority: 'important',
+  });
+}
+
+export function getStreak(userId) {
+  const streaks = load(CX.STREAKS, {});
+  return streaks[userId] || { current: 0, longest: 0, lastDay: null };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ── REACTIONS (replaces plain likes) ─────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function addReaction(postId, userId, reactionType) {
+  if (!REACTION_TYPES[reactionType]) return null;
+  const reactions = load(CX.REACTIONS, {});
+  if (!reactions[postId]) reactions[postId] = {};
+
+  const prev = reactions[postId][userId];
+  if (prev === reactionType) {
+    delete reactions[postId][userId];
+  } else {
+    reactions[postId][userId] = reactionType;
+    // Notify post author
+    const post = getPosts().find(p => p.id === postId);
+    if (post && post.authorId !== userId) {
+      const by = getProfile(userId);
+      const rt = REACTION_TYPES[reactionType];
+      addNotification(post.authorId, {
+        type: 'reaction', fromId: userId,
+        fromName: by?.fullName || 'Someone',
+        postId, message: `reacted ${rt.emoji} ${rt.label} to your post`,
+        priority: 'normal',
+      });
+      updateClimateScore(post.authorId, SCORE_EVENTS.REACTION_RECEIVED.delta, SCORE_EVENTS.REACTION_RECEIVED.label);
+    }
+    // Challenge progress
+    updateChallengeProgress(userId, 'engage_three');
+  }
+
+  save(CX.REACTIONS, reactions);
+  return getReactions(postId);
+}
+
+export function getReactions(postId) {
+  const reactions = load(CX.REACTIONS, {});
+  const map = reactions[postId] || {};
+  const counts = {};
+  Object.values(map).forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+  const total = Object.values(counts).reduce((s, v) => s + v, 0);
+  return { counts, total, byUser: map };
+}
+
+export function getUserReaction(postId, userId) {
+  return (load(CX.REACTIONS, {})[postId] || {})[userId] || null;
+}
+
+export function getTotalReactions(postId) {
+  return getReactions(postId).total;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ── SOLUTION HUB ──────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function getSolutions(filter = 'all') {
+  const all = load(CX.SOLUTIONS, SEED_SOLUTIONS);
+  if (filter === 'top') {
+    const weekAgo = Date.now() - 7 * 86400000;
+    return [...all].sort((a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0))
+      .filter(s => s.timestamp >= weekAgo || (s.upvotes?.length || 0) > 2)
+      .slice(0, 5);
+  }
+  return all;
+}
+
+export function createSolution({ authorId, authorName, authorAvatar, authorRole, title, problem, solution, impact, industry, fundingRequired, tags, collaborationOpen }) {
+  const all = load(CX.SOLUTIONS, SEED_SOLUTIONS);
+  const entry = {
+    id: 'sol' + Date.now(), authorId, authorName,
+    authorAvatar: authorAvatar || getInitials(authorName),
+    authorRole: authorRole || 'individual',
+    title, problem, solution, impact,
+    industry: industry || 'General', fundingRequired: fundingRequired || '',
+    collaborationOpen: !!collaborationOpen,
+    tags: tags || [], upvotes: [], bookmarks: [],
+    timestamp: Date.now(), verified: false,
+  };
+  save(CX.SOLUTIONS, [entry, ...all]);
+  updateClimateScore(authorId, SCORE_EVENTS.SOLUTION_CREATED.delta, SCORE_EVENTS.SOLUTION_CREATED.label);
+  updateChallengeProgress(authorId, 'upload_init');
+  return entry;
+}
+
+export function toggleSolutionUpvote(solutionId, userId) {
+  const all = load(CX.SOLUTIONS, SEED_SOLUTIONS);
+  const sol = all.find(s => s.id === solutionId);
+  if (!sol) return null;
+  if (!sol.upvotes) sol.upvotes = [];
+  const idx = sol.upvotes.indexOf(userId);
+  if (idx > -1) sol.upvotes.splice(idx, 1);
+  else sol.upvotes.push(userId);
+  save(CX.SOLUTIONS, all);
+  return idx === -1;
+}
+
+export function toggleSolutionBookmark(solutionId, userId) {
+  const all = load(CX.SOLUTIONS, SEED_SOLUTIONS);
+  const sol = all.find(s => s.id === solutionId);
+  if (!sol) return null;
+  if (!sol.bookmarks) sol.bookmarks = [];
+  const idx = sol.bookmarks.indexOf(userId);
+  if (idx > -1) sol.bookmarks.splice(idx, 1);
+  else sol.bookmarks.push(userId);
+  save(CX.SOLUTIONS, all);
+  return idx === -1;
+}
+
+export function isSolutionUpvoted(solutionId, userId) {
+  const sol = (load(CX.SOLUTIONS, SEED_SOLUTIONS)).find(s => s.id === solutionId);
+  return (sol?.upvotes || []).includes(userId);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ── BATTLE MODE ───────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function getBattles() {
+  return load(CX.BATTLES, SEED_BATTLES);
+}
+
+export function createBattle({ title, sideA, sideB, authorId }) {
+  const battles = load(CX.BATTLES, SEED_BATTLES);
+  const battle = {
+    id: 'bat' + Date.now(),
+    title, sideA, sideB,
+    criteria: ['Impact', 'Innovation', 'Scalability'],
+    votes: { sideA: {}, sideB: {} },
+    totalA: 0, totalB: 0,
+    status: 'active', authorId,
+    timestamp: Date.now(),
+  };
+  save(CX.BATTLES, [battle, ...battles]);
+  return battle;
+}
+
+export function voteInBattle(battleId, userId, side) {
+  const battles = load(CX.BATTLES, SEED_BATTLES);
+  const battle = battles.find(b => b.id === battleId);
+  if (!battle) return null;
+  if (!battle.votes) battle.votes = { sideA: {}, sideB: {} };
+
+  const otherSide = side === 'sideA' ? 'sideB' : 'sideA';
+  const alreadyVoted = battle.votes[side][userId] || battle.votes[otherSide][userId];
+
+  if (alreadyVoted) {
+    // Toggle off same side, or switch
+    if (battle.votes[side][userId]) {
+      delete battle.votes[side][userId];
+    } else {
+      delete battle.votes[otherSide][userId];
+      battle.votes[side][userId] = true;
+    }
+  } else {
+    battle.votes[side][userId] = true;
+  }
+
+  battle.totalA = Object.keys(battle.votes.sideA).length;
+  battle.totalB = Object.keys(battle.votes.sideB).length;
+  save(CX.BATTLES, battles);
+  return { totalA: battle.totalA, totalB: battle.totalB, userVote: battle.votes[side][userId] ? side : null };
+}
+
+export function getUserBattleVote(battleId, userId) {
+  const battle = (load(CX.BATTLES, SEED_BATTLES)).find(b => b.id === battleId);
+  if (!battle?.votes) return null;
+  if (battle.votes.sideA?.[userId]) return 'sideA';
+  if (battle.votes.sideB?.[userId]) return 'sideB';
+  return null;
+}
+
+export function getTrendingBattles(limit = 3) {
+  return getBattles()
+    .filter(b => b.status === 'active')
+    .sort((a, b) => (b.totalA + b.totalB) - (a.totalA + a.totalB))
+    .slice(0, limit);
 }

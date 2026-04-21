@@ -6,227 +6,366 @@
   <title>Community · Climactix Global</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --primary:#0A1F44; --primary-mid:#0D2A5C; --primary-tint:#EEF4FF; --primary-pale:#C3D4F0;
-      --accent:#2F80ED;
-      --white:#FFFFFF; --off-white:#F7F9FC; --grey-light:#F4F7FA; --grey-mid:#E0E6ED;
-      --text:#0B0B0B; --text-2:#4F4F4F; --text-muted:#6B7A8D; --text-faint:#9AACBE;
-      --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
-      --shadow-md:0 4px 16px rgba(0,0,0,0.08); --radius:6px; --radius-sm:4px;
-      --nav-h:60px; --transition:0.15s ease;
+      --bg:#060E1C; --nav-bg:#050A16;
+      --surface:#0A1628; --surface-2:#0F1E34; --surface-3:#142440;
+      --border:#1A2B40; --border-strong:#253A52;
+      --accent:#00C896; --accent-dim:#00A07A;
+      --blue:#1B75D6; --blue-dim:#154FA0;
+      --gold:#E8A020; --silver:#8AA8C4; --bronze:#C27030;
+      --danger:#E03030; --warning:#F0A020;
+      --text:#D8E8F4; --text-2:#8AA8C4; --text-muted:#4A6478; --text-faint:#2A3C50;
+      --shadow:0 4px 24px rgba(0,0,0,.5); --shadow-sm:0 2px 8px rgba(0,0,0,.3);
+      --r:8px; --r-sm:5px; --nav-h:56px; --t:.15s ease;
     }
     html { scroll-behavior:smooth; }
-    body { font-family:'Inter',sans-serif; background:var(--off-white); color:var(--text); -webkit-font-smoothing:antialiased; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
     a { color:inherit; text-decoration:none; }
     button { font-family:inherit; cursor:pointer; border:none; background:none; }
     input,textarea { font-family:inherit; }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--surface); }
+    ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
 
-    /* ── NAV ── */
-    .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--white);border-bottom:1px solid var(--grey-mid);display:flex;align-items:center;padding:0 20px;gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05); }
-    .cx-nav-logo { display:flex;align-items:center;gap:10px;flex-shrink:0;text-decoration:none; }
-    .cx-nav-logo img { height:32px; }
-    .cx-nav-logo-text { font-size:15px;font-weight:700;color:var(--primary); }
-    .cx-nav-logo-sub { font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);line-height:1; }
-    .cx-nav-search { flex:1;max-width:380px;position:relative; }
-    .cx-nav-search input { width:100%;height:38px;background:var(--grey-light);border:1px solid var(--grey-mid);border-radius:20px;padding:0 16px 0 40px;font-size:13.5px;outline:none;transition:var(--transition); }
-    .cx-nav-search input:focus { background:var(--white);border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,61,46,0.08); }
-    .cx-nav-search input::placeholder { color:var(--text-faint); }
-    .cx-nav-search-icon { position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:15px;pointer-events:none; }
-    .cx-nav-links { display:flex;align-items:center;gap:4px;margin-left:8px; }
-    .cx-nav-link { display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:500;color:var(--text-muted);text-decoration:none;transition:var(--transition);position:relative; }
-    .cx-nav-link:hover { background:var(--grey-light);color:var(--text); }
-    .cx-nav-link.active { color:var(--primary); }
-    .cx-nav-link.active::after { content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--primary);border-radius:2px 2px 0 0; }
-    .cx-nav-link .nav-icon { font-size:20px;line-height:1; }
+    /* NAV */
+    .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px; }
+    .cx-nav-logo { display:flex;align-items:center;gap:9px;flex-shrink:0; }
+    .cx-nav-logo img { height:28px; }
+    .cx-nav-logo-text { font-size:14px;font-weight:700;color:var(--text); }
+    .cx-nav-logo-sub { font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);line-height:1; }
+    .cx-nav-search { flex:1;max-width:340px;position:relative; }
+    .cx-nav-search input { width:100%;height:34px;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:0 12px 0 36px;font-size:12.5px;color:var(--text);outline:none;transition:var(--t); }
+    .cx-nav-search input:focus { border-color:var(--blue);box-shadow:0 0 0 2px rgba(27,117,214,.15); }
+    .cx-nav-search input::placeholder { color:var(--text-muted); }
+    .cx-nav-search-icon { position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none; }
+    .cx-nav-links { display:flex;align-items:center;gap:1px;margin-left:6px; }
+    .cx-nav-link { display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 11px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:var(--t);position:relative; }
+    .cx-nav-link:hover { background:var(--surface);color:var(--text); }
+    .cx-nav-link.active { color:var(--accent); }
+    .cx-nav-link.active::after { content:'';position:absolute;bottom:0;left:8px;right:8px;height:2px;background:var(--accent);border-radius:1px; }
+    .cx-nav-link .nav-icon { font-size:17px;line-height:1; }
     .cx-notif-wrap { position:relative; }
-    .cx-notif-badge { position:absolute;top:2px;right:8px;min-width:16px;height:16px;background:#EF4444;border-radius:8px;border:2px solid var(--white);font-size:9px;font-weight:800;color:white;display:none;align-items:center;justify-content:center;padding:0 3px; }
+    .cx-notif-badge { position:absolute;top:1px;right:6px;min-width:15px;height:15px;background:var(--danger);border-radius:8px;border:2px solid var(--nav-bg);font-size:8px;font-weight:800;color:white;display:none;align-items:center;justify-content:center;padding:0 2px; }
     .cx-notif-badge.show { display:flex; }
-    .cx-nav-right { display:flex;align-items:center;gap:10px;margin-left:auto; }
-    .cx-avatar-btn { display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:20px;background:none;border:1px solid var(--grey-mid);cursor:pointer;transition:var(--transition); }
-    .cx-avatar-btn:hover { background:var(--grey-light); }
-    .cx-avatar { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0; }
+    .cx-nav-right { display:flex;align-items:center;gap:8px;margin-left:auto; }
+    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;border-radius:4px;background:none;border:1px solid var(--border);cursor:pointer;transition:var(--t); }
+    .cx-avatar-btn:hover { background:var(--surface); }
+    .cx-avatar { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0; }
 
-    /* ── LAYOUT ── */
-    .cx-layout { max-width:1160px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:240px 1fr 300px;gap:20px;align-items:start; }
+    /* LAYOUT */
+    .cx-layout { max-width:1180px;margin:18px auto;padding:0 14px;display:grid;grid-template-columns:248px 1fr 292px;gap:16px;align-items:start; }
 
-    /* ── LEFT PANEL ── */
-    .cx-left-panel { display:flex;flex-direction:column;gap:14px;position:sticky;top:calc(var(--nav-h) + 16px); }
-    .cx-profile-mini { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm); }
-    .cx-profile-mini-banner { height:56px;background:linear-gradient(135deg,var(--primary) 0%,#0D2A5C 100%); }
-    .cx-profile-mini-body { padding:0 16px 16px; }
-    .cx-profile-mini-avatar-wrap { display:flex;justify-content:space-between;align-items:flex-end;margin-top:-24px;margin-bottom:10px; }
-    .cx-mini-avatar { width:48px;height:48px;border-radius:50%;border:3px solid white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white; }
-    .cx-score-badge { display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--primary-tint);border-radius:10px;font-size:11px;font-weight:600;color:var(--primary); }
-    .cx-mini-name { font-size:14px;font-weight:700;color:var(--text);line-height:1.3; }
-    .cx-mini-role { font-size:11.5px;color:var(--text-muted);margin-top:1px; }
-    .cx-mini-stats { display:flex;border-top:1px solid var(--grey-light);margin-top:12px;padding-top:12px; }
-    .cx-mini-stat { flex:1;text-align:center;border-right:1px solid var(--grey-light);padding:4px 0;cursor:pointer; }
+    /* CARD BASE */
+    .cx-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden; }
+
+    /* LEFT PANEL */
+    .cx-left-panel { display:flex;flex-direction:column;gap:11px;position:sticky;top:calc(var(--nav-h) + 13px); }
+
+    /* Profile mini */
+    .cx-profile-mini-banner { height:50px;background:linear-gradient(135deg,#0A1F44 0%,#0D3A2E 100%);position:relative;flex-shrink:0; }
+    .cx-profile-mini-banner::after { content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(0,200,150,.04) 18px,rgba(0,200,150,.04) 36px); }
+    .cx-profile-mini-body { padding:0 13px 13px; }
+    .cx-profile-mini-avatar-wrap { display:flex;justify-content:space-between;align-items:flex-end;margin-top:-26px;margin-bottom:9px; }
+    .cx-score-ring-wrap { position:relative;width:68px;height:68px;flex-shrink:0;cursor:pointer; }
+    .cx-score-ring-svg { position:absolute;inset:0; }
+    .cx-mini-avatar { width:52px;height:52px;border-radius:50%;border:3px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%); }
+    .cx-score-num { font-size:20px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;line-height:1; }
+    .cx-score-sub { font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted); }
+    .cx-mini-name { font-size:13px;font-weight:700;color:var(--text);line-height:1.3; }
+    .cx-mini-role { font-size:10.5px;color:var(--text-muted);margin-top:1px; }
+    .cx-breakdown-link { font-size:10.5px;color:var(--blue);cursor:pointer;margin-top:5px;display:inline-flex;align-items:center;gap:3px; }
+    .cx-breakdown-link:hover { text-decoration:underline; }
+    .cx-mini-stats { display:flex;border-top:1px solid var(--border);margin-top:10px;padding-top:9px; }
+    .cx-mini-stat { flex:1;text-align:center;border-right:1px solid var(--border);padding:3px 0;cursor:pointer; }
     .cx-mini-stat:last-child { border-right:none; }
-    .cx-mini-stat:hover { background:var(--grey-light);border-radius:6px; }
-    .cx-mini-stat-val { font-size:14px;font-weight:700;color:var(--primary);display:block; }
-    .cx-mini-stat-label { font-size:10px;color:var(--text-muted);font-weight:500; }
-    .cx-left-nav { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);padding:8px;box-shadow:var(--shadow-sm); }
-    .cx-left-nav-item { display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--text-2);cursor:pointer;transition:var(--transition);text-decoration:none; }
-    .cx-left-nav-item:hover { background:var(--grey-light);color:var(--text); }
-    .cx-left-nav-item.active { background:var(--primary-tint);color:var(--primary);font-weight:600; }
-    .cx-left-nav-item .nav-icon { font-size:18px;width:22px;text-align:center; }
-    .cx-section-label { font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);padding:10px 12px 4px; }
-    .cx-topics-wrap { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow-sm); }
-    .cx-topic-tag { display:inline-flex;align-items:center;padding:5px 10px;background:var(--grey-light);border-radius:14px;font-size:12px;font-weight:500;color:var(--text-2);margin:3px 2px;cursor:pointer;transition:var(--transition);border:1px solid transparent; }
-    .cx-topic-tag:hover { background:var(--primary-tint);border-color:rgba(11,61,46,0.15);color:var(--primary); }
+    .cx-mini-stat:hover .cx-mini-stat-val { color:var(--accent); }
+    .cx-mini-stat-val { font-size:13px;font-weight:700;color:var(--text);display:block;font-family:'JetBrains Mono',monospace; }
+    .cx-mini-stat-label { font-size:9.5px;color:var(--text-muted);font-weight:500; }
 
-    /* ── FEED ── */
-    .cx-feed { display:flex;flex-direction:column;gap:14px;min-width:0; }
-    .cx-feed-filter { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);padding:4px;display:flex;gap:4px;box-shadow:var(--shadow-sm); }
-    .cx-filter-tab { flex:1;padding:8px 4px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-muted);background:none;border:none;cursor:pointer;transition:var(--transition);text-align:center; }
-    .cx-filter-tab.active { background:var(--primary-tint);color:var(--primary);font-weight:600; }
+    /* Left nav */
+    .cx-left-nav { padding:5px; }
+    .cx-left-nav-item { display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:5px;font-size:12.5px;font-weight:500;color:var(--text-2);cursor:pointer;transition:var(--t);text-decoration:none;position:relative; }
+    .cx-left-nav-item:hover { background:var(--surface-2);color:var(--text); }
+    .cx-left-nav-item.active { background:rgba(0,200,150,.09);color:var(--accent);font-weight:600; }
+    .cx-left-nav-item .nav-icon { font-size:15px;width:19px;text-align:center; }
+    .cx-section-label { font-size:10px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--text-muted);padding:8px 10px 3px; }
 
-    /* ── CREATE POST ── */
-    .cx-create-post { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm); }
-    .cx-create-top { display:flex;gap:10px;align-items:center; }
-    .cx-create-input { flex:1;height:44px;padding:10px 16px;border:1.5px solid var(--grey-mid);border-radius:24px;font-size:14px;color:var(--text);background:var(--off-white);outline:none;transition:var(--transition);cursor:pointer;resize:none; }
-    .cx-create-input:focus { background:var(--white);border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,61,46,0.07);cursor:text; }
-    .cx-create-input::placeholder { color:var(--text-faint); }
-    .cx-create-actions { display:flex;gap:4px;margin-top:10px;padding-top:10px;border-top:1px solid var(--grey-light);align-items:center; }
-    .cx-create-btn { display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:6px;font-size:12.5px;font-weight:600;color:var(--text-2);background:none;border:none;cursor:pointer;transition:var(--transition); }
-    .cx-create-btn:hover { background:var(--grey-light);color:var(--text); }
-    .cx-post-btn { margin-left:auto;padding:8px 22px;background:var(--primary);color:white;border-radius:20px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:var(--transition); }
-    .cx-post-btn:hover { background:var(--primary-mid); }
+    /* Challenges widget */
+    .cx-challenges { padding:13px; }
+    .cx-ch-hdr { display:flex;justify-content:space-between;align-items:center;margin-bottom:11px; }
+    .cx-ch-title { font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-2); }
+    .cx-streak-badge { display:inline-flex;align-items:center;gap:3px;padding:3px 7px;background:rgba(240,160,32,.1);border:1px solid rgba(240,160,32,.25);border-radius:10px;font-size:10.5px;font-weight:700;color:var(--warning); }
+    .cx-ch-item { display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border); }
+    .cx-ch-item:last-child { border-bottom:none; }
+    .cx-ch-icon { font-size:15px;width:18px;text-align:center;flex-shrink:0; }
+    .cx-ch-info { flex:1;min-width:0; }
+    .cx-ch-label { font-size:11.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .cx-ch-bar { height:2px;background:var(--border);border-radius:2px;margin-top:3px;overflow:hidden; }
+    .cx-ch-bar-fill { height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease; }
+    .cx-ch-check { width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;transition:var(--t); }
+    .cx-ch-check.done { background:var(--accent);border-color:var(--accent);color:#050C18; }
 
-    /* ── POST CARD ── */
-    .cx-post-card { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow var(--transition); }
-    .cx-post-card:hover { box-shadow:var(--shadow-md); }
-    .cx-post-header { display:flex;gap:12px;padding:16px 16px 0;align-items:flex-start; }
+    /* FEED */
+    .cx-feed { display:flex;flex-direction:column;gap:11px;min-width:0; }
+    .cx-feed-filter { background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:3px;display:flex;gap:2px; }
+    .cx-filter-tab { flex:1;padding:6px 4px;border-radius:5px;font-size:12px;font-weight:500;color:var(--text-muted);background:none;border:none;cursor:pointer;transition:var(--t);text-align:center; }
+    .cx-filter-tab:hover { color:var(--text); }
+    .cx-filter-tab.active { background:var(--surface-2);color:var(--accent);font-weight:600; }
+
+    /* Pulse Banner */
+    .cx-pulse { background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:12px 15px;display:flex;gap:0;align-items:center; }
+    .cx-pulse-stat { display:flex;flex-direction:column;align-items:center;flex:1;padding:0 8px; }
+    .cx-pulse-val { font-size:18px;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1; }
+    .cx-pulse-val.up { color:var(--accent); }
+    .cx-pulse-val.down { color:var(--danger); }
+    .cx-pulse-lbl { font-size:9.5px;color:var(--text-muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-top:2px; }
+    .cx-pulse-div { width:1px;height:34px;background:var(--border); }
+
+    /* Create Post */
+    .cx-create-post { background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px; }
+    .cx-create-top { display:flex;gap:9px;align-items:center; }
+    .cx-create-input { flex:1;height:40px;padding:9px 13px;border:1px solid var(--border);border-radius:20px;font-size:13px;color:var(--text);background:var(--surface-2);outline:none;transition:var(--t);cursor:pointer; }
+    .cx-create-input:focus { background:var(--surface-3);border-color:var(--blue);cursor:text; }
+    .cx-create-input::placeholder { color:var(--text-muted); }
+    .cx-create-actions { display:flex;gap:3px;margin-top:9px;padding-top:9px;border-top:1px solid var(--border);align-items:center; }
+    .cx-create-btn { display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:5px;font-size:11.5px;font-weight:600;color:var(--text-muted);cursor:pointer;transition:var(--t); }
+    .cx-create-btn:hover { background:var(--surface-2);color:var(--text); }
+    .cx-post-btn { margin-left:auto;padding:7px 18px;background:var(--accent);color:#050C18;border-radius:18px;font-size:12.5px;font-weight:700;border:none;cursor:pointer;transition:var(--t); }
+    .cx-post-btn:hover { background:var(--accent-dim); }
+
+    /* Post Card */
+    .cx-post-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color var(--t); }
+    .cx-post-card:hover { border-color:var(--border-strong); }
+    .cx-post-header { display:flex;gap:10px;padding:13px 13px 0;align-items:flex-start; }
     .cx-post-author-info { flex:1;min-width:0; }
-    .cx-post-name-row { display:flex;align-items:center;gap:6px;flex-wrap:wrap; }
-    .cx-post-name { font-size:14.5px;font-weight:700;color:var(--text);cursor:pointer; }
-    .cx-post-name:hover { color:var(--primary);text-decoration:underline; }
-    .cx-verified { color:var(--primary);font-size:14px; }
-    .cx-role-badge { display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:600; }
-    .cx-type-badge { display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase; }
-    .cx-type-solution  { background:#EEF4FF;color:#065F46; }
-    .cx-type-funding   { background:#FEF3C7;color:#92400E; }
-    .cx-type-research  { background:#EDE9FE;color:#5B21B6; }
-    .cx-type-update    { background:#F3F4F6;color:#374151; }
-    .cx-post-company { font-size:12px;color:var(--text-muted);margin-top:1px; }
-    .cx-post-meta { display:flex;align-items:center;gap:6px;margin-top:2px;font-size:12px;color:var(--text-faint); }
-    .cx-dot { width:3px;height:3px;border-radius:50%;background:currentColor; }
-    .cx-post-more { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text-muted);cursor:pointer;transition:var(--transition);position:relative; }
-    .cx-post-more:hover { background:var(--grey-light);color:var(--text); }
-    .cx-post-menu { position:absolute;top:36px;right:0;background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius-sm);box-shadow:var(--shadow-md);min-width:160px;z-index:100;display:none; }
+    .cx-post-name-row { display:flex;align-items:center;gap:5px;flex-wrap:wrap; }
+    .cx-post-name { font-size:13.5px;font-weight:700;color:var(--text);cursor:pointer; }
+    .cx-post-name:hover { color:var(--accent); }
+    .cx-verified { color:var(--accent);font-size:12px; }
+    .cx-role-badge { display:inline-flex;align-items:center;padding:2px 6px;border-radius:3px;font-size:9.5px;font-weight:700;letter-spacing:.2px; }
+    .cx-type-badge { display:inline-flex;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase; }
+    .cx-type-solution { background:rgba(0,200,150,.1);color:var(--accent);border:1px solid rgba(0,200,150,.2); }
+    .cx-type-funding  { background:rgba(232,160,32,.1);color:var(--gold);border:1px solid rgba(232,160,32,.2); }
+    .cx-type-research { background:rgba(160,100,255,.1);color:#A064FF;border:1px solid rgba(160,100,255,.2); }
+    .cx-type-update   { background:rgba(138,168,196,.1);color:var(--text-2);border:1px solid rgba(138,168,196,.15); }
+    .cx-post-company { font-size:11px;color:var(--text-muted);margin-top:1px; }
+    .cx-post-meta { display:flex;align-items:center;gap:4px;margin-top:1px;font-size:11px;color:var(--text-muted); }
+    .cx-dot { width:2px;height:2px;border-radius:50%;background:currentColor; }
+    .cx-post-more { width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-muted);cursor:pointer;transition:var(--t);position:relative; }
+    .cx-post-more:hover { background:var(--surface-2);color:var(--text); }
+    .cx-post-menu { position:absolute;top:30px;right:0;background:var(--surface-2);border:1px solid var(--border-strong);border-radius:var(--r-sm);box-shadow:var(--shadow);min-width:160px;z-index:100;display:none; }
     .cx-post-menu.open { display:block; }
-    .cx-post-menu-item { padding:10px 14px;font-size:13px;cursor:pointer;color:var(--text-2);transition:var(--transition); }
-    .cx-post-menu-item:hover { background:var(--grey-light); }
-    .cx-post-menu-item.danger { color:#EF4444; }
-    .cx-post-body { padding:12px 16px 0; }
-    .cx-post-text { font-size:14px;line-height:1.65;color:var(--text-2);white-space:pre-wrap;word-break:break-word; }
+    .cx-post-menu-item { padding:8px 12px;font-size:12px;cursor:pointer;color:var(--text-2);transition:var(--t); }
+    .cx-post-menu-item:hover { background:var(--surface-3);color:var(--text); }
+    .cx-post-menu-item.danger { color:var(--danger); }
+    .cx-post-body { padding:9px 13px 0; }
+    .cx-post-text { font-size:13.5px;line-height:1.65;color:var(--text-2);white-space:pre-wrap;word-break:break-word; }
     .cx-post-text.clamped { display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden; }
-    .cx-see-more-btn { background:none;border:none;color:var(--primary);font-size:13px;font-weight:600;cursor:pointer;padding:4px 0 0;display:block; }
-    .cx-post-tags { display:flex;flex-wrap:wrap;gap:5px;padding:8px 16px 0; }
-    .cx-hashtag { font-size:12.5px;font-weight:500;color:var(--primary);cursor:pointer;padding:2px 0; }
+    .cx-see-more-btn { background:none;border:none;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;padding:3px 0 0;display:block; }
+    .cx-post-tags { display:flex;flex-wrap:wrap;gap:4px;padding:5px 13px 0; }
+    .cx-hashtag { font-size:11.5px;font-weight:600;color:var(--blue);cursor:pointer;padding:2px 0; }
     .cx-hashtag:hover { text-decoration:underline; }
-    .cx-post-stats { display:flex;justify-content:space-between;padding:6px 16px 0;font-size:12px;color:var(--text-faint); }
-    .cx-post-actions { display:flex;gap:2px;padding:4px 8px;border-top:1px solid var(--grey-light);margin-top:6px; }
-    .cx-action-btn { flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 4px;border-radius:6px;font-size:13px;font-weight:500;color:var(--text-muted);background:none;border:none;cursor:pointer;transition:var(--transition); }
-    .cx-action-btn:hover { background:var(--grey-light);color:var(--text); }
-    .cx-action-btn.liked { color:#EF4444; }
-    .cx-action-btn.liked:hover { background:#FEF2F2; }
-    .cx-action-btn.bookmarked { color:var(--primary); }
-    .cx-action-btn .act-icon { font-size:17px; }
-    /* ── COMMENTS ── */
-    .cx-comments-wrap { border-top:1px solid var(--grey-light);padding:12px 16px;background:var(--off-white);display:none; }
+    .cx-post-stats { display:flex;justify-content:space-between;padding:5px 13px 0;font-size:11px;color:var(--text-muted); }
+
+    /* Post Actions */
+    .cx-post-actions { display:flex;gap:1px;padding:3px 5px;border-top:1px solid var(--border);margin-top:5px; }
+    .cx-action-btn { flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 3px;border-radius:5px;font-size:12px;font-weight:500;color:var(--text-muted);background:none;border:none;cursor:pointer;transition:var(--t); }
+    .cx-action-btn:hover { background:var(--surface-2);color:var(--text); }
+    .cx-action-btn.reacted { color:var(--accent); }
+    .cx-action-btn.bookmarked { color:var(--blue); }
+    .cx-action-btn .act-icon { font-size:15px; }
+
+    /* Reaction Picker */
+    .cx-react-wrap { position:relative;flex:1;display:flex; }
+    .cx-react-picker { position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:var(--surface-2);border:1px solid var(--border-strong);border-radius:22px;padding:5px 9px;display:none;gap:6px;z-index:200;box-shadow:var(--shadow);white-space:nowrap; }
+    .cx-react-picker.open { display:flex; }
+    .cx-react-opt { display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 5px;border-radius:8px;transition:var(--t);border:none;background:none; }
+    .cx-react-opt:hover { background:var(--surface-3);transform:scale(1.18); }
+    .cx-react-opt .r-em { font-size:19px;line-height:1; }
+    .cx-react-opt .r-lb { font-size:8.5px;color:var(--text-muted);font-weight:600; }
+    .cx-react-opt.active .r-em { filter:drop-shadow(0 0 5px rgba(0,200,150,.7)); }
+
+    /* Comments */
+    .cx-comments-wrap { border-top:1px solid var(--border);padding:11px 13px;background:var(--surface-2);display:none; }
     .cx-comments-wrap.open { display:block; }
-    .cx-comment { display:flex;gap:10px;margin-bottom:12px; }
-    .cx-comment-bubble { flex:1;background:var(--white);border:1px solid var(--grey-mid);border-radius:12px 12px 12px 4px;padding:10px 12px; }
-    .cx-comment-author { font-size:12.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px;margin-bottom:3px; }
-    .cx-comment-text { font-size:13px;color:var(--text-2);line-height:1.55; }
-    .cx-comment-meta { display:flex;gap:12px;margin-top:5px;font-size:11.5px;color:var(--text-faint); }
-    .cx-comment-meta button { color:var(--text-faint);font-size:11.5px;font-weight:500;cursor:pointer;background:none;border:none; }
-    .cx-comment-meta button:hover { color:var(--primary); }
-    .cx-add-comment { display:flex;gap:10px;margin-top:10px;align-items:center; }
-    .cx-comment-input { flex:1;padding:9px 14px;border:1.5px solid var(--grey-mid);border-radius:20px;font-size:13px;outline:none;transition:var(--transition);background:var(--white); }
-    .cx-comment-input:focus { border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,61,46,0.07); }
-    .cx-comment-submit { padding:9px 16px;background:var(--primary);color:white;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;transition:var(--transition);border:none; }
-    .cx-comment-submit:hover { background:var(--primary-mid); }
-    /* ── RIGHT PANEL ── */
-    .cx-right-panel { display:flex;flex-direction:column;gap:14px;position:sticky;top:calc(var(--nav-h) + 16px); }
-    .cx-sidebar-section { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm); }
-    .cx-sidebar-header { font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center; }
-    .cx-sidebar-link { font-size:12px;font-weight:500;color:var(--primary);cursor:pointer; }
-    .cx-sidebar-link:hover { text-decoration:underline; }
-    .cx-people-item { display:flex;gap:10px;align-items:center;margin-bottom:12px; }
+    .cx-comment { display:flex;gap:8px;margin-bottom:9px; }
+    .cx-comment-bubble { flex:1;background:var(--surface-3);border:1px solid var(--border);border-radius:8px 8px 8px 3px;padding:8px 10px; }
+    .cx-comment-author { font-size:11.5px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:5px;margin-bottom:2px; }
+    .cx-comment-text { font-size:12px;color:var(--text-2);line-height:1.55; }
+    .cx-comment-meta { display:flex;gap:9px;margin-top:4px;font-size:10.5px;color:var(--text-muted); }
+    .cx-comment-meta button { color:var(--text-muted);font-size:10.5px;font-weight:500;cursor:pointer;background:none;border:none; }
+    .cx-comment-meta button:hover { color:var(--accent); }
+    .cx-add-comment { display:flex;gap:8px;margin-top:9px;align-items:center; }
+    .cx-comment-input { flex:1;padding:7px 12px;border:1px solid var(--border);border-radius:18px;font-size:12px;outline:none;background:var(--surface-3);color:var(--text);transition:var(--t); }
+    .cx-comment-input:focus { border-color:var(--blue); }
+    .cx-comment-input::placeholder { color:var(--text-muted); }
+    .cx-comment-submit { padding:7px 13px;background:var(--blue);color:white;border-radius:18px;font-size:11.5px;font-weight:600;cursor:pointer;border:none;transition:var(--t); }
+    .cx-comment-submit:hover { background:var(--blue-dim); }
+
+    /* RIGHT PANEL */
+    .cx-right-panel { display:flex;flex-direction:column;gap:11px;position:sticky;top:calc(var(--nav-h) + 13px); }
+    .cx-sb { padding:13px; }
+    .cx-sb-hdr { font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-2);margin-bottom:11px;display:flex;justify-content:space-between;align-items:center; }
+    .cx-sb-link { font-size:10.5px;font-weight:600;color:var(--blue);cursor:pointer;text-transform:none;letter-spacing:0; }
+    .cx-sb-link:hover { text-decoration:underline; }
+
+    /* Leaderboard */
+    .cx-lb-tabs { display:flex;gap:2px;margin-bottom:10px; }
+    .cx-lb-tab { flex:1;padding:4px 3px;border-radius:4px;font-size:10px;font-weight:700;color:var(--text-muted);background:none;border:1px solid var(--border);cursor:pointer;text-align:center;transition:var(--t); }
+    .cx-lb-tab.active { background:rgba(0,200,150,.08);color:var(--accent);border-color:rgba(0,200,150,.3); }
+    .cx-lb-item { display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border); }
+    .cx-lb-item:last-child { border-bottom:none; }
+    .cx-lb-item.is-me { background:rgba(0,200,150,.05);border-radius:4px;padding:5px 5px;margin:0 -5px; }
+    .cx-lb-rank { font-size:11px;font-weight:800;width:20px;text-align:center;font-family:'JetBrains Mono',monospace;flex-shrink:0; }
+    .cx-lb-rank.r1 { color:var(--gold); }
+    .cx-lb-rank.r2 { color:var(--silver); }
+    .cx-lb-rank.r3 { color:var(--bronze); }
+    .cx-lb-rank.rn { color:var(--text-muted); }
+    .cx-lb-info { flex:1;min-width:0; }
+    .cx-lb-name { font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .cx-lb-sc { font-size:10.5px;color:var(--text-muted);font-family:'JetBrains Mono',monospace; }
+    .cx-lb-trend { font-size:11px;font-weight:700;width:14px;text-align:center;flex-shrink:0; }
+    .cx-lb-trend.up { color:var(--accent); }
+    .cx-lb-trend.dn { color:var(--danger); }
+    .cx-lb-trend.st { color:var(--text-muted); }
+    .cx-lb-my-rank { margin-top:8px;padding:7px 9px;background:var(--surface-2);border-radius:5px;display:flex;justify-content:space-between;align-items:center;font-size:11.5px; }
+    .cx-lb-my-rank span:first-child { color:var(--text-muted); }
+    .cx-lb-my-rank span:last-child { font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace; }
+
+    /* Battle Widget */
+    .cx-battle-card { padding:9px;background:var(--surface-2);border-radius:var(--r-sm);border:1px solid var(--border);margin-bottom:7px; }
+    .cx-battle-card:last-child { margin-bottom:0; }
+    .cx-battle-ttl { font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.4; }
+    .cx-battle-sides { display:grid;grid-template-columns:1fr auto 1fr;gap:5px;align-items:center;margin-bottom:7px; }
+    .cx-bat-side { padding:6px 5px;border-radius:5px;border:1.5px solid var(--border);cursor:pointer;text-align:center;transition:var(--t);background:none;width:100%; }
+    .cx-bat-side:hover { border-color:var(--blue);background:rgba(27,117,214,.07); }
+    .cx-bat-side.voted { border-color:var(--accent);background:rgba(0,200,150,.07); }
+    .cx-bat-side .b-icon { font-size:15px;display:block; }
+    .cx-bat-side .b-label { font-size:10px;font-weight:600;color:var(--text-2);display:block;margin-top:1px; }
+    .cx-bat-side .b-cnt { font-size:12px;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace; }
+    .cx-bat-vs { font-size:9px;font-weight:800;color:var(--text-muted);letter-spacing:.5px;text-align:center; }
+    .cx-bat-bar { height:3px;background:var(--border);border-radius:2px;overflow:hidden; }
+    .cx-bat-bar-fill { height:100%;background:linear-gradient(90deg,var(--blue),var(--accent));border-radius:2px;transition:width .5s ease; }
+
+    /* People / Trending / Funding */
+    .cx-people-item { display:flex;gap:8px;align-items:center;margin-bottom:9px; }
     .cx-people-item:last-child { margin-bottom:0; }
     .cx-people-info { flex:1;min-width:0; }
-    .cx-people-name { font-size:13.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .cx-people-meta { font-size:11.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-    .cx-follow-btn { padding:5px 14px;border:1.5px solid var(--primary);border-radius:14px;font-size:12px;font-weight:600;color:var(--primary);background:none;cursor:pointer;transition:var(--transition);flex-shrink:0; }
-    .cx-follow-btn:hover { background:var(--primary);color:white; }
-    .cx-follow-btn.following { background:var(--primary-tint);border-color:transparent; }
-    .cx-trending-item { display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:5px 0;transition:var(--transition); }
-    .cx-trending-item:hover { opacity:0.75; }
-    .cx-trending-tag { font-size:13px;font-weight:600;color:var(--primary); }
-    .cx-funding-item { padding:10px;border:1px solid var(--grey-mid);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;transition:var(--transition); }
-    .cx-funding-item:hover { border-color:var(--primary);background:var(--primary-tint); }
-    .cx-funding-item:last-child { margin-bottom:0; }
-    .cx-funding-item-name { font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px; }
-    .cx-funding-item-ask { font-size:12px;color:var(--primary);font-weight:600; }
-    .cx-score-pill { display:inline-flex;align-items:center;padding:2px 7px;background:var(--primary-tint);border-radius:8px;font-size:11px;font-weight:700;color:var(--primary); }
-    /* ── MODAL ── */
-    .cx-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
+    .cx-people-name { font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .cx-people-meta { font-size:10.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .cx-follow-btn { padding:4px 11px;border:1px solid var(--border-strong);border-radius:11px;font-size:11px;font-weight:600;color:var(--text-2);background:none;cursor:pointer;transition:var(--t);flex-shrink:0; }
+    .cx-follow-btn:hover { background:var(--accent);border-color:var(--accent);color:#050C18; }
+    .cx-follow-btn.following { background:rgba(0,200,150,.1);border-color:transparent;color:var(--accent); }
+    .cx-trending-item { display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:4px 0;transition:var(--t); }
+    .cx-trending-item:hover { opacity:.8; }
+    .cx-trending-tag { font-size:12px;font-weight:600;color:var(--blue); }
+    .cx-fi { padding:8px;border:1px solid var(--border);border-radius:var(--r-sm);margin-bottom:6px;cursor:pointer;transition:var(--t); }
+    .cx-fi:hover { border-color:var(--accent);background:rgba(0,200,150,.03); }
+    .cx-fi:last-child { margin-bottom:0; }
+    .cx-fi-name { font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:2px; }
+    .cx-fi-ask { font-size:11px;color:var(--accent);font-weight:600; }
+    .cx-score-pill { display:inline-flex;align-items:center;padding:1px 6px;background:rgba(0,200,150,.1);border-radius:6px;font-size:10px;font-weight:700;color:var(--accent); }
+
+    /* MODALS */
+    .cx-overlay { position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
     .cx-overlay.open { display:flex; }
-    .cx-modal { background:var(--white);border-radius:16px;width:100%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;animation:modalIn 0.2s ease; }
-    @keyframes modalIn { from{opacity:0;transform:scale(0.96) translateY(8px);}to{opacity:1;transform:scale(1) translateY(0);} }
-    .cx-modal-head { display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--grey-mid); }
-    .cx-modal-title { font-size:16px;font-weight:700; }
-    .cx-close-btn { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text-muted);cursor:pointer; }
-    .cx-close-btn:hover { background:var(--grey-light); }
-    .cx-modal-body { padding:20px; }
-    .cx-type-tabs { display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap; }
-    .cx-type-tab { padding:6px 14px;border-radius:20px;font-size:12.5px;font-weight:600;color:var(--text-muted);background:var(--grey-light);border:1.5px solid transparent;cursor:pointer;transition:var(--transition);display:flex;align-items:center;gap:5px; }
-    .cx-type-tab.active { background:var(--primary-tint);border-color:rgba(11,61,46,0.2);color:var(--primary); }
-    .cx-modal-textarea { width:100%;min-height:140px;padding:14px;border:1.5px solid var(--grey-mid);border-radius:var(--radius-sm);font-size:14px;line-height:1.65;color:var(--text);resize:vertical;outline:none;transition:var(--transition); }
-    .cx-modal-textarea:focus { border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,61,46,0.07); }
-    .cx-modal-textarea::placeholder { color:var(--text-faint); }
-    .cx-tags-input { width:100%;padding:10px 14px;border:1.5px solid var(--grey-mid);border-radius:var(--radius-sm);font-size:13.5px;outline:none;transition:var(--transition);margin-top:10px; }
-    .cx-tags-input:focus { border-color:var(--primary);box-shadow:0 0 0 3px rgba(11,61,46,0.07); }
-    .cx-modal-foot { display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid var(--grey-mid);gap:12px; }
-    .cx-modal-post-btn { padding:10px 28px;background:var(--primary);color:white;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:var(--transition); }
-    .cx-modal-post-btn:hover { background:var(--primary-mid); }
-    .cx-modal-post-btn:disabled { opacity:0.4;cursor:not-allowed; }
-    .cx-char-count { font-size:12px;color:var(--text-faint); }
-    /* ── NOTIF PANEL ── */
-    .cx-notif-panel { position:absolute;top:calc(var(--nav-h) + 4px);right:20px;width:360px;background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);box-shadow:var(--shadow-md);z-index:300;display:none;overflow:hidden;max-height:480px;overflow-y:auto; }
+    .cx-modal { background:var(--surface);border:1px solid var(--border-strong);border-radius:12px;width:100%;max-width:600px;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden;animation:modalIn .2s ease; }
+    @keyframes modalIn { from{opacity:0;transform:scale(.96) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);} }
+    .cx-modal-head { display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border); }
+    .cx-modal-title { font-size:14px;font-weight:700;color:var(--text); }
+    .cx-close-btn { width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text-muted);cursor:pointer; }
+    .cx-close-btn:hover { background:var(--surface-2);color:var(--text); }
+    .cx-modal-body { padding:16px;max-height:72vh;overflow-y:auto; }
+    .cx-type-tabs { display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap; }
+    .cx-type-tab { padding:5px 12px;border-radius:18px;font-size:11.5px;font-weight:600;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);cursor:pointer;transition:var(--t); }
+    .cx-type-tab.active { background:rgba(0,200,150,.1);border-color:rgba(0,200,150,.3);color:var(--accent); }
+    .cx-modal-textarea { width:100%;min-height:128px;padding:11px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;line-height:1.65;color:var(--text);background:var(--surface-2);resize:vertical;outline:none;transition:var(--t); }
+    .cx-modal-textarea:focus { border-color:var(--blue); }
+    .cx-modal-textarea::placeholder { color:var(--text-muted); }
+    .cx-tags-input { width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:12.5px;outline:none;margin-top:7px;background:var(--surface-2);color:var(--text);transition:var(--t); }
+    .cx-tags-input:focus { border-color:var(--blue); }
+    .cx-tags-input::placeholder { color:var(--text-muted); }
+    .cx-modal-foot { display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-top:1px solid var(--border);gap:10px; }
+    .cx-modal-post-btn { padding:9px 22px;background:var(--accent);color:#050C18;border-radius:18px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:var(--t); }
+    .cx-modal-post-btn:hover { background:var(--accent-dim); }
+    .cx-modal-post-btn:disabled { opacity:.3;cursor:not-allowed; }
+    .cx-char-count { font-size:11px;color:var(--text-muted); }
+
+    /* Score Breakdown Modal */
+    .cx-sb-score-big { text-align:center;padding:18px;background:var(--surface-2);border-radius:var(--r);margin-bottom:16px; }
+    .cx-score-giant { font-size:52px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;line-height:1; }
+    .cx-score-giant-lbl { font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-top:4px; }
+    .cx-rules-grid { display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px; }
+    .cx-rule { padding:9px;background:var(--surface-2);border-radius:var(--r-sm);border:1px solid var(--border); }
+    .cx-rule-row { display:flex;justify-content:space-between;align-items:center; }
+    .cx-rule-lbl { font-size:11.5px;color:var(--text-2); }
+    .cx-rule-delta { font-size:12.5px;font-weight:800;font-family:'JetBrains Mono',monospace; }
+    .cx-rule-delta.pos { color:var(--accent); }
+    .cx-rule-delta.neg { color:var(--danger); }
+    .cx-hist-list { display:flex;flex-direction:column;gap:5px; }
+    .cx-hist-item { display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--surface-2);border-radius:var(--r-sm);border-left:3px solid transparent; }
+    .cx-hist-item.pos { border-left-color:var(--accent); }
+    .cx-hist-item.neg { border-left-color:var(--danger); }
+    .cx-hist-reason { font-size:11.5px;color:var(--text-2); }
+    .cx-hist-right { text-align:right; }
+    .cx-hist-delta { font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;display:block; }
+    .cx-hist-time { font-size:10px;color:var(--text-muted); }
+
+    /* Full Leaderboard Modal */
+    .cx-lb-modal-tabs { display:flex;gap:5px;margin-bottom:14px; }
+    .cx-lb-modal-tab { flex:1;padding:7px;border-radius:5px;font-size:11.5px;font-weight:600;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);cursor:pointer;text-align:center;transition:var(--t); }
+    .cx-lb-modal-tab.active { background:rgba(0,200,150,.1);border-color:rgba(0,200,150,.3);color:var(--accent); }
+    .cx-lb-modal-item { display:flex;align-items:center;gap:9px;padding:9px;background:var(--surface-2);border-radius:var(--r-sm);margin-bottom:5px; }
+    .cx-lb-modal-item.is-me { background:rgba(0,200,150,.05);border:1px solid rgba(0,200,150,.2); }
+    .cx-lb-modal-rank { font-size:13px;font-weight:800;width:26px;text-align:center;font-family:'JetBrains Mono',monospace;flex-shrink:0; }
+    .cx-lb-modal-info { flex:1;min-width:0; }
+    .cx-lb-modal-name { font-size:13px;font-weight:700;color:var(--text); }
+    .cx-lb-modal-role { font-size:10.5px;color:var(--text-muted); }
+    .cx-lb-modal-score-val { font-size:15px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace; }
+    .cx-lb-modal-trend { font-size:12px;font-weight:700;margin-left:4px; }
+
+    /* Onboarding */
+    .cx-onboard-banner { background:linear-gradient(135deg,#061830,#0D2E1A);border:1px solid rgba(0,200,150,.18);border-radius:var(--r);padding:16px; }
+    .cx-onboard-title { font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:5px; }
+    .cx-onboard-desc { font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:11px; }
+    .cx-onboard-btn { display:block;padding:8px;background:var(--accent);color:#050C18;border-radius:6px;font-size:12.5px;font-weight:700;text-align:center;transition:var(--t); }
+    .cx-onboard-btn:hover { background:var(--accent-dim); }
+
+    /* Notification Panel */
+    .cx-notif-panel { position:absolute;top:calc(var(--nav-h) + 4px);right:20px;width:372px;background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--r);box-shadow:var(--shadow);z-index:300;display:none;overflow:hidden;max-height:490px;overflow-y:auto; }
     .cx-notif-panel.open { display:block; }
-    .cx-notif-head { display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--grey-mid);font-size:14px;font-weight:700;color:var(--text);position:sticky;top:0;background:var(--white); }
-    .cx-notif-mark { font-size:12px;font-weight:500;color:var(--primary);cursor:pointer; }
+    .cx-notif-head { display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);position:sticky;top:0;background:var(--surface);z-index:1; }
+    .cx-notif-mark { font-size:11px;font-weight:500;color:var(--blue);cursor:pointer; }
     .cx-notif-mark:hover { text-decoration:underline; }
-    .cx-notif-item { display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid var(--grey-light);cursor:pointer;transition:var(--transition); }
-    .cx-notif-item:hover { background:var(--off-white); }
-    .cx-notif-item.unread { background:var(--primary-tint); }
-    .cx-notif-dot { width:8px;height:8px;background:var(--primary);border-radius:50%;flex-shrink:0;margin-top:5px; }
+    .cx-notif-cat { padding:5px 13px;font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);background:var(--surface-2);border-bottom:1px solid var(--border); }
+    .cx-notif-item { display:flex;gap:9px;padding:10px 13px;border-bottom:1px solid var(--border);cursor:pointer;transition:var(--t); }
+    .cx-notif-item:hover { background:var(--surface-2); }
+    .cx-notif-item.unread { background:rgba(27,117,214,.05); }
+    .cx-notif-item.imp { border-left:3px solid var(--warning); }
+    .cx-notif-dot { width:6px;height:6px;background:var(--blue);border-radius:50%;flex-shrink:0;margin-top:5px; }
     .cx-notif-dot.hidden { opacity:0; }
-    .cx-notif-text { font-size:13px;color:var(--text-2);line-height:1.5; }
-    .cx-notif-time { font-size:11px;color:var(--text-faint);margin-top:2px; }
-    .cx-notif-empty { padding:32px;text-align:center;color:var(--text-muted);font-size:13.5px; }
-    /* ── TOAST ── */
-    .cx-toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1F2937;color:white;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:500;z-index:9999;transition:transform 0.3s ease;white-space:nowrap;pointer-events:none; }
+    .cx-notif-text { font-size:12px;color:var(--text-2);line-height:1.5; }
+    .cx-notif-time { font-size:10px;color:var(--text-muted);margin-top:1px; }
+    .cx-notif-empty { padding:28px;text-align:center;color:var(--text-muted);font-size:12.5px; }
+
+    /* Toast */
+    .cx-toast { position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text);padding:10px 16px;border-radius:8px;font-size:12.5px;font-weight:500;z-index:9999;transition:transform .3s ease;white-space:nowrap;pointer-events:none;box-shadow:var(--shadow); }
     .cx-toast.show { transform:translateX(-50%) translateY(0); }
-    /* ── LOAD MORE ── */
-    .cx-load-more { text-align:center;padding:16px; }
-    .cx-load-more-btn { padding:10px 28px;border:1.5px solid var(--grey-mid);border-radius:20px;font-size:13px;font-weight:600;color:var(--text-2);cursor:pointer;background:var(--white);transition:var(--transition); }
-    .cx-load-more-btn:hover { border-color:var(--primary);color:var(--primary);background:var(--primary-tint); }
-    /* ── ONBOARDING BANNER ── */
-    .cx-onboard-banner { background:linear-gradient(135deg,#0A1F44,#123A6F);border-radius:var(--radius);padding:20px;color:white;box-shadow:var(--shadow-md); }
-    .cx-onboard-title { font-size:15px;font-weight:700;margin-bottom:6px; }
-    .cx-onboard-desc { font-size:13px;opacity:0.85;line-height:1.6;margin-bottom:14px; }
-    .cx-onboard-btn { display:block;padding:10px;background:white;color:var(--primary);border-radius:8px;font-size:13px;font-weight:700;text-align:center;cursor:pointer;transition:var(--transition); }
-    .cx-onboard-btn:hover { opacity:0.92; }
-    /* ── RESPONSIVE ── */
-    @media(max-width:1024px){.cx-layout{grid-template-columns:200px 1fr}.cx-right-panel{display:none}}
-    @media(max-width:700px){.cx-layout{grid-template-columns:1fr;padding:0 12px}.cx-left-panel{display:none}.cx-nav-links{display:none}}
+
+    /* Score float */
+    .score-float { position:fixed;font-size:14px;font-weight:800;pointer-events:none;z-index:9999;animation:scoreFloat 1.6s ease forwards;font-family:'JetBrains Mono',monospace; }
+    @keyframes scoreFloat { 0%{opacity:1;transform:translateY(0);}60%{opacity:1;}100%{opacity:0;transform:translateY(-44px);} }
+
+    .cx-load-more { text-align:center;padding:12px; }
+    .cx-load-more-btn { padding:8px 22px;border:1px solid var(--border-strong);border-radius:18px;font-size:12px;font-weight:600;color:var(--text-2);cursor:pointer;background:var(--surface);transition:var(--t); }
+    .cx-load-more-btn:hover { border-color:var(--accent);color:var(--accent); }
+
+    /* Responsive */
+    @media(max-width:1060px){.cx-layout{grid-template-columns:220px 1fr}.cx-right-panel{display:none}}
+    @media(max-width:700px){.cx-layout{grid-template-columns:1fr;padding:0 10px}.cx-left-panel{display:none}.cx-nav-links{display:none}}
   </style>
 </head>
 <body>
@@ -245,10 +384,12 @@
     <input type="text" placeholder="Search posts, people, topics…" id="searchInput" autocomplete="off" />
   </div>
   <nav class="cx-nav-links">
-    <a href="community.html" class="cx-nav-link active"><span class="nav-icon">🏠</span>Feed</a>
-    <a href="forum.html"     class="cx-nav-link"><span class="nav-icon">💬</span>Forum</a>
-    <a href="funding-hub.html" class="cx-nav-link"><span class="nav-icon">💰</span>Funding</a>
-    <a href="community-profile.html" class="cx-nav-link"><span class="nav-icon">👤</span>Network</a>
+    <a href="community.html"         class="cx-nav-link active"><span class="nav-icon">🏠</span>Feed</a>
+    <a href="leaderboard.html"       class="cx-nav-link"><span class="nav-icon">🏆</span>Rankings</a>
+    <a href="solutions.html"         class="cx-nav-link"><span class="nav-icon">💡</span>Solutions</a>
+    <a href="forum.html"             class="cx-nav-link"><span class="nav-icon">💬</span>Forum</a>
+    <a href="funding-hub.html"       class="cx-nav-link"><span class="nav-icon">💰</span>Funding</a>
+    <a href="battles.html"           class="cx-nav-link"><span class="nav-icon">⚔️</span>Battles</a>
     <div class="cx-notif-wrap">
       <button class="cx-nav-link" id="notifBtn" onclick="toggleNotifPanel()">
         <span class="nav-icon">🔔</span>Alerts
@@ -257,15 +398,13 @@
     </div>
   </nav>
   <div class="cx-nav-right" id="navRight">
-    <!-- Guest state: shown when not logged in -->
-    <div id="navGuest" style="display:flex;align-items:center;gap:8px;">
-      <a href="community-login.html" style="padding:6px 14px;font-size:13px;font-weight:600;color:var(--text-muted);border:1px solid var(--grey-mid);border-radius:4px;text-decoration:none;transition:var(--transition);" onmouseover="this.style.background='var(--grey-light)'" onmouseout="this.style.background='none'">Sign In</a>
-      <a href="community-login.html?tab=create" style="padding:6px 14px;font-size:13px;font-weight:600;background:var(--primary);color:white;border:none;border-radius:4px;text-decoration:none;transition:var(--transition);" onmouseover="this.style.background='var(--primary-mid)'" onmouseout="this.style.background='var(--primary)'">Join Community</a>
+    <div id="navGuest" style="display:flex;align-items:center;gap:7px;">
+      <a href="community-login.html" style="padding:5px 13px;font-size:12.5px;font-weight:600;color:var(--text-muted);border:1px solid var(--border);border-radius:4px;">Sign In</a>
+      <a href="community-login.html?tab=create" style="padding:5px 13px;font-size:12.5px;font-weight:600;background:var(--accent);color:#050C18;border:none;border-radius:4px;">Join</a>
     </div>
-    <!-- Logged-in state: shown when authenticated -->
     <button class="cx-avatar-btn" id="navUserBtn" style="display:none" onclick="window.location.href='community-profile.html'">
-      <div class="cx-avatar" id="navAvatar" style="background:#0A1F44">?</div>
-      <span style="font-size:13px;font-weight:600;" id="navUserName">—</span>
+      <div class="cx-avatar" id="navAvatar" style="background:#0A1628">?</div>
+      <span style="font-size:12.5px;font-weight:600;" id="navUserName">—</span>
     </button>
   </div>
 </nav>
@@ -273,7 +412,7 @@
 <!-- NOTIFICATION PANEL -->
 <div class="cx-notif-panel" id="notifPanel">
   <div class="cx-notif-head">
-    Notifications
+    Alerts
     <span class="cx-notif-mark" onclick="markAllRead()">Mark all read</span>
   </div>
   <div id="notifList"></div>
@@ -284,15 +423,30 @@
 
   <!-- LEFT -->
   <aside class="cx-left-panel">
-    <div class="cx-profile-mini" id="miniProfileCard">
+
+    <!-- Profile mini with score ring -->
+    <div class="cx-card">
       <div class="cx-profile-mini-banner"></div>
       <div class="cx-profile-mini-body">
         <div class="cx-profile-mini-avatar-wrap">
-          <div class="cx-mini-avatar cx-avatar" id="miniAvatar" style="background:#0A1F44">?</div>
-          <div class="cx-score-badge" id="miniScore">⚡ 0</div>
+          <!-- Circular score ring -->
+          <div class="cx-score-ring-wrap" onclick="openScoreBreakdown()" title="View Score Breakdown">
+            <svg class="cx-score-ring-svg" viewBox="0 0 68 68" id="scoreRingSvg">
+              <circle cx="34" cy="34" r="28" fill="none" stroke="#1A2B40" stroke-width="5"/>
+              <circle cx="34" cy="34" r="28" fill="none" stroke="#00C896" stroke-width="5"
+                stroke-linecap="round" stroke-dasharray="175.9" stroke-dashoffset="175.9"
+                transform="rotate(-90 34 34)" id="scoreRingFill"/>
+            </svg>
+            <div class="cx-mini-avatar cx-avatar" id="miniAvatar" style="background:#0A1628">?</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="cx-score-num" id="miniScoreNum">0</div>
+            <div class="cx-score-sub">Climate Score</div>
+          </div>
         </div>
         <div class="cx-mini-name" id="miniName">—</div>
         <div class="cx-mini-role" id="miniRole">—</div>
+        <div class="cx-breakdown-link" onclick="openScoreBreakdown()">📊 Score breakdown →</div>
         <div class="cx-mini-stats">
           <div class="cx-mini-stat" onclick="window.location.href='community-profile.html'">
             <span class="cx-mini-stat-val" id="miniPosts">0</span>
@@ -310,29 +464,61 @@
       </div>
     </div>
 
-    <div class="cx-left-nav">
-      <a href="community.html" class="cx-left-nav-item active"><span class="nav-icon">🏠</span>My Feed</a>
+    <!-- Left nav -->
+    <div class="cx-card cx-left-nav">
+      <a href="community.html"         class="cx-left-nav-item active"><span class="nav-icon">🏠</span>My Feed</a>
       <a href="community-profile.html" class="cx-left-nav-item"><span class="nav-icon">👤</span>My Profile</a>
       <button class="cx-left-nav-item" style="width:100%;text-align:left;" onclick="showBookmarks()" id="bookmarkNavItem"><span class="nav-icon">🔖</span>Saved Posts</button>
-      <a href="forum.html" class="cx-left-nav-item"><span class="nav-icon">💬</span>Discussions</a>
-      <a href="funding-hub.html" class="cx-left-nav-item"><span class="nav-icon">💰</span>Funding Hub</a>
-      <a href="dashboard.html" class="cx-left-nav-item"><span class="nav-icon">📊</span>ESG Dashboard</a>
-      <a href="climactix-ai.html" class="cx-left-nav-item"><span class="nav-icon">🤖</span>AI Engine</a>
+      <a href="leaderboard.html"       class="cx-left-nav-item"><span class="nav-icon">🏆</span>Leaderboard</a>
+      <a href="solutions.html"         class="cx-left-nav-item"><span class="nav-icon">💡</span>Solution Hub</a>
+      <a href="forum.html"             class="cx-left-nav-item"><span class="nav-icon">💬</span>Discussions</a>
+      <a href="funding-hub.html"       class="cx-left-nav-item"><span class="nav-icon">💰</span>Funding Hub</a>
+      <a href="dashboard.html"         class="cx-left-nav-item"><span class="nav-icon">📊</span>ESG Dashboard</a>
+      <a href="climactix-ai.html"      class="cx-left-nav-item"><span class="nav-icon">🤖</span>AI Engine</a>
     </div>
 
-    <div class="cx-topics-wrap" id="interestsPanel">
-      <div class="cx-section-label">My Interests</div>
-      <div id="myInterestTags">—</div>
+    <!-- Daily Challenges Widget -->
+    <div class="cx-card cx-challenges">
+      <div class="cx-ch-hdr">
+        <div class="cx-ch-title">Today's Challenges</div>
+        <div class="cx-streak-badge" id="streakBadge">🔥 0d</div>
+      </div>
+      <div id="challengesList"></div>
     </div>
+
   </aside>
 
   <!-- FEED -->
   <section class="cx-feed">
-    <!-- Onboarding banner (shown for incomplete profiles) -->
+
+    <!-- Onboarding banner -->
     <div class="cx-onboard-banner" id="onboardBanner" style="display:none;">
       <div class="cx-onboard-title">🌱 Complete Your Climate Profile</div>
-      <div class="cx-onboard-desc">Add your role, bio, and climate interests so the community knows who you are and what you're working on.</div>
+      <div class="cx-onboard-desc">Add your role, bio, and climate interests so investors and the community know who you are.</div>
       <a href="community-profile.html" class="cx-onboard-btn">Set Up Profile →</a>
+    </div>
+
+    <!-- Climate Pulse Banner -->
+    <div class="cx-pulse" id="pulseBanner">
+      <div class="cx-pulse-stat">
+        <div class="cx-pulse-val" id="pulseScore">—</div>
+        <div class="cx-pulse-lbl">Climate Score</div>
+      </div>
+      <div class="cx-pulse-div"></div>
+      <div class="cx-pulse-stat">
+        <div class="cx-pulse-val" id="pulseRank">—</div>
+        <div class="cx-pulse-lbl">Global Rank</div>
+      </div>
+      <div class="cx-pulse-div"></div>
+      <div class="cx-pulse-stat">
+        <div class="cx-pulse-val" id="pulseWeekly">—</div>
+        <div class="cx-pulse-lbl">This Week</div>
+      </div>
+      <div class="cx-pulse-div"></div>
+      <div class="cx-pulse-stat">
+        <div class="cx-pulse-val" id="pulseStreak">—</div>
+        <div class="cx-pulse-lbl">Day Streak</div>
+      </div>
     </div>
 
     <!-- Filter Tabs -->
@@ -347,7 +533,7 @@
     <!-- Create Post -->
     <div class="cx-create-post">
       <div class="cx-create-top">
-        <div class="cx-avatar" id="createAvatar" style="width:44px;height:44px;font-size:14px;background:#0A1F44">?</div>
+        <div class="cx-avatar" id="createAvatar" style="width:42px;height:42px;font-size:13px;background:#0A1628">?</div>
         <input class="cx-create-input" id="quickPostInput" readonly
           placeholder="What's on your climate agenda?"
           onclick="openPostModal()" />
@@ -363,7 +549,6 @@
     <!-- Feed container -->
     <div id="feedContainer"></div>
 
-    <!-- Load more -->
     <div class="cx-load-more" id="loadMoreWrap" style="display:none;">
       <button class="cx-load-more-btn" id="loadMoreBtn" onclick="loadMorePosts()">Load more posts</button>
     </div>
@@ -371,29 +556,64 @@
 
   <!-- RIGHT -->
   <aside class="cx-right-panel">
-    <div class="cx-sidebar-section">
-      <div class="cx-sidebar-header">
+
+    <!-- Leaderboard Widget -->
+    <div class="cx-card cx-sb">
+      <div class="cx-sb-hdr">
+        Climate Leaderboard
+        <span class="cx-sb-link" onclick="openLeaderboardModal()">Full board</span>
+      </div>
+      <div class="cx-lb-tabs">
+        <button class="cx-lb-tab active" data-lbf="weekly"   onclick="switchLbFilter('weekly',this)">Weekly</button>
+        <button class="cx-lb-tab"        data-lbf="monthly"  onclick="switchLbFilter('monthly',this)">Monthly</button>
+        <button class="cx-lb-tab"        data-lbf="all-time" onclick="switchLbFilter('all-time',this)">All Time</button>
+      </div>
+      <div id="leaderboardWidget"></div>
+      <div class="cx-lb-my-rank" id="myRankRow">
+        <span>Your rank</span><span id="myRankVal">—</span>
+      </div>
+    </div>
+
+    <!-- Battle Widget -->
+    <div class="cx-card cx-sb">
+      <div class="cx-sb-hdr">
+        ⚔️ Active Battles
+        <span class="cx-sb-link" onclick="window.location.href='community.html#battles'">All battles</span>
+      </div>
+      <div id="battleWidget"></div>
+    </div>
+
+    <!-- People to Follow -->
+    <div class="cx-card cx-sb">
+      <div class="cx-sb-hdr">
         People to Follow
-        <span class="cx-sidebar-link" onclick="window.location.href='community-profile.html'">See all</span>
+        <span class="cx-sb-link" onclick="window.location.href='community-profile.html'">See all</span>
       </div>
       <div id="suggestedPeople"></div>
     </div>
-    <div class="cx-sidebar-section">
-      <div class="cx-sidebar-header">Trending in Climate</div>
-      <div id="trendingTags" style="display:flex;flex-direction:column;gap:10px;"></div>
+
+    <!-- Trending -->
+    <div class="cx-card cx-sb">
+      <div class="cx-sb-hdr">Trending in Climate</div>
+      <div id="trendingTags" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
-    <div class="cx-sidebar-section">
-      <div class="cx-sidebar-header">
+
+    <!-- Funding snippets -->
+    <div class="cx-card cx-sb">
+      <div class="cx-sb-hdr">
         Active Funding
-        <span class="cx-sidebar-link" onclick="window.location.href='funding-hub.html'">View all</span>
+        <span class="cx-sb-link" onclick="window.location.href='funding-hub.html'">View all</span>
       </div>
       <div id="fundingSnippets"></div>
     </div>
-    <div class="cx-sidebar-section" style="background:linear-gradient(135deg,#0A1F44,#0D2A5C);border-color:transparent;">
-      <div style="color:white;font-size:13.5px;font-weight:700;margin-bottom:6px;">Get your Climate Score</div>
-      <div style="color:rgba(255,255,255,0.78);font-size:12.5px;line-height:1.6;margin-bottom:14px;">Trusted by 200+ VCs and corporates to evaluate climate impact.</div>
-      <a href="assessment.html" style="display:block;text-align:center;padding:9px;background:white;color:#0A1F44;border-radius:8px;font-size:13px;font-weight:700;">Start Assessment →</a>
+
+    <!-- CTA -->
+    <div style="background:linear-gradient(135deg,#061830,#0D2E1A);border:1px solid rgba(0,200,150,.18);border-radius:var(--r);padding:14px;">
+      <div style="color:var(--text);font-size:13px;font-weight:700;margin-bottom:5px;">Get your Climate Score</div>
+      <div style="color:var(--text-2);font-size:11.5px;line-height:1.6;margin-bottom:12px;">Trusted by 200+ VCs and corporates to evaluate climate impact.</div>
+      <a href="assessment.html" style="display:block;text-align:center;padding:8px;background:var(--accent);color:#050C18;border-radius:6px;font-size:12.5px;font-weight:700;">Start Assessment →</a>
     </div>
+
   </aside>
 </main>
 
@@ -405,11 +625,11 @@
       <button class="cx-close-btn" onclick="closePostModal()">✕</button>
     </div>
     <div class="cx-modal-body">
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;">
-        <div class="cx-avatar" id="modalAvatar" style="width:44px;height:44px;font-size:14px;background:#0A1F44">?</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;">
+        <div class="cx-avatar" id="modalAvatar" style="width:42px;height:42px;font-size:13px;background:#0A1628">?</div>
         <div>
-          <div style="font-size:14px;font-weight:700;" id="modalUserName">—</div>
-          <div style="font-size:12px;color:#6B7280;margin-top:1px;">Posting to Climactix Community</div>
+          <div style="font-size:13.5px;font-weight:700;color:var(--text);" id="modalUserName">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px;">Posting to Climactix Community</div>
         </div>
       </div>
       <div class="cx-type-tabs">
@@ -418,18 +638,38 @@
         <button class="cx-type-tab"        data-type="funding"  onclick="setPostType('funding',this)">💰 Funding</button>
         <button class="cx-type-tab"        data-type="research" onclick="setPostType('research',this)">📄 Research</button>
       </div>
-      <textarea class="cx-modal-textarea" id="postContent"
-        placeholder="Share your climate insights…" oninput="onPostInput()"></textarea>
-      <input class="cx-tags-input" id="postTags" type="text"
-        placeholder="Hashtags: ClimateTech, NetZero, SolarEnergy (comma-separated)" />
+      <textarea class="cx-modal-textarea" id="postContent" placeholder="Share your climate insights…" oninput="onPostInput()"></textarea>
+      <input class="cx-tags-input" id="postTags" type="text" placeholder="Hashtags: ClimateTech, NetZero (comma-separated)" />
     </div>
     <div class="cx-modal-foot">
       <div class="cx-char-count" id="charCount">0 / 3000</div>
-      <div style="display:flex;gap:10px;">
-        <button onclick="closePostModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#374151;background:#F3F4F6;border:none;cursor:pointer;">Cancel</button>
+      <div style="display:flex;gap:8px;">
+        <button onclick="closePostModal()" style="padding:8px 16px;border-radius:18px;font-size:12.5px;font-weight:600;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);cursor:pointer;">Cancel</button>
         <button class="cx-modal-post-btn" id="modalPostBtn" onclick="submitPost()" disabled>Post</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- SCORE BREAKDOWN MODAL -->
+<div class="cx-overlay" id="scoreOverlay" onclick="if(event.target===this)closeScoreModal()">
+  <div class="cx-modal">
+    <div class="cx-modal-head">
+      <div class="cx-modal-title">⚡ Climate Score Breakdown</div>
+      <button class="cx-close-btn" onclick="closeScoreModal()">✕</button>
+    </div>
+    <div class="cx-modal-body" id="scoreModalBody"></div>
+  </div>
+</div>
+
+<!-- LEADERBOARD MODAL -->
+<div class="cx-overlay" id="lbOverlay" onclick="if(event.target===this)closeLbModal()">
+  <div class="cx-modal" style="max-width:660px;">
+    <div class="cx-modal-head">
+      <div class="cx-modal-title">🏆 Climate Leaderboard</div>
+      <button class="cx-close-btn" onclick="closeLbModal()">✕</button>
+    </div>
+    <div class="cx-modal-body" id="lbModalBody"></div>
   </div>
 </div>
 
@@ -446,10 +686,16 @@ import {
   getSuggestedProfiles, getTrendingTags, getAllFundingRequests,
   getNotifications, getUnreadCount, markNotifsRead, addNotification,
   getRoleConfig, getAvatarColor, getInitials,
-  timeAgo, formatCount, ROLES, SEED_FUNDING
+  timeAgo, formatCount, ROLES, SEED_FUNDING,
+  updateClimateScore, getScoreHistory, getScoreBreakdown,
+  getLeaderboard, getUserRank, getRankTrend,
+  getDailyState, updateChallengeProgress, getStreak,
+  addReaction, getReactions, getUserReaction,
+  getBattles, voteInBattle, getUserBattleVote, getTrendingBattles,
+  SCORE_EVENTS, REACTION_TYPES, CHALLENGE_DEFS,
 } from './community.js';
 
-// ── Boot & Auth ───────────────────────────────────────────────────
+// ── BOOT ─────────────────────────────────────────────────────────────
 initCommunity();
 if (!requireAuth()) throw new Error('redirect');
 
@@ -458,9 +704,10 @@ let currentFilter = 'all';
 let currentPostType = 'update';
 let showingBookmarks = false;
 let postsPage = 1;
+let lbFilter = 'weekly';
 const PAGE_SIZE = 5;
 
-// ── NAV SETUP ─────────────────────────────────────────────────────
+// ── NAV SETUP ─────────────────────────────────────────────────────────
 function setupNav() {
   const { fullName, role, avatar, climateScore, followersCount, followingCount, postsCount, interests, company, bio } = currentUser;
   const color = getAvatarColor(role);
@@ -471,83 +718,298 @@ function setupNav() {
     if (el) { el.textContent = avatar; el.style.background = color; }
   });
   document.getElementById('navUserName').textContent = fullName.split(' ')[0];
-  // Show logged-in nav state
-  const guestEl = document.getElementById('navGuest');
-  const userBtn = document.getElementById('navUserBtn');
-  if (guestEl) guestEl.style.display = 'none';
-  if (userBtn) userBtn.style.display = 'flex';
-  document.getElementById('miniName').textContent = fullName;
-  document.getElementById('miniRole').textContent = roleConf.label + (company ? ` · ${company}` : '');
-  document.getElementById('miniScore').textContent = `⚡ ${climateScore}`;
+  document.getElementById('navGuest').style.display   = 'none';
+  document.getElementById('navUserBtn').style.display = 'flex';
+  document.getElementById('miniName').textContent    = fullName;
+  document.getElementById('miniRole').textContent    = roleConf.label + (company ? ` · ${company}` : '');
   document.getElementById('modalUserName').textContent = fullName;
-  document.getElementById('miniPosts').textContent    = formatCount(postsCount || 0);
+  document.getElementById('miniPosts').textContent     = formatCount(postsCount || 0);
   document.getElementById('miniFollowers').textContent = formatCount(followersCount || 0);
   document.getElementById('miniFollowing').textContent = formatCount(followingCount || 0);
 
-  // Onboarding banner
-  if (!isProfileComplete(currentUser)) {
-    document.getElementById('onboardBanner').style.display = 'block';
-  }
+  if (!isProfileComplete(currentUser)) document.getElementById('onboardBanner').style.display = 'block';
 
-  // Interests
-  const tags = (interests && interests.length) ? interests : ['Climate Tech', 'Net Zero', 'Sustainability'];
-  document.getElementById('myInterestTags').innerHTML = tags.map(i =>
-    `<span class="cx-topic-tag" onclick="filterByTag('${i}')">${i}</span>`).join('');
-
-  // Notification badge
+  updateScoreRing(climateScore || 0);
   refreshNotifBadge();
 }
 
-function refreshNotifBadge() {
-  const count = getUnreadCount(currentUser.uid);
-  const badge = document.getElementById('notifBadge');
-  if (count > 0) {
-    badge.textContent = count > 9 ? '9+' : count;
-    badge.classList.add('show');
-  } else {
-    badge.classList.remove('show');
+// ── SCORE RING ────────────────────────────────────────────────────────
+function updateScoreRing(score) {
+  const num = document.getElementById('miniScoreNum');
+  if (num) num.textContent = score;
+  const ring = document.getElementById('scoreRingFill');
+  if (!ring) return;
+  const C = 2 * Math.PI * 28; // r=28
+  const offset = C - (C * Math.min(score, 100) / 100);
+  ring.style.strokeDasharray = C.toFixed(1);
+  ring.style.strokeDashoffset = offset.toFixed(1);
+  // Color gradient by score
+  ring.style.stroke = score >= 80 ? '#00C896' : score >= 50 ? '#E8A020' : '#E03030';
+}
+
+function animateScoreChange(delta, x, y) {
+  const el = document.createElement('div');
+  el.className = 'score-float';
+  el.textContent = (delta > 0 ? '+' : '') + delta;
+  el.style.color = delta > 0 ? 'var(--accent)' : 'var(--danger)';
+  el.style.left = (x || 200) + 'px';
+  el.style.top  = (y || 300) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1700);
+}
+
+// ── PULSE BANNER ──────────────────────────────────────────────────────
+function renderPulseBanner() {
+  const score   = currentUser.climateScore || 0;
+  const rank    = getUserRank(currentUser.uid) || '—';
+  const streak  = getStreak(currentUser.uid).current || 0;
+
+  // Weekly delta
+  const history = getScoreHistory(currentUser.uid);
+  const weekAgo = Date.now() - 7 * 86400000;
+  const weekDelta = history.filter(h => h.timestamp >= weekAgo).reduce((s, h) => s + h.delta, 0);
+
+  document.getElementById('pulseScore').textContent  = score;
+  document.getElementById('pulseRank').textContent   = rank === null ? '—' : '#' + rank;
+  const wEl = document.getElementById('pulseWeekly');
+  wEl.textContent  = (weekDelta >= 0 ? '+' : '') + weekDelta;
+  wEl.className    = 'cx-pulse-val ' + (weekDelta > 0 ? 'up' : weekDelta < 0 ? 'down' : '');
+  document.getElementById('pulseStreak').textContent = streak + (streak === 1 ? 'd' : 'd');
+}
+
+// ── CHALLENGES ────────────────────────────────────────────────────────
+function renderChallenges() {
+  const state  = getDailyState(currentUser.uid);
+  const streak = getStreak(currentUser.uid);
+  document.getElementById('streakBadge').textContent = '🔥 ' + streak.current + 'd';
+
+  const list = document.getElementById('challengesList');
+  list.innerHTML = state.challenges.map(ch => `
+    <div class="cx-ch-item">
+      <span class="cx-ch-icon">${ch.icon}</span>
+      <div class="cx-ch-info">
+        <div class="cx-ch-label">${escHtml(ch.label)}</div>
+        <div class="cx-ch-bar">
+          <div class="cx-ch-bar-fill" style="width:${Math.round((ch.progress/ch.target)*100)}%"></div>
+        </div>
+      </div>
+      <div class="cx-ch-check ${ch.completed ? 'done' : ''}">
+        ${ch.completed ? '✓' : `${ch.progress}/${ch.target}`}
+      </div>
+    </div>`).join('');
+
+  if (state.allCompleted) {
+    list.insertAdjacentHTML('beforeend', `<div style="text-align:center;padding:7px 0;font-size:11.5px;color:var(--accent);font-weight:600;">✓ All done! +${CHALLENGE_DEFS.reduce((s,c)=>s+c.points,0)} pts earned</div>`);
   }
 }
 
-// ── NOTIFICATIONS ─────────────────────────────────────────────────
+// ── LEADERBOARD WIDGET ────────────────────────────────────────────────
+function renderLeaderboardWidget() {
+  const board = getLeaderboard(lbFilter, 5);
+  const myId  = currentUser.uid;
+  const myRank = getUserRank(myId, lbFilter);
+
+  const rankClass = i => i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn';
+  const rankLabel = i => i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+  const trendFn   = uid => {
+    const t = getRankTrend(uid);
+    return t === 'up' ? { cls:'up', sym:'↑' } : t === 'down' ? { cls:'dn', sym:'↓' } : { cls:'st', sym:'—' };
+  };
+
+  const html = board.map((p, i) => {
+    const tr = trendFn(p.uid);
+    return `<div class="cx-lb-item ${p.uid === myId ? 'is-me' : ''}">
+      <span class="cx-lb-rank ${rankClass(i)}">${rankLabel(i)}</span>
+      <div class="cx-avatar" style="width:26px;height:26px;font-size:9px;background:${getAvatarColor(p.role)};flex-shrink:0;">${p.avatar}</div>
+      <div class="cx-lb-info">
+        <div class="cx-lb-name">${escHtml(p.fullName)}</div>
+        <div class="cx-lb-sc">⚡${p.displayScore || p.climateScore || 0}</div>
+      </div>
+      <span class="cx-lb-trend ${tr.cls}">${tr.sym}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('leaderboardWidget').innerHTML = html || '<div style="color:var(--text-muted);font-size:12px;padding:8px 0;">No data yet.</div>';
+  document.getElementById('myRankVal').textContent = myRank ? '#' + myRank : '—';
+}
+
+window.switchLbFilter = function(f, btn) {
+  lbFilter = f;
+  document.querySelectorAll('.cx-lb-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderLeaderboardWidget();
+};
+
+// ── BATTLE WIDGET ─────────────────────────────────────────────────────
+function renderBattleWidget() {
+  const battles = getTrendingBattles(2);
+  const myId = currentUser.uid;
+
+  if (!battles.length) {
+    document.getElementById('battleWidget').innerHTML = '<div style="color:var(--text-muted);font-size:12px;padding:4px 0;">No active battles yet.</div>';
+    return;
+  }
+
+  document.getElementById('battleWidget').innerHTML = battles.map(b => {
+    const total = (b.totalA || 0) + (b.totalB || 0);
+    const pctA  = total ? Math.round((b.totalA / total) * 100) : 50;
+    const userVote = getUserBattleVote(b.id, myId);
+    return `<div class="cx-battle-card">
+      <div class="cx-battle-ttl">${escHtml(b.title)}</div>
+      <div class="cx-battle-sides">
+        <button class="cx-bat-side ${userVote === 'sideA' ? 'voted' : ''}" data-bvote="${b.id}:sideA">
+          <span class="b-icon">${b.sideA.icon || '⚡'}</span>
+          <span class="b-label">${escHtml(b.sideA.label)}</span>
+          <span class="b-cnt">${b.totalA || 0}</span>
+        </button>
+        <span class="cx-bat-vs">VS</span>
+        <button class="cx-bat-side ${userVote === 'sideB' ? 'voted' : ''}" data-bvote="${b.id}:sideB">
+          <span class="b-icon">${b.sideB.icon || '💡'}</span>
+          <span class="b-label">${escHtml(b.sideB.label)}</span>
+          <span class="b-cnt">${b.totalB || 0}</span>
+        </button>
+      </div>
+      <div class="cx-bat-bar"><div class="cx-bat-bar-fill" id="bbar-${b.id}" style="width:${pctA}%"></div></div>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('[data-bvote]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const [battleId, side] = btn.dataset.bvote.split(':');
+      const result = voteInBattle(battleId, myId, side);
+      if (result) {
+        showToast('Vote registered!');
+        renderBattleWidget();
+        animateScoreChange(1, 400, 400);
+      }
+    });
+  });
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────────
 window.toggleNotifPanel = function() {
   const panel = document.getElementById('notifPanel');
   panel.classList.toggle('open');
   if (panel.classList.contains('open')) renderNotifs();
 };
-
 window.markAllRead = function() {
   markNotifsRead(currentUser.uid);
   refreshNotifBadge();
   renderNotifs();
 };
-
+function refreshNotifBadge() {
+  const count = getUnreadCount(currentUser.uid);
+  const badge = document.getElementById('notifBadge');
+  if (count > 0) { badge.textContent = count > 9 ? '9+' : count; badge.classList.add('show'); }
+  else badge.classList.remove('show');
+}
 function renderNotifs() {
   const notifs = getNotifications(currentUser.uid);
-  const list = document.getElementById('notifList');
+  const list   = document.getElementById('notifList');
   if (!notifs.length) {
-    list.innerHTML = '<div class="cx-notif-empty">No notifications yet.<br>Start interacting with the community!</div>';
+    list.innerHTML = '<div class="cx-notif-empty">No notifications yet.<br>Start engaging with the community!</div>';
     return;
   }
-  const iconMap = { like: '❤️', comment: '💬', follow: '👤' };
-  list.innerHTML = notifs.slice(0, 20).map(n => `
-    <div class="cx-notif-item ${n.read ? '' : 'unread'}" onclick="markAllRead()">
+  const imp  = notifs.filter(n => n.priority === 'important').slice(0, 10);
+  const norm = notifs.filter(n => n.priority !== 'important').slice(0, 15);
+  const iconMap = { like:'❤️', comment:'💬', follow:'👤', reaction:'🌱', rank_change:'🔥', challenge:'🏆', streak:'🔥', pitch:'👁', score:'⚡' };
+  const renderItem = n => `
+    <div class="cx-notif-item ${n.read ? '' : 'unread'} ${n.priority === 'important' ? 'imp' : ''}" onclick="markAllRead()">
       <div class="cx-notif-dot ${n.read ? 'hidden' : ''}"></div>
       <div>
         <div class="cx-notif-text">${iconMap[n.type] || '🔔'} <strong>${escHtml(n.fromName)}</strong> ${escHtml(n.message)}</div>
         <div class="cx-notif-time">${timeAgo(n.timestamp)}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+  list.innerHTML =
+    (imp.length  ? `<div class="cx-notif-cat">Important</div>${imp.map(renderItem).join('')}` : '') +
+    (norm.length ? `<div class="cx-notif-cat">Recent</div>${norm.map(renderItem).join('')}` : '');
 }
-
-// Close notif panel when clicking outside
 document.addEventListener('click', e => {
   const panel = document.getElementById('notifPanel');
-  const btn = document.getElementById('notifBtn');
+  const btn   = document.getElementById('notifBtn');
   if (!panel.contains(e.target) && !btn.contains(e.target)) panel.classList.remove('open');
 });
 
-// ── RENDER FEED ───────────────────────────────────────────────────
+// ── SCORE BREAKDOWN MODAL ─────────────────────────────────────────────
+window.openScoreBreakdown = function() {
+  const bd = getScoreBreakdown(currentUser.uid);
+  if (!bd) return;
+  const score = bd.currentScore;
+  const rulesHtml = bd.scoringRules.map(r => `
+    <div class="cx-rule">
+      <div class="cx-rule-row">
+        <span class="cx-rule-lbl">${r.icon} ${escHtml(r.label)}</span>
+        <span class="cx-rule-delta ${r.delta > 0 ? 'pos' : 'neg'}">${r.delta > 0 ? '+' : ''}${r.delta}</span>
+      </div>
+    </div>`).join('');
+  const histHtml = bd.history.length
+    ? bd.history.map(h => `
+      <div class="cx-hist-item ${h.delta > 0 ? 'pos' : 'neg'}">
+        <span class="cx-hist-reason">${escHtml(h.reason)}</span>
+        <div class="cx-hist-right">
+          <span class="cx-hist-delta" style="color:${h.delta>0?'var(--accent)':'var(--danger)'}">${h.delta>0?'+':''}${h.delta}</span>
+          <span class="cx-hist-time">${timeAgo(h.timestamp)}</span>
+        </div>
+      </div>`).join('')
+    : '<div style="color:var(--text-muted);font-size:12px;padding:8px;">No activity yet — start posting and engaging!</div>';
+
+  document.getElementById('scoreModalBody').innerHTML = `
+    <div class="cx-sb-score-big">
+      <div class="cx-score-giant">${score}</div>
+      <div class="cx-score-giant-lbl">Your Climate Score · 0–100 scale</div>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">How Points are Earned</div>
+    <div class="cx-rules-grid">${rulesHtml}</div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Recent Activity</div>
+    <div class="cx-hist-list">${histHtml}</div>`;
+  document.getElementById('scoreOverlay').classList.add('open');
+};
+window.closeScoreModal = function() { document.getElementById('scoreOverlay').classList.remove('open'); };
+
+// ── LEADERBOARD MODAL ─────────────────────────────────────────────────
+let lbModalFilter = 'weekly';
+window.openLeaderboardModal = function(f) {
+  if (f) lbModalFilter = f;
+  renderLbModal();
+  document.getElementById('lbOverlay').classList.add('open');
+};
+window.closeLbModal = function() { document.getElementById('lbOverlay').classList.remove('open'); };
+function renderLbModal() {
+  const board = getLeaderboard(lbModalFilter, 20);
+  const myId  = currentUser.uid;
+  const rankClass = i => i === 0 ? 'r1 gold' : i === 1 ? 'r2 silver' : i === 2 ? 'r3 bronze' : 'rn';
+  const rankLabel = i => i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+  const trendFn   = uid => {
+    const t = getRankTrend(uid);
+    return t === 'up' ? { cls:'up', sym:'↑' } : t === 'down' ? { cls:'dn', sym:'↓' } : { cls:'st', sym:'—' };
+  };
+  const tabs = ['weekly','monthly','all-time'].map(f => `
+    <button class="cx-lb-modal-tab ${lbModalFilter===f?'active':''}" onclick="switchLbModalFilter('${f}')">${f.replace('-',' ').replace(/\b\w/g,c=>c.toUpperCase())}</button>`).join('');
+  const items = board.map((p, i) => {
+    const tr = trendFn(p.uid);
+    return `<div class="cx-lb-modal-item ${p.uid===myId?'is-me':''}">
+      <span class="cx-lb-modal-rank" style="color:${i===0?'var(--gold)':i===1?'var(--silver)':i===2?'var(--bronze)':'var(--text-muted)'}">${rankLabel(i)}</span>
+      <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(p.role)};flex-shrink:0;">${p.avatar}</div>
+      <div class="cx-lb-modal-info">
+        <div class="cx-lb-modal-name">${escHtml(p.fullName)} ${p.uid===myId?'<span style="color:var(--accent);font-size:10px;">(you)</span>':''}</div>
+        <div class="cx-lb-modal-role">${getRoleConfig(p.role).label}${p.company?' · '+escHtml(p.company):''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <span class="cx-lb-modal-score-val">⚡${p.displayScore||p.climateScore||0}</span>
+        <span class="cx-lb-modal-trend" style="color:${tr.cls==='up'?'var(--accent)':tr.cls==='dn'?'var(--danger)':'var(--text-muted)'}">${tr.sym}</span>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('lbModalBody').innerHTML =
+    `<div class="cx-lb-modal-tabs">${tabs}</div>${items}`;
+}
+window.switchLbModalFilter = function(f) {
+  lbModalFilter = f;
+  renderLbModal();
+};
+
+// ── RENDER FEED ────────────────────────────────────────────────────────
 function getAllFilteredPosts() {
   if (showingBookmarks) return getBookmarkedPosts(currentUser.uid);
   const all = getPosts();
@@ -556,7 +1018,7 @@ function getAllFilteredPosts() {
 
 function renderFeed(resetPage = true) {
   if (resetPage) postsPage = 1;
-  const posts = getAllFilteredPosts();
+  const posts   = getAllFilteredPosts();
   const container = document.getElementById('feedContainer');
   const visible = posts.slice(0, postsPage * PAGE_SIZE);
 
@@ -566,29 +1028,25 @@ function renderFeed(resetPage = true) {
     document.getElementById('loadMoreWrap').style.display = 'none';
     return;
   }
-
   container.innerHTML = visible.map(renderPostCard).join('');
   bindPostEvents(container);
-
-  const hasMore = posts.length > visible.length;
-  const lmw = document.getElementById('loadMoreWrap');
-  lmw.style.display = hasMore ? 'block' : 'none';
+  document.getElementById('loadMoreWrap').style.display = posts.length > visible.length ? 'block' : 'none';
 }
 
 function renderEmpty(title, sub) {
-  return `<div style="background:white;border:1px solid #E5E7EB;border-radius:12px;padding:40px;text-align:center;">
-    <div style="font-size:36px;margin-bottom:12px;">🌱</div>
-    <div style="font-size:16px;font-weight:600;color:#111;margin-bottom:6px;">${escHtml(title)}</div>
-    <div style="font-size:13.5px;color:#6B7280;">${escHtml(sub)}</div>
+  return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:40px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:10px;">🌱</div>
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px;">${escHtml(title)}</div>
+    <div style="font-size:12.5px;color:var(--text-muted);">${escHtml(sub)}</div>
   </div>`;
 }
 
 window.loadMorePosts = function() {
   postsPage++;
-  const posts = getAllFilteredPosts();
+  const posts     = getAllFilteredPosts();
   const container = document.getElementById('feedContainer');
-  const start = (postsPage - 1) * PAGE_SIZE;
-  const newPosts = posts.slice(start, start + PAGE_SIZE);
+  const start     = (postsPage - 1) * PAGE_SIZE;
+  const newPosts  = posts.slice(start, start + PAGE_SIZE);
   if (!newPosts.length) return;
   const wrapper = document.createElement('div');
   wrapper.innerHTML = newPosts.map(renderPostCard).join('');
@@ -597,24 +1055,29 @@ window.loadMorePosts = function() {
   if (posts.length <= postsPage * PAGE_SIZE) document.getElementById('loadMoreWrap').style.display = 'none';
 };
 
+// ── RENDER POST CARD ───────────────────────────────────────────────────
 function renderPostCard(post) {
-  const uid = currentUser.uid;
-  const liked      = isLiked(post.id, uid);
-  const bookmarked = isBookmarked(post.id, uid);
-  const roleConf   = getRoleConfig(post.authorRole);
+  const uid         = currentUser.uid;
+  const bookmarked  = isBookmarked(post.id, uid);
+  const roleConf    = getRoleConfig(post.authorRole);
   const avatarColor = getAvatarColor(post.authorRole);
   const isOwn       = post.authorId === uid;
+  const userReact   = getUserReaction(post.id, uid);
+  const reactions   = getReactions(post.id);
+  const typeBadge   = { solution:'cx-type-solution', funding:'cx-type-funding', research:'cx-type-research', update:'cx-type-update' }[post.type] || 'cx-type-update';
+  const typeLabel   = { solution:'🌱 Solution', funding:'💰 Funding', research:'📄 Research', update:'📝 Update' }[post.type] || '📝 Update';
 
   const PREVIEW = 400;
   const isLong  = post.content.length > PREVIEW;
-  const typeBadge = { solution:'cx-type-solution', funding:'cx-type-funding', research:'cx-type-research', update:'cx-type-update' }[post.type] || 'cx-type-update';
-  const typeLabel = { solution:'🌱 Solution', funding:'💰 Funding', research:'📄 Research', update:'📝 Update' }[post.type] || '📝 Update';
+
+  // Top reactions summary
+  const topReact = Object.entries(reactions.counts).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const reactSummary = topReact.map(([t]) => (REACTION_TYPES[t]||{}).emoji||'').join('') + (reactions.total ? ` ${reactions.total}` : '');
 
   const commentsHtml = (post.comments || []).map(c => {
     const cConf = getRoleConfig(c.authorRole);
-    return `
-    <div class="cx-comment">
-      <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(c.authorRole)};flex-shrink:0;">${c.authorAvatar}</div>
+    return `<div class="cx-comment">
+      <div class="cx-avatar" style="width:28px;height:28px;font-size:10px;background:${getAvatarColor(c.authorRole)};flex-shrink:0;">${c.authorAvatar}</div>
       <div class="cx-comment-bubble">
         <div class="cx-comment-author">${escHtml(c.authorName)}
           <span class="cx-role-badge" style="background:${cConf.bg};color:${cConf.color}">${cConf.label}</span>
@@ -622,8 +1085,7 @@ function renderPostCard(post) {
         <div class="cx-comment-text">${escHtml(c.content)}</div>
         <div class="cx-comment-meta">
           <span>${timeAgo(c.timestamp)}</span>
-          <button data-clikes="${post.id}:${c.id}">👍 ${c.likes.length || ''}</button>
-          <button>Reply</button>
+          <button data-clikes="${post.id}:${c.id}">👍 ${c.likes.length||''}</button>
         </div>
       </div>
     </div>`;
@@ -632,7 +1094,7 @@ function renderPostCard(post) {
   return `
   <div class="cx-post-card" id="post-${post.id}">
     <div class="cx-post-header">
-      <div class="cx-avatar" style="width:48px;height:48px;font-size:16px;background:${avatarColor};flex-shrink:0;cursor:pointer;"
+      <div class="cx-avatar" style="width:44px;height:44px;font-size:14px;background:${avatarColor};flex-shrink:0;cursor:pointer;"
         onclick="window.location.href='community-profile.html?uid=${post.authorId}'">${post.authorAvatar}</div>
       <div class="cx-post-author-info">
         <div class="cx-post-name-row">
@@ -654,7 +1116,9 @@ function renderPostCard(post) {
             ${bookmarked ? '🔖 Remove bookmark' : '📌 Save post'}
           </div>
           <div class="cx-post-menu-item" onclick="sharePost('${post.id}')">↗️ Copy link</div>
-          ${isOwn ? `<div class="cx-post-menu-item danger" onclick="handleDeletePost('${post.id}')">🗑️ Delete post</div>` : '<div class="cx-post-menu-item" onclick="showToast(\'Report submitted for review\')">⚑ Report</div>'}
+          ${isOwn
+            ? `<div class="cx-post-menu-item danger" onclick="handleDeletePost('${post.id}')">🗑️ Delete post</div>`
+            : '<div class="cx-post-menu-item" onclick="showToast(\'Report submitted\')">⚑ Report</div>'}
         </div>
       </div>
     </div>
@@ -666,21 +1130,33 @@ function renderPostCard(post) {
         : `<div class="cx-post-text">${escHtml(post.content)}</div>`}
     </div>
 
-    ${post.tags?.length ? `<div class="cx-post-tags">${post.tags.map(t => `<span class="cx-hashtag" onclick="filterByTag('#${escHtml(t)}')">#${escHtml(t)}</span>`).join('')}</div>` : ''}
+    ${post.tags?.length ? `<div class="cx-post-tags">${post.tags.map(t=>`<span class="cx-hashtag" onclick="filterByTag('#${escHtml(t)}')">#${escHtml(t)}</span>`).join('')}</div>` : ''}
 
     <div class="cx-post-stats">
-      <span>${post.likes.length ? `❤️ ${formatCount(post.likes.length)} like${post.likes.length !== 1 ? 's' : ''}` : ''}</span>
-      <span>${post.comments.length ? `${post.comments.length} comment${post.comments.length !== 1 ? 's' : ''}` : ''}</span>
+      <span>${reactSummary || ''}</span>
+      <span>${post.comments.length ? `${post.comments.length} comment${post.comments.length!==1?'s':''}` : ''}</span>
     </div>
 
     <div class="cx-post-actions">
-      <button class="cx-action-btn ${liked?'liked':''}" data-like="${post.id}">
-        <span class="act-icon">${liked?'❤️':'🤍'}</span>
-        <span class="act-count">${post.likes.length ? formatCount(post.likes.length) : 'Like'}</span>
-      </button>
+      <!-- Reaction Button with Picker -->
+      <div class="cx-react-wrap" id="rwrap-${post.id}">
+        <div class="cx-react-picker" id="rpick-${post.id}">
+          ${Object.entries(REACTION_TYPES).map(([k,v])=>
+            `<button class="cx-react-opt ${userReact===k?'active':''}" onclick="handleReaction('${post.id}','${k}')">
+              <span class="r-em">${v.emoji}</span>
+              <span class="r-lb">${v.label}</span>
+            </button>`).join('')}
+        </div>
+        <button class="cx-action-btn ${userReact?'reacted':''}" id="rbtn-${post.id}"
+          onmouseenter="showReactPicker('${post.id}')"
+          onclick="showReactPicker('${post.id}')">
+          <span class="act-icon">${userReact ? (REACTION_TYPES[userReact]?.emoji||'🌱') : '🤍'}</span>
+          <span>${userReact ? (REACTION_TYPES[userReact]?.label||'React') : 'React'}</span>
+        </button>
+      </div>
       <button class="cx-action-btn" data-ctoggle="${post.id}">
         <span class="act-icon">💬</span>
-        <span class="act-count" id="ccount-${post.id}">${post.comments.length ? formatCount(post.comments.length) : 'Comment'}</span>
+        <span id="ccount-${post.id}">${post.comments.length ? formatCount(post.comments.length) : 'Comment'}</span>
       </button>
       <button class="cx-action-btn" onclick="sharePost('${post.id}')">
         <span class="act-icon">↗️</span><span>Share</span>
@@ -694,7 +1170,7 @@ function renderPostCard(post) {
     <div class="cx-comments-wrap" id="comments-${post.id}">
       <div id="clist-${post.id}">${commentsHtml}</div>
       <div class="cx-add-comment">
-        <div class="cx-avatar" style="width:34px;height:34px;font-size:11px;background:${getAvatarColor(currentUser.role)};flex-shrink:0;">${currentUser.avatar}</div>
+        <div class="cx-avatar" style="width:30px;height:30px;font-size:10px;background:${getAvatarColor(currentUser.role)};flex-shrink:0;">${currentUser.avatar}</div>
         <input class="cx-comment-input" id="cinput-${post.id}" placeholder="Add a comment…"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();handleCommentSubmit('${post.id}');}" />
         <button class="cx-comment-submit" data-csub="${post.id}">Post</button>
@@ -703,9 +1179,63 @@ function renderPostCard(post) {
   </div>`;
 }
 
+// ── REACTION PICKER ────────────────────────────────────────────────────
+const _pickerTimers = {};
+window.showReactPicker = function(postId) {
+  clearTimeout(_pickerTimers[postId]);
+  document.querySelectorAll('.cx-react-picker.open').forEach(p => {
+    if (p.id !== 'rpick-' + postId) p.classList.remove('open');
+  });
+  document.getElementById('rpick-' + postId)?.classList.add('open');
+};
+
+function hideReactPicker(postId) {
+  _pickerTimers[postId] = setTimeout(() => {
+    document.getElementById('rpick-' + postId)?.classList.remove('open');
+  }, 300);
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.cx-react-wrap')) {
+    document.querySelectorAll('.cx-react-picker.open').forEach(p => p.classList.remove('open'));
+  }
+});
+
+window.handleReaction = function(postId, type) {
+  document.getElementById('rpick-' + postId)?.classList.remove('open');
+  const result = addReaction(postId, currentUser.uid, type);
+  if (!result) return;
+  // Update button
+  const btn = document.getElementById('rbtn-' + postId);
+  const myR = getUserReaction(postId, currentUser.uid);
+  if (btn) {
+    btn.classList.toggle('reacted', !!myR);
+    btn.querySelector('.act-icon').textContent = myR ? (REACTION_TYPES[myR]?.emoji || '🌱') : '🤍';
+    btn.querySelector('span:last-child').textContent = myR ? (REACTION_TYPES[myR]?.label || 'React') : 'React';
+  }
+  // Update reaction options
+  document.querySelectorAll(`#rpick-${postId} .cx-react-opt`).forEach(opt => {
+    const k = opt.getAttribute('onclick').match(/'([^']+)'\)/)?.[1];
+    opt.classList.toggle('active', k === myR);
+  });
+  // Refresh stats
+  const stats = document.querySelector(`#post-${postId} .cx-post-stats span:first-child`);
+  if (stats) {
+    const r2 = getReactions(postId);
+    const top = Object.entries(r2.counts).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    stats.textContent = top.map(([t])=>(REACTION_TYPES[t]||{}).emoji||'').join('') + (r2.total ? ` ${r2.total}` : '');
+  }
+  // Score float
+  animateScoreChange(1, 500, 500);
+  currentUser = getCurrentUserProfile();
+  updateScoreRing(currentUser.climateScore || 0);
+  document.getElementById('miniScoreNum').textContent = currentUser.climateScore || 0;
+  renderPulseBanner();
+  showToast(`${REACTION_TYPES[type].emoji} ${REACTION_TYPES[type].label}!`);
+};
+
+// ── POST EVENT BINDINGS ────────────────────────────────────────────────
 function bindPostEvents(container) {
-  container.querySelectorAll('[data-like]').forEach(btn =>
-    btn.addEventListener('click', () => handleLike(btn.dataset.like)));
   container.querySelectorAll('[data-ctoggle]').forEach(btn =>
     btn.addEventListener('click', () => toggleComments(btn.dataset.ctoggle)));
   container.querySelectorAll('[data-bookmark]').forEach(btn =>
@@ -722,52 +1252,37 @@ function bindPostEvents(container) {
     }));
 }
 
-// ── INTERACTIONS ──────────────────────────────────────────────────
-function handleLike(postId) {
-  const result = toggleLike(postId, currentUser.uid);
-  if (!result) return;
-  const btn = document.querySelector(`[data-like="${postId}"]`);
-  if (btn) {
-    btn.classList.toggle('liked', result.liked);
-    btn.querySelector('.act-icon').textContent = result.liked ? '❤️' : '🤍';
-    btn.querySelector('.act-count').textContent = result.count ? formatCount(result.count) : 'Like';
-  }
-  const statsEl = document.querySelector(`#post-${postId} .cx-post-stats span:first-child`);
-  if (statsEl) statsEl.textContent = result.count ? `❤️ ${formatCount(result.count)} like${result.count !== 1 ? 's' : ''}` : '';
-}
-
 function toggleComments(postId) {
   document.getElementById(`comments-${postId}`)?.classList.toggle('open');
 }
 
 function handleBookmark(postId) {
   const saved = toggleBookmark(postId, currentUser.uid);
-  const btns = document.querySelectorAll(`[data-bookmark="${postId}"]`);
+  const btns  = document.querySelectorAll(`[data-bookmark="${postId}"]`);
   btns.forEach(btn => {
     btn.classList.toggle('bookmarked', saved);
-    btn.querySelector('.act-icon').textContent = saved ? '🔖' : '📌';
+    btn.querySelector('.act-icon').textContent      = saved ? '🔖' : '📌';
     btn.querySelector('span:last-child').textContent = saved ? 'Saved' : 'Save';
   });
-  // update menu item text too
-  const menuItem = document.querySelector(`#menu-${postId} .cx-post-menu-item:first-child`);
-  if (menuItem) menuItem.textContent = saved ? '🔖 Remove bookmark' : '📌 Save post';
+  const mi = document.querySelector(`#menu-${postId} .cx-post-menu-item:first-child`);
+  if (mi) mi.textContent = saved ? '🔖 Remove bookmark' : '📌 Save post';
   showToast(saved ? 'Saved to bookmarks' : 'Removed from bookmarks');
 }
 
 function handleCommentSubmit(postId) {
-  const input = document.getElementById(`cinput-${postId}`);
+  const input   = document.getElementById(`cinput-${postId}`);
   const content = input?.value.trim();
   if (!content) return;
   const comment = addComment(postId, {
-    authorId:    currentUser.uid, authorName: currentUser.fullName,
-    authorRole:  currentUser.role, authorAvatar: currentUser.avatar, content,
+    authorId: currentUser.uid, authorName: currentUser.fullName,
+    authorRole: currentUser.role, authorAvatar: currentUser.avatar, content,
   });
   if (!comment) return;
   input.value = '';
   const cConf = getRoleConfig(comment.authorRole);
   document.getElementById(`clist-${postId}`)?.insertAdjacentHTML('beforeend', `
     <div class="cx-comment">
-      <div class="cx-avatar" style="width:32px;height:32px;font-size:11px;background:${getAvatarColor(comment.authorRole)};flex-shrink:0;">${comment.authorAvatar}</div>
+      <div class="cx-avatar" style="width:28px;height:28px;font-size:10px;background:${getAvatarColor(comment.authorRole)};flex-shrink:0;">${comment.authorAvatar}</div>
       <div class="cx-comment-bubble">
         <div class="cx-comment-author">${escHtml(comment.authorName)}
           <span class="cx-role-badge" style="background:${cConf.bg};color:${cConf.color}">${cConf.label}</span>
@@ -780,6 +1295,10 @@ function handleCommentSubmit(postId) {
   const post = getPosts().find(p => p.id === postId);
   if (countEl && post) countEl.textContent = formatCount(post.comments.length);
   document.getElementById(`comments-${postId}`)?.classList.add('open');
+  currentUser = getCurrentUserProfile();
+  updateScoreRing(currentUser.climateScore || 0);
+  renderPulseBanner();
+  renderChallenges();
   showToast('Comment posted');
 }
 
@@ -787,7 +1306,6 @@ window.handleDeletePost = function(postId) {
   if (!confirm('Delete this post?')) return;
   deletePost(postId, currentUser.uid);
   document.getElementById(`post-${postId}`)?.remove();
-  // Refresh mini profile post count
   currentUser = getCurrentUserProfile();
   document.getElementById('miniPosts').textContent = formatCount(currentUser.postsCount || 0);
   showToast('Post deleted');
@@ -808,28 +1326,25 @@ function toggleSeeMore(postId, btn) {
 
 window.togglePostMenu = function(postId, event) {
   event.stopPropagation();
-  document.querySelectorAll('.cx-post-menu.open').forEach(m => {
-    if (m.id !== `menu-${postId}`) m.classList.remove('open');
-  });
+  document.querySelectorAll('.cx-post-menu.open').forEach(m => { if (m.id !== `menu-${postId}`) m.classList.remove('open'); });
   document.getElementById(`menu-${postId}`)?.classList.toggle('open');
 };
 document.addEventListener('click', () => {
   document.querySelectorAll('.cx-post-menu.open').forEach(m => m.classList.remove('open'));
 });
 
-// ── FOLLOW (sidebar) ──────────────────────────────────────────────
+// ── FOLLOW ─────────────────────────────────────────────────────────────
 window.handleFollow = function(targetId, btn) {
   const nowFollowing = toggleFollow(targetId, currentUser.uid);
   if (nowFollowing === null) return;
   btn.textContent = nowFollowing ? 'Following' : '+ Follow';
   btn.classList.toggle('following', nowFollowing);
-  // Refresh mini stats
   currentUser = getCurrentUserProfile();
   document.getElementById('miniFollowing').textContent = formatCount(currentUser.followingCount || 0);
   showToast(nowFollowing ? 'Following!' : 'Unfollowed');
 };
 
-// ── POST MODAL ────────────────────────────────────────────────────
+// ── POST MODAL ─────────────────────────────────────────────────────────
 window.openPostModal = function(type = 'update') {
   setPostType(type, document.querySelector(`[data-type="${type}"]`));
   document.getElementById('postOverlay').classList.add('open');
@@ -846,12 +1361,7 @@ window.setPostType = function(type, btn) {
   currentPostType = type;
   document.querySelectorAll('.cx-type-tab').forEach(t => t.classList.remove('active'));
   btn?.classList.add('active');
-  const ph = {
-    update:   'Share your climate insights, news, or perspective…',
-    solution: 'Describe your climate solution — problem, approach, impact metrics…',
-    funding:  'Share your funding opportunity — sector, ask, impact, what partners you need…',
-    research: 'Share research findings — key insights, methodology, how practitioners can apply this…',
-  };
+  const ph = { update:'Share your climate insights, news, or perspective…', solution:'Describe your climate solution — problem, approach, impact metrics…', funding:'Share your funding opportunity — sector, ask, impact, what partners you need…', research:'Share research findings — key insights, methodology, how practitioners can apply this…' };
   document.getElementById('postContent').placeholder = ph[type] || ph.update;
 };
 window.onPostInput = function() {
@@ -864,31 +1374,29 @@ window.submitPost = function() {
   const rawTags = document.getElementById('postTags').value.trim();
   if (content.length < 10) return;
   const tags = rawTags ? rawTags.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean) : [];
-  createPost({
-    authorId: currentUser.uid, authorName: currentUser.fullName,
-    authorRole: currentUser.role, authorAvatar: currentUser.avatar,
-    authorVerified: currentUser.verified, authorCompany: currentUser.company || '',
-    type: currentPostType, content, tags,
-  });
+  createPost({ authorId: currentUser.uid, authorName: currentUser.fullName, authorRole: currentUser.role, authorAvatar: currentUser.avatar, authorVerified: currentUser.verified, authorCompany: currentUser.company || '', type: currentPostType, content, tags });
   closePostModal();
-  // Refresh current user (postsCount bumped)
   currentUser = getCurrentUserProfile();
   document.getElementById('miniPosts').textContent = formatCount(currentUser.postsCount || 0);
+  updateScoreRing(currentUser.climateScore || 0);
+  animateScoreChange(SCORE_EVENTS.POST_CREATED.delta, 400, 400);
   renderFeed();
-  showToast('Post published to community');
+  renderPulseBanner();
+  renderChallenges();
+  renderLeaderboardWidget();
+  refreshNotifBadge();
+  showToast('Post published +2 pts ⚡');
 };
 
-// ── BOOKMARKS VIEW ────────────────────────────────────────────────
+// ── BOOKMARKS VIEW ─────────────────────────────────────────────────────
 window.showBookmarks = function() {
-  showingBookmarks = true;
-  currentFilter = 'bookmarks';
+  showingBookmarks = true; currentFilter = 'bookmarks';
   document.querySelectorAll('.cx-filter-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('bookmarksTab').style.display = '';
   document.getElementById('bookmarksTab').classList.add('active');
   document.getElementById('bookmarkNavItem').classList.add('active');
   renderFeed();
 };
-// Reset bookmarks view when a filter tab is clicked
 document.querySelectorAll('.cx-filter-tab[data-filter]').forEach(tab => {
   tab.addEventListener('click', () => {
     showingBookmarks = false;
@@ -901,7 +1409,7 @@ document.querySelectorAll('.cx-filter-tab[data-filter]').forEach(tab => {
   });
 });
 
-// ── SEARCH ────────────────────────────────────────────────────────
+// ── SEARCH ─────────────────────────────────────────────────────────────
 let searchTimer;
 document.getElementById('searchInput').addEventListener('input', function() {
   clearTimeout(searchTimer);
@@ -915,38 +1423,33 @@ document.getElementById('searchInput').addEventListener('input', function() {
     );
     const container = document.getElementById('feedContainer');
     document.getElementById('loadMoreWrap').style.display = 'none';
-    if (!results.length) {
-      container.innerHTML = renderEmpty(`No results for "${q}"`, 'Try a different keyword or hashtag.');
-      return;
-    }
+    if (!results.length) { container.innerHTML = renderEmpty(`No results for "${q}"`, 'Try a different keyword or hashtag.'); return; }
     container.innerHTML = results.map(renderPostCard).join('');
     bindPostEvents(container);
   }, 250);
 });
-
 window.filterByTag = function(tag) {
   const q = tag.replace(/^#/, '');
   document.getElementById('searchInput').value = '#' + q;
   document.getElementById('searchInput').dispatchEvent(new Event('input'));
 };
 
-// ── RIGHT SIDEBAR ─────────────────────────────────────────────────
+// ── RIGHT SIDEBAR ──────────────────────────────────────────────────────
 function renderSuggestedPeople() {
-  const uid = currentUser.uid;
-  const people = getSuggestedProfiles(uid, 4);
-  const container = document.getElementById('suggestedPeople');
-  if (!people.length) { container.innerHTML = '<div style="color:#9CA3AF;font-size:13px;text-align:center;padding:8px;">No suggestions — you\'re well connected!</div>'; return; }
-  container.innerHTML = people.map(p => `
+  const people = getSuggestedProfiles(currentUser.uid, 4);
+  const c = document.getElementById('suggestedPeople');
+  if (!people.length) { c.innerHTML = '<div style="color:var(--text-muted);font-size:12px;text-align:center;padding:6px;">You\'re well connected!</div>'; return; }
+  c.innerHTML = people.map(p => `
     <div class="cx-people-item">
-      <div class="cx-avatar" style="background:${getAvatarColor(p.role)};width:38px;height:38px;font-size:12px;cursor:pointer;" onclick="window.location.href='community-profile.html?uid=${p.uid}'">${p.avatar}</div>
+      <div class="cx-avatar" style="background:${getAvatarColor(p.role)};width:34px;height:34px;font-size:11px;cursor:pointer;" onclick="window.location.href='community-profile.html?uid=${p.uid}'">${p.avatar}</div>
       <div class="cx-people-info">
         <div class="cx-people-name">${escHtml(p.fullName)}</div>
-        <div class="cx-people-meta">${getRoleConfig(p.role).label}${p.company ? ' · ' + escHtml(p.company) : ''}</div>
-        <div class="cx-people-meta" style="color:#9CA3AF;">${formatCount(p.followersCount)} followers</div>
+        <div class="cx-people-meta">${getRoleConfig(p.role).label}${p.company?' · '+escHtml(p.company):''}</div>
+        <div class="cx-people-meta" style="color:var(--text-faint)">${formatCount(p.followersCount)} followers</div>
       </div>
-      <button class="cx-follow-btn ${isFollowing(p.uid, uid) ? 'following' : ''}"
-        onclick="handleFollow('${p.uid}', this)">
-        ${isFollowing(p.uid, uid) ? 'Following' : '+ Follow'}
+      <button class="cx-follow-btn ${isFollowing(p.uid,currentUser.uid)?'following':''}"
+        onclick="handleFollow('${p.uid}',this)">
+        ${isFollowing(p.uid,currentUser.uid)?'Following':'+ Follow'}
       </button>
     </div>`).join('');
 }
@@ -957,52 +1460,59 @@ function renderTrendingTags() {
     <div class="cx-trending-item" onclick="filterByTag('${escHtml(t.tag)}')">
       <div>
         <div class="cx-trending-tag">#${escHtml(t.tag)}</div>
-        <div style="font-size:11px;color:#9CA3AF;margin-top:1px;">${t.count} post${t.count !== 1 ? 's' : ''}</div>
+        <div style="font-size:10.5px;color:var(--text-muted);margin-top:1px;">${t.count} post${t.count!==1?'s':''}</div>
       </div>
-      <span style="font-size:11px;color:#D1D5DB;">#${i + 1}</span>
+      <span style="font-size:10.5px;color:var(--text-faint);">#${i+1}</span>
     </div>`).join('');
 }
 
 function renderFundingSnippets() {
   const funding = getAllFundingRequests().slice(0, 3);
   document.getElementById('fundingSnippets').innerHTML = funding.map(f => `
-    <div class="cx-funding-item" onclick="window.location.href='funding-hub.html'">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
-        <div class="cx-funding-item-name">${escHtml(f.startupName)}</div>
+    <div class="cx-fi" onclick="window.location.href='funding-hub.html'">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;">
+        <div class="cx-fi-name">${escHtml(f.startupName)}</div>
         <span class="cx-score-pill">⚡${f.climateScore}</span>
       </div>
-      <div class="cx-funding-item-ask">${escHtml(f.ask)} · ${escHtml(f.stage)}</div>
-      <div style="font-size:11.5px;color:#6B7280;margin-top:2px;">${escHtml(f.sector)}</div>
+      <div class="cx-fi-ask">${escHtml(f.ask)} · ${escHtml(f.stage)}</div>
+      <div style="font-size:10.5px;color:var(--text-muted);margin-top:2px;">${escHtml(f.sector)}</div>
     </div>`).join('');
 }
 
-// ── TOAST ─────────────────────────────────────────────────────────
-function showToast(msg) {
+// ── TOAST ──────────────────────────────────────────────────────────────
+window.showToast = function(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   clearTimeout(window._tt);
   window._tt = setTimeout(() => t.classList.remove('show'), 2800);
-}
-
+};
 function escHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s || '';
-  return d.innerHTML;
+  const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
 }
 
-// ── DEEP LINK: ?post=xxx ──────────────────────────────────────────
+// ── DEEP LINK ──────────────────────────────────────────────────────────
 const urlPost = new URLSearchParams(location.search).get('post');
 if (urlPost) {
   setTimeout(() => {
     const el = document.getElementById(`post-${urlPost}`);
-    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.outline = '2px solid #0A1F44'; }
-  }, 500);
+    if (el) { el.scrollIntoView({ behavior:'smooth', block:'center' }); el.style.outline = '2px solid var(--accent)'; }
+  }, 600);
 }
 
-// ── BOOT ──────────────────────────────────────────────────────────
+// ── AUTO-REFRESH LEADERBOARD (30s) ────────────────────────────────────
+setInterval(() => {
+  renderLeaderboardWidget();
+  renderPulseBanner();
+  refreshNotifBadge();
+}, 30000);
+
+// ── BOOT ──────────────────────────────────────────────────────────────
 setupNav();
+renderPulseBanner();
+renderChallenges();
 renderFeed();
+renderLeaderboardWidget();
+renderBattleWidget();
 renderSuggestedPeople();
 renderTrendingTags();
 renderFundingSnippets();
