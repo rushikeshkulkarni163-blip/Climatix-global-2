@@ -45,7 +45,7 @@
       Object.assign(this.canvas.style, {
         position: 'fixed', top: 0, left: 0,
         width: '100%', height: '100%',
-        zIndex: '-3', pointerEvents: 'none',
+        zIndex: '-5', pointerEvents: 'none',
       });
       document.body.insertBefore(this.canvas, document.body.firstChild);
       this.ctx = this.canvas.getContext('2d');
@@ -142,7 +142,7 @@
       Object.assign(this.canvas.style, {
         position: 'fixed', top: 0, left: 0,
         width: '100%', height: '100%',
-        zIndex: '-2', pointerEvents: 'none',
+        zIndex: '-3', pointerEvents: 'none',
         mixBlendMode: 'screen',
       });
       document.body.insertBefore(this.canvas, document.body.firstChild);
@@ -247,7 +247,7 @@
       Object.assign(this.canvas.style, {
         position: 'fixed', top: 0, left: 0,
         width: '100%', height: '100%',
-        zIndex: '-1', pointerEvents: 'none',
+        zIndex: '-2', pointerEvents: 'none',
       });
       document.body.appendChild(this.canvas);
       this.ctx = this.canvas.getContext('2d');
@@ -336,7 +336,7 @@
       Object.assign(this.canvas.style, {
         position: 'fixed', top: 0, left: 0,
         width: '100%', height: '100%',
-        zIndex: '0', pointerEvents: 'none',
+        zIndex: '-1', pointerEvents: 'none',
         mixBlendMode: 'soft-light',
         opacity: '0.55',
       });

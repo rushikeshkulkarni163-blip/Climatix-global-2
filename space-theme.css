@@ -70,23 +70,27 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Atmospheric Sky Canvas (fixed bg) ── */
+/* ── Canvas z-index stacking (bottom → top)
+   -5  sky-canvas       sky gradient (created by SkySystem)
+   -4  #space-canvas    Three.js 3-D dust/mist field
+   -3  cloud-canvas     2-D cumulus clouds (created by CloudSystem)
+   -2  particle-canvas  atmospheric particles (AtmosphericParticles)
+   -1  light-canvas     volumetric light rays (LightRays)
+    0  weather canvas   rain overlay (WeatherRain)
+   1+  page content     normal document flow
+   ── */
 #space-canvas {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  z-index: -2;
+  z-index: -4;
   pointer-events: none;
 }
 
-/* Weather overlay canvas */
-#weather-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.7;
+/* Ensure all page content sits above the canvas stack */
+body > *:not(canvas):not(.cursor-dot):not(.cursor-ring):not(.space-planet) {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── Typography ── */
