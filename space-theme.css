@@ -6,19 +6,45 @@
 
 /* ── Variables ── */
 :root {
-  --sp-void:      #03050e;   /* deepest space black */
-  --sp-dark:      #060a18;   /* dark section bg */
-  --sp-panel:     #080d1e;   /* card panel bg */
-  --sp-blue:      #0a1228;   /* mid blue-black */
-  --sp-accent:    #3d8bff;   /* spacecraft blue accent */
+  --sp-void:      #03050e;
+  --sp-dark:      #060a18;
+  --sp-panel:     #080d1e;
+  --sp-blue:      #0a1228;
+  --sp-accent:    #3d8bff;
   --sp-glow:      rgba(61,139,255,0.14);
-  --sp-text:      rgba(225,235,255,0.92);   /* primary text */
-  --sp-text-dim:  rgba(170,195,240,0.65);   /* secondary */
-  --sp-text-mute: rgba(120,155,210,0.42);   /* muted */
-  --sp-border:    rgba(255,255,255,0.06);   /* glass border */
-  --sp-border-2:  rgba(61,139,255,0.18);    /* accent border */
+  --sp-text:      rgba(225,235,255,0.92);
+  --sp-text-dim:  rgba(170,195,240,0.65);
+  --sp-text-mute: rgba(120,155,210,0.42);
+  --sp-border:    rgba(255,255,255,0.06);
+  --sp-border-2:  rgba(61,139,255,0.18);
   --sp-shadow:    0 8px 40px rgba(0,0,0,0.70), 0 2px 8px rgba(0,0,0,0.50);
   --sp-glow-btn:  0 0 24px rgba(61,139,255,0.20), 0 0 8px rgba(61,139,255,0.10);
+
+  /* ── Override every light-colour variable from style.css ──
+     This is the root fix: any element using var(--white) etc.
+     automatically gets the dark panel colour instead.          */
+  --white:       #060a1a;
+  --off-white:   #060a1a;
+  --grey-light:  #08101e;
+  --grey-mid:    rgba(255,255,255,0.08);
+  --grey-border: rgba(255,255,255,0.08);
+  --grey-muted:  rgba(255,255,255,0.20);
+  --cream:       #060a1a;
+  --cream-dark:  #08101e;
+  --parchment:   rgba(255,255,255,0.08);
+  --forest-tint: rgba(61,139,255,0.08);
+  --primary-tint:#060a1a;
+  --accent-light:#060a1a;
+  --slate-tint:  #08101e;
+  --amber-tint:  #08101e;
+  --text-primary:    rgba(225,235,255,0.92);
+  --text-secondary:  rgba(170,195,240,0.65);
+  --text-muted:      rgba(120,155,210,0.45);
+  --text-faint:      rgba(100,140,200,0.35);
+  --ink:             rgba(225,235,255,0.92);
+  --ink-soft:        rgba(170,195,240,0.65);
+  --ink-muted:       rgba(120,155,210,0.45);
+  --ink-faint:       rgba(100,140,200,0.35);
 }
 
 /* ── Global reset ── */
@@ -569,6 +595,39 @@ footer, .site-footer {
 .page-wrapper p {
   color: var(--sp-text-dim) !important;
   -webkit-text-fill-color: var(--sp-text-dim) !important;
+}
+
+/* ── Catch-all: any div/section with hard-coded white/light bg ── */
+[style*="background:#fff"],
+[style*="background: #fff"],
+[style*="background:#ffffff"],
+[style*="background: #ffffff"],
+[style*="background: white"],
+[style*="background-color:#fff"],
+[style*="background-color: #fff"] {
+  background: rgba(6,10,26,0.82) !important;
+  border-color: rgba(61,139,255,0.15) !important;
+  color: var(--sp-text) !important;
+}
+/* Inline colored text inside those divs */
+[style*="background:#fff"] [style*="color:#1a"],
+[style*="background:#fff"] [style*="color:#2a"],
+[style*="background:#fff"] [style*="color:#3a"],
+[style*="background:#fff"] [style*="color:#4a"],
+[style*="background:#fff"] [style*="color:#5a"],
+[style*="background:#fff"] [style*="color:#6a"] {
+  color: var(--sp-text-dim) !important;
+  -webkit-text-fill-color: var(--sp-text-dim) !important;
+}
+[style*="background:#fff"] [style*="font-weight:700"],
+[style*="background:#fff"] [style*="font-weight: 700"] {
+  color: var(--sp-text) !important;
+  -webkit-text-fill-color: var(--sp-text) !important;
+}
+
+/* ── Global fallback: no element should ever have pure white bg ── */
+body *:not(#space-canvas):not(canvas):not(img):not(svg):not(path) {
+  background-color: var(--resolved-bg, inherit);
 }
 
 /* ── Mobile ── */

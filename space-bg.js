@@ -331,6 +331,72 @@
       this.scene.add(group);
       this.earthGroup = group;
       this.loaded = true;
+
+      /* Satellite */
+      this._buildSatellite();
+    },
+
+    /* ── Realistic Climactix satellite ── */
+    _buildSatellite() {
+      const sat = new THREE.Group();
+
+      /* Body */
+      const bodyMat = new THREE.MeshPhongMaterial({
+        color: 0xc8d8e8, shininess: 90, specular: 0x445566,
+      });
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.048, 0.032, 0.072), bodyMat);
+      sat.add(body);
+
+      /* Solar panels */
+      const panelMat = new THREE.MeshPhongMaterial({
+        color: 0x0a1a3a, shininess: 140, specular: 0x3366cc,
+        emissive: 0x020810,
+      });
+      const panelGeo = new THREE.BoxGeometry(0.145, 0.002, 0.052);
+      const panelL = new THREE.Mesh(panelGeo, panelMat);
+      panelL.position.x = -0.097;
+      const panelR = panelL.clone();
+      panelR.position.x = 0.097;
+      sat.add(panelL, panelR);
+
+      /* Panel cell grid lines (thin dark strips) */
+      const gridMat = new THREE.MeshBasicMaterial({ color: 0x112244 });
+      for (let i = -2; i <= 2; i++) {
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(0.002, 0.003, 0.052), gridMat);
+        bar.position.set(-0.097 + i * 0.028, 0.001, 0);
+        sat.add(bar);
+        const barR = bar.clone();
+        barR.position.x = 0.097 + i * 0.028;
+        sat.add(barR);
+      }
+
+      /* Antenna mast */
+      const antMat = new THREE.MeshPhongMaterial({ color: 0xe0e0e0, shininess: 70 });
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.0016, 0.0016, 0.058, 8), antMat);
+      mast.position.y = 0.045;
+      sat.add(mast);
+
+      /* Dish */
+      const dish = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.007, 0.013, 16), antMat);
+      dish.position.y = 0.075;
+      sat.add(dish);
+
+      /* Dish inner (darker) */
+      const dishInner = new THREE.Mesh(
+        new THREE.CircleGeometry(0.016, 16),
+        new THREE.MeshPhongMaterial({ color: 0x334455, shininess: 120, specular: 0x223344 }),
+      );
+      dishInner.position.y = 0.082;
+      dishInner.rotation.x = -Math.PI / 2;
+      sat.add(dishInner);
+
+      /* Orbit pivot — child of earthGroup so it moves with Earth */
+      this.orbitPivot = new THREE.Group();
+      this.orbitPivot.rotation.x = 0.49; // ~28° orbital inclination
+      sat.position.set(2.22, 0, 0);      // orbit radius just outside atmosphere
+      this.orbitPivot.add(sat);
+      this.earthGroup.add(this.orbitPivot);
+      this.satellite = sat;
     },
 
     /* ── Sun glow sprite ── */
@@ -415,6 +481,15 @@
       /* Earth rotation */
       if (this.earth)  this.earth.rotation.y  += 0.00025;
       if (this.clouds) this.clouds.rotation.y += 0.00032;
+
+      /* Satellite orbit */
+      if (this.orbitPivot) {
+        this.orbitPivot.rotation.y += 0.0055; // ~25 s full orbit
+        if (this.satellite) {
+          // Keep satellite body facing direction of travel (prograde)
+          this.satellite.rotation.z = -(this.orbitPivot.rotation.y + Math.PI / 2);
+        }
+      }
 
       /* Star layers: very slow rotation */
       this.starLayers.forEach((s, i) => {
