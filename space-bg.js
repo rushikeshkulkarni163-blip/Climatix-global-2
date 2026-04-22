@@ -44,9 +44,19 @@
       float NdL    = dot(N, L);
       float dayMix = smoothstep(-0.18, 0.28, NdL);
 
-      vec3 dayCol   = texture2D(uDay,    vUv).rgb;
-      vec3 nightCol = texture2D(uNight,  vUv).rgb * 1.6;
-      float clouds  = texture2D(uClouds, vUv).r;
+      vec4  dayTex   = texture2D(uDay,    vUv);
+      vec4  nightTex = texture2D(uNight,  vUv);
+      float clouds   = texture2D(uClouds, vUv).r;
+
+      /* Procedural fallback — used when textures are black/empty */
+      float txLoaded = step(0.004, dot(dayTex.rgb, vec3(0.333)));
+      vec3 procDay   = mix(vec3(0.05, 0.14, 0.46),   /* ocean */
+                           vec3(0.07, 0.22, 0.09),   /* land  */
+                           smoothstep(0.40, 0.62,
+                             fract(sin(vUv.x*18.5+vUv.y*11.3)*4321.9
+                                  +cos(vUv.x*9.1 +vUv.y*22.7)*1987.4)));
+      vec3 dayCol   = mix(procDay,              dayTex.rgb,       txLoaded);
+      vec3 nightCol = mix(vec3(0.01,0.02,0.06), nightTex.rgb * 1.6, txLoaded);
 
       /* Day / night blend */
       vec3 color = mix(nightCol * 0.55, dayCol, dayMix);
@@ -265,9 +275,27 @@
         if (++loaded === 3) this._createEarthMesh(textures);
       };
 
-      loader.load(TX.day,    t => onLoad('day',    t), undefined, () => onLoad('day',    new THREE.Texture()));
-      loader.load(TX.night,  t => onLoad('night',  t), undefined, () => onLoad('night',  new THREE.Texture()));
-      loader.load(TX.clouds, t => onLoad('clouds', t), undefined, () => onLoad('clouds', new THREE.Texture()));
+      /* Visible fallback canvas textures so Earth renders even if CDN is down */
+      const mkFallback = (r, g, b) => {
+        const c = document.createElement('canvas');
+        c.width = c.height = 64;
+        const ctx = c.getContext('2d');
+        const grd = ctx.createLinearGradient(0, 0, 64, 64);
+        grd.addColorStop(0, `rgb(${r},${g},${b})`);
+        grd.addColorStop(1, `rgb(${Math.max(0,r-10)},${Math.max(0,g-15)},${Math.max(0,b-20)})`);
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, 64, 64);
+        const tex = new THREE.CanvasTexture(c);
+        tex.needsUpdate = true;
+        return tex;
+      };
+
+      loader.load(TX.day,    t => onLoad('day',    t), undefined,
+        () => { console.warn('[Earth] day texture failed — using fallback'); onLoad('day',    mkFallback(18, 55, 130)); });
+      loader.load(TX.night,  t => onLoad('night',  t), undefined,
+        () => { console.warn('[Earth] night texture failed — using fallback'); onLoad('night',  mkFallback(4,  10, 30)); });
+      loader.load(TX.clouds, t => onLoad('clouds', t), undefined,
+        () => { console.warn('[Earth] clouds texture failed — using fallback'); onLoad('clouds', mkFallback(0,  0,  0)); });
     },
 
     _createEarthMesh(tx) {
