@@ -327,7 +327,7 @@
       const group = new THREE.Group();
       group.add(this.earth, this.clouds, this.atmosphere, halo);
       // Position: massive, right-of-centre, slightly behind content
-      group.position.set(2.2, -0.2, -0.5);
+      group.position.set(2.2, 0.1, -0.5);
       this.scene.add(group);
       this.earthGroup = group;
       this.loaded = true;
@@ -468,14 +468,14 @@
       const drift = Math.sin(elapsed * 0.12) * 0.06;
       this.camera.position.x  = this.mouse.lx * 0.22 + drift;
       this.camera.position.y  = -this.mouse.ly * 0.16 + 0.40 + Math.sin(elapsed * 0.08) * 0.04;
-      this.camera.position.z  = 5.0 + this.scroll.frac * 2.2; // pull back as user scrolls
+      this.camera.position.z  = 5.0 + this.scroll.frac * 0.7; // subtle depth as user scrolls
       this.camera.lookAt(0.5, 0, 0); // look slightly toward Earth
 
       /* Earth group: subtle drift + scroll-based drift */
       if (this.earthGroup) {
-        this.earthGroup.position.y = -0.20 + Math.sin(elapsed * 0.15) * 0.08
-                                    - this.scroll.frac * 0.8;
-        this.earthGroup.position.x = 2.2 + this.mouse.lx * 0.10;
+        this.earthGroup.position.y = 0.10 + Math.sin(elapsed * 0.15) * 0.06
+                                    - this.scroll.frac * 0.20;
+        this.earthGroup.position.x = 2.2 + this.mouse.lx * 0.08;
       }
 
       /* Earth rotation */
