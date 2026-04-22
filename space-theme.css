@@ -48,13 +48,42 @@ body {
   pointer-events: none;
 }
 
+/* ── Reset gradient text bleed — must come first ── */
+* {
+  -webkit-text-fill-color: unset;
+}
+
 /* ── Typography ── */
-h1, h2, h3, h4, h5 {
+h1, h2, h3, h4, h5,
+h1 *, h2 *, h3 *, h4 *, h5 *,
+.cx-concern-card h3, .cx-concern-card h4,
+.solution-card h3, .solution-card h4,
+.problem-card h3, .problem-card h4,
+.cx-fw-card h3, .cx-fw-card h4,
+.cx-imperative-card h3, .cx-imperative-card h4,
+.roadmap-card h3, .roadmap-card h4,
+.sct-card h3, .sct-card h4,
+.cx-gbm-deal h4, .cx-gbm-deal h3,
+.arch-node h3, .arch-node h4,
+.theme-card h3, .theme-card h4,
+.founder-card h3, .founder-card h4,
+[class*="-card"] h3, [class*="-card"] h4,
+[class*="-card"] h2, [class*="-node"] h3 {
   font-family: var(--font-sci-fi) !important;
-  color: var(--text-space) !important;
-  text-shadow: 0 0 30px rgba(0,212,255,0.20) !important;
+  color: rgba(220, 240, 255, 0.95) !important;
+  -webkit-text-fill-color: rgba(220, 240, 255, 0.95) !important;
+  text-shadow: 0 0 20px rgba(0,212,255,0.15) !important;
   letter-spacing: 0.02em !important;
 }
+
+/* Section-level h2 headings */
+section h2, .page-wrapper h2, h2 {
+  font-family: var(--font-sci-fi) !important;
+  color: rgba(220, 240, 255, 0.95) !important;
+  -webkit-text-fill-color: rgba(220, 240, 255, 0.95) !important;
+  text-shadow: 0 0 30px rgba(0,212,255,0.20) !important;
+}
+
 p, li, span, label, td, th { color: var(--text-space-dim) !important; }
 strong, b { color: var(--text-space) !important; }
 a { color: var(--neon-cyan) !important; }
@@ -131,12 +160,14 @@ a:hover { color: #fff !important; text-shadow: var(--glow-cyan) !important; }
   box-shadow: var(--glow-cyan) !important;
   animation: pulseGlow 3s ease-in-out infinite !important;
 }
-.cx-hero-title {
+.cx-hero-title,
+.cx-hero-title * {
   font-family: var(--font-sci-fi) !important;
-  background: linear-gradient(135deg, #fff 0%, var(--neon-cyan) 50%, var(--neon-purple) 100%) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #00D4FF 50%, #9B5DE5 100%) !important;
   -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
   text-shadow: none !important;
   animation: textGlow 4s ease-in-out infinite alternate !important;
 }
@@ -722,6 +753,153 @@ hr, .divider {
 }
 
 /* ── Responsive ── */
+/* ── Inline-style & class-specific dark-text overrides ── */
+
+/* Concern cards */
+.cc-title {
+  font-family: var(--font-sci-fi) !important;
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+  font-size: 14px !important;
+}
+.cc-desc {
+  color: rgba(160,200,240,0.75) !important;
+  -webkit-text-fill-color: rgba(160,200,240,0.75) !important;
+}
+.cc-metric {
+  background: rgba(0,212,255,0.08) !important;
+  border-color: rgba(0,212,255,0.20) !important;
+  color: rgba(0,212,255,0.90) !important;
+  -webkit-text-fill-color: rgba(0,212,255,0.90) !important;
+}
+.cc-icon-wrap {
+  background: rgba(0,212,255,0.06) !important;
+}
+
+/* Green Bonds section — dark forest greens → space light */
+.cx-gbm-header h2,
+.cx-gbm-deal-company,
+.cx-gbm-deal-desc,
+.cx-gbm-eyebrow,
+.cx-gbm-stat-label,
+.cx-gbm-activist h4,
+.cx-gbm-activist-note,
+[class*="gbm"] h2,
+[class*="gbm"] h3,
+[class*="gbm"] h4 {
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+}
+.cx-gbm-header p,
+.cx-gbm-deal-desc,
+[class*="gbm"] p {
+  color: rgba(160,200,240,0.75) !important;
+  -webkit-text-fill-color: rgba(160,200,240,0.75) !important;
+}
+.cx-gbm-deal-date,
+[class*="gbm"] [class*="date"],
+[class*="gbm"] [class*="source"] {
+  color: rgba(100,160,200,0.60) !important;
+  -webkit-text-fill-color: rgba(100,160,200,0.60) !important;
+}
+.cx-eyebrow {
+  color: var(--neon-cyan) !important;
+  -webkit-text-fill-color: var(--neon-cyan) !important;
+}
+
+/* Nuclear override: any inline style="color:#1a or color:#5a dark tones */
+/* We catch these by overriding all paragraphs and spans in the main page-wrapper */
+.page-wrapper p,
+.page-wrapper span:not(.cx-stat-val):not(.hg-val):not(.cx-gbm-stat-val),
+.page-wrapper div:not([class*="canvas"]):not([id*="canvas"]) > p {
+  color: rgba(160,200,240,0.75) !important;
+  -webkit-text-fill-color: rgba(160,200,240,0.75) !important;
+}
+
+/* Inline bold text in activist note area */
+.cx-gbm-activist div {
+  color: rgba(200,225,255,0.85) !important;
+  -webkit-text-fill-color: rgba(200,225,255,0.85) !important;
+}
+
+/* Framework cards */
+.cx-fw-name {
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+  font-family: var(--font-sci-fi) !important;
+}
+.cx-fw-org { color: rgba(100,160,210,0.65) !important; -webkit-text-fill-color: rgba(100,160,210,0.65) !important; }
+.cx-fw-desc { color: rgba(160,200,240,0.70) !important; -webkit-text-fill-color: rgba(160,200,240,0.70) !important; }
+
+/* Solution / problem / service cards */
+.solution-card h3, .solution-card .card-title,
+.problem-card h3, .problem-card .card-title,
+.service-card h3, .service-card .card-title {
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+  font-family: var(--font-sci-fi) !important;
+}
+.solution-card p, .problem-card p, .service-card p {
+  color: rgba(160,200,240,0.75) !important;
+  -webkit-text-fill-color: rgba(160,200,240,0.75) !important;
+}
+
+/* Architect flow nodes */
+.arch-node-title, .arch-node h3 {
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+  font-family: var(--font-sci-fi) !important;
+}
+.arch-node p, .arch-node span {
+  color: rgba(160,200,240,0.70) !important;
+  -webkit-text-fill-color: rgba(160,200,240,0.70) !important;
+}
+
+/* Theme cards */
+.theme-title {
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+  font-family: var(--font-sci-fi) !important;
+}
+.theme-desc, .theme-meta {
+  color: rgba(160,200,240,0.75) !important;
+  -webkit-text-fill-color: rgba(160,200,240,0.75) !important;
+}
+
+/* Roadmap cards */
+.roadmap-title {
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+  font-family: var(--font-sci-fi) !important;
+}
+.roadmap-phase-label {
+  color: var(--neon-cyan) !important;
+  -webkit-text-fill-color: var(--neon-cyan) !important;
+}
+
+/* Founder bio */
+.founder-bio p, .founder-title, .founder-role {
+  color: rgba(160,200,240,0.80) !important;
+  -webkit-text-fill-color: rgba(160,200,240,0.80) !important;
+}
+.founder-name {
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+  font-family: var(--font-sci-fi) !important;
+}
+
+/* Imperative section */
+.cx-imperative-card h3,
+.cx-imperative-card .pillar-title {
+  color: rgba(220,240,255,0.95) !important;
+  -webkit-text-fill-color: rgba(220,240,255,0.95) !important;
+  font-family: var(--font-sci-fi) !important;
+}
+.cx-imperative-card p {
+  color: rgba(160,200,240,0.75) !important;
+  -webkit-text-fill-color: rgba(160,200,240,0.75) !important;
+}
+
 @media (max-width: 768px) {
   h1, h2 {
     font-size: clamp(18px, 5vw, 32px) !important;
