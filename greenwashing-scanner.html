@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESG Risk Intelligence — Climactix Global</title>
+  <meta name="description" content="Audit your ESG disclosures for credibility, compliance, and investor risk. AI-powered ESG Risk Intelligence aligned with GRI, ISSB S2, and TCFD." />
+  <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin></script>
+
+  <style>
+  /* ═══════════════════════════════════════════════════════════
+     GREENWASHING RISK SCANNER — DARK PROFESSIONAL THEME
+     Bloomberg-grade ESG intelligence interface
+  ═══════════════════════════════════════════════════════════ */
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* Core dark palette */
+    --bg:          #050A14;
+    --bg-2:        #080E1C;
+    --surface:     #0D1626;
+    --surface-2:   #111C30;
+    --surface-3:   #162035;
+    --border:      #1E2D4A;
+    --border-light:#243350;
+
+    /* Accent system */
+    --emerald:     #10B981;
+    --emerald-dim: #065F46;
+    --emerald-glow:rgba(16,185,129,.12);
+    --amber:       #F59E0B;
+    --amber-dim:   #78350F;
+    --amber-glow:  rgba(245,158,11,.12);
+    --red:         #EF4444;
+    --red-dim:     #7F1D1D;
+    --red-glow:    rgba(239,68,68,.12);
+    --blue:        #3B82F6;
+    --blue-glow:   rgba(59,130,246,.10);
+
+    /* Typography */
+    --text:        #E2E8F0;
+    --text-muted:  #94A3B8;
+    --text-dim:    #64748B;
+    --text-faint:  #334155;
+
+    /* Type families */
+    --font:        'Inter', system-ui, sans-serif;
+    --mono:        'JetBrains Mono', monospace;
+
+    /* Geometry */
+    --r-sm: 4px;
+    --r-md: 8px;
+    --r-lg: 12px;
+    --r-xl: 16px;
+    --r-2xl:24px;
+
+    /* Shadows */
+    --sh-sm: 0 1px 4px rgba(0,0,0,.5);
+    --sh-md: 0 4px 24px rgba(0,0,0,.6);
+    --sh-lg: 0 16px 64px rgba(0,0,0,.7);
+    --sh-glow-em: 0 0 32px rgba(16,185,129,.18);
+
+    /* Transitions */
+    --t: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-2); }
+  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+
+  /* ── Layout ── */
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 768px) { .wrap { padding: 0 20px; } }
+
+  /* ════════════════════════════════════
+     TOP NAV
+  ════════════════════════════════════ */
+  .gw-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(5,10,20,.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+  }
+  .gw-nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px; max-width: 1160px; margin: 0 auto; padding: 0 32px;
+  }
+  .gw-nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--text);
+  }
+  .gw-nav-brand img { height: 28px; width: auto; }
+  .gw-nav-brand span {
+    font-size: 13px; font-weight: 600; letter-spacing: .04em;
+    color: var(--text-muted);
+  }
+  .gw-nav-links { display: flex; align-items: center; gap: 24px; }
+  .gw-nav-links a {
+    font-size: 12px; font-weight: 500; color: var(--text-dim);
+    text-decoration: none; letter-spacing: .06em; text-transform: uppercase;
+    transition: var(--t);
+  }
+  .gw-nav-links a:hover { color: var(--emerald); }
+  .gw-nav-cta {
+    background: var(--emerald); color: #fff;
+    padding: 6px 16px; border-radius: var(--r-md);
+    font-size: 12px; font-weight: 600; letter-spacing: .04em;
+    text-decoration: none; transition: var(--t);
+    border: none; cursor: pointer;
+  }
+  .gw-nav-cta:hover { background: #059669; }
+
+  /* ════════════════════════════════════
+     HERO
+  ════════════════════════════════════ */
+  .gw-hero {
+    padding: 72px 0 64px;
+    position: relative; overflow: hidden;
+  }
+  .gw-hero-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(16,185,129,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(16,185,129,.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, black 0%, transparent 75%);
+  }
+  .gw-hero-glow {
+    position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 500px;
+    background: radial-gradient(ellipse, rgba(16,185,129,.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .gw-hero-inner { position: relative; z-index: 1; text-align: center; }
+
+  .gw-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25);
+    padding: 5px 14px; border-radius: 100px;
+    font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--emerald); margin-bottom: 24px;
+  }
+  .gw-badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--emerald); animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: .5; transform: scale(.85); }
+  }
+
+  .gw-hero h1 {
+    font-size: clamp(32px, 5vw, 52px); font-weight: 700; line-height: 1.1;
+    color: var(--text); margin-bottom: 20px; letter-spacing: -.02em;
+  }
+  .gw-hero h1 span { color: var(--emerald); }
+  .gw-hero-sub {
+    font-size: 17px; color: var(--text-muted); max-width: 620px;
+    margin: 0 auto 36px; line-height: 1.7;
+  }
+
+  .gw-framework-chips {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 52px;
+  }
+  .gw-chip {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 4px 12px; border-radius: var(--r-md);
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    font-family: var(--mono); letter-spacing: .04em;
+  }
+
+  /* ════════════════════════════════════
+     UPLOAD ZONE
+  ════════════════════════════════════ */
+  #upload-section { max-width: 680px; margin: 0 auto; }
+
+  .gw-upload-zone {
+    border: 2px dashed var(--border-light);
+    border-radius: var(--r-xl);
+    background: var(--surface);
+    padding: 56px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--t);
+    position: relative;
+    overflow: hidden;
+  }
+  .gw-upload-zone:hover,
+  .gw-upload-zone.drag-over {
+    border-color: var(--emerald);
+    background: rgba(16,185,129,.04);
+    box-shadow: var(--sh-glow-em);
+  }
+  .gw-upload-zone.drag-over { transform: scale(1.01); }
+
+  .gw-upload-icon {
+    width: 56px; height: 56px; margin: 0 auto 20px;
+    background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25);
+    border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center;
+  }
+  .gw-upload-icon svg { width: 26px; height: 26px; color: var(--emerald); }
+  .gw-upload-title { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .gw-upload-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .gw-upload-meta { font-size: 11px; color: var(--text-dim); font-family: var(--mono); }
+
+  #fileInput { display: none; }
+
+  .gw-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 22px; border-radius: var(--r-md);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: var(--t); text-decoration: none; border: none;
+    font-family: var(--font);
+  }
+  .gw-btn-primary { background: var(--emerald); color: #fff; }
+  .gw-btn-primary:hover { background: #059669; transform: translateY(-1px); box-shadow: var(--sh-glow-em); }
+  .gw-btn-outline {
+    background: transparent; color: var(--text-muted);
+    border: 1px solid var(--border-light);
+  }
+  .gw-btn-outline:hover { border-color: var(--emerald); color: var(--emerald); }
+  .gw-btn-ghost { background: var(--surface-2); color: var(--text-muted); }
+  .gw-btn-ghost:hover { background: var(--surface-3); color: var(--text); }
+
+  .gw-upload-actions {
+    display: flex; justify-content: center; gap: 12px; margin-top: 28px; flex-wrap: wrap;
+  }
+
+  .gw-file-selected {
+    display: none; margin-top: 20px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 14px 18px;
+    display: none; align-items: center; gap: 12px;
+  }
+  .gw-file-selected.visible { display: flex; }
+  .gw-file-icon {
+    width: 36px; height: 36px; background: rgba(59,130,246,.12);
+    border: 1px solid rgba(59,130,246,.25); border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .gw-file-icon svg { width: 18px; height: 18px; color: var(--blue); }
+  .gw-file-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .gw-file-size { font-size: 11px; color: var(--text-dim); font-family: var(--mono); }
+  .gw-file-remove { margin-left: auto; cursor: pointer; color: var(--text-dim); transition: var(--t); }
+  .gw-file-remove:hover { color: var(--red); }
+
+  .gw-scan-btn-wrap { margin-top: 20px; }
+
+  /* ════════════════════════════════════
+     LOADING STATE
+  ════════════════════════════════════ */
+  #loading-section { display: none; text-align: center; max-width: 540px; margin: 0 auto; }
+  #loading-section.visible { display: block; }
+
+  .gw-loader-orb {
+    width: 72px; height: 72px; margin: 0 auto 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    border-top-color: var(--emerald);
+    animation: spin 1s linear infinite;
+    position: relative;
+  }
+  .gw-loader-orb::after {
+    content: '';
+    position: absolute; inset: 6px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: rgba(16,185,129,.4);
+    animation: spin .7s linear infinite reverse;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .gw-loader-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .gw-loader-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; }
+
+  .gw-loader-steps { text-align: left; }
+  .gw-loader-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; border-radius: var(--r-md); margin-bottom: 4px;
+    font-size: 13px; color: var(--text-dim); transition: var(--t);
+    background: var(--surface);
+  }
+  .gw-loader-step.active { color: var(--text); background: var(--surface-2); }
+  .gw-loader-step.done { color: var(--emerald); }
+  .gw-step-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+  /* ════════════════════════════════════
+     RESULTS DASHBOARD
+  ════════════════════════════════════ */
+  #results-section { display: none; }
+  #results-section.visible { display: block; }
+
+  .gw-results-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 32px; flex-wrap: wrap; gap: 20px;
+  }
+  .gw-results-meta { flex: 1; }
+  .gw-results-company {
+    font-size: 13px; color: var(--text-dim); font-family: var(--mono);
+    text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px;
+  }
+  .gw-results-title { font-size: 22px; font-weight: 700; color: var(--text); }
+  .gw-results-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* Score card grid */
+  .gw-score-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 32px;
+  }
+  @media (max-width: 640px) { .gw-score-grid { grid-template-columns: 1fr; } }
+
+  /* Circular gauge */
+  .gw-gauge-wrap { display: flex; flex-direction: column; align-items: center; }
+  .gw-gauge { position: relative; width: 180px; height: 180px; }
+  .gw-gauge svg { width: 180px; height: 180px; transform: rotate(-90deg); }
+  .gw-gauge-track { fill: none; stroke: var(--surface-2); stroke-width: 12; }
+  .gw-gauge-fill {
+    fill: none; stroke-width: 12; stroke-linecap: round;
+    transition: stroke-dasharray 1.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .gw-gauge-label {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .gw-gauge-score {
+    font-size: 40px; font-weight: 700; line-height: 1;
+    font-family: var(--mono);
+  }
+  .gw-gauge-max { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+  .gw-gauge-level {
+    font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    margin-top: 4px; padding: 3px 10px; border-radius: 100px;
+  }
+  .gw-level-low    { background: rgba(16,185,129,.15);  color: var(--emerald); }
+  .gw-level-medium { background: rgba(245,158,11,.15);  color: var(--amber); }
+  .gw-level-high   { background: rgba(239,68,68,.15);   color: var(--red); }
+
+  .gw-gauge-name {
+    margin-top: 12px; font-size: 11px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: .1em;
+  }
+
+  /* Score breakdown bars */
+  .gw-breakdown { flex: 1; }
+  .gw-breakdown-title { font-size: 12px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 20px; }
+  .gw-bar-item { margin-bottom: 18px; }
+  .gw-bar-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 7px;
+  }
+  .gw-bar-label { font-size: 13px; font-weight: 500; color: var(--text); }
+  .gw-bar-weight { font-size: 11px; color: var(--text-dim); font-family: var(--mono); }
+  .gw-bar-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .gw-bar-track {
+    height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden;
+  }
+  .gw-bar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .gw-bar-danger { background: var(--red); }
+  .gw-bar-amber  { background: var(--amber); }
+  .gw-bar-blue   { background: var(--blue); }
+
+  /* Stats strip */
+  .gw-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 640px) { .gw-stats { grid-template-columns: repeat(2, 1fr); } }
+  .gw-stat {
+    background: var(--surface); padding: 20px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .gw-stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; }
+  .gw-stat-value { font-size: 26px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+  .gw-stat-sub { font-size: 11px; color: var(--text-muted); }
+
+  /* ── Tabs ── */
+  .gw-tabs {
+    display: flex; gap: 2px; margin-bottom: 24px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 4px; flex-wrap: wrap;
+  }
+  .gw-tab {
+    flex: 1; min-width: 120px; padding: 8px 16px;
+    border: none; background: transparent; cursor: pointer;
+    font-family: var(--font); font-size: 12px; font-weight: 600;
+    color: var(--text-dim); border-radius: var(--r-md); transition: var(--t);
+    white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .gw-tab:hover { color: var(--text); background: var(--surface-2); }
+  .gw-tab.active { background: var(--surface-2); color: var(--text); box-shadow: var(--sh-sm); }
+  .gw-tab-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%; font-size: 10px;
+    background: var(--surface-3); color: var(--text-muted);
+  }
+  .gw-tab.active .gw-tab-badge { background: var(--emerald); color: #fff; }
+
+  /* Tab content */
+  .gw-tab-content { display: none; }
+  .gw-tab-content.active { display: block; }
+
+  /* ── Card containers ── */
+  .gw-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); overflow: hidden; margin-bottom: 12px;
+  }
+  .gw-card-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .gw-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .gw-card-body { padding: 20px; }
+
+  /* Claims */
+  .gw-claim-item {
+    padding: 16px; background: var(--surface-2); border-radius: var(--r-md);
+    margin-bottom: 10px; border: 1px solid var(--border);
+  }
+  .gw-claim-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .gw-claim-text { font-size: 13px; color: var(--text); line-height: 1.6; flex: 1; }
+  .gw-claim-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .gw-badge-sm {
+    padding: 3px 8px; border-radius: var(--r-sm);
+    font-size: 10px; font-weight: 600; font-family: var(--mono);
+    letter-spacing: .04em;
+  }
+  .gw-badge-type     { background: var(--surface-3); color: var(--text-muted); border: 1px solid var(--border); }
+  .gw-badge-ok       { background: rgba(16,185,129,.12);  color: var(--emerald); }
+  .gw-badge-warn     { background: rgba(245,158,11,.12);  color: var(--amber); }
+  .gw-badge-danger   { background: rgba(239,68,68,.12);   color: var(--red); }
+  .gw-badge-blue     { background: rgba(59,130,246,.12);  color: var(--blue); }
+
+  /* Data extracted */
+  .gw-data-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  }
+  .gw-data-item {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 16px;
+  }
+  .gw-data-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .gw-data-val { font-size: 16px; font-weight: 700; font-family: var(--mono); color: var(--text); }
+  .gw-data-unit { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .gw-data-missing { font-size: 13px; color: var(--text-dim); font-style: italic; }
+
+  /* Risk flags */
+  .gw-flag-item {
+    padding: 20px; background: var(--surface-2); border-radius: var(--r-md);
+    margin-bottom: 10px; border-left: 3px solid var(--border);
+  }
+  .gw-flag-item.sev-high   { border-left-color: var(--red); }
+  .gw-flag-item.sev-medium { border-left-color: var(--amber); }
+  .gw-flag-item.sev-low    { border-left-color: var(--emerald); }
+  .gw-flag-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+  .gw-flag-sev {
+    flex-shrink: 0; padding: 3px 9px; border-radius: var(--r-sm);
+    font-size: 10px; font-weight: 700; font-family: var(--mono); letter-spacing: .06em;
+  }
+  .gw-flag-sev.high   { background: rgba(239,68,68,.15);  color: var(--red); }
+  .gw-flag-sev.medium { background: rgba(245,158,11,.15); color: var(--amber); }
+  .gw-flag-sev.low    { background: rgba(16,185,129,.15); color: var(--emerald); }
+  .gw-flag-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .gw-flag-cat { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .gw-flag-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; }
+  .gw-flag-ref {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; color: var(--blue); font-family: var(--mono);
+    background: rgba(59,130,246,.08); padding: 3px 8px; border-radius: var(--r-sm);
+  }
+  .gw-flag-excerpt {
+    margin-top: 10px; padding: 10px 14px;
+    background: var(--surface-3); border-radius: var(--r-sm);
+    font-size: 12px; color: var(--text-muted); font-style: italic;
+    border-left: 2px solid var(--border-light);
+  }
+
+  /* Missing disclosures */
+  .gw-missing-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px;
+  }
+  .gw-missing-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px; background: var(--surface-2); border-radius: var(--r-md);
+    border: 1px solid var(--border);
+  }
+  .gw-missing-icon {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .gw-missing-icon.gri  { background: rgba(59,130,246,.12);  color: var(--blue); }
+  .gw-missing-icon.tcfd { background: rgba(245,158,11,.12);  color: var(--amber); }
+  .gw-missing-icon.issb { background: rgba(16,185,129,.12);  color: var(--emerald); }
+  .gw-missing-label { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .gw-missing-desc  { font-size: 11px; color: var(--text-dim); margin-top: 3px; line-height: 1.5; }
+
+  /* Recommendations */
+  .gw-reco-item {
+    padding: 20px; background: var(--surface-2); border-radius: var(--r-md);
+    margin-bottom: 10px; border: 1px solid var(--border);
+    display: flex; gap: 16px;
+  }
+  .gw-reco-num {
+    flex-shrink: 0; width: 32px; height: 32px; border-radius: var(--r-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; font-family: var(--mono);
+    background: var(--surface-3); color: var(--text-muted);
+  }
+  .gw-reco-body { flex: 1; }
+  .gw-reco-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .gw-reco-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .gw-reco-action { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 10px; }
+  .gw-reco-footer { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .gw-reco-framework {
+    font-size: 11px; color: var(--blue); font-family: var(--mono);
+    background: rgba(59,130,246,.08); padding: 3px 8px; border-radius: var(--r-sm);
+  }
+  .gw-reco-impact { font-size: 11px; color: var(--text-dim); font-style: italic; }
+
+  /* ── Framework coverage ── */
+  .gw-framework-section { margin-bottom: 20px; }
+  .gw-framework-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .gw-framework-name {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .gw-framework-pct { font-size: 12px; color: var(--text-muted); font-family: var(--mono); }
+  .gw-req-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px;
+  }
+  .gw-req-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+    background: var(--surface-2); border-radius: var(--r-md);
+    font-size: 12px; color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .gw-req-item.met { color: var(--text); }
+  .gw-req-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .gw-req-dot.met     { background: var(--emerald); }
+  .gw-req-dot.missing { background: var(--red); }
+
+  /* ── CTA Banner ── */
+  .gw-cta-banner {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl); padding: 40px; margin-top: 40px;
+    text-align: center;
+  }
+  .gw-cta-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .gw-cta-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .gw-cta-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+  /* ── LinkedIn share modal ── */
+  .gw-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.75);
+    display: none; align-items: center; justify-content: center;
+    z-index: 999; padding: 20px;
+  }
+  .gw-modal-overlay.visible { display: flex; }
+  .gw-modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-xl); max-width: 520px; width: 100%;
+    padding: 32px; box-shadow: var(--sh-lg);
+  }
+  .gw-modal-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+  }
+  .gw-modal-title { font-size: 16px; font-weight: 700; color: var(--text); }
+  .gw-modal-close {
+    width: 28px; height: 28px; border-radius: var(--r-sm);
+    background: var(--surface-2); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 16px; transition: var(--t);
+  }
+  .gw-modal-close:hover { background: var(--surface-3); color: var(--text); }
+  .gw-modal-body textarea {
+    width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--r-md); color: var(--text); font-family: var(--font);
+    font-size: 13px; line-height: 1.7; padding: 14px;
+    resize: vertical; min-height: 160px;
+  }
+  .gw-modal-body textarea:focus { outline: none; border-color: var(--emerald); }
+  .gw-modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+
+  /* ── Toast notification ── */
+  .gw-toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 12px 18px;
+    font-size: 13px; color: var(--text); box-shadow: var(--sh-md);
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1); z-index: 9999;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .gw-toast.show { transform: translateY(0); opacity: 1; }
+  .gw-toast.success .gw-toast-icon { color: var(--emerald); }
+  .gw-toast.error   .gw-toast-icon { color: var(--red); }
+
+  /* ── Error state ── */
+  #error-section { display: none; text-align: center; max-width: 500px; margin: 0 auto; }
+  #error-section.visible { display: block; }
+  .gw-error-icon {
+    width: 64px; height: 64px; margin: 0 auto 20px;
+    background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  }
+  .gw-error-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .gw-error-msg { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.7; }
+
+  /* ── Empty states ── */
+  .gw-empty {
+    text-align: center; padding: 40px 20px;
+    color: var(--text-dim); font-size: 13px;
+  }
+  .gw-empty svg { width: 40px; height: 40px; margin: 0 auto 12px; opacity: .4; }
+
+  /* ── Footer ── */
+  .gw-footer {
+    margin-top: 80px; padding: 32px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .gw-footer-text { font-size: 12px; color: var(--text-dim); }
+  .gw-footer-text a { color: var(--text-muted); text-decoration: none; }
+  .gw-footer-text a:hover { color: var(--emerald); }
+
+  /* Sample report notice */
+  .gw-sample-notice {
+    background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.2);
+    border-radius: var(--r-md); padding: 10px 16px; margin-bottom: 16px;
+    font-size: 12px; color: var(--amber); display: none; align-items: center; gap: 8px;
+  }
+  .gw-sample-notice.visible { display: flex; }
+
+  /* Print / PDF target */
+  #pdf-target { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav class="gw-nav">
+  <div class="gw-nav-inner">
+    <a href="index.html" class="gw-nav-brand">
+      <img src="Climatix_logo.png" alt="Climactix" onerror="this.style.display='none'" />
+      <span>Climactix Global</span>
+    </a>
+    <div class="gw-nav-links">
+      <a href="generate.html">ESG Engine</a>
+      <a href="assessment.html">Assessment</a>
+      <a href="greenwashing-scanner.html" style="color:var(--emerald)">ESG Risk Intelligence</a>
+      <a href="solutions.html">Solutions</a>
+      <a class="gw-nav-cta" href="signup.html">Get Access</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="gw-hero">
+  <div class="gw-hero-grid"></div>
+  <div class="gw-hero-glow"></div>
+  <div class="wrap">
+    <div class="gw-hero-inner">
+      <div class="gw-badge">
+        <div class="gw-badge-dot"></div>
+        AI-Powered ESG Audit
+      </div>
+      <h1>ESG Risk<br /><span>Intelligence</span></h1>
+      <p class="gw-hero-sub">
+        Audit your ESG disclosures for credibility, compliance, and investor risk.
+        Powered by Claude — aligned with GRI, ISSB S2, TCFD, CSRD, and BRSR.
+      </p>
+      <div class="gw-framework-chips">
+        <span class="gw-chip">GRI 305</span>
+        <span class="gw-chip">ISSB S1 / S2</span>
+        <span class="gw-chip">TCFD</span>
+        <span class="gw-chip">GHG Protocol</span>
+        <span class="gw-chip">SBTi</span>
+        <span class="gw-chip">CSRD / ESRS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Main content ── -->
+<main class="wrap" style="padding-bottom: 80px;">
+
+  <!-- Upload section -->
+  <div id="upload-section">
+    <div
+      class="gw-upload-zone"
+      id="dropZone"
+      onclick="document.getElementById('fileInput').click()"
+    >
+      <div class="gw-upload-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <div class="gw-upload-title">Drop your ESG report here</div>
+      <div class="gw-upload-sub">or click to browse files from your device</div>
+      <div class="gw-upload-meta">PDF only · Max 20 MB · GRI / ISSB / TCFD reports supported</div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".pdf" />
+
+    <div class="gw-file-selected" id="fileSelected">
+      <div class="gw-file-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+      </div>
+      <div>
+        <div class="gw-file-name" id="fileName">report.pdf</div>
+        <div class="gw-file-size" id="fileSize">0 KB</div>
+      </div>
+      <div class="gw-file-remove" id="removeFile" title="Remove file" onclick="removeFile()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="gw-upload-actions">
+      <button class="gw-btn gw-btn-outline" onclick="loadSampleReport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        Try Sample Report
+      </button>
+    </div>
+
+    <div class="gw-scan-btn-wrap" id="scanBtnWrap" style="display:none; text-align:center; margin-top: 20px;">
+      <button class="gw-btn gw-btn-primary" style="padding: 13px 36px; font-size: 14px;" onclick="startScan()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Scan for Greenwashing Risk
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading section -->
+  <div id="loading-section">
+    <div class="gw-loader-orb"></div>
+    <div class="gw-loader-title">Analysing ESG Disclosures</div>
+    <div class="gw-loader-sub">Running AI-powered greenwashing detection pipeline…</div>
+    <div class="gw-loader-steps">
+      <div class="gw-loader-step" id="step-0">
+        <svg class="gw-step-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M9 12.875L5.5 9.375l1.415-1.414L9 10.045l4.585-4.584 1.415 1.414z"/>
+          <path d="M10 3a7 7 0 100 14A7 7 0 0010 3zm0-2a9 9 0 110 18A9 9 0 0110 1z"/>
+        </svg>
+        Extracting text from PDF…
+      </div>
+      <div class="gw-loader-step" id="step-1">
+        <svg class="gw-step-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9 3a1 1 0 012 0v5.5a.5.5 0 001 0V4a1 1 0 112 0v4.5a.5.5 0 001 0V6a1 1 0 112 0v5a7 7 0 11-14 0V9a1 1 0 012 0v2.5a.5.5 0 001 0V4a1 1 0 012 0v4.5a.5.5 0 001 0V3z" clip-rule="evenodd"/>
+        </svg>
+        Detecting sustainability claims with AI…
+      </div>
+      <div class="gw-loader-step" id="step-2">
+        <svg class="gw-step-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+        </svg>
+        Extracting quantitative ESG data…
+      </div>
+      <div class="gw-loader-step" id="step-3">
+        <svg class="gw-step-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        Validating narrative vs data consistency…
+      </div>
+      <div class="gw-loader-step" id="step-4">
+        <svg class="gw-step-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Mapping to GRI / ISSB S2 / TCFD frameworks…
+      </div>
+      <div class="gw-loader-step" id="step-5">
+        <svg class="gw-step-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+        </svg>
+        Generating AI recommendations…
+      </div>
+    </div>
+  </div>
+
+  <!-- Error section -->
+  <div id="error-section">
+    <div class="gw-error-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" width="28" height="28">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <div class="gw-error-title">Analysis Failed</div>
+    <div class="gw-error-msg" id="errorMsg">An error occurred while processing your report. Please ensure the file is a valid PDF and try again.</div>
+    <button class="gw-btn gw-btn-primary" onclick="resetToUpload()">Try Again</button>
+  </div>
+
+  <!-- Results section -->
+  <div id="results-section">
+    <div class="gw-sample-notice" id="sampleNotice">
+      <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+      </svg>
+      Showing sample report analysis — upload your own ESG report for a real assessment.
+    </div>
+
+    <div id="pdf-target">
+      <!-- Results header -->
+      <div class="gw-results-header">
+        <div class="gw-results-meta">
+          <div class="gw-results-company" id="resultCompany">ESG DISCLOSURE AUDIT</div>
+          <div class="gw-results-title">Greenwashing Risk Assessment</div>
+        </div>
+        <div class="gw-results-actions">
+          <button class="gw-btn gw-btn-outline" onclick="shareLinkedIn()">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+              <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/>
+            </svg>
+            Share Score
+          </button>
+          <button class="gw-btn gw-btn-ghost" onclick="downloadReport()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download Report
+          </button>
+          <button class="gw-btn gw-btn-outline" onclick="resetToUpload()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+            </svg>
+            New Scan
+          </button>
+        </div>
+      </div>
+
+      <!-- Score gauge + breakdown -->
+      <div class="gw-score-grid">
+        <div class="gw-gauge-wrap">
+          <div class="gw-gauge" id="gaugeWrap">
+            <svg viewBox="0 0 180 180">
+              <circle class="gw-gauge-track" cx="90" cy="90" r="75"/>
+              <circle class="gw-gauge-fill" id="gaugeFill" cx="90" cy="90" r="75"
+                stroke-dasharray="0 471" stroke-dashoffset="0"/>
+            </svg>
+            <div class="gw-gauge-label">
+              <div class="gw-gauge-score" id="gaugeScore">0</div>
+              <div class="gw-gauge-max">/100</div>
+              <div class="gw-gauge-level" id="gaugeLevel">—</div>
+            </div>
+          </div>
+          <div class="gw-gauge-name">Risk Score</div>
+        </div>
+
+        <div class="gw-breakdown">
+          <div class="gw-breakdown-title">Score Breakdown</div>
+
+          <div class="gw-bar-item">
+            <div class="gw-bar-header">
+              <span class="gw-bar-label">Narrative vs Data Mismatch</span>
+              <span class="gw-bar-weight">40% weight</span>
+            </div>
+            <div class="gw-bar-track">
+              <div class="gw-bar-fill gw-bar-danger" id="bar-mismatch" style="width:0%"></div>
+            </div>
+            <div class="gw-bar-meta" id="bar-mismatch-meta">—</div>
+          </div>
+
+          <div class="gw-bar-item">
+            <div class="gw-bar-header">
+              <span class="gw-bar-label">Missing Disclosures</span>
+              <span class="gw-bar-weight">30% weight</span>
+            </div>
+            <div class="gw-bar-track">
+              <div class="gw-bar-fill gw-bar-amber" id="bar-missing" style="width:0%"></div>
+            </div>
+            <div class="gw-bar-meta" id="bar-missing-meta">—</div>
+          </div>
+
+          <div class="gw-bar-item">
+            <div class="gw-bar-header">
+              <span class="gw-bar-label">Framework Alignment Gap</span>
+              <span class="gw-bar-weight">30% weight</span>
+            </div>
+            <div class="gw-bar-track">
+              <div class="gw-bar-fill gw-bar-blue" id="bar-alignment" style="width:0%"></div>
+            </div>
+            <div class="gw-bar-meta" id="bar-alignment-meta">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="gw-stats">
+        <div class="gw-stat">
+          <div class="gw-stat-label">Claims Detected</div>
+          <div class="gw-stat-value" id="stat-claims">0</div>
+          <div class="gw-stat-sub">sustainability claims</div>
+        </div>
+        <div class="gw-stat">
+          <div class="gw-stat-label">Risk Flags</div>
+          <div class="gw-stat-value" id="stat-flags">0</div>
+          <div class="gw-stat-sub">greenwashing indicators</div>
+        </div>
+        <div class="gw-stat">
+          <div class="gw-stat-label">Missing Disclosures</div>
+          <div class="gw-stat-value" id="stat-missing">0</div>
+          <div class="gw-stat-sub">framework requirements</div>
+        </div>
+        <div class="gw-stat">
+          <div class="gw-stat-label">Framework Coverage</div>
+          <div class="gw-stat-value" id="stat-coverage">0%</div>
+          <div class="gw-stat-sub">GRI · ISSB · TCFD</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="gw-tabs">
+        <button class="gw-tab active" onclick="switchTab('claims', this)">
+          Claims <span class="gw-tab-badge" id="badge-claims">0</span>
+        </button>
+        <button class="gw-tab" onclick="switchTab('data', this)">
+          ESG Data
+        </button>
+        <button class="gw-tab" onclick="switchTab('flags', this)">
+          Risk Flags <span class="gw-tab-badge" id="badge-flags">0</span>
+        </button>
+        <button class="gw-tab" onclick="switchTab('missing', this)">
+          Missing Disclosures <span class="gw-tab-badge" id="badge-missing">0</span>
+        </button>
+        <button class="gw-tab" onclick="switchTab('recommendations', this)">
+          Recommendations <span class="gw-tab-badge" id="badge-recos">0</span>
+        </button>
+      </div>
+
+      <!-- Tab: Claims -->
+      <div class="gw-tab-content active" id="tab-claims">
+        <div class="gw-card">
+          <div class="gw-card-header">
+            <div class="gw-card-title">Sustainability Claims Detected</div>
+          </div>
+          <div class="gw-card-body" id="claims-list">
+            <div class="gw-empty">No claims detected.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: ESG Data -->
+      <div class="gw-tab-content" id="tab-data">
+        <div class="gw-card">
+          <div class="gw-card-header">
+            <div class="gw-card-title">Quantitative ESG Data Extracted</div>
+          </div>
+          <div class="gw-card-body">
+            <div class="gw-data-grid" id="data-grid"></div>
+          </div>
+        </div>
+        <div class="gw-card" style="margin-top:12px;">
+          <div class="gw-card-header">
+            <div class="gw-card-title">Framework Coverage by Standard</div>
+          </div>
+          <div class="gw-card-body" id="framework-coverage"></div>
+        </div>
+      </div>
+
+      <!-- Tab: Risk Flags -->
+      <div class="gw-tab-content" id="tab-flags">
+        <div id="flags-list">
+          <div class="gw-empty">No risk flags detected.</div>
+        </div>
+      </div>
+
+      <!-- Tab: Missing Disclosures -->
+      <div class="gw-tab-content" id="tab-missing">
+        <div class="gw-card">
+          <div class="gw-card-header">
+            <div class="gw-card-title">Missing Framework Disclosures</div>
+          </div>
+          <div class="gw-card-body">
+            <div class="gw-missing-grid" id="missing-grid">
+              <div class="gw-empty">All key disclosures present.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Recommendations -->
+      <div class="gw-tab-content" id="tab-recommendations">
+        <div id="recos-list">
+          <div class="gw-empty">No recommendations generated.</div>
+        </div>
+      </div>
+
+      <!-- CTA Banner -->
+      <div class="gw-cta-banner">
+        <div class="gw-cta-title">Fix Your ESG Disclosures with Climactix</div>
+        <div class="gw-cta-sub">
+          Turn risk flags into compliant, investor-grade ESG disclosures. Our AI engine
+          generates TCFD, GRI, and ISSB-aligned reports in minutes.
+        </div>
+        <div class="gw-cta-actions">
+          <a href="generate.html" class="gw-btn gw-btn-primary" style="padding: 12px 28px; font-size: 14px;">
+            Generate ESG Report
+          </a>
+          <a href="solutions.html" class="gw-btn gw-btn-outline" style="padding: 12px 28px; font-size: 14px;">
+            Explore Solutions
+          </a>
+        </div>
+      </div>
+    </div><!-- end #pdf-target -->
+  </div><!-- end results-section -->
+
+</main>
+
+<!-- Footer -->
+<footer class="gw-footer">
+  <div class="wrap">
+    <p class="gw-footer-text">
+      &copy; 2025 <a href="index.html">Climactix Global</a> · Greenwashing Risk Scanner ·
+      Powered by Claude AI · Aligned with <a href="#">GRI</a>, <a href="#">ISSB S2</a>, <a href="#">TCFD</a>
+    </p>
+  </div>
+</footer>
+
+<!-- LinkedIn share modal -->
+<div class="gw-modal-overlay" id="linkedinModal">
+  <div class="gw-modal">
+    <div class="gw-modal-header">
+      <div class="gw-modal-title">Share ESG Risk Score on LinkedIn</div>
+      <button class="gw-modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="gw-modal-body">
+      <textarea id="linkedinText" rows="7"></textarea>
+    </div>
+    <div class="gw-modal-footer">
+      <button class="gw-btn gw-btn-ghost" onclick="copyLinkedIn()">Copy Text</button>
+      <button class="gw-btn gw-btn-primary" onclick="openLinkedIn()">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+          <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+          <circle cx="4" cy="4" r="2"/>
+        </svg>
+        Post to LinkedIn
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="gw-toast" id="toast">
+  <span class="gw-toast-icon" id="toastIcon">✓</span>
+  <span id="toastMsg">Done</span>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   GREENWASHING RISK SCANNER — APPLICATION LOGIC
+   State machine: idle → uploading → loading → results/error
+═══════════════════════════════════════════════════════════ */
+
+const API_BASE = 'http://localhost:8000';
+
+let _scanResult = null;
+let _selectedFile = null;
+let _isSample = false;
+
+// ── DOM helpers ──────────────────────────────────────────────────────────────
+
+const $ = id => document.getElementById(id);
+const show = id => { const el = $(id); if (el) { el.classList.add('visible'); el.style.display = ''; } };
+const hide = id => { const el = $(id); if (el) { el.classList.remove('visible'); el.style.display = 'none'; } };
+
+function showSection(section) {
+  ['upload-section', 'loading-section', 'error-section', 'results-section'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    if (id === section) {
+      el.style.display = '';
+      el.classList.add('visible');
+    } else {
+      el.style.display = 'none';
+      el.classList.remove('visible');
+    }
+  });
+}
+
+// ── File handling ────────────────────────────────────────────────────────────
+
+const dropZone = $('dropZone');
+const fileInput = $('fileInput');
+
+dropZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const files = e.dataTransfer.files;
+  if (files.length > 0) handleFileSelect(files[0]);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files.length > 0) handleFileSelect(e.target.files[0]);
+});
+
+function handleFileSelect(file) {
+  if (!file.name.toLowerCase().endsWith('.pdf')) {
+    showToast('Only PDF files are supported.', 'error');
+    return;
+  }
+  if (file.size > 20 * 1024 * 1024) {
+    showToast('File exceeds 20 MB limit.', 'error');
+    return;
+  }
+  _selectedFile = file;
+  _isSample = false;
+  $('fileName').textContent = file.name;
+  $('fileSize').textContent = formatBytes(file.size);
+  $('fileSelected').classList.add('visible');
+  $('scanBtnWrap').style.display = 'block';
+}
+
+function removeFile() {
+  _selectedFile = null;
+  fileInput.value = '';
+  $('fileSelected').classList.remove('visible');
+  $('scanBtnWrap').style.display = 'none';
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// ── Sample report ────────────────────────────────────────────────────────────
+
+function loadSampleReport() {
+  _isSample = true;
+  _selectedFile = null;
+  showSection('loading-section');
+  animateSteps();
+
+  // Simulate API delay then show canned result
+  setTimeout(() => {
+    const sample = buildSampleResult();
+    _scanResult = sample;
+    renderResults(sample, true);
+    showSection('results-section');
+    $('sampleNotice').classList.add('visible');
+  }, 4200);
+}
+
+function buildSampleResult() {
+  return {
+    company_name: "Hypothetical Corp PLC",
+    risk_score: 67,
+    risk_level: "Medium",
+    risk_label: "Medium Risk",
+    risk_color: "#F59E0B",
+    score_breakdown: {
+      narrative_data_mismatch: { score: 72, weight: "40%", high_flags: 2, medium_flags: 3 },
+      missing_disclosures:     { score: 60, weight: "30%", items_missing: 6, items_total: 15 },
+      framework_alignment:     { score: 55, weight: "30%", coverage_pct: 45 }
+    },
+    framework_coverage_pct: 45,
+    claims_detected: [
+      { claim: "We will achieve net-zero emissions across our operations by 2050.", type: "net_zero", has_supporting_data: false, baseline_year: null, target_year: 2050, third_party_verified: false },
+      { claim: "100% of our electricity is sourced from renewable energy.", type: "renewables", has_supporting_data: true, baseline_year: 2020, target_year: null, third_party_verified: false },
+      { claim: "We are committed to science-based emissions reductions aligned with 1.5°C.", type: "science_based", has_supporting_data: false, baseline_year: null, target_year: 2035, third_party_verified: false },
+      { claim: "Our supply chain is carbon neutral as of 2023.", type: "carbon_neutral", has_supporting_data: false, baseline_year: null, target_year: null, third_party_verified: false }
+    ],
+    data_extracted: {
+      scope_1: { value: "12450", unit: "tCO2e" },
+      scope_2: { value: "8320", unit: "tCO2e" },
+      scope_3: null,
+      energy_consumption: { value: "142500", unit: "MWh" },
+      baseline_year: null,
+      net_zero_target_year: 2050,
+      reporting_boundary_defined: false,
+      third_party_assurance: false,
+      transition_pathway_present: false,
+      emission_intensity_reported: false,
+      emission_reduction_stated: true
+    },
+    risk_flags: [
+      { flag_id: "F001", title: "Net-Zero Claim Without Baseline Year", description: "The report asserts net-zero by 2050 but no baseline year is defined, making the claim unmeasurable and non-compliant with TCFD Metrics & Targets.", severity: "High", category: "Narrative vs Data Mismatch", framework_ref: "TCFD — Metrics & Targets; GRI 305-5", claim_excerpt: "We will achieve net-zero emissions across our operations by 2050." },
+      { flag_id: "F002", title: "Unverified Net-Zero / Carbon Neutrality Claim", description: "Net-zero and carbon neutrality claims are present but no third-party verification or external assurance is cited.", severity: "High", category: "Verification Gap", framework_ref: "ISSB S2 para 21; GRI 305", claim_excerpt: "We will achieve net-zero emissions across our operations by 2050." },
+      { flag_id: "F004", title: "Scope 3 Emissions Not Reported", description: "Scope 3 value chain emissions are absent despite Scope 1 and 2 being disclosed. For most organisations, Scope 3 represents over 70% of total footprint.", severity: "High", category: "Missing Disclosure", framework_ref: "ISSB S2; GHG Protocol Scope 3; GRI 305-3", claim_excerpt: "" },
+      { flag_id: "F005", title: "Long-Term Targets Without Transition Pathway", description: "Net-zero 2050 is stated but no interim milestones, transition plan, or decarbonisation roadmap is disclosed.", severity: "High", category: "Narrative vs Data Mismatch", framework_ref: "ISSB S2 para 29; TCFD Strategy; GRI 3-3", claim_excerpt: "" },
+      { flag_id: "F006", title: "Reporting Boundary Not Defined", description: "Emissions data is presented but the reporting boundary or consolidation approach is not specified, making data unverifiable.", severity: "Medium", category: "Framework Misalignment", framework_ref: "GHG Protocol Corporate Standard; GRI 305", claim_excerpt: "" }
+    ],
+    missing_disclosures: [
+      { framework: "GRI",  requirement: "GRI 305-3 — Scope 3 Value Chain Emissions", description: "Other indirect (Scope 3) GHG emissions disclosed" },
+      { framework: "GRI",  requirement: "GRI 305-4 — Emission Intensity", description: "GHG emissions intensity ratio" },
+      { framework: "GRI",  requirement: "GRI 305-5 — Emission Reductions vs Baseline", description: "GHG emission reductions quantified against a defined baseline" },
+      { framework: "TCFD", requirement: "TCFD — Risk Management Pillar", description: "Process for identifying, assessing and managing climate risks" },
+      { framework: "TCFD", requirement: "TCFD — Scenario Analysis", description: "Climate scenario analysis performed" },
+      { framework: "ISSB", requirement: "ISSB S2 — Transition Risks & Plan", description: "Transition risks and decarbonisation transition plan" },
+      { framework: "ISSB", requirement: "ISSB S2 — Scope 3 Value Chain", description: "Value chain (Scope 3) emissions per ISSB S2 para 29" }
+    ],
+    framework_breakdown: {
+      GRI: [
+        { requirement: "GRI 305-1 — Scope 1 Direct Emissions", description: "Direct GHG emissions", status: "met" },
+        { requirement: "GRI 305-2 — Scope 2 Indirect Emissions", description: "Scope 2 GHG emissions", status: "met" },
+        { requirement: "GRI 305-3 — Scope 3 Value Chain Emissions", description: "Scope 3 emissions", status: "missing" },
+        { requirement: "GRI 305-4 — Emission Intensity", description: "Intensity ratio", status: "missing" },
+        { requirement: "GRI 305-5 — Emission Reductions", description: "Reductions vs baseline", status: "missing" },
+        { requirement: "GRI — Reporting Boundary", description: "Boundary defined", status: "missing" }
+      ],
+      TCFD: [
+        { requirement: "TCFD — Governance Pillar", description: "Board oversight", status: "met" },
+        { requirement: "TCFD — Strategy Pillar", description: "Climate risks in strategy", status: "met" },
+        { requirement: "TCFD — Risk Management Pillar", description: "Risk management process", status: "missing" },
+        { requirement: "TCFD — Metrics & Targets", description: "Climate metrics disclosed", status: "met" },
+        { requirement: "TCFD — Scenario Analysis", description: "Scenario analysis", status: "missing" }
+      ],
+      ISSB: [
+        { requirement: "ISSB S2 — Physical Climate Risks", description: "Physical risk disclosure", status: "met" },
+        { requirement: "ISSB S2 — Transition Risks & Plan", description: "Transition plan", status: "missing" },
+        { requirement: "ISSB S2 — Scope 3 Value Chain", description: "Scope 3 disclosed", status: "missing" },
+        { requirement: "ISSB S1 — Materiality Assessment", description: "Materiality process", status: "met" }
+      ]
+    },
+    recommendations: [
+      { priority: "Critical", title: "Define and disclose Scope 3 emissions", action: "Commission a Scope 3 inventory using the GHG Protocol Corporate Value Chain Standard. Categorise at minimum Categories 1, 2, 3, 11, and 15. Disclose in the next annual report.", framework: "GRI 305-3 / ISSB S2 / GHG Protocol", impact: "Addresses the highest-risk disclosure gap; reduces investor greenwashing scrutiny significantly." },
+      { priority: "Critical", title: "Establish a baseline year for all climate targets", action: "Define a single base year (2019 or 2020 recommended) for all net-zero and emissions reduction targets. Disclose restated baseline figures under GRI 305-5.", framework: "GRI 305-5 / TCFD Metrics & Targets", impact: "Without a baseline, net-zero claims cannot be verified — a primary regulatory enforcement trigger." },
+      { priority: "High", title: "Obtain third-party assurance for climate claims", action: "Engage an independent assurance provider (e.g. limited assurance to ISAE 3000) for Scope 1, 2, and carbon neutrality claims. Disclose the assurance statement in the report.", framework: "ISSB S2 para 21 / GRI 305", impact: "Third-party verification is the single most effective measure to reduce perceived greenwashing risk." },
+      { priority: "High", title: "Develop and publish a transition pathway", action: "Create a detailed transition plan with interim 2030 milestones, capital allocation, and a technology roadmap aligned to your net-zero 2050 target.", framework: "ISSB S2 para 29 / TCFD Strategy", impact: "Investors and regulators now require transition plans — absence is a material flag under CSRD." },
+      { priority: "Medium", title: "Define and publish the reporting boundary", action: "Clearly state the consolidation approach (operational control, financial control, or equity share) used for all GHG and energy data in the report.", framework: "GHG Protocol / GRI 305", impact: "Undefined boundaries prevent third-party verification and undermine all emissions data credibility." },
+      { priority: "Medium", title: "Conduct and disclose climate scenario analysis", action: "Perform at minimum two scenarios (a <2°C transition scenario and a 4°C physical risk scenario) per TCFD recommendations. Disclose material impacts on strategy.", framework: "TCFD / ISSB S2", impact: "Increasingly expected by institutional investors; absence raises governance credibility concerns." }
+    ]
+  };
+}
+
+// ── Scan execution ────────────────────────────────────────────────────────────
+
+async function startScan() {
+  if (!_selectedFile) return;
+
+  showSection('loading-section');
+  animateSteps();
+
+  const formData = new FormData();
+  formData.append('file', _selectedFile);
+
+  try {
+    const response = await fetch(`${API_BASE}/api/analyze-esg`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
+      throw new Error(err.detail || `Server error ${response.status}`);
+    }
+
+    const result = await response.json();
+    _scanResult = result;
+    renderResults(result, false);
+    showSection('results-section');
+
+  } catch (err) {
+    $('errorMsg').textContent = err.message || 'Failed to analyse the report. Please try again.';
+    showSection('error-section');
+  }
+}
+
+// ── Step animation ────────────────────────────────────────────────────────────
+
+function animateSteps() {
+  const steps = ['step-0','step-1','step-2','step-3','step-4','step-5'];
+  steps.forEach(id => {
+    const el = $(id);
+    if (el) el.classList.remove('active','done');
+  });
+
+  const delays = [0, 700, 1400, 2100, 2800, 3500];
+  steps.forEach((id, i) => {
+    setTimeout(() => {
+      const el = $(id);
+      if (!el) return;
+      if (i > 0) {
+        const prev = $(steps[i - 1]);
+        if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+      }
+      el.classList.add('active');
+    }, delays[i]);
+  });
+}
+
+// ── Render results ────────────────────────────────────────────────────────────
+
+function renderResults(r, isSample) {
+  _isSample = isSample;
+
+  // Company name
+  $('resultCompany').textContent = (r.company_name || 'ESG REPORT').toUpperCase();
+
+  // Gauge
+  renderGauge(r.risk_score, r.risk_level);
+
+  // Score bars
+  const bd = r.score_breakdown || {};
+  const mm = bd.narrative_data_mismatch || {};
+  const md = bd.missing_disclosures || {};
+  const fa = bd.framework_alignment || {};
+
+  animateBar('bar-mismatch', mm.score || 0);
+  $('bar-mismatch-meta').textContent = `${mm.high_flags || 0} High + ${mm.medium_flags || 0} Medium flags`;
+
+  animateBar('bar-missing', md.score || 0);
+  $('bar-missing-meta').textContent = `${md.items_missing || 0} of ${md.items_total || 0} requirements missing`;
+
+  animateBar('bar-alignment', fa.score || 0);
+  $('bar-alignment-meta').textContent = `${fa.coverage_pct || 0}% framework coverage achieved`;
+
+  // Stats
+  $('stat-claims').textContent  = (r.claims_detected || []).length;
+  $('stat-flags').textContent   = (r.risk_flags || []).length;
+  $('stat-missing').textContent = (r.missing_disclosures || []).length;
+  $('stat-coverage').textContent = `${r.framework_coverage_pct || 0}%`;
+
+  // Badges
+  $('badge-claims').textContent  = (r.claims_detected || []).length;
+  $('badge-flags').textContent   = (r.risk_flags || []).length;
+  $('badge-missing').textContent = (r.missing_disclosures || []).length;
+  $('badge-recos').textContent   = (r.recommendations || []).length;
+
+  // Tabs content
+  renderClaims(r.claims_detected || []);
+  renderData(r.data_extracted || {}, r.framework_breakdown || {});
+  renderFlags(r.risk_flags || []);
+  renderMissing(r.missing_disclosures || []);
+  renderRecos(r.recommendations || []);
+}
+
+// ── Gauge ─────────────────────────────────────────────────────────────────────
+
+function renderGauge(score, level) {
+  const fill  = $('gaugeFill');
+  const label = $('gaugeScore');
+  const lvl   = $('gaugeLevel');
+
+  const circumference = 2 * Math.PI * 75; // r=75 → ≈ 471
+  const fraction = Math.min(score / 100, 1);
+  const dash = fraction * circumference;
+
+  const colorMap = { Low: '#10B981', Medium: '#F59E0B', High: '#EF4444' };
+  const color = colorMap[level] || '#94A3B8';
+
+  fill.setAttribute('stroke', color);
+
+  // Animate gauge
+  requestAnimationFrame(() => {
+    fill.style.strokeDasharray = `${dash} ${circumference}`;
+  });
+
+  // Count up score
+  let current = 0;
+  const inc = score / 50;
+  const timer = setInterval(() => {
+    current = Math.min(current + inc, score);
+    label.textContent = Math.round(current);
+    if (current >= score) clearInterval(timer);
+  }, 20);
+
+  lvl.textContent = level + ' Risk';
+  lvl.className = 'gw-gauge-level gw-level-' + level.toLowerCase();
+}
+
+function animateBar(id, value) {
+  setTimeout(() => {
+    const el = $(id);
+    if (el) el.style.width = Math.min(value, 100) + '%';
+  }, 300);
+}
+
+// ── Tab: Claims ───────────────────────────────────────────────────────────────
+
+function renderClaims(claims) {
+  const el = $('claims-list');
+  if (!claims.length) {
+    el.innerHTML = '<div class="gw-empty">No sustainability claims were detected in this report.</div>';
+    return;
+  }
+
+  const typeLabels = {
+    net_zero: 'Net Zero', carbon_neutral: 'Carbon Neutral', science_based: 'Science-Based',
+    renewables: 'Renewables', supply_chain: 'Supply Chain', social: 'Social',
+    biodiversity: 'Biodiversity', circular: 'Circular Economy', water: 'Water', other: 'Other',
+  };
+
+  el.innerHTML = claims.map(c => `
+    <div class="gw-claim-item">
+      <div class="gw-claim-header">
+        <div class="gw-claim-text">"${escHtml(c.claim)}"</div>
+      </div>
+      <div class="gw-claim-badges">
+        <span class="gw-badge-sm gw-badge-type">${typeLabels[c.type] || c.type || 'Claim'}</span>
+        ${c.has_supporting_data
+          ? '<span class="gw-badge-sm gw-badge-ok">✓ Data Supported</span>'
+          : '<span class="gw-badge-sm gw-badge-danger">⚠ No Supporting Data</span>'}
+        ${c.third_party_verified
+          ? '<span class="gw-badge-sm gw-badge-blue">✓ 3rd Party Verified</span>'
+          : '<span class="gw-badge-sm gw-badge-warn">Unverified</span>'}
+        ${c.baseline_year ? `<span class="gw-badge-sm gw-badge-type">Baseline: ${c.baseline_year}</span>` : ''}
+        ${c.target_year   ? `<span class="gw-badge-sm gw-badge-type">Target: ${c.target_year}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Tab: ESG Data ─────────────────────────────────────────────────────────────
+
+function renderData(data, frameworkBreakdown) {
+  const grid = $('data-grid');
+
+  const items = [
+    { label: 'Scope 1 Emissions', key: 'scope_1' },
+    { label: 'Scope 2 Emissions', key: 'scope_2' },
+    { label: 'Scope 3 Emissions', key: 'scope_3' },
+    { label: 'Energy Consumption', key: 'energy_consumption' },
+  ];
+
+  grid.innerHTML = items.map(item => {
+    const val = data[item.key];
+    return `
+      <div class="gw-data-item">
+        <div class="gw-data-label">${item.label}</div>
+        ${val
+          ? `<div class="gw-data-val">${Number(val.value).toLocaleString()}</div>
+             <div class="gw-data-unit">${val.unit}</div>`
+          : `<div class="gw-data-missing">Not reported</div>`
+        }
+      </div>
+    `;
+  }).join('') + `
+    <div class="gw-data-item">
+      <div class="gw-data-label">Baseline Year</div>
+      ${data.baseline_year
+        ? `<div class="gw-data-val">${data.baseline_year}</div>`
+        : `<div class="gw-data-missing">Not defined</div>`}
+    </div>
+    <div class="gw-data-item">
+      <div class="gw-data-label">Net-Zero Target</div>
+      ${data.net_zero_target_year
+        ? `<div class="gw-data-val">${data.net_zero_target_year}</div>`
+        : `<div class="gw-data-missing">Not stated</div>`}
+    </div>
+    <div class="gw-data-item">
+      <div class="gw-data-label">3rd Party Assurance</div>
+      <div class="gw-data-val" style="font-size:14px;color:${data.third_party_assurance ? 'var(--emerald)' : 'var(--red)'}">
+        ${data.third_party_assurance ? '✓ Yes' : '✗ No'}
+      </div>
+    </div>
+    <div class="gw-data-item">
+      <div class="gw-data-label">Reporting Boundary</div>
+      <div class="gw-data-val" style="font-size:14px;color:${data.reporting_boundary_defined ? 'var(--emerald)' : 'var(--red)'}">
+        ${data.reporting_boundary_defined ? '✓ Defined' : '✗ Undefined'}
+      </div>
+    </div>
+    <div class="gw-data-item">
+      <div class="gw-data-label">Transition Pathway</div>
+      <div class="gw-data-val" style="font-size:14px;color:${data.transition_pathway_present ? 'var(--emerald)' : 'var(--red)'}">
+        ${data.transition_pathway_present ? '✓ Present' : '✗ Absent'}
+      </div>
+    </div>
+  `;
+
+  // Framework coverage
+  const covEl = $('framework-coverage');
+  const standards = Object.entries(frameworkBreakdown);
+  if (!standards.length) { covEl.innerHTML = '<div class="gw-empty">No framework data.</div>'; return; }
+
+  covEl.innerHTML = standards.map(([std, reqs]) => {
+    const met = reqs.filter(r => r.status === 'met').length;
+    const pct = Math.round((met / reqs.length) * 100);
+    const colorMap = { GRI: 'var(--blue)', TCFD: 'var(--amber)', ISSB: 'var(--emerald)' };
+    return `
+      <div class="gw-framework-section">
+        <div class="gw-framework-header">
+          <div class="gw-framework-name">
+            <span style="color:${colorMap[std]||'var(--text)'}">●</span> ${std}
+          </div>
+          <div class="gw-framework-pct">${met}/${reqs.length} met (${pct}%)</div>
+        </div>
+        <div class="gw-req-grid">
+          ${reqs.map(r => `
+            <div class="gw-req-item ${r.status}">
+              <div class="gw-req-dot ${r.status}"></div>
+              <span>${r.requirement}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Tab: Risk Flags ───────────────────────────────────────────────────────────
+
+function renderFlags(flags) {
+  const el = $('flags-list');
+  if (!flags.length) {
+    el.innerHTML = '<div class="gw-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>No risk flags — excellent disclosure quality.</div>';
+    return;
+  }
+
+  // Sort: High first
+  const sorted = [...flags].sort((a, b) => {
+    const order = { High: 0, Medium: 1, Low: 2 };
+    return (order[a.severity] ?? 3) - (order[b.severity] ?? 3);
+  });
+
+  el.innerHTML = sorted.map(f => `
+    <div class="gw-flag-item sev-${f.severity.toLowerCase()}">
+      <div class="gw-flag-header">
+        <span class="gw-flag-sev ${f.severity.toLowerCase()}">${f.severity.toUpperCase()}</span>
+        <div>
+          <div class="gw-flag-title">${escHtml(f.title)}</div>
+          <div class="gw-flag-cat">${escHtml(f.category)}</div>
+        </div>
+      </div>
+      <div class="gw-flag-desc">${escHtml(f.description)}</div>
+      <span class="gw-flag-ref">⊕ ${escHtml(f.framework_ref)}</span>
+      ${f.claim_excerpt ? `<div class="gw-flag-excerpt">"${escHtml(f.claim_excerpt)}"</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ── Tab: Missing Disclosures ──────────────────────────────────────────────────
+
+function renderMissing(missing) {
+  const el = $('missing-grid');
+  if (!missing.length) {
+    el.innerHTML = '<div class="gw-empty">All key framework disclosures are present.</div>';
+    return;
+  }
+
+  el.innerHTML = missing.map(m => `
+    <div class="gw-missing-item">
+      <div class="gw-missing-icon ${(m.framework || '').toLowerCase()}">${m.framework}</div>
+      <div>
+        <div class="gw-missing-label">${escHtml(m.requirement)}</div>
+        <div class="gw-missing-desc">${escHtml(m.description)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Tab: Recommendations ──────────────────────────────────────────────────────
+
+function renderRecos(recs) {
+  const el = $('recos-list');
+  if (!recs.length) {
+    el.innerHTML = '<div class="gw-empty">No recommendations generated.</div>';
+    return;
+  }
+
+  const priMap = { Critical: 'danger', High: 'warn', Medium: 'type' };
+
+  el.innerHTML = recs.map((r, i) => `
+    <div class="gw-reco-item">
+      <div class="gw-reco-num">${String(i + 1).padStart(2,'0')}</div>
+      <div class="gw-reco-body">
+        <div class="gw-reco-header">
+          <span class="gw-badge-sm gw-badge-${priMap[r.priority] || 'type'}">${r.priority || 'Medium'}</span>
+          <span class="gw-reco-title">${escHtml(r.title)}</span>
+        </div>
+        <div class="gw-reco-action">${escHtml(r.action)}</div>
+        <div class="gw-reco-footer">
+          ${r.framework ? `<span class="gw-reco-framework">${escHtml(r.framework)}</span>` : ''}
+          ${r.impact    ? `<span class="gw-reco-impact">${escHtml(r.impact)}</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.gw-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.gw-tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const content = $('tab-' + name);
+  if (content) content.classList.add('active');
+}
+
+// ── Download report ───────────────────────────────────────────────────────────
+
+async function downloadReport() {
+  if (!_scanResult) return;
+
+  // Try backend PDF first
+  if (!_isSample) {
+    try {
+      const res = await fetch(`${API_BASE}/api/analyze-esg/export-pdf`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(_scanResult),
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `climactix-greenwashing-scan.pdf`;
+        a.click(); URL.revokeObjectURL(url);
+        showToast('Report downloaded.', 'success');
+        return;
+      }
+    } catch (_) { /* fall through to html2pdf */ }
+  }
+
+  // Fallback: html2pdf.js client-side
+  const target = $('pdf-target');
+  if (!target || !window.html2pdf) { showToast('Download not available.', 'error'); return; }
+
+  showToast('Generating PDF…', 'success');
+  const opt = {
+    margin: [10, 12],
+    filename: 'climactix-greenwashing-risk-report.pdf',
+    image: { type: 'jpeg', quality: 0.92 },
+    html2canvas: { scale: 2, backgroundColor: '#050A14', useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css'] },
+  };
+  html2pdf().set(opt).from(target).save();
+}
+
+// ── LinkedIn sharing ──────────────────────────────────────────────────────────
+
+function shareLinkedIn() {
+  if (!_scanResult) return;
+  const s = _scanResult;
+  const text = `We ran our ESG disclosures through the Climactix Greenwashing Risk Scanner.
+
+🔍 Risk Score: ${s.risk_score}/100 (${s.risk_level} Risk)
+⚠️ Risk Flags: ${(s.risk_flags||[]).length} greenwashing indicators identified
+📋 Missing Disclosures: ${(s.missing_disclosures||[]).length} framework requirements
+📊 Framework Coverage: ${s.framework_coverage_pct || 0}% (GRI · ISSB S2 · TCFD)
+
+Eye-opening insights on ESG credibility, compliance gaps, and investor risk.
+
+Audit powered by Climactix AI — ESG Intelligence Infrastructure.
+👉 climactixglobal.com/greenwashing-scanner
+
+#ESG #Sustainability #Greenwashing #TCFD #ISSB #GRI #ClimateDisclosure #Climactix`;
+
+  $('linkedinText').value = text;
+  $('linkedinModal').classList.add('visible');
+}
+
+function closeModal() {
+  $('linkedinModal').classList.remove('visible');
+}
+
+function copyLinkedIn() {
+  const text = $('linkedinText').value;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard.', 'success');
+    closeModal();
+  });
+}
+
+function openLinkedIn() {
+  const text = encodeURIComponent($('linkedinText').value);
+  window.open(`https://www.linkedin.com/sharing/share-offsite/?mini=true&url=${encodeURIComponent('https://climactixglobal.com/greenwashing-scanner')}&summary=${text}`, '_blank');
+  closeModal();
+}
+
+// Close modal on overlay click
+$('linkedinModal').addEventListener('click', e => {
+  if (e.target === $('linkedinModal')) closeModal();
+});
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+
+function resetToUpload() {
+  _scanResult = null;
+  _selectedFile = null;
+  _isSample = false;
+  fileInput.value = '';
+  $('fileSelected').classList.remove('visible');
+  $('scanBtnWrap').style.display = 'none';
+  $('sampleNotice').classList.remove('visible');
+  showSection('upload-section');
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+
+function showToast(msg, type = 'success') {
+  const toast = $('toast');
+  const icon  = $('toastIcon');
+  $('toastMsg').textContent = msg;
+  icon.textContent = type === 'error' ? '✕' : '✓';
+  toast.className = `gw-toast ${type}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// ── Utility ───────────────────────────────────────────────────────────────────
+
+function escHtml(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+
+// Show only upload section on page load
+showSection('upload-section');
+</script>
+</body>
+</html>

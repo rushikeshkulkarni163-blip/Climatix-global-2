@@ -34,6 +34,8 @@ load_dotenv()
 from services.extractor import extract_text
 from services.ai_engine import generate_all_narratives
 from services.scorer import calculate_scores
+from services.greenwashing_scanner import scan_for_greenwashing, extract_data, validate_claims, extract_claims
+from services.esg_framework_intelligence import run_intelligence_analysis, FRAMEWORK_REGISTRY, UNIFIED_ESG_MODEL, CROSS_FRAMEWORK_MAP
 
 # ── Template directory ─────────────────────────────────────────────────────────
 _TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -372,6 +374,328 @@ def export_docx(req: ExportRequest):
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
+
+
+# ── Greenwashing Scanner ──────────────────────────────────────────────────────
+
+class GreenwashingScanRequest(BaseModel):
+    text: str
+    company_name: Optional[str] = "The Company"
+
+
+@app.post("/api/analyze-esg")
+async def analyze_esg(file: UploadFile = File(...)):
+    """
+    Accept a PDF / DOCX / XLSX file, extract text, and run the full
+    Greenwashing Risk Scanner pipeline. Returns a structured risk assessment.
+    File size limit: 20 MB.
+    """
+    MAX_SIZE = 20 * 1024 * 1024  # 20 MB
+    content = await file.read()
+
+    if len(content) > MAX_SIZE:
+        raise HTTPException(status_code=413, detail="File exceeds 20 MB limit.")
+
+    try:
+        text = extract_text(content, file.filename or "", file.content_type or "")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if not text.strip():
+        raise HTTPException(status_code=400, detail="Could not extract readable text from the file.")
+
+    company_name = (file.filename or "").rsplit(".", 1)[0].replace("-", " ").replace("_", " ").title() or "The Company"
+
+    try:
+        result = scan_for_greenwashing(text, company_name)
+        # Enrich with intelligence layer (jurisdiction, multi-framework coverage, integrity score)
+        extracted = result.get("data_extracted", {})
+        flags     = result.get("risk_flags", [])
+        intel     = run_intelligence_analysis(text, extracted, flags, company_name)
+        result["intelligence"] = intel
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Scanner failed: {str(e)}")
+
+    return JSONResponse(content={"success": True, **result})
+
+
+@app.post("/api/analyze-esg/export-pdf")
+def export_greenwashing_pdf(result: dict):
+    """Generate a downloadable investor-grade PDF from a greenwashing scan result."""
+    try:
+        pdf_bytes = _build_greenwashing_pdf(result)
+    except ImportError:
+        raise HTTPException(status_code=500, detail="reportlab not installed.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
+
+    company = (result.get("company_name") or "report").replace(" ", "-").lower()
+    filename = f"climactix-greenwashing-scan-{company}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@app.get("/api/esg-intelligence/frameworks")
+def list_frameworks():
+    """
+    Return the full ESG Framework Registry — metadata for all 16 supported
+    standards (GRI, TCFD, ISSB S1/S2, CSRD, ESRS, BRSR, SFDR, SEC,
+    TNFD, GRESB, ISO 14001, PCAF, GHG Protocol, SBTi).
+    """
+    return JSONResponse(content={
+        "count": len(FRAMEWORK_REGISTRY),
+        "frameworks": {
+            fid: {
+                "full_name": meta["full_name"],
+                "type": meta["type"],
+                "focus": meta["focus"],
+                "jurisdiction": meta["jurisdiction"],
+                "target_users": meta["target_users"],
+                "disclosure_areas": meta["disclosure_areas"],
+                "mandatory_in": meta["mandatory_in"],
+            }
+            for fid, meta in FRAMEWORK_REGISTRY.items()
+        },
+    })
+
+
+@app.get("/api/esg-intelligence/model")
+def unified_model():
+    """
+    Return the Unified ESG Data Model — canonical concepts with cross-framework
+    mappings (which frameworks require each disclosure point).
+    """
+    return JSONResponse(content={
+        "concept_count": len(UNIFIED_ESG_MODEL),
+        "categories": sorted({c["category"] for c in UNIFIED_ESG_MODEL.values()}),
+        "concepts": {
+            cid: {
+                "category": c["category"],
+                "sub_category": c["sub_category"],
+                "concept": c["concept"],
+                "metric_type": c["metric_type"],
+                "framework_mappings": {
+                    fw: {"ref": info["ref"], "weight": info["weight"]}
+                    for fw, info in c["framework_mappings"].items()
+                },
+                "scoring_weight": c["scoring_weight"],
+            }
+            for cid, c in UNIFIED_ESG_MODEL.items()
+        },
+    })
+
+
+@app.get("/api/esg-intelligence/cross-framework-map")
+def cross_framework_map():
+    """
+    Return the cross-framework equivalence table — one disclosure satisfies
+    multiple frameworks.  Shows interoperability across GRI, TCFD, ISSB, CSRD,
+    BRSR, SEC, CDP, SBTi, GHG Protocol.
+    """
+    return JSONResponse(content={
+        "description": (
+            "Maps each ESG concept to the framework references it satisfies. "
+            "A single disclosure on Scope 1 emissions, for example, satisfies "
+            "GRI 305-1, TCFD Metrics, ISSB S2 para 29, CSRD ESRS E1-6, BRSR P9, "
+            "SEC Climate Rule, CDP C6.1, and GHG Protocol simultaneously."
+        ),
+        "cross_framework_map": CROSS_FRAMEWORK_MAP,
+    })
+
+
+@app.post("/api/esg-intelligence/analyze")
+async def esg_intelligence_analyze(file: UploadFile = File(...)):
+    """
+    Upload an ESG report → run full Framework Intelligence pipeline.
+    Returns:
+      - jurisdiction detection (India → BRSR, EU → CSRD, etc.)
+      - coverage matrix against unified ESG model
+      - per-framework compliance status (Aligned / Partial / Missing)
+      - ESG Integrity Score (0–100, higher = better)
+      - Greenwashing Risk Score (0–100, inverse)
+      - Critical gaps with cross-framework refs
+    """
+    MAX_SIZE = 20 * 1024 * 1024
+    content = await file.read()
+    if len(content) > MAX_SIZE:
+        raise HTTPException(status_code=413, detail="File exceeds 20 MB limit.")
+
+    try:
+        text = extract_text(content, file.filename or "", file.content_type or "")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if not text.strip():
+        raise HTTPException(status_code=400, detail="No readable text extracted.")
+
+    company_name = (file.filename or "").rsplit(".", 1)[0].replace("-", " ").replace("_", " ").title() or "The Company"
+
+    try:
+        extracted = extract_data(text)
+        claims    = extract_claims(text)
+        flags     = validate_claims(claims, extracted, text)
+        intel     = run_intelligence_analysis(text, extracted, flags, company_name)
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Intelligence analysis failed: {str(e)}")
+
+    return JSONResponse(content={"success": True, **intel})
+
+
+def _build_greenwashing_pdf(result: dict) -> bytes:
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import mm
+    from reportlab.platypus import (
+        SimpleDocTemplate, Paragraph, Spacer, HRFlowable, Table, TableStyle,
+    )
+    from datetime import date
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buf, pagesize=A4,
+        topMargin=20 * mm, bottomMargin=20 * mm,
+        leftMargin=22 * mm, rightMargin=22 * mm,
+    )
+
+    # Palette
+    dark     = colors.HexColor("#050A14")
+    forest   = colors.HexColor("#2d5a3d")
+    emerald  = colors.HexColor("#10B981")
+    amber    = colors.HexColor("#F59E0B")
+    danger   = colors.HexColor("#EF4444")
+    ink      = colors.HexColor("#1a1a2e")
+    muted    = colors.HexColor("#6B7280")
+    white    = colors.white
+
+    risk_score = result.get("risk_score", 0)
+    risk_level = result.get("risk_level", "Unknown")
+    score_color = (
+        emerald if risk_level == "Low"
+        else amber if risk_level == "Medium"
+        else danger
+    )
+
+    h1  = ParagraphStyle("H1",  fontName="Helvetica-Bold",   fontSize=20, textColor=dark,   spaceAfter=4)
+    h2  = ParagraphStyle("H2",  fontName="Helvetica-Bold",   fontSize=13, textColor=forest, spaceBefore=12, spaceAfter=4)
+    h3  = ParagraphStyle("H3",  fontName="Helvetica-Bold",   fontSize=10, textColor=ink,    spaceBefore=8,  spaceAfter=3)
+    bod = ParagraphStyle("Bod", fontName="Helvetica",        fontSize=9,  textColor=ink,    leading=14,     spaceAfter=6)
+    met = ParagraphStyle("Met", fontName="Helvetica",        fontSize=8,  textColor=muted,  spaceAfter=3)
+    sev_high = ParagraphStyle("SH", fontName="Helvetica-Bold", fontSize=9, textColor=danger)
+    sev_med  = ParagraphStyle("SM", fontName="Helvetica-Bold", fontSize=9, textColor=amber)
+    sev_low  = ParagraphStyle("SL", fontName="Helvetica-Bold", fontSize=9, textColor=emerald)
+
+    story = []
+    co = result.get("company_name", "The Company")
+
+    # Header
+    story.append(Paragraph("CLIMACTIX AI", ParagraphStyle(
+        "Brand", fontName="Helvetica-Bold", fontSize=10, textColor=forest, spaceAfter=2,
+    )))
+    story.append(Paragraph("Greenwashing Risk Scanner · Investor-Grade ESG Disclosure Audit", met))
+    story.append(Spacer(1, 3 * mm))
+    story.append(HRFlowable(width="100%", thickness=2, color=forest))
+    story.append(Spacer(1, 4 * mm))
+    story.append(Paragraph(f"Greenwashing Risk Report — {co}", h1))
+    story.append(Paragraph(f"Generated {date.today().strftime('%-d %B %Y')} · Climactix AI", met))
+    story.append(Spacer(1, 5 * mm))
+
+    # Score summary table
+    bd = result.get("score_breakdown", {})
+    score_data = [
+        ["Risk Score", "Risk Level", "Mismatch Score", "Missing Disclosures", "Framework Gaps"],
+        [
+            f"{risk_score}/100",
+            risk_level,
+            f"{bd.get('narrative_data_mismatch',{}).get('score',0)}/100",
+            f"{bd.get('missing_disclosures',{}).get('items_missing',0)} items",
+            f"{100 - result.get('framework_coverage_pct', 0)}% unmet",
+        ],
+    ]
+    t = Table(score_data, colWidths=[30*mm, 30*mm, 38*mm, 38*mm, 30*mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, 0), forest),
+        ("TEXTCOLOR",     (0, 0), (-1, 0), white),
+        ("FONTNAME",      (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE",      (0, 0), (-1, 0), 8),
+        ("FONTNAME",      (0, 1), (-1, 1), "Helvetica-Bold"),
+        ("FONTSIZE",      (0, 1), (0, 1),  18),
+        ("TEXTCOLOR",     (0, 1), (0, 1),  score_color),
+        ("TEXTCOLOR",     (1, 1), (1, 1),  score_color),
+        ("FONTSIZE",      (1, 1), (-1, 1), 11),
+        ("ALIGN",         (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
+        ("ROWBACKGROUNDS",(0, 1), (-1, -1), [colors.HexColor("#F4F9F8")]),
+        ("GRID",          (0, 0), (-1, -1), 0.5, white),
+        ("TOPPADDING",    (0, 0), (-1, -1), 7),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+    ]))
+    story.append(t)
+    story.append(Spacer(1, 7 * mm))
+
+    def _hr():
+        story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#d0d0c0")))
+        story.append(Spacer(1, 2 * mm))
+
+    # Risk Flags
+    flags = result.get("risk_flags", [])
+    if flags:
+        _hr()
+        story.append(Paragraph("Risk Flags Identified", h2))
+        sev_map = {"High": sev_high, "Medium": sev_med, "Low": sev_low}
+        for f in flags:
+            sty = sev_map.get(f.get("severity", "Medium"), sev_med)
+            story.append(Paragraph(f"[{f.get('severity','').upper()}] {f.get('title','')}", sty))
+            story.append(Paragraph(f["description"], bod))
+            story.append(Paragraph(f"Framework: {f.get('framework_ref','')}", met))
+            if f.get("claim_excerpt"):
+                story.append(Paragraph(f"Excerpt: \"{f['claim_excerpt']}\"", met))
+            story.append(Spacer(1, 3 * mm))
+
+    # Missing Disclosures
+    missing = result.get("missing_disclosures", [])
+    if missing:
+        _hr()
+        story.append(Paragraph("Missing Framework Disclosures", h2))
+        for item in missing:
+            story.append(Paragraph(f"✗  {item.get('requirement','')} [{item.get('framework','')}]", h3))
+            story.append(Paragraph(item.get("description", ""), bod))
+
+    # Recommendations
+    recs = result.get("recommendations", [])
+    if recs:
+        _hr()
+        story.append(Paragraph("Remediation Recommendations", h2))
+        for r in recs:
+            pri = r.get("priority", "Medium")
+            sty = sev_map.get(pri, sev_med)
+            story.append(Paragraph(f"[{pri.upper()}] {r.get('title','')}", sty))
+            story.append(Paragraph(r.get("action", ""), bod))
+            story.append(Paragraph(f"Framework: {r.get('framework','')}  ·  Impact: {r.get('impact','')}", met))
+            story.append(Spacer(1, 3 * mm))
+
+    # Footer
+    story.append(Spacer(1, 8 * mm))
+    story.append(HRFlowable(width="100%", thickness=1, color=forest))
+    story.append(Spacer(1, 2 * mm))
+    story.append(Paragraph(
+        "Generated by Climactix AI Greenwashing Risk Scanner · climactixglobal.com · Powered by Claude",
+        ParagraphStyle("Footer", fontName="Helvetica", fontSize=7, textColor=muted, alignment=1),
+    ))
+
+    doc.build(story)
+    return buf.getvalue()
 
 
 # ── PDF builder ────────────────────────────────────────────────────────────────
