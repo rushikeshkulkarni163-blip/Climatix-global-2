@@ -1,5 +1,5 @@
 """
-Climactix AI — Greenwashing Risk Scanner Service
+Climactix AI — ESG Risk Intelligence Scanner Service
 ================================================
 Detects greenwashing risk in ESG reports through a 5-stage pipeline:
   1. Claim Extraction   — LLM-powered sustainability claim detection
