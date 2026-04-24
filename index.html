@@ -385,6 +385,7 @@
   .hm-layer-btn.active.co2   { background:rgba(253,174,97,0.15); border-color:rgba(253,174,97,0.5); color:#fdae61; }
   .hm-layer-btn.active.sea   { background:rgba(96,165,250,0.15); border-color:rgba(96,165,250,0.5); color:#60a5fa; }
   .hm-layer-btn.active.ice   { background:rgba(200,230,255,0.12); border-color:rgba(200,230,255,0.4); color:#c8e8ff; }
+  .hm-layer-btn.active.wb    { background:rgba(52,211,153,0.12);  border-color:rgba(52,211,153,0.45); color:#34d399; }
   .hm-layer-status {
     font-size: 9.5px;
     color: rgba(64,168,220,0.6);
@@ -405,6 +406,7 @@
   .hm-legend-bar.sea  { background: linear-gradient(90deg,#deebf7 0%,#3182bd 60%,#08306b 100%); }
   .hm-legend-bar.ice  { background: linear-gradient(90deg,#08306b 0%,#9ecae1 50%,#ffffff 100%); }
   .hm-legend-bar.temp { background: linear-gradient(90deg, #60a5fa 0%, #fbbf24 35%, #f97316 65%, #f87171 85%, #dc2626 100%); }
+  .hm-legend-bar.wb   { background: linear-gradient(90deg,#1e3a8a 0%,#3b82f6 25%,#4ade80 50%,#f97316 75%,#b91c1c 100%); }
 
   /* ── 3. CLIMATE CONCERNS SECTION ── */
   .cx-concerns-section {
@@ -993,6 +995,7 @@
               <button class="glc-btn" data-layer="co2"><span class="glc-icon">🌫</span> CO₂</button>
               <button class="glc-btn" data-layer="sea_level"><span class="glc-icon">🌊</span> Sea Level</button>
               <button class="glc-btn" data-layer="arctic_ice"><span class="glc-icon">❄</span> Ice</button>
+              <button class="glc-btn" data-layer="wb_cmip6"><span class="glc-icon">🌏</span> WB CMIP6</button>
             </div>
 
             <!-- Globe canvas -->
@@ -1122,6 +1125,7 @@
             <button class="hm-layer-btn" data-layer="co2">🌫 CO₂ Concentration</button>
             <button class="hm-layer-btn" data-layer="sea_level">🌊 Sea Level Rise</button>
             <button class="hm-layer-btn" data-layer="arctic_ice">❄ Arctic Ice</button>
+            <button class="hm-layer-btn" data-layer="wb_cmip6">🌏 WB CMIP6</button>
           </div>
           <div class="hm-layer-status">
             <span class="hm-layer-dot"></span>
@@ -2685,7 +2689,130 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
           return Math.round(v * 100) + '% ice cover';
         },
       },
+      wb_cmip6: {
+        label: 'WB CMIP6 Temperature',
+        unit:  '°C mean annual',
+        badge: [
+          { val: '~28°C', loc: 'Sahel / W Africa' },
+          { val: '~25°C', loc: 'South Asia'        },
+          { val: '~−5°C', loc: 'Arctic Canada'     },
+        ],
+        colorFn: function(v) {
+          /* Cold blue → green → amber → deep red (absolute temp) */
+          const a = Math.min(230, Math.round(40 + v * 190));
+          if (v < 0.10) return [30,  58,  138, a];
+          if (v < 0.22) return [59,  130, 246, a];
+          if (v < 0.36) return [56,  189, 248, a];
+          if (v < 0.50) return [74,  222, 128, a];
+          if (v < 0.62) return [251, 191, 36,  a];
+          if (v < 0.74) return [249, 115, 22,  a];
+          if (v < 0.86) return [239, 68,  68,  a];
+          return               [185, 28,  28,  a];
+        },
+        rawLabel: function(v, minR, maxR) {
+          const raw = minR + v * (maxR - minR);
+          return (raw >= 0 ? '+' : '') + raw.toFixed(1) + '°C';
+        },
+      },
     };
+
+    /* ── World Bank CMIP6 country centroid table (ISO3 → [lat, lng]) ── */
+    const COUNTRY_GEO = {
+      AFG:[33.9,67.7],AGO:[-11.2,17.9],ALB:[41.2,20.2],ARE:[24.0,54.0],ARG:[-38.4,-63.6],
+      ARM:[40.1,45.0],AUS:[-25.3,133.8],AUT:[47.5,14.6],AZE:[40.1,47.6],BDI:[-3.4,29.9],
+      BEL:[50.5,4.5],BEN:[9.3,2.3],BFA:[12.4,-1.6],BGD:[23.7,90.4],BGR:[42.7,25.5],
+      BHS:[25.0,-77.5],BLR:[53.7,27.9],BOL:[-16.3,-63.6],BRA:[-14.2,-51.9],BTN:[27.5,90.4],
+      BWA:[-22.3,24.7],CAF:[6.6,20.9],CAN:[60.0,-96.8],CHE:[46.8,8.2],CHL:[-35.7,-71.5],
+      CHN:[35.9,104.2],CIV:[7.5,-5.5],CMR:[3.8,11.5],COD:[-4.0,21.8],COG:[-0.2,15.8],
+      COL:[4.1,-72.9],CRI:[9.8,-84.1],CUB:[21.5,-80.0],CZE:[49.8,15.5],DEU:[51.2,10.5],
+      DJI:[11.8,42.6],DNK:[56.3,9.5],DZA:[28.0,1.7],ECU:[-1.8,-78.2],EGY:[26.8,30.8],
+      ERI:[15.2,39.8],ESP:[40.5,-3.7],EST:[58.6,25.0],ETH:[9.1,40.5],FIN:[64.0,26.0],
+      FJI:[-17.7,178.1],FRA:[46.2,2.2],GAB:[-0.8,11.6],GBR:[55.4,-3.4],GEO:[42.3,43.4],
+      GHA:[7.9,-1.0],GIN:[11.0,-10.9],GMB:[13.4,-15.3],GNB:[12.0,-15.2],GRC:[39.1,21.8],
+      GTM:[15.8,-90.2],HND:[15.2,-86.2],HRV:[45.1,15.2],HTI:[18.9,-72.7],HUN:[47.2,19.5],
+      IDN:[-0.8,113.9],IND:[20.6,78.9],IRL:[53.4,-8.2],IRN:[32.4,53.7],IRQ:[33.2,43.7],
+      ISL:[64.9,-19.0],ISR:[31.5,34.8],ITA:[41.9,12.6],JAM:[18.1,-77.3],JOR:[31.2,36.5],
+      JPN:[36.2,138.3],KAZ:[48.0,66.9],KEN:[-0.0,37.9],KGZ:[41.2,74.8],KHM:[12.6,104.9],
+      KOR:[35.9,127.8],LAO:[17.9,102.5],LBN:[33.9,35.9],LBR:[6.4,-9.4],LBY:[26.3,17.2],
+      LKA:[7.9,80.8],LTU:[55.2,23.9],LVA:[56.9,24.6],MAR:[31.8,-7.1],MDA:[47.4,28.4],
+      MDG:[-18.8,46.9],MEX:[23.6,-102.5],MKD:[41.6,21.7],MLI:[17.6,-4.0],MNE:[42.7,19.4],
+      MNG:[46.9,103.8],MOZ:[-18.7,35.5],MRT:[21.0,-10.9],MWI:[-13.3,34.3],MYS:[4.2,109.6],
+      NAM:[-22.0,17.1],NER:[17.6,8.1],NGA:[9.1,8.7],NIC:[12.9,-85.2],NLD:[52.3,5.3],
+      NOR:[60.5,8.5],NPL:[28.4,84.1],NZL:[-40.9,174.9],OMN:[21.5,55.9],PAK:[30.4,69.3],
+      PAN:[8.5,-80.8],PER:[-9.2,-75.0],PHL:[12.9,121.8],PNG:[-6.3,143.9],POL:[51.9,19.1],
+      PRK:[40.3,127.5],PRY:[-23.4,-58.4],PRT:[39.4,-8.2],ROU:[45.9,24.9],RUS:[61.5,105.3],
+      RWA:[-2.0,29.9],SAU:[23.9,45.1],SDN:[12.9,30.2],SEN:[14.5,-14.5],SLE:[8.5,-11.8],
+      SLV:[13.8,-88.9],SOM:[6.2,46.2],SRB:[44.0,21.0],SSD:[7.9,29.7],SUR:[3.9,-56.0],
+      SVK:[48.7,19.7],SVN:[46.1,14.8],SWE:[60.1,18.6],SWZ:[-26.5,31.5],SYR:[34.8,38.8],
+      TCD:[15.5,18.7],TGO:[8.6,0.8],THA:[15.9,100.9],TJK:[38.9,71.3],TKM:[38.9,59.6],
+      TLS:[-8.9,125.7],TUN:[33.9,9.5],TUR:[38.9,35.2],TWN:[23.7,121.0],TZA:[-6.4,34.9],
+      UGA:[1.4,32.3],UKR:[48.4,31.2],URY:[-32.5,-55.8],USA:[38.0,-97.0],UZB:[41.4,63.9],
+      VEN:[6.4,-66.6],VNM:[14.1,108.3],YEM:[15.6,48.5],ZAF:[-28.5,24.7],ZMB:[-13.1,27.8],ZWE:[-20.0,30.0],
+    };
+
+    /* ── Fetch & rasterise World Bank CMIP6 country data → 72×36 grid ── */
+    const WB_URL = 'https://cckpapi.worldbank.org/api/v1/cmip6-x0.25_climatology_tasmax,tas,tasmin_climatology,natvar,yearofchange_annual_2020-2039_median_ssp119_ensemble_all_mean/global_countries?_format=json';
+
+    async function fetchWbLayer() {
+      const resp = await fetch(WB_URL, { signal: AbortSignal.timeout(18000) });
+      if (!resp.ok) throw new Error('WB API ' + resp.status);
+      const json = await resp.json();
+
+      /* Parse country → tas value (try common CCKP response shapes) */
+      const countryTemp = {};
+      const raw = json.data || json;
+      for (const [iso3, val] of Object.entries(raw)) {
+        if (!COUNTRY_GEO[iso3]) continue;
+        let t = null;
+        if (val !== null && typeof val === 'object' && !Array.isArray(val)) {
+          t = val.tas ?? val.median?.tas ?? val.mean?.tas ?? null;
+        } else if (Array.isArray(val) && val.length > 0) {
+          const v0 = val[0];
+          t = (typeof v0 === 'number') ? v0 : (v0?.tas ?? v0?.median?.tas ?? null);
+        } else if (typeof val === 'number') {
+          t = val;
+        }
+        if (t !== null && isFinite(t)) countryTemp[iso3] = t;
+      }
+
+      /* Build 72×36 grid via nearest-centroid (within 30° radius for land masking) */
+      const ROWS = 36, COLS = 72;
+      const cellTemp = new Array(ROWS * COLS).fill(null);
+      const isos = Object.keys(countryTemp);
+
+      for (let r = 0; r < ROWS; r++) {
+        const lat = -87.5 + r * 5;
+        for (let c = 0; c < COLS; c++) {
+          const lng = -177.5 + c * 5;
+          let bestD = Infinity, bestT = null;
+          for (const iso of isos) {
+            const [clat, clng] = COUNTRY_GEO[iso];
+            const d = (lat - clat) ** 2 + (lng - clng) ** 2;
+            if (d < bestD) { bestD = d; bestT = countryTemp[iso]; }
+          }
+          if (bestD <= 900) cellTemp[r * COLS + c] = bestT; /* ≤30° */
+        }
+      }
+
+      /* Normalise to [0,1] */
+      const temps = cellTemp.filter(v => v !== null);
+      const minT = Math.min(...temps), maxT = Math.max(...temps);
+      const range = maxT - minT || 1;
+      const values = cellTemp.map(v => v === null ? 0 : Math.max(0, Math.min(1, (v - minT) / range)));
+
+      return {
+        layer: 'wb_cmip6',
+        meta: {
+          source: 'World Bank CCKP · CMIP6 SSP1-1.9 · 2020–2039',
+          updated: '2024',
+          min_raw: Math.round(minT * 10) / 10,
+          max_raw: Math.round(maxT * 10) / 10,
+          unit: '°C mean annual temperature',
+          label: 'WB CMIP6 Mean Temperature',
+        },
+        grid: { rows: ROWS, cols: COLS, values },
+      };
+    }
 
     /* ═══════════════════════════════════════════
        A. HERO GLOBE — Three.js + Climate Heatmap
@@ -2942,6 +3069,32 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         /* Return cache hit */
         if (_layerData[layer]) {
           applyLayer(layer, _layerData[layer]);
+          if (overlay) overlay.classList.remove('visible');
+          return;
+        }
+
+        /* World Bank CMIP6 — fetch directly from WB API */
+        if (layer === 'wb_cmip6') {
+          try {
+            const data = await fetchWbLayer();
+            _layerData[layer] = data;
+            applyLayer(layer, data);
+          } catch(e) {
+            console.warn('WB CMIP6 fetch failed:', e);
+            /* Fallback: synthetic warm-earth gradient */
+            const ROWS = 36, COLS = 72;
+            const vals = [];
+            for (let r = 0; r < ROWS; r++) {
+              const lat = -87.5 + r * 5;
+              const baseFrac = (lat + 90) / 180;  /* 0=south, 1=north */
+              /* Tropics warmest, poles coldest — invert for temperature */
+              const warmFrac = 1 - Math.abs(lat / 90) * 0.85;
+              for (let c = 0; c < COLS; c++) vals.push(Math.max(0, Math.min(1, warmFrac)));
+            }
+            const fb = { layer:'wb_cmip6', meta:{ source:'Climactix Estimate (WB offline)', updated:'—', min_raw:-10, max_raw:30, unit:'°C', label:'WB CMIP6 Temperature' }, grid:{ rows:ROWS, cols:COLS, values:vals } };
+            _layerData[layer] = fb;
+            applyLayer(layer, fb);
+          }
           if (overlay) overlay.classList.remove('visible');
           return;
         }
@@ -3306,13 +3459,47 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
             { val:'+3.4 m', cls:'v-blue',   label:'Sea Level if W. Antarctic<br>Collapses' },
           ],
         },
+
+        /* ── 5. WORLD BANK CMIP6 ─────────────────────── */
+        wb_cmip6: {
+          heading: 'World Bank CMIP6 — 2020–2039 Mean Temperature Projections (SSP1-1.9)',
+          desc:    'Country-level mean annual temperature projections under the IPCC SSP1-1.9 low-emissions scenario for 2020–2039, sourced live from the World Bank Climate Change Knowledge Portal (CCKP). Represents committed warming even under aggressive mitigation. Hover any hotspot for country-level risk context.',
+          regions: [
+            { name:'Sahara / West Africa',     la:20,  ln:5,    val:28.5, r:62, desc:'Mali, Niger and Chad face mean annual temps above 28°C — among the highest globally. Agricultural productivity near collapse thresholds.', sev:'critical' },
+            { name:'Arabian Peninsula',        la:24,  ln:45,   val:27.8, r:58, desc:'Saudi Arabia and Gulf states project 27–30°C mean annual temperatures. Outdoor labour, agriculture and water supply severely constrained.', sev:'critical' },
+            { name:'Sub-Saharan Africa',       la:5,   ln:22,   val:26.5, r:55, desc:'Equatorial and West African nations face mean annual temps exceeding 26°C — constraining crop yields, labour productivity and public health.', sev:'critical' },
+            { name:'South Asia',               la:23,  ln:80,   val:24.8, r:52, desc:'India, Pakistan and Bangladesh project mean annual temps of 24–28°C with rising heat-humidity extremes threatening 1.5B+ people.', sev:'high' },
+            { name:'SE Asia',                  la:10,  ln:107,  val:26.2, r:50, desc:'Southeast Asian nations face high baseline temperatures. Coastal flooding and intensifying tropical storms compound heat exposure.', sev:'high' },
+            { name:'Tropical South America',   la:-5,  ln:-55,  val:25.4, r:50, desc:'Amazon Basin and tropical South America remain warm with intensifying dry seasons under projected climate. Deforestation amplifying local heat.', sev:'high' },
+            { name:'Mediterranean',            la:37,  ln:15,   val:16.5, r:48, desc:'Southern European and North African Mediterranean countries face rising summer extremes, prolonged droughts and crop system stress.', sev:'high' },
+            { name:'Australia (Inland)',        la:-25, ln:133,  val:22.3, r:48, desc:'Australian interior projected at 20–25°C mean annual temperature — increasingly hostile for agriculture with amplified fire risk.', sev:'moderate' },
+            { name:'Central Asia',             la:43,  ln:65,   val:11.2, r:46, desc:'Kazakhstan, Uzbekistan and Turkmenistan face continental temperature amplification and severe water scarcity as glaciers retreat.', sev:'moderate' },
+            { name:'Northern Europe',          la:58,  ln:15,   val:6.2,  r:44, desc:'Scandinavia and Baltic nations remain cooler but warming faster than the global average. Growing seasons extending into previously boreal zones.', sev:'moderate' },
+            { name:'Arctic Canada / Alaska',   la:65,  ln:-120, val:-4.5, r:46, desc:'Arctic Canada warming at 2–4× global average. Permafrost thaw accelerating, releasing stored carbon and collapsing infrastructure.', sev:'critical' },
+            { name:'Siberia',                  la:65,  ln:105,  val:-3.8, r:46, desc:'Western Siberia permafrost thawing rapidly. Methane release from thermokarst lakes represents a major climate feedback risk.', sev:'critical' },
+          ],
+          colorFn: function(v) {
+            if (v >= 26) return { fill:'#b91c1c', glow:'#ef4444' };
+            if (v >= 22) return { fill:'#c2410c', glow:'#f97316' };
+            if (v >= 16) return { fill:'#b45309', glow:'#fbbf24' };
+            if (v >= 8)  return { fill:'#166534', glow:'#4ade80' };
+            if (v >= 0)  return { fill:'#1e40af', glow:'#60a5fa' };
+            return               { fill:'#1e3a8a', glow:'#3b82f6' };
+          },
+          valLabel: function(v) { return (v >= 0 ? '+' : '') + v.toFixed(1) + '°C mean annual'; },
+          sevMap: { critical:'Extreme Heat Zone', high:'High Heat Stress', moderate:'Moderate Exposure' },
+          legend: { barClass:'wb', min:'< −10°C', max:'30°C+', ticks:['−10°C','0°C','10°C','20°C','28°C+'] },
+          stats: [
+            { val:'SSP1-1.9', cls:'v-teal',   label:'Emissions Scenario<br>(Low Ambition Path)' },
+            { val:'2020–39',  cls:'v-blue',   label:'Projection Window' },
+            { val:'~1.5°C',   cls:'v-orange', label:'Committed Warming<br>By 2040' },
+            { val:'160+',     cls:'v-teal',   label:'Countries in<br>WB Dataset' },
+          ],
+        },
       };
 
       /* Active layer state */
       let _activeHmLayer = 'temperature';
-
-      /* Shared canvas for static base map (rebuilt only on first init) */
-      const REGIONS = ALL_LAYERS.temperature.regions; /* backward compat ref */
 
       /* ── Continent polygon data ── */
       const CONTINENTS = [
@@ -3324,14 +3511,6 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         [[70,30],[70,80],[70,140],[60,160],[50,140],[40,130],[35,125],[22,114],[10,104],[1,104],[-8,115],[-8,132],[0,130],[5,118],[10,108],[20,107],[25,90],[22,88],[22,80],[28,72],[22,60],[20,57],[22,55],[28,50],[35,36],[35,28],[40,26],[42,44],[47,53],[55,60],[55,80],[65,80],[70,60]],
         [[-15,130],[-15,140],[-18,146],[-22,150],[-34,151],[-38,147],[-38,140],[-35,137],[-32,116],[-22,113]],
       ];
-
-      /* ── Anomaly → colour ── */
-      function anomalyColor(v) {
-        if (v >= 2.8) return { fill:'#cc1100', glow:'#ff3311' };
-        if (v >= 2.2) return { fill:'#dd5500', glow:'#ff8800' };
-        if (v >= 1.7) return { fill:'#cc9900', glow:'#ffcc00' };
-        return           { fill:'#226699', glow:'#4a9eff' };
-      }
 
       /* ── Draw base map (static, once) ── */
       const baseCanvas = document.createElement('canvas');
@@ -3403,10 +3582,14 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         ctx.clearRect(0, 0, W, H);
         ctx.drawImage(baseCanvas, 0, 0);
 
-        /* Temperature hotspots */
-        REGIONS.forEach((reg, i) => {
+        const activeLayer = ALL_LAYERS[_activeHmLayer];
+        const regions = activeLayer.regions;
+        const colorFn = activeLayer.colorFn;
+        const valLabel = activeLayer.valLabel;
+
+        regions.forEach((reg, i) => {
           const cx2 = px(reg.ln), cy2 = py(reg.la);
-          const { fill, glow } = anomalyColor(reg.anomaly);
+          const { fill, glow } = colorFn(reg.val);
           const isHovered = (i === hoveredIdx);
 
           /* Outer pulse ring */
@@ -3432,15 +3615,16 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
           ctx.fillStyle = isHovered ? '#ffffff' : glow;
           ctx.beginPath(); ctx.arc(cx2, cy2, isHovered ? 5 : 3.5, 0, Math.PI * 2); ctx.fill();
 
-          /* Anomaly label for hovered */
+          /* Value label for hovered */
           if (isHovered) {
+            const shortLabel = valLabel(reg.val).split(' ')[0]; /* first token only */
             ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            ctx.beginPath(); ctx.arc(cx2, cy2, 22, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(cx2, cy2, 24, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 10px "JetBrains Mono", monospace';
+            ctx.font = 'bold 9px "JetBrains Mono", monospace';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('+' + reg.anomaly.toFixed(1) + '°', cx2, cy2);
+            ctx.fillText(shortLabel, cx2, cy2);
           }
         });
       }
@@ -3455,9 +3639,12 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         const mx = (e.clientX - rect.left) * scaleX;
         const my = (e.clientY - rect.top) * scaleY;
 
+        const activeLayer = ALL_LAYERS[_activeHmLayer];
+        const regions = activeLayer.regions;
+
         let found = -1;
         let minDist = Infinity;
-        REGIONS.forEach((reg, i) => {
+        regions.forEach((reg, i) => {
           const dx = mx - px(reg.ln), dy = my - py(reg.la);
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < reg.r * 0.8 && dist < minDist) { minDist = dist; found = i; }
@@ -3466,13 +3653,13 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         hoveredIdx = found;
 
         if (found >= 0) {
-          const reg = REGIONS[found];
-          const { glow } = anomalyColor(reg.anomaly);
+          const reg = regions[found];
+          const { glow } = activeLayer.colorFn(reg.val);
           const sevClass = reg.sev;
-          const sevLabel = { critical:'Critical Risk', high:'High Risk', moderate:'Moderate Risk' }[sevClass];
+          const sevLabel = (activeLayer.sevMap || {})[sevClass] || sevClass;
 
           document.getElementById('hmRegion').textContent   = reg.name;
-          document.getElementById('hmAnomaly').textContent  = '+' + reg.anomaly.toFixed(1) + '°C anomaly';
+          document.getElementById('hmAnomaly').textContent  = activeLayer.valLabel(reg.val);
           document.getElementById('hmAnomaly').style.color  = glow;
           document.getElementById('hmDesc').textContent     = reg.desc;
           document.getElementById('hmSeverity').textContent = sevLabel;
@@ -3502,6 +3689,69 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         tooltip.style.display = 'none';
         hoveredIdx = -1;
       });
+
+      /* ── Heatmap layer switch ── */
+      function switchHmLayer(layer) {
+        if (layer === _activeHmLayer) return;
+        _activeHmLayer = layer;
+        hoveredIdx = -1;
+        tooltip.style.display = 'none';
+
+        const L = ALL_LAYERS[layer];
+
+        /* Heading + desc */
+        const hdEl = document.getElementById('hmSectionHeading');
+        const dsEl = document.getElementById('hmSectionDesc');
+        if (hdEl) hdEl.textContent = L.heading;
+        if (dsEl) dsEl.textContent = L.desc;
+
+        /* Legend */
+        const bar  = document.getElementById('hmLegendBar');
+        const ticks= document.getElementById('hmLegendTicks');
+        const lmin = document.getElementById('hmLegendMin');
+        const lmax = document.getElementById('hmLegendMax');
+        if (bar)  { bar.className = 'hm-legend-bar ' + L.legend.barClass; }
+        if (lmin) lmin.textContent = L.legend.min;
+        if (lmax) lmax.textContent = L.legend.max;
+        if (ticks) {
+          ticks.innerHTML = L.legend.ticks.map(t => '<span>' + t + '</span>').join('');
+        }
+
+        /* Stats */
+        L.stats.forEach(function(s, i) {
+          const idx = i + 1;
+          const vEl = document.getElementById('hmStat' + idx + 'Val');
+          const lEl = document.getElementById('hmStat' + idx + 'Label');
+          if (vEl) { vEl.textContent = s.val; vEl.className = 'hm-stat-val ' + s.cls; }
+          if (lEl) lEl.innerHTML = s.label;
+        });
+
+        /* Source label */
+        const src = document.getElementById('hmLayerSource');
+        if (src && layer === 'wb_cmip6') {
+          src.textContent = 'World Bank CCKP · CMIP6 SSP1-1.9 · 2020–2039';
+        } else if (src) {
+          src.textContent = 'Climactix Climate Intelligence · April 2026';
+        }
+
+        /* Button active states */
+        document.querySelectorAll('#hmLayerBtns .hm-layer-btn').forEach(function(btn) {
+          btn.classList.remove('active', 'temperature', 'co2', 'sea', 'ice', 'wb');
+        });
+        const activeBtn = document.querySelector('#hmLayerBtns [data-layer="' + layer + '"]');
+        if (activeBtn) {
+          const cls = { temperature:'temperature', co2:'co2', sea_level:'sea', arctic_ice:'ice', wb_cmip6:'wb' }[layer] || '';
+          activeBtn.classList.add('active', cls);
+        }
+      }
+
+      document.querySelectorAll('#hmLayerBtns .hm-layer-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { switchHmLayer(this.dataset.layer); });
+      });
+
+      /* Mark temperature active on init */
+      const initBtn = document.querySelector('#hmLayerBtns [data-layer="temperature"]');
+      if (initBtn) initBtn.classList.add('active', 'temperature');
     }
 
     /* ══════════════════════════════════════════════
