@@ -933,7 +933,25 @@
       <a href="assessment.html" class="hdr-cta">Start Assessment</a>
     </div>
   </header>
- 
+  <script>
+    /* ── Nav dropdown click-toggle (works on touch + fixes hover gap) ── */
+    (function() {
+      function closeAll() {
+        document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('open'); });
+      }
+      document.querySelectorAll('.nav-dropdown-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var parent = this.closest('.nav-dropdown');
+          var wasOpen = parent.classList.contains('open');
+          closeAll();
+          if (!wasOpen) parent.classList.add('open');
+        });
+      });
+      document.addEventListener('click', closeAll);
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAll(); });
+    })();
+  </script>
 
   <main>
 
