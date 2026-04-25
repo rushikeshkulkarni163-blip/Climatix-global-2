@@ -95,13 +95,17 @@
     .nav-chevron { transition: transform 0.2s ease; flex-shrink: 0; opacity: 0.6; }
     .nav-dropdown:hover .nav-chevron { transform: rotate(180deg); }
     .nav-dropdown-menu {
-      position: absolute; top: calc(100% + 6px); left: 0; min-width: 160px;
+      position: absolute; top: 100%; left: 0; min-width: 180px;
       background: #fff; border: 1px solid #E0E6ED; border-radius: 6px;
       box-shadow: 0 8px 24px rgba(10,31,68,0.14); padding: 6px;
       opacity: 0; visibility: hidden; transform: translateY(-4px);
-      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s; z-index: 300;
+      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+      z-index: 9999; pointer-events: none;
     }
-    .nav-dropdown:hover .nav-dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown.open  .nav-dropdown-menu {
+      opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto;
+    }
     .nav-dropdown-item {
       display: block; font-size: 13px; color: #4F4F4F; text-decoration: none;
       padding: 7px 12px; border-radius: 4px; transition: var(--t); white-space: nowrap;
@@ -589,6 +593,7 @@
           <a href="index.html#solution" class="nav-dropdown-item">Solution</a>
           <a href="generate.html" class="nav-dropdown-item">ESG Engine</a>
           <a href="climactix-ai.html" class="nav-dropdown-item">AI Engine</a>
+          <a href="greenwashing-scanner.html" class="nav-dropdown-item">ESG Risk Intelligence</a>
         </div>
       </div>
       <div class="nav-dropdown">
@@ -614,6 +619,24 @@
       <a href="assessment.html" class="hdr-cta">Start Assessment</a>
     </div>
   </header>
+  <script>
+    (function() {
+      function closeAll() {
+        document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('open'); });
+      }
+      document.querySelectorAll('.nav-dropdown-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var parent = this.closest('.nav-dropdown');
+          var wasOpen = parent.classList.contains('open');
+          closeAll();
+          if (!wasOpen) parent.classList.add('open');
+        });
+      });
+      document.addEventListener('click', closeAll);
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAll(); });
+    })();
+  </script>
 
   <!-- ═══════════════════════════════════════ HERO -->
   <section class="cr-hero" id="top">
