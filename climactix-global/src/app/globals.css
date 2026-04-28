@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --blue: #00338D;
+  --blue-mid: #005EB8;
+  --blue-light: #4472C4;
+  --blue-dark: #002060;
+  --blue-tint: #E8EEF8;
+  --gray: #4A4A4A;
+  --gray-light: #767676;
+  --bg: #F5F7FA;
+  --white: #FFFFFF;
+  --danger: #C1121F;
+  --success: #107C10;
+  --amber: #F4A261;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: Arial, Inter, system-ui, sans-serif;
+  background-color: var(--white);
+  color: var(--gray);
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Arial, Inter, system-ui, sans-serif;
+    color: #00338D;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* ── Layout ── */
+  .section-wrap {
+    @apply max-w-7xl mx-auto px-6 lg:px-8;
+  }
+
+  .section-pad {
+    @apply py-16 lg:py-24;
+  }
+
+  /* ── Cards ── */
+  .card {
+    @apply bg-white border border-gray-200 p-6;
+  }
+
+  .card-hover {
+    @apply transition-shadow duration-200 hover:shadow-card-hover hover:border-brand-blue-mid;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3
+           text-sm font-bold uppercase tracking-wide
+           hover:bg-brand-blue-dark active:scale-[0.98] transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 border-2 border-brand-blue text-brand-blue
+           px-6 py-3 text-sm font-bold uppercase tracking-wide
+           hover:bg-brand-blue-tint active:scale-[0.98] transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2;
+  }
+
+  .btn-amber {
+    @apply inline-flex items-center gap-2 bg-brand-amber text-white
+           px-6 py-3 text-sm font-bold uppercase tracking-wide
+           hover:bg-brand-amber-dark active:scale-[0.98] transition-all duration-150;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 text-brand-blue text-sm font-bold
+           hover:underline underline-offset-4 transition-all;
+  }
+
+  /* ── Forms ── */
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 bg-white
+           focus:outline-none focus:border-brand-blue transition-colors
+           placeholder:text-gray-400 text-gray-800 text-sm;
+  }
+
+  .label {
+    @apply block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2;
+  }
+
+  /* ── Nav ── */
+  .nav-link {
+    @apply text-sm font-semibold text-gray-700 hover:text-brand-blue transition-colors
+           py-2 border-b-2 border-transparent hover:border-brand-blue;
+  }
+
+  .nav-link-active {
+    @apply text-sm font-semibold text-brand-blue border-b-2 border-brand-blue py-2;
+  }
+
+  /* ── Typography ── */
+  .section-title {
+    @apply text-3xl lg:text-4xl font-bold text-brand-blue leading-tight mb-4;
+  }
+
+  .section-label {
+    @apply text-xs font-bold uppercase tracking-widest text-brand-blue-mid mb-3;
+  }
+
+  .section-subtitle {
+    @apply text-gray-500 text-base mb-8 max-w-2xl leading-relaxed;
+  }
+
+  /* ── Risk badge ── */
+  .risk-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold uppercase
+           tracking-widest border;
+  }
+
+  /* ── Tables ── */
+  .data-table th {
+    @apply text-left text-2xs font-bold text-gray-500 uppercase tracking-widest
+           px-4 py-3 bg-gray-50 border-b border-gray-200;
+  }
+
+  .data-table td {
+    @apply px-4 py-3 text-sm text-gray-700 border-b border-gray-100;
+  }
+
+  .data-table tr:nth-child(even) td {
+    @apply bg-gray-50;
+  }
+
+  /* ── Skeletons ── */
+  .skeleton {
+    @apply animate-pulse bg-gray-100;
+  }
+
+  /* ── Divider ── */
+  .rule-blue {
+    @apply border-t-2 border-brand-blue w-12 mb-6;
+  }
+
+  /* ── Topic pill ── */
+  .topic-pill {
+    @apply px-4 py-2 text-sm font-semibold text-brand-blue border border-brand-blue
+           hover:bg-brand-blue hover:text-white transition-colors cursor-pointer whitespace-nowrap;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+
+  .ticker-wrap { overflow: hidden; white-space: nowrap; }
+  .ticker-content {
+    display: inline-block;
+    animation: ticker 40s linear infinite;
+  }
+
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+}
