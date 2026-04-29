@@ -115,22 +115,24 @@
   }
   .glc-btn .glc-icon { font-size: 11px; line-height: 1; }
 
-  /* Globe hover tooltip */
+  /* Globe hover tooltip — Bloomberg-style country panel */
   #globeHoverTip {
     position: absolute;
-    background: rgba(5,9,22,0.93);
-    border: 1px solid rgba(64,168,220,0.3);
-    border-radius: 8px;
-    padding: 8px 12px;
+    background: rgba(6,10,20,0.96);
+    border: 1px solid rgba(59,130,246,0.35);
+    padding: 10px 12px;
     pointer-events: none;
     z-index: 10;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     display: none;
-    min-width: 140px;
+    min-width: 160px;
   }
-  .ght-loc  { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.9); letter-spacing: 0.05em; text-transform: uppercase; }
-  .ght-val  { font-size: 14px; font-weight: 800; color: #40A8DC; margin-top: 3px; font-family: 'JetBrains Mono', monospace; }
-  .ght-unit { font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .ght-country { font-size: 11px; font-weight: 800; color: #FFFFFF; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 7px; border-bottom: 1px solid rgba(59,130,246,0.2); padding-bottom: 6px; }
+  .ght-row     { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; }
+  .ght-label   { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; text-transform: uppercase; }
+  .ght-data    { font-size: 11px; font-weight: 700; color: #7AB8E8; font-family: Inter, Arial, sans-serif; }
+  .ght-risk-bar-wrap { height: 3px; background: rgba(255,255,255,0.08); margin: 6px 0 2px; }
+  .ght-risk-bar      { height: 100%; background: #3B82F6; width: 0%; transition: width 0.25s; }
 
   /* Globe status bar */
   .globe-status-bar {
@@ -1048,9 +1050,22 @@
 
             <!-- Hover tooltip (positioned by JS raycaster) -->
             <div id="globeHoverTip">
-              <div class="ght-loc" id="ghtLoc">—</div>
-              <div class="ght-val" id="ghtVal">—</div>
-              <div class="ght-unit" id="ghtUnit">—</div>
+              <div class="ght-country" id="ghtCountry">—</div>
+              <div class="ght-row">
+                <span class="ght-label">CO₂</span>
+                <span class="ght-data" id="ghtCO2">—</span>
+              </div>
+              <div class="ght-row">
+                <span class="ght-label">RISK</span>
+                <span class="ght-data" id="ghtRisk">—</span>
+              </div>
+              <div class="ght-risk-bar-wrap">
+                <div class="ght-risk-bar" id="ghtRiskBar"></div>
+              </div>
+              <div class="ght-row">
+                <span class="ght-label">PROJECTS</span>
+                <span class="ght-data" id="ghtProjects">—</span>
+              </div>
             </div>
 
             <!-- Loading overlay -->
@@ -2853,6 +2868,8 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
     </div>
   </div>
 
+  <script src="globe-gis.js"></script>
+
   <script>
   /* ─────────────────────────────────────────────────
      CLIMATE INTELLIGENCE ENGINE
@@ -2862,12 +2879,28 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
        C) Legacy widget globe
   ───────────────────────────────────────────────── */
   (function(){
+    let _threeReady = false, _topoReady = false, _worldData = null;
+    function _tryInit() {
+      if (!_threeReady || !_topoReady) return;
+      initHeroGlobe(_worldData);
+      initClimateGlobe();
+    }
+
+    /* Load topojson-client then fetch world-atlas data */
+    const t = document.createElement('script');
+    t.src = 'https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js';
+    t.onload = function() {
+      fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+        .then(function(r){ return r.json(); })
+        .then(function(d){ _worldData = d; _topoReady = true; _tryInit(); })
+        .catch(function(){ _topoReady = true; _tryInit(); }); /* graceful: GIS skipped if fetch fails */
+    };
+    t.onerror = function(){ _topoReady = true; _tryInit(); };
+    document.head.appendChild(t);
+
     const s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-    s.onload = function() {
-      initHeroGlobe();
-      initClimateGlobe(); /* legacy widget */
-    };
+    s.onload = function() { _threeReady = true; _tryInit(); };
     document.head.appendChild(s);
 
     /* Heatmap uses Canvas 2D — no Three.js needed, init on DOMContentLoaded */
@@ -3161,7 +3194,7 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
     /* ═══════════════════════════════════════════
        A. HERO GLOBE — Three.js + Climate Heatmap
     ═══════════════════════════════════════════ */
-    function initHeroGlobe() {
+    function initHeroGlobe(worldData) {
       const canvas = document.getElementById('heroGlobeCanvas');
       if (!canvas) return;
 
@@ -3175,35 +3208,20 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
       camera.position.z = 2.9;
 
-      /* Star field */
-      (function addStars(){
-        const pts = [];
-        for (let i = 0; i < 800; i++) {
-          const v = new THREE.Vector3(
-            (Math.random() - 0.5) * 80,
-            (Math.random() - 0.5) * 80,
-            (Math.random() - 0.5) * 80
-          );
-          if (v.length() < 6) continue;
-          pts.push(v);
-        }
-        const geo = new THREE.BufferGeometry().setFromPoints(pts);
-        const mat = new THREE.PointsMaterial({ color: 0xaaccff, size: 0.12, transparent: true, opacity: 0.55 });
-        scene.add(new THREE.Points(geo, mat));
-      })();
+      /* Star field removed — institutional theme */
 
       /* Earth texture: canvas-drawn continents */
       const tc = document.createElement('canvas');
       tc.width = 1024; tc.height = 512;
       const cx = tc.getContext('2d');
 
-      /* Ocean */
+      /* Ocean — institutional deep navy */
       const og = cx.createLinearGradient(0, 0, 0, 512);
-      og.addColorStop(0, '#030a14'); og.addColorStop(1, '#04101a');
+      og.addColorStop(0, '#071828'); og.addColorStop(1, '#0a1f35');
       cx.fillStyle = og; cx.fillRect(0, 0, 1024, 512);
 
-      /* Land */
-      cx.fillStyle = '#0d3320';
+      /* Land — muted institutional slate-green */
+      cx.fillStyle = '#1a3a30';
       function ll(la, ln) {
         return { x: ((ln + 180) / 360) * 1024, y: ((90 - la) / 180) * 512 };
       }
@@ -3229,27 +3247,27 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       const earthGeo = new THREE.SphereGeometry(1, 56, 56);
       const earthMat = new THREE.MeshPhongMaterial({
         map: tex,
-        specular: new THREE.Color(0x1a5544),
-        shininess: 12
+        specular: new THREE.Color(0x1a3a5a),
+        shininess: 10
       });
       const earth = new THREE.Mesh(earthGeo, earthMat);
       scene.add(earth);
 
-      /* Atmosphere layers */
-      [[1.055, 0x226644, 0.15, THREE.BackSide],
-       [1.12,  0x113322, 0.06, THREE.BackSide],
-       [1.18,  0x0a2218, 0.025, THREE.BackSide]].forEach(([r, c, o, side]) => {
+      /* Atmosphere layers — institutional blue glow */
+      [[1.055, 0x1a4a7a, 0.18, THREE.BackSide],
+       [1.12,  0x0d2a4a, 0.07, THREE.BackSide],
+       [1.18,  0x071828, 0.025, THREE.BackSide]].forEach(([r, c, o, side]) => {
         scene.add(new THREE.Mesh(
           new THREE.SphereGeometry(r, 32, 32),
           new THREE.MeshPhongMaterial({ color: c, transparent: true, opacity: o, side })
         ));
       });
 
-      /* Lights */
-      scene.add(new THREE.AmbientLight(0x223344, 0.9));
-      const sun = new THREE.DirectionalLight(0x88ccaa, 2.5);
+      /* Lights — cool institutional tones */
+      scene.add(new THREE.AmbientLight(0x2a3d55, 1.0));
+      const sun = new THREE.DirectionalLight(0xaac8e8, 2.8);
       sun.position.set(5, 3, 4); scene.add(sun);
-      const fill = new THREE.DirectionalLight(0x0a2218, 0.5);
+      const fill = new THREE.DirectionalLight(0x0a1a2e, 0.4);
       fill.position.set(-4, -2, -5); scene.add(fill);
 
       /* Lat/lng → vec3 */
@@ -3641,6 +3659,12 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         });
         renderer.render(scene, camera);
       })();
+
+      /* ── GIS layer: country borders + hover intelligence ── */
+      if (window.enhanceGlobeGIS && worldData) {
+        const wrap = document.getElementById('heroGlobeCanvas').parentElement;
+        window.enhanceGlobeGIS({ earth, llv, camera, canvas, wrap, worldData, THREE });
+      }
 
       /* ── Initial data load (temperature by default) ── */
       loadLayer('temperature');
