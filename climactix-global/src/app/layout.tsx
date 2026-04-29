@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex flex-col min-h-screen bg-brand-bg">
+      <body className="flex flex-col min-h-screen bg-black">
         <QueryProvider>
           <Navbar />
           <main className="flex-1">{children}</main>

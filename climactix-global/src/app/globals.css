@@ -2,53 +2,137 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── CSS custom properties ──────────────────────────────── */
 :root {
-  --blue: #00338D;
-  --blue-mid: #005EB8;
+  /* Terminal / Bloomberg */
+  --t-black:   #000000;
+  --t-dark:    #0A0A0A;
+  --t-panel:   #0D0D0D;
+  --t-card:    #111111;
+  --t-border:  #1F1F1F;
+  --t-navy:    #0A1F44;
+  --t-text:    #FFFFFF;
+  --t-muted:   #9CA3AF;
+  --t-dim:     #6B7280;
+  --t-green:   #10B981;
+  --t-red:     #EF4444;
+  --t-orange:  #F97316;
+
+  /* Legacy brand (kept for internal-app pages) */
+  --blue:       #00338D;
+  --blue-mid:   #005EB8;
   --blue-light: #4472C4;
-  --blue-dark: #002060;
-  --blue-tint: #E8EEF8;
-  --gray: #4A4A4A;
+  --blue-dark:  #002060;
+  --blue-tint:  #E8EEF8;
+  --gray:       #4A4A4A;
   --gray-light: #767676;
-  --bg: #F5F7FA;
-  --white: #FFFFFF;
-  --danger: #C1121F;
-  --success: #107C10;
-  --amber: #F4A261;
+  --bg:         #F5F7FA;
+  --white:      #FFFFFF;
+  --danger:     #C1121F;
+  --success:    #107C10;
+  --amber:      #F4A261;
 }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: Arial, Inter, system-ui, sans-serif;
-  background-color: var(--white);
-  color: var(--gray);
+  font-family: Inter, Arial, "Helvetica Neue", system-ui, sans-serif;
+  background-color: #000000;
+  color: #FFFFFF;
   -webkit-font-smoothing: antialiased;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.55;
 }
 
+/* ── Base heading overrides ─────────────────────────────── */
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    font-family: Arial, Inter, system-ui, sans-serif;
-    color: #00338D;
+    font-family: Inter, Arial, "Helvetica Neue", system-ui, sans-serif;
+    color: #FFFFFF;
     font-weight: 700;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 }
 
+/* ── Component classes ──────────────────────────────────── */
 @layer components {
-  /* ── Layout ── */
-  .section-wrap {
-    @apply max-w-7xl mx-auto px-6 lg:px-8;
+
+  /* Layout */
+  .section-wrap { @apply max-w-7xl mx-auto px-6 lg:px-8; }
+  .section-pad  { @apply py-16 lg:py-20; }
+
+  /* ── Terminal (homepage) buttons ─── */
+  .btn-terminal-primary {
+    @apply inline-flex items-center gap-2 bg-white text-black
+           px-6 py-3 text-xs font-bold uppercase tracking-widest
+           hover:bg-gray-100 active:scale-[0.98] transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black;
   }
 
-  .section-pad {
-    @apply py-16 lg:py-24;
+  .btn-terminal-secondary {
+    @apply inline-flex items-center gap-2 border border-white/25 text-white
+           px-6 py-3 text-xs font-bold uppercase tracking-widest
+           hover:bg-white/10 active:scale-[0.98] transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-white/30;
   }
 
-  /* ── Cards ── */
+  .btn-terminal-cta {
+    @apply inline-flex items-center gap-2 bg-terminal-navy border border-terminal-navy-light
+           text-white px-5 py-2 text-xs font-bold uppercase tracking-widest
+           hover:bg-terminal-navy-mid active:scale-[0.98] transition-all duration-150;
+  }
+
+  /* ── Terminal cards ─── */
+  .terminal-card {
+    @apply bg-[#0D0D0D] border border-[#1F1F1F]
+           hover:border-[#2A2A2A] transition-colors duration-200;
+  }
+
+  .terminal-card-raised {
+    @apply bg-[#111111] border border-[#1F1F1F]
+           hover:border-[#333333] transition-colors duration-200;
+  }
+
+  /* ── Terminal labels ─── */
+  .terminal-label {
+    @apply text-[10px] font-bold uppercase tracking-[0.14em] text-gray-500;
+  }
+
+  .terminal-label-active {
+    @apply text-[10px] font-bold uppercase tracking-[0.14em] text-terminal-orange;
+  }
+
+  /* ── Section divider ─── */
+  .t-divider {
+    @apply border-t border-[#1F1F1F];
+  }
+
+  /* ── Section label (homepage) ─── */
+  .t-section-label {
+    @apply text-[10px] font-bold uppercase tracking-[0.14em] text-gray-500 mb-2;
+  }
+
+  /* ── Editorial arrow link ─── */
+  .t-link {
+    @apply inline-flex items-center gap-1.5 text-xs font-bold text-gray-400
+           hover:text-white transition-colors duration-150;
+  }
+
+  /* ── Data stat cell ─── */
+  .t-stat {
+    @apply border border-[#1F1F1F] bg-black/60 px-3 py-2.5;
+  }
+
+  /* ── Ticker item ─── */
+  .t-ticker-item {
+    @apply flex-shrink-0 flex items-center gap-2 text-xs font-medium text-gray-300;
+  }
+
+  /* ───────────────────────────────────────────────────────
+     Legacy component classes (kept for internal app pages)
+     ─────────────────────────────────────────────────────── */
+
   .card {
     @apply bg-white border border-gray-200 p-6;
   }
@@ -57,7 +141,6 @@ body {
     @apply transition-shadow duration-200 hover:shadow-card-hover hover:border-brand-blue-mid;
   }
 
-  /* ── Buttons ── */
   .btn-primary {
     @apply inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3
            text-sm font-bold uppercase tracking-wide
@@ -84,7 +167,6 @@ body {
            hover:underline underline-offset-4 transition-all;
   }
 
-  /* ── Forms ── */
   .input-field {
     @apply w-full px-4 py-3 border border-gray-300 bg-white
            focus:outline-none focus:border-brand-blue transition-colors
@@ -95,7 +177,6 @@ body {
     @apply block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2;
   }
 
-  /* ── Nav ── */
   .nav-link {
     @apply text-sm font-semibold text-gray-700 hover:text-brand-blue transition-colors
            py-2 border-b-2 border-transparent hover:border-brand-blue;
@@ -105,9 +186,8 @@ body {
     @apply text-sm font-semibold text-brand-blue border-b-2 border-brand-blue py-2;
   }
 
-  /* ── Typography ── */
   .section-title {
-    @apply text-3xl lg:text-4xl font-bold text-brand-blue leading-tight mb-4;
+    @apply text-3xl lg:text-4xl font-bold leading-tight mb-4;
   }
 
   .section-label {
@@ -115,57 +195,68 @@ body {
   }
 
   .section-subtitle {
-    @apply text-gray-500 text-base mb-8 max-w-2xl leading-relaxed;
+    @apply text-gray-400 text-base mb-8 max-w-2xl leading-relaxed;
   }
 
-  /* ── Risk badge ── */
   .risk-badge {
     @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold uppercase
            tracking-widest border;
   }
 
-  /* ── Tables ── */
   .data-table th {
     @apply text-left text-2xs font-bold text-gray-500 uppercase tracking-widest
-           px-4 py-3 bg-gray-50 border-b border-gray-200;
+           px-4 py-3 bg-[#111111] border-b border-[#1F1F1F];
   }
 
   .data-table td {
-    @apply px-4 py-3 text-sm text-gray-700 border-b border-gray-100;
+    @apply px-4 py-3 text-sm text-gray-300 border-b border-[#1F1F1F];
   }
 
   .data-table tr:nth-child(even) td {
-    @apply bg-gray-50;
+    @apply bg-[#0A0A0A];
   }
 
-  /* ── Skeletons ── */
   .skeleton {
-    @apply animate-pulse bg-gray-100;
+    @apply animate-pulse bg-[#1A1A1A];
   }
 
-  /* ── Divider ── */
   .rule-blue {
-    @apply border-t-2 border-brand-blue w-12 mb-6;
+    @apply border-t-2 border-terminal-navy-light w-10 mb-5;
   }
 
-  /* ── Topic pill ── */
   .topic-pill {
-    @apply px-4 py-2 text-sm font-semibold text-brand-blue border border-brand-blue
-           hover:bg-brand-blue hover:text-white transition-colors cursor-pointer whitespace-nowrap;
+    @apply px-3 py-1.5 text-xs font-semibold text-gray-300 border border-[#2A2A2A]
+           hover:bg-[#111111] hover:border-[#444444] hover:text-white
+           transition-colors cursor-pointer whitespace-nowrap;
   }
 }
 
+/* ── Utilities ───────────────────────────────────────────── */
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
+  /* Ticker */
   .ticker-wrap { overflow: hidden; white-space: nowrap; }
   .ticker-content {
     display: inline-block;
-    animation: ticker 40s linear infinite;
+    animation: ticker 50s linear infinite;
   }
+  .ticker-content:hover { animation-play-state: paused; }
 
   @keyframes ticker {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
+  }
+
+  /* Scrollbar */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Subtle grid texture background */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }

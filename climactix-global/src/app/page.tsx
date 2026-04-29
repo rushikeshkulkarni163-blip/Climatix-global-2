@@ -1,19 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowRight, TrendingUp, Globe, BookOpen, CheckCircle2 } from "lucide-react";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ── Globe (client-only — Three.js needs the DOM) ──────────
+const GlobeComponent = dynamic(
+  () => import("@/components/ui/GlobeComponent"),
+  { ssr: false, loading: () => <GlobeFallback /> }
+);
+
+function GlobeFallback() {
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-48 h-48 rounded-full border border-[#1F1F1F] animate-pulse bg-[#0A1F44]/20" />
+    </div>
+  );
+}
+
+// ── Data ──────────────────────────────────────────────────
 
 const TICKER_ITEMS = [
-  "Global Avg Temp Anomaly: +1.48°C",
-  "Arctic Sea Ice Loss: -13%/decade",
-  "CO₂ Concentration: 423 ppm",
-  "Sea Level Rise: +3.7mm/yr",
-  "Extreme Weather Events: +5× since 1970",
-  "Global Carbon Budget Remaining: ~380 GtCO₂",
-  "Renewable Energy Share: 30.3% global",
-  "Climate Finance Gap: $4.3T/year needed",
+  { label: "Global Avg Temp Anomaly", value: "+1.48°C", dir: "up" },
+  { label: "Arctic Sea Ice Loss", value: "-13%/decade", dir: "down" },
+  { label: "CO₂ Concentration", value: "423 ppm", dir: "up" },
+  { label: "Sea Level Rise", value: "+3.7mm/yr", dir: "up" },
+  { label: "Extreme Weather Events", value: "+5× since 1970", dir: "up" },
+  { label: "Global Carbon Budget Remaining", value: "~380 GtCO₂", dir: "down" },
+  { label: "Renewable Energy Share", value: "30.3% global", dir: "up" },
+  { label: "Climate Finance Gap", value: "$4.3T/year needed", dir: "up" },
 ];
 
 const FEATURED_INSIGHTS = [
@@ -79,86 +94,119 @@ const CASE_STUDIES = [
 
 const STATS = [
   { value: "10+", label: "Free APIs Integrated" },
-  { value: "12", label: "Industry Sectors" },
+  { value: "12",  label: "Industry Sectors" },
   { value: "40+", label: "Climate Indicators" },
-  { value: "9", label: "Report Sections" },
+  { value: "9",   label: "Report Sections" },
 ];
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+const TCFD_ITEMS = [
+  "Physical Risk — Acute & Chronic",
+  "Transition Risk — 4 Dimensions",
+  "ESG Scoring — E/S/G Weighted",
+  "Scenario Analysis — RCP 2.6–8.5",
+  "Financial Materiality Assessment",
+  "Net Zero Pathway Alignment",
+  "TCFD/CSRD Disclosure Readiness",
+  "UN SDG Indicator Mapping",
+];
+
+// ── Page ──────────────────────────────────────────────────
 
 export default function HomePage() {
   return (
-    <div className="bg-white">
+    <div className="bg-black text-white">
 
-      {/* ── HERO ── */}
-      <section className="bg-brand-blue">
+      {/* ══ HERO ══════════════════════════════════════════════ */}
+      <section className="border-b border-[#1F1F1F] bg-black bg-grid">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[520px]">
-            {/* Left */}
-            <div className="py-20 lg:py-28 lg:pr-16 flex flex-col justify-center">
-              <p className="section-label text-blue-300 mb-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[560px]">
+
+            {/* Left — editorial copy */}
+            <div className="py-20 lg:py-24 lg:pr-14 flex flex-col justify-center border-r border-[#1F1F1F]">
+              <p className="terminal-label mb-4">
                 TCFD-ALIGNED CLIMATE INTELLIGENCE
               </p>
-              <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-6 text-balance">
+              <h1 className="text-4xl lg:text-5xl xl:text-[3.25rem] font-bold text-white leading-[1.08] tracking-tight mb-6 text-balance">
                 Climate Risk Intelligence<br />
                 for a Changing World
               </h1>
-              <p className="text-blue-200 text-lg leading-relaxed mb-10 max-w-xl">
+              <p className="text-gray-400 text-sm leading-relaxed mb-10 max-w-lg">
                 TCFD-aligned analysis for industries, investors &amp; researchers.
                 Physical risk scoring, transition risk assessment, ESG benchmarking,
                 and professional PDF reports — powered by open climate APIs.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/risk-analysis" className="btn-primary bg-white text-brand-blue hover:bg-blue-50 border-white">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/risk-analysis" className="btn-terminal-primary">
                   Start Risk Assessment <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link href="/dashboard" className="btn-secondary border-white/50 text-white hover:bg-white/10">
+                <Link href="/dashboard" className="btn-terminal-secondary">
                   View Dashboard
                 </Link>
               </div>
             </div>
 
-            {/* Right — visual panel */}
-            <div className="hidden lg:flex flex-col justify-end bg-brand-blue-dark relative overflow-hidden">
-              {/* Abstract grid lines */}
-              <div className="absolute inset-0 opacity-10">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="absolute border-t border-white w-full" style={{ top: `${i * 14}%` }} />
-                ))}
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="absolute border-l border-white h-full" style={{ left: `${i * 20}%` }} />
-                ))}
+            {/* Right — 3D Globe panel */}
+            <div className="hidden lg:block relative bg-[#020812] overflow-hidden">
+              {/* Globe fills the panel */}
+              <div className="absolute inset-0">
+                <GlobeComponent />
               </div>
 
-              {/* Stats overlay */}
-              <div className="relative z-10 p-12 grid grid-cols-2 gap-4">
-                {STATS.map(({ value, label }) => (
-                  <div key={label} className="bg-white/10 border border-white/20 p-5">
-                    <div className="text-3xl font-bold text-white mb-1">{value}</div>
-                    <div className="text-blue-300 text-xs uppercase tracking-wider">{label}</div>
-                  </div>
-                ))}
+              {/* Risk indicator bar */}
+              <div className="absolute top-5 left-5 right-5 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                <span className="terminal-label">
+                  GLOBAL CLIMATE RISK — ACTIVE MONITORING
+                </span>
               </div>
 
-              {/* Bottom accent */}
-              <div className="h-1 w-full bg-gradient-to-r from-blue-400 via-white to-transparent opacity-20" />
+              {/* Stats overlay — bottom */}
+              <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                <div className="grid grid-cols-4 gap-2">
+                  {STATS.map(({ value, label }) => (
+                    <div key={label} className="t-stat">
+                      <div className="text-lg font-bold text-white leading-none">{value}</div>
+                      <div className="text-[9px] text-gray-500 uppercase tracking-widest mt-1 leading-tight">
+                        {label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── LIVE DATA TICKER ── */}
-      <div className="bg-brand-blue-dark border-b border-brand-blue">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 bg-brand-blue-mid px-5 py-2.5">
-            <span className="text-white text-2xs font-bold uppercase tracking-widest">Live Data</span>
+      {/* ══ LIVE DATA TICKER ══════════════════════════════════ */}
+      <div className="bg-[#0A0A0A] border-b border-[#1F1F1F]">
+        <div className="flex items-stretch">
+          {/* Badge */}
+          <div className="flex-shrink-0 flex items-center bg-[#0A1F44] px-5 border-r border-[#1F1F1F]">
+            <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-white whitespace-nowrap">
+              LIVE DATA
+            </span>
           </div>
+
+          {/* Scrolling content */}
           <div className="ticker-wrap flex-1 py-2.5 overflow-hidden">
-            <div className="ticker-content flex gap-12">
+            <div className="ticker-content flex gap-10">
               {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-                <span key={i} className="text-blue-200 text-xs font-medium">
-                  <span className="text-blue-400 mr-2">•</span>
-                  {item}
+                <span key={i} className="t-ticker-item">
+                  <span
+                    className={
+                      item.dir === "up"
+                        ? "text-[#EF4444] font-bold"
+                        : "text-[#10B981] font-bold"
+                    }
+                  >
+                    {item.dir === "up" ? "▲" : "▼"}
+                  </span>
+                  <span className="text-gray-500 uppercase tracking-wider text-[10px]">
+                    {item.label}:
+                  </span>
+                  <span className="text-white font-semibold">{item.value}</span>
                 </span>
               ))}
             </div>
@@ -166,10 +214,10 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── THREE PILLAR CTAs ── */}
-      <section className="border-b border-gray-200">
+      {/* ══ THREE PILLAR CTAs ════════════════════════════════ */}
+      <section className="border-b border-[#1F1F1F]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#1F1F1F]">
             {[
               {
                 icon: TrendingUp,
@@ -196,15 +244,15 @@ export default function HomePage() {
                 cta: "Explore Data",
               },
             ].map(({ icon: Icon, label, sub, desc, href, cta }) => (
-              <div key={label} className="group p-10 hover:bg-brand-blue-tint transition-colors">
-                <div className="w-10 h-10 bg-brand-blue flex items-center justify-center mb-5 group-hover:bg-brand-blue-dark transition-colors">
-                  <Icon className="w-5 h-5 text-white" />
+              <div key={label} className="group p-8 hover:bg-[#0A0A0A] transition-colors">
+                <div className="w-8 h-8 border border-[#2A2A2A] flex items-center justify-center mb-5 group-hover:border-[#444444] transition-colors">
+                  <Icon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
                 </div>
-                <p className="text-2xs font-bold uppercase tracking-widest text-brand-blue-mid mb-2">{sub}</p>
-                <h3 className="text-xl font-bold text-brand-blue mb-3">{label}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-6">{desc}</p>
-                <Link href={href} className="btn-ghost text-brand-blue text-sm font-bold">
-                  {cta} <ArrowRight className="w-4 h-4" />
+                <p className="terminal-label mb-2">{sub}</p>
+                <h3 className="text-base font-bold text-white mb-3">{label}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed mb-6">{desc}</p>
+                <Link href={href} className="t-link">
+                  {cta} <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
             ))}
@@ -212,75 +260,97 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── TOPIC STRIP ── */}
-      <div className="border-b border-gray-200 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
-            <span className="text-2xs font-bold uppercase tracking-widest text-gray-400 flex-shrink-0">Topics:</span>
+      {/* ══ TOPIC STRIP ══════════════════════════════════════ */}
+      <div className="border-b border-[#1F1F1F] bg-[#0A0A0A]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-3">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            <span className="terminal-label flex-shrink-0 mr-1">Topics:</span>
             {TOPICS.map((t) => (
-              <button key={t} className="topic-pill flex-shrink-0 text-xs">{t}</button>
+              <button key={t} className="topic-pill flex-shrink-0">{t}</button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── FEATURED INSIGHTS ── */}
-      <section className="section-pad border-b border-gray-200">
+      {/* ══ FEATURED INSIGHTS ════════════════════════════════ */}
+      <section className="section-pad border-b border-[#1F1F1F]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10">
+
+          {/* Header row */}
+          <div className="flex items-end justify-between mb-8">
             <div>
-              <p className="section-label">Featured Insights</p>
-              <div className="rule-blue" />
-              <h2 className="text-3xl font-bold text-brand-blue">
+              <p className="t-section-label">Featured Insights</p>
+              <div className="w-8 border-t border-[#2A2A2A] mb-4" />
+              <h2 className="text-2xl font-bold text-white">
                 Climate Intelligence for Decision-Makers
               </h2>
             </div>
-            <Link href="/research" className="btn-ghost hidden md:flex">
-              All Insights <ArrowRight className="w-4 h-4" />
+            <Link href="/research" className="t-link hidden md:flex">
+              All Insights <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-gray-200">
-            {FEATURED_INSIGHTS.map(({ category, title, desc, href }) => (
-              <article key={title} className="bg-white p-6 group hover:bg-brand-blue-tint transition-colors">
-                <p className="text-2xs font-bold uppercase tracking-widest text-brand-blue-mid mb-3">
-                  {category}
-                </p>
-                <h3 className="text-base font-bold text-brand-blue mb-3 leading-snug group-hover:underline underline-offset-2">
-                  {title}
-                </h3>
-                <p className="text-gray-500 text-xs leading-relaxed mb-4 line-clamp-3">{desc}</p>
-                <Link href={href} className="text-brand-blue text-xs font-bold flex items-center gap-1 hover:gap-2 transition-all">
-                  Read more <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </article>
-            ))}
+          {/* Editorial grid — featured left, 3 stacked right */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-px bg-[#1F1F1F]">
+
+            {/* Featured large card */}
+            <article className="lg:col-span-2 bg-black p-7 group hover:bg-[#0A0A0A] transition-colors">
+              <p className="terminal-label-active mb-3">{FEATURED_INSIGHTS[0].category}</p>
+              <h3 className="text-xl font-bold text-white mb-4 leading-tight group-hover:text-gray-100">
+                {FEATURED_INSIGHTS[0].title}
+              </h3>
+              <p className="text-gray-400 text-sm leading-relaxed mb-6">
+                {FEATURED_INSIGHTS[0].desc}
+              </p>
+              <Link href={FEATURED_INSIGHTS[0].href} className="t-link">
+                Read analysis <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </article>
+
+            {/* 3 smaller cards stacked */}
+            <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-px bg-[#1F1F1F]">
+              {FEATURED_INSIGHTS.slice(1).map(({ category, title, desc, href }) => (
+                <article key={title} className="bg-black p-6 group hover:bg-[#0A0A0A] transition-colors">
+                  <p className="terminal-label mb-2">{category}</p>
+                  <h3 className="text-sm font-bold text-white mb-3 leading-snug">
+                    {title}
+                  </h3>
+                  <p className="text-gray-500 text-xs leading-relaxed mb-4 line-clamp-3">{desc}</p>
+                  <Link href={href} className="t-link text-[11px]">
+                    Read more <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </article>
+              ))}
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── INDUSTRIES ── */}
-      <section className="section-pad bg-brand-blue-tint border-b border-gray-200">
+      {/* ══ INDUSTRIES ════════════════════════════════════════ */}
+      <section className="section-pad bg-[#0A0A0A] border-b border-[#1F1F1F]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="mb-10">
-            <p className="section-label">Industries</p>
-            <div className="rule-blue" />
-            <h2 className="text-3xl font-bold text-brand-blue">
+
+          <div className="mb-8">
+            <p className="t-section-label">Industries</p>
+            <div className="w-8 border-t border-[#2A2A2A] mb-4" />
+            <h2 className="text-2xl font-bold text-white">
               Sector-Specific Climate Risk Analysis
             </h2>
-            <p className="section-subtitle text-gray-500 mt-3">
+            <p className="text-gray-500 text-sm mt-2">
               IPCC AR6-aligned risk weights for 12 industry sectors, from energy to tourism.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-gray-300">
+          {/* Horizontal industry nav */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-[#1F1F1F]">
             {INDUSTRIES.map((ind) => (
               <Link
                 key={ind}
                 href="/risk-analysis"
-                className="bg-white px-5 py-6 text-sm font-semibold text-brand-blue
-                           hover:bg-brand-blue hover:text-white transition-colors text-center
-                           border-b-2 border-transparent hover:border-brand-blue-mid"
+                className="bg-[#0A0A0A] px-4 py-5 text-xs font-semibold text-gray-400
+                           hover:bg-[#111111] hover:text-white transition-colors text-center
+                           border-b-2 border-transparent hover:border-[#1D4ED8] group"
               >
                 {ind}
               </Link>
@@ -289,25 +359,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CASE STUDIES ── */}
-      <section className="section-pad border-b border-gray-200">
+      {/* ══ CASE STUDIES ══════════════════════════════════════ */}
+      <section className="section-pad border-b border-[#1F1F1F]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="mb-10">
-            <p className="section-label">Client Impact</p>
-            <div className="rule-blue" />
-            <h2 className="text-3xl font-bold text-brand-blue">Case Studies</h2>
+
+          <div className="mb-8">
+            <p className="t-section-label">Client Impact</p>
+            <div className="w-8 border-t border-[#2A2A2A] mb-4" />
+            <h2 className="text-2xl font-bold text-white">Case Studies</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#1F1F1F]">
             {CASE_STUDIES.map(({ tag, title, desc, href }) => (
-              <div key={title} className="border border-gray-200 group hover:border-brand-blue-mid hover:shadow-card-hover transition-all">
-                {/* Blue top accent */}
-                <div className="h-1 bg-brand-blue" />
+              <div key={title} className="bg-black group hover:bg-[#0A0A0A] transition-colors">
+                <div className="h-px bg-[#0A1F44] group-hover:bg-[#1D4ED8] transition-colors" />
                 <div className="p-7">
-                  <p className="text-2xs font-bold uppercase tracking-widest text-brand-blue-mid mb-3">{tag}</p>
-                  <h3 className="text-lg font-bold text-brand-blue mb-3 leading-snug">{title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-6">{desc}</p>
-                  <Link href={href} className="btn-ghost text-brand-blue text-xs font-bold">
+                  <p className="terminal-label mb-3">{tag}</p>
+                  <h3 className="text-base font-bold text-white mb-3 leading-snug">{title}</h3>
+                  <p className="text-gray-500 text-xs leading-relaxed mb-6">{desc}</p>
+                  <Link href={href} className="t-link">
                     Explore <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -317,71 +387,73 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── TCFD FRAMEWORK BAND ── */}
-      <section className="bg-brand-blue section-pad">
+      {/* ══ TCFD FRAMEWORK / RISK PANEL ══════════════════════ */}
+      <section className="section-pad bg-[#020812] border-b border-[#1F1F1F]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <p className="text-blue-300 text-2xs font-bold uppercase tracking-widest mb-3">
-                Framework Alignment
-              </p>
-              <div className="w-12 border-t-2 border-blue-400 mb-5" />
-              <h2 className="text-3xl font-bold text-white mb-5 leading-tight">
-                Built on the TCFD Framework
-              </h2>
-              <p className="text-blue-200 text-base leading-relaxed mb-8">
-                Our scoring engine follows the Task Force on Climate-related Financial Disclosures
-                recommendations, aligned with IPCC AR6 scenario pathways and Paris Agreement targets.
-              </p>
-              <Link href="/risk-analysis" className="btn-primary bg-white text-brand-blue hover:bg-blue-50">
-                Generate Disclosure Report <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+          <div className="border border-[#0F2D5E] p-8 lg:p-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                "Physical Risk — Acute & Chronic",
-                "Transition Risk — 4 Dimensions",
-                "ESG Scoring — E/S/G Weighted",
-                "Scenario Analysis — RCP 2.6–8.5",
-                "Financial Materiality Assessment",
-                "Net Zero Pathway Alignment",
-                "TCFD/CSRD Disclosure Readiness",
-                "UN SDG Indicator Mapping",
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-blue-300 flex-shrink-0 mt-0.5" />
-                  <span className="text-blue-200 text-sm">{item}</span>
+              {/* Left — copy */}
+              <div>
+                <p className="terminal-label mb-3">Framework Alignment</p>
+                <div className="w-8 border-t border-[#1D4ED8] mb-5" />
+                <h2 className="text-2xl font-bold text-white mb-5 leading-tight">
+                  Built on the TCFD Framework
+                </h2>
+                <p className="text-gray-400 text-sm leading-relaxed mb-8">
+                  Our scoring engine follows the Task Force on Climate-related Financial Disclosures
+                  recommendations, aligned with IPCC AR6 scenario pathways and Paris Agreement targets.
+                </p>
+                <Link href="/risk-analysis" className="btn-terminal-primary">
+                  Generate Disclosure Report <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+              {/* Right — data panel checklist */}
+              <div className="border border-[#1F1F1F] bg-black p-6">
+                <p className="terminal-label mb-4">COVERAGE MATRIX</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {TCFD_ITEMS.map((item) => (
+                    <div key={item} className="flex items-start gap-2.5 py-2 border-b border-[#111111]">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-300 text-xs">{item}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── REPORTS & DATA SOURCES ── */}
-      <section className="section-pad border-b border-gray-200">
+      {/* ══ REPORTS & DATA SOURCES ════════════════════════════ */}
+      <section className="section-pad border-b border-[#1F1F1F]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Reports */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+            {/* Reports panel */}
             <div>
-              <p className="section-label">Reports & Downloads</p>
-              <div className="rule-blue" />
-              <h2 className="text-2xl font-bold text-brand-blue mb-6">
+              <p className="t-section-label">Reports &amp; Downloads</p>
+              <div className="w-8 border-t border-[#2A2A2A] mb-5" />
+              <h2 className="text-xl font-bold text-white mb-6">
                 Professional PDF Climate Disclosures
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-px">
                 {[
                   { label: "Executive Summary", desc: "2–3 page high-level overview" },
-                  { label: "Technical Report", desc: "Full 9-section TCFD disclosure" },
-                  { label: "Investor Report", desc: "Formatted for institutional disclosure" },
+                  { label: "Technical Report",  desc: "Full 9-section TCFD disclosure" },
+                  { label: "Investor Report",   desc: "Formatted for institutional disclosure" },
                 ].map(({ label, desc }) => (
-                  <div key={label} className="flex items-center justify-between p-4 border border-gray-200 hover:border-brand-blue group transition-colors">
+                  <div
+                    key={label}
+                    className="flex items-center justify-between p-4 bg-[#0A0A0A] border border-[#1F1F1F] hover:border-[#2A2A2A] group transition-colors"
+                  >
                     <div>
-                      <div className="font-bold text-brand-blue text-sm">{label}</div>
-                      <div className="text-gray-400 text-xs mt-0.5">{desc}</div>
+                      <div className="font-bold text-white text-sm">{label}</div>
+                      <div className="text-gray-500 text-xs mt-0.5">{desc}</div>
                     </div>
-                    <Link href="/report" className="text-brand-blue text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                    <Link href="/report" className="t-link">
                       Generate <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
@@ -389,47 +461,48 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Data sources */}
+            {/* Data sources panel */}
             <div>
-              <p className="section-label">Data Sources</p>
-              <div className="rule-blue" />
-              <h2 className="text-2xl font-bold text-brand-blue mb-6">
+              <p className="t-section-label">Data Sources</p>
+              <div className="w-8 border-t border-[#2A2A2A] mb-5" />
+              <h2 className="text-xl font-bold text-white mb-6">
                 10 Free APIs. Zero Paid Keys Required.
               </h2>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-px bg-[#1F1F1F]">
                 {[
-                  { name: "Open-Meteo", type: "Temperature & Weather" },
-                  { name: "NASA POWER", type: "Solar, Wind, Humidity" },
-                  { name: "World Bank", type: "Country Emissions" },
-                  { name: "OpenAQ", type: "Air Quality (PM2.5+)" },
-                  { name: "ReliefWeb", type: "Disaster Events" },
-                  { name: "UN SDG API", type: "Sustainability Goals" },
+                  { name: "Open-Meteo",     type: "Temperature & Weather" },
+                  { name: "NASA POWER",     type: "Solar, Wind, Humidity" },
+                  { name: "World Bank",     type: "Country Emissions" },
+                  { name: "OpenAQ",         type: "Air Quality (PM2.5+)" },
+                  { name: "ReliefWeb",      type: "Disaster Events" },
+                  { name: "UN SDG API",     type: "Sustainability Goals" },
                   { name: "REST Countries", type: "Geographic Data" },
-                  { name: "NOAA CDO", type: "Climate Observations" },
+                  { name: "NOAA CDO",       type: "Climate Observations" },
                 ].map(({ name, type }) => (
-                  <div key={name} className="bg-gray-50 border border-gray-200 px-4 py-3">
-                    <div className="font-bold text-brand-blue text-sm">{name}</div>
-                    <div className="text-gray-400 text-xs mt-0.5">{type}</div>
+                  <div key={name} className="bg-[#0A0A0A] px-4 py-3 hover:bg-[#111111] transition-colors">
+                    <div className="font-bold text-white text-xs">{name}</div>
+                    <div className="text-gray-500 text-[10px] mt-0.5">{type}</div>
                   </div>
                 ))}
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* ── BOTTOM CTA ── */}
-      <section className="bg-gray-50 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-14 flex flex-col md:flex-row items-center justify-between gap-6">
+      {/* ══ BOTTOM CTA ════════════════════════════════════════ */}
+      <section className="bg-[#0A0A0A] border-b border-[#1F1F1F]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-2xl font-bold text-brand-blue mb-2">
+            <h2 className="text-xl font-bold text-white mb-2">
               Ready to assess your climate risk?
             </h2>
             <p className="text-gray-500 text-sm">
               Complete the 5-step wizard and generate a TCFD-aligned PDF report in minutes.
             </p>
           </div>
-          <Link href="/risk-analysis" className="btn-primary flex-shrink-0">
+          <Link href="/risk-analysis" className="btn-terminal-primary flex-shrink-0">
             Start Your Assessment <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
