@@ -18,6 +18,12 @@ const NAV_ITEMS = [
     sub: ["Physical Risk", "Transition Risk", "ESG Scoring", "TCFD Assessment", "5-Step Risk Wizard"],
   },
   {
+    label: "Simulation",
+    href: "/simulation",
+    sub: ["Asset Risk Mapping", "NGFS Scenarios", "Physical Risk Layer", "Transition Risk Layer", "Financial Impact", "Supply Chain Graph"],
+    highlight: true,
+  },
+  {
     label: "Industries",
     href: "/portfolio",
     sub: ["Energy & Utilities", "Financial Services", "Manufacturing", "Real Estate", "Agriculture", "Technology"],
@@ -31,11 +37,6 @@ const NAV_ITEMS = [
     label: "Reports",
     href: "/report",
     sub: ["Executive Summary", "Technical Report", "Investor Report", "TCFD Disclosure", "PDF Generation"],
-  },
-  {
-    label: "Technology",
-    href: "/",
-    sub: ["Open Climate APIs", "NASA POWER", "World Bank Data", "OpenAQ", "UN SDG API"],
   },
 ];
 
@@ -63,42 +64,52 @@ export default function Navbar() {
 
           {/* Desktop nav links */}
           <div className="hidden lg:flex items-center">
-            {NAV_ITEMS.map(({ label, href, sub }) => (
-              <div
-                key={label}
-                className="relative"
-                onMouseEnter={() => setOpenDrop(label)}
-                onMouseLeave={() => setOpenDrop(null)}
-              >
-                <Link
-                  href={href}
-                  className={cn(
-                    "flex items-center gap-1 px-4 h-11 text-xs font-semibold uppercase tracking-wider transition-colors border-b-2",
-                    pathname === href || pathname.startsWith(href + "/")
-                      ? "text-white border-white"
-                      : "text-[#9CA3AF] border-transparent hover:text-white hover:border-[#333333]"
-                  )}
+            {NAV_ITEMS.map(({ label, href, sub, highlight }) => {
+              const isActive = pathname === href || pathname.startsWith(href + "/");
+              return (
+                <div
+                  key={label}
+                  className="relative"
+                  onMouseEnter={() => setOpenDrop(label)}
+                  onMouseLeave={() => setOpenDrop(null)}
                 >
-                  {label}
-                  <ChevronDown className="w-3 h-3 opacity-50" />
-                </Link>
+                  <Link
+                    href={href}
+                    className={cn(
+                      "flex items-center gap-1 px-4 h-11 text-xs font-semibold uppercase tracking-wider transition-colors border-b-2",
+                      isActive
+                        ? "text-white border-white"
+                        : highlight
+                        ? "text-[#F97316] border-transparent hover:text-white hover:border-[#F97316]/50"
+                        : "text-[#9CA3AF] border-transparent hover:text-white hover:border-[#333333]"
+                    )}
+                  >
+                    {label}
+                    {highlight && !isActive && (
+                      <span className="ml-0.5 text-[7px] font-bold uppercase tracking-widest text-[#F97316] border border-[#F97316]/40 px-1 py-0.5">
+                        NEW
+                      </span>
+                    )}
+                    <ChevronDown className="w-3 h-3 opacity-50" />
+                  </Link>
 
-                {/* Dropdown */}
-                {openDrop === label && (
-                  <div className="absolute top-full left-0 w-52 bg-[#0D0D0D] border border-[#1F1F1F] py-1 z-50 shadow-2xl">
-                    {sub.map((item) => (
-                      <Link
-                        key={item}
-                        href={href}
-                        className="block px-4 py-2 text-xs text-[#9CA3AF] hover:bg-[#161616] hover:text-white transition-colors"
-                      >
-                        {item}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                  {/* Dropdown */}
+                  {openDrop === label && (
+                    <div className="absolute top-full left-0 w-56 bg-[#0D0D0D] border border-[#1F1F1F] py-1 z-50 shadow-2xl">
+                      {sub.map((item) => (
+                        <Link
+                          key={item}
+                          href={href}
+                          className="block px-4 py-2 text-xs text-[#9CA3AF] hover:bg-[#161616] hover:text-white transition-colors"
+                        >
+                          {item}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Right actions */}
