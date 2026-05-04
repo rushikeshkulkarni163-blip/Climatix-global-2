@@ -545,6 +545,85 @@ body {
 }
 #tl-year-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .16em; color: var(--tx3); }
 #tl-year-val { font-family: var(--mono); font-size: 20px; font-weight: 700; line-height: 1.1; color: var(--tx0); }
+
+/* ═══════════════════════════════════════
+   LIVE API LAYER
+═══════════════════════════════════════ */
+.api-dot {
+  display: inline-block; width: 5px; height: 5px;
+  border-radius: 50%; vertical-align: middle; margin-right: 4px; flex-shrink: 0;
+}
+.api-dot.live { background: var(--pos); box-shadow: 0 0 5px var(--pos); animation: apipulse 2.2s ease-in-out infinite; }
+.api-dot.static { background: var(--tx4); }
+@keyframes apipulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+.live-sec {
+  padding: 10px 14px; border-top: 1px solid var(--bd0);
+  animation: fadein .3s ease;
+}
+@keyframes fadein { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+.live-sec-title {
+  font-size: 7px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .2em; color: var(--tx3); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.live-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 3px 0; border-bottom: 1px solid var(--bd0);
+}
+.live-row:last-child { border-bottom: none; }
+.lk { font-size: 9px; color: var(--tx2); }
+.lv { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--tx1); }
+.lv.green { color: var(--pos); }
+.lv.red   { color: var(--neg); }
+.lv.amber { color: var(--s20); }
+
+.src-badge {
+  display: inline-block; font-size: 7px; font-weight: 600; letter-spacing: .06em;
+  padding: 1px 5px; background: var(--bg4); border: 1px solid var(--bd2);
+  color: var(--tx3); font-family: var(--mono); vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* Spinner */
+.spin {
+  display: inline-block; width: 9px; height: 9px;
+  border: 1px solid var(--bd3); border-top-color: var(--acc);
+  border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Scenario compare tab inside right panel */
+.cmp-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--bd0); border: 1px solid var(--bd0);
+  margin-top: 8px;
+}
+.cmp-col {
+  background: var(--bg2); padding: 8px 6px;
+}
+.cmp-col-hd { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+.cmp-metric { margin-bottom: 4px; }
+.cmp-lbl { font-size: 7px; color: var(--tx3); letter-spacing: .06em; }
+.cmp-val { font-family: var(--mono); font-size: 10px; font-weight: 700; }
+
+/* Tab switcher in right panel */
+.rp-tabs { display: flex; border-bottom: 1px solid var(--bd1); }
+.rp-tab {
+  flex: 1; padding: 7px 6px; background: none; border: none;
+  font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  color: var(--tx3); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all .12s; margin-bottom: -1px;
+}
+.rp-tab:hover { color: var(--tx1); }
+.rp-tab.on { color: var(--tx0); border-bottom-color: var(--acc); }
+
+/* Economic overlay pill */
+.econ-pill {
+  font-size: 7px; font-weight: 700; letter-spacing: .1em; padding: 1px 5px;
+  background: rgba(90,58,138,.15); border: 1px solid rgba(90,58,138,.3);
+  color: #8A6AC8; margin-left: auto;
+}
 </style>
 </head>
 <body>
@@ -718,7 +797,59 @@ body {
 
 /* ─── STATE ─── */
 const S={scenario:'2.0',year:2030,layer:'physical',selId:null,
-  assets:[],addMode:false,coords:null,showLinks:true,playing:false,timer:null};
+  assets:[],addMode:false,coords:null,showLinks:true,playing:false,timer:null,
+  liveMode:false,activeTab:'risk'};
+
+/* ─── API LAYER ─── */
+const API='http://localhost:8000';
+
+async function checkBackend(){
+  try{
+    const r=await fetch(`${API}/api/health`,{signal:AbortSignal.timeout(2500)});
+    S.liveMode=r.ok;
+  }catch{S.liveMode=false;}
+  renderStats();
+}
+
+async function fetchLiveAssetRisk(a){
+  if(!S.liveMode)return null;
+  const iso3=countryToISO3(a.country)||'USA';
+  try{
+    const r=await fetch(`${API}/api/risk/score?lat=${a.lat}&lng=${a.lng}&iso3=${iso3}&sector=${encodeURIComponent(a.sector)}&scenario=${S.scenario}&year=${S.year}&revenue=${a.rev*1e6}`,
+      {signal:AbortSignal.timeout(18000)});
+    if(!r.ok)return null;
+    return await r.json();
+  }catch{return null;}
+}
+
+async function fetchCountryMacro(iso3){
+  if(!S.liveMode)return null;
+  try{
+    const r=await fetch(`${API}/api/worldbank/${iso3}`,{signal:AbortSignal.timeout(12000)});
+    if(!r.ok)return null;
+    return await r.json();
+  }catch{return null;}
+}
+
+async function fetchScenarioCompare(a){
+  if(!S.liveMode)return null;
+  const iso3=countryToISO3(a.country)||'USA';
+  try{
+    const r=await fetch(`${API}/api/scenario/compare?lat=${a.lat}&lng=${a.lng}&iso3=${iso3}&sector=${encodeURIComponent(a.sector)}&year=${S.year}`,
+      {signal:AbortSignal.timeout(30000)});
+    if(!r.ok)return null;
+    return await r.json();
+  }catch{return null;}
+}
+
+/* Country name → ISO3 lookup */
+function countryToISO3(name){
+  const m={'United States':'USA','China':'CHN','India':'IND','Germany':'DEU','Australia':'AUS',
+    'Singapore':'SGP','Brazil':'BRA','Netherlands':'NLD','UAE':'ARE','Nigeria':'NGA',
+    'Japan':'JPN','United Kingdom':'GBR','France':'FRA','South Africa':'ZAF','Russia':'RUS',
+    'Indonesia':'IDN','Mexico':'MEX','Saudi Arabia':'SAU','South Korea':'KOR','Canada':'CAN'};
+  return m[name]||'USA';
+}
 
 /* ─── NGFS SCENARIOS ─── */
 const SCN={
@@ -850,7 +981,9 @@ function heatGJ(){
   const f=[];
   for(let lat=-80;lat<=80;lat+=5)for(let lng=-175;lng<=175;lng+=5){
     const r=calc({lat,lng,sector:'Manufacturing',s1:200000,s2:100000},S.scenario,S.year);
-    const v=S.layer==='physical'?r.phys/100:S.layer==='transition'?r.trans/100:S.layer==='carbon'?Math.min(1,r.ecp/900):r.tot/100;
+    // economic layer: uses CO₂ intensity + GDP vulnerability proxy
+    const econScore=Math.min(100,(Math.abs(lat)/90*40)+(lng>-20&&lng<140&&lat>-10&&lat<35?30:10));
+    const v=S.layer==='physical'?r.phys/100:S.layer==='transition'?r.trans/100:S.layer==='carbon'?Math.min(1,r.ecp/900):S.layer==='economic'?econScore/100:r.tot/100;
     f.push({type:'Feature',geometry:{type:'Point',coordinates:[lng,lat]},properties:{intensity:Math.round(v*100)/100}});
   }
   return{type:'FeatureCollection',features:f};
@@ -957,6 +1090,10 @@ function renderStats(){
     <div class="sb-item"><span class="sb-lbl">Trans Risk</span><span class="sb-val info">${f1(p.at)}</span></div>
     <div class="sb-item"><span class="sb-lbl">High</span><span class="sb-val warn">${p.hi}</span></div>
     <div class="sb-item"><span class="sb-lbl">Critical</span><span class="sb-val neg">${p.cr}</span></div>
+    <div class="sb-item" style="margin-left:auto">
+      <span class="api-dot ${S.liveMode?'live':'static'}"></span>
+      <span class="sb-lbl">${S.liveMode?'LIVE API':'STATIC'}</span>
+    </div>
     <div class="sb-year"><span class="sb-year-lbl">Year</span><span class="sb-year-val">${S.year}</span></div>`;
 }
 
@@ -990,12 +1127,21 @@ const LYRS=[
     ico:`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="6.5" r="5" stroke-dasharray="2.5 2"/></svg>`},
   {id:'composite',  name:'Composite Risk',   desc:'Weighted overall climate risk',
     ico:`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="1" y="5" width="11" height="3" rx=".5"/><rect x="3" y="2" width="7" height="2" rx=".5" opacity=".6"/><rect x="4" y="9" width="5" height="2" rx=".5" opacity=".4"/></svg>`},
+  {id:'economic',   name:'Economic Exposure', desc:'GDP vulnerability · CO₂ · energy',
+    ico:`<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 10 L4 7 L7 8.5 L12 3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="8.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/></svg>`,
+    badge:'ECON'},
 ];
 function renderLyrs(){
   document.getElementById('lyr-btns').innerHTML=LYRS.map(l=>`
     <button class="lyb${l.id===S.layer?' on':''}" onclick="setLyr('${l.id}')">
       <div class="lyb-ico">${l.ico}</div>
-      <div class="lyb-text"><div class="lyb-name">${l.name}</div><div class="lyb-desc">${l.desc}</div></div>
+      <div class="lyb-text">
+        <div style="display:flex;align-items:center;gap:5px">
+          <div class="lyb-name">${l.name}</div>
+          ${l.badge?`<span class="econ-pill">${l.badge}</span>`:''}
+        </div>
+        <div class="lyb-desc">${l.desc}</div>
+      </div>
     </button>`).join('');
 }
 
@@ -1044,6 +1190,8 @@ function drawPanel(a){
   const r=calc(a,S.scenario,S.year),col=riskColor(r.lvl),hex=riskHex(r.lvl);
   const c=SCN[S.scenario],series=ts(a,S.scenario);
   const pi=document.getElementById('rpi');
+
+  /* ── Static base panel HTML ── */
   pi.innerHTML=`
     <div class="rp-head">
       <div>
@@ -1057,6 +1205,15 @@ function drawPanel(a){
       <button class="btn-x" onclick="S.selId=null;document.getElementById('rp').classList.remove('on');renderList()">✕</button>
     </div>
 
+    <!-- Tab bar -->
+    <div class="rp-tabs">
+      <button class="rp-tab on" id="tab-risk"    onclick="switchTab('risk')">Risk</button>
+      <button class="rp-tab"    id="tab-fin"     onclick="switchTab('fin')">Financials</button>
+      <button class="rp-tab"    id="tab-compare" onclick="switchTab('compare')">Compare</button>
+      <button class="rp-tab"    id="tab-macro"   onclick="switchTab('macro')">Country</button>
+    </div>
+
+    <!-- Overall badge -->
     <div class="risk-badge" style="border-color:${hex}30;background:${hex}08">
       <div>
         <div class="rb-label">Overall Risk Score</div>
@@ -1075,75 +1232,249 @@ function drawPanel(a){
       Stranded Asset Risk Detected
     </div>`:''}
 
-    <div class="rp-sec">
-      <div class="rp-sec-title">Risk Breakdown</div>
-      ${[['Physical Risk',r.phys,'#924010'],['Transition Risk',r.trans,'#1A6DA0'],['Supply Chain',r.sc,'#5A3A8A']]
-        .map(([l,v,c])=>`<div class="rb-row">
-          <span class="rb-lbl">${l}</span>
-          <div class="rb-track"><div class="rb-fill" style="width:${v}%;background:${c}"></div></div>
-          <span class="rb-val" style="color:${c}">${Math.round(v)}</span>
-        </div>`).join('')}
+    <!-- TAB: RISK -->
+    <div id="pane-risk">
+      <div class="rp-sec">
+        <div class="rp-sec-title">Risk Breakdown</div>
+        ${[['Physical Risk',r.phys,'#924010'],['Transition Risk',r.trans,'#1A6DA0'],['Supply Chain',r.sc,'#5A3A8A']]
+          .map(([l,v,c])=>`<div class="rb-row">
+            <span class="rb-lbl">${l}</span>
+            <div class="rb-track"><div class="rb-fill" style="width:${v}%;background:${c}"></div></div>
+            <span class="rb-val" style="color:${c}">${Math.round(v)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="rp-sec">
+        <div class="rp-sec-title">Physical Hazards</div>
+        ${[['Heat Stress',r.heat,'#924010'],['Flood Risk',r.flood,'#1A5080'],['Storm Risk',r.storm,'#4A2A7A'],['Drought Risk',r.drought,'#806800'],['Sea Level',Math.min(100,r.flood*.45),'#1A4060']]
+          .map(([l,v,c])=>`<div class="rb-row">
+            <span class="rb-lbl">${l}</span>
+            <div class="rb-track"><div class="rb-fill" style="width:${v}%;background:${c}"></div></div>
+            <span class="rb-val" style="color:${c}">${Math.round(v)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="rp-sec">
+        <div class="rp-sec-title">Risk Projection 2024–2050</div>
+        ${chartArea(series,270,100)}
+        <div class="c-legend">
+          <div class="cl-item"><div class="cl-line" style="background:#924010"></div>Physical</div>
+          <div class="cl-item"><div class="cl-line" style="background:#1A6DA0"></div>Transition</div>
+        </div>
+      </div>
+      <!-- Live climate data slot -->
+      <div id="live-climate-slot"></div>
     </div>
 
-    <div class="rp-sec">
-      <div class="rp-sec-title">Physical Hazards</div>
-      ${[['Heat Stress',r.heat,'#924010'],['Flood Risk',r.flood,'#1A5080'],['Storm Risk',r.storm,'#4A2A7A'],['Drought Risk',r.drought,'#806800']]
-        .map(([l,v,c])=>`<div class="rb-row">
-          <span class="rb-lbl">${l}</span>
-          <div class="rb-track"><div class="rb-fill" style="width:${v}%;background:${c}"></div></div>
-          <span class="rb-val" style="color:${c}">${Math.round(v)}</span>
-        </div>`).join('')}
+    <!-- TAB: FINANCIALS -->
+    <div id="pane-fin" style="display:none">
+      <div class="rp-sec">
+        <div class="rp-sec-title">Financial Impact</div>
+        <div class="fin-grid">
+          <div class="fin-cell">
+            <div class="fin-lbl">Revenue at Risk</div>
+            <div class="fin-val" style="color:var(--neg)">${fPct(r.rar)}</div>
+            <div class="fin-sub">${fM(r.rar/100*a.rev)} exposure</div>
+          </div>
+          <div class="fin-cell">
+            <div class="fin-lbl">EBITDA Impact</div>
+            <div class="fin-val" style="color:var(--s20)">${fPct(r.ebi)}</div>
+            <div class="fin-sub">margin compression</div>
+          </div>
+          <div class="fin-cell">
+            <div class="fin-lbl">Carbon Cost</div>
+            <div class="fin-val" style="color:#5A3A8A">${fM(r.ccm)}</div>
+            <div class="fin-sub">$${Math.round(r.ecp)}/tCO₂</div>
+          </div>
+          <div class="fin-cell">
+            <div class="fin-lbl">Supply Disruption</div>
+            <div class="fin-val" style="color:var(--neu)">${Math.round(r.sc)}</div>
+            <div class="fin-sub">risk index</div>
+          </div>
+        </div>
+      </div>
+      <div class="rp-sec">
+        <div class="rp-sec-title">Revenue at Risk % (Projected)</div>
+        ${chartLine(series.map(s=>({x:s.y,y:s.rar})),270,72,'#BE3030')}
+      </div>
+      <div class="rp-sec">
+        <div class="rp-sec-title">Asset Data</div>
+        <div class="meta-list">
+          ${[['Revenue',fM(a.rev)],['Capex',fM(a.capex)],['Employees',a.emp.toLocaleString()],
+             ['Scope 1',`${(a.s1/1e3).toFixed(0)}k tCO₂e`],['Scope 2',`${(a.s2/1e3).toFixed(0)}k tCO₂e`],
+             ['Coordinates',`${a.lat.toFixed(2)}°, ${a.lng.toFixed(2)}°`]]
+            .map(([k,v])=>`<div class="meta-row"><span class="mk">${k}</span><span class="mv">${v}</span></div>`).join('')}
+        </div>
+      </div>
+      <!-- Live financial data slot -->
+      <div id="live-fin-slot"></div>
     </div>
 
-    <div class="rp-sec">
-      <div class="rp-sec-title">Financial Impact</div>
-      <div class="fin-grid">
-        <div class="fin-cell">
-          <div class="fin-lbl">Revenue at Risk</div>
-          <div class="fin-val" style="color:var(--neg)">${fPct(r.rar)}</div>
-          <div class="fin-sub">${fM(r.rar/100*a.rev)} exposure</div>
+    <!-- TAB: COMPARE -->
+    <div id="pane-compare" style="display:none">
+      <div class="rp-sec">
+        <div class="rp-sec-title" style="display:flex;align-items:center;justify-content:space-between">
+          Scenario Comparison — ${S.year}
+          ${S.liveMode?`<span class="api-dot live" style="margin:0"></span><span style="font-size:7px;color:var(--pos);letter-spacing:.06em">LIVE</span>`:'<span style="font-size:7px;color:var(--tx3)">STATIC</span>'}
         </div>
-        <div class="fin-cell">
-          <div class="fin-lbl">EBITDA Impact</div>
-          <div class="fin-val" style="color:var(--s20)">${fPct(r.ebi)}</div>
-          <div class="fin-sub">margin compression</div>
-        </div>
-        <div class="fin-cell">
-          <div class="fin-lbl">Carbon Cost</div>
-          <div class="fin-val" style="color:#5A3A8A">${fM(r.ccm)}</div>
-          <div class="fin-sub">$${Math.round(r.ecp)}/tCO₂ effective</div>
-        </div>
-        <div class="fin-cell">
-          <div class="fin-lbl">Supply Disruption</div>
-          <div class="fin-val" style="color:var(--neu)">${Math.round(r.sc)}</div>
-          <div class="fin-sub">risk index score</div>
+        <div class="cmp-grid" id="cmp-grid">
+          ${buildStaticCompare(a)}
         </div>
       </div>
     </div>
 
-    <div class="rp-sec">
-      <div class="rp-sec-title">Asset Data</div>
-      <div class="meta-list">
-        ${[['Revenue',fM(a.rev)],['Capex',fM(a.capex)],['Employees',a.emp.toLocaleString()],
-           ['Scope 1',`${(a.s1/1e3).toFixed(0)}k tCO₂e`],['Scope 2',`${(a.s2/1e3).toFixed(0)}k tCO₂e`],
-           ['Coordinates',`${a.lat.toFixed(2)}°, ${a.lng.toFixed(2)}°`]]
-          .map(([k,v])=>`<div class="meta-row"><span class="mk">${k}</span><span class="mv">${v}</span></div>`).join('')}
+    <!-- TAB: COUNTRY MACRO -->
+    <div id="pane-macro" style="display:none">
+      <div class="rp-sec">
+        <div class="rp-sec-title">
+          ${a.country} — World Bank Indicators
+          <span class="src-badge">WB API</span>
+        </div>
+        <div id="macro-slot">
+          ${S.liveMode?`<div style="padding:8px 0;color:var(--tx3);font-size:9px"><span class="spin"></span> Fetching World Bank data…</div>`
+            :'<div style="padding:8px 0;font-size:9px;color:var(--tx3)">Start the Python API server to load live country data.</div>'}
+        </div>
       </div>
-    </div>
-
-    <div class="rp-sec">
-      <div class="rp-sec-title">Risk Projection  2024 – 2050</div>
-      ${chartArea(series,270,100)}
-      <div class="c-legend">
-        <div class="cl-item"><div class="cl-line" style="background:#924010"></div>Physical</div>
-        <div class="cl-item"><div class="cl-line" style="background:#1A6DA0"></div>Transition</div>
-      </div>
-    </div>
-    <div class="rp-sec">
-      <div class="rp-sec-title">Revenue at Risk  % (Projected)</div>
-      ${chartLine(series.map(s=>({x:s.y,y:s.rar})),270,72,'#BE3030')}
     </div>`;
+
   document.getElementById('rp').classList.add('on');
+  S.activeTab='risk';
+
+  /* ── Async: fetch live API data in background ── */
+  if(S.liveMode){
+    fetchLiveAssetRisk(a).then(d=>{
+      if(!d||S.selId!==a.id)return;
+      renderLiveClimateSlot(d);
+      renderLiveFinSlot(d);
+    });
+    fetchCountryMacro(countryToISO3(a.country)||'USA').then(d=>{
+      if(!d||S.selId!==a.id)return;
+      renderMacroSlot(d);
+    });
+  }
+}
+
+function switchTab(tab){
+  S.activeTab=tab;
+  ['risk','fin','compare','macro'].forEach(t=>{
+    document.getElementById(`pane-${t}`).style.display=t===tab?'':'none';
+    document.getElementById(`tab-${t}`).classList.toggle('on',t===tab);
+  });
+  /* Lazy-load compare tab */
+  if(tab==='compare'&&S.liveMode){
+    const a=S.assets.find(x=>x.id===S.selId);
+    if(!a)return;
+    document.getElementById('cmp-grid').innerHTML=
+      `<div style="grid-column:1/-1;padding:10px;font-size:9px;color:var(--tx3)"><span class="spin"></span> Loading NGFS comparison…</div>`;
+    fetchScenarioCompare(a).then(d=>{
+      if(!d||S.selId!==a.id)return;
+      document.getElementById('cmp-grid').innerHTML=buildLiveCompare(d,a);
+    }).catch(()=>{});
+  }
+}
+
+function buildStaticCompare(a){
+  return['1.5','2.0','3.0'].map(id=>{
+    const s=SCN[id],r=calc(a,id,S.year);
+    return`<div class="cmp-col">
+      <div class="cmp-col-hd" style="color:${s.color}">${s.temp}</div>
+      <div class="cmp-metric"><div class="cmp-lbl">Risk Score</div><div class="cmp-val" style="color:${riskColor(r.lvl)}">${Math.round(r.tot)}</div></div>
+      <div class="cmp-metric"><div class="cmp-lbl">Rev at Risk</div><div class="cmp-val">${fPct(r.rar)}</div></div>
+      <div class="cmp-metric"><div class="cmp-lbl">Carbon/t</div><div class="cmp-val">$${Math.round(r.ecp)}</div></div>
+      <div class="cmp-metric"><div class="cmp-lbl">Level</div><div class="cmp-val" style="color:${riskColor(r.lvl)};font-size:9px;letter-spacing:.06em;text-transform:uppercase">${r.lvl}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function buildLiveCompare(d,a){
+  const scns=[
+    ['1.5',d.scenarios?.['net_zero_1.5'],SCN['1.5'].color],
+    ['2.0',d.scenarios?.['delayed_2.0'],SCN['2.0'].color],
+    ['3.0',d.scenarios?.['current_3.0'],SCN['3.0'].color],
+  ];
+  return scns.map(([id,s,col])=>{
+    if(!s||s.error){const r=calc(a,id,S.year);return buildStaticCompare(a).split('</div>').slice(0,1).join('');}
+    const rar=s.financial_impact?.revenue_at_risk_pct??0;
+    const tot=s.composite_risk_score??0;
+    const lvl=s.risk_level??'low';
+    const cp=s.financial_impact?.compliance_cost_usd_tonne??28;
+    return`<div class="cmp-col">
+      <div class="cmp-col-hd" style="color:${col}">${SCN[id].temp} <span class="src-badge">API</span></div>
+      <div class="cmp-metric"><div class="cmp-lbl">Risk Score</div><div class="cmp-val" style="color:${riskColor(lvl)}">${f1(tot)}</div></div>
+      <div class="cmp-metric"><div class="cmp-lbl">Rev at Risk</div><div class="cmp-val">${fPct(rar)}</div></div>
+      <div class="cmp-metric"><div class="cmp-lbl">Carbon/t</div><div class="cmp-val">$${Math.round(cp)}</div></div>
+      <div class="cmp-metric"><div class="cmp-lbl">Level</div><div class="cmp-val" style="color:${riskColor(lvl)};font-size:9px;letter-spacing:.06em;text-transform:uppercase">${lvl}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderLiveClimateSlot(d){
+  const el=document.getElementById('live-climate-slot');
+  if(!el)return;
+  const bl=d.climate_baseline||{};
+  const proj=d.projection||{};
+  const ph=d.physical_risk||{};
+  el.innerHTML=`
+    <div class="live-sec">
+      <div class="live-sec-title">
+        <span class="api-dot live"></span>Live Climate Data
+        <span class="src-badge">${(d.sources||['api'])[0]}</span>
+      </div>
+      ${[
+        ['Baseline Temp',bl.temp_mean_c!=null?`${bl.temp_mean_c}°C`:'—',''],
+        ['Max Temp',bl.temp_max_c!=null?`${bl.temp_max_c}°C`:'—', bl.temp_max_c>35?'red':''],
+        ['Precip/yr',bl.precip_mm_year!=null?`${Math.round(bl.precip_mm_year)} mm`:'—',''],
+        ['Wind Speed',bl.wind_speed_ms!=null?`${bl.wind_speed_ms} m/s`:'—',''],
+        ['Temp Anomaly',proj.temp_anomaly_c!=null?`+${proj.temp_anomaly_c}°C`:'—',proj.temp_anomaly_c>1?'amber':'green'],
+        ['Extreme Heat Days',proj.extreme_heat_days!=null?`${proj.extreme_heat_days} days/yr`:'—',proj.extreme_heat_days>30?'red':'amber'],
+        ['Sea Level Risk',ph.sea_level_risk!=null?`${ph.sea_level_risk}/100`:'—',ph.sea_level_risk>50?'red':''],
+      ].map(([k,v,cls])=>`<div class="live-row"><span class="lk">${k}</span><span class="lv ${cls}">${v}</span></div>`).join('')}
+    </div>`;
+}
+
+function renderLiveFinSlot(d){
+  const el=document.getElementById('live-fin-slot');
+  if(!el)return;
+  const fi=d.financial_impact||{};
+  const tr=d.transition_risk||{};
+  el.innerHTML=`
+    <div class="live-sec">
+      <div class="live-sec-title">
+        <span class="api-dot live"></span>API-Calibrated Financials
+        <span class="src-badge">NGFS P.IV</span>
+      </div>
+      ${[
+        ['Rev at Risk',fi.revenue_at_risk_pct!=null?`${fPct(fi.revenue_at_risk_pct)}`:'—','red'],
+        ['EBITDA Impact',fi.ebitda_impact_pct!=null?`${fPct(fi.ebitda_impact_pct)}`:'—','amber'],
+        ['Capex Increase',fi.capex_increase_pct!=null?`${fPct(fi.capex_increase_pct)}`:'—','amber'],
+        ['Opex Increase',fi.opex_increase_pct!=null?`${fPct(fi.opex_increase_pct)}`:'—','amber'],
+        ['Asset Impairment',fi.asset_impairment_pct!=null?`${fPct(fi.asset_impairment_pct)}`:'—','red'],
+        ['Supply Disruption',fi.supply_chain_disruption_pct!=null?`${fPct(fi.supply_chain_disruption_pct)}`:'—',''],
+        ['Carbon/tCO₂',fi.compliance_cost_usd_tonne!=null?`$${Math.round(fi.compliance_cost_usd_tonne)}`:'—','amber'],
+        ['Stranded Prob.',fi.stranded_asset_probability!=null?`${(fi.stranded_asset_probability*100).toFixed(1)}%`:'—',
+          fi.stranded_asset_probability>0.5?'red':fi.stranded_asset_probability>0.2?'amber':'green'],
+      ].map(([k,v,cls])=>`<div class="live-row"><span class="lk">${k}</span><span class="lv ${cls}">${v}</span></div>`).join('')}
+    </div>`;
+}
+
+function renderMacroSlot(d){
+  const el=document.getElementById('macro-slot');
+  if(!el)return;
+  const fmtGDP=v=>v?`$${(v/1e12).toFixed(2)}T`:'N/A';
+  const fmtPop=v=>v?`${(v/1e6).toFixed(1)}M`:'N/A';
+  el.innerHTML=`
+    <div class="meta-list">
+      ${[
+        ['GDP',fmtGDP(d.gdp_usd)],
+        ['GDP Growth',d.gdp_growth_pct!=null?`${d.gdp_growth_pct.toFixed(1)}%`:'N/A'],
+        ['CO₂ per Capita',d.co2_per_capita!=null?`${d.co2_per_capita.toFixed(1)} t`:'N/A'],
+        ['Population',fmtPop(d.population)],
+        ['Energy Use',d.energy_use_per_capita!=null?`${Math.round(d.energy_use_per_capita)} kg OE`:'N/A'],
+        ['Renewables',d.renewable_energy_pct!=null?`${d.renewable_energy_pct.toFixed(1)}%`:'N/A'],
+        ['Data Year',d.data_year||'2022'],
+      ].map(([k,v])=>`<div class="meta-row"><span class="mk">${k}</span><span class="mv">${v}</span></div>`).join('')}
+    </div>
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--bd0)">
+      <span style="font-size:7px;color:var(--tx3);letter-spacing:.1em">SOURCE: WORLD BANK OPEN DATA API</span>
+    </div>`;
 }
 
 /* ─── SVG CHARTS ─── */
@@ -1276,6 +1607,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderAll();initMap();
   document.getElementById('nname').addEventListener('input',e=>{
     document.getElementById('cfbtn').disabled=!e.target.value.trim();});
+  /* Check if Python API server is running */
+  checkBackend();
+  /* Re-check every 30 seconds (handles server start/stop during session) */
+  setInterval(checkBackend,30000);
 });
 </script>
 </body>
