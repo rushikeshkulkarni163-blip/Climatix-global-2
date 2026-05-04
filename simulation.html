@@ -1706,6 +1706,84 @@ function renderTL(){
   document.getElementById('tl-year-val').textContent=S.year;
 }
 
+/* ─── STATIC COUNTRY MACRO DATA ─────────────────────────────────
+   World Bank 2022/2023 values — always available offline.
+   Fields: gdp ($T), gdpGrowth (%), co2pc (t/capita), pop (M),
+           energy (kg OE/capita), renewables (%), forest (%)
+──────────────────────────────────────────────────────────────── */
+const COUNTRY_MACRO={
+  'United States': {gdp:25.46,gdpGrowth:2.1,co2pc:14.9,pop:334.2,energy:6894,renewables:21.5,forest:33.9,
+    co2rank:'High emitter',climatePolicy:'IRA 2022 active',carbonMarket:'California ETS + RGGI',rating:'BBB'},
+  'China':         {gdp:17.96,gdpGrowth:5.2,co2pc:7.4, pop:1412,energy:2613,renewables:28.7,forest:23.4,
+    co2rank:'Largest total',climatePolicy:'NDC 2030 peak',carbonMarket:'National ETS (CNY ~60/t)',rating:'BB+'},
+  'India':         {gdp:3.39, gdpGrowth:7.2,co2pc:1.9, pop:1428,energy:637, renewables:21.8,forest:24.1,
+    co2rank:'3rd largest',climatePolicy:'500GW renewables 2030',carbonMarket:'PAT scheme only',rating:'BB'},
+  'Germany':       {gdp:4.07, gdpGrowth:-0.3,co2pc:7.7,pop:84.4,energy:3500,renewables:44.5,forest:32.7,
+    co2rank:'EU top emitter',climatePolicy:'EU ETS + Climate Action Prog.',carbonMarket:'EU ETS (~€65/t)',rating:'AAA'},
+  'Australia':     {gdp:1.69, gdpGrowth:1.9,co2pc:14.7,pop:26.5,energy:5323,renewables:32.5,forest:16.2,
+    co2rank:'High per-capita',climatePolicy:'Safeguard Mechanism',carbonMarket:'AUS Carbon Credit Units',rating:'AAA'},
+  'Singapore':     {gdp:0.47, gdpGrowth:1.1,co2pc:7.6, pop:5.9, energy:6300,renewables:3.2, forest:23.1,
+    co2rank:'Small total',climatePolicy:'Carbon Tax S$25/t → S$80 by 2030',carbonMarket:'Carbon Tax (gov)',rating:'AAA'},
+  'Brazil':        {gdp:1.92, gdpGrowth:2.9,co2pc:2.2, pop:215, energy:1366,renewables:83.0,forest:59.4,
+    co2rank:'Deforestation driver',climatePolicy:'REDD+ & EMBRAPA',carbonMarket:'B3 voluntary',rating:'BB-'},
+  'Netherlands':   {gdp:1.01, gdpGrowth:0.1,co2pc:7.5, pop:17.9,energy:4200,renewables:33.7,forest:11.2,
+    co2rank:'EU member',climatePolicy:'EU ETS + Dutch Climate Agreement',carbonMarket:'EU ETS (~€65/t)',rating:'AAA'},
+  'UAE':           {gdp:0.50, gdpGrowth:3.4,co2pc:19.4,pop:9.9, energy:8900,renewables:5.0, forest:3.8,
+    co2rank:'Very high per-capita',climatePolicy:'Net Zero 2050 pledge',carbonMarket:'None operational',rating:'AA-'},
+  'Nigeria':       {gdp:0.47, gdpGrowth:2.9,co2pc:0.6, pop:220, energy:725, renewables:19.8,forest:24.9,
+    co2rank:'Low per-capita',climatePolicy:'NDC partial',carbonMarket:'None',rating:'B-'},
+  'Japan':         {gdp:4.23, gdpGrowth:1.9,co2pc:8.6, pop:125, energy:3430,renewables:21.3,forest:68.5,
+    co2rank:'5th largest',climatePolicy:'GX Decarbonisation 2050',carbonMarket:'J-Credit + Tokyo ETS',rating:'A+'},
+  'User-Defined':  {gdp:null, gdpGrowth:null,co2pc:null,pop:null,energy:null,renewables:null,forest:null,
+    co2rank:'—',climatePolicy:'—',carbonMarket:'—',rating:'—'},
+};
+
+function buildStaticMacro(country){
+  const d=COUNTRY_MACRO[country]||COUNTRY_MACRO['User-Defined'];
+  const fgdp=v=>v!=null?`$${v.toFixed(2)}T`:'N/A';
+  const fpct=v=>v!=null?`${v.toFixed(1)}%`:'N/A';
+  const fnum=v=>v!=null?`${Math.round(v).toLocaleString()}`:'N/A';
+
+  /* Climate risk colour for CO₂ per capita */
+  const co2col=d.co2pc!=null?(d.co2pc>12?'#FF4D4F':d.co2pc>7?'#FFC857':'#00FF94'):'var(--tx1)';
+  const renCol=d.renewables!=null?(d.renewables>40?'#00FF94':d.renewables>20?'#FFC857':'#FF8C42'):'var(--tx1)';
+
+  return`
+    <div class="meta-list">
+      ${[
+        ['GDP (2023)',          fgdp(d.gdp),              'var(--tx0)'],
+        ['GDP Growth',          fpct(d.gdpGrowth),        d.gdpGrowth!=null&&d.gdpGrowth<0?'#FF4D4F':'#00FF94'],
+        ['CO₂ per Capita',     d.co2pc!=null?`${d.co2pc.toFixed(1)} t`:'N/A', co2col],
+        ['Population',         d.pop!=null?`${d.pop.toFixed(1)}M`:'N/A',       'var(--tx1)'],
+        ['Energy Use/Capita',  d.energy!=null?`${fnum(d.energy)} kg OE`:'N/A','var(--tx1)'],
+        ['Renewables Share',   fpct(d.renewables),                              renCol],
+        ['Forest Cover',       fpct(d.forest),                                 'var(--tx1)'],
+      ].map(([k,v,col])=>`
+        <div class="meta-row">
+          <span class="mk">${k}</span>
+          <span class="mv" style="color:${col}">${v}</span>
+        </div>`).join('')}
+    </div>
+
+    <!-- Climate policy block -->
+    <div style="margin-top:10px;padding:9px 10px;background:var(--bg3);border:1px solid var(--bd1)">
+      <div style="font-size:7px;text-transform:uppercase;letter-spacing:.16em;color:var(--tx3);margin-bottom:6px">Climate Policy &amp; Carbon Market</div>
+      ${[
+        ['Policy Framework', d.climatePolicy],
+        ['Carbon Market',    d.carbonMarket],
+        ['Emitter Profile',  d.co2rank],
+        ['Sovereign Rating', d.rating],
+      ].map(([k,v])=>`
+        <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--bd0)">
+          <span style="font-size:8px;color:var(--tx2)">${k}</span>
+          <span style="font-family:var(--mono);font-size:8px;color:var(--tx1);text-align:right;max-width:55%;word-break:break-word">${v}</span>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:6px;font-size:7px;color:var(--tx3);letter-spacing:.1em">
+      SOURCE: WORLD BANK 2022/23 · IMF · CLIMATE WATCH${S.liveMode?' + LIVE WB API':''}
+    </div>`;
+}
+
 /* ─── ASSET PANEL ─── */
 function pickAsset(id){
   if(S.selId===id){S.selId=null;document.getElementById('rp').classList.remove('on');}
@@ -1925,13 +2003,12 @@ function drawPanel(a){
     <!-- TAB: COUNTRY MACRO -->
     <div id="pane-macro" style="display:none">
       <div class="rp-sec">
-        <div class="rp-sec-title">
-          ${a.country} — World Bank Indicators
-          <span class="src-badge">WB API</span>
+        <div class="rp-sec-title" style="display:flex;align-items:center;justify-content:space-between">
+          <span>${a.country} — Macro Indicators</span>
+          <span class="src-badge">${S.liveMode?'WB API':'EMBEDDED'}</span>
         </div>
         <div id="macro-slot">
-          ${S.liveMode?`<div style="padding:8px 0;color:var(--tx3);font-size:9px"><span class="spin"></span> Fetching World Bank data…</div>`
-            :'<div style="padding:8px 0;font-size:9px;color:var(--tx3)">Start the Python API server to load live country data.</div>'}
+          ${buildStaticMacro(a.country)}
         </div>
       </div>
     </div>`;
