@@ -19,46 +19,46 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root {
-  /* ── Backgrounds (deep navy-black) */
-  --bg0: #000000;
-  --bg1: #040408;
-  --bg2: #07090F;
-  --bg3: #0B0E18;
-  --bg4: #101525;
-  --bghov: #0E1220;
+  /* ── Backgrounds */
+  --bg0: #0A0A0A;
+  --bg1: #111827;
+  --bg2: #0D1520;
+  --bg3: #1a2235;
+  --bg4: #1e2840;
+  --bghov: #141e2e;
 
   /* ── Borders */
-  --bd0: #0D1120;
-  --bd1: #141D30;
-  --bd2: #1C2840;
-  --bd3: #263550;
+  --bd0: #1a2235;
+  --bd1: #1e2d45;
+  --bd2: #243550;
+  --bd3: #2e4060;
 
   /* ── Text hierarchy */
-  --tx0: #F0F2F5;
-  --tx1: #A8B8C8;
+  --tx0: #F0F4F8;
+  --tx1: #9BAEC8;
   --tx2: #5A7090;
-  --tx3: #324058;
-  --tx4: #1E2A38;
+  --tx3: #2e4060;
+  --tx4: #1a2a3a;
 
-  /* ── Risk colours — institutional, muted */
-  --rc: #BE3030;   /* critical  */
-  --rh: #924010;   /* high      */
-  --rm: #806800;   /* medium    */
-  --rl: #186840;   /* low       */
+  /* ── Risk colours — vivid for dark terminal */
+  --rc: #FF4D4F;   /* critical  */
+  --rh: #FF8C42;   /* high      */
+  --rm: #FFC857;   /* medium    */
+  --rl: #00FF94;   /* low       */
 
   /* ── Scenario colours */
-  --s15: #1A6DA0;  /* 1.5 °C net zero   — cool blue   */
-  --s20: #A07820;  /* 2.0 °C delayed    — warm amber  */
-  --s30: #9E2A1E;  /* 3.0 °C current    — dark red    */
+  --s15: #00D4FF;  /* 1.5°C net zero   — cyan   */
+  --s20: #FFC857;  /* 2.0°C delayed    — amber  */
+  --s30: #FF4D4F;  /* 3.0°C current    — red    */
 
-  /* ── UI accent (selection / active state) */
-  --acc: #1E5EA8;
-  --acc2: #0C2D60;
+  /* ── UI accent */
+  --acc: #00D4FF;
+  --acc2: rgba(0,212,255,0.12);
 
-  /* ── Metrics colours */
-  --pos: #1A7040;
-  --neg: #B83030;
-  --neu: #3A6090;
+  /* ── Metrics */
+  --pos: #00FF94;
+  --neg: #FF4D4F;
+  --neu: #00D4FF;
 
   /* ── Dimensions */
   --nav-h: 48px;
@@ -283,7 +283,7 @@ body {
   background: var(--bd2); border: none; cursor: pointer;
   transition: background .2s; flex-shrink: 0; border-radius: 8px;
 }
-.tog.on { background: var(--acc); }
+.tog.on { background: var(--acc); box-shadow: 0 0 8px rgba(0,212,255,0.4); }
 .tog::after {
   content: ''; position: absolute; top: 2px; left: 2px;
   width: 12px; height: 12px; border-radius: 50%;
@@ -624,6 +624,115 @@ body {
   background: rgba(90,58,138,.15); border: 1px solid rgba(90,58,138,.3);
   color: #8A6AC8; margin-left: auto;
 }
+
+/* ═══════════════════════════════════════
+   GLASSMORPHISM + GLOW UTILITIES
+═══════════════════════════════════════ */
+.glass {
+  background: rgba(17,24,39,0.72);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+}
+.glow-cyan  { text-shadow: 0 0 18px rgba(0,212,255,0.7); }
+.glow-green { text-shadow: 0 0 18px rgba(0,255,148,0.6); }
+.glow-red   { text-shadow: 0 0 18px rgba(255,77,79,0.6); }
+.glow-amber { text-shadow: 0 0 18px rgba(255,200,87,0.5); }
+
+/* ═══════════════════════════════════════
+   HAZARD SUB-TOGGLES
+═══════════════════════════════════════ */
+.haz-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4px; padding: 8px 14px;
+}
+.haz-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 7px; background: var(--bg2);
+  border: 1px solid var(--bd1); cursor: pointer;
+  font-size: 8px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--tx2);
+  transition: all .15s;
+}
+.haz-btn:hover { border-color: var(--bd3); color: var(--tx1); }
+.haz-btn.on { border-color: currentColor; }
+.haz-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+/* Heatmap intensity slider */
+.intensity-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px 10px;
+}
+.intensity-lbl { font-size: 8px; color: var(--tx3); white-space: nowrap; text-transform: uppercase; letter-spacing: .1em; }
+.intensity-slider {
+  flex: 1; height: 3px; -webkit-appearance: none; appearance: none;
+  background: var(--bd1); outline: none; cursor: pointer;
+}
+.intensity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--acc);
+  box-shadow: 0 0 6px rgba(0,212,255,0.5); cursor: pointer;
+}
+
+/* ═══════════════════════════════════════
+   SEMI-CIRCULAR GAUGE
+═══════════════════════════════════════ */
+.gauge-wrap { padding: 14px 14px 0; display: flex; flex-direction: column; align-items: center; }
+.gauge-labels { display: flex; justify-content: space-between; width: 130px; margin-top: 2px; }
+.gauge-label { font-size: 7px; color: var(--tx3); letter-spacing: .08em; }
+
+/* Confidence + Greenwashing badges */
+.intel-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px; padding: 10px 14px;
+}
+.intel-cell {
+  background: var(--bg2); border: 1px solid var(--bd1); padding: 8px 10px;
+}
+.intel-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .12em; color: var(--tx3); margin-bottom: 3px; }
+.intel-val { font-family: var(--mono); font-size: 12px; font-weight: 700; line-height: 1; }
+.intel-sub { font-size: 7px; color: var(--tx3); margin-top: 3px; }
+
+/* ═══════════════════════════════════════
+   PDF REPORT BUTTON + TOAST
+═══════════════════════════════════════ */
+.btn-pdf {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 12px; background: transparent;
+  border: 1px solid var(--acc); color: var(--acc);
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  cursor: pointer; transition: all .15s;
+}
+.btn-pdf:hover {
+  background: var(--acc2); box-shadow: 0 0 12px rgba(0,212,255,0.25);
+}
+.btn-pdf svg { flex-shrink: 0; }
+
+#toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  z-index: 9999; background: var(--bg3); border: 1px solid var(--acc);
+  padding: 9px 20px; font-size: 11px; font-weight: 600; color: var(--acc);
+  box-shadow: 0 0 20px rgba(0,212,255,0.2);
+  opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════
+   GRADIENT LEGEND (fixed bottom-left)
+═══════════════════════════════════════ */
+#grad-legend {
+  position: absolute; bottom: 72px; left: 16px; z-index: 10;
+  background: rgba(17,24,39,0.85); border: 1px solid var(--bd2);
+  padding: 8px 10px; pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+.gl-title { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: .16em; color: var(--tx3); margin-bottom: 5px; }
+.gl-bar {
+  width: 120px; height: 6px;
+  background: linear-gradient(to right, rgba(0,255,148,.7), rgba(255,200,87,.7), rgba(255,77,79,.9));
+  margin-bottom: 3px;
+}
+.gl-ticks { display: flex; justify-content: space-between; }
+.gl-tick { font-family: var(--mono); font-size: 7px; color: var(--tx3); }
 </style>
 </head>
 <body>
@@ -648,9 +757,14 @@ body {
     <a href="community.html">Community</a>
   </div>
   <div class="nav-right">
+    <button class="btn-pdf" onclick="generateReport()" id="pdf-btn" disabled title="Select an asset to generate report">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1h5l2 2v7H2z" stroke-linejoin="round"/><line x1="4" y1="5" x2="7" y2="5"/><line x1="4" y1="7" x2="7" y2="7"/><line x1="4" y1="3.5" x2="6" y2="3.5"/></svg>
+      Export PDF
+    </button>
     <a href="assessment.html" class="nav-cta">Run Analysis</a>
   </div>
 </nav>
+<div id="toast"></div>
 
 <!-- ═══════════════════════════════════ SIM ════ -->
 <div id="sim">
@@ -686,6 +800,21 @@ body {
         <div id="lyr-btns"></div>
       </div>
 
+      <!-- Hazard sub-toggles -->
+      <div class="pb">
+        <div class="ph">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M5 1v3M3.5 5.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5S5.83 4 5 4s-1.5.67-1.5 1.5z"/>
+          </svg>
+          Hazard Layers
+        </div>
+        <div class="haz-grid" id="haz-grid"></div>
+        <div class="intensity-row">
+          <span class="intensity-lbl">Intensity</span>
+          <input type="range" class="intensity-slider" id="intensity-slider" min="10" max="100" value="40" oninput="setIntensity(this.value)"/>
+        </div>
+      </div>
+
       <!-- Overlays -->
       <div class="pb">
         <div class="ph">
@@ -697,6 +826,10 @@ body {
         <div class="tog-row">
           <span class="tog-lbl">Supply Chain Links</span>
           <button class="tog on" id="linktog" onclick="toggleLinks()"></button>
+        </div>
+        <div class="tog-row">
+          <span class="tog-lbl">Asset Markers</span>
+          <button class="tog on" id="assettog" onclick="toggleAssets()"></button>
         </div>
       </div>
 
@@ -759,6 +892,11 @@ body {
           <button class="btn-confirm" id="cfbtn" onclick="confirmAdd()" disabled>Analyse Risk &amp; Add to Portfolio</button>
         </div>
       </div>
+      <div id="grad-legend">
+        <div class="gl-title" id="gl-title">Physical Risk</div>
+        <div class="gl-bar"></div>
+        <div class="gl-ticks"><span class="gl-tick">Low</span><span class="gl-tick">Med</span><span class="gl-tick">High</span><span class="gl-tick">Critical</span></div>
+      </div>
       <div class="mwm">
         <div class="mwm-1">Climactix Climate Intelligence Layer</div>
         <div class="mwm-2">NGFS Phase IV Scenarios · IPCC AR6 Physical Risk</div>
@@ -791,14 +929,20 @@ body {
 
 </div><!-- /sim -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
 'use strict';
 
 /* ─── STATE ─── */
 const S={scenario:'2.0',year:2030,layer:'physical',selId:null,
-  assets:[],addMode:false,coords:null,showLinks:true,playing:false,timer:null,
-  liveMode:false,activeTab:'risk'};
+  assets:[],addMode:false,coords:null,showLinks:true,showAssets:true,playing:false,timer:null,
+  liveMode:false,activeTab:'risk',
+  hazards:{heat:true,flood:true,storm:true,drought:true,sealevel:true},
+  heatmapOpacity:0.40};
+
+let _mapUpdTimer=null;
+function debouncedMapUpd(){clearTimeout(_mapUpdTimer);_mapUpdTimer=setTimeout(mapUpd,80);}
 
 /* ─── API LAYER ─── */
 const API='http://localhost:8000';
@@ -856,15 +1000,15 @@ const SCN={
   '1.5':{name:'Net Zero 2050',temp:'1.5°C',
     desc:'Aggressive decarbonisation. Net zero by 2050.',
     cp30:130,cp50:800,pm30:.55,pm50:.72,tm30:1.45,tm50:1.85,
-    color:'#1A6DA0'},
+    color:'#00D4FF'},
   '2.0':{name:'Delayed Transition',temp:'2°C',
     desc:'Moderate action, late policy implementation.',
     cp30:40,cp50:300,pm30:.78,pm50:1.10,tm30:.88,tm50:1.38,
-    color:'#A07820'},
+    color:'#FFC857'},
   '3.0':{name:'Current Policies',temp:'3°C+',
     desc:'Business as usual. Severe physical damage by 2050.',
     cp30:28,cp50:65,pm30:.95,pm50:1.82,tm30:.48,tm50:.58,
-    color:'#9E2A1E'},
+    color:'#FF4D4F'},
 };
 
 /* ─── ASSETS ─── */
@@ -959,8 +1103,82 @@ function riskColor(lvl){
   return lvl==='critical'?'var(--rc)':lvl==='high'?'var(--rh)':lvl==='medium'?'var(--rm)':'var(--rl)';
 }
 function riskHex(lvl){
-  return lvl==='critical'?'#BE3030':lvl==='high'?'#924010':lvl==='medium'?'#806800':'#186840';
+  return lvl==='critical'?'#FF4D4F':lvl==='high'?'#FF8C42':lvl==='medium'?'#FFC857':'#00FF94';
 }
+/* ─── HAZARD TOGGLES ─── */
+const HAZ_CFG=[
+  {id:'heat',   label:'Heat',     color:'#FF8C42'},
+  {id:'flood',  label:'Flood',    color:'#00D4FF'},
+  {id:'storm',  label:'Storm',    color:'#8A6AC8'},
+  {id:'drought',label:'Drought',  color:'#FFC857'},
+  {id:'sealevel',label:'Sea Lvl', color:'#00FF94'},
+];
+function renderHazards(){
+  const g=document.getElementById('haz-grid');if(!g)return;
+  g.innerHTML=HAZ_CFG.map(h=>`
+    <button class="haz-btn${S.hazards[h.id]?' on':''}" onclick="toggleHaz('${h.id}')"
+      style="color:${S.hazards[h.id]?h.color:'var(--tx3)'}">
+      <div class="haz-dot" style="background:${S.hazards[h.id]?h.color:'var(--bd2)'}"></div>
+      ${h.label}
+    </button>`).join('');
+}
+function toggleHaz(id){
+  S.hazards[id]=!S.hazards[id];
+  renderHazards();
+  if(S.layer==='physical')debouncedMapUpd();
+}
+function setIntensity(v){
+  S.heatmapOpacity=v/100;
+  if(map&&map.getSource('rg'))map.setPaintProperty('rh','heatmap-opacity',S.heatmapOpacity);
+}
+function toggleAssets(){
+  S.showAssets=!S.showAssets;
+  document.getElementById('assettog').className='tog'+(S.showAssets?' on':'');
+  mapUpd();
+}
+
+/* ─── GAUGE SVG ─── */
+function gaugeSVG(score,col){
+  const cx=70,cy=68,r=52,sw=10;
+  const angle=Math.PI-(score/100)*Math.PI;
+  const ex=cx+r*Math.cos(angle),ey=cy-r*Math.sin(angle);
+  const bg=`M${cx-r},${cy} A${r},${r} 0 0 1 ${cx+r},${cy}`;
+  const fg=`M${cx-r},${cy} A${r},${r} 0 0 1 ${ex},${ey}`;
+  return`<svg width="140" height="76" viewBox="0 0 140 76" style="display:block;overflow:visible">
+    <path d="${bg}" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="${sw}" stroke-linecap="round"/>
+    <path d="${fg}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"
+      style="filter:drop-shadow(0 0 6px ${col}88)"/>
+    <text x="${cx}" y="${cy+2}" text-anchor="middle" font-family="JetBrains Mono,monospace"
+      font-size="22" font-weight="700" fill="${col}" style="filter:drop-shadow(0 0 8px ${col})">${Math.round(score)}</text>
+  </svg>`;
+}
+
+/* ─── GREENWASHING RISK ─── */
+const CI_SCORE={Energy:90,Mining:80,Manufacturing:55,Shipping:45,Agriculture:35,Logistics:30,
+  'Real Estate':22,Technology:14,Finance:10};
+function greenwashRisk(sector,transRisk){
+  const ci=CI_SCORE[sector]||40;
+  const gwScore=ci*(100-transRisk)/100;
+  if(gwScore>60)return{label:'ELEVATED',color:'#FF4D4F',score:gwScore};
+  if(gwScore>30)return{label:'MODERATE',color:'#FFC857',score:gwScore};
+  return{label:'LOW',color:'#00FF94',score:gwScore};
+}
+
+/* ─── CONFIDENCE SCORE ─── */
+function confidenceScore(a){
+  const isPreloaded=ASSETS.some(x=>x.id===a.id);
+  const base=isPreloaded?88:68;
+  const bonus=(a.s1>0?3:0)+(a.s2>0?3:0)+(a.rev>0?2:0);
+  return Math.min(97,base+bonus);
+}
+
+/* ─── TOAST ─── */
+function showToast(msg,dur=3200){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
 function pf(){
   if(!S.assets.length)return{cnt:0,rev:0,ap:0,at:0,rm:0,cm:0,hi:0,cr:0};
   const P=S.assets.map(a=>calc(a,S.scenario,S.year));
@@ -979,11 +1197,24 @@ function ts(a,sid){return PY.map(y=>{const r=calc(a,sid,y);return{y,ph:+r.phys.t
 /* ─── MAP DATA ─── */
 function heatGJ(){
   const f=[];
+  const hz=S.hazards;
   for(let lat=-80;lat<=80;lat+=5)for(let lng=-175;lng<=175;lng+=5){
     const r=calc({lat,lng,sector:'Manufacturing',s1:200000,s2:100000},S.scenario,S.year);
-    // economic layer: uses CO₂ intensity + GDP vulnerability proxy
     const econScore=Math.min(100,(Math.abs(lat)/90*40)+(lng>-20&&lng<140&&lat>-10&&lat<35?30:10));
-    const v=S.layer==='physical'?r.phys/100:S.layer==='transition'?r.trans/100:S.layer==='carbon'?Math.min(1,r.ecp/900):S.layer==='economic'?econScore/100:r.tot/100;
+    let v;
+    if(S.layer==='physical'){
+      /* Blend only active hazards */
+      let sum=0,w=0;
+      if(hz.heat){sum+=r.heat*.28;w+=.28;}
+      if(hz.flood){sum+=r.flood*.32;w+=.32;}
+      if(hz.storm){sum+=r.storm*.22;w+=.22;}
+      if(hz.drought){sum+=r.drought*.18;w+=.18;}
+      if(hz.sealevel){const sl=Math.min(100,r.flood*.45);sum+=sl*.05;w+=.05;}
+      v=w>0?Math.min(1,(sum/w)/100):0;
+    }else if(S.layer==='transition'){v=r.trans/100;}
+    else if(S.layer==='carbon'){v=Math.min(1,r.ecp/900);}
+    else if(S.layer==='economic'){v=econScore/100;}
+    else{v=r.tot/100;}
     f.push({type:'Feature',geometry:{type:'Point',coordinates:[lng,lat]},properties:{intensity:Math.round(v*100)/100}});
   }
   return{type:'FeatureCollection',features:f};
@@ -1025,12 +1256,13 @@ function initMap(){
       'heatmap-intensity':1.6,
       'heatmap-color':['interpolate',['linear'],['heatmap-density'],
         0,'rgba(0,0,0,0)',
-        .12,'rgba(24,104,64,.18)',
-        .32,'rgba(128,104,0,.28)',
-        .52,'rgba(146,64,16,.40)',
-        .72,'rgba(190,48,48,.54)',
-        1,'rgba(160,24,24,.72)'],
-      'heatmap-radius':52,'heatmap-opacity':.80}});
+        .10,'rgba(0,255,148,.15)',
+        .28,'rgba(0,212,255,.22)',
+        .48,'rgba(255,200,87,.38)',
+        .68,'rgba(255,140,66,.52)',
+        .88,'rgba(255,77,79,.65)',
+        1, 'rgba(200,0,0,.82)'],
+      'heatmap-radius':52,'heatmap-opacity':S.heatmapOpacity}});
     map.addSource('lk',{type:'geojson',data:linkGJ()});
     map.addLayer({id:'lkl',type:'line',source:'lk',
       layout:{'line-cap':'round','line-join':'round'},
@@ -1065,7 +1297,12 @@ function mapUpd(){
   map.getSource('as').setData(assetGJ());
   map.getSource('lk').setData(linkGJ());
   map.setLayoutProperty('lkl','visibility',S.showLinks?'visible':'none');
+  map.setLayoutProperty('ac','visibility',S.showAssets?'visible':'none');
+  map.setLayoutProperty('ash','visibility',S.showAssets?'visible':'none');
+  map.setPaintProperty('rh','heatmap-opacity',S.heatmapOpacity);
   map.getCanvas().style.cursor=S.addMode?'crosshair':'';
+  const el=document.getElementById('gl-title');
+  if(el){const names={physical:'Physical Risk',transition:'Transition Risk',carbon:'Carbon Exposure',composite:'Composite Risk',economic:'Economic Exposure'};el.textContent=names[S.layer]||'Risk Layer';}
 }
 
 /* ─── FORMAT ─── */
@@ -1189,9 +1426,14 @@ function pickAsset(id){
 function drawPanel(a){
   const r=calc(a,S.scenario,S.year),col=riskColor(r.lvl),hex=riskHex(r.lvl);
   const c=SCN[S.scenario],series=ts(a,S.scenario);
+  const gw=greenwashRisk(a.sector,r.trans);
+  const conf=confidenceScore(a);
   const pi=document.getElementById('rpi');
 
-  /* ── Static base panel HTML ── */
+  /* Enable PDF button */
+  const pdfBtn=document.getElementById('pdf-btn');
+  if(pdfBtn)pdfBtn.disabled=false;
+
   pi.innerHTML=`
     <div class="rp-head">
       <div>
@@ -1202,7 +1444,7 @@ function drawPanel(a){
           ${a.country} · ${a.sector}
         </div>
       </div>
-      <button class="btn-x" onclick="S.selId=null;document.getElementById('rp').classList.remove('on');renderList()">✕</button>
+      <button class="btn-x" onclick="S.selId=null;document.getElementById('rp').classList.remove('on');renderList();document.getElementById('pdf-btn').disabled=true">✕</button>
     </div>
 
     <!-- Tab bar -->
@@ -1213,19 +1455,35 @@ function drawPanel(a){
       <button class="rp-tab"    id="tab-macro"   onclick="switchTab('macro')">Country</button>
     </div>
 
-    <!-- Overall badge -->
-    <div class="risk-badge" style="border-color:${hex}30;background:${hex}08">
-      <div>
-        <div class="rb-label">Overall Risk Score</div>
-        <div class="rb-score" style="color:${col}">${f1(r.tot)}</div>
-        <div class="rb-level" style="color:${col}">${r.lvl}</div>
+    <!-- Semi-circular gauge -->
+    <div class="gauge-wrap">
+      ${gaugeSVG(r.tot,hex)}
+      <div class="gauge-labels">
+        <span class="gauge-label">0</span>
+        <span class="gauge-label" style="color:${col};font-weight:700;text-transform:uppercase;letter-spacing:.1em">${r.lvl}</span>
+        <span class="gauge-label">100</span>
       </div>
-      <div class="rb-right">
-        <div class="rb-scn-lbl">Scenario / Year</div>
-        <div class="rb-scn-val" style="color:${c.color}">${c.temp}</div>
-        <div class="rb-year">${S.year}</div>
+      <div style="margin-top:4px;font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.16em">Overall Risk · ${c.temp} · ${S.year}</div>
+    </div>
+
+    <!-- Intel badges: Confidence + Greenwashing -->
+    <div class="intel-row">
+      <div class="intel-cell">
+        <div class="intel-lbl">Confidence</div>
+        <div class="intel-val" style="color:${conf>=85?'#00FF94':conf>=70?'#FFC857':'#FF8C42'}">${conf}%</div>
+        <div class="intel-sub">${conf>=85?'High data quality':'Estimated'}</div>
+      </div>
+      <div class="intel-cell">
+        <div class="intel-lbl">Greenwash Risk</div>
+        <div class="intel-val" style="color:${gw.color}">${gw.label}</div>
+        <div class="intel-sub">Score ${Math.round(gw.score)}/100</div>
       </div>
     </div>
+
+    ${r.stranded?`<div class="stranded">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5.5 1L10 9.5H1z" stroke-linejoin="round"/><line x1="5.5" y1="4.5" x2="5.5" y2="6.5" stroke-linecap="round"/><circle cx="5.5" cy="8" r=".6" fill="currentColor" stroke="none"/></svg>
+      Stranded Asset Risk Detected
+    </div>`:''}
 
     ${r.stranded?`<div class="stranded">
       <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5.5 1L10 9.5H1z" stroke-linejoin="round"/><line x1="5.5" y1="4.5" x2="5.5" y2="6.5" stroke-linecap="round"/><circle cx="5.5" cy="8" r=".6" fill="currentColor" stroke="none"/></svg>
