@@ -639,6 +639,73 @@ body {
 .glow-amber { text-shadow: 0 0 18px rgba(255,200,87,0.5); }
 
 /* ═══════════════════════════════════════
+   SCENARIO SHIFT BANNER
+═══════════════════════════════════════ */
+#scn-banner {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 30;
+  padding: 0 20px; height: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(90deg,rgba(10,10,10,.95) 0%,rgba(17,24,39,.95) 100%);
+  border-bottom: 1px solid var(--acc2);
+  transition: height .28s ease, opacity .28s ease;
+  opacity: 0; backdrop-filter: blur(10px);
+}
+#scn-banner.show { height: 38px; opacity: 1; }
+.scn-banner-msg { font-size: 10px; font-weight: 600; color: var(--tx0); letter-spacing: .03em; }
+.scn-banner-msg strong { color: var(--acc); }
+.scn-banner-delta { display: flex; gap: 16px; }
+.scn-bd { font-family: var(--mono); font-size: 10px; font-weight: 700; }
+.scn-bd.neg { color: #FF4D4F; }
+.scn-bd.pos { color: #00FF94; }
+
+/* ═══════════════════════════════════════
+   DECISION SIGNAL BOX
+═══════════════════════════════════════ */
+.decision-box {
+  margin: 10px 14px 0;
+  border-left: 3px solid; padding: 9px 12px;
+}
+.decision-label { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .18em; color: var(--tx3); margin-bottom: 4px; }
+.decision-signal { font-size: 11px; font-weight: 800; letter-spacing: .06em; margin-bottom: 4px; }
+.decision-desc { font-size: 8.5px; color: var(--tx1); line-height: 1.55; }
+
+/* Key drivers */
+.driver-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.driver-lbl { font-size: 8.5px; color: var(--tx2); width: 110px; flex-shrink: 0; }
+.driver-track { flex: 1; height: 4px; background: var(--bd0); position: relative; }
+.driver-fill { height: 100%; transition: width .6s ease; }
+.driver-pct { font-family: var(--mono); font-size: 9px; font-weight: 600; width: 34px; text-align: right; flex-shrink: 0; }
+
+/* Tipping point pill */
+.tip-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 7.5px; font-weight: 700; letter-spacing: .08em; padding: 2px 8px;
+  border: 1px solid; text-transform: uppercase;
+}
+
+/* Investment summary */
+.inv-summary {
+  margin: 10px 14px; border: 1px solid var(--bd2);
+  background: var(--bg2);
+}
+.inv-sum-head {
+  padding: 7px 10px; background: var(--bg3); border-bottom: 1px solid var(--bd1);
+  font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .16em; color: var(--acc);
+}
+.inv-sum-body { padding: 10px; }
+.inv-row { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; border-bottom: 1px solid var(--bd0); }
+.inv-row:last-child { border-bottom: none; }
+.inv-k { font-size: 8.5px; color: var(--tx2); }
+.inv-v { font-family: var(--mono); font-size: 10px; font-weight: 700; }
+
+/* Timeline tipping markers */
+.ty-tip {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  font-size: 6px; font-weight: 800; letter-spacing: .06em;
+  padding: 1px 4px; border: 1px solid; white-space: nowrap; pointer-events: none;
+}
+
+/* ═══════════════════════════════════════
    HAZARD SUB-TOGGLES
 ═══════════════════════════════════════ */
 .haz-grid {
@@ -801,6 +868,12 @@ body {
 
 <!-- ═══════════════════════════════════ SIM ════ -->
 <div id="sim">
+
+  <!-- SCENARIO SHIFT BANNER -->
+  <div id="scn-banner">
+    <div class="scn-banner-msg" id="scn-banner-msg"></div>
+    <div class="scn-banner-delta" id="scn-banner-delta"></div>
+  </div>
 
   <!-- STATS BAR -->
   <div id="sbar"></div>
@@ -1073,15 +1146,36 @@ const AICO={
   farm:       `<svg width="11" height="11" viewBox="0 0 11 11" fill="currentColor"><path d="M5.5 1C3 3 1.5 5 1.5 7h8c0-2-1.5-4-4-6z" opacity=".8"/><rect x="4" y="7" width="3" height="3.5"/></svg>`,
 };
 
-/* ─── RISK ENGINE ─── */
-const SW={Energy:{pm:.9,tm:1.6,el:1.8},Mining:{pm:1.4,tm:1.5,el:1.7},
-  Manufacturing:{pm:1.2,tm:1.2,el:1.5},Agriculture:{pm:1.9,tm:.7,el:2.2},
-  'Real Estate':{pm:1.6,tm:1.1,el:2.0},Finance:{pm:.4,tm:1.4,el:1.2},
-  Technology:{pm:.7,tm:.9,el:1.3},Logistics:{pm:1.1,tm:1.4,el:1.6},Shipping:{pm:1.4,tm:1.7,el:1.7}};
+/* ─── RISK ENGINE v2 ─────────────────────────────────────────────
+   Formula:
+     Physical  = Σ hazard_i × w_i                       (heat/flood/storm/drought/SLR)
+     Transition = carbonCost×.35 + policy×.28 + tech×.22 + market×.15
+     SupplyChain= base + Σ(upstream_risk × dep_weight)   (one-pass cascade)
+     Total      = Physical×0.40 + Transition×0.35 + SC×0.25
+──────────────────────────────────────────────────────────────── */
+/* Sector weights: pm=physical, tm=transition, el=EBITDA leverage, dep=SC dependency, ems=tCO₂/$M */
+const SW={
+  Energy:       {pm:.9,  tm:1.6, el:1.8, dep:.70, ems:450},
+  Mining:       {pm:1.4, tm:1.5, el:1.7, dep:.50, ems:350},
+  Manufacturing:{pm:1.2, tm:1.2, el:1.5, dep:.80, ems:220},
+  Agriculture:  {pm:1.9, tm:.7,  el:2.2, dep:.40, ems:130},
+  'Real Estate':{pm:1.6, tm:1.1, el:2.0, dep:.30, ems:80},
+  Finance:      {pm:.4,  tm:1.4, el:1.2, dep:.50, ems:40},
+  Technology:   {pm:.7,  tm:.9,  el:1.3, dep:.60, ems:50},
+  Logistics:    {pm:1.1, tm:1.4, el:1.6, dep:.90, ems:110},
+  Shipping:     {pm:1.4, tm:1.7, el:1.7, dep:.80, ems:180},
+};
+/* Dependency cascade weights by upstream sector */
+const DEP_W={Logistics:.45,Shipping:.42,Manufacturing:.38,Energy:.35,Mining:.32,
+  Technology:.25,Agriculture:.28,Finance:.15,'Real Estate':.18};
 const RCM={EU:1.55,UK:1.32,USA:.82,Canada:.92,Australia:.68,Japan:.72,SouthKorea:.62,
   China:.48,India:.20,Brazil:.14,LatAm:.12,Russia:.05,MENA:.08,Africa:.06,SEA:.16,Global:1.0};
 const BTR={EU:78,UK:72,USA:55,Canada:60,Japan:52,SouthKorea:46,China:42,Australia:36,
   India:25,Brazil:16,LatAm:13,Russia:8,MENA:10,Africa:7,SEA:18,Global:20};
+
+/* Revenue-sensitivity per sector (fraction of rev exposed per unit of risk 0-100) */
+const REV_SENS={Energy:.18,Manufacturing:.14,Logistics:.20,Finance:.06,Mining:.22,
+  Technology:.08,Agriculture:.32,Shipping:.16,'Real Estate':.12};
 
 function rgn(lat,lng){
   if(lng>=-10&&lng<=40&&lat>=35&&lat<=72)return'EU';
@@ -1117,21 +1211,138 @@ function itp(y,v24,v30,v50){
   if(y<=2030)return v24+(v30-v24)*((y-2024)/6);
   return v30+(v50-v30)*((y-2030)/20);
 }
+/* ── Physical sub-engine ── */
+function _phys(a,sid,yr){
+  const c=SCN[sid],bp=bph(a.lat,a.lng),sw=SW[a.sector]||{pm:1};
+  const pm=itp(yr,.18,c.pm30,c.pm50);
+  const heat    =Math.min(100,bp.heat*pm*sw.pm);
+  const flood   =Math.min(100,bp.flood*pm*sw.pm);
+  const storm   =Math.min(100,bp.storm*pm*sw.pm);
+  const drought =Math.min(100,(bp.drought+bp.perm*.3)*pm*sw.pm);
+  const slF     =yr>2035?1+(yr-2035)*.028:1.0; // non-linear SLR post-2035
+  const seaLevel=Math.min(100,bp.flood*.45*slF*pm);
+  const phys    =Math.min(100,heat*.28+flood*.28+storm*.18+drought*.16+seaLevel*.10);
+  return{heat,flood,storm,drought,seaLevel,phys};
+}
+/* ── Transition sub-engine ── */
+function _trans(a,sid,yr){
+  const c=SCN[sid],sw=SW[a.sector]||{tm:1};
+  const rid=rgn(a.lat,a.lng);
+  const tm =itp(yr,.28,c.tm30,c.tm50);
+  const cp =itp(yr,28,c.cp30,c.cp50);
+  const ecp=cp*(RCM[rid]||1);
+  const btr=BTR[rid]||20;
+  const carbonCost    =Math.min(100,(ecp/800)*100*sw.tm);
+  const policyRisk    =Math.min(100,btr*tm*sw.tm*.85);
+  const techDisruption=Math.min(100,28*tm*sw.tm);
+  const marketShift   =Math.min(100,policyRisk*.6+(yr>2035?18:5));
+  const trans         =Math.min(100,carbonCost*.35+policyRisk*.28+techDisruption*.22+marketShift*.15);
+  return{carbonCost,policyRisk,techDisruption,marketShift,trans,ecp,cp,pol:policyRisk,tech:techDisruption};
+}
+/* ── Supply-chain cascade (one-pass upstream propagation) ── */
+function _sc(a,sid,yr,amap){
+  const ph=_phys(a,sid,yr),tr=_trans(a,sid,yr);
+  const sw=SW[a.sector]||{dep:.5};
+  let base=ph.phys*.35+tr.trans*.25+15;
+  if(a.lnk&&a.lnk.length&&amap){
+    let sum=0,tw=0;
+    a.lnk.forEach(tid=>{
+      const t=amap[tid];if(!t)return;
+      const tp=_phys(t,sid,yr);
+      const w=DEP_W[t.sector]||.3;
+      sum+=tp.phys*w;tw+=w;
+    });
+    if(tw>0)base=Math.min(100,base+(sum/tw)*(sw.dep||.5)*.4);
+  }
+  return Math.min(100,base);
+}
+
+/* ── Fast calc (used by heatmap + asset list — no cascade) ── */
 function calc(a,sid,yr){
-  const c=SCN[sid],bp=bph(a.lat,a.lng),sw=SW[a.sector]||{pm:1,tm:1,el:1.5};
-  const pm=itp(yr,.18,c.pm30,c.pm50),tm=itp(yr,.28,c.tm30,c.tm50),cp=itp(yr,28,c.cp30,c.cp50);
-  const heat=Math.min(100,bp.heat*pm*sw.pm),flood=Math.min(100,bp.flood*pm*sw.pm);
-  const storm=Math.min(100,bp.storm*pm*sw.pm),drought=Math.min(100,(bp.drought+bp.perm*.3)*pm*sw.pm);
-  const phys=Math.min(100,heat*.28+flood*.32+storm*.22+drought*.18);
-  const rid=rgn(a.lat,a.lng),ecp=cp*(RCM[rid]||1),btr=BTR[rid]||20;
-  const pol=Math.min(100,btr*tm*sw.tm),tech=Math.min(100,28*tm*sw.tm);
-  const trans=Math.min(100,pol*.62+tech*.38);
-  const rar=Math.min(48,(phys/100*16+trans/100*13)*sw.pm);
-  const sc=Math.min(100,phys*.38+trans*.28+18);
-  const tot=Math.min(100,phys*.44+trans*.44+sc*.12);
+  const ph=_phys(a,sid,yr),tr=_trans(a,sid,yr);
+  const sw=SW[a.sector]||{pm:1,tm:1,el:1.5};
+  const sc=Math.min(100,ph.phys*.35+tr.trans*.25+15);
+  const tot=Math.min(100,ph.phys*.40+tr.trans*.35+sc*.25);
   const lvl=tot>=68?'critical':tot>=46?'high':tot>=26?'medium':'low';
-  return{heat,flood,storm,drought,phys,ecp,pol,tech,trans,rar,ebi:Math.min(80,rar*sw.el),
-    ccm:((a.s1+a.s2)*ecp)/1e6,sc,tot,lvl,stranded:tot>=68&&(a.sector==='Energy'||a.sector==='Mining')};
+  const sens=REV_SENS[a.sector]||.12;
+  const rar=Math.min(48,(ph.phys/100*sens*100*.55+tr.trans/100*sens*100*.45));
+  const ebi=Math.min(80,rar*sw.el);
+  const ccm=((a.s1+a.s2)*tr.ecp)/1e6;
+  return{heat:ph.heat,flood:ph.flood,storm:ph.storm,drought:ph.drought,seaLevel:ph.seaLevel,
+    phys:ph.phys,carbonCost:tr.carbonCost,policyRisk:tr.policyRisk,techDisruption:tr.techDisruption,
+    marketShift:tr.marketShift,trans:tr.trans,ecp:tr.ecp,cp:tr.cp,
+    rar,ebi,ccm,sc,tot,lvl,pol:tr.policyRisk,tech:tr.techDisruption,
+    stranded:tot>=68&&(a.sector==='Energy'||a.sector==='Mining')};
+}
+
+/* ── Full calc (panel only — cascade + drivers + decision + tipping) ── */
+function calcFull(a,sid,yr){
+  const amap={};S.assets.forEach(x=>amap[x.id]=x);
+  const ph=_phys(a,sid,yr),tr=_trans(a,sid,yr);
+  const sw=SW[a.sector]||{pm:1,tm:1,el:1.5,dep:.5};
+  const sc=_sc(a,sid,yr,amap);
+  const tot=Math.min(100,ph.phys*.40+tr.trans*.35+sc*.25);
+  const lvl=tot>=68?'critical':tot>=46?'high':tot>=26?'medium':'low';
+
+  /* Financial */
+  const sens=REV_SENS[a.sector]||.12;
+  const rar=Math.min(48,(ph.phys/100*sens*100*.55+tr.trans/100*sens*100*.45));
+  const ebi=Math.min(80,rar*sw.el);
+  const ccm=((a.s1+a.s2)*tr.ecp)/1e6;
+  const adaptCost=Math.min(a.rev*.18,(ph.phys/100)*a.rev*.22);
+  const costIncrease=ccm+adaptCost;
+  const ebitdaImpact=rar/100*a.rev+costIncrease;
+  const yrs=Math.max(1,2050-yr);
+  const npvImpact=-(ebitdaImpact*(1-Math.pow(1.08,-yrs))/.08);
+
+  /* Key drivers (% contribution to composite score) */
+  const physContrib=+(ph.phys*.40/Math.max(tot,.01)*100).toFixed(1);
+  const transContrib=+(tr.trans*.35/Math.max(tot,.01)*100).toFixed(1);
+  const scContrib=+(sc*.25/Math.max(tot,.01)*100).toFixed(1);
+  const heatPct=+(ph.heat*.28/Math.max(ph.phys,.01)*100).toFixed(1);
+  const floodPct=+(ph.flood*.28/Math.max(ph.phys,.01)*100).toFixed(1);
+  const carbonPct=+(tr.carbonCost*.35/Math.max(tr.trans,.01)*100).toFixed(1);
+  const policyPct=+(tr.policyRisk*.28/Math.max(tr.trans,.01)*100).toFixed(1);
+  const scDepPct=sc>15?+((sc-15)/Math.max(sc,.01)*100).toFixed(1):0;
+
+  /* Decision signal */
+  let decision,decisionColor,decisionDesc;
+  if(tot>=75){
+    decision='AVOID / RELOCATE'; decisionColor='#FF4D4F';
+    decisionDesc='Asset faces existential climate risk. Capital reallocation recommended before '+Math.min(2050,yr+8)+'.';
+  }else if(tot>=60){
+    decision='MITIGATE URGENTLY'; decisionColor='#FF8C42';
+    decisionDesc='High physical + transition exposure. Implement resilience plan within 24 months.';
+  }else if(tot>=46){
+    decision='MONITOR & ADAPT'; decisionColor='#FFC857';
+    decisionDesc='Elevated risk trajectory. Build adaptation measures and hedge scenario exposure.';
+  }else if(tot>=26){
+    decision='MONITOR'; decisionColor='#00D4FF';
+    decisionDesc='Risk manageable. Review annually and re-assess under 3°C scenario.';
+  }else{
+    decision='STABLE'; decisionColor='#00FF94';
+    decisionDesc='Low climate risk exposure. Standard ESG monitoring protocols apply.';
+  }
+
+  /* Tipping / viability years */
+  let tippingYear=null,viabilityYear=null;
+  for(let y=yr;y<=2050;y+=3){
+    const fp=_phys(a,sid,y),ft=_trans(a,sid,y);
+    const fsc=Math.min(100,fp.phys*.35+ft.trans*.25+15);
+    const ftot=Math.min(100,fp.phys*.40+ft.trans*.35+fsc*.25);
+    if(!tippingYear&&ftot>=46)tippingYear=y;
+    if(!viabilityYear&&ftot>=75)viabilityYear=y;
+    if(tippingYear&&viabilityYear)break;
+  }
+
+  return{heat:ph.heat,flood:ph.flood,storm:ph.storm,drought:ph.drought,seaLevel:ph.seaLevel,phys:ph.phys,
+    carbonCost:tr.carbonCost,policyRisk:tr.policyRisk,techDisruption:tr.techDisruption,
+    marketShift:tr.marketShift,trans:tr.trans,ecp:tr.ecp,cp:tr.cp,pol:tr.policyRisk,tech:tr.techDisruption,
+    sc,tot,lvl,rar,ebi,ccm,adaptCost,costIncrease,ebitdaImpact,npvImpact,
+    stranded:tot>=75&&(a.sector==='Energy'||a.sector==='Mining'),
+    strandedProb:tot>=68?(Math.min(.92,(tot-68)/32*.92)).toFixed(2):'0.00',
+    physContrib,transContrib,scContrib,heatPct,floodPct,carbonPct,policyPct,scDepPct,
+    decision,decisionColor,decisionDesc,tippingYear,viabilityYear};
 }
 function riskColor(lvl){
   return lvl==='critical'?'var(--rc)':lvl==='high'?'var(--rh)':lvl==='medium'?'var(--rm)':'var(--rl)';
@@ -1256,8 +1467,11 @@ function heatGJ(){
 function assetGJ(){
   return{type:'FeatureCollection',features:S.assets.map(a=>{
     const r=calc(a,S.scenario,S.year);
+    /* Size proportional to revenue: $185M→5px, $4500M→14px */
+    const revRadius=Math.min(14,Math.max(5,4+Math.log(a.rev/100)*1.4));
     return{type:'Feature',geometry:{type:'Point',coordinates:[a.lng,a.lat]},
-      properties:{id:a.id,color:riskHex(r.lvl),lvl:r.lvl,score:Math.round(r.tot)}};
+      properties:{id:a.id,color:riskHex(r.lvl),lvl:r.lvl,score:Math.round(r.tot),
+        radius:revRadius,glowRadius:revRadius+8}};
   })};
 }
 function linkGJ(){
@@ -1298,15 +1512,21 @@ function initMap(){
         1, 'rgba(180,0,0,1.0)'],
       'heatmap-radius':56,'heatmap-intensity':2.2,'heatmap-opacity':S.heatmapOpacity}});
     map.addSource('lk',{type:'geojson',data:linkGJ()});
+    /* Animated supply-chain links — pulsing dashes */
+    map.addLayer({id:'lkl-bg',type:'line',source:'lk',
+      layout:{'line-cap':'round','line-join':'round'},
+      paint:{'line-color':'rgba(0,212,255,.12)','line-width':2}});
     map.addLayer({id:'lkl',type:'line',source:'lk',
       layout:{'line-cap':'round','line-join':'round'},
-      paint:{'line-color':'#2A3850','line-width':1.0,'line-dasharray':[4,5],'line-opacity':.7}});
+      paint:{'line-color':'rgba(0,212,255,.55)','line-width':1.2,'line-dasharray':[3,5],'line-opacity':.85}});
     map.addSource('as',{type:'geojson',data:assetGJ()});
+    /* Outer glow — size = revenue exposure */
     map.addLayer({id:'ash',type:'circle',source:'as',
-      paint:{'circle-radius':14,'circle-color':['get','color'],'circle-opacity':.10,'circle-blur':1.4}});
+      paint:{'circle-radius':['get','glowRadius'],'circle-color':['get','color'],'circle-opacity':.12,'circle-blur':1.6}});
+    /* Core dot — size = revenue */
     map.addLayer({id:'ac',type:'circle',source:'as',
-      paint:{'circle-radius':7,'circle-color':['get','color'],
-             'circle-stroke-width':1.5,'circle-stroke-color':'rgba(240,242,245,.65)','circle-opacity':.92}});
+      paint:{'circle-radius':['get','radius'],'circle-color':['get','color'],
+             'circle-stroke-width':1.8,'circle-stroke-color':'rgba(240,242,245,.7)','circle-opacity':.94}});
     map.on('click','ac',e=>{
       if(!e.features||!e.features.length)return;
       pickAsset(e.features[0].properties.id);
@@ -1331,6 +1551,7 @@ function mapUpd(){
   map.getSource('as').setData(assetGJ());
   map.getSource('lk').setData(linkGJ());
   map.setLayoutProperty('lkl','visibility',S.showLinks?'visible':'none');
+  map.setLayoutProperty('lkl-bg','visibility',S.showLinks?'visible':'none');
   map.setLayoutProperty('ac','visibility',S.showAssets?'visible':'none');
   map.setLayoutProperty('ash','visibility',S.showAssets?'visible':'none');
   map.setPaintProperty('rh','heatmap-opacity',S.heatmapOpacity);
@@ -1344,26 +1565,43 @@ function f1(n){return(+n).toFixed(1);}
 function fM(n){return n>=1000?`$${(n/1000).toFixed(1)}B`:`$${(+n).toFixed(0)}M`;}
 function fPct(n){return`${f1(n)}%`;}
 
+/* ─── PORTFOLIO INTELLIGENCE ─── */
+function portfolioInsight(){
+  if(!S.assets.length)return'';
+  const scored=S.assets.map(a=>{
+    const r=calc(a,S.scenario,S.year);
+    return{a,tot:r.tot,rm:(r.rar/100)*a.rev};
+  }).sort((a,b)=>b.rm-a.rm);
+  const totalRM=scored.reduce((s,x)=>s+x.rm,0);
+  if(!totalRM)return'';
+  const top3pct=Math.round(scored.slice(0,3).reduce((s,x)=>s+x.rm,0)/totalRM*100);
+  const topName=scored[0]?.a.name||'';
+  return`<span style="font-size:8px;color:var(--tx3);padding:0 10px;border-right:1px solid var(--bd0);white-space:nowrap">
+    ⬡ Top 3 assets: <span style="color:var(--acc)">${top3pct}%</span> of total risk · Highest: <span style="color:#FF8C42">${topName}</span>
+  </span>`;
+}
+
 /* ─── STATS BAR ─── */
 function renderStats(){
   const p=pf(),c=SCN[S.scenario];
   const rrPct=p.rev>0?fPct(p.rm/p.rev*100):'—';
   document.getElementById('sbar').innerHTML=`
     <div class="sb-scn">
-      <div class="sb-scn-dot" style="background:${c.color}"></div>
+      <div class="sb-scn-dot" style="background:${c.color};box-shadow:0 0 5px ${c.color}80"></div>
       <span class="sb-scn-label" style="color:${c.color}">${c.temp} &nbsp;·&nbsp; ${c.name}</span>
     </div>
     <div class="sb-item"><span class="sb-lbl">Assets</span><span class="sb-val">${p.cnt}</span></div>
-    <div class="sb-item"><span class="sb-lbl">Portfolio</span><span class="sb-val">${fM(p.rev)}</span></div>
+    <div class="sb-item"><span class="sb-lbl">Portfolio Rev</span><span class="sb-val">${fM(p.rev)}</span></div>
     <div class="sb-item"><span class="sb-lbl">Rev at Risk</span><span class="sb-val neg">${fM(p.rm)} <span style="font-size:9px;opacity:.7">(${rrPct})</span></span></div>
     <div class="sb-item"><span class="sb-lbl">Compliance</span><span class="sb-val warn">${fM(p.cm)}</span></div>
-    <div class="sb-item"><span class="sb-lbl">Phys Risk</span><span class="sb-val info">${f1(p.ap)}</span></div>
-    <div class="sb-item"><span class="sb-lbl">Trans Risk</span><span class="sb-val info">${f1(p.at)}</span></div>
-    <div class="sb-item"><span class="sb-lbl">High</span><span class="sb-val warn">${p.hi}</span></div>
+    <div class="sb-item"><span class="sb-lbl">Avg Physical</span><span class="sb-val info">${f1(p.ap)}</span></div>
+    <div class="sb-item"><span class="sb-lbl">Avg Transition</span><span class="sb-val info">${f1(p.at)}</span></div>
+    <div class="sb-item"><span class="sb-lbl">High Risk</span><span class="sb-val warn">${p.hi}</span></div>
     <div class="sb-item"><span class="sb-lbl">Critical</span><span class="sb-val neg">${p.cr}</span></div>
+    ${portfolioInsight()}
     <div class="sb-item" style="margin-left:auto">
       <span class="api-dot ${S.liveMode?'live':'static'}"></span>
-      <span class="sb-lbl">${S.liveMode?'LIVE API':'STATIC'}</span>
+      <span class="sb-lbl">${S.liveMode?'LIVE API':'STATIC MODE'}</span>
     </div>
     <div class="sb-year"><span class="sb-year-lbl">Year</span><span class="sb-year-val">${S.year}</span></div>`;
 }
@@ -1444,12 +1682,26 @@ function renderList(){
 /* ─── TIMELINE ─── */
 function renderTL(){
   const c=SCN[S.scenario].color;
+  /* Compute tipping / viability years across whole portfolio for active scenario */
+  const tipYears=new Set(),viaYears=new Set();
+  S.assets.forEach(a=>{
+    PY.forEach(y=>{
+      const r=calc(a,S.scenario,y);
+      if(r.tot>=46)tipYears.add(y);
+      if(r.tot>=75)viaYears.add(y);
+    });
+  });
   document.getElementById('tltrack').innerHTML=PY.map(y=>{
     const on=y===S.year,past=y<S.year;
-    return`<button class="ty-btn" onclick="setYear(${y})">
+    const isTip=tipYears.has(y),isVia=viaYears.has(y);
+    let tipMark='';
+    if(isVia)tipMark=`<span class="ty-tip" style="color:#FF4D4F;border-color:#FF4D4F40;background:#FF4D4F12">UNVIABLE</span>`;
+    else if(isTip)tipMark=`<span class="ty-tip" style="color:#FFC857;border-color:#FFC85740;background:#FFC85712">TIPPING</span>`;
+    return`<button class="ty-btn" onclick="setYear(${y})" style="position:relative">
+      ${tipMark}
       <div class="ty-rail" style="background:${on||past?c:'var(--bd1)'}"></div>
       <div class="ty-dot${on?' on':''}" style="${on?`background:${c};border-color:rgba(240,242,245,.7)`:`background:${past?c+'60':'var(--bg2)'};border-color:${past?c+'50':'var(--bd2)'}`}"></div>
-      <span class="ty-lbl${on?' on':''}${past?' past':''}">${y}</span>
+      <span class="ty-lbl${on?' on':''}${past?' past':''}" style="${isVia?'color:#FF4D4F':isTip?'color:#FFC857':''}">${y}</span>
     </button>`;}).join('');
   document.getElementById('tl-year-val').textContent=S.year;
 }
@@ -1461,7 +1713,7 @@ function pickAsset(id){
   renderList();
 }
 function drawPanel(a){
-  const r=calc(a,S.scenario,S.year),col=riskColor(r.lvl),hex=riskHex(r.lvl);
+  const r=calcFull(a,S.scenario,S.year),col=riskColor(r.lvl),hex=riskHex(r.lvl);
   const c=SCN[S.scenario],series=ts(a,S.scenario);
   const gw=greenwashRisk(a.sector,r.trans);
   const conf=confidenceScore(a);
@@ -1538,17 +1790,61 @@ function drawPanel(a){
             <span class="rb-val" style="color:${c}">${Math.round(v)}</span>
           </div>`).join('')}
       </div>
+      <!-- DECISION SIGNAL -->
+      <div class="decision-box" style="border-color:${r.decisionColor};background:${r.decisionColor}0D">
+        <div class="decision-label">Decision Signal</div>
+        <div class="decision-signal" style="color:${r.decisionColor}">${r.decision}</div>
+        <div class="decision-desc">${r.decisionDesc}</div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          ${r.tippingYear?`<span class="tip-pill" style="color:#FFC857;border-color:#FFC85740">⚡ Tipping ${r.tippingYear}</span>`:''}
+          ${r.viabilityYear?`<span class="tip-pill" style="color:#FF4D4F;border-color:#FF4D4F40">☠ Unviable ${r.viabilityYear}</span>`:''}
+          ${!r.tippingYear&&!r.viabilityYear?`<span class="tip-pill" style="color:#00FF94;border-color:#00FF9440">✓ Stable to 2050</span>`:''}
+        </div>
+      </div>
+
       <div class="rp-sec">
         <div class="rp-sec-title">Physical Hazards</div>
-        ${[['Heat Stress',r.heat,'#FF8C42'],['Flood Risk',r.flood,'#00D4FF'],['Storm Risk',r.storm,'#A78BFA'],['Drought Risk',r.drought,'#FFC857'],['Sea Level',Math.min(100,r.flood*.45),'#00FF94']]
+        ${[['Heat Stress',r.heat,'#FF8C42'],['Flood Risk',r.flood,'#00D4FF'],['Storm Risk',r.storm,'#A78BFA'],['Drought Risk',r.drought,'#FFC857'],['Sea Level Rise',r.seaLevel,'#00FF94']]
           .map(([l,v,c])=>`<div class="rb-row">
             <span class="rb-lbl">${l}</span>
             <div class="rb-track"><div class="rb-fill" style="width:${v}%;background:${c}"></div></div>
             <span class="rb-val" style="color:${c}">${Math.round(v)}</span>
           </div>`).join('')}
       </div>
+
+      <!-- KEY DRIVERS -->
       <div class="rp-sec">
-        <div class="rp-sec-title">Risk Projection 2024–2050</div>
+        <div class="rp-sec-title">Key Risk Drivers</div>
+        ${[
+          ['Physical Exposure',r.physContrib,'#FF8C42','Heat & flood dominate'],
+          ['Transition Exposure',r.transContrib,'#00D4FF','Carbon + policy burden'],
+          ['Supply Chain',r.scContrib,'#A78BFA','Upstream cascade risk'],
+        ].map(([l,v,c,sub])=>`
+          <div class="driver-row">
+            <span class="driver-lbl">${l}</span>
+            <div class="driver-track">
+              <div class="driver-fill" style="width:${Math.min(v,100)}%;background:${c};box-shadow:0 0 4px ${c}60"></div>
+            </div>
+            <span class="driver-pct" style="color:${c}">${v}%</span>
+          </div>`).join('')}
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd0)">
+          <div style="font-size:7px;text-transform:uppercase;letter-spacing:.16em;color:var(--tx3);margin-bottom:6px">Sub-Drivers</div>
+          ${[
+            [`Heat (${r.heatPct}%)`,r.heatPct,'#FF8C42'],
+            [`Flood (${r.floodPct}%)`,r.floodPct,'#00D4FF'],
+            [`Carbon Price (${r.carbonPct}%)`,r.carbonPct,'#FFC857'],
+            [`Policy Risk (${r.policyPct}%)`,r.policyPct,'#A78BFA'],
+            [`SC Cascade (${r.scDepPct}%)`,r.scDepPct,'#00FF94'],
+          ].map(([l,v,c])=>`
+            <div class="driver-row" style="margin-bottom:4px">
+              <span class="driver-lbl" style="font-size:7.5px;width:140px">${l}</span>
+              <div class="driver-track"><div class="driver-fill" style="width:${Math.min(v,100)}%;background:${c}80"></div></div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="rp-sec">
+        <div class="rp-sec-title">Risk Trajectory 2024–2050</div>
         ${chartArea(series,270,100)}
         <div class="c-legend">
           <div class="cl-item"><div class="cl-line" style="background:#FF8C42"></div>Physical</div>
@@ -1562,7 +1858,7 @@ function drawPanel(a){
     <!-- TAB: FINANCIALS -->
     <div id="pane-fin" style="display:none">
       <div class="rp-sec">
-        <div class="rp-sec-title">Financial Impact</div>
+        <div class="rp-sec-title">Financial Impact (TCFD-Aligned)</div>
         <div class="fin-grid">
           <div class="fin-cell">
             <div class="fin-lbl">Revenue at Risk</div>
@@ -1576,18 +1872,28 @@ function drawPanel(a){
           </div>
           <div class="fin-cell">
             <div class="fin-lbl">Carbon Cost</div>
-            <div class="fin-val" style="color:#5A3A8A">${fM(r.ccm)}</div>
+            <div class="fin-val" style="color:#A78BFA">${fM(r.ccm)}</div>
             <div class="fin-sub">$${Math.round(r.ecp)}/tCO₂</div>
           </div>
           <div class="fin-cell">
-            <div class="fin-lbl">Supply Disruption</div>
-            <div class="fin-val" style="color:var(--neu)">${Math.round(r.sc)}</div>
-            <div class="fin-sub">risk index</div>
+            <div class="fin-lbl">Adaptation Capex</div>
+            <div class="fin-val" style="color:var(--neu)">${fM(r.adaptCost||0)}</div>
+            <div class="fin-sub">resilience investment</div>
+          </div>
+          <div class="fin-cell">
+            <div class="fin-lbl">Total Cost Increase</div>
+            <div class="fin-val" style="color:#FF8C42">${fM(r.costIncrease||0)}</div>
+            <div class="fin-sub">annual burden</div>
+          </div>
+          <div class="fin-cell">
+            <div class="fin-lbl">NPV Impact</div>
+            <div class="fin-val" style="color:#FF4D4F">${fM(Math.abs(r.npvImpact||0))}</div>
+            <div class="fin-sub">DCF at 8% to 2050</div>
           </div>
         </div>
       </div>
       <div class="rp-sec">
-        <div class="rp-sec-title">Revenue at Risk % (Projected)</div>
+        <div class="rp-sec-title">Revenue at Risk — Scenario Trajectory</div>
         ${chartLine(series.map(s=>({x:s.y,y:s.rar})),270,72,'#FF4D4F')}
       </div>
       <div class="rp-sec">
@@ -1827,7 +2133,36 @@ function chartLine(pts,w,h,color){
 }
 
 /* ─── STATE MUTATIONS ─── */
-function setScn(id){S.scenario=id;renderAll();debouncedMapUpd();if(S.selId){const a=S.assets.find(x=>x.id===S.selId);if(a)drawPanel(a);}}
+function setScn(id){
+  const prev=S.scenario;
+  S.scenario=id;
+  renderAll();debouncedMapUpd();
+  if(S.selId){const a=S.assets.find(x=>x.id===S.selId);if(a)drawPanel(a);}
+  /* Show scenario shift banner */
+  if(prev!==id){
+    const pPf=pfForScn(prev),nPf=pfForScn(id);
+    const deltaRM=nPf.rm-pPf.rm,deltaCR=nPf.cr-pPf.cr;
+    const cFrom=SCN[prev],cTo=SCN[id];
+    const banner=document.getElementById('scn-banner');
+    const msg=document.getElementById('scn-banner-msg');
+    const delta=document.getElementById('scn-banner-delta');
+    msg.innerHTML=`Scenario shift: <strong>${cFrom.temp} ${cFrom.name}</strong> → <strong style="color:${cTo.color}">${cTo.temp} ${cTo.name}</strong>`;
+    delta.innerHTML=`
+      <span class="scn-bd ${deltaRM>0?'neg':'pos'}">Rev at Risk ${deltaRM>0?'+':''}${fM(Math.abs(deltaRM))}</span>
+      <span class="scn-bd ${deltaCR>0?'neg':'pos'}">Critical Assets ${deltaCR>0?'+':''}${deltaCR}</span>`;
+    banner.classList.add('show');
+    clearTimeout(banner._t);banner._t=setTimeout(()=>banner.classList.remove('show'),5500);
+  }
+}
+function pfForScn(sid){
+  if(!S.assets.length)return{rm:0,cr:0};
+  const results=S.assets.map(a=>calc(a,sid,S.year));
+  const rev=S.assets.reduce((s,a)=>s+a.rev,0);
+  return{
+    rm:S.assets.reduce((s,a,i)=>s+(results[i].rar/100)*a.rev,0),
+    cr:results.filter(r=>r.lvl==='critical').length
+  };
+}
 function setLyr(id){S.layer=id;renderLyrs();document.getElementById('gl-title')&&(document.getElementById('gl-title').textContent={physical:'Physical Risk',transition:'Transition Risk',carbon:'Carbon Exposure',composite:'Composite Risk',economic:'Economic Exposure'}[id]||id);debouncedMapUpd();}
 function setYear(y){S.year=y;pausePlay();renderAll();debouncedMapUpd();if(S.selId){const a=S.assets.find(x=>x.id===S.selId);if(a)drawPanel(a);}}
 function toggleLinks(){S.showLinks=!S.showLinks;document.getElementById('linktog').className='tog'+(S.showLinks?' on':'');mapUpd();}
@@ -1856,13 +2191,29 @@ function confirmAdd(){
   if(!S.coords)return;
   const name=document.getElementById('nname').value.trim();if(!name)return;
   const id='u'+Date.now();
-  S.assets.push({id,name,cat:'factory',lat:S.coords.lat,lng:S.coords.lng,
-    rev:parseFloat(document.getElementById('nrev').value)||500,emp:500,
-    country:'User-Defined',sector:document.getElementById('nsect').value,
-    capex:800,s1:100000,s2:60000});
+  const sector=document.getElementById('nsect').value;
+  const rev=parseFloat(document.getElementById('nrev').value)||500;
+  const newAsset={id,name,cat:'factory',lat:S.coords.lat,lng:S.coords.lng,
+    rev,emp:500,country:'User-Defined',sector,capex:Math.round(rev*.6),
+    s1:Math.round(rev*(SW[sector]?.ems||150)*800),
+    s2:Math.round(rev*(SW[sector]?.ems||150)*400)};
+  S.assets.push(newAsset);
   document.getElementById('nname').value='';
   cancelAdd();renderAll();mapUpd();
-  setTimeout(()=>pickAsset(id),200);
+
+  /* Build investment risk summary after a short delay */
+  setTimeout(()=>{
+    pickAsset(id);
+    /* Show investment summary banner in toast */
+    const rf=calcFull(newAsset,S.scenario,S.year);
+    const rfBad=calcFull(newAsset,'3.0',2050);
+    let verdict,vColor;
+    if(rf.tot>=68){verdict='AVOID — Critical climate risk at current location';vColor='#FF4D4F';}
+    else if(rf.tot>=46){verdict='HIGH RISK — Significant adaptation investment required';vColor='#FF8C42';}
+    else if(rfBad.tot>=68){verdict='CAUTION — Viable now, critical by 2050 under 3°C';vColor='#FFC857';}
+    else{verdict='VIABLE — Acceptable risk profile across scenarios';vColor='#00FF94';}
+    showToast(`Investment Signal: ${verdict}`,6000);
+  },250);
 }
 
 /* ─── TIMELINE ─── */
