@@ -817,6 +817,125 @@ body {
 .mstat-scn-val { font-family: var(--mono); font-size: 12px; font-weight: 700; }
 
 /* ═══════════════════════════════════════
+   SEARCH BAR
+═══════════════════════════════════════ */
+.search-pb { position: relative; }
+.search-wrap {
+  display: flex; align-items: center; gap: 0;
+  padding: 6px 10px 6px 14px;
+  border-bottom: 1px solid var(--bd0);
+}
+.search-icon { flex-shrink: 0; opacity: .4; }
+.search-input {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-family: var(--font); font-size: 11px; font-weight: 500;
+  color: var(--tx0); padding: 0 8px; line-height: 1;
+  min-width: 0;
+}
+.search-input::placeholder { color: var(--tx3); }
+.search-input:focus ~ .search-icon { opacity: .8; }
+.search-clear {
+  background: none; border: none; cursor: pointer;
+  color: var(--tx3); font-size: 11px; padding: 0 2px;
+  transition: color .12s; display: none; flex-shrink: 0;
+}
+.search-clear.visible { display: block; }
+.search-clear:hover { color: var(--tx0); }
+.search-results {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: var(--bg1); border-bottom: 1px solid var(--bd2);
+  z-index: 200; max-height: 280px; overflow-y: auto;
+  display: none; box-shadow: 0 12px 30px rgba(0,0,0,.5);
+}
+.search-results.open { display: block; }
+.search-result-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 14px; border-bottom: 1px solid var(--bd0);
+  cursor: pointer; transition: background .1s;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: var(--bghov); }
+.sr-ico {
+  width: 22px; height: 22px; flex-shrink: 0; border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; border: 1px solid var(--bd2); background: var(--bg3);
+}
+.sr-name { font-size: 11px; font-weight: 600; color: var(--tx0); line-height: 1.3; }
+.sr-sub  { font-size: 9px; color: var(--tx2); margin-top: 1px; }
+.sr-type {
+  margin-left: auto; font-size: 7px; font-weight: 700; letter-spacing: .08em;
+  padding: 1px 5px; border: 1px solid; text-transform: uppercase;
+  flex-shrink: 0;
+}
+.sr-coords { font-family: var(--mono); font-size: 8px; color: var(--tx3); margin-top: 2px; }
+.search-group-hdr {
+  padding: 5px 14px; background: var(--bg2);
+  font-size: 8px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .14em; color: var(--tx3); border-bottom: 1px solid var(--bd0);
+}
+
+/* ═══════════════════════════════════════
+   COORD PIN MODAL
+═══════════════════════════════════════ */
+#pin-modal {
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 22; width: 288px;
+  background: var(--bg3); border: 1px solid var(--acc);
+  box-shadow: 0 24px 60px rgba(0,0,0,.7);
+  display: none;
+}
+#pin-modal.on { display: block; }
+.pm-head { display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 14px; border-bottom: 1px solid var(--bd1); }
+.pm-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--acc); }
+.pm-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; }
+.pm-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.btn-pin {
+  width: 100%; background: var(--acc); color: var(--bg0);
+  padding: 8px; border: none; cursor: pointer;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+  transition: opacity .15s;
+}
+.btn-pin:hover { opacity: .85; }
+
+/* ═══════════════════════════════════════
+   INFRASTRUCTURE POPUP (map)
+═══════════════════════════════════════ */
+#infra-popup {
+  position: absolute; z-index: 41; width: 240px;
+  background: rgba(10,10,10,.96); border: 1px solid var(--bd3);
+  box-shadow: 0 16px 40px rgba(0,0,0,.7);
+  backdrop-filter: blur(14px);
+  display: none;
+}
+#infra-popup.on { display: block; animation: fadein .2s ease; }
+.ipu-head { padding: 8px 12px; border-bottom: 1px solid var(--bd1);
+  display: flex; align-items: center; justify-content: space-between; }
+.ipu-type-badge { font-size: 7px; font-weight: 700; letter-spacing: .10em;
+  padding: 2px 7px; border: 1px solid; text-transform: uppercase; }
+.ipu-name { font-size: 11px; font-weight: 700; color: var(--tx0); padding: 7px 12px 4px; }
+.ipu-body { padding: 4px 12px 10px; }
+.ipu-row { display: flex; justify-content: space-between; padding: 3px 0;
+  border-bottom: 1px solid var(--bd0); font-size: 9px; }
+.ipu-row:last-child { border-bottom: none; }
+.ipu-k { color: var(--tx2); }
+.ipu-v { font-family: var(--mono); font-weight: 600; color: var(--tx0); }
+
+/* ═══════════════════════════════════════
+   INFRASTRUCTURE LEGEND CHIPS (bottom-left)
+═══════════════════════════════════════ */
+#infra-legend {
+  position: absolute; bottom: 72px; left: 16px; z-index: 10;
+  background: rgba(17,24,39,.88); border: 1px solid var(--bd2);
+  padding: 7px 10px; display: none; flex-direction: column; gap: 5px;
+  backdrop-filter: blur(8px);
+}
+#infra-legend.on { display: flex; }
+.il-row { display: flex; align-items: center; gap: 6px; }
+.il-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.il-lbl { font-size: 8px; color: var(--tx2); letter-spacing: .06em; }
+
+/* ═══════════════════════════════════════
    INTELLIGENCE LAYER BUTTONS
 ═══════════════════════════════════════ */
 .intel-section-hdr {
@@ -1019,6 +1138,19 @@ body {
     <!-- LEFT PANEL -->
     <div id="lp">
 
+      <!-- Search Bar -->
+      <div class="pb search-pb">
+        <div class="search-wrap">
+          <svg class="search-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4">
+            <circle cx="5" cy="5" r="3.5"/><line x1="7.8" y1="7.8" x2="11" y2="11" stroke-linecap="round"/>
+          </svg>
+          <input class="search-input" id="sim-search" placeholder="Search assets, ports, airports, energy…" autocomplete="off"
+            oninput="onSearchInput(this.value)" onkeydown="onSearchKey(event)" onfocus="openSearch()"/>
+          <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+        </div>
+        <div id="search-results" class="search-results"></div>
+      </div>
+
       <!-- Scenario -->
       <div class="pb">
         <div class="ph">
@@ -1072,6 +1204,30 @@ body {
           <span class="tog-lbl">Asset Markers</span>
           <button class="tog on" id="assettog" onclick="toggleAssets()"></button>
         </div>
+        <div class="tog-row">
+          <span class="tog-lbl" style="color:var(--tx0)">⚓ Major Ports <span style="font-size:8px;color:var(--tx3)">(30)</span></span>
+          <button class="tog" id="porttog" onclick="toggleInfra('ports')"></button>
+        </div>
+        <div class="tog-row">
+          <span class="tog-lbl" style="color:var(--tx0)">✈ Major Airports <span style="font-size:8px;color:var(--tx3)">(30)</span></span>
+          <button class="tog" id="airtog" onclick="toggleInfra('airports')"></button>
+        </div>
+        <div class="tog-row">
+          <span class="tog-lbl" style="color:var(--tx0)">⚡ Energy Facilities <span style="font-size:8px;color:var(--tx3)">(40)</span></span>
+          <button class="tog" id="energytog" onclick="toggleInfra('energy')"></button>
+        </div>
+        <!-- Pin Coordinates -->
+        <div style="padding:7px 14px;border-top:1px solid var(--bd0)">
+          <button onclick="openPinModal()" style="width:100%;display:flex;align-items:center;gap:6px;
+            padding:6px 10px;background:transparent;border:1px solid var(--bd2);cursor:pointer;
+            font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--acc);transition:all .12s"
+            onmouseenter="this.style.background='var(--acc2)'" onmouseleave="this.style.background='transparent'">
+            <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.4">
+              <circle cx="4.5" cy="3.5" r="2"/><path d="M4.5 6v3" stroke-linecap="round"/>
+            </svg>
+            Pin Coordinates
+          </button>
+        </div>
       </div>
 
       <!-- Intelligence Layers -->
@@ -1116,6 +1272,55 @@ body {
         </div>
       </div>
       <div id="ahint">Click map to place project</div>
+
+      <!-- Pin Coordinates Modal -->
+      <div id="pin-modal">
+        <div class="pm-head">
+          <span class="pm-title">⊕ Pin Coordinates</span>
+          <button class="btn-x" onclick="closePinModal()">✕</button>
+        </div>
+        <div class="pm-body">
+          <div>
+            <div class="f-lbl">Search Location or Paste Coords</div>
+            <input class="f-input" id="pin-search" placeholder="e.g. Tokyo or 35.68, 139.69"
+              oninput="onPinSearchInput(this.value)"/>
+            <div id="pin-suggestions" style="display:none;border:1px solid var(--bd2);border-top:none;background:var(--bg2);max-height:120px;overflow-y:auto"></div>
+          </div>
+          <div class="pm-row2">
+            <div>
+              <div class="f-lbl">Latitude</div>
+              <input class="f-input" id="pin-lat" type="number" step="0.0001" placeholder="35.6892"/>
+            </div>
+            <div>
+              <div class="f-lbl">Longitude</div>
+              <input class="f-input" id="pin-lng" type="number" step="0.0001" placeholder="139.6917"/>
+            </div>
+          </div>
+          <div>
+            <div class="f-lbl">Label (optional)</div>
+            <input class="f-input" id="pin-label" placeholder="Custom location name"/>
+          </div>
+          <button class="btn-pin" onclick="confirmPin()">Pin on Map</button>
+          <button onclick="pinAndAdd()" style="width:100%;background:transparent;border:1px solid var(--acc);color:var(--acc);padding:7px;cursor:pointer;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;transition:all .12s"
+            onmouseenter="this.style.background='var(--acc2)'" onmouseleave="this.style.background='transparent'">
+            + Add as Portfolio Asset
+          </button>
+        </div>
+      </div>
+
+      <!-- Infrastructure Info Popup -->
+      <div id="infra-popup">
+        <div class="ipu-head">
+          <span class="ipu-type-badge" id="ipu-badge"></span>
+          <button class="btn-x" onclick="document.getElementById('infra-popup').classList.remove('on')">✕</button>
+        </div>
+        <div class="ipu-name" id="ipu-name"></div>
+        <div class="ipu-body" id="ipu-body"></div>
+      </div>
+
+      <!-- Infrastructure Legend -->
+      <div id="infra-legend"></div>
+
       <!-- News event popup — positioned absolutely within map wrapper -->
       <div id="news-popup">
         <div class="npu-head">
@@ -1206,7 +1411,9 @@ const S={scenario:'2.0',year:2030,layer:'physical',selId:null,
   heatmapOpacity:0.40,
   /* Intelligence layer state — max 2 active simultaneously */
   intel:{sentiment:false,news:false,regulation:false,fuel:false,narrative:false},
-  intelOrder:[],  /* tracks toggle order for LRU eviction */
+  intelOrder:[],
+  /* Infrastructure overlay state */
+  infra:{ports:false,airports:false,energy:false},
 };
 
 let _mapUpdTimer=null;
@@ -1330,6 +1537,139 @@ const NARRATIVE_DATA={
   Logistics:    {disclosureGap:32,greenwashRisk:35,sentimentMismatch:38},
   Shipping:     {disclosureGap:45,greenwashRisk:52,sentimentMismatch:48},
 };
+
+/* ─── GLOBAL INFRASTRUCTURE DATA ──────────────────────────────────
+   30 major container ports · 30 major airports · 40 energy sites
+   All coordinates are accurate WGS-84 values.
+─────────────────────────────────────────────────────────────────── */
+
+const PORTS_DATA=[
+  {id:'p01',name:'Port of Shanghai',       country:'China',       lat:31.22,lng:121.62,teu:47.3,rank:1, color:'#0EA5E9'},
+  {id:'p02',name:'Port of Singapore',      country:'Singapore',   lat:1.27, lng:103.82,teu:37.3,rank:2, color:'#0EA5E9'},
+  {id:'p03',name:'Port of Ningbo-Zhoushan',country:'China',       lat:29.87,lng:121.55,teu:33.4,rank:3, color:'#0EA5E9'},
+  {id:'p04',name:'Port of Shenzhen',       country:'China',       lat:22.43,lng:113.97,teu:30.0,rank:4, color:'#0EA5E9'},
+  {id:'p05',name:'Port of Guangzhou',      country:'China',       lat:23.10,lng:113.27,teu:25.0,rank:5, color:'#0EA5E9'},
+  {id:'p06',name:'Port of Qingdao',        country:'China',       lat:36.07,lng:120.33,teu:24.0,rank:6, color:'#0EA5E9'},
+  {id:'p07',name:'Port of Busan',          country:'South Korea', lat:35.10,lng:129.04,teu:22.7,rank:7, color:'#0EA5E9'},
+  {id:'p08',name:'Port of Tianjin',        country:'China',       lat:38.98,lng:117.75,teu:21.5,rank:8, color:'#0EA5E9'},
+  {id:'p09',name:'Port of Hong Kong',      country:'China',       lat:22.31,lng:114.17,teu:17.9,rank:9, color:'#0EA5E9'},
+  {id:'p10',name:'Port of Rotterdam',      country:'Netherlands', lat:51.92,lng:4.48,  teu:15.3,rank:10,color:'#0EA5E9'},
+  {id:'p11',name:'Port of Jebel Ali',      country:'UAE',         lat:25.01,lng:55.06, teu:14.8,rank:11,color:'#0EA5E9'},
+  {id:'p12',name:'Port Klang',             country:'Malaysia',    lat:3.00, lng:101.40,teu:13.0,rank:12,color:'#0EA5E9'},
+  {id:'p13',name:'Port of Antwerp',        country:'Belgium',     lat:51.23,lng:4.40,  teu:12.0,rank:13,color:'#0EA5E9'},
+  {id:'p14',name:'Port of Xiamen',         country:'China',       lat:24.45,lng:118.07,teu:12.0,rank:14,color:'#0EA5E9'},
+  {id:'p15',name:'Port Tanjung Pelepas',   country:'Malaysia',    lat:1.37, lng:103.55,teu:11.5,rank:15,color:'#0EA5E9'},
+  {id:'p16',name:'Los Angeles / Long Beach',country:'USA',        lat:33.73,lng:-118.25,teu:19.7,rank:16,color:'#0EA5E9'},
+  {id:'p17',name:'Port of Hamburg',        country:'Germany',     lat:53.55,lng:9.97,  teu:8.9, rank:17,color:'#0EA5E9'},
+  {id:'p18',name:'Port of Colombo',        country:'Sri Lanka',   lat:6.94, lng:79.85, teu:7.0, rank:18,color:'#0EA5E9'},
+  {id:'p19',name:'Port Laem Chabang',      country:'Thailand',    lat:13.09,lng:100.88,teu:8.8, rank:19,color:'#0EA5E9'},
+  {id:'p20',name:'JNPT Mumbai',            country:'India',       lat:18.94,lng:72.95, teu:6.0, rank:20,color:'#0EA5E9'},
+  {id:'p21',name:'Port Said',              country:'Egypt',       lat:31.25,lng:32.30, teu:5.5, rank:21,color:'#0EA5E9'},
+  {id:'p22',name:'Port of Piraeus',        country:'Greece',      lat:37.95,lng:23.63, teu:5.5, rank:22,color:'#0EA5E9'},
+  {id:'p23',name:'Port of New York / NJ',  country:'USA',         lat:40.66,lng:-74.05,teu:9.5, rank:23,color:'#0EA5E9'},
+  {id:'p24',name:'Port of Valencia',       country:'Spain',       lat:39.45,lng:-0.32, teu:5.7, rank:24,color:'#0EA5E9'},
+  {id:'p25',name:'Port of Felixstowe',     country:'UK',          lat:51.96,lng:1.35,  teu:3.8, rank:25,color:'#0EA5E9'},
+  {id:'p26',name:'Port of Savannah',       country:'USA',         lat:32.08,lng:-81.09,teu:5.7, rank:26,color:'#0EA5E9'},
+  {id:'p27',name:'Port of Santos',         country:'Brazil',      lat:-23.96,lng:-46.33,teu:4.7,rank:27,color:'#0EA5E9'},
+  {id:'p28',name:'Port of Durban',         country:'South Africa',lat:-29.87,lng:31.03,teu:2.9, rank:28,color:'#0EA5E9'},
+  {id:'p29',name:'Port of Lagos (Apapa)',  country:'Nigeria',     lat:6.45, lng:3.37,  teu:1.2, rank:29,color:'#0EA5E9'},
+  {id:'p30',name:'Port of Karachi',        country:'Pakistan',    lat:24.84,lng:66.99, teu:2.5, rank:30,color:'#0EA5E9'},
+];
+
+const AIRPORTS_DATA=[
+  {id:'a01',name:'Dubai International',       iata:'DXB',country:'UAE',         lat:25.25, lng:55.36,  pax:86.9},
+  {id:'a02',name:'Hartsfield-Jackson Atlanta', iata:'ATL',country:'USA',         lat:33.64, lng:-84.43, pax:93.7},
+  {id:'a03',name:'Dallas/Fort Worth',          iata:'DFW',country:'USA',         lat:32.90, lng:-97.04, pax:73.4},
+  {id:'a04',name:'London Heathrow',            iata:'LHR',country:'UK',          lat:51.47, lng:-0.46,  pax:78.0},
+  {id:'a05',name:'Tokyo Haneda',               iata:'HND',country:'Japan',       lat:35.55, lng:139.78, pax:79.0},
+  {id:'a06',name:'Los Angeles International',  iata:'LAX',country:'USA',         lat:33.94, lng:-118.41,pax:75.0},
+  {id:'a07',name:'Chicago O\'Hare',            iata:'ORD',country:'USA',         lat:41.98, lng:-87.91, pax:68.3},
+  {id:'a08',name:'Beijing Capital',            iata:'PEK',country:'China',       lat:40.08, lng:116.58, pax:65.0},
+  {id:'a09',name:'Shanghai Pudong',            iata:'PVG',country:'China',       lat:31.14, lng:121.80, pax:60.5},
+  {id:'a10',name:'Charles de Gaulle',          iata:'CDG',country:'France',      lat:49.01, lng:2.55,   pax:67.4},
+  {id:'a11',name:'Amsterdam Schiphol',         iata:'AMS',country:'Netherlands', lat:52.31, lng:4.76,   pax:61.9},
+  {id:'a12',name:'Frankfurt Airport',          iata:'FRA',country:'Germany',     lat:50.03, lng:8.57,   pax:58.1},
+  {id:'a13',name:'Singapore Changi',           iata:'SIN',country:'Singapore',   lat:1.36,  lng:103.99, pax:59.0},
+  {id:'a14',name:'Istanbul Airport',           iata:'IST',country:'Turkey',      lat:41.27, lng:28.74,  pax:76.2},
+  {id:'a15',name:'Guangzhou Baiyun',           iata:'CAN',country:'China',       lat:23.39, lng:113.30, pax:62.9},
+  {id:'a16',name:'Hong Kong International',    iata:'HKG',country:'China',       lat:22.31, lng:113.92, pax:50.2},
+  {id:'a17',name:'Incheon International',      iata:'ICN',country:'South Korea', lat:37.46, lng:126.44, pax:54.7},
+  {id:'a18',name:'Denver International',       iata:'DEN',country:'USA',         lat:39.86, lng:-104.67,pax:64.9},
+  {id:'a19',name:'Bangkok Suvarnabhumi',       iata:'BKK',country:'Thailand',    lat:13.69, lng:100.75, pax:52.0},
+  {id:'a20',name:'Tokyo Narita',               iata:'NRT',country:'Japan',       lat:35.77, lng:140.39, pax:37.0},
+  {id:'a21',name:'Mumbai Chhatrapati Shivaji', iata:'BOM',country:'India',       lat:19.09, lng:72.87,  pax:50.2},
+  {id:'a22',name:'Delhi Indira Gandhi',        iata:'DEL',country:'India',       lat:28.57, lng:77.10,  pax:65.3},
+  {id:'a23',name:'Kuala Lumpur International', iata:'KUL',country:'Malaysia',    lat:2.74,  lng:101.71, pax:48.7},
+  {id:'a24',name:'O.R. Tambo Johannesburg',    iata:'JNB',country:'South Africa',lat:-26.13,lng:28.24,  pax:20.8},
+  {id:'a25',name:'São Paulo Guarulhos',         iata:'GRU',country:'Brazil',      lat:-23.44,lng:-46.47, pax:36.0},
+  {id:'a26',name:'Sydney Kingsford Smith',     iata:'SYD',country:'Australia',   lat:-33.94,lng:151.18, pax:36.0},
+  {id:'a27',name:'Toronto Pearson',            iata:'YYZ',country:'Canada',      lat:43.68, lng:-79.63, pax:44.2},
+  {id:'a28',name:'Madrid Barajas',             iata:'MAD',country:'Spain',       lat:40.49, lng:-3.57,  pax:50.6},
+  {id:'a29',name:'Cairo International',        iata:'CAI',country:'Egypt',       lat:30.12, lng:31.41,  pax:21.5},
+  {id:'a30',name:'New York JFK',               iata:'JFK',country:'USA',         lat:40.64, lng:-73.78, pax:57.8},
+];
+
+/* Energy color palette by type */
+const ENERGY_COLORS={
+  refinery:'#F97316',lng:'#A855F7',nuclear:'#EAB308',
+  oilfield:'#EF4444',solar:'#F59E0B',wind:'#14B8A6',
+  hydro:'#3B82F6',hub:'#94A3B8',
+};
+
+const ENERGY_SITES_DATA=[
+  /* ── Major Refineries ── */
+  {id:'e01',name:'Ras Tanura Refinery',    company:'Saudi Aramco',    country:'Saudi Arabia',lat:26.64,lng:50.15, type:'refinery',capacity:'550k bpd'},
+  {id:'e02',name:'Jamnagar Refinery',      company:'Reliance',        country:'India',       lat:22.41,lng:70.10, type:'refinery',capacity:'1.24M bpd'},
+  {id:'e03',name:'Ruwais Refinery',        company:'ADNOC',           country:'UAE',         lat:24.10,lng:52.73, type:'refinery',capacity:'817k bpd'},
+  {id:'e04',name:'Pernis Refinery',        company:'Shell',           country:'Netherlands', lat:51.88,lng:4.37,  type:'refinery',capacity:'400k bpd'},
+  {id:'e05',name:'Ulsan Refinery',         company:'SK Innovation',   country:'South Korea', lat:35.49,lng:129.39,type:'refinery',capacity:'840k bpd'},
+  {id:'e06',name:'Baytown Refinery',       company:'ExxonMobil',      country:'USA',         lat:29.73,lng:-94.98,type:'refinery',capacity:'584k bpd'},
+  {id:'e07',name:'Port Arthur Refinery',   company:'Motiva (Aramco)', country:'USA',         lat:29.87,lng:-93.94,type:'refinery',capacity:'636k bpd'},
+  {id:'e08',name:'Abadan Refinery',        company:'NIOC',            country:'Iran',        lat:30.35,lng:48.30, type:'refinery',capacity:'400k bpd'},
+  {id:'e09',name:'Dzerzhinsk Refinery',    company:'Lukoil',          country:'Russia',      lat:56.24,lng:43.46, type:'refinery',capacity:'340k bpd'},
+  {id:'e10',name:'Balongan Refinery',      company:'Pertamina',       country:'Indonesia',   lat:-6.28,lng:108.45,type:'refinery',capacity:'125k bpd'},
+  /* ── LNG Terminals ── */
+  {id:'e11',name:'Qatar LNG (RasGas)',     company:'QatarEnergy',     country:'Qatar',       lat:25.57,lng:51.57, type:'lng',     capacity:'77M t/yr'},
+  {id:'e12',name:'Sabine Pass LNG',        company:'Cheniere',        country:'USA',         lat:29.75,lng:-93.86,type:'lng',     capacity:'30M t/yr'},
+  {id:'e13',name:'Gorgon LNG',             company:'Chevron',         country:'Australia',   lat:-21.91,lng:114.28,type:'lng',    capacity:'15.6M t/yr'},
+  {id:'e14',name:'Yamal LNG',              company:'Novatek',         country:'Russia',      lat:71.00,lng:68.40, type:'lng',     capacity:'16.5M t/yr'},
+  {id:'e15',name:'Bontang LNG',            company:'Pertamina',       country:'Indonesia',   lat:0.12, lng:117.49,type:'lng',     capacity:'21.7M t/yr'},
+  {id:'e16',name:'Gladstone LNG (GLNG)',   company:'Santos',          country:'Australia',   lat:-23.85,lng:151.26,type:'lng',    capacity:'7.8M t/yr'},
+  {id:'e17',name:'Sabetta LNG Terminal',   company:'Novatek',         country:'Russia',      lat:71.27,lng:72.60, type:'lng',     capacity:'16.5M t/yr'},
+  {id:'e18',name:'Skikda LNG Terminal',    company:'Sonatrach',       country:'Algeria',     lat:36.88,lng:6.90,  type:'lng',     capacity:'9M t/yr'},
+  /* ── Nuclear Power ── */
+  {id:'e19',name:'Zaporizhzhia Nuclear',   company:'Energoatom',      country:'Ukraine',     lat:47.51,lng:34.59, type:'nuclear', capacity:'6,000 MW'},
+  {id:'e20',name:'Hanul Nuclear Complex',  company:'KEPCO',           country:'South Korea', lat:37.09,lng:129.38,type:'nuclear', capacity:'5,900 MW'},
+  {id:'e21',name:'Tianwan Nuclear Plant',  company:'JNNPC/CNPEC',    country:'China',       lat:34.69,lng:119.44,type:'nuclear', capacity:'6,100 MW'},
+  {id:'e22',name:'Bruce Nuclear',          company:'Bruce Power',     country:'Canada',      lat:44.33,lng:-81.59,type:'nuclear', capacity:'6,550 MW'},
+  {id:'e23',name:'Palo Verde Nuclear',     company:'APS',             country:'USA',         lat:33.39,lng:-112.86,type:'nuclear',capacity:'3,937 MW'},
+  {id:'e24',name:'Cattenom Nuclear Plant', company:'EDF',             country:'France',      lat:49.40,lng:6.22,  type:'nuclear', capacity:'5,200 MW'},
+  /* ── Major Oil Fields ── */
+  {id:'e25',name:'Ghawar Oil Field',       company:'Saudi Aramco',    country:'Saudi Arabia',lat:25.10,lng:49.10, type:'oilfield',capacity:'5M bpd'},
+  {id:'e26',name:'Rumaila Oil Field',      company:'BP / CNPC',       country:'Iraq',        lat:30.20,lng:47.40, type:'oilfield',capacity:'1.4M bpd'},
+  {id:'e27',name:'Permian Basin (West TX)',company:'Multiple',        country:'USA',         lat:31.80,lng:-102.40,type:'oilfield',capacity:'5.8M bpd'},
+  {id:'e28',name:'Johan Sverdrup Field',   company:'Equinor',         country:'Norway',      lat:59.00,lng:2.70,  type:'oilfield',capacity:'755k bpd'},
+  {id:'e29',name:'Kashagan Oil Field',     company:'NCOC',            country:'Kazakhstan',  lat:45.50,lng:52.50, type:'oilfield',capacity:'400k bpd'},
+  {id:'e30',name:'Alberta Oil Sands',      company:'Multiple',        country:'Canada',      lat:56.73,lng:-111.40,type:'oilfield',capacity:'3.3M bpd'},
+  {id:'e31',name:'Vaca Muerta Shale',      company:'YPF / Shell',     country:'Argentina',   lat:-38.60,lng:-68.90,type:'oilfield',capacity:'340k bpd'},
+  {id:'e32',name:'Burgan Oil Field',       company:'KPC',             country:'Kuwait',      lat:28.96,lng:48.05, type:'oilfield',capacity:'1.6M bpd'},
+  /* ── Renewable Mega-Projects ── */
+  {id:'e33',name:'Bhadla Solar Park',      company:'NTPC / Adani',    country:'India',       lat:27.54,lng:71.91, type:'solar',   capacity:'2,245 MW'},
+  {id:'e34',name:'Hornsea 2 Offshore Wind',company:'Ørsted',          country:'UK',          lat:54.00,lng:1.80,  type:'wind',    capacity:'1,386 MW'},
+  {id:'e35',name:'Gansu Wind Power Base',  company:'State Grid',      country:'China',       lat:40.50,lng:97.00, type:'wind',    capacity:'7,965 MW'},
+  {id:'e36',name:'Tengger Desert Solar',   company:'State Grid',      country:'China',       lat:37.55,lng:105.00,type:'solar',   capacity:'1,547 MW'},
+  {id:'e37',name:'Noor Abu Dhabi Solar',   company:'ACWA Power',      country:'UAE',         lat:24.28,lng:54.05, type:'solar',   capacity:'1,177 MW'},
+  {id:'e38',name:'Al Kharsaah Solar',      company:'KAHRAMAA / Marubeni',country:'Qatar',    lat:25.25,lng:51.00, type:'solar',   capacity:'800 MW'},
+  /* ── Hydro ── */
+  {id:'e39',name:'Itaipu Hydropower',      company:'Itaipu Binacional',country:'Brazil/Paraguay',lat:-25.41,lng:-54.59,type:'hydro',capacity:'14,000 MW'},
+  {id:'e40',name:'Three Gorges Dam',       company:'CTGC',            country:'China',       lat:30.82,lng:111.00,type:'hydro',  capacity:'22,500 MW'},
+  /* ── Trading Hubs ── */
+  {id:'e41',name:'Henry Hub Gas Hub',      company:'Sabine Pipe Line', country:'USA',        lat:29.97,lng:-90.07,type:'hub',    capacity:'Benchmark'},
+  {id:'e42',name:'TTF Gas Hub (Virtual)',  company:'Gasunie',          country:'Netherlands',lat:52.37,lng:4.90,  type:'hub',    capacity:'Benchmark'},
+];
+
+/* User-pinned markers store */
+const PINNED_MARKERS=[];
 
 /* Live signal feed for right panel */
 const LIVE_SIGNALS=[
@@ -2090,6 +2430,82 @@ function initMap(){
         'circle-stroke-width':1,'circle-stroke-color':['get','color'],
         'circle-stroke-opacity':0.35}});
 
+    /* ── Infrastructure layers (ports, airports, energy) ── */
+
+    /* PORTS — blue circles + anchor labels */
+    map.addSource('ports-src',{type:'geojson',data:portsGJ()});
+    map.addLayer({id:'ports-glow',type:'circle',source:'ports-src',
+      layout:{visibility:'none'},
+      paint:{'circle-radius':['+',['get','radius'],8],'circle-color':'#0EA5E9','circle-opacity':0.13,'circle-blur':1.2}});
+    map.addLayer({id:'ports-layer',type:'circle',source:'ports-src',
+      layout:{visibility:'none'},
+      paint:{'circle-radius':['get','radius'],'circle-color':'#0EA5E9',
+             'circle-stroke-width':1.6,'circle-stroke-color':'rgba(240,244,248,.75)','circle-opacity':0.90}});
+    map.addLayer({id:'ports-label',type:'symbol',source:'ports-src',
+      layout:{visibility:'none','text-field':['get','icon'],'text-size':9,'text-anchor':'center',
+              'text-allow-overlap':true,'text-ignore-placement':true},
+      paint:{'text-color':'#ffffff','text-halo-color':'rgba(5,8,14,.9)','text-halo-width':1.2}});
+
+    /* AIRPORTS — cyan circles + plane labels */
+    map.addSource('air-src',{type:'geojson',data:airportsGJ()});
+    map.addLayer({id:'air-glow',type:'circle',source:'air-src',
+      layout:{visibility:'none'},
+      paint:{'circle-radius':['+',['get','radius'],7],'circle-color':'#22D3EE','circle-opacity':0.13,'circle-blur':1.2}});
+    map.addLayer({id:'air-layer',type:'circle',source:'air-src',
+      layout:{visibility:'none'},
+      paint:{'circle-radius':['get','radius'],'circle-color':'#22D3EE',
+             'circle-stroke-width':1.4,'circle-stroke-color':'rgba(240,244,248,.75)','circle-opacity':0.88}});
+    map.addLayer({id:'air-label',type:'symbol',source:'air-src',
+      layout:{visibility:'none','text-field':['get','iata'],'text-size':8,'text-anchor':'left',
+              'text-offset':[0.9,0],'text-allow-overlap':false,'text-ignore-placement':false},
+      paint:{'text-color':'#22D3EE','text-halo-color':'rgba(5,8,14,.92)','text-halo-width':1.4}});
+
+    /* ENERGY SITES — color-by-type circles */
+    map.addSource('energy-src',{type:'geojson',data:energyGJ()});
+    map.addLayer({id:'energy-glow',type:'circle',source:'energy-src',
+      layout:{visibility:'none'},
+      paint:{'circle-radius':['+',['get','radius'],8],'circle-color':['get','color'],'circle-opacity':0.14,'circle-blur':1.3}});
+    map.addLayer({id:'energy-layer',type:'circle',source:'energy-src',
+      layout:{visibility:'none'},
+      paint:{'circle-radius':['get','radius'],'circle-color':['get','color'],
+             'circle-stroke-width':1.4,'circle-stroke-color':'rgba(240,244,248,.70)','circle-opacity':0.88}});
+    map.addLayer({id:'energy-label',type:'symbol',source:'energy-src',
+      layout:{visibility:'none','text-field':['get','icon'],'text-size':9,'text-anchor':'center',
+              'text-allow-overlap':true,'text-ignore-placement':true},
+      paint:{'text-color':'#ffffff','text-halo-color':'rgba(5,8,14,.9)','text-halo-width':1.2}});
+
+    /* PINNED MARKERS — custom user pins */
+    map.addSource('pins-src',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+    map.addLayer({id:'pins-layer',type:'circle',source:'pins-src',
+      paint:{'circle-radius':8,'circle-color':'#00D4FF',
+             'circle-stroke-width':2,'circle-stroke-color':'#ffffff','circle-opacity':0.95}});
+    map.addLayer({id:'pins-label',type:'symbol',source:'pins-src',
+      layout:{'text-field':['get','label'],'text-size':9,'text-anchor':'left','text-offset':[1,0],
+              'text-allow-overlap':false},
+      paint:{'text-color':'#00D4FF','text-halo-color':'rgba(5,8,14,.92)','text-halo-width':1.4}});
+
+    /* Infrastructure popup interactions */
+    ['ports-layer','air-layer','energy-layer'].forEach(lid=>{
+      map.on('click',lid,e=>{
+        if(!e.features||!e.features.length)return;
+        e.preventDefault();
+        const p=e.features[0].properties;
+        const popup=document.getElementById('infra-popup');
+        document.getElementById('ipu-badge').textContent=p.badge;
+        document.getElementById('ipu-badge').style.cssText=
+          `background:${p.color}18;border:1px solid ${p.color}40;color:${p.color};padding:1px 6px;font-size:8px;font-weight:700;letter-spacing:.08em;border-radius:2px`;
+        document.getElementById('ipu-name').textContent=p.name;
+        document.getElementById('ipu-body').innerHTML=p.detail;
+        const cv=map.getCanvas().getBoundingClientRect();
+        const pt=map.project(e.lngLat);
+        popup.style.left=`${Math.min(cv.width-260,pt.x+14)}px`;
+        popup.style.top=`${Math.max(10,pt.y-90)}px`;
+        popup.classList.add('on');
+      });
+      map.on('mouseenter',lid,()=>{if(!S.addMode)map.getCanvas().style.cursor='pointer';});
+      map.on('mouseleave',lid,()=>{if(!S.addMode)map.getCanvas().style.cursor='';});
+    });
+
     /* News marker interaction */
     map.on('click','news-layer',e=>{
       if(!e.features||!e.features.length)return;
@@ -2216,6 +2632,262 @@ function intelMapUpd(){
     map.setLayoutProperty('narr-layer','visibility',S.intel.narrative?'visible':'none');
     if(S.intel.narrative&&map.getSource('narr-src'))map.getSource('narr-src').setData(narrativeGJ());
   }
+}
+
+/* ─── INFRASTRUCTURE GeoJSON GENERATORS ─── */
+function portsGJ(){
+  return{type:'FeatureCollection',features:PORTS_DATA.map(p=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[p.lng,p.lat]},
+    properties:{
+      id:p.id,name:p.name,country:p.country,teu:p.teu,rank:p.rank,
+      radius:5+Math.min(8,p.teu/8),color:'#0EA5E9',icon:'⚓',badge:'PORT',
+      detail:`<div style="color:var(--tx1);font-size:10px;line-height:1.7">
+        <div style="color:var(--tx2);font-size:9px">${p.country}</div>
+        <div style="margin-top:4px"><span style="color:var(--tx2)">Rank</span> <span style="color:#0EA5E9;font-weight:700">#${p.rank}</span></div>
+        <div><span style="color:var(--tx2)">Volume</span> <span style="color:#0EA5E9;font-weight:700">${p.teu}M TEU/yr</span></div>
+      </div>`
+    }
+  }))};
+}
+
+function airportsGJ(){
+  return{type:'FeatureCollection',features:AIRPORTS_DATA.map(a=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[a.lng,a.lat]},
+    properties:{
+      id:a.id,name:a.name,iata:a.iata,country:a.country,pax:a.pax,
+      radius:5+Math.min(7,a.pax/15),color:'#22D3EE',icon:'✈',badge:'AIRPORT',
+      detail:`<div style="color:var(--tx1);font-size:10px;line-height:1.7">
+        <div style="color:var(--tx2);font-size:9px">${a.country} · <span style="font-family:var(--mono);color:#22D3EE">${a.iata}</span></div>
+        <div style="margin-top:4px"><span style="color:var(--tx2)">Passengers</span> <span style="color:#22D3EE;font-weight:700">${a.pax}M/yr</span></div>
+      </div>`
+    }
+  }))};
+}
+
+function energyGJ(){
+  return{type:'FeatureCollection',features:ENERGY_SITES_DATA.map(e=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[e.lng,e.lat]},
+    properties:{
+      id:e.id,name:e.name,company:e.company,country:e.country,
+      type:e.type,capacity:e.capacity||'',
+      radius:6,color:ENERGY_COLORS[e.type]||'#94A3B8',
+      icon:{refinery:'⚙',lng:'🔷',nuclear:'☢',oilfield:'🛢',solar:'☀',wind:'💨',hydro:'💧',hub:'⬡'}[e.type]||'⚡',
+      badge:e.type.toUpperCase(),
+      detail:`<div style="color:var(--tx1);font-size:10px;line-height:1.7">
+        <div style="color:var(--tx2);font-size:9px">${e.company} · ${e.country}</div>
+        ${e.capacity?`<div style="margin-top:4px"><span style="color:var(--tx2)">Capacity</span> <span style="color:${ENERGY_COLORS[e.type]||'#94A3B8'};font-weight:700">${e.capacity}</span></div>`:''}
+      </div>`
+    }
+  }))};
+}
+
+function pinsGJ(){
+  return{type:'FeatureCollection',features:PINNED_MARKERS.map(p=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[p.lng,p.lat]},
+    properties:{label:p.label||'📍',id:p.id}
+  }))};
+}
+
+/* ─── INFRASTRUCTURE TOGGLE ─── */
+function toggleInfra(type){
+  S.infra[type]=!S.infra[type];
+  const tog=document.getElementById({ports:'porttog',airports:'airtog',energy:'energytog'}[type]);
+  if(tog)tog.classList.toggle('on',S.infra[type]);
+  updateInfraLayers();
+  renderInfraLegend();
+}
+
+function updateInfraLayers(){
+  if(!map||!map.getSource('ports-src'))return;
+  const show=(layers,vis)=>layers.forEach(l=>{if(map.getLayer(l))map.setLayoutProperty(l,'visibility',vis?'visible':'none');});
+  show(['ports-layer','ports-glow','ports-label'],S.infra.ports);
+  show(['air-layer','air-glow','air-label'],S.infra.airports);
+  show(['energy-layer','energy-glow','energy-label'],S.infra.energy);
+  /* Update pins source */
+  if(map.getSource('pins-src'))map.getSource('pins-src').setData(pinsGJ());
+}
+
+function renderInfraLegend(){
+  const el=document.getElementById('infra-legend');if(!el)return;
+  const anyOn=Object.values(S.infra).some(v=>v);
+  el.style.display=anyOn?'flex':'none';
+  const items=[];
+  if(S.infra.ports)items.push({color:'#0EA5E9',label:'Major Port'});
+  if(S.infra.airports)items.push({color:'#22D3EE',label:'Major Airport'});
+  if(S.infra.energy){
+    Object.entries(ENERGY_COLORS).forEach(([k,c])=>items.push({color:c,label:k.charAt(0).toUpperCase()+k.slice(1)}));
+  }
+  el.innerHTML=items.map(i=>`
+    <div style="display:flex;align-items:center;gap:5px;padding:3px 8px;background:var(--bg1);border:1px solid var(--bd1)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${i.color};flex-shrink:0"></div>
+      <span style="font-size:8px;color:var(--tx1)">${i.label}</span>
+    </div>`).join('');
+}
+
+/* ─── SEARCH SYSTEM ─── */
+let _searchResults=[];
+
+function openSearch(){
+  const inp=document.getElementById('sim-search');
+  if(inp&&inp.value.trim())renderSearch(inp.value.trim());
+}
+
+function clearSearch(){
+  const inp=document.getElementById('sim-search');
+  if(inp)inp.value='';
+  _searchResults=[];
+  const res=document.getElementById('search-results');
+  if(res)res.classList.remove('open');
+  document.getElementById('search-clear').style.display='none';
+}
+
+function onSearchInput(val){
+  document.getElementById('search-clear').style.display=val?'block':'none';
+  if(!val.trim()){
+    _searchResults=[];
+    document.getElementById('search-results').classList.remove('open');
+    return;
+  }
+  renderSearch(val.trim());
+}
+
+function onSearchKey(e){
+  if(e.key==='Escape')clearSearch();
+  if(e.key==='Enter'&&_searchResults.length>0)pickSearchResult(_searchResults[0]);
+}
+
+function renderSearch(q){
+  const res=document.getElementById('search-results');
+  /* Coordinate pattern: "lat, lng" */
+  const coordMatch=q.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
+  _searchResults=[];
+
+  if(coordMatch){
+    const lat=parseFloat(coordMatch[1]),lng=parseFloat(coordMatch[2]);
+    if(lat>=-90&&lat<=90&&lng>=-180&&lng<=180){
+      _searchResults=[{type:'coord',label:`Fly to ${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+        icon:'📍',sub:'Custom coordinates',lat,lng}];
+    }
+  }
+
+  const ql=q.toLowerCase();
+  /* Assets */
+  S.assets.filter(a=>a.name.toLowerCase().includes(ql)||a.country.toLowerCase().includes(ql))
+    .slice(0,4).forEach(a=>_searchResults.push({type:'asset',label:a.name,icon:'◉',sub:`${a.sector} · ${a.country}`,id:a.id,lat:a.lat,lng:a.lng}));
+  /* Ports */
+  PORTS_DATA.filter(p=>p.name.toLowerCase().includes(ql)||p.country.toLowerCase().includes(ql))
+    .slice(0,4).forEach(p=>_searchResults.push({type:'port',label:p.name,icon:'⚓',sub:`Port · ${p.country} · ${p.teu}M TEU`,lat:p.lat,lng:p.lng}));
+  /* Airports */
+  AIRPORTS_DATA.filter(a=>a.name.toLowerCase().includes(ql)||a.iata.toLowerCase().includes(ql)||a.country.toLowerCase().includes(ql))
+    .slice(0,4).forEach(a=>_searchResults.push({type:'airport',label:a.name,icon:'✈',sub:`Airport · ${a.iata} · ${a.country}`,lat:a.lat,lng:a.lng}));
+  /* Energy sites */
+  ENERGY_SITES_DATA.filter(e=>e.name.toLowerCase().includes(ql)||e.company.toLowerCase().includes(ql)||e.country.toLowerCase().includes(ql))
+    .slice(0,4).forEach(e=>_searchResults.push({type:'energy',label:e.name,icon:'⚡',sub:`${e.type} · ${e.company} · ${e.country}`,lat:e.lat,lng:e.lng}));
+
+  if(!_searchResults.length){
+    res.classList.remove('open');return;
+  }
+  res.innerHTML=_searchResults.map((r,i)=>`
+    <div class="search-result-item" onclick="pickSearchResult(_searchResults[${i}])">
+      <span style="font-size:12px;line-height:1">${r.icon}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:10px;font-weight:600;color:var(--tx0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.label}</div>
+        <div style="font-size:8px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.sub}</div>
+      </div>
+    </div>`).join('');
+  res.classList.add('open');
+}
+
+function pickSearchResult(r){
+  if(!r)return;
+  clearSearch();
+  if(map)map.flyTo({center:[r.lng,r.lat],zoom:r.type==='coord'?8:6,duration:900,essential:true});
+  if(r.type==='asset')pickAsset(r.id);
+  /* Auto-enable the relevant infra layer for visual context */
+  if(r.type==='port'&&!S.infra.ports){toggleInfra('ports');}
+  if(r.type==='airport'&&!S.infra.airports){toggleInfra('airports');}
+  if(r.type==='energy'&&!S.infra.energy){toggleInfra('energy');}
+}
+
+/* ─── PIN MODAL ─── */
+function openPinModal(){
+  const m=document.getElementById('pin-modal');
+  if(m)m.classList.add('on');
+  setTimeout(()=>document.getElementById('pin-search')?.focus(),80);
+}
+
+function closePinModal(){
+  document.getElementById('pin-modal').classList.remove('on');
+  document.getElementById('pin-search').value='';
+  document.getElementById('pin-lat').value='';
+  document.getElementById('pin-lng').value='';
+  document.getElementById('pin-label').value='';
+  document.getElementById('pin-suggestions').style.display='none';
+}
+
+function onPinSearchInput(val){
+  const sugg=document.getElementById('pin-suggestions');
+  const coordMatch=val.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
+  if(coordMatch){
+    const lat=parseFloat(coordMatch[1]),lng=parseFloat(coordMatch[2]);
+    document.getElementById('pin-lat').value=lat;
+    document.getElementById('pin-lng').value=lng;
+    sugg.style.display='none';
+    return;
+  }
+  if(!val.trim()){sugg.style.display='none';return;}
+  const ql=val.toLowerCase();
+  const hits=[
+    ...PORTS_DATA.filter(p=>p.name.toLowerCase().includes(ql)).slice(0,3).map(p=>({name:p.name,lat:p.lat,lng:p.lng,type:'port'})),
+    ...AIRPORTS_DATA.filter(a=>a.name.toLowerCase().includes(ql)||a.iata.toLowerCase().includes(ql)).slice(0,3).map(a=>({name:a.name,lat:a.lat,lng:a.lng,type:'airport'})),
+    ...ENERGY_SITES_DATA.filter(e=>e.name.toLowerCase().includes(ql)||e.company.toLowerCase().includes(ql)).slice(0,3).map(e=>({name:e.name,lat:e.lat,lng:e.lng,type:'energy'})),
+    ...S.assets.filter(a=>a.name.toLowerCase().includes(ql)).slice(0,2).map(a=>({name:a.name,lat:a.lat,lng:a.lng,type:'asset'})),
+  ].slice(0,6);
+  if(!hits.length){sugg.style.display='none';return;}
+  sugg.style.display='block';
+  sugg.innerHTML=hits.map(h=>`
+    <div onclick="pinFillCoords(${h.lat},${h.lng},'${h.name.replace(/'/g,"\\'")}');this.parentNode.style.display='none'"
+      style="padding:6px 12px;cursor:pointer;font-size:10px;color:var(--tx0);border-bottom:1px solid var(--bd0)"
+      onmouseenter="this.style.background='var(--bg3)'" onmouseleave="this.style.background=''">
+      ${h.name} <span style="color:var(--tx2);font-size:8px">· ${h.type}</span>
+    </div>`).join('');
+}
+
+function pinFillCoords(lat,lng,label){
+  document.getElementById('pin-lat').value=lat;
+  document.getElementById('pin-lng').value=lng;
+  if(!document.getElementById('pin-label').value)document.getElementById('pin-label').value=label;
+}
+
+function confirmPin(){
+  const lat=parseFloat(document.getElementById('pin-lat').value);
+  const lng=parseFloat(document.getElementById('pin-lng').value);
+  const label=document.getElementById('pin-label').value.trim()||'📍';
+  if(isNaN(lat)||isNaN(lng)){showToast('Enter valid coordinates.');return;}
+  PINNED_MARKERS.push({id:`pin${Date.now()}`,lat,lng,label});
+  if(map&&map.getSource('pins-src'))map.getSource('pins-src').setData(pinsGJ());
+  if(map)map.flyTo({center:[lng,lat],zoom:7,duration:900});
+  closePinModal();
+  showToast(`Pinned: ${label}`);
+}
+
+function pinAndAdd(){
+  const lat=parseFloat(document.getElementById('pin-lat').value);
+  const lng=parseFloat(document.getElementById('pin-lng').value);
+  const label=document.getElementById('pin-label').value.trim()||'Custom Site';
+  if(isNaN(lat)||isNaN(lng)){showToast('Enter valid coordinates.');return;}
+  closePinModal();
+  /* Pre-fill the add-asset modal at these coordinates */
+  S.coords={lat,lng};
+  document.getElementById('ncoords').textContent=`${lat.toFixed(4)}° N,  ${lng.toFixed(4)}° E`;
+  document.getElementById('nname').value=label;
+  document.getElementById('cfbtn').disabled=!label;
+  document.getElementById('amodal').classList.add('on');
+  if(map)map.flyTo({center:[lng,lat],zoom:6,duration:800});
 }
 
 function updateGradLegend(){
