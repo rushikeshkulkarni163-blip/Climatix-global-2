@@ -817,6 +817,138 @@ body {
 .mstat-scn-val { font-family: var(--mono); font-size: 12px; font-weight: 700; }
 
 /* ═══════════════════════════════════════
+   INTELLIGENCE LAYER BUTTONS
+═══════════════════════════════════════ */
+.intel-section-hdr {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 14px;
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .14em; color: var(--tx2);
+  border-bottom: 1px solid var(--bd0);
+}
+.intel-section-hdr .max-badge {
+  margin-left: auto; font-size: 7px; letter-spacing: .08em;
+  color: var(--acc); padding: 1px 5px;
+  border: 1px solid rgba(0,212,255,.25); background: var(--acc2);
+}
+.intel-btn {
+  width: 100%; display: flex; align-items: center; gap: 9px;
+  padding: 7px 14px;
+  background: transparent; border: 0;
+  border-bottom: 1px solid var(--bd0);
+  border-left: 2px solid transparent;
+  text-align: left; cursor: pointer; transition: background .12s;
+}
+.intel-btn:hover { background: var(--bghov); }
+.intel-btn.on { background: var(--bg3); }
+.intel-btn.on { border-left-color: var(--btn-accent, var(--acc)); }
+.intel-ico {
+  width: 24px; height: 24px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--bd1); background: var(--bg2);
+  font-size: 11px; transition: all .12s;
+}
+.intel-btn.on .intel-ico { border-color: var(--bd3); background: var(--bg4); }
+.intel-name { font-size: 11px; font-weight: 600; color: var(--tx1); }
+.intel-btn.on .intel-name { color: var(--tx0); }
+.intel-desc { font-size: 9px; color: var(--tx2); margin-top: 1px; }
+.intel-score {
+  margin-left: auto; font-family: var(--mono);
+  font-size: 10px; font-weight: 700; flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════
+   ALERT STACK
+═══════════════════════════════════════ */
+#alert-stack {
+  position: fixed; bottom: 72px; right: 16px;
+  z-index: 800; display: flex; flex-direction: column-reverse;
+  gap: 6px; pointer-events: none;
+  width: 300px;
+}
+.alert-item {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 9px 12px;
+  background: rgba(10,10,10,.92); border: 1px solid;
+  backdrop-filter: blur(12px);
+  animation: alertIn .3s ease forwards;
+  pointer-events: all; cursor: pointer;
+}
+@keyframes alertIn { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:none} }
+.alert-critical { border-color: rgba(255,77,79,.45); box-shadow: 0 0 16px rgba(255,77,79,.12); }
+.alert-high     { border-color: rgba(255,140,66,.45); box-shadow: 0 0 16px rgba(255,140,66,.10); }
+.alert-medium   { border-color: rgba(255,200,87,.35); box-shadow: 0 0 12px rgba(255,200,87,.08); }
+.alert-info     { border-color: rgba(0,212,255,.30);  box-shadow: 0 0 12px rgba(0,212,255,.08); }
+.alert-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.alert-body { flex: 1; min-width: 0; }
+.alert-msg { font-size: 10px; font-weight: 600; color: var(--tx0); line-height: 1.4; }
+.alert-impact { font-size: 9px; color: var(--tx2); margin-top: 2px; font-family: var(--mono); }
+.alert-close { background: none; border: none; color: var(--tx3); font-size: 11px; cursor: pointer; flex-shrink: 0; transition: color .12s; padding: 0; line-height: 1; }
+.alert-close:hover { color: var(--tx0); }
+
+/* ═══════════════════════════════════════
+   SIGNAL ITEMS (right panel)
+═══════════════════════════════════════ */
+.signal-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 0; border-bottom: 1px solid var(--bd0);
+}
+.signal-item:last-child { border-bottom: none; }
+.signal-icon-wrap { font-size: 12px; flex-shrink: 0; margin-top: 1px; line-height: 1; }
+.signal-body { flex: 1; min-width: 0; }
+.signal-msg { font-size: 10px; font-weight: 600; color: var(--tx0); line-height: 1.4; }
+.signal-impact { font-size: 9px; margin-top: 2px; font-family: var(--mono); }
+.signal-delta {
+  flex-shrink: 0; font-family: var(--mono); font-size: 11px; font-weight: 700;
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════
+   NEWS ITEMS (right panel)
+═══════════════════════════════════════ */
+.news-item {
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 8px 0; border-bottom: 1px solid var(--bd0);
+}
+.news-item:last-child { border-bottom: none; }
+.news-tag {
+  display: inline-block; font-size: 7px; font-weight: 700;
+  letter-spacing: .10em; padding: 2px 7px;
+  border: 1px solid; text-transform: uppercase; width: fit-content;
+}
+.news-title { font-size: 10px; font-weight: 700; color: var(--tx0); line-height: 1.4; }
+.news-detail { font-size: 9px; color: var(--tx2); line-height: 1.5; margin-top: 1px; }
+.news-impact { font-size: 8px; color: var(--tx3); margin-top: 3px; font-family: var(--mono); letter-spacing: .04em; }
+
+/* ═══════════════════════════════════════
+   EXTENDED RISK BREAKDOWN (new components)
+═══════════════════════════════════════ */
+.risk-component-row {
+  display: flex; flex-direction: column; gap: 3px; margin-bottom: 9px;
+}
+.risk-component-row:last-child { margin-bottom: 0; }
+.risk-comp-header { display: flex; align-items: center; justify-content: space-between; }
+.risk-comp-sub { font-size: 8px; color: var(--tx3); letter-spacing: .04em; margin-top: 1px; }
+
+/* ═══════════════════════════════════════
+   NEWS POPUP OVERLAY
+═══════════════════════════════════════ */
+#news-popup {
+  position: absolute; z-index: 40;
+  width: 230px; padding: 0;
+  background: rgba(10,10,10,.96); border: 1px solid var(--bd3);
+  box-shadow: 0 16px 40px rgba(0,0,0,.7);
+  backdrop-filter: blur(14px) saturate(1.4);
+  display: none;
+}
+#news-popup.on { display: block; animation: fadein .2s ease; }
+.npu-head { padding: 8px 12px; border-bottom: 1px solid var(--bd1); display: flex; align-items: center; justify-content: space-between; }
+.npu-tag { font-size: 7px; font-weight: 700; letter-spacing: .10em; padding: 2px 7px; border: 1px solid; text-transform: uppercase; }
+.npu-title { font-size: 10px; font-weight: 700; color: var(--tx0); padding: 8px 12px 4px; line-height: 1.4; }
+.npu-detail { font-size: 9px; color: var(--tx2); padding: 0 12px 6px; line-height: 1.5; }
+.npu-impact { font-size: 8px; font-family: var(--mono); letter-spacing: .04em; padding: 6px 12px; border-top: 1px solid var(--bd0); }
+
+/* ═══════════════════════════════════════
    GRADIENT LEGEND (fixed bottom-left)
 ═══════════════════════════════════════ */
 #grad-legend {
@@ -868,6 +1000,9 @@ body {
 
 <!-- ═══════════════════════════════════ SIM ════ -->
 <div id="sim">
+
+  <!-- ALERT STACK -->
+  <div id="alert-stack"></div>
 
   <!-- SCENARIO SHIFT BANNER -->
   <div id="scn-banner">
@@ -939,6 +1074,18 @@ body {
         </div>
       </div>
 
+      <!-- Intelligence Layers -->
+      <div class="pb">
+        <div class="intel-section-hdr">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="5" cy="5" r="3.8"/><line x1="5" y1="2" x2="5" y2="5.5" stroke-linecap="round"/><circle cx="5" cy="7" r=".6" fill="currentColor" stroke="none"/>
+          </svg>
+          Intelligence Layers
+          <span class="max-badge">MAX 2</span>
+        </div>
+        <div id="intel-btns"></div>
+      </div>
+
       <!-- Asset list -->
       <div class="al-head">
         <div class="al-lbl">Portfolio <span class="al-count">(<span id="acnt">0</span> assets)</span></div>
@@ -969,6 +1116,16 @@ body {
         </div>
       </div>
       <div id="ahint">Click map to place project</div>
+      <!-- News event popup — positioned absolutely within map wrapper -->
+      <div id="news-popup">
+        <div class="npu-head">
+          <span class="npu-tag" id="npu-tag"></span>
+          <button class="btn-x" onclick="document.getElementById('news-popup').classList.remove('on')">✕</button>
+        </div>
+        <div class="npu-title" id="npu-title"></div>
+        <div class="npu-detail" id="npu-detail"></div>
+        <div class="npu-impact" id="npu-impact"></div>
+      </div>
       <div id="amodal">
         <div class="am-head">
           <span class="am-title">Add Project</span>
@@ -1046,10 +1203,153 @@ const S={scenario:'2.0',year:2030,layer:'physical',selId:null,
   assets:[],addMode:false,coords:null,showLinks:true,showAssets:true,playing:false,timer:null,
   liveMode:false,activeTab:'risk',
   hazards:{heat:true,flood:true,storm:true,drought:true,sealevel:true},
-  heatmapOpacity:0.40};
+  heatmapOpacity:0.40,
+  /* Intelligence layer state — max 2 active simultaneously */
+  intel:{sentiment:false,news:false,regulation:false,fuel:false,narrative:false},
+  intelOrder:[],  /* tracks toggle order for LRU eviction */
+};
 
 let _mapUpdTimer=null;
 function debouncedMapUpd(){clearTimeout(_mapUpdTimer);_mapUpdTimer=setTimeout(mapUpd,80);}
+
+/* ─── INTELLIGENCE DATA STORES ──────────────────────────────────────
+   All values simulate real-world data structures. Each store is
+   keyed on the same region IDs produced by rgn() so risk engines
+   and map generators stay perfectly in sync.
+─────────────────────────────────────────────────────────────────── */
+
+/* [1] Social Sentiment: score 0-100 (higher = more negative/activist) */
+const SENTIMENT_SCORES={
+  EU:         {score:72,trend:+8, label:'Climate activism elevated',     color:'#FF8C42'},
+  UK:         {score:65,trend:+5, label:'ESG policy pressure high',       color:'#FF8C42'},
+  USA:        {score:44,trend:-3, label:'Mixed — IRA vs. rollback risk',  color:'#FFC857'},
+  Canada:     {score:52,trend:+2, label:'Carbon tax debate active',       color:'#FFC857'},
+  Japan:      {score:48,trend:+4, label:'GX transition scrutiny rising',  color:'#FFC857'},
+  SouthKorea: {score:38,trend:+2, label:'K-ETS expansion concerns',       color:'#00D4FF'},
+  China:      {score:31,trend:+6, label:'Net-zero narrative momentum',    color:'#00D4FF'},
+  India:      {score:25,trend:+8, label:'Growth vs. emissions tension',   color:'#00FF94'},
+  Australia:  {score:41,trend:+12,label:'Climate election pressure',      color:'#FFC857'},
+  Brazil:     {score:58,trend:-5, label:'Deforestation scrutiny high',    color:'#FF8C42'},
+  LatAm:      {score:35,trend:+3, label:'Moderate regional activism',     color:'#00D4FF'},
+  Russia:     {score:15,trend:+1, label:'Minimal ESG civil pressure',     color:'#00FF94'},
+  MENA:       {score:28,trend:+9, label:'Net-zero pledges vs. fossil',    color:'#00D4FF'},
+  Africa:     {score:22,trend:+5, label:'Climate finance deficit',        color:'#00FF94'},
+  SEA:        {score:38,trend:+7, label:'Coastal flood awareness rising', color:'#00D4FF'},
+  Global:     {score:42,trend:+4, label:'Global average sentiment',       color:'#FFC857'},
+};
+
+/* [2] News & event intelligence feed */
+const NEWS_FEED=[
+  {id:'n01',lat:52.0,lng:8.0,  type:'regulation',title:'EU CBAM Phase 2 Activated',
+    detail:'Carbon border adjustment mechanism expands to chemicals and plastics sectors.',
+    impact:14,sector:'Manufacturing',tag:'REGULATION',color:'#A78BFA'},
+  {id:'n02',lat:51.5,lng:0.1,  type:'regulation',title:'UK Mandatory Sustainability Reporting',
+    detail:'TCFD-aligned disclosure becomes mandatory for 2,000+ UK companies.',
+    impact:8, sector:'Finance',tag:'REGULATION',color:'#A78BFA'},
+  {id:'n03',lat:29.5,lng:-95.0,type:'disruption',title:'Gulf Coast Cat-4 Hurricane Warning',
+    detail:'Category 4 storm threatens refinery corridor operations and logistics routes.',
+    impact:22,sector:'Energy',tag:'DISRUPTION',color:'#FF4D4F'},
+  {id:'n04',lat:31.0,lng:121.0,type:'disruption',title:'Yangtze Delta: Flood Level 3 Alert',
+    detail:'Record rainfall disrupts logistics and manufacturing production in Yangtze Delta.',
+    impact:18,sector:'Manufacturing',tag:'DISRUPTION',color:'#FF4D4F'},
+  {id:'n05',lat:18.5,lng:73.5, type:'regulation',title:'India Carbon Trading Scheme Launch',
+    detail:'Bureau of Energy Efficiency finalises domestic carbon credit mechanism.',
+    impact:6, sector:'Energy',tag:'REGULATION',color:'#A78BFA'},
+  {id:'n06',lat:-22.0,lng:118.0,type:'regulation',title:'Australia Safeguard Mechanism Tightens',
+    detail:'Mining sector faces accelerated emissions reduction obligations under revised rules.',
+    impact:11,sector:'Mining',tag:'REGULATION',color:'#A78BFA'},
+  {id:'n07',lat:25.0,lng:55.0, type:'market',title:'MENA Energy Price Surge: +18% YoY',
+    detail:'Oil market turbulence and regional tensions drive fuel cost uncertainty.',
+    impact:9, sector:'Energy',tag:'MARKET',color:'#FFC857'},
+  {id:'n08',lat:51.9,lng:4.5,  type:'disruption',title:'Rotterdam Port: 2-Week Strike Action',
+    detail:'Container terminal logistics suspended — supply chain cascade risk elevated.',
+    impact:16,sector:'Shipping',tag:'DISRUPTION',color:'#FF4D4F'},
+  {id:'n09',lat:-15.0,lng:-48.0,type:'disruption',title:'Cerrado Drought: Crop Yield -23%',
+    detail:'Severe drought conditions reduce Brazil agricultural output significantly.',
+    impact:20,sector:'Agriculture',tag:'DISRUPTION',color:'#FF4D4F'},
+  {id:'n10',lat:6.5,lng:3.5,   type:'regulation',title:'Nigeria Carbon Tax Consultation',
+    detail:'Federal government proposes $10/tCO₂ carbon levy for major emitters.',
+    impact:5, sector:'Energy',tag:'REGULATION',color:'#A78BFA'},
+  {id:'n11',lat:35.6,lng:139.7,type:'regulation',title:'Japan GX Bond: Industrial Phase 2',
+    detail:'Green transformation bond program enters industrial decarbonisation phase.',
+    impact:7, sector:'Manufacturing',tag:'REGULATION',color:'#A78BFA'},
+  {id:'n12',lat:50.1,lng:8.7,  type:'market',title:'EU Electricity Prices: +28% Peak',
+    detail:'Winter demand and grid constraints drive record-high industrial electricity costs.',
+    impact:12,sector:'Manufacturing',tag:'MARKET',color:'#FFC857'},
+];
+
+/* [3] Policy / Regulation strictness by region */
+const REGULATION_DATA={
+  EU:         {strictness:88,carbonTax:68,label:'EU ETS + CBAM active',        complianceCost:'VERY HIGH'},
+  UK:         {strictness:75,carbonTax:55,label:'UK ETS + ESOS mandate',       complianceCost:'HIGH'},
+  USA:        {strictness:52,carbonTax:12,label:'IRA + State ETS programs',     complianceCost:'MODERATE'},
+  Canada:     {strictness:62,carbonTax:65,label:'Federal Carbon Price $65/t',   complianceCost:'HIGH'},
+  Japan:      {strictness:55,carbonTax:8, label:'GX Transition Bond scheme',    complianceCost:'MODERATE'},
+  SouthKorea: {strictness:48,carbonTax:8, label:'K-ETS Phase 3',               complianceCost:'MODERATE'},
+  China:      {strictness:42,carbonTax:9, label:'National ETS (CNY~60/t)',      complianceCost:'LOW-MOD'},
+  India:      {strictness:22,carbonTax:0, label:'PAT scheme + proposed ETS',    complianceCost:'LOW'},
+  Australia:  {strictness:38,carbonTax:0, label:'Safeguard Mechanism 2024',     complianceCost:'MODERATE'},
+  Brazil:     {strictness:18,carbonTax:0, label:'Voluntary + REDD+',            complianceCost:'LOW'},
+  LatAm:      {strictness:14,carbonTax:0, label:'NDC-only framework',           complianceCost:'MINIMAL'},
+  Russia:     {strictness:8, carbonTax:0, label:'Minimal regulatory framework', complianceCost:'NONE'},
+  MENA:       {strictness:18,carbonTax:0, label:'Net-zero pledges only',        complianceCost:'LOW'},
+  Africa:     {strictness:10,carbonTax:0, label:'Partial NDC framework',        complianceCost:'NONE'},
+  SEA:        {strictness:22,carbonTax:0, label:'National sector policies',     complianceCost:'LOW'},
+  Global:     {strictness:35,carbonTax:15,label:'Mixed policy coverage',        complianceCost:'LOW'},
+};
+
+/* [4] Fuel & energy cost index (100 = global 2024 baseline) */
+const FUEL_PRICE_DATA={
+  EU:         {index:142,electricity:0.28,diesel:1.82,trend:'+12%',color:'#FF8C42'},
+  UK:         {index:132,electricity:0.24,diesel:1.72,trend:'+8%', color:'#FF8C42'},
+  USA:        {index:88, electricity:0.12,diesel:1.05,trend:'+3%', color:'#FFC857'},
+  Canada:     {index:92, electricity:0.10,diesel:1.15,trend:'+4%', color:'#FFC857'},
+  Japan:      {index:118,electricity:0.22,diesel:1.55,trend:'+6%', color:'#FF8C42'},
+  SouthKorea: {index:108,electricity:0.14,diesel:1.45,trend:'+5%', color:'#FFC857'},
+  China:      {index:72, electricity:0.08,diesel:0.92,trend:'+2%', color:'#00FF94'},
+  India:      {index:68, electricity:0.07,diesel:0.88,trend:'+1%', color:'#00FF94'},
+  Australia:  {index:78, electricity:0.14,diesel:1.12,trend:'+5%', color:'#FFC857'},
+  Brazil:     {index:62, electricity:0.09,diesel:0.85,trend:'-2%', color:'#00FF94'},
+  LatAm:      {index:65, electricity:0.10,diesel:0.90,trend:'+1%', color:'#00FF94'},
+  Russia:     {index:48, electricity:0.04,diesel:0.62,trend:'-5%', color:'#00FF94'},
+  MENA:       {index:42, electricity:0.05,diesel:0.55,trend:'+8%', color:'#FFC857'},
+  Africa:     {index:55, electricity:0.12,diesel:0.88,trend:'+4%', color:'#FFC857'},
+  SEA:        {index:70, electricity:0.09,diesel:0.92,trend:'+3%', color:'#FFC857'},
+  Global:     {index:85, electricity:0.13,diesel:1.10,trend:'+4%', color:'#FFC857'},
+};
+
+/* [5] Narrative risk: disclosure gaps, greenwashing, sentiment mismatch by sector */
+const NARRATIVE_DATA={
+  Energy:       {disclosureGap:52,greenwashRisk:68,sentimentMismatch:62},
+  Mining:       {disclosureGap:48,greenwashRisk:58,sentimentMismatch:55},
+  Manufacturing:{disclosureGap:38,greenwashRisk:42,sentimentMismatch:40},
+  Agriculture:  {disclosureGap:44,greenwashRisk:38,sentimentMismatch:48},
+  'Real Estate':{disclosureGap:35,greenwashRisk:32,sentimentMismatch:35},
+  Finance:      {disclosureGap:28,greenwashRisk:45,sentimentMismatch:32},
+  Technology:   {disclosureGap:22,greenwashRisk:28,sentimentMismatch:25},
+  Logistics:    {disclosureGap:32,greenwashRisk:35,sentimentMismatch:38},
+  Shipping:     {disclosureGap:45,greenwashRisk:52,sentimentMismatch:48},
+};
+
+/* Live signal feed for right panel */
+const LIVE_SIGNALS=[
+  {icon:'⚠',type:'regulation',msg:'EU carbon price +€8/tCO₂ effective Q2 2026',
+    impact:'+$14M compliance burden',delta:14,region:'EU',sector:'Manufacturing'},
+  {icon:'🔥',type:'sentiment',msg:'Rotterdam: port worker climate strike — wave 2',
+    impact:'+18% supply disruption risk',delta:18,region:'EU',sector:'Shipping'},
+  {icon:'📰',type:'news',msg:'Yangtze flood warning elevated to Category 3',
+    impact:'+22% physical risk exposure',delta:22,region:'China',sector:'Manufacturing'},
+  {icon:'⛽',type:'fuel',msg:'EU electricity surges +12% YoY peak demand',
+    impact:'+$6M annual operating cost',delta:6,region:'EU',sector:'Energy'},
+  {icon:'📋',type:'narrative',msg:'ESG disclosure gap: Energy sector audits intensify',
+    impact:'Reputational risk +15 pts',delta:15,region:'Global',sector:'Energy'},
+  {icon:'⚠',type:'regulation',msg:'Australia: safeguard mechanism accelerated for mining',
+    impact:'+$8M mandatory capex',delta:8,region:'Australia',sector:'Mining'},
+  {icon:'📰',type:'news',msg:'Gulf Coast Cat-4 forecast threatens refinery operations',
+    impact:'Physical risk spike: 3 assets',delta:22,region:'USA',sector:'Energy'},
+  {icon:'⛽',type:'fuel',msg:'MENA oil price volatility: diesel +8% 30-day avg',
+    impact:'+$4M transport cost increase',delta:9,region:'MENA',sector:'Logistics'},
+];
 
 /* ─── API LAYER ─── */
 const API='http://localhost:8000';
@@ -1258,47 +1558,75 @@ function _sc(a,sid,yr,amap){
 }
 
 /* ── Fast calc (used by heatmap + asset list — no cascade) ── */
+/* New formula: Physical×0.30 + Transition×0.25 + SC×0.15 + Policy×0.10 + Market×0.10 + Narrative×0.10 */
 function calc(a,sid,yr){
   const ph=_phys(a,sid,yr),tr=_trans(a,sid,yr);
   const sw=SW[a.sector]||{pm:1,tm:1,el:1.5};
   const sc=Math.min(100,ph.phys*.35+tr.trans*.25+15);
-  const tot=Math.min(100,ph.phys*.40+tr.trans*.35+sc*.25);
+  const pol=_policy(a,sid,yr);
+  const mkt=_market(a,sid,yr);
+  const narr=_narrative(a,sid,yr);
+  /* Six-component composite: weights sum to 1.00 */
+  const tot=Math.min(100,
+    ph.phys*.30+tr.trans*.25+sc*.15+pol*.10+mkt*.10+narr*.10);
   const lvl=tot>=68?'critical':tot>=46?'high':tot>=26?'medium':'low';
   const sens=REV_SENS[a.sector]||.12;
-  const rar=Math.min(48,(ph.phys/100*sens*100*.55+tr.trans/100*sens*100*.45));
+  /* Revenue at risk now also reflects policy + narrative channels */
+  const rar=Math.min(52,(ph.phys/100*sens*100*.50+tr.trans/100*sens*100*.35+pol/100*sens*100*.15));
   const ebi=Math.min(80,rar*sw.el);
   const ccm=((a.s1+a.s2)*tr.ecp)/1e6;
   return{heat:ph.heat,flood:ph.flood,storm:ph.storm,drought:ph.drought,seaLevel:ph.seaLevel,
     phys:ph.phys,carbonCost:tr.carbonCost,policyRisk:tr.policyRisk,techDisruption:tr.techDisruption,
     marketShift:tr.marketShift,trans:tr.trans,ecp:tr.ecp,cp:tr.cp,
-    rar,ebi,ccm,sc,tot,lvl,pol:tr.policyRisk,tech:tr.techDisruption,
+    pol,mkt,narr,
+    rar,ebi,ccm,sc,tot,lvl,pol2:tr.policyRisk,tech:tr.techDisruption,
     stranded:tot>=68&&(a.sector==='Energy'||a.sector==='Mining')};
 }
 
-/* ── Full calc (panel only — cascade + drivers + decision + tipping) ── */
+/* ── Full calc (panel only — cascade + all 6 components + drivers) ── */
 function calcFull(a,sid,yr){
   const amap={};S.assets.forEach(x=>amap[x.id]=x);
   const ph=_phys(a,sid,yr),tr=_trans(a,sid,yr);
   const sw=SW[a.sector]||{pm:1,tm:1,el:1.5,dep:.5};
   const sc=_sc(a,sid,yr,amap);
-  const tot=Math.min(100,ph.phys*.40+tr.trans*.35+sc*.25);
+  const pol=_policy(a,sid,yr);
+  const mkt=_market(a,sid,yr);
+  const narr=_narrative(a,sid,yr);
+
+  /* Six-component composite */
+  const tot=Math.min(100,ph.phys*.30+tr.trans*.25+sc*.15+pol*.10+mkt*.10+narr*.10);
   const lvl=tot>=68?'critical':tot>=46?'high':tot>=26?'medium':'low';
 
-  /* Financial */
+  /* Financial — extended for all 6 channels */
   const sens=REV_SENS[a.sector]||.12;
-  const rar=Math.min(48,(ph.phys/100*sens*100*.55+tr.trans/100*sens*100*.45));
+  const rar=Math.min(52,(ph.phys/100*sens*100*.50+tr.trans/100*sens*100*.35+pol/100*sens*100*.15));
   const ebi=Math.min(80,rar*sw.el);
   const ccm=((a.s1+a.s2)*tr.ecp)/1e6;
   const adaptCost=Math.min(a.rev*.18,(ph.phys/100)*a.rev*.22);
-  const costIncrease=ccm+adaptCost;
+  /* Fuel cost increase from market risk */
+  const rid=rgn(a.lat,a.lng);
+  const fuelData=FUEL_PRICE_DATA[rid]||FUEL_PRICE_DATA.Global;
+  const fuelCostIncrease=a.rev*(fuelData.index/100-1)*0.04;
+  /* Policy compliance cost */
+  const regData=REGULATION_DATA[rid]||REGULATION_DATA.Global;
+  const complianceCostAnnual=((a.s1+a.s2)*regData.carbonTax)/1e6;
+  /* Supply chain disruption cost */
+  const scDisruptionCost=a.rev*(sc/100)*0.06;
+  /* Narrative/reputational cost (ESG premium on financing) */
+  const narrativeCost=a.rev*(narr/100)*0.02;
+  const costIncrease=ccm+adaptCost+fuelCostIncrease+complianceCostAnnual+narrativeCost;
   const ebitdaImpact=rar/100*a.rev+costIncrease;
   const yrs=Math.max(1,2050-yr);
   const npvImpact=-(ebitdaImpact*(1-Math.pow(1.08,-yrs))/.08);
 
-  /* Key drivers (% contribution to composite score) */
-  const physContrib=+(ph.phys*.40/Math.max(tot,.01)*100).toFixed(1);
-  const transContrib=+(tr.trans*.35/Math.max(tot,.01)*100).toFixed(1);
-  const scContrib=+(sc*.25/Math.max(tot,.01)*100).toFixed(1);
+  /* Risk contribution percentages */
+  const physContrib=+(ph.phys*.30/Math.max(tot,.01)*100).toFixed(1);
+  const transContrib=+(tr.trans*.25/Math.max(tot,.01)*100).toFixed(1);
+  const scContrib=+(sc*.15/Math.max(tot,.01)*100).toFixed(1);
+  const polContrib=+(pol*.10/Math.max(tot,.01)*100).toFixed(1);
+  const mktContrib=+(mkt*.10/Math.max(tot,.01)*100).toFixed(1);
+  const narrContrib=+(narr*.10/Math.max(tot,.01)*100).toFixed(1);
+  /* Sub-driver percentages */
   const heatPct=+(ph.heat*.28/Math.max(ph.phys,.01)*100).toFixed(1);
   const floodPct=+(ph.flood*.28/Math.max(ph.phys,.01)*100).toFixed(1);
   const carbonPct=+(tr.carbonCost*.35/Math.max(tr.trans,.01)*100).toFixed(1);
@@ -1309,27 +1637,27 @@ function calcFull(a,sid,yr){
   let decision,decisionColor,decisionDesc;
   if(tot>=75){
     decision='AVOID / RELOCATE'; decisionColor='#FF4D4F';
-    decisionDesc='Asset faces existential climate risk. Capital reallocation recommended before '+Math.min(2050,yr+8)+'.';
+    decisionDesc='Existential risk across 6 intelligence dimensions. Capital reallocation required before '+Math.min(2050,yr+8)+'.';
   }else if(tot>=60){
     decision='MITIGATE URGENTLY'; decisionColor='#FF8C42';
-    decisionDesc='High physical + transition exposure. Implement resilience plan within 24 months.';
+    decisionDesc='High composite risk: physical + policy + narrative channels elevated. Resilience plan within 24 months.';
   }else if(tot>=46){
     decision='MONITOR & ADAPT'; decisionColor='#FFC857';
-    decisionDesc='Elevated risk trajectory. Build adaptation measures and hedge scenario exposure.';
+    decisionDesc='Elevated multi-channel risk trajectory. Build adaptation and monitor intelligence signals.';
   }else if(tot>=26){
     decision='MONITOR'; decisionColor='#00D4FF';
-    decisionDesc='Risk manageable. Review annually and re-assess under 3°C scenario.';
+    decisionDesc='Risk manageable across all dimensions. Annual review — watch policy and sentiment signals.';
   }else{
     decision='STABLE'; decisionColor='#00FF94';
-    decisionDesc='Low climate risk exposure. Standard ESG monitoring protocols apply.';
+    decisionDesc='Low risk across all 6 intelligence dimensions. Standard ESG monitoring applies.';
   }
 
-  /* Tipping / viability years */
+  /* Tipping / viability forward projection */
   let tippingYear=null,viabilityYear=null;
   for(let y=yr;y<=2050;y+=3){
-    const fp=_phys(a,sid,y),ft=_trans(a,sid,y);
+    const fp=_phys(a,sid,y),ft=_trans(a,sid,y),fp2=_policy(a,sid,y),fm=_market(a,sid,y),fn=_narrative(a,sid,y);
     const fsc=Math.min(100,fp.phys*.35+ft.trans*.25+15);
-    const ftot=Math.min(100,fp.phys*.40+ft.trans*.35+fsc*.25);
+    const ftot=Math.min(100,fp.phys*.30+ft.trans*.25+fsc*.15+fp2*.10+fm*.10+fn*.10);
     if(!tippingYear&&ftot>=46)tippingYear=y;
     if(!viabilityYear&&ftot>=75)viabilityYear=y;
     if(tippingYear&&viabilityYear)break;
@@ -1337,11 +1665,14 @@ function calcFull(a,sid,yr){
 
   return{heat:ph.heat,flood:ph.flood,storm:ph.storm,drought:ph.drought,seaLevel:ph.seaLevel,phys:ph.phys,
     carbonCost:tr.carbonCost,policyRisk:tr.policyRisk,techDisruption:tr.techDisruption,
-    marketShift:tr.marketShift,trans:tr.trans,ecp:tr.ecp,cp:tr.cp,pol:tr.policyRisk,tech:tr.techDisruption,
-    sc,tot,lvl,rar,ebi,ccm,adaptCost,costIncrease,ebitdaImpact,npvImpact,
+    marketShift:tr.marketShift,trans:tr.trans,ecp:tr.ecp,cp:tr.cp,pol,mkt,narr,
+    pol2:tr.policyRisk,tech:tr.techDisruption,
+    sc,tot,lvl,rar,ebi,ccm,adaptCost,fuelCostIncrease,complianceCostAnnual,scDisruptionCost,narrativeCost,
+    costIncrease,ebitdaImpact,npvImpact,
     stranded:tot>=75&&(a.sector==='Energy'||a.sector==='Mining'),
     strandedProb:tot>=68?(Math.min(.92,(tot-68)/32*.92)).toFixed(2):'0.00',
-    physContrib,transContrib,scContrib,heatPct,floodPct,carbonPct,policyPct,scDepPct,
+    physContrib,transContrib,scContrib,polContrib,mktContrib,narrContrib,
+    heatPct,floodPct,carbonPct,policyPct,scDepPct,
     decision,decisionColor,decisionDesc,tippingYear,viabilityYear};
 }
 function riskColor(lvl){
@@ -1396,6 +1727,59 @@ function gaugeSVG(score,col){
     <text x="${cx}" y="${cy+2}" text-anchor="middle" font-family="JetBrains Mono,monospace"
       font-size="22" font-weight="700" fill="${col}" style="filter:drop-shadow(0 0 8px ${col})">${Math.round(score)}</text>
   </svg>`;
+}
+
+/* ─── POLICY / REGULATION RISK ───────────────────────────────────
+   PolicyRisk = f(carbon tax, regulation strictness, compliance cost)
+   Output: 0–100 score
+─────────────────────────────────────────────────────────────────── */
+function _policy(a,sid,yr){
+  const rid=rgn(a.lat,a.lng);
+  const reg=REGULATION_DATA[rid]||REGULATION_DATA.Global;
+  const c=SCN[sid],sw=SW[a.sector]||{tm:1};
+  const tm=itp(yr,.28,c.tm30,c.tm50);
+  const strictness=reg.strictness;
+  const taxBurden=Math.min(100,(reg.carbonTax/100)*100);
+  /* Forward-looking compliance pressure rises with transition multiplier */
+  const compliance=Math.min(100,strictness*tm*sw.tm*0.65);
+  return Math.min(100,strictness*.40+taxBurden*.30+compliance*.30);
+}
+
+/* ─── MARKET / ECONOMIC RISK ──────────────────────────────────────
+   MarketRisk = f(fuel price volatility, inflation, sector exposure)
+─────────────────────────────────────────────────────────────────── */
+function _market(a,sid,yr){
+  const rid=rgn(a.lat,a.lng);
+  const fuel=FUEL_PRICE_DATA[rid]||FUEL_PRICE_DATA.Global;
+  const sw=SW[a.sector]||{el:1.5};
+  /* Fuel index 0-180 → 0-100 risk */
+  const fuelRisk=Math.min(100,(fuel.index/180)*100);
+  /* Inflation at 3.8% global avg amplified by sector EBITDA leverage */
+  const inflationRisk=Math.min(100,3.8*sw.el*4.5);
+  /* Sector volatility exposure */
+  const sectorVol=Math.min(40,sw.el*10);
+  /* Year-projection amplifier — markets grow more volatile toward 2050 */
+  const yrAmp=yr>2035?1+(yr-2035)*.01:1.0;
+  return Math.min(100,(fuelRisk*.50+inflationRisk*.25+sectorVol*.25)*yrAmp);
+}
+
+/* ─── NARRATIVE / SENTIMENT RISK ─────────────────────────────────
+   NarrativeRisk = f(disclosure gaps, greenwashing signals, sentiment mismatch)
+─────────────────────────────────────────────────────────────────── */
+function _narrative(a,sid,yr){
+  const rid=rgn(a.lat,a.lng);
+  const sent=SENTIMENT_SCORES[rid]||SENTIMENT_SCORES.Global;
+  const narr=NARRATIVE_DATA[a.sector]||{disclosureGap:30,greenwashRisk:35,sentimentMismatch:30};
+  /* High regional activism amplifies narrative risk */
+  const sentBoost=sent.score>55?(sent.score-55)*0.6:0;
+  /* Rising trend adds forward pressure */
+  const trendBoost=sent.trend>0?sent.trend*0.4:0;
+  return Math.min(100,
+    narr.disclosureGap*.35+
+    narr.greenwashRisk*.40+
+    narr.sentimentMismatch*.25+
+    sentBoost+trendBoost
+  );
 }
 
 /* ─── GREENWASHING RISK ─── */
@@ -1489,6 +1873,77 @@ function linkGJ(){
   return{type:'FeatureCollection',features:f};
 }
 
+/* ─── INTELLIGENCE MAP DATA GENERATORS ──────────────────────────────
+   Each generator produces a GeoJSON FeatureCollection using the same
+   rgn() region lookup that the risk engine uses, guaranteeing that
+   map colours and risk panel numbers are always in sync.
+─────────────────────────────────────────────────────────────────── */
+
+/* Sentiment heatmap — red = high activism / negative pressure */
+function sentimentGJ(){
+  const f=[];
+  for(let lat=-80;lat<=80;lat+=4)for(let lng=-175;lng<=175;lng+=4){
+    const rid=rgn(lat,lng);
+    const sent=SENTIMENT_SCORES[rid]||SENTIMENT_SCORES.Global;
+    /* Add geographic noise so the heatmap looks organic, not blocky */
+    const noise=(Math.sin(lat*.31)*Math.cos(lng*.19)*7+Math.cos(lat*.17)*Math.sin(lng*.23)*5);
+    const v=Math.max(0,Math.min(1,(sent.score+noise)/100));
+    f.push({type:'Feature',geometry:{type:'Point',coordinates:[lng,lat]},
+      properties:{intensity:Math.round(v*100)/100}});
+  }
+  return{type:'FeatureCollection',features:f};
+}
+
+/* Regulation heatmap — purple = strict / high policy burden */
+function regulationGJ(){
+  const f=[];
+  for(let lat=-80;lat<=80;lat+=4)for(let lng=-175;lng<=175;lng+=4){
+    const rid=rgn(lat,lng);
+    const reg=REGULATION_DATA[rid]||REGULATION_DATA.Global;
+    const noise=(Math.cos(lat*.25)*Math.sin(lng*.15)*6+Math.sin(lat*.19)*Math.cos(lng*.27)*4);
+    const v=Math.max(0,Math.min(1,(reg.strictness+noise)/100));
+    f.push({type:'Feature',geometry:{type:'Point',coordinates:[lng,lat]},
+      properties:{intensity:Math.round(v*100)/100}});
+  }
+  return{type:'FeatureCollection',features:f};
+}
+
+/* Fuel & energy cost heatmap — amber/red = high cost zones */
+function fuelGJ(){
+  const f=[];
+  for(let lat=-80;lat<=80;lat+=4)for(let lng=-175;lng<=175;lng+=4){
+    const rid=rgn(lat,lng);
+    const fuel=FUEL_PRICE_DATA[rid]||FUEL_PRICE_DATA.Global;
+    const noise=(Math.sin(lat*.20)*Math.cos(lng*.30)*5+Math.cos(lat*.14)*Math.sin(lng*.22)*4);
+    /* Index scale 0-180, normalise to 0-1 */
+    const v=Math.max(0,Math.min(1,(fuel.index+noise)/180));
+    f.push({type:'Feature',geometry:{type:'Point',coordinates:[lng,lat]},
+      properties:{intensity:Math.round(v*100)/100}});
+  }
+  return{type:'FeatureCollection',features:f};
+}
+
+/* News events — point markers, size proportional to impact */
+function newsGJ(){
+  return{type:'FeatureCollection',features:NEWS_FEED.map(n=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[n.lng,n.lat]},
+    properties:{...n,radius:5+(n.impact/22)*7}
+  }))};
+}
+
+/* Narrative risk overlay on asset positions — ring glow by risk level */
+function narrativeGJ(){
+  return{type:'FeatureCollection',features:S.assets.map(a=>{
+    const narrScore=_narrative(a,S.scenario,S.year);
+    const lvl=narrScore>=60?'critical':narrScore>=40?'high':narrScore>=22?'medium':'low';
+    return{type:'Feature',
+      geometry:{type:'Point',coordinates:[a.lng,a.lat]},
+      properties:{id:a.id,narrativeScore:Math.round(narrScore),
+        color:riskHex(lvl),radius:14+(narrScore/100)*8}};
+  })};
+}
+
 /* ─── MAP INIT ─── */
 let map=null;
 function initMap(){
@@ -1551,11 +2006,120 @@ function initMap(){
         'text-halo-width':1.8,
       }
     });
+    /* ── Intelligence layer sources & layers (all hidden by default) ── */
+
+    /* 1. Sentiment heatmap — red = high activism / climate pressure */
+    map.addSource('sent-src',{type:'geojson',data:sentimentGJ()});
+    map.addLayer({id:'sent-layer',type:'heatmap',source:'sent-src',
+      layout:{visibility:'none'},
+      paint:{
+        'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
+        'heatmap-intensity':1.5,
+        'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+          0,'rgba(0,0,0,0)',
+          .12,'rgba(0,255,148,.40)',
+          .35,'rgba(255,200,87,.60)',
+          .58,'rgba(255,140,66,.78)',
+          .80,'rgba(255,77,79,.90)',
+          1,'rgba(180,0,0,1.0)'],
+        'heatmap-radius':62,'heatmap-opacity':0.55}});
+
+    /* 2. Regulation heatmap — purple gradient = policy strictness */
+    map.addSource('reg-src',{type:'geojson',data:regulationGJ()});
+    map.addLayer({id:'reg-layer',type:'heatmap',source:'reg-src',
+      layout:{visibility:'none'},
+      paint:{
+        'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
+        'heatmap-intensity':1.3,
+        'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+          0,'rgba(0,0,0,0)',
+          .10,'rgba(139,92,246,.28)',
+          .35,'rgba(139,92,246,.55)',
+          .60,'rgba(109,40,217,.80)',
+          .82,'rgba(76,29,149,.92)',
+          1,'rgba(46,16,101,1.0)'],
+        'heatmap-radius':64,'heatmap-opacity':0.58}});
+
+    /* 3. Fuel/energy cost heatmap — green→red = low→high energy cost */
+    map.addSource('fuel-src',{type:'geojson',data:fuelGJ()});
+    map.addLayer({id:'fuel-layer',type:'heatmap',source:'fuel-src',
+      layout:{visibility:'none'},
+      paint:{
+        'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
+        'heatmap-intensity':1.4,
+        'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+          0,'rgba(0,0,0,0)',
+          .15,'rgba(0,255,148,.38)',
+          .40,'rgba(255,200,87,.62)',
+          .68,'rgba(255,140,66,.82)',
+          .88,'rgba(255,77,79,.92)',
+          1,'rgba(180,0,0,1.0)'],
+        'heatmap-radius':60,'heatmap-opacity':0.52}});
+
+    /* 4. News event markers — colour-coded by event type */
+    map.addSource('news-src',{type:'geojson',data:newsGJ()});
+    /* Glow halo */
+    map.addLayer({id:'news-glow',type:'circle',source:'news-src',
+      layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['+',['get','radius'],10],
+        'circle-color':['case',
+          ['==',['get','type'],'regulation'],'#A78BFA',
+          ['==',['get','type'],'disruption'],'#FF4D4F','#FFC857'],
+        'circle-opacity':0.14,'circle-blur':1.4}});
+    /* Core marker */
+    map.addLayer({id:'news-layer',type:'circle',source:'news-src',
+      layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['get','radius'],
+        'circle-color':['case',
+          ['==',['get','type'],'regulation'],'#A78BFA',
+          ['==',['get','type'],'disruption'],'#FF4D4F','#FFC857'],
+        'circle-stroke-width':1.6,
+        'circle-stroke-color':'rgba(240,242,245,0.82)',
+        'circle-opacity':0.90}});
+
+    /* 5. Narrative risk overlay — ring around existing assets */
+    map.addSource('narr-src',{type:'geojson',data:narrativeGJ()});
+    map.addLayer({id:'narr-layer',type:'circle',source:'narr-src',
+      layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['get','radius'],
+        'circle-color':['get','color'],
+        'circle-opacity':0.16,'circle-blur':0.9,
+        'circle-stroke-width':1,'circle-stroke-color':['get','color'],
+        'circle-stroke-opacity':0.35}});
+
+    /* News marker interaction */
+    map.on('click','news-layer',e=>{
+      if(!e.features||!e.features.length)return;
+      e.preventDefault();
+      const n=e.features[0].properties;
+      const popup=document.getElementById('news-popup');
+      document.getElementById('npu-tag').textContent=n.tag;
+      document.getElementById('npu-tag').style.cssText=
+        `background:${n.color}18;border-color:${n.color}40;color:${n.color}`;
+      document.getElementById('npu-title').textContent=n.title;
+      document.getElementById('npu-detail').textContent=n.detail;
+      document.getElementById('npu-impact').innerHTML=
+        `<span style="color:${n.color}">Impact: +${n.impact} risk pts</span> · ${n.sector}`;
+      /* Position popup near click */
+      const cv=map.getCanvas().getBoundingClientRect();
+      const pt=map.project(e.lngLat);
+      popup.style.left=`${Math.min(cv.width-250,pt.x+14)}px`;
+      popup.style.top=`${Math.max(10,pt.y-80)}px`;
+      popup.classList.add('on');
+    });
+    map.on('mouseenter','news-layer',()=>{if(!S.addMode)map.getCanvas().style.cursor='pointer';});
+    map.on('mouseleave','news-layer',()=>{if(!S.addMode)map.getCanvas().style.cursor='';});
+
     map.on('click','ac',e=>{
       if(!e.features||!e.features.length)return;
       pickAsset(e.features[0].properties.id);
     });
     map.on('click',e=>{
+      /* Close news popup on any non-marker map click */
+      if(!e.defaultPrevented)document.getElementById('news-popup').classList.remove('on');
       if(e.defaultPrevented||!S.addMode)return;
       S.coords={lat:e.lngLat.lat,lng:e.lngLat.lng};
       document.getElementById('ncoords').textContent=`${S.coords.lat.toFixed(4)}° N,  ${S.coords.lng.toFixed(4)}° E`;
@@ -1569,6 +2133,102 @@ function initMap(){
     document.getElementById('mload').style.display='none';
   });
 }
+/* ─── INTELLIGENCE LAYER TOGGLE CONFIG ─── */
+const INTEL_LYRS=[
+  {id:'sentiment', name:'Social Sentiment',  desc:'Activism · ESG pressure · public risk', icon:'🌡',
+    accent:'#FF8C42', gradLegend:'Calm → Pressure'},
+  {id:'news',      name:'News Events',        desc:'Regulation · disruption · market shifts', icon:'📰',
+    accent:'#A78BFA', gradLegend:'Low → High impact'},
+  {id:'regulation',name:'Policy & Regulation',desc:'Carbon price · compliance · strictness',  icon:'⚖',
+    accent:'#8B5CF6', gradLegend:'Minimal → Strict'},
+  {id:'fuel',      name:'Fuel & Energy Cost', desc:'Electricity · diesel · cost volatility',  icon:'⛽',
+    accent:'#FFC857', gradLegend:'Low → High cost'},
+  {id:'narrative', name:'Narrative Risk',     desc:'Disclosure gaps · greenwashing signals',  icon:'📋',
+    accent:'#00D4FF', gradLegend:'Low → Elevated risk'},
+];
+
+function renderIntelBtns(){
+  const el=document.getElementById('intel-btns');if(!el)return;
+  /* Count portfolio-level scores for badge display */
+  const scores={};
+  INTEL_LYRS.forEach(l=>{
+    if(S.assets.length===0){scores[l.id]='-';}
+    else{
+      let avg=0;
+      S.assets.forEach(a=>{
+        if(l.id==='sentiment')avg+=SENTIMENT_SCORES[rgn(a.lat,a.lng)]?.score||42;
+        else if(l.id==='regulation')avg+=REGULATION_DATA[rgn(a.lat,a.lng)]?.strictness||35;
+        else if(l.id==='fuel')avg+=FUEL_PRICE_DATA[rgn(a.lat,a.lng)]?.index||85;
+        else if(l.id==='narrative')avg+=_narrative(a,S.scenario,S.year);
+        else avg+=50;
+      });
+      avg=avg/S.assets.length;
+      scores[l.id]=Math.round(avg);
+    }
+  });
+  el.innerHTML=INTEL_LYRS.map(l=>{
+    const on=S.intel[l.id];
+    return`<button class="intel-btn${on?' on':''}" onclick="toggleIntel('${l.id}')"
+      style="${on?`--btn-accent:${l.accent};border-left-color:${l.accent}`:'border-left-color:transparent'}">
+      <div class="intel-ico">${l.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div class="intel-name">${l.name}</div>
+        <div class="intel-desc">${l.desc}</div>
+      </div>
+      <span class="intel-score" style="color:${on?l.accent:'var(--tx3)'}">${scores[l.id]}</span>
+    </button>`;
+  }).join('');
+}
+
+/* Toggle with LRU eviction — max 2 intelligence layers at once */
+function toggleIntel(id){
+  if(S.intel[id]){
+    /* Turning off */
+    S.intel[id]=false;
+    S.intelOrder=S.intelOrder.filter(x=>x!==id);
+  }else{
+    /* Turning on — evict oldest if already 2 active */
+    if(S.intelOrder.length>=2){
+      const evict=S.intelOrder.shift();
+      S.intel[evict]=false;
+    }
+    S.intel[id]=true;
+    S.intelOrder.push(id);
+  }
+  renderIntelBtns();
+  intelMapUpd();
+  updateGradLegend();
+}
+
+/* Sync intelligence layers to MapLibre visibility */
+function intelMapUpd(){
+  if(!map||!map.getSource('sent-src'))return;
+  /* Intelligence heatmaps */
+  [['sent-layer','sentiment'],['reg-layer','regulation'],['fuel-layer','fuel']].forEach(([lid,key])=>{
+    if(map.getLayer(lid))map.setLayoutProperty(lid,'visibility',S.intel[key]?'visible':'none');
+  });
+  /* News markers */
+  ['news-layer','news-glow'].forEach(lid=>{
+    if(map.getLayer(lid))map.setLayoutProperty(lid,'visibility',S.intel.news?'visible':'none');
+  });
+  /* Narrative overlay — also update data when assets change */
+  if(map.getLayer('narr-layer')){
+    map.setLayoutProperty('narr-layer','visibility',S.intel.narrative?'visible':'none');
+    if(S.intel.narrative&&map.getSource('narr-src'))map.getSource('narr-src').setData(narrativeGJ());
+  }
+}
+
+function updateGradLegend(){
+  const el=document.getElementById('gl-title');if(!el)return;
+  const activeIntel=INTEL_LYRS.find(l=>S.intel[l.id]);
+  if(activeIntel){
+    el.textContent=activeIntel.name;
+  }else{
+    const names={physical:'Physical Risk',transition:'Transition Risk',carbon:'Carbon Exposure',composite:'Composite Risk',economic:'Economic Exposure'};
+    el.textContent=names[S.layer]||'Risk Layer';
+  }
+}
+
 function mapUpd(){
   if(!map||!map.getSource('rg'))return;
   map.getSource('rg').setData(heatGJ());
@@ -1581,8 +2241,8 @@ function mapUpd(){
   if(map.getLayer('al'))map.setLayoutProperty('al','visibility',S.showAssets?'visible':'none');
   map.setPaintProperty('rh','heatmap-opacity',S.heatmapOpacity);
   map.getCanvas().style.cursor=S.addMode?'crosshair':'';
-  const el=document.getElementById('gl-title');
-  if(el){const names={physical:'Physical Risk',transition:'Transition Risk',carbon:'Carbon Exposure',composite:'Composite Risk',economic:'Economic Exposure'};el.textContent=names[S.layer]||'Risk Layer';}
+  updateGradLegend();
+  intelMapUpd();
 }
 
 /* ─── FORMAT ─── */
@@ -1624,6 +2284,14 @@ function renderStats(){
     <div class="sb-item"><span class="sb-lbl">High Risk</span><span class="sb-val warn">${p.hi}</span></div>
     <div class="sb-item"><span class="sb-lbl">Critical</span><span class="sb-val neg">${p.cr}</span></div>
     ${portfolioInsight()}
+    ${generateAlerts().length?`<div class="sb-item" style="border-right:1px solid var(--bd0)">
+      <span class="sb-lbl">Alerts</span>
+      <span class="sb-val neg" style="animation:apipulse 2s ease-in-out infinite">${generateAlerts().length}</span>
+    </div>`:''}
+    ${Object.values(S.intel).some(v=>v)?`<div class="sb-item">
+      <span class="sb-lbl">Intel Layers</span>
+      <span class="sb-val info">${Object.values(S.intel).filter(v=>v).length} active</span>
+    </div>`:''}
     <div class="sb-item" style="margin-left:auto">
       <span class="api-dot ${S.liveMode?'live':'static'}"></span>
       <span class="sb-lbl">${S.liveMode?'LIVE API':'STATIC MODE'}</span>
@@ -1845,6 +2513,7 @@ function drawPanel(a){
       <button class="rp-tab"    id="tab-fin"     onclick="switchTab('fin')">Financials</button>
       <button class="rp-tab"    id="tab-compare" onclick="switchTab('compare')">Compare</button>
       <button class="rp-tab"    id="tab-macro"   onclick="switchTab('macro')">Country</button>
+      <button class="rp-tab"    id="tab-signals" onclick="switchTab('signals')" style="color:var(--acc)">Signals</button>
     </div>
 
     <!-- Semi-circular gauge -->
@@ -1885,12 +2554,19 @@ function drawPanel(a){
     <!-- TAB: RISK -->
     <div id="pane-risk">
       <div class="rp-sec">
-        <div class="rp-sec-title">Risk Breakdown</div>
-        ${[['Physical Risk',r.phys,'#FF8C42'],['Transition Risk',r.trans,'#00D4FF'],['Supply Chain',r.sc,'#A78BFA']]
-          .map(([l,v,c])=>`<div class="rb-row">
-            <span class="rb-lbl">${l}</span>
+        <div class="rp-sec-title">6-Component Risk Breakdown</div>
+        ${[
+          ['Physical Risk',   r.phys,'#FF8C42','30%'],
+          ['Transition Risk', r.trans,'#00D4FF','25%'],
+          ['Supply Chain',    r.sc,  '#A78BFA','15%'],
+          ['Policy Risk',     r.pol, '#8B5CF6','10%'],
+          ['Market Risk',     r.mkt, '#FFC857','10%'],
+          ['Narrative Risk',  r.narr,'#22D3EE','10%'],
+        ].map(([l,v,c,wt])=>`<div class="rb-row">
+            <span class="rb-lbl" style="width:98px">${l}</span>
             <div class="rb-track"><div class="rb-fill" style="width:${v}%;background:${c}"></div></div>
-            <span class="rb-val" style="color:${c}">${Math.round(v)}</span>
+            <span style="font-size:8px;color:var(--tx3);width:22px;text-align:right;flex-shrink:0">${wt}</span>
+            <span class="rb-val" style="color:${c};width:24px">${Math.round(v)}</span>
           </div>`).join('')}
       </div>
       <!-- DECISION SIGNAL -->
@@ -1919,9 +2595,12 @@ function drawPanel(a){
       <div class="rp-sec">
         <div class="rp-sec-title">Key Risk Drivers</div>
         ${[
-          ['Physical Exposure',r.physContrib,'#FF8C42','Heat & flood dominate'],
-          ['Transition Exposure',r.transContrib,'#00D4FF','Carbon + policy burden'],
-          ['Supply Chain',r.scContrib,'#A78BFA','Upstream cascade risk'],
+          ['Physical',   r.physContrib, '#FF8C42','Heat & flood dominate'],
+          ['Transition', r.transContrib,'#00D4FF','Carbon + tech disruption'],
+          ['Supply Chain',r.scContrib,  '#A78BFA','Upstream cascade risk'],
+          ['Policy',     r.polContrib,  '#8B5CF6','Regulation & compliance'],
+          ['Market',     r.mktContrib,  '#FFC857','Fuel & inflation pressure'],
+          ['Narrative',  r.narrContrib, '#22D3EE','Disclosure & sentiment'],
         ].map(([l,v,c,sub])=>`
           <div class="driver-row">
             <span class="driver-lbl">${l}</span>
@@ -1984,9 +2663,29 @@ function drawPanel(a){
             <div class="fin-sub">resilience investment</div>
           </div>
           <div class="fin-cell">
+            <div class="fin-lbl">Fuel Cost Increase</div>
+            <div class="fin-val" style="color:#FFC857">${fM(r.fuelCostIncrease||0)}</div>
+            <div class="fin-sub">energy price delta</div>
+          </div>
+          <div class="fin-cell">
+            <div class="fin-lbl">Policy Compliance</div>
+            <div class="fin-val" style="color:#8B5CF6">${fM(r.complianceCostAnnual||0)}</div>
+            <div class="fin-sub">carbon tax burden</div>
+          </div>
+          <div class="fin-cell">
+            <div class="fin-lbl">SC Disruption Cost</div>
+            <div class="fin-val" style="color:#A78BFA">${fM(r.scDisruptionCost||0)}</div>
+            <div class="fin-sub">network vulnerability</div>
+          </div>
+          <div class="fin-cell">
+            <div class="fin-lbl">Narrative Premium</div>
+            <div class="fin-val" style="color:#22D3EE">${fM(r.narrativeCost||0)}</div>
+            <div class="fin-sub">ESG/financing cost</div>
+          </div>
+          <div class="fin-cell">
             <div class="fin-lbl">Total Cost Increase</div>
             <div class="fin-val" style="color:#FF8C42">${fM(r.costIncrease||0)}</div>
-            <div class="fin-sub">annual burden</div>
+            <div class="fin-sub">6-channel burden</div>
           </div>
           <div class="fin-cell">
             <div class="fin-lbl">NPV Impact</div>
@@ -2036,6 +2735,11 @@ function drawPanel(a){
           ${buildStaticMacro(a.country)}
         </div>
       </div>
+    </div>
+
+    <!-- TAB: SIGNALS -->
+    <div id="pane-signals" style="display:none">
+      ${buildSignalsPane(a)}
     </div>`;
 
   document.getElementById('rp').classList.add('on');
@@ -2055,11 +2759,203 @@ function drawPanel(a){
   }
 }
 
+/* ─── SIGNALS PANE ─────────────────────────────────────────────────
+   Builds the right-panel Signals tab for a selected asset. Shows:
+   live signals, intelligence breakdown (all 6 components), nearby
+   news events, and regulatory context.
+─────────────────────────────────────────────────────────────────── */
+function buildSignalsPane(a){
+  const rid=rgn(a.lat,a.lng);
+  const sent=SENTIMENT_SCORES[rid]||SENTIMENT_SCORES.Global;
+  const reg=REGULATION_DATA[rid]||REGULATION_DATA.Global;
+  const fuel=FUEL_PRICE_DATA[rid]||FUEL_PRICE_DATA.Global;
+  const narr=NARRATIVE_DATA[a.sector]||{disclosureGap:30,greenwashRisk:35,sentimentMismatch:30};
+  const polScore=Math.round(_policy(a,S.scenario,S.year));
+  const mktScore=Math.round(_market(a,S.scenario,S.year));
+  const narrScore=Math.round(_narrative(a,S.scenario,S.year));
+
+  /* Filter relevant signals to this asset's region + sector */
+  const signals=LIVE_SIGNALS.filter(s=>s.region===rid||s.region==='Global'||s.sector===a.sector).slice(0,5);
+
+  /* Nearby news: within ~25 degrees or matching sector */
+  const nearNews=NEWS_FEED.filter(n=>{
+    const dist=Math.sqrt(Math.pow(n.lat-a.lat,2)+Math.pow(n.lng-a.lng,2));
+    return dist<25||n.sector===a.sector;
+  }).slice(0,4);
+
+  const fuelCostDelta=((fuel.index/85-1)*100).toFixed(1);
+  const fuelCol=fuelCostDelta>10?'var(--neg)':fuelCostDelta>0?'var(--s20)':'var(--pos)';
+
+  return`
+    <!-- LIVE SIGNALS -->
+    <div class="rp-sec">
+      <div class="rp-sec-title" style="display:flex;align-items:center;gap:6px">
+        <span class="api-dot live"></span>Live Intelligence Signals
+      </div>
+      ${signals.length?signals.map(s=>`
+        <div class="signal-item">
+          <div class="signal-icon-wrap">${s.icon}</div>
+          <div class="signal-body">
+            <div class="signal-msg">${s.msg}</div>
+            <div class="signal-impact" style="color:${s.delta>15?'#FF4D4F':s.delta>8?'#FFC857':'#00D4FF'}">${s.impact}</div>
+          </div>
+          <div class="signal-delta" style="color:${s.delta>0?'#FF4D4F':'#00FF94'}">+${s.delta}</div>
+        </div>`).join(''):'<div style="font-size:10px;color:var(--tx3);padding:6px 0">No region-specific signals</div>'}
+    </div>
+
+    <!-- INTELLIGENCE COMPONENT BREAKDOWN -->
+    <div class="rp-sec">
+      <div class="rp-sec-title">6-Dimension Intelligence Breakdown</div>
+      ${[
+        ['Policy Risk',     polScore,  '#A78BFA', reg.label,                           '10% weight'],
+        ['Market Risk',     mktScore,  '#FFC857', `Fuel ${fuel.index} · ${fuel.trend}`,'10% weight'],
+        ['Narrative Risk',  narrScore, '#00D4FF', `Greenwash ${narr.greenwashRisk}/100`, '10% weight'],
+        ['Social Sentiment',sent.score,sent.score>60?'#FF8C42':'#00FF94',sent.label,   'Modifier'],
+      ].map(([l,v,c,sub,wt])=>`
+        <div class="risk-component-row">
+          <div class="risk-comp-header">
+            <span class="rb-lbl">${l}</span>
+            <span style="font-size:8px;color:var(--tx3);margin-right:4px">${wt}</span>
+            <span class="rb-val" style="color:${c}">${v}</span>
+          </div>
+          <div class="rb-track"><div class="rb-fill" style="width:${v}%;background:${c};box-shadow:0 0 4px ${c}60"></div></div>
+          <div class="risk-comp-sub">${sub}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- NEARBY NEWS EVENTS -->
+    <div class="rp-sec">
+      <div class="rp-sec-title">Nearby Intelligence Events</div>
+      ${nearNews.length?nearNews.map(n=>`
+        <div class="news-item">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="news-tag" style="background:${n.color}18;border-color:${n.color}40;color:${n.color}">${n.tag}</span>
+            <span style="font-size:7px;color:var(--tx3);font-family:var(--mono)">+${n.impact} pts · ${n.sector}</span>
+          </div>
+          <div class="news-title">${n.title}</div>
+          <div class="news-detail">${n.detail}</div>
+        </div>`).join(''):'<div style="font-size:10px;color:var(--tx3);padding:6px 0">No nearby events</div>'}
+    </div>
+
+    <!-- REGULATORY & FUEL CONTEXT -->
+    <div class="rp-sec">
+      <div class="rp-sec-title">Regulatory & Energy Context</div>
+      <div class="meta-list">
+        ${[
+          ['Region', rid],
+          ['Policy Framework', reg.label],
+          ['Regulation Score', `${reg.strictness}/100`],
+          ['Carbon Tax', reg.carbonTax>0?`$${reg.carbonTax}/tCO₂`:'Not operational'],
+          ['Compliance Level', reg.complianceCost],
+          ['Energy Cost Index', `${fuel.index} (avg 85)`],
+          ['Electricity Price', `$${fuel.electricity}/kWh`],
+          ['Fuel Cost Δ vs Avg', `${fuelCostDelta>0?'+':''}${fuelCostDelta}%`],
+          ['Sentiment Score', `${sent.score}/100 (Δ ${sent.trend>0?'+':''}${sent.trend} pts/mo)`],
+        ].map(([k,v,col])=>`<div class="meta-row"><span class="mk">${k}</span><span class="mv" ${col?`style="color:${col}"`:''}>${v}</span></div>`).join('')}
+      </div>
+    </div>
+
+    <!-- SUPPLY CHAIN NETWORK STATUS -->
+    <div class="rp-sec">
+      <div class="rp-sec-title">Supply Chain Intelligence</div>
+      ${(a.lnk&&a.lnk.length)?`
+        <div style="font-size:9px;color:var(--tx2);margin-bottom:8px">
+          ${a.lnk.length} upstream link${a.lnk.length>1?'s':''} detected — cascade risk active
+        </div>
+        ${a.lnk.map(tid=>{const t=S.assets.find(x=>x.id===tid);if(!t)return'';
+          const tr=calc(t,S.scenario,S.year);
+          return`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd0)">
+            <div style="width:5px;height:5px;border-radius:50%;background:${riskHex(tr.lvl)};flex-shrink:0"></div>
+            <div style="flex:1;font-size:9px;color:var(--tx1)">${t.name}</div>
+            <div style="font-family:var(--mono);font-size:10px;font-weight:700;color:${riskHex(tr.lvl)}">${Math.round(tr.tot)}</div>
+          </div>`;}).join('')}
+      `:`<div style="font-size:10px;color:var(--tx3);padding:6px 0">No upstream supply chain links configured</div>`}
+    </div>`;
+}
+
+/* ─── ALERT SYSTEM ─────────────────────────────────────────────────
+   Generates context-aware alerts based on the current portfolio state,
+   active scenario, and intelligence data. Auto-clears on new render.
+─────────────────────────────────────────────────────────────────── */
+function generateAlerts(){
+  if(!S.assets.length)return[];
+  const alerts=[];
+
+  /* Fuel cost alert — EU assets */
+  const euAssets=S.assets.filter(a=>rgn(a.lat,a.lng)==='EU');
+  if(euAssets.length>0){
+    const totalRev=euAssets.reduce((s,a)=>s+a.rev,0);
+    alerts.push({icon:'⛽',type:'fuel',severity:'medium',
+      msg:`EU energy price surge: electricity +28% peak demand`,
+      impact:`+$${Math.round(totalRev*0.028)}M estimated operating cost increase`});
+  }
+
+  /* Regulation alert — manufacturing sector */
+  const mfgAssets=S.assets.filter(a=>a.sector==='Manufacturing'&&
+    ['EU','UK'].includes(rgn(a.lat,a.lng)));
+  if(mfgAssets.length>0){
+    alerts.push({icon:'⚠',type:'regulation',severity:'high',
+      msg:`EU CBAM + policy tightening: ${mfgAssets.length} manufacturing asset${mfgAssets.length>1?'s':''} affected`,
+      impact:'+$14M compliance burden · Q2 2026 deadline'});
+  }
+
+  /* Sentiment spike alert */
+  const highSentAssets=S.assets.filter(a=>{
+    const s=SENTIMENT_SCORES[rgn(a.lat,a.lng)]||SENTIMENT_SCORES.Global;
+    return s.score>62&&s.trend>4;
+  });
+  if(highSentAssets.length>0){
+    const topRegion=rgn(highSentAssets[0].lat,highSentAssets[0].lng);
+    const topSent=SENTIMENT_SCORES[topRegion]||SENTIMENT_SCORES.Global;
+    alerts.push({icon:'🔥',type:'sentiment',severity:'medium',
+      msg:`${topSent.label} — ${highSentAssets.length} asset${highSentAssets.length>1?'s':''} in high-pressure zone`,
+      impact:`Sentiment score ${topSent.score}/100 · trend +${topSent.trend} pts/mo`});
+  }
+
+  /* Critical physical risk alert */
+  const critPhys=S.assets.filter(a=>calc(a,S.scenario,S.year).phys>65)
+    .sort((a,b)=>calc(b,S.scenario,S.year).phys-calc(a,S.scenario,S.year).phys);
+  if(critPhys.length>0){
+    const top=critPhys[0];const tr=calc(top,S.scenario,S.year);
+    alerts.push({icon:'🌊',type:'physical',severity:'critical',
+      msg:`${top.name}: physical risk threshold exceeded`,
+      impact:`${fPct(tr.phys)} physical · ${fPct(tr.rar)} revenue at risk`});
+  }
+
+  /* Narrative/greenwashing alert — Energy/Mining */
+  const narrHigh=S.assets.filter(a=>_narrative(a,S.scenario,S.year)>55);
+  if(narrHigh.length>0){
+    alerts.push({icon:'📋',type:'narrative',severity:'info',
+      msg:`${narrHigh.length} asset${narrHigh.length>1?'s':''} with elevated narrative/disclosure risk`,
+      impact:'ESG disclosure gaps detected — reputational exposure'});
+  }
+
+  return alerts.slice(0,4);
+}
+
+function renderAlerts(){
+  const el=document.getElementById('alert-stack');if(!el)return;
+  const alerts=generateAlerts();
+  if(!alerts.length){el.innerHTML='';return;}
+  el.innerHTML=alerts.map((alert,i)=>`
+    <div class="alert-item alert-${alert.severity}" style="animation-delay:${i*.08}s"
+      onclick="this.style.opacity='0';setTimeout(()=>this.remove(),200)">
+      <div class="alert-icon">${alert.icon}</div>
+      <div class="alert-body">
+        <div class="alert-msg">${alert.msg}</div>
+        <div class="alert-impact">${alert.impact}</div>
+      </div>
+      <button class="alert-close" onclick="event.stopPropagation();this.closest('.alert-item').remove()">✕</button>
+    </div>`).join('');
+}
+
 function switchTab(tab){
   S.activeTab=tab;
-  ['risk','fin','compare','macro'].forEach(t=>{
-    document.getElementById(`pane-${t}`).style.display=t===tab?'':'none';
-    document.getElementById(`tab-${t}`).classList.toggle('on',t===tab);
+  ['risk','fin','compare','macro','signals'].forEach(t=>{
+    const pane=document.getElementById(`pane-${t}`);
+    const btn=document.getElementById(`tab-${t}`);
+    if(pane)pane.style.display=t===tab?'':'none';
+    if(btn)btn.classList.toggle('on',t===tab);
   });
   /* Lazy-load compare tab */
   if(tab==='compare'&&S.liveMode){
@@ -2425,7 +3321,11 @@ function renderMapStats(){
 }
 
 /* ─── RENDER ALL ─── */
-function renderAll(){renderStats();renderScn();renderLyrs();renderList();renderTL();renderHazards();renderMapStats();}
+function renderAll(){
+  renderStats();renderScn();renderLyrs();renderList();renderTL();renderHazards();renderMapStats();
+  renderIntelBtns();
+  renderAlerts();
+}
 
 /* ─── PDF REPORT ─── */
 function generateReport(){
