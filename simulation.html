@@ -717,6 +717,39 @@ body {
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ═══════════════════════════════════════
+   MAP STATISTICS OVERLAY
+═══════════════════════════════════════ */
+#map-stats {
+  position: absolute; top: 16px; right: 16px; z-index: 10;
+  width: 220px;
+  background: rgba(10,10,10,0.88);
+  border: 1px solid rgba(0,212,255,0.18);
+  backdrop-filter: blur(14px) saturate(1.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  pointer-events: none;
+}
+.mstat-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-bottom: 1px solid rgba(0,212,255,0.10);
+}
+.mstat-title { font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .2em; color: var(--acc); }
+.mstat-badge { font-size: 7px; font-weight: 700; letter-spacing: .08em; padding: 1px 6px; background: rgba(0,212,255,.1); border: 1px solid rgba(0,212,255,.25); color: var(--acc); }
+.mstat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,.04); }
+.mstat-cell { background: rgba(10,10,10,.6); padding: 9px 12px; }
+.mstat-lbl { font-size: 7px; text-transform: uppercase; letter-spacing: .14em; color: var(--tx3); margin-bottom: 3px; }
+.mstat-val { font-family: var(--mono); font-size: 14px; font-weight: 700; line-height: 1; }
+.mstat-sub { font-size: 7px; color: var(--tx3); margin-top: 2px; }
+.mstat-bar-row { padding: 6px 12px; border-top: 1px solid rgba(255,255,255,.04); }
+.mstat-bar-lbl { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.mstat-bar-lbl span { font-size: 7px; color: var(--tx2); text-transform: uppercase; letter-spacing: .1em; }
+.mstat-bar-track { height: 3px; background: rgba(255,255,255,.07); overflow: hidden; }
+.mstat-bar-fill { height: 100%; border-radius: 1px; transition: width .5s ease; }
+.mstat-scn-row { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-top: 1px solid rgba(255,255,255,.04); }
+.mstat-scn-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.mstat-scn-name { font-size: 8px; font-weight: 600; flex: 1; }
+.mstat-scn-val { font-family: var(--mono); font-size: 10px; font-weight: 700; }
+
+/* ═══════════════════════════════════════
    GRADIENT LEGEND (fixed bottom-left)
 ═══════════════════════════════════════ */
 #grad-legend {
@@ -892,6 +925,7 @@ body {
           <button class="btn-confirm" id="cfbtn" onclick="confirmAdd()" disabled>Analyse Risk &amp; Add to Portfolio</button>
         </div>
       </div>
+      <div id="map-stats"></div>
       <div id="grad-legend">
         <div class="gl-title" id="gl-title">Physical Risk</div>
         <div class="gl-bar"></div>
@@ -1256,13 +1290,13 @@ function initMap(){
       'heatmap-intensity':1.6,
       'heatmap-color':['interpolate',['linear'],['heatmap-density'],
         0,'rgba(0,0,0,0)',
-        .10,'rgba(0,255,148,.15)',
-        .28,'rgba(0,212,255,.22)',
-        .48,'rgba(255,200,87,.38)',
-        .68,'rgba(255,140,66,.52)',
-        .88,'rgba(255,77,79,.65)',
-        1, 'rgba(200,0,0,.82)'],
-      'heatmap-radius':52,'heatmap-opacity':S.heatmapOpacity}});
+        .08,'rgba(0,255,148,.55)',
+        .25,'rgba(0,212,255,.65)',
+        .45,'rgba(255,200,87,.80)',
+        .65,'rgba(255,140,66,.88)',
+        .82,'rgba(255,77,79,.92)',
+        1, 'rgba(180,0,0,1.0)'],
+      'heatmap-radius':56,'heatmap-intensity':2.2,'heatmap-opacity':S.heatmapOpacity}});
     map.addSource('lk',{type:'geojson',data:linkGJ()});
     map.addLayer({id:'lkl',type:'line',source:'lk',
       layout:{'line-cap':'round','line-join':'round'},
@@ -1394,7 +1428,10 @@ function renderList(){
       </div>
       <div class="a-meta">
         <div class="a-name">${a.name}</div>
-        <div class="a-sub">${a.country} · ${a.sector}</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:2px;flex-wrap:wrap">
+          <span style="font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:1px 5px;border:1px solid ${hex}40;color:${hex};background:${hex}12;white-space:nowrap">${a.sector}</span>
+          <span class="a-sub" style="margin:0">${a.country}</span>
+        </div>
       </div>
       <div class="a-risk">
         <div class="a-score" style="color:${col}">${Math.round(r.tot)}</div>
@@ -1755,14 +1792,14 @@ function chartArea(series,w,h){
       </linearGradient>
     </defs>
     ${yt.map(v=>`
-      <line x1="${pl}" y1="${yp(v)}" x2="${pl+cw}" y2="${yp(v)}" stroke="#141D30" stroke-width="1"/>
-      <text x="${pl-4}" y="${yp(v)+3.5}" font-size="7" fill="#324058" text-anchor="end" font-family="monospace">${v}</text>`).join('')}
+      <line x1="${pl}" y1="${yp(v)}" x2="${pl+cw}" y2="${yp(v)}" stroke="#1e2d45" stroke-width="1"/>
+      <text x="${pl-4}" y="${yp(v)+3.5}" font-size="7" fill="#5A7090" text-anchor="end" font-family="monospace">${v}</text>`).join('')}
     <polygon points="${pl},${pt+ch} ${pp} ${pl+cw},${pt+ch}" fill="url(#pg)"/>
     <polyline points="${pp}" fill="none" stroke="#FF8C42" stroke-width="1.5"/>
     <polygon points="${pl},${pt+ch} ${tp} ${pl+cw},${pt+ch}" fill="url(#tg)"/>
     <polyline points="${tp}" fill="none" stroke="#00D4FF" stroke-width="1.5"/>
     ${series.filter((_,i)=>i%2===0).map(s=>{const i=series.indexOf(s);
-      return`<text x="${xs[i]}" y="${pt+ch+13}" font-size="7" fill="#324058" text-anchor="middle" font-family="monospace">${s.y}</text>`;}).join('')}
+      return`<text x="${xs[i]}" y="${pt+ch+13}" font-size="7" fill="#5A7090" text-anchor="middle" font-family="monospace">${s.y}</text>`;}).join('')}
   </svg>`;
 }
 function chartLine(pts,w,h,color){
@@ -1778,14 +1815,14 @@ function chartLine(pts,w,h,color){
         <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
       </linearGradient>
     </defs>
-    <line x1="${pl}" y1="${pt}" x2="${pl}" y2="${pt+ch}" stroke="#141D30" stroke-width="1"/>
-    <line x1="${pl}" y1="${pt+ch}" x2="${pl+cw}" y2="${pt+ch}" stroke="#141D30" stroke-width="1"/>
-    <text x="${pl-4}" y="${pt+5}" font-size="7" fill="#324058" text-anchor="end" font-family="monospace">${mx.toFixed(0)}%</text>
-    <text x="${pl-4}" y="${pt+ch}" font-size="7" fill="#324058" text-anchor="end" font-family="monospace">0%</text>
+    <line x1="${pl}" y1="${pt}" x2="${pl}" y2="${pt+ch}" stroke="#1e2d45" stroke-width="1"/>
+    <line x1="${pl}" y1="${pt+ch}" x2="${pl+cw}" y2="${pt+ch}" stroke="#1e2d45" stroke-width="1"/>
+    <text x="${pl-4}" y="${pt+5}" font-size="7" fill="#5A7090" text-anchor="end" font-family="monospace">${mx.toFixed(0)}%</text>
+    <text x="${pl-4}" y="${pt+ch}" font-size="7" fill="#5A7090" text-anchor="end" font-family="monospace">0%</text>
     <polygon points="${pl},${pt+ch} ${lp} ${pl+cw},${pt+ch}" fill="url(#lg)"/>
     <polyline points="${lp}" fill="none" stroke="${color}" stroke-width="1.5"/>
-    <text x="${xs[0]}" y="${pt+ch+13}" font-size="7" fill="#324058" text-anchor="middle" font-family="monospace">${pts[0].x}</text>
-    <text x="${xs[pts.length-1]}" y="${pt+ch+13}" font-size="7" fill="#324058" text-anchor="middle" font-family="monospace">${pts[pts.length-1].x}</text>
+    <text x="${xs[0]}" y="${pt+ch+13}" font-size="7" fill="#5A7090" text-anchor="middle" font-family="monospace">${pts[0].x}</text>
+    <text x="${xs[pts.length-1]}" y="${pt+ch+13}" font-size="7" fill="#5A7090" text-anchor="middle" font-family="monospace">${pts[pts.length-1].x}</text>
   </svg>`;
 }
 
@@ -1856,152 +1893,289 @@ function advance(){
 function resetTL(){pausePlay();S.year=2024;renderAll();mapUpd();
   if(S.selId){const a=S.assets.find(x=>x.id===S.selId);if(a)drawPanel(a);}}
 
+/* ─── MAP STATISTICS OVERLAY ─── */
+function renderMapStats(){
+  const el=document.getElementById('map-stats');if(!el)return;
+  const p=pf(),c=SCN[S.scenario];
+  if(!p.cnt){el.innerHTML='';return;}
+
+  /* Sector distribution */
+  const sectors={};
+  S.assets.forEach(a=>{sectors[a.sector]=(sectors[a.sector]||0)+1;});
+  const topSectors=Object.entries(sectors).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  /* Risk distribution */
+  const lvlCounts={critical:0,high:0,medium:0,low:0};
+  S.assets.forEach(a=>{const r=calc(a,S.scenario,S.year);lvlCounts[r.lvl]++;});
+
+  const rrPct=p.rev>0?((p.rm/p.rev)*100).toFixed(1):'0';
+
+  el.innerHTML=`
+    <div class="mstat-head">
+      <span class="mstat-title">Portfolio Statistics</span>
+      <span class="mstat-badge">${c.temp} · ${S.year}</span>
+    </div>
+    <div class="mstat-grid">
+      <div class="mstat-cell">
+        <div class="mstat-lbl">Assets</div>
+        <div class="mstat-val" style="color:var(--acc)">${p.cnt}</div>
+        <div class="mstat-sub">${topSectors[0]?topSectors[0][0]:''}</div>
+      </div>
+      <div class="mstat-cell">
+        <div class="mstat-lbl">Portfolio Rev</div>
+        <div class="mstat-val" style="color:var(--tx0)">${fM(p.rev)}</div>
+        <div class="mstat-sub">annual revenue</div>
+      </div>
+      <div class="mstat-cell">
+        <div class="mstat-lbl">Rev at Risk</div>
+        <div class="mstat-val" style="color:#FF4D4F">${fM(p.rm)}</div>
+        <div class="mstat-sub">${rrPct}% of revenue</div>
+      </div>
+      <div class="mstat-cell">
+        <div class="mstat-lbl">Compliance</div>
+        <div class="mstat-val" style="color:#FFC857">${fM(p.cm)}</div>
+        <div class="mstat-sub">carbon cost</div>
+      </div>
+    </div>
+    <!-- Risk distribution bars -->
+    <div class="mstat-bar-row">
+      <div class="mstat-bar-lbl"><span>Critical</span><span style="color:#FF4D4F">${lvlCounts.critical}</span></div>
+      <div class="mstat-bar-track"><div class="mstat-bar-fill" style="width:${lvlCounts.critical/p.cnt*100}%;background:#FF4D4F"></div></div>
+    </div>
+    <div class="mstat-bar-row" style="padding-top:4px">
+      <div class="mstat-bar-lbl"><span>High</span><span style="color:#FF8C42">${lvlCounts.high}</span></div>
+      <div class="mstat-bar-track"><div class="mstat-bar-fill" style="width:${lvlCounts.high/p.cnt*100}%;background:#FF8C42"></div></div>
+    </div>
+    <div class="mstat-bar-row" style="padding-top:4px">
+      <div class="mstat-bar-lbl"><span>Medium</span><span style="color:#FFC857">${lvlCounts.medium}</span></div>
+      <div class="mstat-bar-track"><div class="mstat-bar-fill" style="width:${lvlCounts.medium/p.cnt*100}%;background:#FFC857"></div></div>
+    </div>
+    <div class="mstat-bar-row" style="padding-top:4px">
+      <div class="mstat-bar-lbl"><span>Low</span><span style="color:#00FF94">${lvlCounts.low}</span></div>
+      <div class="mstat-bar-track"><div class="mstat-bar-fill" style="width:${lvlCounts.low/p.cnt*100}%;background:#00FF94"></div></div>
+    </div>
+    <!-- Avg scores -->
+    <div class="mstat-bar-row" style="border-top:1px solid rgba(0,212,255,.08);margin-top:4px">
+      <div class="mstat-bar-lbl"><span>Avg Physical Risk</span><span style="color:#FF8C42">${f1(p.ap)}</span></div>
+      <div class="mstat-bar-track"><div class="mstat-bar-fill" style="width:${p.ap}%;background:linear-gradient(90deg,#FF8C42,#FF4D4F)"></div></div>
+    </div>
+    <div class="mstat-bar-row" style="padding-top:4px">
+      <div class="mstat-bar-lbl"><span>Avg Transition Risk</span><span style="color:#00D4FF">${f1(p.at)}</span></div>
+      <div class="mstat-bar-track"><div class="mstat-bar-fill" style="width:${p.at}%;background:linear-gradient(90deg,#00D4FF,#0096FF)"></div></div>
+    </div>
+    <!-- Scenario labels -->
+    <div class="mstat-scn-row">
+      <div class="mstat-scn-dot" style="background:${c.color};box-shadow:0 0 5px ${c.color}80"></div>
+      <span class="mstat-scn-name" style="color:${c.color}">${c.name}</span>
+      <span class="mstat-scn-val" style="color:${c.color}">${c.temp}</span>
+    </div>`;
+}
+
 /* ─── RENDER ALL ─── */
-function renderAll(){renderStats();renderScn();renderLyrs();renderList();renderTL();renderHazards();}
+function renderAll(){renderStats();renderScn();renderLyrs();renderList();renderTL();renderHazards();renderMapStats();}
 
 /* ─── PDF REPORT ─── */
 function generateReport(){
   const a=S.assets.find(x=>x.id===S.selId);
   if(!a){showToast('Select an asset first');return;}
-  const {jsPDF}=window.jspdf;
-  if(!jsPDF){showToast('PDF library not loaded');return;}
-  showToast('Generating report…',5000);
 
-  const r=calc(a,S.scenario,S.year);
-  const c=SCN[S.scenario];
-  const gw=greenwashRisk(a.sector,r.trans);
-  const conf=confidenceScore(a);
-  const doc=new jsPDF({unit:'mm',format:'a4'});
-  const W=210,M=16,TW=W-M*2,now=new Date().toLocaleDateString('en-GB',{year:'numeric',month:'long',day:'numeric'});
+  /* jsPDF loads as window.jspdf.jsPDF (UMD build from cdnjs) */
+  const jsPDFClass=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+  if(!jsPDFClass){showToast('PDF library still loading — try again');return;}
+  showToast('Generating report…',6000);
 
-  /* ── Helpers ── */
-  const rgb=(hex)=>{const b=parseInt(hex.slice(1),16);return[(b>>16)&255,(b>>8)&255,b&255];};
-  const riskRGB=r.lvl==='critical'?[255,77,79]:r.lvl==='high'?[255,140,66]:r.lvl==='medium'?[255,200,87]:[0,255,148];
-  let y=0;
+  try{
+    const r=calc(a,S.scenario,S.year);
+    const c=SCN[S.scenario];
+    const gw=greenwashRisk(a.sector,r.trans);
+    const conf=confidenceScore(a);
+    const doc=new jsPDFClass({unit:'mm',format:'a4'});
+    const W=210,M=16,TW=W-M*2;
+    const now=new Date().toLocaleDateString('en-GB',{year:'numeric',month:'long',day:'numeric'});
+    const riskRGB=r.lvl==='critical'?[255,77,79]:r.lvl==='high'?[255,140,66]:r.lvl==='medium'?[255,200,87]:[0,200,100];
+    let y=0;
 
-  function newPage(){doc.addPage();y=M;}
-  function hline(yy,op=.12){doc.setDrawColor(255,255,255);doc.setGlobalAlpha(op);doc.line(M,yy,W-M,yy);doc.setGlobalAlpha(1);}
+    function newPage(){doc.addPage();y=M+4;}
 
-  /* ── Cover ── */
-  doc.setFillColor(10,10,10);doc.rect(0,0,W,297,'F');
-  doc.setFillColor(17,24,39);doc.rect(0,0,W,62,'F');
-  doc.setTextColor(0,212,255);doc.setFontSize(7);doc.setFont('helvetica','bold');
-  doc.text('CLIMACTIX GLOBAL · CLIMATE RISK INTELLIGENCE',M,18,{charSpace:.8});
-  doc.setTextColor(240,244,248);doc.setFontSize(20);doc.text('Climate Risk Assessment',M,32);
-  doc.setFontSize(11);doc.text('Investor-Grade NGFS Scenario Analysis',M,42);
-  doc.setTextColor(91,112,144);doc.setFontSize(8);
-  doc.text(`${a.name}  ·  ${a.country}  ·  ${a.sector}`,M,52);
-  doc.text(`Scenario: ${c.name} (${c.temp})  ·  Year: ${S.year}  ·  Generated: ${now}`,M,58);
-  hline(66);
+    function hline(yy){
+      doc.setDrawColor(46,64,96);doc.setLineWidth(.3);
+      doc.line(M,yy,W-M,yy);
+    }
 
-  /* Section fn */
-  y=76;
-  function section(title){
-    if(y>250)newPage();
-    doc.setFillColor(26,34,53);doc.rect(M,y-4,TW,9,'F');
-    doc.setTextColor(0,212,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
-    doc.text(title.toUpperCase(),M+3,y+1.5,{charSpace:.6});
-    y+=11;
+    function section(title){
+      if(y>252)newPage();
+      doc.setFillColor(26,34,53);doc.rect(M,y-4,TW,9,'F');
+      doc.setDrawColor(0,212,255);doc.setLineWidth(.5);
+      doc.line(M,y-4,M+2,y-4);
+      doc.setTextColor(0,212,255);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+      doc.text(title.toUpperCase(),M+4,y+1.5);
+      y+=12;
+    }
+
+    function kv(label,value,valColor){
+      if(y>282)newPage();
+      doc.setTextColor(120,140,170);doc.setFontSize(8);doc.setFont('helvetica','normal');
+      doc.text(label,M+2,y);
+      const vc=valColor||[220,228,240];
+      doc.setTextColor(vc[0],vc[1],vc[2]);
+      doc.setFont('courier','bold');doc.setFontSize(8);
+      doc.text(String(value),W-M,y,{align:'right'});
+      hline(y+2);
+      y+=7;
+    }
+
+    function bar(label,val,color){
+      if(y>282)newPage();
+      doc.setTextColor(120,140,170);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      doc.text(label,M+2,y);
+      /* Track */
+      doc.setFillColor(30,45,69);doc.rect(M+56,y-3.8,100,4.5,'F');
+      /* Fill — clamp to track width */
+      const fw=Math.min(100,Math.max(0,val));
+      doc.setFillColor(color[0],color[1],color[2]);
+      doc.rect(M+56,y-3.8,fw,4.5,'F');
+      /* Value */
+      doc.setTextColor(220,228,240);doc.setFont('courier','bold');doc.setFontSize(7.5);
+      doc.text(`${Math.round(val)}`,W-M,y,{align:'right'});
+      y+=7.5;
+    }
+
+    /* ════ COVER PAGE ════ */
+    doc.setFillColor(10,10,10);doc.rect(0,0,W,297,'F');
+    /* Header stripe */
+    doc.setFillColor(17,24,39);doc.rect(0,0,W,70,'F');
+    /* Cyan accent bar */
+    doc.setFillColor(0,212,255);doc.rect(0,0,3,70,'F');
+    /* Logo text */
+    doc.setTextColor(0,212,255);doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.text('CLIMACTIX GLOBAL',M+4,16);
+    doc.setTextColor(120,140,170);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('CLIMATE RISK INTELLIGENCE PLATFORM',M+4,22);
+    /* Title */
+    doc.setTextColor(220,228,240);doc.setFontSize(22);doc.setFont('helvetica','bold');
+    doc.text('Climate Risk Assessment',M+4,40);
+    doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(160,180,210);
+    doc.text('Investor-Grade NGFS Phase IV Scenario Analysis',M+4,50);
+    /* Meta */
+    doc.setTextColor(80,100,130);doc.setFontSize(8);
+    doc.text(`Asset: ${a.name}  ·  ${a.country}  ·  ${a.sector}`,M+4,62);
+    doc.text(`${c.name} (${c.temp})  ·  Year ${S.year}  ·  ${now}`,M+4,68);
+    /* Risk score box */
+    doc.setFillColor(riskRGB[0],riskRGB[1],riskRGB[2]);
+    doc.rect(M+4,82,40,22,'F');
+    doc.setTextColor(10,10,10);doc.setFontSize(20);doc.setFont('helvetica','bold');
+    doc.text(f1(r.tot),M+24,97,{align:'center'});
+    doc.setFontSize(7);doc.text('RISK SCORE',M+24,103,{align:'center'});
+    doc.setTextColor(220,228,240);doc.setFontSize(9);doc.setFont('helvetica','normal');
+    doc.text(`Risk Level: ${r.lvl.toUpperCase()}`,M+50,90);
+    doc.text(`Confidence: ${conf}%`,M+50,98);
+    doc.text(`Greenwash: ${gw.label}`,M+50,106);
+    /* Divider */
+    doc.setDrawColor(26,34,53);doc.setLineWidth(.8);
+    doc.line(M+4,114,W-M,114);
+
+    /* ════ PAGE 2: RISK DATA ════ */
+    newPage();y=M+4;
+
+    section('1 · Executive Summary');
+    kv('Asset Name',a.name);
+    kv('Location',`${a.lat.toFixed(3)}°N, ${a.lng.toFixed(3)}°E`);
+    kv('Sector',a.sector);
+    kv('NGFS Scenario',`${c.name} (${c.temp})`);
+    kv('Analysis Year',`${S.year}`);
+    kv('Overall Risk Score',`${f1(r.tot)} / 100`,riskRGB);
+    kv('Risk Level',r.lvl.toUpperCase(),riskRGB);
+    kv('Data Confidence',`${conf}%`);
+    y+=3;
+
+    section('2 · Risk Breakdown');
+    bar('Physical Risk',r.phys,[255,140,66]);
+    bar('Transition Risk',r.trans,[0,212,255]);
+    bar('Supply Chain Risk',r.sc,[167,139,250]);
+    y+=3;
+
+    section('3 · Physical Hazard Sub-Scores');
+    bar('Heat Stress',r.heat,[255,140,66]);
+    bar('Flood Risk',r.flood,[0,212,255]);
+    bar('Storm / Cyclone Risk',r.storm,[167,139,250]);
+    bar('Drought Risk',r.drought,[255,200,87]);
+    bar('Sea Level Rise',Math.min(100,r.flood*.45),[0,200,100]);
+    y+=3;
+
+    section('4 · Financial Impact (TCFD-Aligned)');
+    kv('Revenue at Risk',fPct(r.rar),[255,77,79]);
+    kv('EBITDA Margin Impact',fPct(r.ebi),[255,200,87]);
+    kv('Carbon Compliance Price',`$${Math.round(r.ecp)}/tCO₂`,[255,200,87]);
+    kv('Supply Chain Disruption Index',`${Math.round(r.sc)}/100`,[0,212,255]);
+    kv('Total Carbon Compliance Cost',fM(r.ccm),[167,139,250]);
+    kv('Stranded Asset Risk',r.stranded?'DETECTED':'NOT DETECTED',r.stranded?[255,77,79]:[0,200,100]);
+    y+=3;
+
+    /* ════ PAGE 3: SCENARIOS + ESG ════ */
+    newPage();y=M+4;
+
+    section('5 · NGFS Scenario Comparison');
+    ['1.5','2.0','3.0'].forEach(sid=>{
+      const rs=calc(a,sid,S.year),cs=SCN[sid];
+      const rRGB=rs.lvl==='critical'?[255,77,79]:rs.lvl==='high'?[255,140,66]:rs.lvl==='medium'?[255,200,87]:[0,200,100];
+      kv(`${cs.name}`,`Score ${Math.round(rs.tot)}  RevAtRisk ${fPct(rs.rar)}  ${rs.lvl.toUpperCase()}`,rRGB);
+    });
+    y+=3;
+
+    section('6 · ESG Integrity & Greenwashing Risk');
+    const gwRGB=gw.label==='ELEVATED'?[255,77,79]:gw.label==='MODERATE'?[255,200,87]:[0,200,100];
+    kv('Greenwashing Risk Level',gw.label,gwRGB);
+    kv('Greenwashing Risk Score',`${Math.round(gw.score)} / 100`,gwRGB);
+    kv('Sector Carbon Intensity',`${CI_SCORE[a.sector]||40} / 100`);
+    kv('Transition Risk Score',`${f1(r.trans)} / 100`);
+    kv('Carbon Market Readiness',`${BTR[rgn(a.lat,a.lng)]||20} / 100`);
+    y+=3;
+
+    section('7 · Methodology & Data Sources');
+    const methods=[
+      'Physical risk model: IPCC AR6 WG1 + NGFS Phase IV scenario calibration',
+      'Transition risk: Carbon price trajectory, policy pressure & market shift indices',
+      'Financial impact: TCFD-aligned revenue-at-risk, EBITDA & capex models',
+      'Greenwashing score: Sector carbon intensity vs. transition readiness ratio',
+      'Climate baseline: Open-Meteo Historical Archive (2000-2023)',
+      'Supplementary baseline: NASA POWER surface climatology (1981-2010)',
+      'Projections: CMIP6 MRI_AGCM3_2_S model via Open-Meteo Climate API',
+      'Country macro: World Bank Open Data API (GDP, CO₂, renewables)',
+    ];
+    methods.forEach(m=>{
+      if(y>282)newPage();
+      doc.setTextColor(120,140,170);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      doc.text(`•  ${m}`,M+2,y);y+=5.8;
+    });
+    y+=3;
+
+    section('8 · Portfolio Context');
+    const port=pf();
+    kv('Total Portfolio Assets',`${port.cnt}`);
+    kv('Portfolio Revenue',fM(port.rev));
+    kv('Portfolio Revenue at Risk',fM(port.rm),[255,77,79]);
+    kv('High-Risk Assets',`${port.hi}`,[255,200,87]);
+    kv('Critical Assets',`${port.cr}`,[255,77,79]);
+    kv('Avg Physical Risk',f1(port.ap));
+    kv('Avg Transition Risk',f1(port.at));
+
+    /* ════ FOOTER ON ALL PAGES ════ */
+    const totalPages=doc.internal.getNumberOfPages();
+    for(let i=1;i<=totalPages;i++){
+      doc.setPage(i);
+      doc.setFillColor(17,24,39);doc.rect(0,287,W,10,'F');
+      doc.setFillColor(0,212,255);doc.rect(0,287,3,10,'F');
+      doc.setTextColor(46,64,96);doc.setFontSize(6.5);doc.setFont('helvetica','normal');
+      doc.text('CLIMACTIX GLOBAL  ·  CONFIDENTIAL  ·  For institutional use only  ·  Not investment advice',M+4,293);
+      doc.text(`Page ${i} of ${totalPages}`,W-M,293,{align:'right'});
+    }
+
+    doc.save(`Climactix_Risk_${a.name.replace(/[^a-z0-9]/gi,'_')}_${S.year}.pdf`);
+    setTimeout(()=>showToast('Report downloaded successfully'),300);
+  }catch(err){
+    console.error('PDF generation error:',err);
+    showToast('PDF error: '+err.message);
   }
-  function kv(label,value,valColor){
-    if(y>280)newPage();
-    doc.setTextColor(91,112,144);doc.setFontSize(8);doc.setFont('helvetica','normal');
-    doc.text(label,M,y);
-    doc.setTextColor(...(valColor||[240,244,248]));doc.setFont('courier','bold');
-    doc.text(String(value),M+90,y,{align:'right'});
-    y+=6;
-  }
-  function bar(label,val,color){
-    if(y>280)newPage();
-    doc.setTextColor(91,112,144);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
-    doc.text(label,M,y);
-    doc.setFillColor(30,45,69);doc.rect(M+60,y-3.5,100,4,'F');
-    doc.setFillColor(...color);doc.rect(M+60,y-3.5,val,4,'F');
-    doc.setTextColor(240,244,248);doc.setFont('courier','bold');doc.setFontSize(7.5);
-    doc.text(`${Math.round(val)}`,M+163,y);
-    y+=7;
-  }
-
-  /* ── Executive Summary ── */
-  section('1 · Executive Summary');
-  kv('Asset',a.name);
-  kv('Location',`${a.lat.toFixed(2)}°, ${a.lng.toFixed(2)}°`);
-  kv('Sector',a.sector);
-  kv('Scenario',`${c.name} (${c.temp})`);
-  kv('Analysis Year',S.year);
-  kv('Overall Risk Score',`${f1(r.tot)} / 100`,riskRGB);
-  kv('Risk Level',r.lvl.toUpperCase(),riskRGB);
-  kv('Confidence Score',`${conf}%`);
-  y+=4;
-
-  /* ── Risk Breakdown ── */
-  section('2 · Risk Breakdown');
-  bar('Physical Risk',r.phys,[255,140,66]);
-  bar('Transition Risk',r.trans,[0,212,255]);
-  bar('Supply Chain Risk',r.sc,[167,139,250]);
-  y+=4;
-
-  section('3 · Physical Hazards');
-  bar('Heat Stress',r.heat,[255,140,66]);
-  bar('Flood Risk',r.flood,[0,212,255]);
-  bar('Storm Risk',r.storm,[167,139,250]);
-  bar('Drought Risk',r.drought,[255,200,87]);
-  bar('Sea Level',Math.min(100,r.flood*.45),[0,255,148]);
-  y+=4;
-
-  section('4 · Financial Impact');
-  kv('Revenue at Risk',fPct(r.rar),[255,77,79]);
-  kv('EBITDA Impact',fPct(r.ebi),[255,200,87]);
-  kv('Carbon Compliance',`$${Math.round(r.ecp)}/tCO₂`,[255,200,87]);
-  kv('Supply Disruption Index',Math.round(r.sc),[0,212,255]);
-  kv('Carbon Compliance Cost',fM(r.ccm),[167,139,250]);
-  y+=4;
-
-  /* ── Scenario Analysis ── */
-  section('5 · Scenario Comparison');
-  ['1.5','2.0','3.0'].forEach(sid=>{
-    const rs=calc(a,sid,S.year),cs=SCN[sid];
-    const rRGB=rs.lvl==='critical'?[255,77,79]:rs.lvl==='high'?[255,140,66]:rs.lvl==='medium'?[255,200,87]:[0,255,148];
-    kv(`${cs.name} (${cs.temp})`,`Risk ${Math.round(rs.tot)} · RevAtRisk ${fPct(rs.rar)} · Level ${rs.lvl.toUpperCase()}`,rRGB);
-  });
-  y+=4;
-
-  /* ── Greenwashing ── */
-  section('6 · ESG Integrity & Greenwashing Risk');
-  const gwRGB=gw.label==='ELEVATED'?[255,77,79]:gw.label==='MODERATE'?[255,200,87]:[0,255,148];
-  kv('Greenwashing Risk Level',gw.label,gwRGB);
-  kv('Greenwashing Score',`${Math.round(gw.score)}/100`,gwRGB);
-  kv('Sector Carbon Intensity',`${CI_SCORE[a.sector]||40}/100`);
-  kv('Transition Risk',`${f1(r.trans)}/100`);
-  y+=4;
-
-  /* ── Methodology ── */
-  section('7 · Methodology');
-  const methods=['Physical risk: IPCC AR6, NGFS Phase IV scenario calibration',
-    'Transition risk: Carbon price trajectory + policy pressure index',
-    'Financial impact: TCFD-aligned revenue-at-risk and EBITDA models',
-    'Greenwashing risk: Sector carbon intensity vs. transition readiness ratio',
-    'Climate baseline: Open-Meteo historical + NASA POWER (1981–2010)',
-    'Projections: CMIP6 MRI_AGCM3_2_S via Open-Meteo Climate API'];
-  methods.forEach(m=>{
-    if(y>280)newPage();
-    doc.setTextColor(91,112,144);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
-    doc.text(`• ${m}`,M,y);y+=5.5;
-  });
-  y+=4;
-
-  /* ── Footer ── */
-  const pages=doc.getNumberOfPages();
-  for(let i=1;i<=pages;i++){
-    doc.setPage(i);
-    doc.setFillColor(17,24,39);doc.rect(0,285,W,12,'F');
-    doc.setTextColor(46,64,96);doc.setFontSize(6.5);doc.setFont('helvetica','normal');
-    doc.text('CLIMACTIX GLOBAL · CONFIDENTIAL · For institutional use only · Not investment advice',M,292);
-    doc.text(`Page ${i} of ${pages}`,W-M,292,{align:'right'});
-  }
-
-  doc.save(`Climactix_Risk_Report_${a.name.replace(/\s+/g,'_')}_${S.year}.pdf`);
-  setTimeout(()=>showToast('Report downloaded'),200);
 }
 
 /* ─── INIT ─── */
