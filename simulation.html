@@ -1146,7 +1146,7 @@ body {
           </svg>
           <input class="search-input" id="sim-search" placeholder="Search assets, ports, airports, energy…" autocomplete="off"
             oninput="onSearchInput(this.value)" onkeydown="onSearchKey(event)" onfocus="openSearch()"/>
-          <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+          <button class="search-clear" id="search-clear" onclick="clearSearch()" style="display:none">✕</button>
         </div>
         <div id="search-results" class="search-results"></div>
       </div>
@@ -2915,6 +2915,7 @@ function mapUpd(){
   map.getCanvas().style.cursor=S.addMode?'crosshair':'';
   updateGradLegend();
   intelMapUpd();
+  updateInfraLayers();
 }
 
 /* ─── FORMAT ─── */
@@ -4209,9 +4210,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderAll();initMap();
   document.getElementById('nname').addEventListener('input',e=>{
     document.getElementById('cfbtn').disabled=!e.target.value.trim();});
-  /* Check if Python API server is running */
+  /* Close search dropdown when clicking outside */
+  document.addEventListener('click',e=>{
+    const wrap=document.querySelector('.search-pb');
+    if(wrap&&!wrap.contains(e.target)){
+      document.getElementById('search-results')?.classList.remove('open');
+    }
+  });
+  /* Close pin modal when clicking outside */
+  document.getElementById('pin-modal')?.addEventListener('click',e=>e.stopPropagation());
+  document.getElementById('mw')?.addEventListener('click',e=>{
+    const pm=document.getElementById('pin-modal');
+    if(pm&&pm.classList.contains('on')&&!pm.contains(e.target))closePinModal();
+  });
   checkBackend();
-  /* Re-check every 30 seconds (handles server start/stop during session) */
   setInterval(checkBackend,30000);
 });
 </script>
