@@ -613,10 +613,10 @@ body {
 /* Tab switcher in right panel */
 .rp-tabs { display: flex; border-bottom: 1px solid var(--bd1); }
 .rp-tab {
-  flex: 1; padding: 8px 6px; background: none; border: none;
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  flex: 1; padding: 7px 3px; background: none; border: none;
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
   color: var(--tx2); cursor: pointer; border-bottom: 2px solid transparent;
-  transition: all .12s; margin-bottom: -1px;
+  transition: all .12s; margin-bottom: -1px; white-space: nowrap;
 }
 .rp-tab:hover { color: var(--tx1); }
 .rp-tab.on { color: var(--tx0); border-bottom-color: var(--acc); }
@@ -937,6 +937,54 @@ body {
 .il-row { display: flex; align-items: center; gap: 6px; }
 .il-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .il-lbl { font-size: 8px; color: var(--tx2); letter-spacing: .06em; }
+
+/* ═══════════════════════════════════════
+   NARRATIVE INTELLIGENCE PANEL
+═══════════════════════════════════════ */
+.cred-ring-wrap { display:flex; align-items:center; gap:14px; padding:14px 14px 6px; }
+.cred-ring { flex-shrink:0; }
+.cred-ring-info { flex:1; min-width:0; }
+.cred-score { font-family:var(--mono); font-size:34px; font-weight:700; line-height:1; }
+.cred-label-badge {
+  display:inline-block; margin-top:5px; padding:2px 8px;
+  font-size:7px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; border:1px solid;
+}
+.cred-sub { font-size:9px; color:var(--tx2); margin-top:5px; line-height:1.5; }
+.cred-dims { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--bd0);
+  border:1px solid var(--bd0); margin:0 14px 10px; }
+.cred-dim { background:var(--bg2); padding:7px 9px; }
+.cred-dim-lbl { font-size:7px; text-transform:uppercase; letter-spacing:.08em; color:var(--tx2); margin-bottom:2px; }
+.cred-dim-val { font-family:var(--mono); font-size:14px; font-weight:700; line-height:1; }
+.fw-matrix { margin:0 14px 10px; }
+.fw-row { display:flex; align-items:center; gap:6px; padding:4px 0; border-bottom:1px solid var(--bd0); }
+.fw-row:last-child { border-bottom:none; }
+.fw-name { font-size:8px; font-weight:700; letter-spacing:.05em; width:50px; flex-shrink:0; }
+.fw-bar-wrap { flex:1; height:3px; background:var(--bd0); }
+.fw-bar-fill { height:100%; }
+.fw-pct { font-family:var(--mono); font-size:8px; font-weight:700; width:24px; text-align:right; flex-shrink:0; }
+.fw-status { font-size:9px; width:13px; text-align:center; flex-shrink:0; }
+.disc-bars { margin:0 14px 10px; display:flex; flex-direction:column; gap:6px; }
+.disc-row { display:flex; align-items:center; gap:8px; }
+.disc-lbl { font-size:9px; color:var(--tx1); width:52px; flex-shrink:0; }
+.disc-bar-wrap { flex:1; height:4px; background:var(--bd0); }
+.disc-bar-fill { height:100%; }
+.disc-val { font-family:var(--mono); font-size:9px; font-weight:700; width:26px; text-align:right; flex-shrink:0; }
+.gap-list { margin:0 14px 10px; display:flex; flex-direction:column; gap:4px; }
+.gap-item { display:flex; align-items:flex-start; gap:6px; padding:5px 8px;
+  background:rgba(255,77,79,.05); border-left:2px solid rgba(255,77,79,.40);
+  font-size:9px; color:var(--tx1); line-height:1.4; }
+.pos-item { background:rgba(0,255,148,.04); border-left-color:rgba(0,255,148,.40); color:var(--tx1); }
+.narrfin-grid { display:grid; grid-template-columns:1fr; gap:1px; background:var(--bd0);
+  border:1px solid var(--bd0); margin:0 14px 10px; }
+.narrfin-cell { background:var(--bg2); padding:7px 10px; }
+.narrfin-lbl { font-size:7px; text-transform:uppercase; letter-spacing:.08em; color:var(--tx2); margin-bottom:3px; }
+.narrfin-val { font-family:var(--mono); font-size:14px; font-weight:700; line-height:1; }
+.narrfin-sub { font-size:8px; color:var(--tx2); margin-top:3px; line-height:1.4; }
+.sig-adj-row { display:flex; align-items:center; gap:8px; padding:6px 14px; border-bottom:1px solid var(--bd0); }
+.sig-adj-ico { font-size:11px; flex-shrink:0; width:16px; text-align:center; }
+.sig-adj-body { flex:1; min-width:0; }
+.sig-adj-msg { font-size:9px; color:var(--tx0); line-height:1.3; }
+.sig-adj-delta { font-family:var(--mono); font-size:9px; font-weight:700; flex-shrink:0; }
 
 /* ═══════════════════════════════════════
    INTELLIGENCE LAYER BUTTONS
@@ -1541,6 +1589,89 @@ const NARRATIVE_DATA={
   Shipping:     {disclosureGap:45,greenwashRisk:52,sentimentMismatch:48},
 };
 
+/* ─── NARRATIVE INTELLIGENCE — FRAMEWORK REGISTRY ─── */
+const FRAMEWORK_INFO={
+  TCFD:   {name:'TCFD',   full:'Task Force on Climate-related Financial Disclosures',weight:0.22,color:'#00D4FF',focus:'Governance · Strategy · Risk Mgmt · Metrics'},
+  ISSB:   {name:'ISSB',   full:'IFRS S1/S2 Sustainability Disclosure Standards',     weight:0.18,color:'#22D3EE',focus:'Financial materiality · Climate risk linkage'},
+  GRI:    {name:'GRI',    full:'Global Reporting Initiative',                        weight:0.14,color:'#34D399',focus:'Universal ESG coverage · Stakeholder reporting'},
+  SASB:   {name:'SASB',   full:'Sustainability Accounting Standards Board',          weight:0.16,color:'#A78BFA',focus:'Sector-specific financial materiality'},
+  CDP:    {name:'CDP',    full:'Carbon Disclosure Project',                         weight:0.12,color:'#F87171',focus:'Climate data quality · Annual scored submission'},
+  EUTax:  {name:'EU TAX', full:'EU Taxonomy for Sustainable Activities',            weight:0.10,color:'#6EE7B7',focus:'Activity alignment · Do No Significant Harm'},
+  SFDR:   {name:'SFDR',   full:'Sustainable Finance Disclosure Regulation',         weight:0.05,color:'#FCD34D',focus:'Investor-facing PAI compliance'},
+  BRSR:   {name:'BRSR',   full:'Business Responsibility & Sustainability Report',   weight:0.03,color:'#FB923C',focus:'India SEBI mandate · Local ESG compliance'},
+};
+
+/* Per-sector baseline framework coverage scores (0–100) */
+const SECTOR_FW_SCORES={
+  Energy:       {TCFD:68,ISSB:52,GRI:72,SASB:78,CDP:65,EUTax:42,SFDR:25,BRSR:30},
+  Manufacturing:{TCFD:45,ISSB:38,GRI:55,SASB:62,CDP:40,EUTax:35,SFDR:15,BRSR:40},
+  Mining:       {TCFD:42,ISSB:35,GRI:48,SASB:70,CDP:38,EUTax:22,SFDR:10,BRSR:25},
+  Agriculture:  {TCFD:28,ISSB:22,GRI:42,SASB:55,CDP:25,EUTax:38,SFDR: 8,BRSR:48},
+  'Real Estate':{TCFD:52,ISSB:45,GRI:58,SASB:60,CDP:35,EUTax:62,SFDR:20,BRSR:22},
+  Finance:      {TCFD:72,ISSB:68,GRI:65,SASB:55,CDP:45,EUTax:58,SFDR:75,BRSR:35},
+  Technology:   {TCFD:78,ISSB:65,GRI:75,SASB:58,CDP:70,EUTax:40,SFDR:30,BRSR:28},
+  Logistics:    {TCFD:38,ISSB:30,GRI:45,SASB:52,CDP:32,EUTax:28,SFDR:12,BRSR:22},
+  Shipping:     {TCFD:35,ISSB:28,GRI:40,SASB:58,CDP:30,EUTax:25,SFDR:10,BRSR:15},
+};
+
+/* Per-sector disclosure quality model — drives credibility engine */
+const SECTOR_DISCLOSURES={
+  Energy:{
+    scope1:85,scope2:78,scope3:32,netZero:true,netZeroYr:2050,tPlan:'vague',capexPct:14,
+    claimsStrength:82,dataSupport:48,verifiability:55,
+    gaps:['No verified Scope 3 emissions','Transition pathway lacks milestones','No TCFD scenario analysis published'],
+    positives:['Scope 1 & 2 third-party verified','Annual CDP submission maintained'],
+  },
+  Manufacturing:{
+    scope1:72,scope2:65,scope3:18,netZero:true,netZeroYr:2045,tPlan:'partial',capexPct:8,
+    claimsStrength:68,dataSupport:42,verifiability:40,
+    gaps:['Scope 3 supply chain not disclosed','No science-based targets (SBTi)','Supplier engagement programme absent'],
+    positives:['Scope 1 & 2 reported annually'],
+  },
+  Mining:{
+    scope1:78,scope2:70,scope3:12,netZero:false,netZeroYr:null,tPlan:'absent',capexPct:5,
+    claimsStrength:45,dataSupport:35,verifiability:30,
+    gaps:['No net zero commitment','Scope 3 entirely absent','Land use & biodiversity undisclosed','Tailings risk not quantified'],
+    positives:['Scope 1 data collected via regulatory mandate'],
+  },
+  Agriculture:{
+    scope1:45,scope2:38,scope3:15,netZero:false,netZeroYr:null,tPlan:'absent',capexPct:4,
+    claimsStrength:38,dataSupport:22,verifiability:20,
+    gaps:['Methane & N₂O emissions not quantified','Biodiversity impact absent','Water stress risk unaddressed'],
+    positives:[],
+  },
+  'Real Estate':{
+    scope1:60,scope2:72,scope3:28,netZero:true,netZeroYr:2040,tPlan:'partial',capexPct:18,
+    claimsStrength:72,dataSupport:58,verifiability:52,
+    gaps:['Embodied carbon not tracked','Tenant Scope 3 emissions excluded','Physical risk asset-level mapping absent'],
+    positives:['Energy intensity tracked annually','Partial EU Taxonomy alignment claimed'],
+  },
+  Finance:{
+    scope1:25,scope2:42,scope3:8,netZero:true,netZeroYr:2050,tPlan:'vague',capexPct:22,
+    claimsStrength:88,dataSupport:35,verifiability:45,
+    gaps:['Financed emissions (Scope 3 Cat.15) absent','Portfolio TCFD alignment not quantified','SFDR PAI indicators incomplete'],
+    positives:['SFDR compliance declared','Net Zero Banking Alliance signatory'],
+  },
+  Technology:{
+    scope1:55,scope2:88,scope3:45,netZero:true,netZeroYr:2030,tPlan:'detailed',capexPct:28,
+    claimsStrength:90,dataSupport:75,verifiability:72,
+    gaps:['Hardware supply chain Scope 3 gaps remain','Data centre water usage under-disclosed'],
+    positives:['SBTi-validated 1.5°C targets','CDP A-list submitter','100% renewable energy commitment verified'],
+  },
+  Logistics:{
+    scope1:75,scope2:55,scope3:22,netZero:false,netZeroYr:null,tPlan:'absent',capexPct:7,
+    claimsStrength:52,dataSupport:38,verifiability:35,
+    gaps:['Fleet Scope 1 under-reported','Last-mile Scope 3 absent','No EV transition roadmap published'],
+    positives:['Fuel consumption tracked and disclosed'],
+  },
+  Shipping:{
+    scope1:72,scope2:45,scope3:10,netZero:false,netZeroYr:null,tPlan:'absent',capexPct:6,
+    claimsStrength:42,dataSupport:32,verifiability:28,
+    gaps:['IMO GHG Strategy not operationalised','No biofuel / green hydrogen pathway','Ballast water disclosure absent'],
+    positives:['IMO CII rating reported'],
+  },
+};
+
 /* ─── GLOBAL INFRASTRUCTURE DATA ──────────────────────────────────
    30 major container ports · 30 major airports · 40 energy sites
    All coordinates are accurate WGS-84 values.
@@ -1955,8 +2086,10 @@ function calcFull(a,sid,yr){
   const complianceCostAnnual=((a.s1+a.s2)*regData.carbonTax)/1e6;
   /* Supply chain disruption cost */
   const scDisruptionCost=a.rev*(sc/100)*0.06;
-  /* Narrative/reputational cost (ESG premium on financing) */
-  const narrativeCost=a.rev*(narr/100)*0.02;
+  /* Narrative/reputational cost — credibility-adjusted ESG financing premium */
+  const credObj=calcCredibility(a);
+  const narrAdj=narrativeFinancialAdj(credObj.score);
+  const narrativeCost=a.rev*(narr/100)*0.02*narrAdj.complianceMult+a.rev*narrAdj.revenueImpactPct;
   const costIncrease=ccm+adaptCost+fuelCostIncrease+complianceCostAnnual+narrativeCost;
   const ebitdaImpact=rar/100*a.rev+costIncrease;
   const yrs=Math.max(1,2050-yr);
@@ -2109,28 +2242,106 @@ function _market(a,sid,yr){
 /* ─── NARRATIVE / SENTIMENT RISK ─────────────────────────────────
    NarrativeRisk = f(disclosure gaps, greenwashing signals, sentiment mismatch)
 ─────────────────────────────────────────────────────────────────── */
-function _narrative(a,sid,yr){
+/* ─── NARRATIVE INTELLIGENCE ENGINE ──────────────────────────────────
+   calcCredibility(a)         → full disclosure credibility breakdown
+   narrativeFinancialAdj(s)   → financial impact of low credibility
+   _narrative(a,sid,yr)       → 0-100 narrative risk component
+   greenwashRisk(sector,tRisk)→ label/color/score (backward-compat)
+──────────────────────────────────────────────────────────────────── */
+
+function calcCredibility(a){
+  const fw=SECTOR_FW_SCORES[a.sector]||SECTOR_FW_SCORES.Energy;
+  const disc=SECTOR_DISCLOSURES[a.sector]||SECTOR_DISCLOSURES.Energy;
   const rid=rgn(a.lat,a.lng);
-  const sent=SENTIMENT_SCORES[rid]||SENTIMENT_SCORES.Global;
-  const narr=NARRATIVE_DATA[a.sector]||{disclosureGap:30,greenwashRisk:35,sentimentMismatch:30};
-  /* High regional activism amplifies narrative risk */
-  const sentBoost=sent.score>55?(sent.score-55)*0.6:0;
-  /* Rising trend adds forward pressure */
-  const trendBoost=sent.trend>0?sent.trend*0.4:0;
-  return Math.min(100,
-    narr.disclosureGap*.35+
-    narr.greenwashRisk*.40+
-    narr.sentimentMismatch*.25+
-    sentBoost+trendBoost
+
+  /* [1] Completeness — weighted avg of 8 framework scores
+     BRSR weight doubles for India assets; SFDR doubles for Finance */
+  const fwKeys=['TCFD','ISSB','GRI','SASB','CDP','EUTax','SFDR','BRSR'];
+  const fwWts=[0.22,0.18,0.14,0.16,0.12,0.10,
+    a.sector==='Finance'?0.10:0.05,
+    rid==='India'?0.06:0.03];
+  const wSum=fwWts.reduce((s,w)=>s+w,0);
+  const completeness=fwKeys.reduce((s,k,i)=>s+(fw[k]||0)*fwWts[i],0)/wSum;
+
+  /* [2] Consistency — how well quantitative data backs qualitative claims */
+  const gap=Math.abs(disc.claimsStrength-disc.dataSupport);
+  const consistency=Math.max(0,100-gap*0.85);
+
+  /* [3] Verifiability — third-party audit / independent assurance coverage */
+  const verifiability=disc.verifiability;
+
+  /* [4] Alignment — conformance with the three most rigorous standards */
+  const alignment=(fw.TCFD*0.40+fw.ISSB*0.35+(fw.EUTax||0)*0.25);
+
+  /* Composite credibility score (0–100) */
+  const score=Math.min(100,
+    consistency  *0.30+
+    completeness *0.25+
+    verifiability*0.25+
+    alignment    *0.20/100*100
   );
+
+  /* Disclosure gap = weighted absence of Scope data (Scope 3 most important) */
+  const disclosureGap=Math.max(0,100-(disc.scope1*0.20+disc.scope2*0.20+disc.scope3*0.60));
+
+  /* Greenwashing pressure = claims exceeding verifiable data */
+  const gwPressure=Math.max(0,
+    (disc.claimsStrength-disc.dataSupport)*0.40+
+    (100-verifiability)*0.30+
+    disclosureGap*0.30
+  );
+
+  const label=score>=75?'HIGH':score>=55?'MODERATE':score>=38?'LOW':'WEAK';
+  const color=score>=75?'#00FF94':score>=55?'#FFC857':score>=38?'#FF8C42':'#FF4D4F';
+
+  return{score:Math.round(score),completeness:Math.round(completeness),
+    consistency:Math.round(consistency),verifiability:Math.round(verifiability),
+    alignment:Math.round(alignment),
+    disclosureGap:Math.round(disclosureGap),gwPressure:Math.round(gwPressure),
+    label,color,fw,disc};
 }
 
-/* ─── GREENWASHING RISK ─── */
+/* Financial impact of credibility on capital cost, compliance, and revenue */
+function narrativeFinancialAdj(credScore){
+  /* Risk premium in basis points (cost of capital adjustment) */
+  const riskBps=credScore>=80?-30:credScore>=70?40:credScore>=55?120:credScore>=40?200:280;
+  /* Compliance cost multiplier (1.0x–1.5x; weak disclosures invite penalties) */
+  const complianceMult=parseFloat((1+(100-credScore)/200).toFixed(3));
+  /* Reputational revenue impact (max 8% of revenue at credibility=0) */
+  const revenueImpactPct=Math.max(0,(100-credScore)*0.08/100);
+  return{riskBps,complianceMult,revenueImpactPct};
+}
+
+function _narrative(a,sid,yr){
+  const cred=calcCredibility(a);
+  const rid=rgn(a.lat,a.lng);
+  const sent=SENTIMENT_SCORES[rid]||SENTIMENT_SCORES.Global;
+
+  /* Base narrative risk derived from inverse credibility */
+  const baseRisk=(100-cred.score)*0.72;
+
+  /* Regional activism pressure */
+  const sentBoost=sent.score>55?(sent.score-55)*0.45:0;
+  const trendBoost=sent.trend>0?sent.trend*0.32:0;
+
+  /* Nearby negative news events (~30° radius) */
+  const nearNews=NEWS_FEED.filter(n=>
+    Math.abs(n.lat-a.lat)<30&&Math.abs(n.lng-a.lng)<30);
+  const newsBoost=Math.min(12,nearNews.reduce((s,n)=>s+n.impact*0.07,0));
+
+  return Math.min(100,baseRisk+sentBoost+trendBoost+newsBoost);
+}
+
+/* ─── GREENWASHING RISK (backward-compatible) ─── */
 const CI_SCORE={Energy:90,Mining:80,Manufacturing:55,Shipping:45,Agriculture:35,Logistics:30,
   'Real Estate':22,Technology:14,Finance:10};
 function greenwashRisk(sector,transRisk){
+  const disc=SECTOR_DISCLOSURES[sector]||{claimsStrength:50,dataSupport:40,verifiability:40};
   const ci=CI_SCORE[sector]||40;
-  const gwScore=ci*(100-transRisk)/100;
+  /* Blend legacy carbon intensity model with credibility-based pressure */
+  const ciLegacy=ci*(100-transRisk)/100;
+  const gwPressure=Math.max(0,(disc.claimsStrength-disc.dataSupport)*0.45+(100-disc.verifiability)*0.35);
+  const gwScore=ciLegacy*0.50+gwPressure*0.50;
   if(gwScore>60)return{label:'ELEVATED',color:'#FF4D4F',score:gwScore};
   if(gwScore>30)return{label:'MODERATE',color:'#FFC857',score:gwScore};
   return{label:'LOW',color:'#00FF94',score:gwScore};
@@ -2278,12 +2489,17 @@ function newsGJ(){
 /* Narrative risk overlay on asset positions — ring glow by risk level */
 function narrativeGJ(){
   return{type:'FeatureCollection',features:S.assets.map(a=>{
+    const cred=calcCredibility(a);
     const narrScore=_narrative(a,S.scenario,S.year);
-    const lvl=narrScore>=60?'critical':narrScore>=40?'high':narrScore>=22?'medium':'low';
+    /* Color driven by credibility (green=trustworthy, yellow=moderate, red=greenwashing) */
+    const ringColor=cred.score>=75?'#00FF94':cred.score>=55?'#FFC857':cred.score>=38?'#FF8C42':'#FF4D4F';
+    /* Ring thickness = greenwash pressure */
+    const radius=12+(cred.gwPressure/100)*10;
     return{type:'Feature',
       geometry:{type:'Point',coordinates:[a.lng,a.lat]},
       properties:{id:a.id,narrativeScore:Math.round(narrScore),
-        color:riskHex(lvl),radius:14+(narrScore/100)*8}};
+        credibility:cred.score,gwPressure:cred.gwPressure,
+        color:ringColor,radius}};
   })};
 }
 
@@ -3197,11 +3413,12 @@ function drawPanel(a){
 
     <!-- Tab bar -->
     <div class="rp-tabs">
-      <button class="rp-tab on" id="tab-risk"    onclick="switchTab('risk')">Risk</button>
-      <button class="rp-tab"    id="tab-fin"     onclick="switchTab('fin')">Financials</button>
-      <button class="rp-tab"    id="tab-compare" onclick="switchTab('compare')">Compare</button>
-      <button class="rp-tab"    id="tab-macro"   onclick="switchTab('macro')">Country</button>
-      <button class="rp-tab"    id="tab-signals" onclick="switchTab('signals')" style="color:var(--acc)">Signals</button>
+      <button class="rp-tab on" id="tab-risk"      onclick="switchTab('risk')">Risk</button>
+      <button class="rp-tab"    id="tab-fin"       onclick="switchTab('fin')">Financials</button>
+      <button class="rp-tab"    id="tab-compare"   onclick="switchTab('compare')">Compare</button>
+      <button class="rp-tab"    id="tab-macro"     onclick="switchTab('macro')">Country</button>
+      <button class="rp-tab"    id="tab-signals"   onclick="switchTab('signals')" style="color:var(--acc)">Signals</button>
+      <button class="rp-tab"    id="tab-narrative" onclick="switchTab('narrative')" style="color:#22D3EE">Narrative</button>
     </div>
 
     <!-- Semi-circular gauge -->
@@ -3428,6 +3645,11 @@ function drawPanel(a){
     <!-- TAB: SIGNALS -->
     <div id="pane-signals" style="display:none">
       ${buildSignalsPane(a)}
+    </div>
+
+    <!-- TAB: NARRATIVE INTELLIGENCE -->
+    <div id="pane-narrative" style="display:none">
+      ${buildNarrativePane(a)}
     </div>`;
 
   document.getElementById('rp').classList.add('on');
@@ -3637,9 +3859,181 @@ function renderAlerts(){
     </div>`).join('');
 }
 
+/* ─── NARRATIVE INTELLIGENCE PANE ──────────────────────────────────
+   Full ESG disclosure credibility analysis for the selected asset.
+   Answers: "Can this company's climate claims be trusted — and how
+   does that affect financial risk?"
+──────────────────────────────────────────────────────────────────── */
+function buildNarrativePane(a){
+  const cred=calcCredibility(a);
+  const adj=narrativeFinancialAdj(cred.score);
+  const rid=rgn(a.lat,a.lng);
+  const sent=SENTIMENT_SCORES[rid]||SENTIMENT_SCORES.Global;
+  const narrScore=Math.round(_narrative(a,S.scenario,S.year));
+
+  /* SVG credibility ring */
+  const R=30,CX=36,CY=36,SW=7;
+  const circ=2*Math.PI*R;
+  const dash=((cred.score/100)*circ).toFixed(1);
+  const credRing=`<svg width="72" height="72" viewBox="0 0 72 72">
+    <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="var(--bd1)" stroke-width="${SW}"/>
+    <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${cred.color}" stroke-width="${SW}"
+      stroke-dasharray="${dash} ${circ.toFixed(1)}" stroke-dashoffset="${(circ/4).toFixed(1)}"
+      stroke-linecap="round" transform="rotate(-90 ${CX} ${CY})"/>
+  </svg>`;
+
+  /* Framework rows */
+  const fwRows=Object.entries(FRAMEWORK_INFO).map(([key,fw])=>{
+    const score=cred.fw[key]||0;
+    const relevant=!(key==='BRSR'&&rid!=='India')&&!(key==='SFDR'&&a.sector!=='Finance');
+    const status=!relevant?'<span style="color:var(--tx3);font-size:8px">N/A</span>':
+      score>=60?'<span style="color:#00FF94">✓</span>':
+      score>=40?'<span style="color:#FFC857">~</span>':
+      '<span style="color:#FF4D4F">✗</span>';
+    const barColor=fw.color;
+    const displayScore=relevant?score:0;
+    return`<div class="fw-row">
+      <span class="fw-name" style="color:${fw.color}">${fw.name}</span>
+      <div class="fw-bar-wrap"><div class="fw-bar-fill" style="width:${displayScore}%;background:${barColor}40;border-right:2px solid ${barColor}"></div></div>
+      <span class="fw-pct" style="color:${relevant?(score>=60?'#00FF94':score>=40?'#FFC857':'#FF8C42'):'var(--tx3)'}">${relevant?score:'—'}</span>
+      <span class="fw-status">${status}</span>
+    </div>`;
+  }).join('');
+
+  /* Scope disclosure bars */
+  const scopeBars=[
+    ['Scope 1',cred.disc.scope1,'#FF8C42'],
+    ['Scope 2',cred.disc.scope2,'#FFC857'],
+    ['Scope 3',cred.disc.scope3,'#A78BFA'],
+  ].map(([lbl,val,col])=>`<div class="disc-row">
+    <span class="disc-lbl">${lbl}</span>
+    <div class="disc-bar-wrap"><div class="disc-bar-fill" style="width:${val}%;background:${col}"></div></div>
+    <span class="disc-val" style="color:${val>=70?'#00FF94':val>=45?'#FFC857':'#FF4D4F'}">${val}%</span>
+  </div>`).join('');
+
+  /* Gaps & positives */
+  const gapList=cred.disc.gaps.map(g=>`<div class="gap-item">⚠ ${g}</div>`).join('');
+  const posList=(cred.disc.positives||[]).map(p=>`<div class="gap-item pos-item">✓ ${p}</div>`).join('');
+
+  /* Financial impact rows */
+  const bpsColor=adj.riskBps>100?'#FF4D4F':adj.riskBps>0?'#FFC857':adj.riskBps<0?'#00FF94':'var(--tx1)';
+  const bpsStr=adj.riskBps<0?`${adj.riskBps} bps`:`+${adj.riskBps} bps`;
+  const repRevM=(a.rev*adj.revenueImpactPct).toFixed(1);
+
+  /* Live signal adjustments */
+  const relSignals=LIVE_SIGNALS.filter(s=>s.region===rid||s.region==='Global'||s.sector===a.sector).slice(0,3);
+  const sigRows=relSignals.map(s=>{
+    const delta=s.type==='regulation'||s.type==='sentiment'?'+':'+';
+    return`<div class="sig-adj-row">
+      <span class="sig-adj-ico">${s.icon}</span>
+      <div class="sig-adj-body">
+        <div class="sig-adj-msg">${s.msg}</div>
+      </div>
+      <span class="sig-adj-delta" style="color:#FF8C42">${delta}${s.delta}</span>
+    </div>`;
+  }).join('');
+
+  /* Net zero status */
+  const nzStatus=cred.disc.netZero
+    ?`<span style="color:#00FF94;font-weight:700">Yes — ${cred.disc.netZeroYr}</span>`
+    :`<span style="color:#FF4D4F;font-weight:700">No commitment</span>`;
+  const tPlanColors={detailed:'#00FF94',partial:'#FFC857',vague:'#FF8C42',absent:'#FF4D4F'};
+  const tPlanColor=tPlanColors[cred.disc.tPlan]||'#FF4D4F';
+
+  return`
+  <div class="rp-sec" style="padding-bottom:0">
+    <div class="rp-sec-title" style="display:flex;align-items:center;justify-content:space-between">
+      ESG Credibility Score
+      <span style="font-size:7px;color:var(--tx3);font-weight:400;letter-spacing:.06em">Narrative Risk: <span style="color:#22D3EE;font-family:var(--mono);font-weight:700">${narrScore}/100</span></span>
+    </div>
+    <div class="cred-ring-wrap">
+      <div class="cred-ring">${credRing}</div>
+      <div class="cred-ring-info">
+        <div class="cred-score" style="color:${cred.color}">${cred.score}</div>
+        <span class="cred-label-badge" style="color:${cred.color};border-color:${cred.color}40;background:${cred.color}10">${cred.label} CREDIBILITY</span>
+        <div class="cred-sub">GW Pressure: <span style="font-family:var(--mono);font-weight:700;color:${cred.gwPressure>50?'#FF4D4F':cred.gwPressure>25?'#FFC857':'#00FF94'}">${cred.gwPressure}/100</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cred-dims">
+    ${[['Consistency',cred.consistency,'Claims vs Data'],['Completeness',cred.completeness,'Framework Cov.'],
+       ['Verifiability',cred.verifiability,'3rd-party Audit'],['Alignment',cred.alignment,'Int\'l Standards']
+    ].map(([lbl,val,sub])=>{
+      const c=val>=70?'#00FF94':val>=50?'#FFC857':val>=35?'#FF8C42':'#FF4D4F';
+      return`<div class="cred-dim">
+        <div class="cred-dim-lbl">${lbl}</div>
+        <div class="cred-dim-val" style="color:${c}">${Math.round(val)}</div>
+        <div style="font-size:7px;color:var(--tx3);margin-top:2px">${sub}</div>
+      </div>`;
+    }).join('')}
+  </div>
+
+  <div class="rp-sec" style="padding:8px 14px 4px">
+    <div class="rp-sec-title">Framework Coverage (8 Standards)</div>
+  </div>
+  <div class="fw-matrix">${fwRows}</div>
+
+  <div class="rp-sec" style="padding:8px 14px 4px">
+    <div class="rp-sec-title">Scope Emissions Disclosure</div>
+  </div>
+  <div class="disc-bars">
+    ${scopeBars}
+    <div class="disc-row" style="margin-top:2px">
+      <span class="disc-lbl" style="font-size:8px">Net Zero</span>
+      <span style="flex:1;font-size:9px">${nzStatus}</span>
+    </div>
+    <div class="disc-row">
+      <span class="disc-lbl" style="font-size:8px">T. Plan</span>
+      <span style="flex:1;font-size:9px;font-weight:700;text-transform:capitalize;color:${tPlanColor}">${cred.disc.tPlan}</span>
+    </div>
+    <div class="disc-row">
+      <span class="disc-lbl" style="font-size:8px">Sus. Capex</span>
+      <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:#22D3EE">${cred.disc.capexPct}%</span>
+    </div>
+  </div>
+
+  <div class="rp-sec" style="padding:8px 14px 4px">
+    <div class="rp-sec-title">Identified Disclosure Gaps</div>
+  </div>
+  <div class="gap-list">${gapList}${posList||''}</div>
+
+  <div class="rp-sec" style="padding:8px 14px 4px">
+    <div class="rp-sec-title">Financial Impact of Narrative Risk</div>
+  </div>
+  <div class="narrfin-grid">
+    <div class="narrfin-cell">
+      <div class="narrfin-lbl">Cost of Capital Adjustment</div>
+      <div class="narrfin-val" style="color:${bpsColor}">${bpsStr}</div>
+      <div class="narrfin-sub">Risk premium from credibility gap · Applies to WACC</div>
+    </div>
+    <div class="narrfin-cell">
+      <div class="narrfin-lbl">Compliance Cost Multiplier</div>
+      <div class="narrfin-val" style="color:${adj.complianceMult>1.3?'#FF4D4F':adj.complianceMult>1.15?'#FFC857':'#00FF94'}">${adj.complianceMult.toFixed(2)}×</div>
+      <div class="narrfin-sub">Weak disclosures invite regulatory penalties</div>
+    </div>
+    <div class="narrfin-cell">
+      <div class="narrfin-lbl">Reputational Revenue Impact</div>
+      <div class="narrfin-val" style="color:#FF8C42">$${repRevM}M</div>
+      <div class="narrfin-sub">${(adj.revenueImpactPct*100).toFixed(1)}% of annual revenue at reputational risk</div>
+    </div>
+  </div>
+
+  <div class="rp-sec" style="padding:8px 14px 4px">
+    <div class="rp-sec-title" style="display:flex;align-items:center;justify-content:space-between">
+      Live Signal Adjustments
+      <span style="font-size:8px;color:${sent.score>55?'#FF8C42':'var(--tx3)'}">
+        ${sent.label} · ${sent.score}/100
+      </span>
+    </div>
+  </div>
+  ${sigRows||`<div style="padding:8px 14px;font-size:9px;color:var(--tx3)">No active regional signals</div>`}
+  <div style="height:12px"></div>`;
+}
+
 function switchTab(tab){
   S.activeTab=tab;
-  ['risk','fin','compare','macro','signals'].forEach(t=>{
+  ['risk','fin','compare','macro','signals','narrative'].forEach(t=>{
     const pane=document.getElementById(`pane-${t}`);
     const btn=document.getElementById(`tab-${t}`);
     if(pane)pane.style.display=t===tab?'':'none';
