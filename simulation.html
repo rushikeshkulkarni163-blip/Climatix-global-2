@@ -204,8 +204,11 @@ body {
   width: 258px; flex-shrink: 0;
   background: var(--bg1);
   border-right: 1px solid var(--bd1);
-  display: flex; flex-direction: column; overflow: hidden;
+  display: flex; flex-direction: column;
+  overflow-y: auto; overflow-x: hidden;
 }
+#lp::-webkit-scrollbar { width: 2px; }
+#lp::-webkit-scrollbar-thumb { background: var(--bd2); }
 
 /* Panel block */
 .pb { border-bottom: 1px solid var(--bd0); flex-shrink: 0; }
@@ -310,7 +313,7 @@ body {
 .btn-add:hover { border-color: var(--bd3); color: var(--tx0); }
 .btn-add.on { border-color: var(--acc); color: var(--acc); background: var(--acc2); }
 
-#alw { flex: 1; overflow-y: auto; min-height: 0; }
+#alw { height: 200px; min-height: 60px; overflow-y: auto; flex-shrink: 0; }
 
 .a-item {
   display: flex; align-items: center; gap: 8px;
@@ -842,10 +845,10 @@ body {
 .search-clear.visible { display: block; }
 .search-clear:hover { color: var(--tx0); }
 .search-results {
-  position: absolute; top: 100%; left: 0; right: 0;
-  background: var(--bg1); border-bottom: 1px solid var(--bd2);
-  z-index: 200; max-height: 280px; overflow-y: auto;
-  display: none; box-shadow: 0 12px 30px rgba(0,0,0,.5);
+  position: fixed; top: auto; left: 0; width: 258px;
+  background: var(--bg1); border: 1px solid var(--bd2); border-top: none;
+  z-index: 500; max-height: 260px; overflow-y: auto;
+  display: none; box-shadow: 0 16px 40px rgba(0,0,0,.65);
 }
 .search-results.open { display: block; }
 .search-result-item {
@@ -2732,6 +2735,9 @@ function renderInfraLegend(){
 let _searchResults=[];
 
 function openSearch(){
+  const res=document.getElementById('search-results');
+  const wrap=document.querySelector('.search-wrap');
+  if(wrap&&res){const r=wrap.getBoundingClientRect();res.style.top=r.bottom+'px';}
   const inp=document.getElementById('sim-search');
   if(inp&&inp.value.trim())renderSearch(inp.value.trim());
 }
@@ -2762,6 +2768,9 @@ function onSearchKey(e){
 
 function renderSearch(q){
   const res=document.getElementById('search-results');
+  /* Position fixed dropdown below the search bar */
+  const wrap=document.querySelector('.search-wrap');
+  if(wrap){const r=wrap.getBoundingClientRect();res.style.top=r.bottom+'px';}
   /* Coordinate pattern: "lat, lng" */
   const coordMatch=q.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
   _searchResults=[];
@@ -2976,14 +2985,20 @@ function renderStats(){
 function renderScn(){
   document.getElementById('scn-btns').innerHTML=['1.5','2.0','3.0'].map(id=>{
     const s=SCN[id],on=id===S.scenario;
-    return`<button class="scb${on?' on':''}" onclick="setScn('${id}')"
-      style="border-left-color:${on?s.color:'transparent'}">
+    if(!on) return`<button class="scb${on?' on':''}" onclick="setScn('${id}')"
+      style="border-left-color:transparent;padding:8px 14px;display:flex;align-items:center;gap:9px">
+      <span class="scb-temp" style="color:${s.color};font-size:12px">${s.temp}</span>
+      <span class="scb-name" style="margin:0;font-size:10px;color:var(--tx2)">${s.name}</span>
+      <span style="margin-left:auto;font-size:8px;font-weight:700;letter-spacing:.08em;
+        padding:2px 6px;border:1px solid ${s.color}30;color:${s.color}80">SELECT</span>
+    </button>`;
+    return`<button class="scb on" onclick="setScn('${id}')"
+      style="border-left-color:${s.color}">
       <div class="scb-top">
         <span class="scb-temp" style="color:${s.color}">${s.temp}</span>
-        <span class="scb-tag" style="color:${s.color};border-color:${s.color}40;background:${s.color}12">${on?'Active':'Select'}</span>
+        <span class="scb-tag" style="color:${s.color};border-color:${s.color}40;background:${s.color}12">Active</span>
       </div>
       <div class="scb-name">${s.name}</div>
-      <div class="scb-desc">${s.desc}</div>
       <div class="scb-row">
         <div class="scb-cell"><div class="scb-cell-lbl">Carbon 2030</div><div class="scb-cell-val">$${s.cp30}/tCO₂</div></div>
         <div class="scb-cell"><div class="scb-cell-lbl">Carbon 2050</div><div class="scb-cell-val">$${s.cp50}/tCO₂</div></div>
