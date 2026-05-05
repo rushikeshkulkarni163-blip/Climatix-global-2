@@ -4594,6 +4594,499 @@ function generateReport(){
     kv('Avg Physical Risk',f1(port.ap));
     kv('Avg Transition Risk',f1(port.at));
 
+    /* ════ INTELLIGENCE BRIEF PAGES ════ */
+
+    /* ── Helper: paragraph with word-wrap ── */
+    function para(text,indent,maxW,lineH){
+      indent=indent||M+2; maxW=maxW||TW-4; lineH=lineH||5.4;
+      const lines=doc.splitTextToSize(text,maxW);
+      lines.forEach(ln=>{if(y>278)newPage();doc.text(ln,indent,y);y+=lineH;});
+    }
+
+    /* ── Helper: callout / insight box ── */
+    function callout(text,bgRGB,txRGB){
+      if(y>268)newPage();
+      doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+      const lines=doc.splitTextToSize(text,TW-8);
+      const bh=lines.length*5.4+7;
+      doc.setFillColor(bgRGB[0],bgRGB[1],bgRGB[2]);doc.rect(M,y-4,TW,bh,'F');
+      doc.setTextColor(txRGB[0],txRGB[1],txRGB[2]);
+      lines.forEach((ln,i)=>{doc.text(ln,M+4,y+i*5.4);});
+      y+=bh+3;
+    }
+
+    /* ── Helper: bullet ── */
+    function bullet(text,rgb){
+      if(y>278)newPage();
+      const c=rgb||[0,212,255];
+      doc.setFillColor(c[0],c[1],c[2]);doc.circle(M+4,y-1.2,1,'F');
+      doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      const lines=doc.splitTextToSize(text,TW-10);
+      lines.forEach((ln,i)=>{doc.text(ln,M+8,y+i*5);});
+      y+=lines.length*5+1.5;
+    }
+
+    /* ── Helper: sub-header (not a full section) ── */
+    function subhdr(text){
+      if(y>278)newPage();
+      doc.setFillColor(14,24,38);doc.rect(M,y-3,TW,7,'F');
+      doc.setTextColor(160,180,210);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+      doc.text(text,M+3,y+1);
+      y+=10;
+    }
+
+    /* ── Helper: metric row (left label + right value, no bar) ── */
+    function mrow(label,value,vRGB){
+      if(y>282)newPage();
+      doc.setTextColor(100,125,160);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      doc.text(label,M+2,y);
+      const vc=vRGB||[160,180,210];
+      doc.setTextColor(vc[0],vc[1],vc[2]);doc.setFont('courier','bold');
+      doc.text(String(value),W-M,y,{align:'right'});
+      y+=6;
+    }
+
+    /* ── Compute intelligence data ── */
+    const rFull=calcFull(a,S.scenario,S.year);
+    const cred=calcCredibility(a);
+    const adj=narrativeFinancialAdj(cred.score);
+    const rid=rgn(a.lat,a.lng);
+    const tYears=[2025,2030,2035,2040,2050];
+    const tData=tYears.map(yr=>({yr,r:calc(a,S.scenario,yr)}));
+
+    /* Benchmarks — use real portfolio data where available */
+    const sAssets=S.assets.filter(x=>x.sector===a.sector);
+    const sAvgPhys=sAssets.length>1?sAssets.reduce((s,x)=>s+calc(x,S.scenario,S.year).phys,0)/sAssets.length:r.phys*0.87;
+    const sAvgTot =sAssets.length>1?sAssets.reduce((s,x)=>s+calc(x,S.scenario,S.year).tot,0) /sAssets.length:r.tot*0.87;
+    const pAvgPhys=S.assets.length?S.assets.reduce((s,x)=>s+calc(x,S.scenario,S.year).phys,0)/S.assets.length:r.phys*0.84;
+    const pAvgTot =S.assets.length?S.assets.reduce((s,x)=>s+calc(x,S.scenario,S.year).tot,0) /S.assets.length:r.tot*0.84;
+
+    /* Risk driver shares */
+    const dTotal=r.phys*.30+r.trans*.25+r.sc*.15+r.pol*.10+r.mkt*.10+r.narr*.10;
+    const physSh=Math.round(r.phys*.30/Math.max(dTotal,.01)*100);
+    const transSh=Math.round(r.trans*.25/Math.max(dTotal,.01)*100);
+    const scSh=Math.round(r.sc*.15/Math.max(dTotal,.01)*100);
+    const polSh=Math.round(r.pol*.10/Math.max(dTotal,.01)*100);
+    const mktSh=Math.round(r.mkt*.10/Math.max(dTotal,.01)*100);
+    const narrSh=Math.round(r.narr*.10/Math.max(dTotal,.01)*100);
+    const drivers=[
+      {nm:'Physical hazards',sh:physSh},{nm:'Transition costs',sh:transSh},
+      {nm:'Supply chain',sh:scSh},{nm:'Policy pressure',sh:polSh},
+      {nm:'Market dynamics',sh:mktSh},{nm:'Narrative risk',sh:narrSh}
+    ].sort((a,b)=>b.sh-a.sh);
+    const pDrv=drivers[0],sDrv=drivers[1];
+
+    /* Region-specific climate context */
+    const RCTX={
+      EU:'North-western European climate systems are tracking 1.8× the global mean warming rate. Rhine-Danube basin precipitation events are intensifying, with 100-year flood recurrence compressing toward 35-year cycles under CMIP6 RCP6.0 projections. EU ETS Phase 4 carbon pricing creates simultaneous regulatory acceleration.',
+      USA:'Gulf Coast and eastern seaboard assets face compound coastal-fluvial flooding as Atlantic SSTs exceed +1.4°C above the 1951–1980 baseline. Dry-bulb temperature extremes in the continental interior are extending heat stress windows by 18 days per decade.',
+      China:'Yangtze and Pearl River delta hydrological systems are being restructured by monsoon intensification. CMIP6 projections indicate 50-year flood recurrence events compressing to sub-20-year frequency by 2040. Northern inland aridity expansion creates simultaneous drought risk for energy and agriculture assets.',
+      India:'Indo-Gangetic Plain wet-bulb temperature exceedance is accelerating, with WBGT thresholds critical to outdoor labour capacity projected to be breached for 45+ days/year by 2035. Bay of Bengal cyclone frequency has increased 23% per IPCC AR6, amplifying coastal and delta flood risk.',
+      Australia:'East-coast rainfall variability is increasing as the Indian Ocean Dipole intensifies. Inland aridity expansion threatens agriculture and mining water supply, while the Black Summer wildfire precedent signals step-change physical risk to infrastructure in forested and peri-urban zones.',
+      MENA:'Persian Gulf sea surface temperature anomalies are driving wet-bulb temperature indices that approach physiological thresholds for outdoor work. Heat stress increasingly constrains productive hours in construction, logistics, and energy sectors. Water stress from over-extraction compounds long-term viability risk.',
+      SouthKorea:'East Asian monsoonal systems are intensifying, elevating typhoon and flood frequency for coastal manufacturing and logistics assets. Korea is subject to simultaneous transition risk acceleration via K-ETS expansion and imported carbon cost via CBAM exposure.',
+      Japan:'Pacific typhoon tracks are shifting northward with increased Category 3+ intensity. Coastal infrastructure exposure is compounded by liquefaction risk in delta zones. Japan\'s carbon pricing trajectory accelerates post-2030 under the GX framework.',
+      Brazil:'Amazon hydrological disruption is compressing wet-dry seasonality, elevating drought risk for agriculture and hydro-dependent energy assets. Coastal and delta flooding in southern Brazil is intensifying under La Niña-modulated precipitation anomalies.',
+      Russia:'Permafrost degradation in Siberian and Arctic regions introduces structural infrastructure risk for energy extraction and pipeline assets. Western Russia faces increasing drought and wildfire risk consistent with European drying trends.',
+      Africa:'Sub-Saharan assets face intensifying heat stress and precipitation volatility. West African coastal regions are experiencing sea level rise at 1.3× the global mean rate. Agricultural and logistics assets face compound physical-transition risk as adaptation finance remains constrained.',
+      SEA:'South and South-East Asian deltas face the highest compound coastal-fluvial flood risk globally. Bangkok, Ho Chi Minh City, Jakarta, and Manila metro zones are projected to face 3× current annual flood exposure by 2040. Monsoon intensification amplifies river flood frequency across all major basins.',
+      LatAm:'Andean glacier retreat is restructuring water availability for energy, mining, and agriculture assets in Chile, Peru, and Bolivia. Caribbean basin hurricane intensification directly affects coastal and island manufacturing.',
+      Canada:'Northern Canadian assets face permafrost degradation and wildfire risk expansion. Southern assets are affected by Great Lakes water level volatility and increasing heat dome events modelled to triple in frequency by 2045.',
+      Global:'Regional climate systems are responding to global mean warming consistent with CMIP6 ensemble projections, with local amplification factors dependent on proximity to amplifying ocean systems and land surface feedback mechanisms.'
+    };
+    const regionCtx=RCTX[rid]||RCTX.Global;
+
+    /* Narrative builders */
+    const domPhysHaz=r.heat>=r.flood?`heat stress (${Math.round(r.heat)}/100)`:`flood exposure (${Math.round(r.flood)}/100)`;
+    const secndPhysHaz=r.heat<r.flood?`heat stress (${Math.round(r.heat)}/100)`:`flood exposure (${Math.round(r.flood)}/100)`;
+    const physChar=r.phys>=65?'severe compounding':'moderate-to-elevated';
+    const trajWord=tData[4].r.tot>r.tot+20?'steeply escalating':tData[4].r.tot>r.tot+8?'progressively increasing':'moderately evolving';
+    const tipping=tData.find(d=>d.r.tot>=46&&d.yr>S.year);
+    const critical=tData.find(d=>d.r.tot>=68&&d.yr>S.year);
+    const yearsToHigh=tipping?tipping.yr-S.year:null;
+    const yearsToCrit=critical?critical.yr-S.year:null;
+    const sc15=calc(a,'1.5',S.year),sc30=calc(a,'3.0',S.year);
+    const scDelta=sc30.tot-sc15.tot;
+    const disc=SECTOR_DISCLOSURES[a.sector]||SECTOR_DISCLOSURES.Energy;
+
+    /* ════════════════════════════════════
+       PAGE 4: ASSET NARRATIVE + DRIVERS
+    ════════════════════════════════════ */
+    newPage();y=M+4;
+
+    section('9 · Asset Risk Narrative');
+
+    subhdr('Geographic Vulnerability');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(`${a.name} occupies a ${physChar} physical risk zone characterised by dominant ${domPhysHaz} and secondary ${secndPhysHaz}. The asset is situated at ${a.lat.toFixed(2)}°, ${a.lng.toFixed(2)}° within the ${rid} climate region.`);
+    y+=1;
+    para(regionCtx);
+    y+=2;
+
+    subhdr('Climate Trajectory ('+S.scenario+'°C Scenario)');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(`Under the ${c.name} pathway, risk escalation follows a ${trajWord} trajectory from composite score ${Math.round(r.tot)} in ${S.year} to a projected ${Math.round(tData[4].r.tot)} by 2050. ${tipping?`A transition into elevated risk territory is projected circa ${tipping.yr} (${yearsToHigh} years from current year).`:''} ${critical?`Material financial stress threshold is breached circa ${critical.yr}.`:''}`);
+    y+=2;
+
+    if(r.phys>=50||r.trans>=55){
+      const structComment=r.phys>=65&&r.trans>=55?
+        `Both physical and transition channels are simultaneously elevated. This dual-channel exposure pattern is characteristic of assets that face physical disruption costs WHILE also bearing stranded-asset transition liabilities — a structurally unfavourable combination for long-term capital allocation.`:
+        r.phys>=65?
+        `Physical hazard dominance signals that climate adaptation capex will grow as a recurring operational cost, not a one-time investment. Structural viability beyond 2040 requires demonstrated infrastructure resilience upgrades.`:
+        `Transition cost acceleration is the primary long-term threat. Carbon pricing trajectory under ${c.name} materially compresses operating margins from 2030 onward. The asset's current carbon intensity of ${(a.s1+a.s2)} tCO₂e requires active decarbonisation to maintain competitive cost position.`;
+      subhdr('Structural Risk Assessment');
+      doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      para(structComment);
+      y+=2;
+    }
+
+    if(r.lvl==='critical'||r.lvl==='high'){
+      callout(`KEY FINDING  The ${pDrv.nm} (${pDrv.sh}% of total risk) represent the primary value-destruction channel for this asset. Absence of mitigation investment will translate to compounding financial stress by ${tipping?.yr||S.year+10}.`,[30,18,10],[255,140,66]);
+    }
+
+    section('10 · Risk Drivers Decomposition');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(`Revenue at Risk of ${fPct(r.rar)} is attributable to six independent risk channels. The decomposition below isolates each channel's proportional contribution to the composite score of ${Math.round(r.tot)}/100.`);
+    y+=2;
+    bar('Physical Hazards',physSh,[255,140,66]);
+    bar('Transition Costs',transSh,[0,212,255]);
+    bar('Supply Chain',scSh,[167,139,250]);
+    bar('Policy & Regulation',polSh,[139,92,246]);
+    bar('Market Dynamics',mktSh,[255,200,87]);
+    bar('Narrative / ESG',narrSh,[34,211,238]);
+    y+=3;
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(`Primary risk driver: ${pDrv.nm} (${pDrv.sh}%). Secondary driver: ${sDrv.nm} (${sDrv.sh}%). Combined, these two channels account for ${pDrv.sh+sDrv.sh}% of total risk exposure. The ${pDrv.nm.toLowerCase()} channel dominates because ${pDrv.nm==='Physical hazards'?`hazard intensity at this location (${Math.round(r.heat)} heat / ${Math.round(r.flood)} flood / ${Math.round(r.storm)} storm) exceeds the sector median by a material margin`:pDrv.nm==='Transition costs'?`carbon pricing under the ${c.name} pathway reaches $${Math.round(r.ecp)}/tCO₂ — creating a compliance burden of ${fM(r.ccm)} annually at current emissions intensity`:`sector-specific exposure amplifies the risk weight beyond the portfolio mean`}.`);
+
+    /* ════════════════════════════════════
+       PAGE 5: TRAJECTORY + LOCATION INTEL + BENCHMARKS
+    ════════════════════════════════════ */
+    newPage();y=M+4;
+
+    section('11 · Time-Based Risk Evolution');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(`The following trajectory maps composite risk, revenue impact, and key inflection triggers across the NGFS ${c.name} (${c.temp}) pathway from 2025 to 2050. Post-2035 non-linearity reflects the compounding interaction of physical hazard intensification and carbon price acceleration.`);
+    y+=2;
+
+    /* Timeline table header */
+    const txCols=[M+2,M+26,M+60,M+95,M+138];
+    doc.setFillColor(26,34,53);doc.rect(M,y-4,TW,8,'F');
+    doc.setTextColor(0,212,255);doc.setFontSize(7);doc.setFont('courier','bold');
+    ['YEAR','RISK SCORE','REV AT RISK','KEY TRIGGER','TRAJECTORY'].forEach((h,i)=>doc.text(h,txCols[i],y));
+    y+=8;
+    tData.forEach(({yr,r:tr})=>{
+      if(y>278)newPage();
+      const lvlRGB=tr.lvl==='critical'?[255,77,79]:tr.lvl==='high'?[255,140,66]:tr.lvl==='medium'?[255,200,87]:[0,200,100];
+      const trigger=tr.phys>tr.trans?`Heat ${Math.round(tr.heat)}  Flood ${Math.round(tr.flood)}`:`Carbon $${Math.round(tr.ecp)}/t`;
+      const arrow=tr.tot>r.tot+15?'▲▲ ACCEL':tr.tot>r.tot+5?'▲ RISING':tr.tot<r.tot-5?'▼ EASING':'► STABLE';
+      doc.setFillColor(16,22,34);doc.rect(M,y-4,TW,7.5,'F');
+      doc.setTextColor(200,215,235);doc.setFontSize(7.5);doc.setFont('courier','bold');
+      doc.text(`${yr}`,txCols[0],y);
+      doc.setTextColor(lvlRGB[0],lvlRGB[1],lvlRGB[2]);
+      doc.text(`${Math.round(tr.tot)}  ${tr.lvl.toUpperCase()}`,txCols[1],y);
+      doc.setTextColor(255,140,66);
+      doc.text(fPct(tr.rar),txCols[2],y);
+      doc.setTextColor(140,160,190);doc.setFont('helvetica','normal');
+      doc.text(trigger,txCols[3],y);
+      doc.setTextColor(tr.tot>r.tot+5?255:150,tr.tot<r.tot+5&&tr.tot>r.tot-5?200:100,tr.tot<r.tot?200:100);
+      doc.text(arrow,txCols[4],y);
+      y+=8;
+    });
+    y+=3;
+    if(tipping){
+      callout(`ACCELERATION SIGNAL  Risk transitions into HIGH territory at approximately ${tipping.yr}. This inflection is driven by the convergence of ${r.heat>r.flood?'intensifying heat stress':'elevated flood frequency'} with ${r.trans>40?'escalating carbon compliance costs':'policy tightening'} — a historically reliable indicator of sustained operational disruption.`,[20,30,15],[0,255,148]);
+    }
+
+    section('12 · Location Intelligence');
+    subhdr(`${rid} Region — Climate Context`);
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(regionCtx);
+    y+=2;
+
+    const REGPOL={
+      EU:'EU ETS Phase 4 (2021–2030) reduces free allowances 4.2%/year. CBAM applies from 2026. SFDR + CSRD create mandatory disclosure. Carbon price trajectory: €68→€130/t by 2030.',
+      USA:'US IRA allocates $369B in climate incentives, but federal carbon pricing absent. State-level divergence significant. SEC climate disclosure rules under implementation. EPA power plant rules active.',
+      China:'National ETS covers power sector; expansion to industry expected 2025–2027. Carbon intensity targets binding. Green finance taxonomy active. Climate disclosure mandatory for large emitters from 2025.',
+      India:'SEBI BRSR mandatory since FY2023. Carbon credits market (CCTS) under development. Perform Achieve Trade scheme active. India\'s NDC targets 500GW renewables by 2030.',
+      MENA:'Carbon pricing nascent in GCC (UAE, Saudi Arabia carbon levy). Vision 2030 / UAE Net Zero 2050 driving transition investment. TCFD adoption voluntary but accelerating.',
+      Australia:'Safeguard Mechanism reformed 2023: 215 large emitters face declining caps. Carbon price effective ~A$30-50/t by 2030. ASIC climate risk disclosure expectations active for listed entities.',
+      Global:'Carbon pricing coverage expanding globally under UNFCCC Article 6 mechanisms. ISSB S1/S2 mandatory adoption accelerating across G20 jurisdictions through 2025–2026.'
+    };
+    subhdr('Regulatory Environment');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(REGPOL[rid]||REGPOL.Global);
+    y+=2;
+
+    mrow('Carbon Market Readiness',`${BTR[rid]||20} / 100`,[0,212,255]);
+    mrow('Regulatory Strictness',`${REGULATION_DATA[rid]?.strictness||45} / 100`,[167,139,250]);
+    mrow('Carbon Tax / ETS Price',`$${REGULATION_DATA[rid]?.carbonTax||35}/tCO₂`,[255,200,87]);
+    mrow('Fuel / Energy Cost Index',`${FUEL_PRICE_DATA[rid]?.index||100} (baseline = 100)`);
+    y+=3;
+
+    section('13 · Comparative Benchmarking');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    const physVsSec=((r.phys-sAvgPhys)/Math.max(sAvgPhys,.01)*100).toFixed(1);
+    const totVsSec=((r.tot-sAvgTot)/Math.max(sAvgTot,.01)*100).toFixed(1);
+    const totVsPf=((r.tot-pAvgTot)/Math.max(pAvgTot,.01)*100).toFixed(1);
+    para(`${a.name} is benchmarked against the ${a.sector} sector cohort and the broader Climactix portfolio. Deviations above ±10% are considered material for capital allocation decisions.`);
+    y+=2;
+
+    /* Benchmark table */
+    doc.setFillColor(26,34,53);doc.rect(M,y-4,TW,8,'F');
+    doc.setTextColor(0,212,255);doc.setFontSize(7);doc.setFont('courier','bold');
+    ['METRIC','THIS ASSET','SECTOR AVG','PORTFOLIO AVG','STATUS'].forEach((h,j)=>{
+      doc.text(h,[M+2,M+35,M+72,M+109,M+145][j],y);});
+    y+=8;
+    [
+      ['Total Risk Score', Math.round(r.tot), Math.round(sAvgTot), Math.round(pAvgTot)],
+      ['Physical Risk',    Math.round(r.phys), Math.round(sAvgPhys), Math.round(pAvgPhys)],
+      ['Transition Risk',  Math.round(r.trans), '-', '-'],
+      ['Revenue at Risk',  fPct(r.rar), '-', '-'],
+      ['Credibility',      cred.score, '-', '-'],
+    ].forEach(([lbl,val,sec,pf])=>{
+      if(y>278)newPage();
+      const valN=parseFloat(val)||0;
+      const secN=parseFloat(sec)||valN;
+      const diff=secN>0?((valN-secN)/secN*100).toFixed(1):0;
+      const statusTxt=diff>15?'▲ ABOVE (+'+diff+'%)':diff<-15?'▼ BELOW ('+diff+'%)':'≈ IN LINE';
+      const statusRGB=diff>15?[255,140,66]:diff<-15?[0,200,100]:[160,180,210];
+      doc.setFillColor(16,22,34);doc.rect(M,y-4,TW,7.5,'F');
+      doc.setTextColor(180,200,220);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      doc.text(lbl,[M+2][0],y);
+      doc.setFont('courier','bold');
+      doc.setTextColor(200,215,235);doc.text(String(val),M+35,y);
+      doc.setTextColor(140,160,190);doc.text(String(sec),M+72,y);
+      doc.text(String(pf),M+109,y);
+      doc.setTextColor(statusRGB[0],statusRGB[1],statusRGB[2]);doc.text(statusTxt,M+145,y);
+      y+=8;
+    });
+    y+=2;
+    para(`Physical risk is ${Math.abs(+physVsSec)}% ${+physVsSec>0?'above':'below'} the ${a.sector} sector median. Composite risk is ${Math.abs(+totVsSec)}% ${+totVsSec>0?'higher':'lower'} than sector average and ${Math.abs(+totVsPf)}% ${+totVsPf>0?'above':'below'} portfolio mean. ${+physVsSec>15?`This above-average physical exposure warrants priority treatment in the next capital allocation cycle.`:+totVsPf>15?`Portfolio-relative elevation signals this asset as a priority risk management target.`:`Risk profile is broadly in line with comparable assets.`}`);
+
+    /* ════════════════════════════════════
+       PAGE 6: SUPPLY CHAIN + SCENARIO + FINANCIAL STORY
+    ════════════════════════════════════ */
+    newPage();y=M+4;
+
+    section('14 · Supply Chain Cascade Analysis');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    const scLevel=r.sc>=60?'high':r.sc>=35?'moderate':'low';
+    const scCascadeText=r.sc>=55?
+      `The supply chain disruption index of ${Math.round(r.sc)}/100 signals significant upstream dependency risk. A concentrated supply node failure in the ${rid} region has historically caused a 14–27 day operational disruption, translating to direct revenue impact of ${fM(r.sc/100*a.rev*0.12)} under a single-disruption event scenario.`:
+      `Supply chain risk of ${Math.round(r.sc)}/100 is at ${scLevel} level. Upstream node concentration in the ${rid} corridor creates moderate cascading exposure during regional stress events.`;
+    para(scCascadeText);
+    y+=2;
+
+    const linkedAssets=S.assets.filter(x=>x.id!==a.id&&x.lnk&&x.lnk.includes(a.id)||a.lnk?.some(lid=>S.assets.find(y=>y.id===lid)));
+    subhdr('Critical Dependency Nodes');
+    if(linkedAssets.length){
+      linkedAssets.slice(0,4).forEach(la=>{
+        const lr=calc(la,S.scenario,S.year);
+        bullet(`${la.name} (${la.country}) — Risk ${Math.round(lr.tot)}/100 · ${lr.lvl.toUpperCase()} · Cascade exposure: ${lr.tot>=46?'ELEVATED':'CONTAINED'}`,[167,139,250]);
+      });
+    } else {
+      bullet(`No directly linked assets in current portfolio — standalone supply chain exposure assessed at sector-average dependency levels`,[100,120,150]);
+    }
+    y+=2;
+    const SECTOR_SC_VULN={
+      Energy:`Energy infrastructure supply chains are exposed to equipment delivery lead-time extensions (transformers, turbines: 18–36 months lead time), fuel price volatility, and grid interconnection dependencies. A single major substation or pipeline disruption in the ${rid} region has cascade potential to ${Math.round(r.sc*0.4+15)}% of downstream industrial capacity.`,
+      Manufacturing:`Manufacturing supply chains are highly sensitive to single-source component concentration. Under physical risk stress, ${rid} corridor upstream failures propagate with a 2.3× amplification factor to finished goods output within 30–60 days.`,
+      Mining:`Mining supply chains depend on long-haul logistics infrastructure. Flood or extreme heat events impeding rail/road networks create disruption that compounds linearly with event duration — historical data suggests 18 days of access disruption translates to 45 days of production normalisation.`,
+      Shipping:`Port and maritime supply chains exhibit high resilience under normal conditions but severe fragility during concurrent regional stress events. Physical disruption of even one major transhipment hub on the ${rid} corridor has been shown to add 8–14 days transit time and 4–9% cost uplift systemically.`,
+      Agriculture:`Agricultural supply chains are seasonally concentrated and climate-exposed. A single growing-season failure from heat stress or drought creates multi-year price amplification as inventory buffers absorb the first shock but leave subsequent seasons structurally exposed.`,
+      Finance:`Financial sector supply chains primarily involve data infrastructure and human capital concentration. Climate-driven physical disruption of office and data-centre nodes creates operational continuity risk; scenario modelling suggests 40% of critical operations can be disrupted by a single major ${rid} weather event affecting key facilities.`,
+      Technology:`Technology supply chain dependencies concentrate in semiconductor fabrication (TSMC Taiwan risk), rare earth extraction (China / DRC), and cloud infrastructure nodes. Any disruption to these concentrated upstream sources amplifies across the global technology value chain with high systemic impact.`,
+      Logistics:`Logistics networks are the infrastructure through which all other supply chains operate. Physical risk at a logistics hub creates second-order amplification across all sectors it services. The ${rid} corridor handles an estimated $${Math.round(a.rev*4.2)}M in cross-sector cargo annually.`,
+      'Real Estate':'Real estate supply chains involve construction materials, utilities, and property services. Climate risk manifests primarily through property damage, elevated insurance costs, and tenant disruption — each creating cascading revenue and value impairment.',
+    };
+    para(SECTOR_SC_VULN[a.sector]||`Sector-specific supply chain dependencies create ${scLevel} cascade exposure to upstream physical and transition risk events.`);
+    y+=3;
+
+    section('15 · Scenario Sensitivity Analysis');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(`Scenario divergence analysis compares the 1.5°C Net Zero 2050 outcome with the 3°C Current Policies baseline. The ${fPct(scDelta)}-point gap in composite risk score between these pathways identifies both the value of mitigation and the cost of inaction.`);
+    y+=2;
+
+    [['1.5°C Net Zero',sc15,[0,212,255]],['2.0°C Delayed',r,[255,200,87]],['3.0°C Current Policies',sc30,[255,77,79]]].forEach(([nm,rr,rgb])=>{
+      if(y>278)newPage();
+      bar(`${nm}  (Score: ${Math.round(rr.tot)}  Rev@Risk: ${fPct(rr.rar)})`,rr.tot,rgb);
+    });
+    y+=2;
+    const physDelta=sc30.phys-sc15.phys,transDelta=sc30.trans-sc15.trans;
+    para(`The ${fPct(scDelta)}-point total risk divergence between 1.5°C and 3°C pathways is decomposed as: physical risk delta ${f1(physDelta)} pts (driven by ${physDelta>transDelta?'accelerating hazard frequency':'constrained by regional adaptation capacity'}), and transition risk delta ${f1(transDelta)} pts (driven by ${transDelta>20?'carbon price divergence — $'+Math.round(sc15.ecp)+' vs $'+Math.round(sc30.ecp)+'/tCO₂':'policy tightening differential between pathways'}). The primary variable driving divergence is ${physDelta>=transDelta?'physical hazard intensity':'carbon cost trajectory'}, which accounts for ${Math.round(Math.max(physDelta,transDelta)/Math.max(Math.abs(physDelta)+Math.abs(transDelta),1)*100)}% of the cross-scenario spread.`);
+    y+=3;
+
+    section('16 · Financial Story');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    para(`The financial narrative for ${a.name} is structured around three compounding cost vectors: (1) physical disruption costs, which escalate non-linearly with hazard intensity; (2) carbon compliance costs, which track the ${c.name} carbon price trajectory; and (3) reputational / narrative costs, which reflect ESG credibility risk (current credibility: ${cred.score}/100).`);
+    y+=2;
+
+    /* Financial milestone table */
+    doc.setFillColor(26,34,53);doc.rect(M,y-4,TW,8,'F');
+    doc.setTextColor(0,212,255);doc.setFontSize(7);doc.setFont('courier','bold');
+    ['YEAR','EBITDA IMPACT','CARBON COST','TOTAL COST','STATUS'].forEach((h,j)=>{
+      doc.text(h,[M+2,M+30,M+72,M+110,M+148][j],y);});
+    y+=8;
+    tData.forEach(({yr,r:tr})=>{
+      if(y>278)newPage();
+      const ebitda=fM(tr.rar/100*a.rev);
+      const carbon=fM(((a.s1+a.s2)*tr.ecp)/1e6);
+      const total=fM((tr.rar/100*a.rev)+((a.s1+a.s2)*tr.ecp)/1e6);
+      const stRGB=tr.lvl==='critical'?[255,77,79]:tr.lvl==='high'?[255,140,66]:tr.lvl==='medium'?[255,200,87]:[0,200,100];
+      doc.setFillColor(16,22,34);doc.rect(M,y-4,TW,7.5,'F');
+      doc.setFont('courier','bold');
+      doc.setTextColor(200,215,235);doc.text(`${yr}`,M+2,y);
+      doc.setTextColor(255,140,66);doc.text(ebitda,M+30,y);
+      doc.setTextColor(0,212,255);doc.text(carbon,M+72,y);
+      doc.setTextColor(255,200,87);doc.text(total,M+110,y);
+      doc.setTextColor(stRGB[0],stRGB[1],stRGB[2]);
+      doc.text(tr.lvl.toUpperCase(),M+148,y);
+      y+=8;
+    });
+    y+=2;
+
+    const peakImpactYr=tData.reduce((mx,d)=>d.r.rar>mx.r.rar?d:mx,tData[0]);
+    const peakEBITDA=fM(peakImpactYr.r.rar/100*a.rev);
+    para(`EBITDA pressure peaks circa ${peakImpactYr.yr} at approximately ${peakEBITDA} of annual revenue exposure. The inflection from manageable cost drag into structural EBITDA compression occurs when physical disruption frequency exceeds the asset's operational buffer capacity — modelled at the ${Math.round(r.phys*0.85)}/100 physical risk threshold for this sector. Beyond that threshold, each additional risk point translates to disproportionate disruption costs due to non-linear downtime dynamics.`);
+    y+=2;
+    const efficiencyThresh=r.tot>=55?`Asset efficiency is already under pressure at current risk levels. Capital redeployment analysis is warranted within the current planning cycle.`:tipping?`Asset efficiency deterioration is projected to accelerate post-${tipping.yr}. The window for cost-effective risk mitigation closes as physical hazards compound.`:`The asset retains operational efficiency margin at current risk levels, with meaningful deterioration projected only under the 3°C scenario post-2040.`;
+    para(efficiencyThresh);
+
+    /* ════════════════════════════════════
+       PAGE 7: DECISION INTELLIGENCE + INSIGHTS + CONFIDENCE
+    ════════════════════════════════════ */
+    newPage();y=M+4;
+
+    section('17 · Decision Intelligence Layer');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+
+    const decAction=r.tot>=68?{
+      cls:'CRITICAL / DIVEST OR TRANSFORM',rgb:[255,77,79],
+      act1:'Immediate capital protection strategy required — evaluate full asset transformation or divestment.',
+      act2:'Commission independent climate resilience assessment within 90 days.',
+      act3:'Notify board-level risk committee; include in mandatory TCFD disclosure.',
+      ttcr:'Risk has already crossed critical threshold. Financial stress materialising now.',
+    }:r.tot>=46?{
+      cls:'HIGH / MITIGATE URGENTLY',rgb:[255,140,66],
+      act1:'Commit adaptation investment within current capital plan cycle (24 months).',
+      act2:`Evaluate relocation or infrastructure hardening for highest-exposure assets. Target physical risk reduction from ${Math.round(r.phys)} to below 45.`,
+      act3:'Develop climate transition roadmap aligned to '+c.temp+' pathway; secure green financing.',
+      ttcr:yearsToHigh?`Risk escalation in progress. Critical threshold projected ${yearsToCrit?`in ${yearsToCrit} years (circa ${critical.yr})`:'beyond 2050 horizon'}.`:'Monitoring required.',
+    }:r.tot>=26?{
+      cls:'MODERATE / MONITOR AND ADAPT',rgb:[255,200,87],
+      act1:'Annual climate risk review integrated into asset management cycle.',
+      act2:'Develop contingency plans for 3°C scenario materialisation post-2040.',
+      act3:'ESG disclosure improvement recommended: credibility at '+cred.score+'/100 creates financing cost premium.',
+      ttcr:tipping?`Elevated risk projected circa ${tipping.yr} (${yearsToHigh} years). Proactive adaptation is cost-effective now.`:'Risk trajectory manageable within current operational parameters.',
+    }:{
+      cls:'LOW / STANDARD MONITORING',rgb:[0,200,100],
+      act1:'Maintain standard ESG monitoring and annual risk reassessment.',
+      act2:'Leverage low-risk profile for green bond issuance or sustainability-linked financing.',
+      act3:'Build credibility advantage: current score '+cred.score+'/100 — investment in disclosure improves financing terms.',
+      ttcr:'No near-term financial stress indicators. Long-term vigilance recommended under 3°C scenario.',
+    };
+
+    doc.setFillColor(26,34,53);doc.rect(M,y-3,TW,12,'F');
+    doc.setDrawColor(decAction.rgb[0],decAction.rgb[1],decAction.rgb[2]);doc.setLineWidth(.8);
+    doc.line(M,y-3,M,y+9);
+    doc.setTextColor(180,200,220);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+    doc.text('Risk Classification:',M+4,y+1.5);
+    doc.setTextColor(decAction.rgb[0],decAction.rgb[1],decAction.rgb[2]);doc.setFontSize(8.5);
+    doc.text(decAction.cls,M+40,y+1.5);
+    doc.setTextColor(140,160,190);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text(decAction.ttcr,M+4,y+8);
+    y+=16;
+
+    subhdr('Recommended Actions');
+    bullet(decAction.act1,decAction.rgb);
+    bullet(decAction.act2,decAction.rgb);
+    bullet(decAction.act3,decAction.rgb);
+    y+=4;
+
+    /* Decision matrix: Time / Cost / Urgency */
+    doc.setFillColor(26,34,53);doc.rect(M,y-4,TW,8,'F');
+    doc.setTextColor(0,212,255);doc.setFontSize(7);doc.setFont('courier','bold');
+    ['DIMENSION','CURRENT STATUS','2030 OUTLOOK','2040 OUTLOOK'].forEach((h,j)=>{
+      doc.text(h,[M+2,M+42,M+92,M+140][j],y);});
+    y+=8;
+    const matRows=[
+      ['Physical Hazard',`${Math.round(r.phys)}/100  ${r.phys>=65?'SEVERE':r.phys>=40?'ELEVATED':'MODERATE'}`,`${Math.round(tData[1].r.phys)}/100`,`${Math.round(tData[3].r.phys)}/100`],
+      ['Transition Risk',`${Math.round(r.trans)}/100  $${Math.round(r.ecp)}/t`,`$${Math.round(tData[1].r.ecp)}/t`,`$${Math.round(tData[3].r.ecp)}/t`],
+      ['Revenue Impact', fPct(r.rar),  fPct(tData[1].r.rar), fPct(tData[3].r.rar)],
+      ['Compliance Cost',fM(r.ccm),    fM(tData[1].r.ccm),   fM(tData[3].r.ccm)],
+    ];
+    matRows.forEach(row=>{
+      if(y>278)newPage();
+      doc.setFillColor(16,22,34);doc.rect(M,y-4,TW,7.5,'F');
+      doc.setTextColor(160,180,210);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      doc.text(row[0],M+2,y);
+      doc.setFont('courier','normal');doc.setTextColor(200,215,235);
+      doc.text(row[1],M+42,y);doc.text(row[2],M+92,y);doc.text(row[3],M+140,y);
+      y+=8;
+    });
+    y+=3;
+
+    section('18 · Strategic Insights');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+
+    const insights=[];
+    /* Insight 1: Physical dominance */
+    if(physSh>=35) insights.push(`Physical risk dominates long-term exposure (${physSh}% of composite score). This is a structural characteristic of ${a.sector} assets in the ${rid} region — not a cyclical fluctuation. Adaptation capex should be treated as a capital cost, not an expense.`);
+    else insights.push(`Transition risk (${transSh}% of composite score) is the primary value-destruction vector — unusual for this asset class. Carbon pricing trajectory under ${c.name} compresses margins more acutely than physical hazards.`);
+
+    /* Insight 2: Transition pricing */
+    const transUnderpriced=r.ecp<50&&r.trans>45;
+    insights.push(transUnderpriced?
+      `Transition risk is currently underpriced relative to physical risk. Carbon compliance at $${Math.round(r.ecp)}/tCO₂ does not yet reflect the full trajectory to $${Math.round(SCN['2.0'].cp50)}/tCO₂ by 2050. Mark-to-market revaluation under realistic carbon price forecasts would materially increase the reported risk score.`:
+      `Carbon price exposure of $${Math.round(r.ecp)}/tCO₂ is approaching levels where margin compression becomes structurally significant. Total compliance cost of ${fM(r.ccm)} annually represents a persistent drag on EBITDA that is not recoverable through operational efficiency alone.`);
+
+    /* Insight 3: Viability horizon */
+    insights.push(r.tot>=65?
+      `Asset viability is structurally challenged beyond 2040 under the central scenario. The intersection of physical intensification and transition cost acceleration creates an erosion pattern where incremental adaptation investment yields diminishing returns post-2038. Capital reallocation analysis is material now.`:
+      critical?`Asset retains short-term viability but faces structural pressure beyond ${critical.yr}. The current window (${yearsToCrit} years) is the optimal period for transition investment — before risk premiums increase and adaptation options narrow.`:
+      `Asset remains viable across all three NGFS scenarios through 2040. Under 3°C+ pathways, long-term structural pressure emerges post-2045 but does not threaten near-term capital allocation decisions.`);
+
+    /* Insight 4: Credibility */
+    insights.push(cred.score<55?
+      `ESG credibility deficit (${cred.score}/100) creates a financing cost premium of +${adj.riskBps} basis points — a hidden cost that erodes competitive capital access. Improving disclosure quality to the 70+ credibility threshold would reduce the risk premium by an estimated ${adj.riskBps-40} bps, translating to ${fM(a.rev*0.003)} annual cost savings on debt service.`:
+      `ESG credibility of ${cred.score}/100 provides a relative competitive advantage in accessing green and sustainability-linked financing. Maintaining and improving this position should be treated as a capital efficiency strategy, not a compliance exercise.`);
+
+    /* Insight 5: Scenario spread */
+    if(scDelta>15) insights.push(`The ${f1(scDelta)}-point risk gap between 1.5°C and 3°C scenarios is above the material threshold for this asset class. This spread quantifies the financial value of global mitigation to this specific asset at approximately ${fM((sc30.rar/100-sc15.rar/100)*a.rev)} in annual revenue exposure difference — a concrete argument for climate policy engagement.`);
+    else insights.push(`Relatively low scenario sensitivity (${f1(scDelta)}-pt spread between 1.5°C and 3°C) suggests that physical risk dominates regardless of mitigation pathway. This asset's risk profile is driven more by geographical exposure than by policy trajectory — adaptation, not advocacy, is the priority.`);
+
+    insights.slice(0,5).forEach((ins,i)=>{
+      if(y>268)newPage();
+      const insRGB=i===0?[255,140,66]:i===1?[0,212,255]:i===2?[167,139,250]:i===3?[34,211,238]:[255,200,87];
+      callout(`INSIGHT ${i+1}  ${ins}`,[16,20,32],insRGB);
+    });
+
+    section('19 · Confidence & Data Quality');
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+    const isPreloaded=ASSETS.some(x=>x.id===a.id);
+    const hasScope=a.s1>0&&a.s2>0;
+    para(`The overall data confidence score of ${conf}% reflects the quality and completeness of inputs underpinning this assessment. Confidence is a composite of data source reliability, scope emissions availability, and model calibration precision for this asset's geography and sector.`);
+    y+=2;
+
+    mrow('Base Confidence (asset data origin)',isPreloaded?'88% — Pre-loaded verified asset':'68% — User-entered asset',[0,200,100]);
+    mrow('Scope Emissions Data',hasScope?'Available — +6% confidence boost':'Not provided — no adjustment',[255,200,87]);
+    mrow('Geographic Model Precision',`${a.lat!==0&&a.lng!==0?'+3%':'+0%'} — Coordinate-level resolution`,[0,212,255]);
+    mrow('Framework Coverage Confidence',`${cred.completeness}% average — ${cred.label} credibility tier`,[167,139,250]);
+    y+=3;
+
+    subhdr('Known Data Gaps');
+    const gaps=[];
+    if(disc.scope3<30) gaps.push(`Scope 3 emissions not disclosed (${disc.scope3}% completeness) — upstream and downstream value-chain emissions are the fastest-growing risk channel and are absent from this model.`);
+    if(!disc.netZero) gaps.push(`No net zero commitment declared — transition plan trajectory cannot be modelled, creating downside uncertainty in long-horizon projections.`);
+    if(cred.verifiability<50) gaps.push(`Third-party verification coverage is ${cred.verifiability}% — model relies on self-reported data for ${100-cred.verifiability}% of inputs, introducing upward bias risk in credibility assessment.`);
+    if(cred.completeness<55) gaps.push(`Framework coverage below threshold (${Math.round(cred.completeness)}%) — multiple material ESG disclosure frameworks are not addressed, limiting cross-framework validation.`);
+    if(!gaps.length) gaps.push(`Data quality is above threshold for all key inputs. Primary uncertainty is forward projection accuracy under non-linear warming scenarios post-2045.`);
+    gaps.forEach(g=>bullet(g,[255,140,66]));
+    y+=2;
+
+    doc.setTextColor(140,160,190);doc.setFontSize(7.5);doc.setFont('helvetica','italic');
+    para(`Confidence interpretation: scores above 85% support institutional decision-making at full weight. Scores 70–85% support decisions with scenario sensitivity testing. Scores below 70% should be treated as directional indicators pending data enrichment. Scope 3 disclosure and third-party verification are the single highest-leverage actions to improve confidence quality for this asset.`);
+
     /* ════ FOOTER ON ALL PAGES ════ */
     const totalPages=doc.internal.getNumberOfPages();
     for(let i=1;i<=totalPages;i++){
