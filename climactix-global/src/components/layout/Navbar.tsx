@@ -21,7 +21,7 @@ const NAV_ITEMS = [
     label: "Simulation",
     href: "/simulation",
     sub: ["Asset Risk Mapping", "NGFS Scenarios", "Physical Risk Layer", "Transition Risk Layer", "Financial Impact", "Supply Chain Graph"],
-    highlight: true,
+    highlight: false,
   },
   {
     label: "Industries",
@@ -125,6 +125,13 @@ export default function Navbar() {
               className="px-4 h-11 flex items-center text-xs font-semibold text-[#9CA3AF] hover:text-white transition-colors tracking-wider uppercase"
             >
               Log In
+            </Link>
+            <Link
+              href="/terminal"
+              className="ml-1 px-4 py-1.5 bg-[#F97316] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#EA6C0A] transition-colors active:scale-[0.98] flex items-center gap-1.5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              Open Terminal
             </Link>
             <Link
               href="/risk-analysis"
