@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Climate Risk Terminal — Climactix Global</title>
+<meta name="description" content="Bloomberg-grade Climate Risk Intelligence Terminal. Physical risk, NGFS simulation, disclosure studio, investor screening, supply chain, climate finance."/>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg0:#0A0A0A;--bg1:#111111;--bg2:#161616;--bg3:#1C1C1C;--bg4:#222222;
+  --bd0:#1F1F1F;--bd1:#2A2A2A;--bd2:#333333;
+  --tx0:#F9FAFB;--tx1:#D1D5DB;--tx2:#9CA3AF;--tx3:#6B7280;
+  --acc:#F97316;--acc2:rgba(249,115,22,0.12);
+  --cyan:#00D4FF;--cyan2:rgba(0,212,255,0.12);
+  --grn:#10B981;--red:#EF4444;--amb:#F59E0B;--blu:#3B82F6;
+  --nav-h:44px;--tab-h:40px;
+  --font:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg0);color:var(--tx0);font-size:12px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* ── Topbar ── */
+#topbar{
+  height:var(--nav-h);background:#000;border-bottom:1px solid var(--bd0);
+  display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;
+  position:relative;z-index:100;
+}
+.tb-logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.tb-logo-icon{width:26px;height:26px;background:#0A1F44;border-radius:2px;display:flex;align-items:center;justify-content:center}
+.tb-logo-text{font-size:11px;font-weight:800;color:#fff;letter-spacing:.08em}
+.tb-divider{width:1px;height:20px;background:var(--bd0)}
+.tb-title{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.12em;text-transform:uppercase}
+.tb-ticker{flex:1;overflow:hidden;margin:0 16px}
+.ticker-inner{display:flex;gap:24px;animation:ticker-scroll 40s linear infinite;width:max-content}
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:var(--mono);font-size:10px}
+.tick-lbl{color:var(--tx3);letter-spacing:.04em}
+.tick-val{color:var(--tx1);font-weight:600}
+.tick-up{color:var(--red)}
+.tick-dn{color:var(--grn)}
+.tb-clock{font-family:var(--mono);font-size:11px;color:var(--cyan);font-weight:600;letter-spacing:.06em;flex-shrink:0}
+.tb-back{font-size:10px;color:var(--tx3);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--bd1);border-radius:2px;transition:color .15s,border-color .15s;flex-shrink:0}
+.tb-back:hover{color:var(--tx1);border-color:var(--bd2)}
+.tb-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--grn);font-weight:700;letter-spacing:.08em;flex-shrink:0}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── Module Tabs ── */
+#module-tabs{
+  height:var(--tab-h);background:var(--bg1);border-bottom:1px solid var(--bd0);
+  display:flex;align-items:stretch;padding:0 12px;gap:2px;overflow-x:auto;flex-shrink:0;
+}
+#module-tabs::-webkit-scrollbar{display:none}
+.mod-tab{
+  display:inline-flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--tx3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;
+}
+.mod-tab:hover{color:var(--tx1)}
+.mod-tab.active{color:var(--tx0);border-bottom-color:var(--acc)}
+.mod-tab .tab-icon{font-size:11px}
+
+/* ── Layout ── */
+#shell{
+  height:calc(100vh - var(--nav-h) - var(--tab-h));
+  overflow-y:auto;background:var(--bg0);
+}
+#shell::-webkit-scrollbar{width:4px}
+#shell::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+
+.module{display:none;padding:16px}
+.module.active{display:block}
+
+/* ── Grid helpers ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.col-span-2{grid-column:span 2}
+.col-span-3{grid-column:span 3}
+
+/* ── Panel ── */
+.panel{background:var(--bg1);border:1px solid var(--bd0);border-radius:3px;overflow:hidden}
+.panel-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 14px;border-bottom:1px solid var(--bd0);
+}
+.panel-title{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2)}
+.panel-action{font-size:9px;color:var(--acc);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;font-weight:700;background:none;border:none;padding:0}
+.panel-body{padding:14px}
+.panel-body.no-pad{padding:0}
+
+/* ── KPI Card ── */
+.kpi{background:var(--bg1);border:1px solid var(--bd0);border-radius:3px;padding:12px 14px}
+.kpi-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px}
+.kpi-value{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--tx0);line-height:1}
+.kpi-change{display:inline-flex;align-items:center;gap:3px;margin-top:5px;font-size:10px;font-weight:600}
+.kpi-change.up{color:var(--red)}
+.kpi-change.dn{color:var(--grn)}
+.kpi-change.neu{color:var(--cyan)}
+.kpi-sub{font-size:9px;color:var(--tx3);margin-top:3px}
+
+/* ── Risk Badge ── */
+.rbadge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.rb-critical{background:rgba(239,68,68,.15);color:#EF4444;border:1px solid rgba(239,68,68,.25)}
+.rb-high{background:rgba(249,115,22,.15);color:#F97316;border:1px solid rgba(249,115,22,.25)}
+.rb-medium{background:rgba(245,158,11,.15);color:#F59E0B;border:1px solid rgba(245,158,11,.25)}
+.rb-low{background:rgba(16,185,129,.15);color:#10B981;border:1px solid rgba(16,185,129,.25)}
+.rb-minimal{background:rgba(59,130,246,.15);color:#3B82F6;border:1px solid rgba(59,130,246,.25)}
+.rb-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+/* ── Table ── */
+.t-table{width:100%;border-collapse:collapse}
+.t-table th{padding:6px 12px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd0);text-align:left;background:var(--bg2)}
+.t-table td{padding:8px 12px;font-size:11px;color:var(--tx1);border-bottom:1px solid var(--bd0)}
+.t-table tr:last-child td{border-bottom:none}
+.t-table tr:hover td{background:var(--bg2)}
+.t-mono{font-family:var(--mono);font-size:10px}
+
+/* ── Chart container ── */
+.chart-wrap{position:relative;width:100%}
+.chart-wrap canvas{display:block}
+
+/* ── Section label ── */
+.sec-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-label::before{content:'';display:block;width:16px;height:1px;background:var(--acc)}
+
+/* ── Tab set (sub-tabs) ── */
+.sub-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd0);margin-bottom:14px}
+.sub-tab{padding:7px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.sub-tab:hover{color:var(--tx1)}
+.sub-tab.active{color:var(--tx0);border-bottom-color:var(--cyan)}
+
+/* ── Scenario pill ── */
+.sc-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.sc-nz{background:rgba(16,185,129,.12);color:#10B981;border-color:rgba(16,185,129,.25)}
+.sc-dt{background:rgba(245,158,11,.12);color:#F59E0B;border-color:rgba(245,158,11,.25)}
+.sc-b2{background:rgba(59,130,246,.12);color:#3B82F6;border-color:rgba(59,130,246,.25)}
+.sc-cp{background:rgba(239,68,68,.12);color:#EF4444;border-color:rgba(239,68,68,.25)}
+.sc-hh{background:rgba(220,38,38,.2);color:#DC2626;border-color:rgba(220,38,38,.35)}
+
+/* ── Slider ── */
+.slider-group{margin-bottom:14px}
+.slider-lbl{display:flex;justify-content:space-between;margin-bottom:5px}
+.slider-name{font-size:10px;color:var(--tx2)}
+.slider-val{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--acc)}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:var(--bd1);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg0)}
+
+/* ── Framework card ── */
+.fw-card{background:var(--bg2);border:1px solid var(--bd0);border-radius:3px;padding:12px;cursor:pointer;transition:border-color .15s}
+.fw-card:hover,.fw-card.sel{border-color:var(--acc)}
+.fw-name{font-size:11px;font-weight:700;color:var(--tx0);margin-bottom:3px}
+.fw-desc{font-size:9px;color:var(--tx3)}
+.fw-tag{display:inline-block;padding:1px 6px;background:var(--acc2);color:var(--acc);font-size:9px;font-weight:700;border-radius:1px;margin-top:5px}
+
+/* ── Progress bar ── */
+.prog-bar{height:4px;background:var(--bd1);border-radius:2px;overflow:hidden;margin-top:4px}
+.prog-fill{height:100%;border-radius:2px;transition:width .4s ease}
+
+/* ── Hotspot map placeholder ── */
+.geo-map{
+  background:linear-gradient(135deg,#0D1520 0%,#0A1F44 100%);
+  border:1px solid var(--bd0);border-radius:3px;position:relative;overflow:hidden;
+  min-height:260px;display:flex;align-items:center;justify-content:center;
+}
+.geo-map-inner{position:relative;width:100%;height:260px}
+.geo-dot{position:absolute;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%)}
+.geo-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid currentColor;opacity:.4;animation:ripple 2s infinite}
+@keyframes ripple{0%{transform:scale(1);opacity:.4}100%{transform:scale(2.2);opacity:0}}
+.geo-label{position:absolute;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.75);padding:2px 5px;border-radius:1px;white-space:nowrap;transform:translateY(-140%)}
+
+/* ── Code block ── */
+.code-block{background:#0D1117;border:1px solid var(--bd0);border-radius:3px;padding:12px;font-family:var(--mono);font-size:11px;color:#A5F3FC;overflow-x:auto;line-height:1.6}
+
+/* ── Uptime bar ── */
+.uptime-bar{display:flex;gap:2px;margin-top:4px}
+.up-seg{width:8px;height:14px;border-radius:1px;background:var(--grn)}
+.up-seg.warn{background:var(--amb)}
+.up-seg.down{background:var(--red)}
+
+/* ── Alert item ── */
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd0)}
+.alert-item:last-child{border-bottom:none}
+.alert-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.alert-text{font-size:11px;color:var(--tx1)}
+.alert-meta{font-size:9px;color:var(--tx3);margin-top:2px}
+
+/* ── News item ── */
+.news-item{padding:10px 0;border-bottom:1px solid var(--bd0)}
+.news-item:last-child{border-bottom:none}
+.news-headline{font-size:11px;color:var(--tx0);margin-bottom:3px;line-height:1.4}
+.news-meta{display:flex;gap:10px;font-size:9px;color:var(--tx3)}
+.sent-pos{color:var(--grn)}
+.sent-neg{color:var(--red)}
+.sent-neu{color:var(--tx3)}
+
+/* ── Responsive ── */
+@media(max-width:1100px){.grid-4{grid-template-columns:1fr 1fr}.grid-5{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr}.col-span-2,.col-span-3{grid-column:span 1}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     TOPBAR
+═══════════════════════════════════════════════ -->
+<div id="topbar">
+  <a href="index.html" class="tb-logo">
+    <div class="tb-logo-icon">
+      <svg width="16" height="16" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="10" fill="none" stroke="white" stroke-width="1.5"/>
+        <path d="M10 27 Q14 22 18 18 Q22 14 26 10" stroke="#F97316" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="tb-logo-text">CLIMACTIX</span>
+  </a>
+  <div class="tb-divider"></div>
+  <span class="tb-title">Risk Intelligence Terminal</span>
+
+  <div class="tb-ticker">
+    <div class="ticker-inner" id="tickerInner"></div>
+  </div>
+
+  <div class="tb-live"><span class="tb-dot"></span>LIVE</div>
+  <div class="tb-clock" id="clock">--:--:--</div>
+  <a href="index.html" class="tb-back">← Back to Site</a>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODULE TABS
+═══════════════════════════════════════════════ -->
+<div id="module-tabs">
+  <button class="mod-tab active" data-mod="risk"><span class="tab-icon">⬡</span>Risk Terminal</button>
+  <button class="mod-tab" data-mod="simulation"><span class="tab-icon">◈</span>Simulation Lab</button>
+  <button class="mod-tab" data-mod="disclosure"><span class="tab-icon">◻</span>Disclosure Studio</button>
+  <button class="mod-tab" data-mod="investor"><span class="tab-icon">◎</span>Investor Screen</button>
+  <button class="mod-tab" data-mod="supplychain"><span class="tab-icon">⬡</span>Supply Chain</button>
+  <button class="mod-tab" data-mod="narrative"><span class="tab-icon">◈</span>Narrative Intel</button>
+  <button class="mod-tab" data-mod="finance"><span class="tab-icon">◻</span>Climate Finance</button>
+  <button class="mod-tab" data-mod="config"><span class="tab-icon">◎</span>API Config</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SHELL
+═══════════════════════════════════════════════ -->
+<div id="shell">
+
+<!-- ───────────────────────────────────────────
+     MODULE 1 — RISK TERMINAL
+─────────────────────────────────────────────── -->
+<div class="module active" id="mod-risk">
+  <!-- KPI Row -->
+  <div class="grid-5" style="margin-bottom:12px">
+    <div class="kpi">
+      <div class="kpi-label">Global Risk Index</div>
+      <div class="kpi-value" style="color:#EF4444">72.4</div>
+      <div class="kpi-change up">▲ +3.2 <span style="color:var(--tx3);font-weight:400">vs last qtr</span></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Physical Risk Score</div>
+      <div class="kpi-value" style="color:#F97316">68.1</div>
+      <div class="kpi-change up">▲ +1.8</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Transition Risk</div>
+      <div class="kpi-value" style="color:#F59E0B">54.7</div>
+      <div class="kpi-change up">▲ +4.1</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Temp Anomaly</div>
+      <div class="kpi-value" style="color:#00D4FF">+1.48°C</div>
+      <div class="kpi-change up">▲ +0.06°C YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Active Alerts</div>
+      <div class="kpi-value" style="color:#EF4444">23</div>
+      <div class="kpi-change up">▲ +5 today</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:12px">
+    <!-- Temp Anomaly Chart -->
+    <div class="panel">
+      <div class="panel-hd">
+        <span class="panel-title">Temperature Anomaly — 1990–2025</span>
+        <span style="font-size:9px;color:var(--cyan)">NOAA · NASA GISS</span>
+      </div>
+      <div class="panel-body">
+        <div class="chart-wrap" style="height:180px"><canvas id="chartTempAnomaly"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Alerts Panel -->
+    <div class="panel">
+      <div class="panel-hd">
+        <span class="panel-title">Live Risk Alerts</span>
+        <button class="panel-action">View All</button>
+      </div>
+      <div class="panel-body">
+        <div class="alert-item">
+          <div class="alert-dot" style="background:#EF4444"></div>
+          <div><div class="alert-text">Extreme heat event forecast — South Asia (Q3 2025)</div><div class="alert-meta">Physical Risk · CRITICAL · 2 hrs ago</div></div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot" style="background:#F97316"></div>
+          <div><div class="alert-text">Carbon pricing revision — EU ETS floor +€18/tCO₂</div><div class="alert-meta">Transition Risk · HIGH · 5 hrs ago</div></div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot" style="background:#F59E0B"></div>
+          <div><div class="alert-text">Flood probability elevated — Bangladesh coast +32%</div><div class="alert-meta">Physical Risk · MEDIUM · 8 hrs ago</div></div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-dot" style="background:#10B981"></div>
+          <div><div class="alert-text">ISSB S2 compliance window opens — Jan 2026</div><div class="alert-meta">Regulatory · LOW · 1 day ago</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:12px">
+    <!-- Sector Risk Chart -->
+    <div class="panel col-span-2">
+      <div class="panel-hd"><span class="panel-title">Sector Risk Distribution</span></div>
+      <div class="panel-body">
+        <div class="chart-wrap" style="height:180px"><canvas id="chartSectorRisk"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Physical Risk Types -->
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Hazard Breakdown</span></div>
+      <div class="panel-body">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Flood Risk</span><span class="t-mono" style="color:var(--red)">74.2</span></div><div class="prog-bar"><div class="prog-fill" style="width:74%;background:#EF4444"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Heat Stress</span><span class="t-mono" style="color:#F97316">68.5</span></div><div class="prog-bar"><div class="prog-fill" style="width:68%;background:#F97316"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Water Stress</span><span class="t-mono" style="color:#F59E0B">61.0</span></div><div class="prog-bar"><div class="prog-fill" style="width:61%;background:#F59E0B"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Wildfire</span><span class="t-mono" style="color:#F59E0B">52.3</span></div><div class="prog-bar"><div class="prog-fill" style="width:52%;background:#F59E0B"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Sea Level Rise</span><span class="t-mono" style="color:#3B82F6">44.1</span></div><div class="prog-bar"><div class="prog-fill" style="width:44%;background:#3B82F6"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Storm Intensity</span><span class="t-mono" style="color:#3B82F6">38.7</span></div><div class="prog-bar"><div class="prog-fill" style="width:39%;background:#3B82F6"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Geographic Hotspots Table -->
+  <div class="panel">
+    <div class="panel-hd"><span class="panel-title">Geographic Hotspots</span><button class="panel-action">Export CSV</button></div>
+    <div class="panel-body no-pad">
+      <table class="t-table">
+        <thead><tr><th>Region</th><th>Country/Zone</th><th>Primary Hazard</th><th>Risk Score</th><th>Trend</th><th>Rating</th></tr></thead>
+        <tbody>
+          <tr><td>South Asia</td><td>Bangladesh Delta</td><td>Flood + Sea Level</td><td class="t-mono" style="color:#EF4444">84.2</td><td style="color:#EF4444">▲ +6.1</td><td><span class="rbadge rb-critical"><span class="rb-dot"></span>CRITICAL</span></td></tr>
+          <tr><td>Middle East</td><td>Persian Gulf</td><td>Extreme Heat</td><td class="t-mono" style="color:#EF4444">81.7</td><td style="color:#EF4444">▲ +4.8</td><td><span class="rbadge rb-critical"><span class="rb-dot"></span>CRITICAL</span></td></tr>
+          <tr><td>Sub-Saharan Africa</td><td>Sahel Region</td><td>Water Stress</td><td class="t-mono" style="color:#F97316">76.3</td><td style="color:#EF4444">▲ +3.2</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td></tr>
+          <tr><td>Southeast Asia</td><td>Mekong Delta</td><td>Flood + Storm</td><td class="t-mono" style="color:#F97316">73.8</td><td style="color:#EF4444">▲ +2.9</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td></tr>
+          <tr><td>North America</td><td>US West Coast</td><td>Wildfire</td><td class="t-mono" style="color:#F59E0B">65.4</td><td style="color:#EF4444">▲ +5.3</td><td><span class="rbadge rb-medium"><span class="rb-dot"></span>MEDIUM</span></td></tr>
+          <tr><td>Europe</td><td>Mediterranean</td><td>Drought + Heat</td><td class="t-mono" style="color:#F59E0B">62.1</td><td style="color:#EF4444">▲ +1.7</td><td><span class="rbadge rb-medium"><span class="rb-dot"></span>MEDIUM</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /mod-risk -->
+
+<!-- ───────────────────────────────────────────
+     MODULE 2 — SIMULATION LAB
+─────────────────────────────────────────────── -->
+<div class="module" id="mod-simulation">
+  <div class="grid-2" style="margin-bottom:12px;align-items:start">
+    <!-- Scenario Selector -->
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">NGFS Scenario Selector</span></div>
+      <div class="panel-body">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
+          <span class="sc-pill sc-nz" onclick="selectScenario(this,'nz')">● Net Zero 2050</span>
+          <span class="sc-pill sc-dt" onclick="selectScenario(this,'dt')">● Delayed Transition</span>
+          <span class="sc-pill sc-b2" onclick="selectScenario(this,'b2')">● Below 2°C</span>
+          <span class="sc-pill sc-cp" onclick="selectScenario(this,'cp')">● Current Policy</span>
+          <span class="sc-pill sc-hh" onclick="selectScenario(this,'hh')">● Hot House World</span>
+        </div>
+        <div id="sc-desc" style="font-size:10px;color:var(--tx2);padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:2px;line-height:1.6">
+          Select a scenario to see details and projected financial impacts.
+        </div>
+      </div>
+    </div>
+
+    <!-- Parameter Sliders -->
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Model Parameters</span></div>
+      <div class="panel-body">
+        <div class="slider-group">
+          <div class="slider-lbl"><span class="slider-name">Revenue at Risk (%)</span><span class="slider-val" id="revVal">18</span></div>
+          <input type="range" min="0" max="40" value="18" oninput="document.getElementById('revVal').textContent=this.value;updateSimCharts()">
+        </div>
+        <div class="slider-group">
+          <div class="slider-lbl"><span class="slider-name">EBITDA Impact (%)</span><span class="slider-val" id="ebitVal">-12</span></div>
+          <input type="range" min="-30" max="0" value="-12" oninput="document.getElementById('ebitVal').textContent=this.value;updateSimCharts()">
+        </div>
+        <div class="slider-group">
+          <div class="slider-lbl"><span class="slider-name">Carbon Intensity (tCO₂/€M)</span><span class="slider-val" id="carbVal">142</span></div>
+          <input type="range" min="20" max="400" value="142" oninput="document.getElementById('carbVal').textContent=this.value;updateSimCharts()">
+        </div>
+        <div class="slider-group">
+          <div class="slider-lbl"><span class="slider-name">Carbon Price 2030 ($/t)</span><span class="slider-val" id="cpVal">95</span></div>
+          <input type="range" min="20" max="300" value="95" oninput="document.getElementById('cpVal').textContent=this.value;updateSimCharts()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:12px">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Revenue / EBITDA Trajectory (2025–2050)</span></div>
+      <div class="panel-body"><div class="chart-wrap" style="height:200px"><canvas id="chartRevTrajectory"></canvas></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Carbon Price Path</span></div>
+      <div class="panel-body"><div class="chart-wrap" style="height:200px"><canvas id="chartCarbonPrice"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- Scenario Comparison Table -->
+  <div class="panel">
+    <div class="panel-hd"><span class="panel-title">Scenario Comparison Matrix</span></div>
+    <div class="panel-body no-pad">
+      <table class="t-table">
+        <thead><tr><th>Scenario</th><th>Warming (2100)</th><th>Carbon Price 2030</th><th>Revenue Risk</th><th>EBITDA Impact</th><th>Stranded Asset Risk</th><th>Paris Alignment</th></tr></thead>
+        <tbody>
+          <tr><td><span class="sc-pill sc-nz" style="cursor:default">Net Zero 2050</span></td><td class="t-mono">1.5°C</td><td class="t-mono">$147/t</td><td class="t-mono" style="color:#10B981">-8%</td><td class="t-mono" style="color:#10B981">-5%</td><td><span class="rbadge rb-low">LOW</span></td><td style="color:#10B981">✓ Aligned</td></tr>
+          <tr><td><span class="sc-pill sc-b2" style="cursor:default">Below 2°C</span></td><td class="t-mono">1.8°C</td><td class="t-mono">$95/t</td><td class="t-mono" style="color:#F59E0B">-14%</td><td class="t-mono" style="color:#F59E0B">-9%</td><td><span class="rbadge rb-medium">MEDIUM</span></td><td style="color:#F59E0B">~ Partial</td></tr>
+          <tr><td><span class="sc-pill sc-dt" style="cursor:default">Delayed Transition</span></td><td class="t-mono">2.5°C</td><td class="t-mono">$220/t</td><td class="t-mono" style="color:#F97316">-22%</td><td class="t-mono" style="color:#F97316">-16%</td><td><span class="rbadge rb-high">HIGH</span></td><td style="color:#EF4444">✗ Misaligned</td></tr>
+          <tr><td><span class="sc-pill sc-cp" style="cursor:default">Current Policy</span></td><td class="t-mono">3.2°C</td><td class="t-mono">$38/t</td><td class="t-mono" style="color:#EF4444">-31%</td><td class="t-mono" style="color:#EF4444">-24%</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td style="color:#EF4444">✗ Misaligned</td></tr>
+          <tr><td><span class="sc-pill sc-hh" style="cursor:default">Hot House World</span></td><td class="t-mono">4.3°C</td><td class="t-mono">$18/t</td><td class="t-mono" style="color:#DC2626">-44%</td><td class="t-mono" style="color:#DC2626">-38%</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td style="color:#EF4444">✗ Misaligned</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /mod-simulation -->
+
+<!-- ───────────────────────────────────────────
+     MODULE 3 — DISCLOSURE STUDIO
+─────────────────────────────────────────────── -->
+<div class="module" id="mod-disclosure">
+  <div id="disc-tabs" class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSubTab('disc','builder',this)">Report Builder</button>
+    <button class="sub-tab" onclick="switchSubTab('disc','scanner',this)">Greenwash Scanner</button>
+    <button class="sub-tab" onclick="switchSubTab('disc','quality',this)">Quality Scoring</button>
+  </div>
+
+  <!-- Builder -->
+  <div id="disc-builder">
+    <div class="grid-2" style="margin-bottom:12px">
+      <div>
+        <div class="sec-label">Select Framework</div>
+        <div class="grid-2" style="gap:8px">
+          <div class="fw-card sel" onclick="toggleFw(this)"><div class="fw-name">TCFD</div><div class="fw-desc">Task Force on Climate-related Financial Disclosures</div><div class="fw-tag">Global Standard</div></div>
+          <div class="fw-card" onclick="toggleFw(this)"><div class="fw-name">ISSB S2</div><div class="fw-desc">IFRS Sustainability Disclosure Standard 2</div><div class="fw-tag">IFRS</div></div>
+          <div class="fw-card" onclick="toggleFw(this)"><div class="fw-name">CSRD / ESRS E1</div><div class="fw-desc">EU Corporate Sustainability Reporting Directive</div><div class="fw-tag">EU Mandatory</div></div>
+          <div class="fw-card" onclick="toggleFw(this)"><div class="fw-name">CDP Climate</div><div class="fw-desc">Carbon Disclosure Project questionnaire</div><div class="fw-tag">Investor-driven</div></div>
+          <div class="fw-card" onclick="toggleFw(this)"><div class="fw-name">GRI 305</div><div class="fw-desc">Global Reporting Initiative — Emissions</div><div class="fw-tag">Materiality</div></div>
+          <div class="fw-card" onclick="toggleFw(this)"><div class="fw-name">BRSR</div><div class="fw-desc">Business Responsibility & Sustainability Report</div><div class="fw-tag">India Mandatory</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-label">Report Configuration</div>
+        <div class="panel">
+          <div class="panel-body">
+            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Company Name</label><input type="text" placeholder="Enter company name..." style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"></div>
+            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Fiscal Year</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>2024</option><option>2023</option><option>2022</option></select></div>
+            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Report Type</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>Full Disclosure Report</option><option>Executive Summary</option><option>Investor Brief</option><option>Regulatory Filing</option></select></div>
+            <div style="margin-bottom:14px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Sector</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>Energy &amp; Utilities</option><option>Manufacturing</option><option>Financial Services</option><option>Real Estate</option><option>Technology</option><option>Agriculture</option></select></div>
+            <button onclick="generateReport()" style="width:100%;padding:9px;background:var(--acc);color:#fff;border:none;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;text-transform:uppercase">Generate Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="reportOutput" style="display:none">
+      <div class="panel-hd"><span class="panel-title" style="color:var(--grn)">✓ Report Generated</span><button class="panel-action">Download PDF</button></div>
+      <div class="panel-body">
+        <div style="font-size:11px;color:var(--tx1);line-height:1.8">
+          <strong style="color:var(--tx0)">TCFD Climate Risk Disclosure Report — FY2024</strong><br/>
+          Governance: Board-level climate oversight confirmed. Climate risk integrated into enterprise risk management framework.<br/>
+          Strategy: Three NGFS scenario pathways analysed (NZ2050, Below 2°C, Current Policy). Revenue at risk: 14–31% by 2050.<br/>
+          Risk Management: Physical risk assessed for all Tier-1 assets. Flood and heat stress dominant hazards.<br/>
+          Metrics &amp; Targets: Scope 1+2: 48,200 tCO₂e. Scope 3: 214,000 tCO₂e. Net-zero target by 2045.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scanner -->
+  <div id="disc-scanner" style="display:none">
+    <div class="grid-2" style="margin-bottom:12px">
+      <div class="panel">
+        <div class="panel-hd"><span class="panel-title">Claim Analysis</span></div>
+        <div class="panel-body">
+          <textarea placeholder="Paste sustainability claims here to scan for greenwashing risk..." style="width:100%;height:100px;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:8px;color:var(--tx0);font-size:11px;resize:none;outline:none;margin-bottom:10px"></textarea>
+          <button style="padding:7px 16px;background:var(--acc);color:#fff;border:none;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:.06em;cursor:pointer;text-transform:uppercase">Analyse Claims</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hd"><span class="panel-title">ESG Integrity Score</span></div>
+        <div class="panel-body">
+          <div style="text-align:center;padding:10px 0">
+            <div style="font-family:var(--mono);font-size:48px;font-weight:700;color:#10B981;line-height:1">76</div>
+            <div style="font-size:10px;color:var(--tx2);margin-top:4px;letter-spacing:.06em">/ 100 — GOOD STANDING</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Claim Substantiation</span><span class="t-mono" style="color:#10B981">82%</span></div><div class="prog-bar"><div class="prog-fill" style="width:82%;background:#10B981"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Data Transparency</span><span class="t-mono" style="color:#10B981">78%</span></div><div class="prog-bar"><div class="prog-fill" style="width:78%;background:#10B981"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Target Credibility</span><span class="t-mono" style="color:#F59E0B">64%</span></div><div class="prog-bar"><div class="prog-fill" style="width:64%;background:#F59E0B"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Scope Coverage</span><span class="t-mono" style="color:#F97316">55%</span></div><div class="prog-bar"><div class="prog-fill" style="width:55%;background:#F97316"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quality -->
+  <div id="disc-quality" style="display:none">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">TCFD Section Coverage Quality</span></div>
+      <div class="panel-body">
+        <div class="chart-wrap" style="height:220px"><canvas id="chartTcfdQuality"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /mod-disclosure -->
+
+<!-- ───────────────────────────────────────────
+     MODULE 4 — INVESTOR SCREEN
+─────────────────────────────────────────────── -->
+<div class="module" id="mod-investor">
+  <div class="grid-2" style="margin-bottom:12px">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">ESG Radar — Portfolio Aggregate</span></div>
+      <div class="panel-body"><div class="chart-wrap" style="height:220px"><canvas id="chartESGRadar"></canvas></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Climate VaR — Scenario Bands</span></div>
+      <div class="panel-body"><div class="chart-wrap" style="height:220px"><canvas id="chartClimateVar"></canvas></div></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-hd"><span class="panel-title">Portfolio Holdings — Climate Screen</span><button class="panel-action">Export</button></div>
+    <div class="panel-body no-pad">
+      <table class="t-table">
+        <thead><tr><th>Company</th><th>Ticker</th><th>Sector</th><th>Weight</th><th>ESG Score</th><th>Climate VaR</th><th>Paris Alignment</th><th>Rating</th></tr></thead>
+        <tbody>
+          <tr><td>NextEra Energy</td><td class="t-mono">NEE</td><td>Utilities</td><td class="t-mono">8.2%</td><td class="t-mono" style="color:#10B981">78.4</td><td class="t-mono" style="color:#10B981">-4.1%</td><td style="color:#10B981">✓ Aligned</td><td><span class="rbadge rb-low">LOW</span></td></tr>
+          <tr><td>Microsoft Corp</td><td class="t-mono">MSFT</td><td>Technology</td><td class="t-mono">7.6%</td><td class="t-mono" style="color:#10B981">82.1</td><td class="t-mono" style="color:#10B981">-2.8%</td><td style="color:#10B981">✓ Aligned</td><td><span class="rbadge rb-minimal">MINIMAL</span></td></tr>
+          <tr><td>TotalEnergies SE</td><td class="t-mono">TTE</td><td>Oil &amp; Gas</td><td class="t-mono">6.4%</td><td class="t-mono" style="color:#F59E0B">51.3</td><td class="t-mono" style="color:#EF4444">-18.4%</td><td style="color:#EF4444">✗ Misaligned</td><td><span class="rbadge rb-high">HIGH</span></td></tr>
+          <tr><td>Vestas Wind Sys.</td><td class="t-mono">VWS</td><td>Renewables</td><td class="t-mono">5.8%</td><td class="t-mono" style="color:#10B981">88.6</td><td class="t-mono" style="color:#10B981">-1.2%</td><td style="color:#10B981">✓ Aligned</td><td><span class="rbadge rb-minimal">MINIMAL</span></td></tr>
+          <tr><td>Rio Tinto PLC</td><td class="t-mono">RIO</td><td>Mining</td><td class="t-mono">4.9%</td><td class="t-mono" style="color:#F97316">44.8</td><td class="t-mono" style="color:#EF4444">-22.1%</td><td style="color:#EF4444">✗ Misaligned</td><td><span class="rbadge rb-critical">CRITICAL</span></td></tr>
+          <tr><td>Schneider Electric</td><td class="t-mono">SU</td><td>Industrials</td><td class="t-mono">4.2%</td><td class="t-mono" style="color:#10B981">74.2</td><td class="t-mono" style="color:#10B981">-6.8%</td><td style="color:#10B981">✓ Aligned</td><td><span class="rbadge rb-low">LOW</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /mod-investor -->
+
+<!-- ───────────────────────────────────────────
+     MODULE 5 — SUPPLY CHAIN
+─────────────────────────────────────────────── -->
+<div class="module" id="mod-supplychain">
+  <div id="sc-tabs" class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSubTab('sc','scope3',this)">Scope 3 Mapping</button>
+    <button class="sub-tab" onclick="switchSubTab('sc','vendors',this)">Vendor Risk</button>
+    <button class="sub-tab" onclick="switchSubTab('sc','logistics',this)">Logistics Emissions</button>
+  </div>
+  <div id="sc-scope3">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Scope 3 Emissions by Category (tCO₂e)</span></div>
+      <div class="panel-body"><div class="chart-wrap" style="height:280px"><canvas id="chartScope3"></canvas></div></div>
+    </div>
+  </div>
+  <div id="sc-vendors" style="display:none">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Tier-1 Vendor Climate Risk</span><button class="panel-action">Add Vendor</button></div>
+      <div class="panel-body no-pad">
+        <table class="t-table">
+          <thead><tr><th>Supplier</th><th>Country</th><th>Tier</th><th>Annual Spend ($M)</th><th>Scope 1 (tCO₂)</th><th>Climate Risk</th><th>SBTi</th><th>Verified</th></tr></thead>
+          <tbody>
+            <tr><td>Alpha Materials Ltd</td><td>China</td><td class="t-mono">1</td><td class="t-mono">$42.1M</td><td class="t-mono">18,400</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td><td style="color:#F59E0B">Committed</td><td style="color:#EF4444">✗</td></tr>
+            <tr><td>GreenSteel Europe</td><td>Germany</td><td class="t-mono">1</td><td class="t-mono">$38.6M</td><td class="t-mono">9,200</td><td><span class="rbadge rb-medium"><span class="rb-dot"></span>MEDIUM</span></td><td style="color:#10B981">Approved</td><td style="color:#10B981">✓</td></tr>
+            <tr><td>Pacific Logistics Co.</td><td>Singapore</td><td class="t-mono">1</td><td class="t-mono">$24.3M</td><td class="t-mono">31,600</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td><td style="color:#EF4444">None</td><td style="color:#EF4444">✗</td></tr>
+            <tr><td>Nordic Paper Mills</td><td>Sweden</td><td class="t-mono">2</td><td class="t-mono">$18.8M</td><td class="t-mono">4,100</td><td><span class="rbadge rb-low"><span class="rb-dot"></span>LOW</span></td><td style="color:#10B981">Approved</td><td style="color:#10B981">✓</td></tr>
+            <tr><td>IndoChem Pvt Ltd</td><td>India</td><td class="t-mono">2</td><td class="t-mono">$15.4M</td><td class="t-mono">22,800</td><td><span class="rbadge rb-critical"><span class="rb-dot"></span>CRITICAL</span></td><td style="color:#EF4444">None</td><td style="color:#EF4444">✗</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div id="sc-logistics" style="display:none">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Logistics Emissions by Route</span></div>
+      <div class="panel-body no-pad">
+        <table class="t-table">
+          <thead><tr><th>Route</th><th>Mode</th><th>Distance (km)</th><th>Volume (TEU)</th><th>tCO₂e/yr</th><th>Intensity</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Shanghai → Rotterdam</td><td>Sea Freight</td><td class="t-mono">19,550</td><td class="t-mono">4,200</td><td class="t-mono" style="color:#F97316">42,800</td><td><span class="rbadge rb-high">HIGH</span></td><td><button class="panel-action">Optimise</button></td></tr>
+            <tr><td>Mumbai → Hamburg</td><td>Sea Freight</td><td class="t-mono">11,240</td><td class="t-mono">2,800</td><td class="t-mono" style="color:#F59E0B">24,600</td><td><span class="rbadge rb-medium">MEDIUM</span></td><td><button class="panel-action">Optimise</button></td></tr>
+            <tr><td>Chicago → London</td><td>Air Freight</td><td class="t-mono">6,350</td><td class="t-mono">120</td><td class="t-mono" style="color:#EF4444">38,400</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td><button class="panel-action">Shift Mode</button></td></tr>
+            <tr><td>Berlin → Paris</td><td>Road</td><td class="t-mono">1,050</td><td class="t-mono">850</td><td class="t-mono" style="color:#10B981">3,200</td><td><span class="rbadge rb-low">LOW</span></td><td><button class="panel-action">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /mod-supplychain -->
+
+<!-- ───────────────────────────────────────────
+     MODULE 6 — NARRATIVE INTELLIGENCE
+─────────────────────────────────────────────── -->
+<div class="module" id="mod-narrative">
+  <div class="grid-2" style="margin-bottom:12px">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Sentiment Trend</span></div>
+      <div class="panel-body"><div class="chart-wrap" style="height:160px"><canvas id="chartSentiment"></canvas></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Topic Pulse — Climate Mentions (30d)</span></div>
+      <div class="panel-body"><div class="chart-wrap" style="height:160px"><canvas id="chartTopicPulse"></canvas></div></div>
+    </div>
+  </div>
+  <div id="narr-tabs" class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSubTab('narr','feed',this)">News Feed</button>
+    <button class="sub-tab" onclick="switchSubTab('narr','regcal',this)">Regulatory Calendar</button>
+  </div>
+  <div id="narr-feed">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Latest ESG / Climate News</span><button class="panel-action">Refresh</button></div>
+      <div class="panel-body">
+        <div class="news-item"><div class="news-headline">EU Carbon Market Hits Record €98/tCO₂ — Industrial Sectors Face Margin Squeeze</div><div class="news-meta"><span>Reuters</span><span class="sent-neg">● Negative</span><span>2 hrs ago</span></div></div>
+        <div class="news-item"><div class="news-headline">IEA: Renewable Capacity Additions Break Record for Third Consecutive Year</div><div class="news-meta"><span>IEA.org</span><span class="sent-pos">● Positive</span><span>4 hrs ago</span></div></div>
+        <div class="news-item"><div class="news-headline">ISSB Publishes Finalized Guidance on Scope 3 Measurement Under IFRS S2</div><div class="news-meta"><span>IFRS Foundation</span><span class="sent-neu">● Neutral</span><span>6 hrs ago</span></div></div>
+        <div class="news-item"><div class="news-headline">Climate VaR in Loan Books: ECB Finds €400B Exposure in Euro Area Banks</div><div class="news-meta"><span>FT</span><span class="sent-neg">● Negative</span><span>8 hrs ago</span></div></div>
+        <div class="news-item"><div class="news-headline">India BRSR Core Disclosures — SEBI Extends Deadline for Top 250 Listed Cos</div><div class="news-meta"><span>SEBI</span><span class="sent-neu">● Neutral</span><span>1 day ago</span></div></div>
+        <div class="news-item"><div class="news-headline">Microsoft Achieves Carbon Negative Milestone in Q1 2025 Operations Report</div><div class="news-meta"><span>Microsoft Blog</span><span class="sent-pos">● Positive</span><span>1 day ago</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div id="narr-regcal" style="display:none">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Upcoming Regulatory Milestones</span></div>
+      <div class="panel-body no-pad">
+        <table class="t-table">
+          <thead><tr><th>Date</th><th>Regulation</th><th>Jurisdiction</th><th>Scope</th><th>Impact</th></tr></thead>
+          <tbody>
+            <tr><td class="t-mono">Jun 2025</td><td>CSRD Phase 2 Filing</td><td>EU</td><td>Listed SMEs</td><td><span class="rbadge rb-high">HIGH</span></td></tr>
+            <tr><td class="t-mono">Jan 2026</td><td>ISSB S2 Adoption</td><td>Global</td><td>Large Corporates</td><td><span class="rbadge rb-critical">CRITICAL</span></td></tr>
+            <tr><td class="t-mono">Mar 2026</td><td>SEC Climate Disclosure Rule</td><td>USA</td><td>SEC Registrants</td><td><span class="rbadge rb-high">HIGH</span></td></tr>
+            <tr><td class="t-mono">Apr 2026</td><td>BRSR Core (All Listed)</td><td>India</td><td>Listed Companies</td><td><span class="rbadge rb-medium">MEDIUM</span></td></tr>
+            <tr><td class="t-mono">Jan 2027</td><td>CBAM Full Implementation</td><td>EU</td><td>Import-heavy Sectors</td><td><span class="rbadge rb-critical">CRITICAL</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /mod-narrative -->
+
+<!-- ───────────────────────────────────────────
+     MODULE 7 — CLIMATE FINANCE
+─────────────────────────────────────────────── -->
+<div class="module" id="mod-finance">
+  <div id="fin-tabs" class="sub-tabs">
+    <button class="sub-tab active" onclick="switchSubTab('fin','bonds',this)">Green Bond Market</button>
+    <button class="sub-tab" onclick="switchSubTab('fin','carbon',this)">Carbon Markets</button>
+    <button class="sub-tab" onclick="switchSubTab('fin','funds',this)">Climate Funds</button>
+  </div>
+  <div id="fin-bonds">
+    <div class="grid-2" style="margin-bottom:12px">
+      <div class="panel">
+        <div class="panel-hd"><span class="panel-title">Green Bond Issuance (2018–2024, $B)</span></div>
+        <div class="panel-body"><div class="chart-wrap" style="height:200px"><canvas id="chartGreenBond"></canvas></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-hd"><span class="panel-title">Sector Allocation</span></div>
+        <div class="panel-body"><div class="chart-wrap" style="height:200px"><canvas id="chartGBSector"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+  <div id="fin-carbon" style="display:none">
+    <div class="grid-4" style="margin-bottom:12px">
+      <div class="kpi"><div class="kpi-label">EU ETS</div><div class="kpi-value" style="color:var(--cyan)">€98.4</div><div class="kpi-change up">▲ +2.1%</div><div class="kpi-sub">per tCO₂e</div></div>
+      <div class="kpi"><div class="kpi-label">UK ETS</div><div class="kpi-value" style="color:var(--cyan)">£42.7</div><div class="kpi-change dn">▼ -0.8%</div><div class="kpi-sub">per tCO₂e</div></div>
+      <div class="kpi"><div class="kpi-label">California CCA</div><div class="kpi-value" style="color:var(--cyan)">$38.2</div><div class="kpi-change up">▲ +1.4%</div><div class="kpi-sub">per tCO₂e</div></div>
+      <div class="kpi"><div class="kpi-label">Voluntary (VCM)</div><div class="kpi-value" style="color:var(--cyan)">$14.8</div><div class="kpi-change dn">▼ -3.2%</div><div class="kpi-sub">per tCO₂e</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Carbon Price Trajectory (2020–2030 Forecast)</span></div>
+      <div class="panel-body"><div class="chart-wrap" style="height:200px"><canvas id="chartCarbonMkt"></canvas></div></div>
+    </div>
+  </div>
+  <div id="fin-funds" style="display:none">
+    <div class="panel">
+      <div class="panel-hd"><span class="panel-title">Top Climate Funds</span></div>
+      <div class="panel-body no-pad">
+        <table class="t-table">
+          <thead><tr><th>Fund Name</th><th>Manager</th><th>AUM ($B)</th><th>Strategy</th><th>Paris Aligned</th><th>1Y Return</th></tr></thead>
+          <tbody>
+            <tr><td>iShares Global Clean Energy ETF</td><td>BlackRock</td><td class="t-mono">$6.2B</td><td>Clean Energy</td><td style="color:#10B981">✓ PAB</td><td class="t-mono" style="color:#10B981">+18.4%</td></tr>
+            <tr><td>Xtrackers MSCI World ESG</td><td>DWS</td><td class="t-mono">$4.8B</td><td>ESG Screening</td><td style="color:#10B981">✓ CTB</td><td class="t-mono" style="color:#10B981">+12.1%</td></tr>
+            <tr><td>Vanguard ESG U.S. Stock ETF</td><td>Vanguard</td><td class="t-mono">$11.4B</td><td>ESG Exclusions</td><td style="color:#F59E0B">~ Partial</td><td class="t-mono" style="color:#10B981">+14.8%</td></tr>
+            <tr><td>Pimco Climate Bond Fund</td><td>Pimco</td><td class="t-mono">$2.1B</td><td>Green Bonds</td><td style="color:#10B981">✓ PAB</td><td class="t-mono" style="color:#F59E0B">+4.2%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /mod-finance -->
+
+<!-- ───────────────────────────────────────────
+     MODULE 8 — API CONFIG
+─────────────────────────────────────────────── -->
+<div class="module" id="mod-config">
+  <div class="grid-2" style="margin-bottom:12px">
+    <div>
+      <div class="panel" style="margin-bottom:12px">
+        <div class="panel-hd"><span class="panel-title">API Keys</span><button class="panel-action">+ Generate</button></div>
+        <div class="panel-body">
+          <div style="margin-bottom:10px;padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:2px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:10px;font-weight:700;color:var(--tx0)">Production Key</div><div class="t-mono" style="color:var(--tx3);margin-top:3px">cx_prod_••••••••••••••••••4a2f</div></div>
+            <span class="rbadge rb-low">ACTIVE</span>
+          </div>
+          <div style="margin-bottom:10px;padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:2px;display:flex;align-items:center;justify-content:space-between">
+            <div><div style="font-size:10px;font-weight:700;color:var(--tx0)">Staging Key</div><div class="t-mono" style="color:var(--tx3);margin-top:3px">cx_stg_••••••••••••••••••9c1e</div></div>
+            <span class="rbadge rb-low">ACTIVE</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hd"><span class="panel-title">System Health</span></div>
+        <div class="panel-body">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;color:var(--tx2)">Intelligence Engine</span><div style="display:flex;align-items:center;gap:8px"><div class="uptime-bar" id="ub1"></div><span style="font-size:9px;color:var(--grn)">99.9%</span></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;color:var(--tx2)">Risk API</span><div style="display:flex;align-items:center;gap:8px"><div class="uptime-bar" id="ub2"></div><span style="font-size:9px;color:var(--grn)">100%</span></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;color:var(--tx2)">ESG Scoring Engine</span><div style="display:flex;align-items:center;gap:8px"><div class="uptime-bar" id="ub3"></div><span style="font-size:9px;color:var(--grn)">99.7%</span></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:10px;color:var(--tx2)">Disclosure Studio</span><div style="display:flex;align-items:center;gap:8px"><div class="uptime-bar" id="ub4"></div><span style="font-size:9px;color:var(--amb)">98.1%</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:12px">
+        <div class="panel-hd"><span class="panel-title">Quick Start — Python</span></div>
+        <div class="panel-body">
+          <div class="code-block">import climactix<br/><br/>client = climactix.Client(api_key="cx_prod_...")<br/><br/># Physical risk assessment<br/>risk = client.risk.assess(<br/>  &nbsp;&nbsp;company="DEMO_CORP",<br/>  &nbsp;&nbsp;scenario="NZ2050",<br/>  &nbsp;&nbsp;horizon=2050<br/>)<br/>print(risk.overall_score)</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hd"><span class="panel-title">REST Endpoints</span></div>
+        <div class="panel-body no-pad">
+          <table class="t-table">
+            <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="t-mono">/api/v1/risk/assess</td><td><span class="rbadge rb-low" style="font-size:9px">POST</span></td><td style="font-size:10px">Physical + transition risk</td></tr>
+              <tr><td class="t-mono">/api/v1/simulation/run</td><td><span class="rbadge rb-low" style="font-size:9px">POST</span></td><td style="font-size:10px">NGFS scenario simulation</td></tr>
+              <tr><td class="t-mono">/api/v1/esg/score</td><td><span class="rbadge rb-low" style="font-size:9px">POST</span></td><td style="font-size:10px">ESG scoring engine</td></tr>
+              <tr><td class="t-mono">/api/v1/disclosure/generate</td><td><span class="rbadge rb-low" style="font-size:9px">POST</span></td><td style="font-size:10px">TCFD/ISSB report gen</td></tr>
+              <tr><td class="t-mono">/api/v1/portfolio/screen</td><td><span class="rbadge rb-low" style="font-size:9px">POST</span></td><td style="font-size:10px">Portfolio climate screen</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /mod-config -->
+
+</div><!-- /shell -->
+
+<script>
+// ─── Clock ───────────────────────────────────────────────────
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=
+    now.toUTCString().slice(17,25)+' UTC';
+}
+setInterval(updateClock,1000);updateClock();
+
+// ─── Ticker ───────────────────────────────────────────────────
+const TICKS=[
+  {l:'CO₂ Concentration',v:'423 ppm',d:'up'},{l:'Global Temp Anomaly',v:'+1.48°C',d:'up'},
+  {l:'EU ETS Carbon',v:'€98.4/t',d:'up'},{l:'Arctic Ice Loss',v:'-13%/dec',d:'dn'},
+  {l:'Sea Level Rise',v:'+3.7mm/yr',d:'up'},{l:'Renewable Share',v:'30.3%',d:'dn'},
+  {l:'VCM Credit Price',v:'$14.8/t',d:'dn'},{l:'Climate Finance Gap',v:'$4.3T/yr',d:'up'},
+  {l:'Extreme Events',v:'+5× 1970',d:'up'},{l:'Carbon Budget',v:'~380 GtCO₂',d:'dn'},
+];
+function buildTicker(){
+  const inner=document.getElementById('tickerInner');
+  const all=[...TICKS,...TICKS];
+  inner.innerHTML=all.map(t=>`<span class="tick-item"><span class="tick-lbl">${t.l}:</span><span class="${t.d==='up'?'tick-up':'tick-dn'}">${t.d==='up'?'▲':'▼'}</span><span class="tick-val">${t.v}</span></span>`).join('');
+}
+buildTicker();
+
+// ─── Module Tab Switching ─────────────────────────────────────
+document.querySelectorAll('.mod-tab').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.mod-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('mod-'+this.dataset.mod).classList.add('active');
+    initChartsForModule(this.dataset.mod);
+  });
+});
+
+// ─── Sub-tab switching ────────────────────────────────────────
+function switchSubTab(prefix,id,btn){
+  const parent=btn.closest('[id$="-tabs"]')||btn.parentElement;
+  parent.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  // hide all siblings
+  const all={
+    disc:['disc-builder','disc-scanner','disc-quality'],
+    sc:['sc-scope3','sc-vendors','sc-logistics'],
+    narr:['narr-feed','narr-regcal'],
+    fin:['fin-bonds','fin-carbon','fin-funds'],
+  };
+  (all[prefix]||[]).forEach(i=>{const el=document.getElementById(i);if(el)el.style.display='none'});
+  const target=document.getElementById(prefix===prefix?prefix+'-'+id:id);
+  if(target)target.style.display='block';
+  if(prefix==='disc'&&id==='quality')setTimeout(()=>initDiscQuality(),50);
+}
+
+// ─── Framework cards ─────────────────────────────────────────
+function toggleFw(el){el.classList.toggle('sel')}
+
+// ─── Report generation ────────────────────────────────────────
+function generateReport(){
+  document.getElementById('reportOutput').style.display='block';
+  document.getElementById('reportOutput').scrollIntoView({behavior:'smooth'});
+}
+
+// ─── Scenario descriptions ────────────────────────────────────
+const SC_DESC={
+  nz:'<strong style="color:#10B981">Net Zero 2050</strong> — Aggressive decarbonisation. Carbon price reaches $147/t by 2030. Revenue at risk: 8%. Aligned with 1.5°C Paris target.',
+  dt:'<strong style="color:#F59E0B">Delayed Transition</strong> — Late policy action causes abrupt adjustments post-2030. Carbon price spikes to $220/t. EBITDA impact: -16%.',
+  b2:'<strong style="color:#3B82F6">Below 2°C</strong> — Moderate transition. Carbon price $95/t by 2030. Revenue at risk: 14%. Broadly aligned with Paris goals.',
+  cp:'<strong style="color:#EF4444">Current Policy</strong> — Insufficient action. Low carbon price $38/t but high physical risk. Revenue at risk: 31% by 2050.',
+  hh:'<strong style="color:#DC2626">Hot House World</strong> — No new policies. Catastrophic physical risk. 4.3°C warming. Revenue at risk: 44%. Stranded asset probability: CRITICAL.',
+};
+function selectScenario(el,sc){
+  document.querySelectorAll('.sc-pill').forEach(p=>p.style.opacity='0.5');
+  el.style.opacity='1';
+  document.getElementById('sc-desc').innerHTML=SC_DESC[sc]||'';
+}
+
+// ─── Uptime bars ──────────────────────────────────────────────
+function buildUptimeBars(){
+  ['ub1','ub2','ub3','ub4'].forEach((id,i)=>{
+    const el=document.getElementById(id);if(!el)return;
+    let html='';
+    for(let j=0;j<30;j++){
+      const r=Math.random();
+      const cls=r>0.97?(i===3&&j>25?'warn':'down'):r>0.99?'warn':'';
+      html+=`<div class="up-seg ${cls}"></div>`;
+    }
+    el.innerHTML=html;
+  });
+}
+buildUptimeBars();
+
+// ─── Charts ───────────────────────────────────────────────────
+const CHART_DEFAULTS={
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{backgroundColor:'#111',titleColor:'#9CA3AF',bodyColor:'#F9FAFB',borderColor:'#2A2A2A',borderWidth:1}},
+  scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6B7280',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6B7280',font:{size:10}}}},
+};
+const charts={};
+function makeChart(id,cfg){
+  if(charts[id]){charts[id].destroy();delete charts[id];}
+  const el=document.getElementById(id);if(!el)return;
+  charts[id]=new Chart(el,cfg);
+}
+
+const YEARS=['2025','2030','2035','2040','2045','2050'];
+
+function initChartsForModule(mod){
+  if(mod==='risk'){initRiskCharts();}
+  else if(mod==='simulation'){initSimCharts();}
+  else if(mod==='investor'){initInvestorCharts();}
+  else if(mod==='supplychain'){initSCCharts();}
+  else if(mod==='narrative'){initNarrativeCharts();}
+  else if(mod==='finance'){initFinanceCharts();}
+}
+
+function initRiskCharts(){
+  const yrs=['1990','1995','2000','2005','2010','2015','2020','2025'];
+  makeChart('chartTempAnomaly',{type:'line',data:{labels:yrs,datasets:[{data:[0.32,0.38,0.42,0.48,0.62,0.76,0.98,1.48],borderColor:'#EF4444',backgroundColor:'rgba(239,68,68,0.08)',fill:true,tension:0.4,pointRadius:2,borderWidth:2}]},options:{...CHART_DEFAULTS}});
+  const sectors=['Energy','Transport','Building','Industry','Agri','Tech'];
+  makeChart('chartSectorRisk',{type:'bar',data:{labels:sectors,datasets:[{data:[82,71,58,76,64,42],backgroundColor:['#EF4444','#F97316','#F59E0B','#EF4444','#10B981','#3B82F6']}]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:false}}}});
+}
+
+function initSimCharts(){
+  makeChart('chartRevTrajectory',{type:'line',data:{labels:YEARS,datasets:[
+    {label:'Net Zero',data:[100,96,91,88,85,84],borderColor:'#10B981',tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Below 2°C',data:[100,94,87,81,76,72],borderColor:'#3B82F6',tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Delayed',data:[100,97,90,80,70,63],borderColor:'#F59E0B',tension:0.4,pointRadius:2,borderWidth:2,borderDash:[4,4]},
+    {label:'Current Policy',data:[100,96,88,76,62,52],borderColor:'#EF4444',tension:0.4,pointRadius:2,borderWidth:2,borderDash:[4,4]},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#9CA3AF',font:{size:10},boxWidth:12}}}}});
+  makeChart('chartCarbonPrice',{type:'line',data:{labels:YEARS,datasets:[
+    {label:'Net Zero',data:[40,147,180,210,250,280],borderColor:'#10B981',tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Current Policy',data:[28,38,42,48,52,55],borderColor:'#EF4444',tension:0.4,pointRadius:2,borderWidth:2},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#9CA3AF',font:{size:10},boxWidth:12}}}}});
+}
+
+function updateSimCharts(){initSimCharts();}
+
+function initInvestorCharts(){
+  makeChart('chartESGRadar',{type:'radar',data:{labels:['Climate','Energy','Water','Waste','Social','Governance'],datasets:[
+    {label:'Portfolio',data:[72,68,61,75,64,80],borderColor:'#F97316',backgroundColor:'rgba(249,115,22,0.08)',pointRadius:3,borderWidth:2},
+    {label:'Benchmark',data:[60,55,58,62,60,70],borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,0.05)',pointRadius:3,borderWidth:1.5,borderDash:[4,4]},
+  ]},options:{...CHART_DEFAULTS,scales:{r:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#6B7280',font:{size:9},backdropColor:'transparent'},pointLabels:{color:'#9CA3AF',font:{size:10}}}},plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#9CA3AF',font:{size:10},boxWidth:10}}}}});
+  makeChart('chartClimateVar',{type:'line',data:{labels:YEARS,datasets:[
+    {label:'Net Zero VaR',data:[-2,-3,-4,-5,-5.5,-6],borderColor:'#10B981',backgroundColor:'rgba(16,185,129,0.05)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Current Policy VaR',data:[-4,-8,-13,-19,-26,-32],borderColor:'#EF4444',backgroundColor:'rgba(239,68,68,0.05)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#9CA3AF',font:{size:10},boxWidth:12}}}}});
+}
+
+function initSCCharts(){
+  const cats=['Purchased Goods','Capital Goods','Fuel & Energy','Transport (Up)','Waste','Business Travel','Employee Commute','Transport (Down)','Processing','Use of Product'];
+  const vals=[82400,24100,18600,31200,8400,12800,9600,28400,14200,46800];
+  const colors=vals.map(v=>v>40000?'#EF4444':v>20000?'#F97316':'#10B981');
+  makeChart('chartScope3',{type:'bar',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors}]},options:{...CHART_DEFAULTS,indexAxis:'y',plugins:{...CHART_DEFAULTS.plugins},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6B7280',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.02)'},ticks:{color:'#9CA3AF',font:{size:9}}}}}});
+}
+
+function initNarrativeCharts(){
+  const days=Array.from({length:14},(_,i)=>`May ${i+1}`);
+  makeChart('chartSentiment',{type:'line',data:{labels:days,datasets:[
+    {label:'Positive',data:[42,38,45,40,36,42,48,44,46,50,47,52,48,54],borderColor:'#10B981',backgroundColor:'rgba(16,185,129,0.06)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Negative',data:[28,32,26,30,34,28,24,26,22,20,23,18,22,18],borderColor:'#EF4444',backgroundColor:'rgba(239,68,68,0.04)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#9CA3AF',font:{size:10},boxWidth:10}}}}});
+  const topics=['Carbon Pricing','Net Zero','ESG Disclosure','Physical Risk','Green Finance','Biodiversity'];
+  makeChart('chartTopicPulse',{type:'bar',data:{labels:topics,datasets:[{data:[284,218,196,162,138,94],backgroundColor:'#00D4FF'}]},options:{...CHART_DEFAULTS}});
+}
+
+function initDiscQuality(){
+  const sections=['Governance','Strategy','Risk Mgmt','Metrics','Targets'];
+  makeChart('chartTcfdQuality',{type:'bar',data:{labels:sections,datasets:[
+    {label:'Your Score',data:[82,74,68,85,71],backgroundColor:'#F97316'},
+    {label:'Peer Average',data:[65,60,58,70,62],backgroundColor:'rgba(59,130,246,0.5)'},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#9CA3AF',font:{size:10},boxWidth:10}}}}});
+}
+
+function initFinanceCharts(){
+  const yrs=['2018','2019','2020','2021','2022','2023','2024'];
+  makeChart('chartGreenBond',{type:'bar',data:{labels:yrs,datasets:[
+    {label:'Green',data:[167,258,270,522,487,576,620],backgroundColor:'#10B981'},
+    {label:'Social',data:[8,22,148,214,186,178,155],backgroundColor:'#3B82F6'},
+    {label:'Sustainability',data:[4,18,68,152,184,206,230],backgroundColor:'#F97316'},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#9CA3AF',font:{size:10},boxWidth:10}}},scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6B7280',font:{size:10}}},y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6B7280',font:{size:10}}}}}});
+  makeChart('chartGBSector',{type:'doughnut',data:{labels:['Energy','Buildings','Transport','Water','Waste','Other'],datasets:[{data:[38,24,18,12,5,3],backgroundColor:['#10B981','#3B82F6','#F97316','#00D4FF','#F59E0B','#6B7280'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#9CA3AF',font:{size:10},boxWidth:10}}}}});
+  makeChart('chartCarbonMkt',{type:'line',data:{labels:['2020','2021','2022','2023','2024','2025E','2026E','2027E','2028E','2029E','2030E'],datasets:[
+    {label:'EU ETS',data:[25,54,80,88,65,98,104,112,118,126,134],borderColor:'#00D4FF',tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'UK ETS',data:[null,48,70,55,35,43,48,54,60,66,72],borderColor:'#F97316',tension:0.4,pointRadius:2,borderWidth:2},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#9CA3AF',font:{size:10},boxWidth:10}}}}});
+}
+
+// ─── Init first module ────────────────────────────────────────
+window.addEventListener('load',()=>{
+  setTimeout(()=>initRiskCharts(),100);
+});
+</script>
+</body>
+</html>
