@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Upload, FileText, CheckCircle2, AlertCircle, Clock,
-  Download, ChevronRight, Layers, Shield, Zap
+  Download, Layers, Shield, Zap, XCircle
 } from "lucide-react";
 import DataPanel from "@/components/terminal/DataPanel";
 import RiskBadgeT from "@/components/terminal/RiskBadgeT";
@@ -50,13 +50,23 @@ const REPORT_TYPES = [
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+interface UploadedFile {
+  name: string;
+  size: number;
+  type: string;
+  status: "uploading" | "received" | "error";
+  pages?: number;
+  error?: string;
+}
+
 export default function DisclosureStudioPage() {
   const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>(["tcfd", "issb"]);
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
-  const [generating, setGenerating] = useState<string | null>(null);
-  const [generated, setGenerated] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<"builder" | "scanner" | "quality">("builder");
-  const [dragging, setDragging] = useState(false);
+  const [uploadedFiles, setUploadedFiles]           = useState<UploadedFile[]>([]);
+  const [generating, setGenerating]                 = useState<string | null>(null);
+  const [generated, setGenerated]                   = useState<string[]>([]);
+  const [activeTab, setActiveTab]                   = useState<"builder" | "scanner" | "quality">("builder");
+  const [dragging, setDragging]                     = useState(false);
+  const fileInputRef                                = useRef<HTMLInputElement>(null);
 
   const toggleFramework = (id: string) =>
     setSelectedFrameworks((prev) =>
@@ -71,12 +81,60 @@ export default function DisclosureStudioPage() {
     }, 2500);
   };
 
-  const mockUpload = () => {
-    setUploadedFiles((prev) => [
-      ...prev,
-      `ESG_Report_2024_${(Math.random() * 1000).toFixed(0)}.pdf`,
-    ]);
+  const uploadFiles = async (files: File[]) => {
+    if (!files.length) return;
+
+    // Optimistically show uploading state
+    const pending: UploadedFile[] = files.map(f => ({
+      name: f.name, size: Math.round(f.size / 1024), type: f.type, status: "uploading" as const,
+    }));
+    setUploadedFiles(prev => [...prev, ...pending]);
+
+    try {
+      const fd = new FormData();
+      files.forEach(f => fd.append("files", f));
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const json = await res.json() as {
+        success: boolean;
+        files?: UploadedFile[];
+        error?: string;
+      };
+
+      setUploadedFiles(prev => {
+        const copy = [...prev];
+        // Replace the pending entries with the server response
+        const pendingNames = new Set(files.map(f => f.name));
+        const rest = copy.filter(f => !pendingNames.has(f.name));
+        if (json.success && json.files) {
+          return [...rest, ...json.files.map(f => ({ ...f, status: "received" as const }))];
+        }
+        return [...rest, ...files.map(f => ({ name: f.name, size: Math.round(f.size / 1024), type: f.type, status: "error" as const, error: json.error ?? "Upload failed" }))];
+      });
+    } catch {
+      setUploadedFiles(prev => prev.map(f =>
+        files.map(x => x.name).includes(f.name) && f.status === "uploading"
+          ? { ...f, status: "error" as const, error: "Network error" }
+          : f
+      ));
+    }
   };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    void uploadFiles(files);
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    void uploadFiles(files);
+    // Reset so same file can be selected again
+    e.target.value = "";
+  };
+
+  const removeFile = (name: string) =>
+    setUploadedFiles(prev => prev.filter(f => f.name !== name));
 
   const avgScore = Math.round(DISCLOSURE_SECTIONS.reduce((s, d) => s + d.score, 0) / DISCLOSURE_SECTIONS.length);
 
@@ -122,28 +180,46 @@ export default function DisclosureStudioPage() {
 
             {/* File upload */}
             <DataPanel label="DATA INGESTION" title="Upload ESG Documents">
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.xlsx,.docx,.csv,.txt"
+                className="hidden"
+                onChange={handleFileInput}
+              />
               <div
                 className={`border-2 border-dashed rounded-none transition-colors cursor-pointer p-6 text-center ${
                   dragging ? "border-gray-900 bg-gray-50" : "border-gray-200 hover:border-gray-400"
                 }`}
                 onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
                 onDragLeave={() => setDragging(false)}
-                onDrop={(e) => { e.preventDefault(); setDragging(false); mockUpload(); }}
-                onClick={mockUpload}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                <div className="text-xs font-bold text-gray-700 mb-1">Drop ESG reports here</div>
-                <div className="text-[10px] text-gray-400">PDF, XLSX, DOCX · CSRD, GRI, BRSR formats</div>
+                <div className="text-xs font-bold text-gray-700 mb-1">Drop ESG reports here or click to browse</div>
+                <div className="text-[10px] text-gray-400">PDF, XLSX, DOCX, CSV · up to 50 MB per file</div>
               </div>
               {uploadedFiles.length > 0 && (
                 <div className="mt-3 space-y-2">
-                  {uploadedFiles.map((f, i) => (
-                    <div key={i} className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-100">
-                      <FileText className="w-3 h-3 text-gray-400" />
-                      <span className="text-[10px] text-gray-600 flex-1 truncate">{f}</span>
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                  {uploadedFiles.map((f) => (
+                    <div key={f.name} className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-100">
+                      {f.status === "uploading" && <Clock className="w-3 h-3 text-amber-400 animate-spin flex-shrink-0" />}
+                      {f.status === "received"  && <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" />}
+                      {f.status === "error"     && <XCircle className="w-3 h-3 text-red-400 flex-shrink-0" />}
+                      <FileText className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                      <span className="text-[10px] text-gray-600 flex-1 truncate">{f.name}</span>
+                      <span className="text-[9px] text-gray-400">{f.size} KB</span>
+                      {f.pages && <span className="text-[9px] text-gray-400">~{f.pages}pp</span>}
+                      <button onClick={() => removeFile(f.name)} className="text-gray-300 hover:text-red-400 transition-colors">
+                        <XCircle className="w-3 h-3" />
+                      </button>
                     </div>
                   ))}
+                  {uploadedFiles.some(f => f.status === "error") && (
+                    <div className="text-[9px] text-red-500 mt-1">Some files failed. Check network and file types.</div>
+                  )}
                 </div>
               )}
             </DataPanel>

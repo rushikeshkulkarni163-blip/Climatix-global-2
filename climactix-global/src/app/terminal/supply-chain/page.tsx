@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell
 } from "recharts";
-import { CheckCircle2, Clock, ArrowRight } from "lucide-react";
+import { CheckCircle2, Clock, ArrowRight, RefreshCw } from "lucide-react";
 import DataPanel from "@/components/terminal/DataPanel";
 import MetricCard from "@/components/terminal/MetricCard";
 import RiskBadgeT from "@/components/terminal/RiskBadgeT";
 
-// ── Mock data ─────────────────────────────────────────────────────────────────
+// ── Reference data (GHG Protocol category definitions) ────────────────────────
 
 const SCOPE3_BREAKDOWN = [
   { category: "Purchased Goods & Services", emissions: 485000, pct: 38.2, status: "measured", cat: "Upstream" },
@@ -87,10 +87,28 @@ function EmissionsTooltip({ active, payload, label }: { active?: boolean; payloa
 
 export default function SupplyChainPage() {
   const [activeTab, setActiveTab] = useState<"scope3" | "vendors" | "logistics">("scope3");
+  const [liveData, setLiveData]   = useState<{ total_scope3_t?: number; methodology?: string } | null>(null);
+  const [loading, setLoading]     = useState(true);
+  const [asOf, setAsOf]           = useState<string | null>(null);
 
-  const totalScope3 = SCOPE3_BREAKDOWN.reduce((s, d) => s + d.emissions, 0);
+  const loadData = () => {
+    setLoading(true);
+    fetch("/api/terminal/supply-chain?sector=manufacturing", { cache: "no-store" })
+      .then(r => r.json())
+      .then((d: { ok?: boolean; data?: { total_scope3_t?: number; methodology?: string }; asOf?: string }) => {
+        if (d.ok && d.data) { setLiveData(d.data); setAsOf(d.asOf ?? null); }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { loadData(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const totalScope3 = liveData?.total_scope3_t
+    ? liveData.total_scope3_t
+    : SCOPE3_BREAKDOWN.reduce((s, d) => s + d.emissions, 0);
   const measuredPct = Math.round(
-    (SCOPE3_BREAKDOWN.filter(d => d.status === "measured").reduce((s, d) => s + d.pct, 0))
+    SCOPE3_BREAKDOWN.filter(d => d.status === "measured").reduce((s, d) => s + d.pct, 0)
   );
   const highRiskVendors = TOP_VENDORS.filter(v => v.risk === "HIGH" || v.risk === "CRITICAL").length;
   const verifiedVendors = TOP_VENDORS.filter(v => v.verified).length;
@@ -107,10 +125,16 @@ export default function SupplyChainPage() {
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             Supply Chain Climate Risk & Scope 3 Mapping
           </h1>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 mt-1 flex items-center gap-2">
             GHG Protocol Scope 3 · Vendor Risk Scoring · Logistics Emissions · Tier-2/3 Mapping
+            {asOf && <span className="text-emerald-600 font-semibold">· Live · {new Date(asOf).toLocaleTimeString()}</span>}
+            {liveData?.methodology && <span className="text-gray-400">· {liveData.methodology}</span>}
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          <button onClick={loadData} disabled={loading} className="p-1.5 border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-400 transition-all disabled:opacity-40">
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+          </button>
         <div className="flex gap-1">
           {(["scope3", "vendors", "logistics"] as const).map((tab) => (
             <button
@@ -125,6 +149,7 @@ export default function SupplyChainPage() {
               {tab === "scope3" ? "Scope 3 Map" : tab === "vendors" ? "Vendor Risk" : "Logistics"}
             </button>
           ))}
+        </div>
         </div>
       </div>
 

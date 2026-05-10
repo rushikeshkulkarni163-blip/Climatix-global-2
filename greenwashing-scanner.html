@@ -1098,7 +1098,14 @@
    State machine: idle → uploading → loading → results/error
 ═══════════════════════════════════════════════════════════ */
 
-const API_BASE = 'http://localhost:8000';
+// Resolve backend URL: production hostname, staging, or local dev fallback.
+const API_BASE = (() => {
+  const h = window.location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1') return 'http://localhost:8000';
+  if (h.includes('staging') || h.includes('dev')) return `https://api-staging.${h.replace(/^[^.]+\./, '')}`;
+  // Production — backend is deployed at api.climactix.global
+  return 'https://api.climactix.global';
+})();
 
 let _scanResult = null;
 let _selectedFile = null;

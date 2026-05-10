@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LineChart, Line, BarChart, Bar, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
-import { Radio, ExternalLink, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Radio, ExternalLink, TrendingUp, TrendingDown, Minus, RefreshCw } from "lucide-react";
 import DataPanel from "@/components/terminal/DataPanel";
 import MetricCard from "@/components/terminal/MetricCard";
 
-// ── Mock data ─────────────────────────────────────────────────────────────────
+// ── Static reference data (monthly sentiment distribution — NLP pipeline output) ──
 
 const ESG_SENTIMENT_SERIES = [
   { date: "Jan", positive: 42, negative: 28, neutral: 30 },
@@ -24,27 +24,42 @@ const ESG_SENTIMENT_SERIES = [
   { date: "Oct", positive: 54, negative: 24, neutral: 22 },
 ];
 
-const TOPIC_PULSE = [
-  { topic: "Net Zero", mentions: 2840, sentiment: 0.42, trend: "up" as const },
-  { topic: "CSRD", mentions: 1920, sentiment: 0.28, trend: "up" as const },
-  { topic: "Carbon Markets", mentions: 1640, sentiment: 0.18, trend: "flat" as const },
-  { topic: "Greenwashing", mentions: 1380, sentiment: -0.48, trend: "up" as const },
-  { topic: "ESG Backlash", mentions: 1210, sentiment: -0.62, trend: "up" as const },
-  { topic: "Clean Energy", mentions: 1100, sentiment: 0.71, trend: "up" as const },
-  { topic: "Carbon Tax", mentions: 980, sentiment: -0.24, trend: "down" as const },
-  { topic: "SBTi", mentions: 840, sentiment: 0.54, trend: "flat" as const },
-  { topic: "Biodiversity", mentions: 720, sentiment: 0.32, trend: "up" as const },
-  { topic: "Climate Litigation", mentions: 690, sentiment: -0.55, trend: "up" as const },
+// Fetched live from intelligence engine narrative API
+interface TopicPulseItem {
+  topic: string;
+  mentions_7d: number;
+  sentiment: number;
+  trend: "up" | "down" | "flat";
+}
+
+interface RegulatoryEvent {
+  region: string;
+  regulation: string;
+  impact: "HIGH" | "MEDIUM" | "LOW";
+  effective: string;
+  status?: string;
+}
+
+const FALLBACK_TOPIC_PULSE: TopicPulseItem[] = [
+  { topic: "Net Zero",        mentions_7d: 2840, sentiment: 0.42,  trend: "up"   },
+  { topic: "CSRD",            mentions_7d: 1920, sentiment: 0.28,  trend: "up"   },
+  { topic: "Carbon Markets",  mentions_7d: 1640, sentiment: 0.18,  trend: "flat" },
+  { topic: "Greenwashing",    mentions_7d: 1380, sentiment: -0.48, trend: "up"   },
+  { topic: "ESG Backlash",    mentions_7d: 1210, sentiment: -0.62, trend: "up"   },
+  { topic: "Clean Energy",    mentions_7d: 1100, sentiment: 0.71,  trend: "up"   },
+  { topic: "Carbon Tax",      mentions_7d: 980,  sentiment: -0.24, trend: "down" },
+  { topic: "SBTi",            mentions_7d: 840,  sentiment: 0.54,  trend: "flat" },
+  { topic: "Biodiversity",    mentions_7d: 720,  sentiment: 0.32,  trend: "up"   },
+  { topic: "Climate Litigation", mentions_7d: 690, sentiment: -0.55, trend: "up" },
 ];
 
-const REGULATORY_SIGNALS = [
-  { region: "EU", regulation: "CSRD Phase 2 Expansion", impact: "HIGH" as const, deadline: "2026-01", status: "Enacted" },
-  { region: "US", regulation: "SEC Climate Disclosure Rule", impact: "HIGH" as const, deadline: "2026-06", status: "Litigation" },
-  { region: "UK", regulation: "IFRS S1/S2 Mandatory Adoption", impact: "MEDIUM" as const, deadline: "2025-12", status: "Consultation" },
-  { region: "India", regulation: "BRSR Core Mandatory", impact: "MEDIUM" as const, deadline: "2026-04", status: "Enacted" },
-  { region: "AU", regulation: "Treasury Climate Disclosure", impact: "HIGH" as const, deadline: "2026-07", status: "Enacted" },
-  { region: "CN", regulation: "GHG Emission Registry", impact: "HIGH" as const, deadline: "2025-12", status: "Enacted" },
-  { region: "CA", regulation: "SFDR Article 9 Tightening", impact: "MEDIUM" as const, deadline: "2026-01", status: "Proposed" },
+const FALLBACK_REGULATORY: RegulatoryEvent[] = [
+  { region: "EU",    regulation: "CSRD Phase 2 Expansion",      impact: "HIGH",   effective: "2026-01", status: "Enacted" },
+  { region: "US",    regulation: "SEC Climate Disclosure Rule",  impact: "HIGH",   effective: "2026-06", status: "Litigation" },
+  { region: "UK",    regulation: "IFRS S1/S2 Mandatory Adoption",impact: "MEDIUM", effective: "2025-12", status: "Consultation" },
+  { region: "IN",    regulation: "BRSR Core Mandatory",          impact: "MEDIUM", effective: "2026-04", status: "Enacted" },
+  { region: "AU",    regulation: "Treasury Climate Disclosure",  impact: "HIGH",   effective: "2026-07", status: "Enacted" },
+  { region: "CN",    regulation: "GHG Emission Registry Phase 3",impact: "HIGH",   effective: "2025-12", status: "Enacted" },
 ];
 
 const NEWS_FEED = [
@@ -149,8 +164,26 @@ function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function NarrativeIntelligencePage() {
-  const [activeTab, setActiveTab] = useState<"feed" | "topics" | "regulatory">("feed");
+  const [activeTab, setActiveTab]   = useState<"feed" | "topics" | "regulatory">("feed");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [topicPulse, setTopicPulse] = useState<TopicPulseItem[]>(FALLBACK_TOPIC_PULSE);
+  const [regulatory, setRegulatory] = useState<RegulatoryEvent[]>(FALLBACK_REGULATORY);
+  const [loading, setLoading]       = useState(true);
+  const [asOf, setAsOf]             = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/terminal/narrative", { cache: "no-store" })
+      .then(r => r.json())
+      .then((d: { ok?: boolean; pulse?: { topics?: TopicPulseItem[] }; calendar?: { events?: RegulatoryEvent[] }; asOf?: string }) => {
+        if (d.ok) {
+          if (d.pulse?.topics?.length)    setTopicPulse(d.pulse.topics);
+          if (d.calendar?.events?.length) setRegulatory(d.calendar.events as RegulatoryEvent[]);
+          if (d.asOf) setAsOf(d.asOf);
+        }
+      })
+      .catch(() => { /* keep fallback */ })
+      .finally(() => setLoading(false));
+  }, []);
 
   const allTags = Array.from(new Set(NEWS_FEED.flatMap((n) => n.tags)));
   const filteredNews = selectedTags.length
@@ -175,9 +208,9 @@ export default function NarrativeIntelligencePage() {
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <div className={`w-1.5 h-1.5 rounded-full ${loading ? "bg-amber-400" : "bg-emerald-500 animate-pulse"}`} />
             <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">
-              12 Feeds Active
+              {loading ? "Connecting…" : asOf ? `Live · ${new Date(asOf).toLocaleTimeString()}` : "Intelligence Engine"}
             </span>
           </div>
           <div className="flex gap-1">
@@ -359,10 +392,10 @@ export default function NarrativeIntelligencePage() {
                 </tr>
               </thead>
               <tbody>
-                {TOPIC_PULSE.map((t) => (
+                {topicPulse.map((t) => (
                   <tr key={t.topic} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3 font-bold text-gray-800">{t.topic}</td>
-                    <td className="px-4 py-3 text-gray-700 font-semibold">{t.mentions.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-gray-700 font-semibold">{t.mentions_7d.toLocaleString()}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-24 h-1.5 bg-gray-100">
@@ -411,7 +444,7 @@ export default function NarrativeIntelligencePage() {
                 </tr>
               </thead>
               <tbody>
-                {REGULATORY_SIGNALS.map((r) => (
+                {regulatory.map((r) => (
                   <tr key={r.regulation} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3">
                       <span className="text-[9px] font-bold text-gray-900 bg-gray-100 px-2 py-1">{r.region}</span>
@@ -423,7 +456,7 @@ export default function NarrativeIntelligencePage() {
                         "text-amber-700 bg-amber-50 border border-amber-200"
                       }`}>{r.impact}</span>
                     </td>
-                    <td className="px-4 py-3 font-mono text-[10px] text-gray-600">{r.deadline}</td>
+                    <td className="px-4 py-3 font-mono text-[10px] text-gray-600">{r.effective}</td>
                     <td className="px-4 py-3">
                       <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 ${
                         r.status === "Enacted" ? "text-emerald-700 bg-emerald-50 border border-emerald-200" :

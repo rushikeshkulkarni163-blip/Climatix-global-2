@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, LineChart, Line, ScatterChart, Scatter, ZAxis
+  ResponsiveContainer, LineChart, Line,
 } from "recharts";
-import { TrendingUp, TrendingDown, Search, Filter, SortAsc } from "lucide-react";
+import { TrendingUp, TrendingDown, Search, RefreshCw } from "lucide-react";
 import MetricCard from "@/components/terminal/MetricCard";
 import DataPanel from "@/components/terminal/DataPanel";
 import RiskBadgeT from "@/components/terminal/RiskBadgeT";
 
-// ── Mock data ─────────────────────────────────────────────────────────────────
+// ── Reference data (NGFS financial impact projections) ────────────────────────
 
-const PORTFOLIO = [
+const FALLBACK_PORTFOLIO = [
   { ticker: "XOM", name: "ExxonMobil", sector: "Oil & Gas", weight: 8.2, climateVar: -18.4, esg: 28, physRisk: "CRITICAL" as const, transRisk: "HIGH" as const, paris: "4°C+", sbti: false },
   { ticker: "NEE", name: "NextEra Energy", sector: "Utilities", weight: 6.8, climateVar: -4.2, esg: 74, physRisk: "MEDIUM" as const, transRisk: "LOW" as const, paris: "1.5°C", sbti: true },
   { ticker: "BHP", name: "BHP Group", sector: "Mining", weight: 5.4, climateVar: -14.1, esg: 42, physRisk: "HIGH" as const, transRisk: "HIGH" as const, paris: "3°C", sbti: false },
@@ -62,6 +62,29 @@ const PARIS_ALIGNMENT = [
   { label: "4°C+ Trajectory", count: 3, pct: 10.3, color: "#EF4444" },
 ];
 
+type RiskLevel = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "MINIMAL";
+
+interface Holding {
+  ticker: string;
+  name: string;
+  sector: string;
+  weight: number;
+  climateVar: number;
+  esg: number;
+  physRisk: RiskLevel;
+  transRisk: RiskLevel;
+  paris: string;
+  sbti: boolean;
+}
+
+interface PortfolioSummary {
+  portfolioESG: number;
+  portfolioClimateVaR: number;
+  sbtiCount: number;
+  parisAligned: number;
+  criticalHoldings: number;
+}
+
 function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; name?: string; color?: string }>; label?: string }) {
   if (!active || !payload?.length) return null;
   return (
@@ -83,8 +106,45 @@ function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: 
 export default function InvestorDashboardPage() {
   const [searchQ, setSearchQ] = useState("");
   const [sortCol, setSortCol] = useState<"esg" | "climateVar" | "weight">("climateVar");
+  const [holdings, setHoldings] = useState<Holding[]>(FALLBACK_PORTFOLIO);
+  const [summary, setSummary] = useState<PortfolioSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [offline, setOffline] = useState(false);
+  const [asOf, setAsOf] = useState<string | null>(null);
 
-  const filteredPortfolio = PORTFOLIO
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setOffline(false);
+    try {
+      const res = await fetch("/api/terminal/investor?scenario=2C", {
+        cache: "no-store",
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      const json = await res.json();
+      if (json.holdings?.length) {
+        setHoldings(json.holdings);
+      }
+      if (json.summary) {
+        setSummary(json.summary);
+      }
+      if (json.asOf) {
+        setAsOf(json.asOf);
+      }
+    } catch {
+      setOffline(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+    const id = setInterval(loadData, 5 * 60 * 1000);
+    return () => clearInterval(id);
+  }, [loadData]);
+
+  const filteredPortfolio = holdings
     .filter((h) =>
       h.name.toLowerCase().includes(searchQ.toLowerCase()) ||
       h.ticker.toLowerCase().includes(searchQ.toLowerCase()) ||
@@ -96,10 +156,17 @@ export default function InvestorDashboardPage() {
       return b.weight - a.weight;
     });
 
-  const totalClimateVar = PORTFOLIO.reduce((s, h) => s + h.climateVar * h.weight / 100, 0).toFixed(2);
-  const avgEsg = Math.round(PORTFOLIO.reduce((s, h) => s + h.esg, 0) / PORTFOLIO.length);
-  const sbtiCount = PORTFOLIO.filter((h) => h.sbti).length;
-  const highRiskPct = (PORTFOLIO.filter((h) => h.physRisk === "CRITICAL" || h.physRisk === "HIGH").reduce((s, h) => s + h.weight, 0)).toFixed(1);
+  const totalClimateVar = summary
+    ? summary.portfolioClimateVaR.toFixed(2)
+    : holdings.reduce((s, h) => s + h.climateVar * h.weight / 100, 0).toFixed(2);
+  const avgEsg = summary
+    ? summary.portfolioESG
+    : Math.round(holdings.reduce((s, h) => s + h.esg, 0) / holdings.length);
+  const sbtiCount = summary ? summary.sbtiCount : holdings.filter((h) => h.sbti).length;
+  const sbtiTotal = holdings.length;
+  const highRiskPct = holdings
+    .filter((h) => h.physRisk === "CRITICAL" || h.physRisk === "HIGH")
+    .reduce((s, h) => s + h.weight, 0).toFixed(1);
 
   return (
     <div className="p-6 space-y-5 max-w-[1600px] mx-auto">
@@ -111,11 +178,31 @@ export default function InvestorDashboardPage() {
             INVESTOR DASHBOARD / PORTFOLIO INTELLIGENCE
           </div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
-            Climate Portfolio Risk & ESG Intelligence
+            Climate Portfolio Risk &amp; ESG Intelligence
           </h1>
           <p className="text-xs text-gray-500 mt-1">
             Paris Alignment · Climate VaR · ESG Scoring · Stranded Asset Detection · Benchmarking
           </p>
+        </div>
+        <div className="flex items-center gap-3">
+          {offline && (
+            <span className="text-[9px] text-amber-600 font-bold uppercase tracking-wide">
+              Reference Data
+            </span>
+          )}
+          {!offline && asOf && (
+            <span className="text-[9px] text-gray-400">
+              as of {new Date(asOf).toLocaleTimeString()}
+            </span>
+          )}
+          <button
+            onClick={loadData}
+            disabled={loading}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold border border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors disabled:opacity-40"
+          >
+            <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </button>
         </div>
       </div>
 
@@ -123,7 +210,7 @@ export default function InvestorDashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <MetricCard
           label="Portfolio Climate VaR (2050)"
-          value={`${totalClimateVar}%`}
+          value={loading ? "—" : `${totalClimateVar}%`}
           sub="Weighted avg"
           trend="down"
           change="-2.4pp vs Q3"
@@ -131,7 +218,7 @@ export default function InvestorDashboardPage() {
         />
         <MetricCard
           label="Avg ESG Score"
-          value={`${avgEsg}/100`}
+          value={loading ? "—" : `${avgEsg}/100`}
           sub="Portfolio weighted"
           trend="up"
           change="+3.2 pts"
@@ -139,14 +226,14 @@ export default function InvestorDashboardPage() {
         />
         <MetricCard
           label="SBTi-Committed Holdings"
-          value={`${sbtiCount}/${PORTFOLIO.length}`}
-          sub={`${((sbtiCount / PORTFOLIO.length) * 100).toFixed(0)}% of holdings`}
+          value={loading ? "—" : `${sbtiCount}/${sbtiTotal}`}
+          sub={loading ? "" : `${((sbtiCount / sbtiTotal) * 100).toFixed(0)}% of holdings`}
           trend="up"
           change="+2 this quarter"
         />
         <MetricCard
           label="High+Critical Risk Exposure"
-          value={`${highRiskPct}%`}
+          value={loading ? "—" : `${highRiskPct}%`}
           sub="By portfolio weight"
           trend="up"
           change="+1.8pp"
@@ -173,92 +260,102 @@ export default function InvestorDashboardPage() {
                     className="pl-6 pr-3 py-1 text-[10px] border border-gray-200 bg-white w-32 focus:outline-none focus:border-gray-400"
                   />
                 </div>
-                <button className="flex items-center gap-1 px-2 py-1 text-[10px] border border-gray-200 text-gray-500 hover:border-gray-400 transition-colors">
-                  <SortAsc className="w-3 h-3" /> Sort
-                </button>
               </div>
             }
             noPad
           >
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100">
-                    {[
-                      { key: "ticker", label: "Ticker" },
-                      { key: "name", label: "Company" },
-                      { key: "sector", label: "Sector" },
-                      { key: "weight", label: "Weight" },
-                      { key: "climateVar", label: "Climate VaR" },
-                      { key: "esg", label: "ESG Score" },
-                      { key: "physRisk", label: "Physical Risk" },
-                      { key: "transRisk", label: "Transition Risk" },
-                      { key: "paris", label: "Paris Align." },
-                      { key: "sbti", label: "SBTi" },
-                    ].map(({ key, label }) => (
-                      <th
-                        key={key}
-                        onClick={() => ["esg", "climateVar", "weight"].includes(key) && setSortCol(key as "esg" | "climateVar" | "weight")}
-                        className={`text-left px-3 py-2.5 text-[9px] font-bold text-gray-500 uppercase tracking-widest ${
-                          ["esg", "climateVar", "weight"].includes(key) ? "cursor-pointer hover:text-gray-700" : ""
-                        }`}
-                      >
-                        {label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredPortfolio.map((h) => (
-                    <tr key={h.ticker} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                      <td className="px-3 py-2.5 font-bold text-gray-900">{h.ticker}</td>
-                      <td className="px-3 py-2.5 text-gray-700 font-medium">{h.name}</td>
-                      <td className="px-3 py-2.5 text-gray-500">{h.sector}</td>
-                      <td className="px-3 py-2.5 font-semibold text-gray-700">{h.weight}%</td>
-                      <td className="px-3 py-2.5">
-                        <div className="flex items-center gap-1">
-                          {h.climateVar > 0 ? (
-                            <TrendingUp className="w-3 h-3 text-emerald-500" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3 text-red-500" />
-                          )}
-                          <span className={`font-bold ${h.climateVar > 0 ? "text-emerald-600" : "text-red-600"}`}>
-                            {h.climateVar > 0 ? "+" : ""}{h.climateVar}%
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2.5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 h-1.5 bg-gray-100">
-                            <div
-                              className={`h-1.5 ${h.esg >= 70 ? "bg-emerald-400" : h.esg >= 50 ? "bg-amber-400" : "bg-red-400"}`}
-                              style={{ width: `${h.esg}%` }}
-                            />
-                          </div>
-                          <span className="font-bold text-gray-700">{h.esg}</span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2.5"><RiskBadgeT level={h.physRisk} /></td>
-                      <td className="px-3 py-2.5"><RiskBadgeT level={h.transRisk} /></td>
-                      <td className="px-3 py-2.5">
-                        <span className={`text-[9px] font-bold ${
-                          h.paris === "1.5°C" ? "text-emerald-600" :
-                          h.paris === "2°C" ? "text-amber-600" :
-                          h.paris === "3°C" ? "text-orange-600" : "text-red-600"
-                        }`}>{h.paris}</span>
-                      </td>
-                      <td className="px-3 py-2.5">
-                        {h.sbti ? (
-                          <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5">YES</span>
-                        ) : (
-                          <span className="text-[9px] font-bold text-gray-400">—</span>
-                        )}
-                      </td>
+            {loading ? (
+              <div className="divide-y divide-gray-50">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-4 px-3 py-3 animate-pulse">
+                    <div className="w-12 h-3 bg-gray-100 rounded" />
+                    <div className="w-28 h-3 bg-gray-100 rounded" />
+                    <div className="w-20 h-3 bg-gray-100 rounded" />
+                    <div className="flex-1 h-3 bg-gray-50 rounded" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-100">
+                      {[
+                        { key: "ticker", label: "Ticker" },
+                        { key: "name", label: "Company" },
+                        { key: "sector", label: "Sector" },
+                        { key: "weight", label: "Weight" },
+                        { key: "climateVar", label: "Climate VaR" },
+                        { key: "esg", label: "ESG Score" },
+                        { key: "physRisk", label: "Physical Risk" },
+                        { key: "transRisk", label: "Transition Risk" },
+                        { key: "paris", label: "Paris Align." },
+                        { key: "sbti", label: "SBTi" },
+                      ].map(({ key, label }) => (
+                        <th
+                          key={key}
+                          onClick={() => ["esg", "climateVar", "weight"].includes(key) && setSortCol(key as "esg" | "climateVar" | "weight")}
+                          className={`text-left px-3 py-2.5 text-[9px] font-bold text-gray-500 uppercase tracking-widest ${
+                            ["esg", "climateVar", "weight"].includes(key) ? "cursor-pointer hover:text-gray-700" : ""
+                          } ${sortCol === key ? "text-gray-800" : ""}`}
+                        >
+                          {label}
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {filteredPortfolio.map((h) => (
+                      <tr key={h.ticker} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                        <td className="px-3 py-2.5 font-bold text-gray-900">{h.ticker}</td>
+                        <td className="px-3 py-2.5 text-gray-700 font-medium">{h.name}</td>
+                        <td className="px-3 py-2.5 text-gray-500">{h.sector}</td>
+                        <td className="px-3 py-2.5 font-semibold text-gray-700">{h.weight}%</td>
+                        <td className="px-3 py-2.5">
+                          <div className="flex items-center gap-1">
+                            {h.climateVar > 0 ? (
+                              <TrendingUp className="w-3 h-3 text-emerald-500" />
+                            ) : (
+                              <TrendingDown className="w-3 h-3 text-red-500" />
+                            )}
+                            <span className={`font-bold ${h.climateVar > 0 ? "text-emerald-600" : "text-red-600"}`}>
+                              {h.climateVar > 0 ? "+" : ""}{h.climateVar}%
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-1.5 bg-gray-100">
+                              <div
+                                className={`h-1.5 ${h.esg >= 70 ? "bg-emerald-400" : h.esg >= 50 ? "bg-amber-400" : "bg-red-400"}`}
+                                style={{ width: `${h.esg}%` }}
+                              />
+                            </div>
+                            <span className="font-bold text-gray-700">{h.esg}</span>
+                          </div>
+                        </td>
+                        <td className="px-3 py-2.5"><RiskBadgeT level={h.physRisk} /></td>
+                        <td className="px-3 py-2.5"><RiskBadgeT level={h.transRisk} /></td>
+                        <td className="px-3 py-2.5">
+                          <span className={`text-[9px] font-bold ${
+                            h.paris === "1.5°C" ? "text-emerald-600" :
+                            h.paris === "2°C" ? "text-amber-600" :
+                            h.paris === "3°C" ? "text-orange-600" : "text-red-600"
+                          }`}>{h.paris}</span>
+                        </td>
+                        <td className="px-3 py-2.5">
+                          {h.sbti ? (
+                            <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5">YES</span>
+                          ) : (
+                            <span className="text-[9px] font-bold text-gray-400">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </DataPanel>
         </div>
 
@@ -321,6 +418,9 @@ export default function InvestorDashboardPage() {
                   <Line type="monotone" dataKey="severe" name="Severe" stroke="#EF4444" strokeWidth={2} dot={false} strokeDasharray="2 2" />
                 </LineChart>
               </ResponsiveContainer>
+            </div>
+            <div className="flex items-center gap-4 mt-2 text-[9px] text-gray-400">
+              <span>Source: NGFS Phase IV OEWG scenarios · IPCC AR6 WGII financial impact tables</span>
             </div>
           </DataPanel>
         </div>

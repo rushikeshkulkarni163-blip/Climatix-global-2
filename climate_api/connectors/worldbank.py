@@ -5,13 +5,15 @@ No API key required. Free tier: https://datahelpdesk.worldbank.org/knowledgebase
 import httpx
 import asyncio
 import logging
-from typing import Optional, Dict, Any
+import time
+from typing import Optional, Dict, Any, Tuple
 
 from ..models.schemas import CountryMacroData
 
 logger = logging.getLogger(__name__)
 
 WB_BASE = "https://api.worldbank.org/v2"
+_CACHE_TTL_SECONDS = 86400  # 24 h — World Bank data updates annually
 
 # Indicator codes
 INDICATORS: Dict[str, str] = {
@@ -38,8 +40,8 @@ _ISO3_TO_ISO2: Dict[str, str] = {
     "CZE": "CZ", "HUN": "HU", "ROU": "RO", "UKR": "UA", "KAZ": "KZ",
 }
 
-# Simple in-memory cache (TTL: session-scoped)
-_cache: Dict[str, CountryMacroData] = {}
+# In-memory cache with TTL: (data, expires_at_unix)
+_cache: Dict[str, Tuple[CountryMacroData, float]] = {}
 
 
 async def _fetch_indicator(
@@ -64,8 +66,13 @@ async def _fetch_indicator(
 async def get_country_indicators(iso3: str) -> CountryMacroData:
     """Fetch key macro + climate indicators for a country from World Bank API."""
     iso3_upper = iso3.upper()
+    now = time.monotonic()
     if iso3_upper in _cache:
-        return _cache[iso3_upper]
+        cached_data, expires_at = _cache[iso3_upper]
+        if now < expires_at:
+            logger.debug(f"WB cache hit for {iso3_upper} (expires in {expires_at - now:.0f}s)")
+            return cached_data
+        logger.debug(f"WB cache expired for {iso3_upper}, refreshing")
 
     country_code = _ISO3_TO_ISO2.get(iso3_upper, iso3_upper[:2])
 
@@ -89,5 +96,6 @@ async def get_country_indicators(iso3: str) -> CountryMacroData:
         data_year=2022,
     )
 
-    _cache[iso3_upper] = macro
+    _cache[iso3_upper] = (macro, now + _CACHE_TTL_SECONDS)
+    logger.info(f"WB cache stored for {iso3_upper} (TTL {_CACHE_TTL_SECONDS}s)")
     return macro

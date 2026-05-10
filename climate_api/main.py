@@ -54,12 +54,21 @@ app = FastAPI(
     redoc_url="/api/redoc",
 )
 
+_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8080",
+    "https://climactix.global",
+    "https://www.climactix.global",
+    "https://climactixglobal.com",
+    "https://www.climactixglobal.com",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],      # Restrict to your domain in production
+    allow_origins=_ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Request-ID"],
 )
 
 # ── Health ─────────────────────────────────────────────────────────────────

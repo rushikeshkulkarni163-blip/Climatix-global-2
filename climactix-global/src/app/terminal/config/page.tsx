@@ -17,25 +17,44 @@ const API_ENDPOINTS = [
   { method: "GET", path: "/api/v1/esg/score", desc: "ESG score by company with framework breakdown", params: ["entity", "frameworks"] },
 ];
 
+// Data sources with their actual auth requirements and availability
 const DATA_SOURCES = [
-  { name: "Open-Meteo", type: "Climate", status: "active", calls: "1,240", quota: "10,000/day" },
-  { name: "NASA POWER", type: "Climate", status: "active", calls: "842", quota: "5,000/day" },
-  { name: "World Bank API", type: "Economic", status: "active", calls: "1,680", quota: "Unlimited" },
-  { name: "NOAA CDO", type: "Climate", status: "active", calls: "320", quota: "1,000/day" },
-  { name: "OpenAQ", type: "Air Quality", status: "active", calls: "540", quota: "2,000/day" },
-  { name: "ReliefWeb", type: "Disasters", status: "active", calls: "180", quota: "1,000/day" },
-  { name: "UN SDG API", type: "Economic", status: "active", calls: "420", quota: "5,000/day" },
-  { name: "REST Countries", type: "Geographic", status: "active", calls: "90", quota: "Unlimited" },
+  { name: "Open-Meteo",     type: "Climate",     status: "active",  calls: "live", quota: "Unlimited (free)"   },
+  { name: "NASA POWER",     type: "Climate",     status: "active",  calls: "live", quota: "Unlimited (free)"   },
+  { name: "World Bank API", type: "Economic",    status: "active",  calls: "live", quota: "Unlimited (free)"   },
+  { name: "NOAA CDO",       type: "Climate",     status: "key-req", calls: "—",    quota: "1,000/day"          },
+  { name: "OpenAQ",         type: "Air Quality", status: "active",  calls: "live", quota: "2,000/day (free)"   },
+  { name: "ReliefWeb",      type: "Disasters",   status: "active",  calls: "live", quota: "1,000/day (free)"   },
+  { name: "UN SDG API",     type: "Economic",    status: "active",  calls: "live", quota: "Unlimited (free)"   },
+  { name: "REST Countries", type: "Geographic",  status: "active",  calls: "live", quota: "Unlimited (free)"   },
+  { name: "Copernicus CDS", type: "Climate",     status: "key-req", calls: "—",    quota: "Requires .cdsapirc" },
 ];
 
+const ENGINE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
 export default function ConfigPage() {
-  const [showKey, setShowKey] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const mockApiKey = "cg_live_f7a2b8c3d1e4f9a0b5c2d8e3f1a4b7c0d3e6f9a2";
+  const [showKey, setShowKey]       = useState(false);
+  const [copied, setCopied]         = useState(false);
+  const [engineOk, setEngineOk]     = useState<boolean | null>(null);
+  const [checking, setChecking]     = useState(false);
+
+  // API key is configured server-side via ANTHROPIC_API_KEY env var.
+  // Only the masked prefix is shown here for confirmation; the full key
+  // is never sent to the browser.
+  const keyPlaceholder = "sk-ant-api03-••••••••••••••••••••••••••••••";
 
   const handleCopy = () => {
+    navigator.clipboard.writeText(ENGINE_URL).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const checkEngine = () => {
+    setChecking(true);
+    fetch("/api/terminal/finance", { cache: "no-store" })
+      .then(r => setEngineOk(r.ok))
+      .catch(() => setEngineOk(false))
+      .finally(() => setChecking(false));
   };
 
   return (
@@ -55,37 +74,56 @@ export default function ConfigPage() {
 
         {/* API key */}
         <div className="col-span-12 lg:col-span-5">
-          <DataPanel label="API CREDENTIALS" title="Enterprise API Key">
+          <DataPanel label="API CREDENTIALS" title="Intelligence Engine Configuration">
             <div className="space-y-4">
-              <div className="p-3 bg-gray-50 border border-gray-200 font-mono text-xs flex items-center gap-2">
-                <Key className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                <span className="flex-1 text-gray-700 tracking-widest">
-                  {showKey ? mockApiKey : mockApiKey.replace(/[a-z0-9]/gi, "•")}
-                </span>
-                <button onClick={() => setShowKey(!showKey)} className="text-gray-400 hover:text-gray-700">
-                  {showKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                </button>
-                <button onClick={handleCopy} className={`${copied ? "text-emerald-500" : "text-gray-400 hover:text-gray-700"}`}>
-                  {copied ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                </button>
+              {/* Engine URL */}
+              <div>
+                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Engine Endpoint</div>
+                <div className="p-3 bg-gray-50 border border-gray-200 font-mono text-xs flex items-center gap-2">
+                  <Key className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                  <span className="flex-1 text-gray-700">{ENGINE_URL}</span>
+                  <button onClick={handleCopy} className={`${copied ? "text-emerald-500" : "text-gray-400 hover:text-gray-700"}`}>
+                    {copied ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+              {/* AI API Key (masked — never expose full key to browser) */}
+              <div>
+                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Anthropic API Key (server-side)</div>
+                <div className="p-3 bg-gray-50 border border-gray-200 font-mono text-xs flex items-center gap-2">
+                  <Key className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                  <span className="flex-1 text-gray-600 tracking-widest">
+                    {showKey ? keyPlaceholder : keyPlaceholder.replace(/[^•]/g, "•")}
+                  </span>
+                  <button onClick={() => setShowKey(!showKey)} className="text-gray-400 hover:text-gray-700">
+                    {showKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+                <div className="text-[9px] text-gray-400 mt-1">
+                  Configured via <code className="bg-gray-100 px-1 py-0.5 font-mono">ANTHROPIC_API_KEY</code> environment variable on the server.
+                  Never stored in the browser.
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-2 text-[10px]">
                 {[
-                  { label: "Plan", value: "Enterprise" },
-                  { label: "Rate Limit", value: "10,000 req/min" },
-                  { label: "SLA", value: "99.95% uptime" },
-                  { label: "Data Latency", value: "< 200ms" },
-                  { label: "Calls Today", value: "4,820 / 100,000" },
-                  { label: "Expires", value: "2026-12-31" },
+                  { label: "Intelligence Engine", value: engineOk === null ? "Not checked" : engineOk ? "Online" : "Offline" },
+                  { label: "AI Model",             value: "claude-opus-4-6" },
+                  { label: "Target SLA",           value: "99.95% uptime" },
+                  { label: "API Version",          value: "v2.0.0" },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex flex-col gap-0.5 p-2 border border-gray-100">
                     <span className="text-gray-400 uppercase tracking-widest text-[9px]">{label}</span>
-                    <span className="font-bold text-gray-800">{value}</span>
+                    <span className={`font-bold ${value === "Online" ? "text-emerald-600" : value === "Offline" ? "text-red-500" : "text-gray-800"}`}>{value}</span>
                   </div>
                 ))}
               </div>
-              <button className="flex items-center gap-1.5 w-full justify-center px-4 py-2 text-[10px] font-bold border border-gray-200 text-gray-600 hover:border-gray-400 uppercase tracking-widest transition-colors">
-                <RefreshCw className="w-3 h-3" /> Rotate Key
+              <button
+                onClick={checkEngine}
+                disabled={checking}
+                className="flex items-center gap-1.5 w-full justify-center px-4 py-2 text-[10px] font-bold border border-gray-200 text-gray-600 hover:border-gray-400 uppercase tracking-widest transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3 h-3 ${checking ? "animate-spin" : ""}`} />
+                {checking ? "Checking…" : "Test Engine Connection"}
               </button>
             </div>
           </DataPanel>
@@ -188,8 +226,10 @@ print(sim.revenue_at_risk, sim.ebitda_impact)`}
                       <td className="px-4 py-2.5 text-gray-500">{d.type}</td>
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-1.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          <span className="text-[9px] font-bold text-emerald-600 uppercase">Active</span>
+                          <div className={`w-1.5 h-1.5 rounded-full ${d.status === "active" ? "bg-emerald-500 animate-pulse" : "bg-amber-400"}`} />
+                          <span className={`text-[9px] font-bold uppercase ${d.status === "active" ? "text-emerald-600" : "text-amber-600"}`}>
+                            {d.status === "active" ? "Active" : "Key Required"}
+                          </span>
                         </div>
                       </td>
                       <td className="px-4 py-2.5 font-mono text-gray-700">{d.calls}</td>
