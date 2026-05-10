@@ -3,6 +3,9 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowRight, TrendingUp, Globe, BookOpen, CheckCircle2 } from "lucide-react";
+import LiveTicker from "@/components/live/LiveTicker";
+import LiveMetricsBar from "@/components/live/LiveMetricsBar";
+import AlertBanner from "@/components/live/AlertBanner";
 
 // ── Globe (client-only — Three.js needs the DOM) ──────────
 const GlobeComponent = dynamic(
@@ -17,19 +20,6 @@ function GlobeFallback() {
     </div>
   );
 }
-
-// ── Data ──────────────────────────────────────────────────
-
-const TICKER_ITEMS = [
-  { label: "Global Avg Temp Anomaly", value: "+1.48°C", dir: "up" },
-  { label: "Arctic Sea Ice Loss", value: "-13%/decade", dir: "down" },
-  { label: "CO₂ Concentration", value: "423 ppm", dir: "up" },
-  { label: "Sea Level Rise", value: "+3.7mm/yr", dir: "up" },
-  { label: "Extreme Weather Events", value: "+5× since 1970", dir: "up" },
-  { label: "Global Carbon Budget Remaining", value: "~380 GtCO₂", dir: "down" },
-  { label: "Renewable Energy Share", value: "30.3% global", dir: "up" },
-  { label: "Climate Finance Gap", value: "$4.3T/year needed", dir: "up" },
-];
 
 const FEATURED_INSIGHTS = [
   {
@@ -92,12 +82,7 @@ const CASE_STUDIES = [
   },
 ];
 
-const STATS = [
-  { value: "10+", label: "Free APIs Integrated" },
-  { value: "12",  label: "Industry Sectors" },
-  { value: "40+", label: "Climate Indicators" },
-  { value: "9",   label: "Report Sections" },
-];
+// STATS block replaced by live LiveMetricsBar component
 
 const TCFD_ITEMS = [
   "Physical Risk — Acute & Chronic",
@@ -115,6 +100,9 @@ const TCFD_ITEMS = [
 export default function HomePage() {
   return (
     <div className="bg-black text-white">
+
+      {/* ══ ALERT BANNER (live climate alerts) ═══════════════ */}
+      <AlertBanner maxVisible={1} autoHide autoHideMs={10000} />
 
       {/* ══ HERO ══════════════════════════════════════════════ */}
       <section className="border-b border-[#1F1F1F] bg-black bg-grid">
@@ -160,18 +148,9 @@ export default function HomePage() {
                 </span>
               </div>
 
-              {/* Stats overlay — bottom */}
+              {/* Stats overlay — bottom (live data) */}
               <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                <div className="grid grid-cols-4 gap-2">
-                  {STATS.map(({ value, label }) => (
-                    <div key={label} className="t-stat">
-                      <div className="text-lg font-bold text-white leading-none">{value}</div>
-                      <div className="text-[9px] text-gray-500 uppercase tracking-widest mt-1 leading-tight">
-                        {label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <LiveMetricsBar layout="hero" />
               </div>
             </div>
 
@@ -179,40 +158,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══ LIVE DATA TICKER ══════════════════════════════════ */}
-      <div className="bg-[#0A0A0A] border-b border-[#1F1F1F]">
-        <div className="flex items-stretch">
-          {/* Badge */}
-          <div className="flex-shrink-0 flex items-center bg-[#0A1F44] px-5 border-r border-[#1F1F1F]">
-            <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-white whitespace-nowrap">
-              LIVE DATA
-            </span>
-          </div>
-
-          {/* Scrolling content */}
-          <div className="ticker-wrap flex-1 py-2.5 overflow-hidden">
-            <div className="ticker-content flex gap-10">
-              {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-                <span key={i} className="t-ticker-item">
-                  <span
-                    className={
-                      item.dir === "up"
-                        ? "text-[#EF4444] font-bold"
-                        : "text-[#10B981] font-bold"
-                    }
-                  >
-                    {item.dir === "up" ? "▲" : "▼"}
-                  </span>
-                  <span className="text-gray-500 uppercase tracking-wider text-[10px]">
-                    {item.label}:
-                  </span>
-                  <span className="text-white font-semibold">{item.value}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* ══ LIVE DATA TICKER (dynamic — API-driven) ══════════ */}
+      <LiveTicker />
 
       {/* ══ THREE PILLAR CTAs ════════════════════════════════ */}
       <section className="border-b border-[#1F1F1F]">

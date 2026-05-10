@@ -33,6 +33,7 @@ from api.disclosure_router import router as disclosure_router
 from api.supply_chain_router import router as supply_chain_router
 from api.narrative_router import router as narrative_router
 from api.finance_router import router as finance_router
+from api.ws_router import router as ws_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("climactix")
@@ -96,6 +97,7 @@ app.include_router(disclosure_router,    prefix="/api/v1/disclosure",    tags=["
 app.include_router(supply_chain_router,  prefix="/api/v1/supply-chain",  tags=["Supply Chain"])
 app.include_router(narrative_router,     prefix="/api/v1/narrative",     tags=["Narrative Intelligence"])
 app.include_router(finance_router,       prefix="/api/v1/finance",       tags=["Climate Finance"])
+app.include_router(ws_router,                                            tags=["WebSocket Streaming"])
 
 # ── Health & status ───────────────────────────────────────────────────────────
 
