@@ -7,7 +7,14 @@
   <meta name="description" content="Climactix Global: ESG intelligence and disclosure infrastructure for corporations, investors, and regulators. TCFD, ISSB, CSRD-aligned. India and global markets." />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="space-theme.css" />
+  <link rel="stylesheet" href="institutional.css" />
   <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png">
+  <script>
+    (function(){
+      var t = localStorage.getItem('cx-theme') || 'dark';
+      if(t === 'light') document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
   <style>
   /* ═══════════════════════════════════════════════════
      CLIMATE INTELLIGENCE LAYER — HOMEPAGE ENHANCEMENTS
@@ -1113,6 +1120,56 @@
 .cxlm-val.cx-green{color:#10b981}
 .cxlm-val.cx-amber{color:#f59e0b}
 </style>
+<style>
+/* ── INSTITUTIONAL OVERRIDES — lock in dark theme ── */
+/* Fix heatmap layer controls */
+.glc-btn {
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-muted) !important;
+  border-radius: 2px !important;
+}
+.glc-btn:hover { background: var(--surface-3) !important; color: var(--text) !important; border-color: var(--border-strong) !important; }
+.glc-btn.active { background: var(--amber-glow) !important; border-color: var(--border-accent) !important; color: var(--amber) !important; box-shadow: none !important; }
+
+/* Fix heatmap tooltip */
+.heatmap-tooltip { background: var(--surface-2) !important; border: 1px solid var(--border-strong) !important; border-radius: 2px !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; }
+.hm-t-region { color: var(--amber) !important; }
+
+/* Fix stats row */
+.cx-hm-stats { border-radius: 0 !important; }
+.hm-stat { background: var(--surface) !important; }
+.hm-stat-val.v-red    { color: var(--red) !important; }
+.hm-stat-val.v-orange { color: var(--amber) !important; }
+.hm-stat-val.v-blue   { color: var(--cyan) !important; }
+.hm-stat-val.v-teal   { color: var(--green) !important; }
+
+/* Fix globe hover tooltip */
+#globeHoverTip { background: var(--surface-2) !important; border: 1px solid var(--border-strong) !important; border-radius: 2px !important; }
+.ght-data { color: var(--cyan) !important; }
+
+/* Remove all box-shadows from cards */
+.cx-concern-card, .cx-framework-card, .cx-gbm-deal { box-shadow: none !important; }
+.cx-concern-card:hover { transform: none !important; }
+
+/* Fix map layer buttons */
+.hm-layer-btn { border-radius: 2px !important; }
+.hm-layer-btn.active { box-shadow: none !important; }
+
+/* Fix concerns grid border-radius */
+.cx-concerns-grid .cx-concern-card { border-radius: 0 !important; }
+
+/* Remove hover lift effect */
+*:hover { transform: none !important; }
+.cx-arch-section, section#why-climactix { background: var(--bg) !important; }
+
+/* IBM Plex Mono for all monospace elements */
+.cxlm-val, .cxlm-lbl, .kpmg-hero-stat-val, .hm-stat-val { font-family: 'IBM Plex Mono', 'JetBrains Mono', monospace !important; }
+
+/* Section blocks forced to institutional */
+.cx-concerns-section { background: var(--surface) !important; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.cx-heatmap-canvas-wrap { border-radius: 0 !important; }
+</style>
 </head>
 <body data-page="home">
   <!-- HEADER -->
@@ -1195,6 +1252,7 @@
     <div class="header-actions">
       <a href="#calculator" class="nav-link">Calculator</a>
       <a href="login.html" class="nav-link">Sign In</a>
+      <button id="cx-theme-toggle" title="Toggle theme" onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);document.getElementById('cx-theme-toggle').textContent=t==='light'?'◑':'○';})()">○</button>
       <a href="assessment.html" class="hdr-cta">Start Assessment</a>
     </div>
   </header>

@@ -6,241 +6,244 @@
   <title>Climactix AI Engine — ESG Narrative Generator</title>
   <meta name="description" content="Transform raw ESG data into investor-ready narratives, marketing stories, and regulatory disclosures — powered by Claude AI." />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="space-theme.css" />
+  <link rel="stylesheet" href="institutional.css" />
   <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png">
+  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 
   <style>
   /* ═══════════════════════════════════════════════════════════
-     CLIMACTIX AI ENGINE — Page-specific styles
-     Inherits global design tokens from style.css
+     CLIMACTIX ESG INTELLIGENCE ENGINE — Institutional Style
   ═══════════════════════════════════════════════════════════ */
 
-  /* ── AI Page hero ── */
+  /* ── AI Page hero — Institutional ── */
   .ai-hero {
-    background: var(--forest);
-    color: white;
-    padding: 64px 0 56px;
+    background: var(--surface);
+    color: var(--text);
+    padding: 40px 0 36px;
+    border-bottom: 1px solid var(--border);
     position: relative;
-    overflow: hidden;
   }
-  .ai-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 80% 50%, rgba(45,160,100,0.25) 0%, transparent 60%),
-      radial-gradient(ellipse at 20% 80%, rgba(45,90,61,0.3) 0%, transparent 50%);
-    pointer-events: none;
-  }
+  .ai-hero::before { display: none; }
   .ai-hero .container { position: relative; z-index: 1; }
   .ai-hero-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 999px;
-    padding: 6px 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    letter-spacing: 0.1em;
+    gap: 7px;
+    background: var(--amber-glow);
+    border: 1px solid var(--border-accent);
+    border-radius: 2px;
+    padding: 4px 12px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.85);
-    margin-bottom: 24px;
+    color: var(--amber);
+    margin-bottom: 16px;
   }
   .ai-hero-badge .badge-dot {
-    width: 7px; height: 7px;
+    width: 5px; height: 5px;
     border-radius: 50%;
-    background: #4dff8f;
-    animation: blink 2s ease-in-out infinite;
+    background: var(--amber);
+    animation: none;
   }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .ai-hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 700;
-    color: white;
-    line-height: 1.1;
-    margin-bottom: 18px;
+    font-family: var(--font);
+    font-size: clamp(20px, 3vw, 30px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -0.04em;
   }
   .ai-hero p {
-    font-size: 18px;
-    color: rgba(255,255,255,0.72);
-    max-width: 560px;
-    line-height: 1.6;
+    font-size: 13px;
+    color: var(--text-2);
+    max-width: 540px;
+    line-height: 1.65;
   }
   .ai-hero-stats {
     display: flex;
-    gap: 40px;
-    margin-top: 36px;
+    gap: 0;
+    margin-top: 24px;
+    border: 1px solid var(--border);
+    width: fit-content;
   }
   .ahs-item {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
+    padding: 12px 20px;
+    border-right: 1px solid var(--border);
   }
+  .ahs-item:last-child { border-right: none; }
   .ahs-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
+    font-family: var(--mono);
+    font-size: 18px;
     font-weight: 700;
-    color: #4dff8f;
+    color: var(--amber);
     line-height: 1;
+    letter-spacing: -0.02em;
   }
   .ahs-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.08em;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.45);
+    color: var(--text-muted);
   }
 
   /* ── Main App Layout ── */
   .ai-app {
-    background: var(--cream);
+    background: var(--bg);
     min-height: 100vh;
-    padding: 48px 0 80px;
+    padding: 28px 0 60px;
   }
   .ai-container {
     max-width: 900px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 20px;
   }
 
   /* ── Panel base ── */
   .ai-panel {
-    background: white;
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 40px;
-    box-shadow: var(--shadow-card);
+    border-radius: 0;
+    padding: 24px;
+    box-shadow: none;
+    margin-bottom: 12px;
   }
 
   /* ── Panel header ── */
   .panel-header {
     display: flex;
     align-items: flex-start;
-    gap: 20px;
-    margin-bottom: 32px;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
   }
   .panel-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 48px;
+    font-family: var(--mono);
+    font-size: 22px;
     font-weight: 700;
-    color: var(--forest-pale);
+    color: var(--amber);
     line-height: 1;
     flex-shrink: 0;
   }
   .panel-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
+    font-family: var(--font);
+    font-size: 15px;
     font-weight: 700;
-    color: var(--ink);
-    margin-bottom: 4px;
+    color: var(--text);
+    margin-bottom: 3px;
+    letter-spacing: -0.02em;
   }
   .panel-subtitle {
-    font-size: 14px;
-    color: var(--ink-muted);
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 300;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-weight: 400;
     letter-spacing: 0.02em;
   }
 
   /* ── Upload zone ── */
   .upload-zone {
-    border: 2px dashed var(--border-dark);
-    border-radius: var(--radius-md);
-    padding: 48px 32px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 2px;
+    padding: 32px 24px;
     text-align: center;
     cursor: pointer;
-    transition: var(--transition);
-    background: var(--forest-tint);
+    transition: border-color 0.12s ease;
+    background: var(--surface-2);
     position: relative;
   }
   .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--forest);
-    background: rgba(45,90,61,0.06);
+    border-color: var(--amber);
+    background: var(--surface-3);
   }
   .upload-zone.has-file {
-    border-color: var(--forest-mid);
+    border-color: var(--amber);
     border-style: solid;
-    background: rgba(45,90,61,0.04);
+    background: var(--amber-glow);
   }
   .uz-icon {
-    font-size: 40px;
-    margin-bottom: 14px;
+    font-size: 28px;
+    margin-bottom: 10px;
     display: block;
     line-height: 1;
   }
   .uz-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
+    font-family: var(--font);
+    font-size: 13px;
     font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 6px;
+    color: var(--text);
+    margin-bottom: 5px;
   }
   .uz-sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--ink-muted);
-    letter-spacing: 0.04em;
-    margin-bottom: 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
   }
   .uz-btn {
     display: inline-block;
-    background: var(--forest);
-    color: white;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    background: var(--amber);
+    color: var(--amber-fg);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 10px 24px;
-    border-radius: var(--radius-sm);
-    transition: var(--transition);
+    padding: 6px 16px;
+    border-radius: 2px;
+    transition: background 0.12s ease;
   }
-  .upload-zone:hover .uz-btn {
-    background: var(--forest-mid);
-  }
+  .upload-zone:hover .uz-btn { background: var(--amber-dim); }
   .uz-accepted {
     display: none;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
   }
   .uz-accepted.visible { display: flex; }
   .uz-check {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--forest);
+    width: 22px; height: 22px;
+    border-radius: 2px;
+    background: var(--green);
     color: white;
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
+    font-size: 11px;
     flex-shrink: 0;
   }
   .uz-filename {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--forest);
-    font-weight: 500;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    font-weight: 600;
   }
   .uz-clear {
     background: none; border: none; cursor: pointer;
-    color: var(--ink-muted); font-size: 18px; line-height: 1;
-    padding: 0 4px;
-    transition: var(--transition);
+    color: var(--text-muted); font-size: 14px; line-height: 1;
+    padding: 0 3px;
+    transition: color 0.12s ease;
   }
-  .uz-clear:hover { color: #cc4422; }
+  .uz-clear:hover { color: var(--red); }
 
   /* ── Or divider ── */
   .or-divider {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin: 24px 0;
-    color: var(--ink-faint);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.06em;
+    gap: 12px;
+    margin: 16px 0;
+    color: var(--text-faint);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
   .or-divider::before, .or-divider::after {
@@ -253,91 +256,80 @@
   /* ── Text inputs ── */
   .ai-textarea {
     width: 100%;
-    border: 1px solid var(--border-dark);
-    border-radius: var(--radius-md);
-    padding: 16px 20px;
-    font-family: 'Source Serif 4', serif;
-    font-size: 14px;
-    color: var(--ink);
-    background: white;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 10px 12px;
+    font-family: var(--font);
+    font-size: 12.5px;
+    color: var(--text);
+    background: var(--surface-2);
     resize: vertical;
-    transition: var(--transition);
+    transition: border-color 0.12s ease;
     line-height: 1.6;
   }
   .ai-textarea:focus {
     outline: none;
-    border-color: var(--forest);
-    box-shadow: 0 0 0 3px rgba(45,90,61,0.08);
+    border-color: var(--amber);
+    box-shadow: none;
   }
-  .ai-textarea::placeholder { color: var(--ink-faint); }
+  .ai-textarea::placeholder { color: var(--text-muted); }
 
   .input-row {
     display: grid;
-    grid-template-columns: 1fr 160px;
-    gap: 12px;
-    margin-top: 14px;
+    grid-template-columns: 1fr 140px;
+    gap: 10px;
+    margin-top: 10px;
   }
   .text-field {
     width: 100%;
-    border: 1px solid var(--border-dark);
-    border-radius: var(--radius-sm);
-    padding: 11px 16px;
-    font-family: 'Source Serif 4', serif;
-    font-size: 14px;
-    color: var(--ink);
-    background: white;
-    transition: var(--transition);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 8px 10px;
+    font-family: var(--font);
+    font-size: 12.5px;
+    color: var(--text);
+    background: var(--surface-2);
+    transition: border-color 0.12s ease;
   }
   .text-field:focus {
     outline: none;
-    border-color: var(--forest);
-    box-shadow: 0 0 0 3px rgba(45,90,61,0.08);
+    border-color: var(--amber);
+    box-shadow: none;
   }
-  .text-field::placeholder { color: var(--ink-faint); }
+  .text-field::placeholder { color: var(--text-muted); }
 
   /* ── Generate button ── */
   .btn-generate {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
     width: 100%;
-    background: var(--forest);
-    color: white;
+    background: var(--amber);
+    color: var(--amber-fg);
     border: none;
-    border-radius: var(--radius-md);
-    padding: 18px 32px;
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
+    border-radius: 2px;
+    padding: 10px 24px;
+    font-family: var(--mono);
+    font-size: 12px;
     font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     cursor: pointer;
-    margin-top: 24px;
-    transition: var(--transition);
+    margin-top: 16px;
+    transition: background 0.12s ease;
     position: relative;
-    overflow: hidden;
   }
-  .btn-generate::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 100%);
-  }
+  .btn-generate::before { display: none; }
   .btn-generate:hover {
-    background: var(--forest-mid);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(45,90,61,0.3);
+    background: var(--amber-dim);
+    transform: none;
+    box-shadow: none;
   }
   .btn-generate:active { transform: none; }
-  .btn-generate:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    transform: none;
-  }
-  .btn-arrow {
-    font-size: 22px;
-    transition: transform 0.2s ease;
-  }
-  .btn-generate:hover .btn-arrow { transform: translateX(4px); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-arrow { font-size: 14px; transition: none; }
+  .btn-generate:hover .btn-arrow { transform: none; }
 
   /* ── Loading panel ── */
   .loading-panel {
@@ -1348,6 +1340,71 @@
   @media (max-width: 480px) {
     .scores-row { grid-template-columns: 1fr 1fr; }
   }
+
+  /* ── INSTITUTIONAL OVERRIDES — remove all AI aesthetics ── */
+
+  /* Strip Playfair Display everywhere */
+  .panel-number, .panel-title, .ahs-val, .sdg-name, .sdg-score-val,
+  .insight-title, .kpi-value, .report-title, .output-tab-heading,
+  .progress-title { font-family: 'Inter', system-ui, sans-serif !important; }
+
+  /* Reset panel to dark */
+  .ai-panel { background: var(--surface) !important; border: 1px solid var(--border) !important; border-radius: 0 !important; box-shadow: none !important; padding: 20px !important; }
+
+  /* Fix SDG cards */
+  .sdg-card { border: 1px solid var(--border) !important; border-radius: 0 !important; background: var(--surface-2) !important; }
+  .sdg-card-header { background: var(--surface-3) !important; border-bottom: 1px solid var(--border) !important; }
+  .sdg-name { color: var(--text) !important; font-size: 13px !important; }
+  .sdg-score-val { color: var(--amber) !important; }
+  .sdg-summary { background: var(--amber-glow) !important; border: 1px solid var(--border-accent) !important; border-radius: 2px !important; color: var(--text-2) !important; font-style: normal !important; font-size: 12px !important; }
+
+  /* Fix forest colors */
+  .kpi-chip { background: var(--surface-2) !important; border: 1px solid var(--border) !important; border-radius: 2px !important; }
+  .kpi-value { color: var(--amber) !important; font-family: var(--mono) !important; font-size: 16px !important; }
+  .kpi-label { color: var(--text-muted) !important; font-family: var(--mono) !important; font-size: 9px !important; }
+
+  /* Fix struct pillar heads */
+  .struct-pillar-head { background: var(--surface-2) !important; border-bottom: 1px solid var(--border) !important; }
+  .struct-pillar-head .struct-pillar-name { color: var(--text) !important; }
+  .struct-pillar-head.env .struct-pillar-name { color: var(--green) !important; }
+  .struct-pillar-head.soc .struct-pillar-name { color: var(--cyan) !important; }
+  .struct-pillar-head.gov .struct-pillar-name { color: var(--amber) !important; }
+
+  /* Fix insights column heads */
+  .insights-col-head.improving { background: var(--green-glow) !important; color: var(--green) !important; border: 1px solid rgba(16,185,129,0.2) !important; }
+  .insights-col-head.attention  { background: var(--red-glow) !important; color: var(--red) !important; border: 1px solid rgba(239,68,68,0.2) !important; }
+  .insights-list { border: 1px solid var(--border) !important; border-radius: 0 !important; }
+  .insight-item { border-bottom: 1px solid var(--border) !important; background: var(--surface-2) !important; }
+  .insight-title { color: var(--text) !important; font-size: 12.5px !important; }
+
+  /* Fix API config bar */
+  .api-config-bar { background: var(--surface) !important; border: 1px solid var(--border) !important; border-radius: 2px !important; }
+  .api-url-input { background: var(--surface-2) !important; border: 1px solid var(--border) !important; color: var(--text) !important; font-family: var(--mono) !important; font-size: 11px !important; border-radius: 2px !important; }
+  .api-check-btn { background: var(--surface-3) !important; border: 1px solid var(--border-strong) !important; color: var(--text) !important; font-family: var(--mono) !important; font-size: 10px !important; border-radius: 2px !important; }
+
+  /* Fix tweet / output items */
+  .tweet-item { border-bottom: 1px solid var(--border) !important; background: var(--surface-2) !important; }
+  .tweet-num { color: var(--text-muted) !important; font-family: var(--mono) !important; }
+  .tweet-char { color: var(--text-muted) !important; font-family: var(--mono) !important; }
+
+  /* Tab buttons */
+  .tab-btn { border-radius: 2px !important; font-family: var(--mono) !important; background: var(--surface-2) !important; border: 1px solid var(--border) !important; color: var(--text-muted) !important; }
+  .tab-btn.active { background: var(--amber-glow) !important; border-color: var(--border-accent) !important; color: var(--amber) !important; }
+
+  /* Remove all transforms on hover */
+  *:hover { transform: none !important; box-shadow: none !important; }
+
+  /* Fix loading spinner colors */
+  .loading-spinner { border-color: var(--surface-3) !important; border-top-color: var(--amber) !important; }
+
+  /* Scores */
+  .score-ring, .score-arc { stroke: var(--amber) !important; }
+  .score-value { fill: var(--text) !important; font-family: var(--mono) !important; }
+
+  /* Output header */
+  .output-panel { background: var(--surface) !important; border: 1px solid var(--border) !important; border-radius: 0 !important; box-shadow: none !important; }
+  .output-header { border-bottom: 1px solid var(--border) !important; padding: 14px 18px !important; }
+  .output-tab-heading { color: var(--text) !important; font-family: var(--font) !important; font-size: 14px !important; }
   </style>
 </head>
 
@@ -1367,9 +1424,13 @@
     <a href="dashboard.html" class="nav-link">Dashboard</a>
     <a href="generate.html" class="nav-link">Reports</a>
     <a href="assessment.html" class="nav-link">Assessment</a>
-    <a href="climactix-ai.html" class="nav-link" style="background:rgba(255,255,255,0.15);border-radius:4px;padding:6px 12px;">AI Engine</a>
+    <a href="climactix-ai.html" class="nav-link active">ESG Engine</a>
     <a href="greenwashing-scanner.html" class="nav-link">ESG Risk Intelligence</a>
   </nav>
+  <div class="header-actions">
+    <button id="cx-theme-toggle" title="Toggle theme" onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);this.textContent=t==='light'?'◑':'○';}).call(this)">○</button>
+    <a href="assessment.html" class="hdr-cta">Assessment</a>
+  </div>
 </header>
 
 <!-- ── Hero ── -->
