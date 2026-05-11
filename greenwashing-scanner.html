@@ -1101,7 +1101,7 @@
   <div class="gw-modal">
     <div class="gw-modal-header">
       <div class="gw-modal-title">Share ESG Risk Score on LinkedIn</div>
-      <button class="gw-modal-close" onclick="closeModal()">✕</button>
+      <button class="gw-modal-close" onclick="closeModal()"></button>
     </div>
     <div class="gw-modal-body">
       <textarea id="linkedinText" rows="7"></textarea>
@@ -1121,7 +1121,7 @@
 
 <!-- Toast notification -->
 <div class="gw-toast" id="toast">
-  <span class="gw-toast-icon" id="toastIcon">✓</span>
+  <span class="gw-toast-icon" id="toastIcon"></span>
   <span id="toastMsg">Done</span>
 </div>
 
@@ -1480,10 +1480,10 @@ function renderClaims(claims) {
       <div class="gw-claim-badges">
         <span class="gw-badge-sm gw-badge-type">${typeLabels[c.type] || c.type || 'Claim'}</span>
         ${c.has_supporting_data
-          ? '<span class="gw-badge-sm gw-badge-ok">✓ Data Supported</span>'
-          : '<span class="gw-badge-sm gw-badge-danger">⚠ No Supporting Data</span>'}
+          ? '<span class="gw-badge-sm gw-badge-ok"> Data Supported</span>'
+          : '<span class="gw-badge-sm gw-badge-danger"> No Supporting Data</span>'}
         ${c.third_party_verified
-          ? '<span class="gw-badge-sm gw-badge-blue">✓ 3rd Party Verified</span>'
+          ? '<span class="gw-badge-sm gw-badge-blue"> 3rd Party Verified</span>'
           : '<span class="gw-badge-sm gw-badge-warn">Unverified</span>'}
         ${c.baseline_year ? `<span class="gw-badge-sm gw-badge-type">Baseline: ${c.baseline_year}</span>` : ''}
         ${c.target_year   ? `<span class="gw-badge-sm gw-badge-type">Target: ${c.target_year}</span>` : ''}
@@ -1532,19 +1532,19 @@ function renderData(data, frameworkBreakdown) {
     <div class="gw-data-item">
       <div class="gw-data-label">3rd Party Assurance</div>
       <div class="gw-data-val" style="font-size:14px;color:${data.third_party_assurance ? 'var(--emerald)' : 'var(--red)'}">
-        ${data.third_party_assurance ? '✓ Yes' : '✗ No'}
+        ${data.third_party_assurance ? ' Yes' : ' No'}
       </div>
     </div>
     <div class="gw-data-item">
       <div class="gw-data-label">Reporting Boundary</div>
       <div class="gw-data-val" style="font-size:14px;color:${data.reporting_boundary_defined ? 'var(--emerald)' : 'var(--red)'}">
-        ${data.reporting_boundary_defined ? '✓ Defined' : '✗ Undefined'}
+        ${data.reporting_boundary_defined ? ' Defined' : ' Undefined'}
       </div>
     </div>
     <div class="gw-data-item">
       <div class="gw-data-label">Transition Pathway</div>
       <div class="gw-data-val" style="font-size:14px;color:${data.transition_pathway_present ? 'var(--emerald)' : 'var(--red)'}">
-        ${data.transition_pathway_present ? '✓ Present' : '✗ Absent'}
+        ${data.transition_pathway_present ? ' Present' : ' Absent'}
       </div>
     </div>
   `;
@@ -1717,15 +1717,15 @@ function shareLinkedIn() {
   const s = _scanResult;
   const text = `We ran our ESG disclosures through the Climactix ESG Risk Intelligence platform.
 
-🔍 Risk Score: ${s.risk_score}/100 (${s.risk_level} Risk)
-⚠️ Risk Flags: ${(s.risk_flags||[]).length} ESG risk indicators identified
-📋 Missing Disclosures: ${(s.missing_disclosures||[]).length} framework requirements
-📊 Framework Coverage: ${s.framework_coverage_pct || 0}% (GRI · ISSB S2 · TCFD)
+ Risk Score: ${s.risk_score}/100 (${s.risk_level} Risk)
+ Risk Flags: ${(s.risk_flags||[]).length} ESG risk indicators identified
+ Missing Disclosures: ${(s.missing_disclosures||[]).length} framework requirements
+ Framework Coverage: ${s.framework_coverage_pct || 0}% (GRI · ISSB S2 · TCFD)
 
 Eye-opening insights on ESG credibility, compliance gaps, and investor risk.
 
 Audit powered by Climactix AI — ESG Intelligence Infrastructure.
-👉 climactixglobal.com/greenwashing-scanner
+ climactixglobal.com/greenwashing-scanner
 
 #ESG #Sustainability #Greenwashing #TCFD #ISSB #GRI #ClimateDisclosure #Climactix`;
 
@@ -1775,7 +1775,7 @@ function showToast(msg, type = 'success') {
   const toast = $('toast');
   const icon  = $('toastIcon');
   $('toastMsg').textContent = msg;
-  icon.textContent = type === 'error' ? '✕' : '✓';
+  icon.textContent = type === 'error' ? '' : '';
   toast.className = `gw-toast ${type}`;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3500);
