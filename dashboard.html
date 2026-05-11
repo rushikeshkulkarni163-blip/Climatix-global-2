@@ -24,28 +24,28 @@
 
   :root {
     /* Institutional Matte Black palette */
-    --bg0:  #0B0D10;   /* matte black canvas */
-    --bg1:  #131619;   /* surface */
-    --bg2:  #1A1F26;   /* surface-2 */
-    --bg3:  #222830;   /* surface-3 */
-    --bg4:  #2A3340;   /* surface-4 */
-    --br:   rgba(255,255,255,0.07);   /* border */
-    --br2:  rgba(255,255,255,0.10);   /* border-strong */
+    --bg0:  #000000;   /* matte black canvas */
+    --bg1:  #0F0F0F;   /* surface */
+    --bg2:  #1A1A1A;   /* surface-2 */
+    --bg3:  #242424;   /* surface-3 */
+    --bg4:  #2E2E2E;   /* surface-4 */
+    --br:   #2C2C2C;   /* border */
+    --br2:  #333333;   /* border-strong */
     --br3:  rgba(255,255,255,0.14);   /* border-hover */
-    --g:    #F59E0B;   /* Bloomberg Amber — primary accent */
+    --g:    #FF6600;   /* Bloomberg Amber — primary accent */
     --g2:   rgba(245,158,11,.10);
     --g3:   rgba(245,158,11,.06);
-    --y:    #F59E0B;   /* amber */
+    --y:    #FF6600;   /* amber */
     --y2:   rgba(245,158,11,.09);
-    --r:    #EF4444;   /* risk red */
+    --r:    #FF3333;   /* risk red */
     --r2:   rgba(239,68,68,.09);
-    --b:    #06B6D4;   /* professional cyan */
+    --b:    #0099CC;   /* professional cyan */
     --b2:   rgba(6,182,212,.09);
-    --grn:  #10B981;   /* institutional green */
-    --t1:   #F1F5F9;   /* primary text */
-    --t2:   #94A3B8;   /* secondary text */
-    --t3:   #475569;   /* muted text */
-    --mono: 'IBM Plex Mono', 'JetBrains Mono', 'Courier New', monospace;
+    --grn:  #00CC44;   /* institutional green */
+    --t1:   #FFFFFF;   /* primary text */
+    --t2:   #888888;   /* secondary text */
+    --t3:   #555555;   /* muted text */
+    --mono: 'IBM Plex Mono', 'IBM Plex Mono','JetBrains Mono', 'Courier New', monospace;
     --sans: 'Inter', system-ui, sans-serif;
     --rad:  2px;
   }
@@ -55,11 +55,11 @@
   [data-theme="light"] {
     --bg0:  #F8FAFC;
     --bg1:  #FFFFFF;
-    --bg2:  #F1F5F9;
-    --bg3:  #E2E8F0;
+    --bg2:  #FFFFFF;
+    --bg3:  #FFFFFF;
     --bg4:  #CBD5E1;
-    --br:   rgba(0,0,0,0.08);
-    --br2:  rgba(0,0,0,0.12);
+    --br:   #E0E0E0;
+    --br2:  #C8C8C8;
     --br3:  rgba(0,0,0,0.18);
     --t1:   #0F172A;
     --t2:   #334155;
@@ -139,7 +139,7 @@
     display: flex; align-items: center; padding: 0 12px;
     font-family: var(--mono); font-size: 8.5px; font-weight: 700;
     letter-spacing: .14em; text-transform: uppercase;
-    background: var(--g); color: #0C0800; z-index: 2;
+    background: var(--g); color: #000000; z-index: 2;
     white-space: nowrap;
   }
   .ticker-scroll { flex: 1; overflow: hidden; }
@@ -540,11 +540,11 @@ function LineChart({ values, labels, color, unit }) {
         scales: {
           x: {
             grid: { color: '#0E1D16', tickLength: 0 }, border: { display: false },
-            ticks: { color: '#2C4737', font: { family:"'JetBrains Mono',monospace", size:10 }, padding:5 },
+            ticks: { color: '#2C4737', font: { family:"var(--mono)", size:10 }, padding:5 },
           },
           y: {
             grid: { color: '#0E1D16', tickLength: 0 }, border: { display: false },
-            ticks: { color: '#2C4737', font: { family:"'JetBrains Mono',monospace", size:10 }, padding:7 },
+            ticks: { color: '#2C4737', font: { family:"var(--mono)", size:10 }, padding:7 },
           },
         },
       },
@@ -566,7 +566,7 @@ function DonutChart({ score, e, s, g }) {
         labels: [`Environmental  ${e}/100`, `Social  ${s}/100`, `Governance  ${g}/100`],
         datasets: [{
           data: [40, 35, 25],
-          backgroundColor: ['#40A8DC','#3B82F6','#F59E0B'],
+          backgroundColor: ['#40A8DC','#3399FF','#FF6600'],
           borderColor: '#090F1C', borderWidth: 4, hoverOffset: 0,
         }],
       },
@@ -676,7 +676,7 @@ function RiskCard({ r }) {
 }
 
 function SDGCard({ s }) {
-  const color = s.sc >= 75 ? '#40A8DC' : s.sc >= 60 ? '#F59E0B' : '#F87171';
+  const color = s.sc >= 75 ? '#40A8DC' : s.sc >= 60 ? '#FF6600' : '#F87171';
   return (
     <div className="sdg-card" style={{borderTopColor:s.cl}}>
       <div className="sdg-n" style={{color:s.cl}}>SDG {s.n}</div>
@@ -740,8 +740,8 @@ function App() {
 
   const esgBars = [
     { lbl:'Environmental (E)', val:sc.e, color:'#40A8DC', wt:'40%' },
-    { lbl:'Social (S)',         val:sc.s, color:'#3B82F6', wt:'35%' },
-    { lbl:'Governance (G)',     val:sc.g, color:'#F59E0B', wt:'25%' },
+    { lbl:'Social (S)',         val:sc.s, color:'#3399FF', wt:'35%' },
+    { lbl:'Governance (G)',     val:sc.g, color:'#FF6600', wt:'25%' },
   ];
 
   return (
@@ -960,7 +960,7 @@ function App() {
             <div className="ch-hd">
               <div>
                 <div className="ctit"><span className="cdot"/>RENEWABLE ENERGY ADOPTION TREND</div>
-                <div className="ch-big" style={{color:'#3B82F6'}}>34%</div>
+                <div className="ch-big" style={{color:'#3399FF'}}>34%</div>
                 <div className="ch-big-s">of total energy mix · FY25</div>
               </div>
               <div>
@@ -968,7 +968,7 @@ function App() {
                 <div className="ch-range">FY21 → FY25</div>
               </div>
             </div>
-            <LineChart values={D.trends.re} labels={D.trends.lbl} color="#3B82F6" unit="%" />
+            <LineChart values={D.trends.re} labels={D.trends.lbl} color="#3399FF" unit="%" />
           </div>
         </div>
 

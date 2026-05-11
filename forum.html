@@ -11,24 +11,24 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --primary:      #F59E0B;
-      --primary-mid:  #D97706;
+      --primary:      #FF6600;
+      --primary-mid:  #CC5200;
       --primary-tint: rgba(245,158,11,0.08);
       --primary-pale: rgba(245,158,11,0.15);
-      --accent:       #F59E0B;
-      --accent-fg:    #0C0800;
-      --white:        #131619;
-      --off-white:    #0B0D10;
-      --grey-light:   #1A1F26;
-      --grey-mid:     rgba(255,255,255,0.07);
-      --text:         #F5F5F5;
-      --text-2:       #9CA3AF;
-      --text-muted:   #6B7280;
-      --text-faint:   #374151;
-      --mono:         'IBM Plex Mono','JetBrains Mono',monospace;
-      --green:        #10B981;
-      --red:          #EF4444;
-      --cyan:         #06B6D4;
+      --accent:       #FF6600;
+      --accent-fg:    #000000;
+      --white:        #0F0F0F;
+      --off-white:    #000000;
+      --grey-light:   #1A1A1A;
+      --grey-mid:     #2C2C2C;
+      --text:         #FFFFFF;
+      --text-2:       #888888;
+      --text-muted:   #555555;
+      --text-faint:   #333333;
+      --mono:         'IBM Plex Mono',var(--mono);
+      --green:        #00CC44;
+      --red:          #FF3333;
+      --cyan:         #0099CC;
       --shadow-sm:    none;
       --shadow-md:    none;
       --radius:       3px;
@@ -38,13 +38,13 @@
     }
     [data-theme="light"] {
       --white:        #FFFFFF;
-      --off-white:    #F0F2F5;
-      --grey-light:   #F5F7FA;
-      --grey-mid:     rgba(0,0,0,0.08);
-      --text:         #0B0D10;
-      --text-2:       #374151;
-      --text-muted:   #6B7280;
-      --text-faint:   #9CA3AF;
+      --off-white:    #F5F5F5;
+      --grey-light:   #EBEBEB;
+      --grey-mid:     #E0E0E0;
+      --text:         #000000;
+      --text-2:       #333333;
+      --text-muted:   #555555;
+      --text-faint:   #888888;
       --primary-tint: rgba(245,158,11,0.06);
     }
     html { scroll-behavior: smooth; }
@@ -370,7 +370,7 @@
   </div>
   <div class="cx-nav-right">
     <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
-      <div class="cx-avatar" id="navAvatar" style="background:#1A1F26">?</div>
+      <div class="cx-avatar" id="navAvatar" style="background:#1A1A1A">?</div>
       <span style="font-size:11px;font-weight:600;" id="navName">—</span>
     </button>
     <button onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--grey-mid);border-radius:2px;background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
@@ -521,7 +521,7 @@
       </div>
     </div>
     <div class="cx-modal-footer">
-      <button class="cx-modal-close" onclick="closeCreateModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#374151;background:#F3F4F6;">Cancel</button>
+      <button class="cx-modal-close" onclick="closeCreateModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight:600;color:#333333;background:#F3F4F6;">Cancel</button>
       <button class="cx-post-btn" onclick="submitThread()">Post Discussion</button>
     </div>
   </div>
@@ -664,9 +664,9 @@ window.renderThreads = function() {
   const container = document.getElementById('threadsContainer');
 
   if (!threads.length) {
-    container.innerHTML = `<div style="background:white;border:1px solid #E5E7EB;border-radius:12px;padding:40px;text-align:center;color:#9CA3AF;">
+    container.innerHTML = `<div style="background:white;border:1px solid #E5E7EB;border-radius:12px;padding:40px;text-align:center;color:#888888;">
       <div style="font-size:32px;margin-bottom:12px;"></div>
-      <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px;">No discussions yet</div>
+      <div style="font-size:15px;font-weight:600;color:#333333;margin-bottom:6px;">No discussions yet</div>
       <div style="font-size:13px;">Be the first to start a conversation in this community!</div>
       <button onclick="openCreateModal()" style="margin-top:14px;padding:9px 20px;background:#0A1F44;color:white;border-radius:16px;font-size:13px;font-weight:600;cursor:pointer;border:none;">Start Discussion</button>
     </div>`;
@@ -752,7 +752,7 @@ function renderThread(t) {
         <button class="cx-thread-footer-btn" onclick="shareThread('${t.id}')">↗ Share</button>
         <button class="cx-thread-footer-btn" onclick="showToast('Thread saved to bookmarks')"> Save</button>
         <button class="cx-thread-footer-btn" onclick="showToast('Report submitted for review')"> Report</button>
-        <span style="margin-left:auto;font-size:11.5px;color:#9CA3AF;"> ${formatCount(t.replyCount * 12 + 84)} views</span>
+        <span style="margin-left:auto;font-size:11.5px;color:#888888;"> ${formatCount(t.replyCount * 12 + 84)} views</span>
       </div>
 
       <div class="cx-thread-replies" id="replies-${t.id}">
@@ -917,11 +917,11 @@ function renderTopContributors() {
   ];
   document.getElementById('topContributors').innerHTML = contribs.map((c, i) => `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <span style="font-size:13px;font-weight:700;color:#9CA3AF;width:18px;">#${i+1}</span>
+      <span style="font-size:13px;font-weight:700;color:#888888;width:18px;">#${i+1}</span>
       <div style="width:32px;height:32px;border-radius:50%;background:${getAvatarColor(c.role)};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;">${c.avatar}</div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(c.name)}</div>
-        <div style="font-size:11px;color:#9CA3AF;">${formatCount(c.karma)} karma</div>
+        <div style="font-size:11px;color:#888888;">${formatCount(c.karma)} karma</div>
       </div>
     </div>`).join('');
 }
