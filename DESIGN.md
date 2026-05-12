@@ -1,403 +1,558 @@
 ---
-version: 1.0
-name: Climactix Global
-description: "A premium climate intelligence social platform. Dark warm-charcoal surfaces derived from Linear's surface ladder, Inter typography at negative letter-spacing from Vercel/Linear, a single organic green accent (#4ADE80) inspired by climate/nature (never neon cyan), and content-first editorial layout drawn from Apple + Superhuman. The platform sits between Bloomberg terminal data density and Instagram social warmth — professional enough for VCs, human enough for activists. All UI feels fast, considered, and native — never dashboard-generated, never AI-default."
+version: 2.0
+name: Climactix Global — Institutional Design System
+description: "Bloomberg Terminal-grade climate intelligence platform. Matte black surfaces, institutional amber accent, IBM Plex Mono data typography, and maximum information density. The platform competes visually with Bloomberg Terminal, BlackRock Aladdin, Reuters Eikon, MSCI Climate, and Palantir Gotham — not startup SaaS, not AI demos, not fintech templates. Every decision communicates institutional authority, financial trust, and sovereign-grade analytical capability."
 ---
 
-## Overview
+## Philosophy
 
-Climactix uses a **warm-charcoal dark system** — not cold navy, not true black. The canvas is `#0C0C0E` with a 4-step surface ladder reaching `#232328`. A single organic green accent `#4ADE80` is used scarcely (only for: primary CTAs, active states, score rings, verified badges). The platform blends:
+Climactix is a **financial operating system for climate intelligence** — trusted by institutional investors, governments, banks, regulators, and multinational corporations.
 
-- **Linear** surface ladder + hairline border discipline
-- **Inter** with aggressive negative letter-spacing on display
-- **Superhuman** premium spacing + single-action CTA discipline  
-- **Apple** content-first hierarchy — chrome recedes, content leads
-- **Bloomberg** data density for intelligence/scores/rankings
+The platform must communicate:
+- **Trust** through precision, not decoration
+- **Authority** through data density, not spaciousness  
+- **Credibility** through restraint, not visual complexity
+- **Operationality** through functional chrome, not polish
 
-The product must feel like a **premium global social network for climate** — not a SaaS dashboard, not a developer tool, not an AI UI.
+Design references (ranked by influence):
+1. Bloomberg Terminal — data density, amber accent, monospace numbers
+2. BlackRock Aladdin — institutional dark palette, professional hierarchy
+3. Reuters Eikon — news + data integration, clean dividers
+4. MSCI Climate Analytics — risk visualization, analytical layouts
+5. Palantir Gotham — intelligence workspace, panel systems
 
 ---
 
-## colors
+## Color System
 
 ```yaml
-# Core surfaces
---bg:              "#0C0C0E"    # Warm near-black canvas (not cold navy)
---nav-bg:          "rgba(12,12,14,0.88)"  # Frosted glass nav
---surface:         "#141416"    # Cards, posts, panels (step 1)
---surface-2:       "#1C1C1F"    # Elevated surfaces, comment areas (step 2)
---surface-3:       "#232328"    # Highest elevation, modals bg (step 3)
+# ── Backgrounds — Institutional Matte Black
+--bg:          "#000000"    # Pure matte black canvas
+--bg-alt:      "#0A0A0A"    # Slight lift for alternating sections
+--surface:     "#0F0F0F"    # Primary surface — panels, cards
+--surface-2:   "#1A1A1A"    # Elevated surface — dropdowns, hover states
+--surface-3:   "#242424"    # High elevation — tooltips, modals, active panels
+--surface-4:   "#2E2E2E"    # Maximum elevation — focused inputs, selected rows
 
-# Borders — rgba only, never hard hex
---border:          "rgba(255,255,255,0.055)"   # Default: nearly invisible
---border-strong:   "rgba(255,255,255,0.10)"    # Hover, focus states
---border-accent:   "rgba(74,222,128,0.22)"     # Green accent borders
+# ── Borders — graphite system (NOT rgba white overlays)
+--border:         "#2C2C2C"   # Default border — table rows, card edges
+--border-strong:  "#333333"   # Emphasized borders — section dividers
+--border-accent:  "rgba(255,102,0,0.30)"  # Amber-tinted accent borders
 
-# Brand accent — organic green, NEVER neon cyan
---accent:          "#4ADE80"    # Primary CTAs, active states, score rings
---accent-dim:      "#22C55E"    # Hover state of accent
---accent-glow:     "rgba(74,222,128,0.09)"     # Background tint for active
---accent-fg:       "#052E16"    # Text ON green buttons
+# ── PRIMARY ACCENT — Bloomberg Amber
+--amber:       "#FF6600"    # Bloomberg orange-amber — CTAs, active states, live data
+--amber-dim:   "#CC5200"    # Hover state
+--amber-glow:  "rgba(245,158,11,0.10)"   # Subtle tint background
+--amber-fg:    "#000000"    # Text ON amber buttons
 
-# Secondary interactive
---blue:            "#60A5FA"    # Links, mentions, hashtags
---blue-dim:        "#3B82F6"
---blue-glow:       "rgba(96,165,250,0.09)"
+# ── DATA ACCENT SYSTEM — institutional, muted
+--cyan:        "#0099CC"    # Professional cyan — links, data highlights, secondary metrics
+--cyan-glow:   "rgba(6,182,212,0.10)"
+--green:       "#00CC44"    # Institutional green — positive values, up metrics
+--green-glow:  "rgba(16,185,129,0.10)"
+--red:         "#FF3333"    # Risk red — negative values, critical alerts, down metrics
+--red-glow:    "rgba(239,68,68,0.10)"
+--blue:        "#3399FF"    # Deep blue — secondary data, scenario markers
 
-# Status / reputation
---gold:            "#FBBF24"    # #1 rank, gold tier
---silver:          "#94A3B8"    # #2 rank
---bronze:          "#CD7C3E"    # #3 rank
---danger:          "#F87171"    # Errors, destructive
---warning:         "#FB923C"    # Warnings, streaks
+# ── RANK COLORS
+--gold:        "#FF6600"    # #1 position (Bloomberg amber)
+--silver:      "#888888"    # #2 position (institutional gray)
+--bronze:      "#CC5200"    # #3 position (dark amber)
 
-# Text — warm neutrals, never pure white or pure black
---text:            "#F2F2F3"    # Primary text
---text-2:          "#A0A0A8"    # Secondary text (post body, meta)
---text-muted:      "#505058"    # Placeholder, disabled, labels
---text-faint:      "#38383E"    # Very muted, borders at text scale
+# ── TEXT HIERARCHY — white-to-graphite scale
+--text:        "#FFFFFF"    # Primary text — titles, key data
+--text-2:      "#888888"    # Secondary text — descriptions, sub-labels
+--text-muted:  "#555555"    # Muted text — timestamps, metadata
+--text-faint:  "#222222"    # Faint text — borders at text scale, disabled
+
+# ── STATUS COLORS
+--danger:      "#FF3333"    # Errors, critical risk, destructive
+--warning:     "#FF6600"    # Warnings, caution indicators (same as amber)
+--success:     "#00CC44"    # Positive outcomes, green metrics
 ```
 
-### Color Rules (DO NOT VIOLATE)
+### Light Theme (Bloomberg Day Mode)
 
-- **NEVER** use `#00C896`, `#00A07A`, or any teal-cyan as the accent. These read as "AI dashboard."
-- **NEVER** use `#060E1C`, `#050A16`, or cold navy as the background. These read as "crypto UI."
-- **NEVER** use border colors as hex values like `#1A2B40`. Always use `rgba(255,255,255, x)`.
-- Accent `#4ADE80` is used for: CTAs, active nav, score ring, verified check, follow button hover, challenge completion. Nothing else.
-- Section headers are NEVER uppercase + letter-spacing. That reads as "dashboard widget."
+```yaml
+--bg:          "#FFFFFF"
+--bg-alt:      "#F5F5F5"
+--surface:     "#FFFFFF"
+--surface-2:   "#EBEBEB"
+--surface-3:   "#E0E0E0"
+--surface-4:   "#D5D5D5"
+--border:         "#D0D0D0"
+--border-strong:  "#BBBBBB"
+--text:        "#000000"
+--text-2:      "#333333"
+--text-muted:  "#666666"
+--text-faint:  "#999999"
+```
+
+### Color Rules (Non-Negotiable)
+
+- **NEVER** use warm charcoal (#0C0C0E) or cold navy (#060E1C) as background — pure institutional black only
+- **NEVER** use organic green (#4ADE80) — that was the old system; amber is the primary accent
+- **NEVER** use glassmorphism, frosted glass, or `backdrop-filter: blur()` on panels
+- **NEVER** use gradient backgrounds on cards or panels — flat surface with border
+- **NEVER** use `box-shadow` on cards — elevation = surface color change only
+- **Amber (#FF6600)** is used for: CTAs, active nav state, live data values, accent borders, Bloomberg-style metric highlights, "LIVE" indicators
+- **Cyan (#0099CC)** is used for: links, secondary data points, geography highlights, globe data badges
+- **Green (#00CC44)** is used for: positive financial values, up-arrows, score improvements
+- **Red (#FF3333)** is used for: negative values, critical risk, down-arrows, alerts
 
 ---
 
-## typography
+## Typography
 
-Font: **Inter** (Google Fonts, variable weight range 300–900).
-Fallback stack: `Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`
+**Primary**: Inter (Google Fonts, 300–900 weight)
+**Data/Numbers**: IBM Plex Mono (400–700 weight)
 
-### Scale
+```
+font: 'Inter', 'IBM Plex Sans', -apple-system, 'Helvetica Neue', system-ui, sans-serif
+mono: 'IBM Plex Mono', 'JetBrains Mono', 'Courier New', monospace
+```
 
-| Token           | Size  | Weight | Line Height | Letter Spacing | Use                                |
-|-----------------|-------|--------|-------------|----------------|------------------------------------|
-| display-xl      | 48px  | 800    | 1.05        | -2.4px         | Page hero headlines                |
-| display-lg      | 36px  | 700    | 1.08        | -1.4px         | Section titles, modal big numbers  |
-| display-md      | 28px  | 700    | 1.12        | -0.8px         | Card section headers               |
-| heading         | 22px  | 700    | 1.20        | -0.4px         | Sidebar section titles             |
-| subheading      | 18px  | 600    | 1.30        | -0.2px         | Card titles, post author name      |
-| body-lg         | 15px  | 400    | 1.65        | 0              | Post body text                     |
-| body            | 14px  | 400    | 1.60        | 0              | UI labels, sidebar nav             |
-| body-sm         | 13px  | 500    | 1.50        | 0              | Meta text, timestamps              |
-| caption         | 12px  | 500    | 1.40        | 0              | Tags, badges, pills                |
-| micro           | 10px  | 600    | 1.30        | 0.4px          | ALL-CAPS labels (use sparingly)    |
-| button          | 13px  | 700    | 1.0         | 0              | All button labels                  |
-| score-display   | 22px  | 800    | 1.0         | -1px           | Climate score numbers              |
+### Type Scale (Bloomberg Terminal Hierarchy)
+
+| Role              | Size    | Weight | Font    | Tracking    | Use                                   |
+|-------------------|---------|--------|---------|-------------|---------------------------------------|
+| Page title        | 28–34px | 800    | Inter   | -0.04em     | Hero headlines, page H1               |
+| Section heading   | 20–24px | 700    | Inter   | -0.025em    | Panel headers, section titles         |
+| Card title        | 14–16px | 700    | Inter   | -0.015em    | Card headers, entity names            |
+| Body text         | 12–13px | 400    | Inter   | 0           | Descriptions, body content            |
+| Label / Meta      | 11px    | 500    | Inter   | 0           | UI labels, secondary info             |
+| Table row         | 12px    | 400    | Inter   | 0           | Table body text                       |
+| Caption           | 10px    | 600    | Inter   | +0.08em     | Tags, chip labels, micro-categories   |
+| Bloomberg label   | 8–10px  | 700    | IBM Plex Mono | +0.10em | ALL-CAPS section eyebrows, data labels |
+| Data value        | 13–18px | 700    | IBM Plex Mono | +0.01em | KPI values, prices, metrics           |
+| Score number      | 18–28px | 800    | IBM Plex Mono | -0.03em | Climate scores, large display numbers |
+| Terminal text     | 11–12px | 500    | IBM Plex Mono | 0       | Code, IDs, table data columns         |
 
 ### Typography Rules
 
-- **Negative tracking on display.** Every heading ≥18px gets negative letter-spacing.
-- **No uppercase section headers.** Headers use sentence case with `font-weight: 700`. `text-transform: uppercase` with `letter-spacing` creates dashboard feel — forbidden.
-- **Post body is 14–15px / 1.65 line-height / weight 400.** This creates readable editorial content, not cramped dashboard text.
-- **Author names are 14px / weight 700 / letter-spacing: -0.2px.** Strong but not loud.
-- **Score numbers use font-weight 800 with letter-spacing: -1px.** Numbers should feel designed, not default.
+- **ALL-CAPS labels in IBM Plex Mono** for eyebrows, section categories, data table headers — this is Bloomberg DNA
+- **Negative letter-spacing on headings ≥18px** — tighter tracking = institutional weight
+- **Data numbers ALWAYS in IBM Plex Mono** — never Inter for prices, scores, metrics
+- **Body text 12–13px at 1.5–1.6 line-height** — maximum density without sacrificing readability
+- **No decorative typography** — no mixed case word-art, no gradient text, no glowing text
 
 ---
 
-## rounded (border-radius)
+## Geometry (Border Radius)
 
-| Token  | Value  | Use                                             |
-|--------|--------|-------------------------------------------------|
-| xs     | 4px    | Status chips, tiny badges                       |
-| sm     | 6px    | Tab active states, small internal elements      |
-| md     | 8px    | Buttons (primary action)                        |
-| default | 10px  | Form inputs, comment inputs                     |
-| lg     | 14px   | Post cards, sidebar cards, modals               |
-| xl     | 20px   | Pill buttons (follow, sign in), search input    |
-| full   | 9999px | Avatar circles, tag pills                       |
+Bloomberg Terminal aesthetic: **sharp or minimal radius only**.
 
-**Rule:** Post cards use `14px`. Buttons use `8px` (not pill). Follow/join CTAs use `20px` pill. Avatars always `9999px`.
+| Token    | Value | Use                                                    |
+|----------|-------|--------------------------------------------------------|
+| Zero     | 0px   | Table cells, data grids, ticker strips                 |
+| xs       | 1px   | Nothing visible                                        |
+| sm       | 2px   | Micro badges, tiny chips                               |
+| default  | 3px   | All standard components — cards, panels, buttons       |
+| md       | 4px   | Dropdowns, nav items                                   |
+| lg       | 6px   | Only for interactive elements that benefit from softness |
 
----
-
-## spacing
-
-Base unit: `4px`.
-
-| Token   | Value | Use                               |
-|---------|-------|-----------------------------------|
-| xxs     | 4px   | Icon-to-text gap, tight inline    |
-| xs      | 8px   | Between badge elements            |
-| sm      | 12px  | Between nav items                 |
-| md      | 14px  | Card internal padding             |
-| lg      | 16px  | Standard component gap            |
-| xl      | 20px  | Section gap within panel          |
-| xxl     | 24px  | Gap between major feed sections   |
-| section | 32px  | Gap between layout sections       |
+**Rule**: Maximum `3px` on all cards, panels, buttons. The `border-radius: 0 !important` override in style.css enforces this globally. Only override with explicit justification.
 
 ---
 
-## elevation
+## Spacing
 
-Linear-inspired surface ladder — depth via background, never drop-shadow on chrome.
+Base unit: `4px`. Bloomberg-style density.
 
-| Level | Background    | Border                           | Use                              |
-|-------|---------------|----------------------------------|----------------------------------|
-| 0     | `--bg`        | none                             | Page background                  |
-| 1     | `--surface`   | `rgba(255,255,255,0.055)` 1px   | Cards, posts, panels             |
-| 2     | `--surface-2` | `rgba(255,255,255,0.055)` 1px   | Comments, hover states, dropdowns |
-| 3     | `--surface-3` | `rgba(255,255,255,0.10)` 1px    | Modals, overlays, pickers        |
-| focus | n/a           | `rgba(74,222,128,0.22)` 2px     | Input focus, active selection    |
+| Token   | Value | Use                                      |
+|---------|-------|------------------------------------------|
+| xxs     | 4px   | Icon-to-text gap, inline tight           |
+| xs      | 8px   | Between badge elements                   |
+| sm      | 10px  | Nav item internal padding                |
+| md      | 14px  | Card internal padding                    |
+| lg      | 16px  | Standard gap between components          |
+| xl      | 20px  | Between major card sections              |
+| xxl     | 24px  | Page section internal gap                |
+| section | 40px  | Between major page sections (not 80px+)  |
 
-**Rule:** Never use `box-shadow` on nav, cards, or sidebar items. Elevation = surface color change only.
+**Rule**: No section has `padding: 80px 0` unless it's a homepage hero. Inner pages use `24–40px` section gaps. Information density is a feature.
 
 ---
 
-## components
+## Elevation
 
-### Navigation (top bar)
+Surface ladder — no drop shadows on chrome.
 
-```
-height: 62px
-background: rgba(12,12,14,0.88) with backdrop-filter: blur(24px)
-border-bottom: 1px solid rgba(255,255,255,0.055)
+| Level  | Background    | Border         | Use                                          |
+|--------|---------------|----------------|----------------------------------------------|
+| 0      | `--bg`        | none           | Page canvas                                  |
+| 1      | `--surface`   | `--border` 1px | Cards, panels, nav, sidebar items            |
+| 2      | `--surface-2` | `--border` 1px | Hovered rows, expanded items, sub-panels     |
+| 3      | `--surface-3` | `--border-strong` 1px | Tooltips, dropdowns, active panels |
+| 4      | `--surface-4` | `--border-strong` 1px | Focused inputs, selected table rows |
 
-Logo: 15px / weight 700 / letter-spacing: -0.3px
-Sub-label: 9px / weight 600 / letter-spacing: 2px / uppercase / color: #4ADE80
+**Rule**: NEVER `box-shadow` on UI chrome. Elevation = background darkening. Only allowable `box-shadow`: deep overlay modals (0 16px 48px rgba(0,0,0,0.6)) and they should be rare.
 
-Search input: height 36px / border-radius 18px / background --surface-2
-Nav links: 13.5px / weight 500 / border-radius 9px / horizontal row with gap 6px
-  - Default: color --text-muted
-  - Hover: background --surface-2 / color --text
-  - Active: background rgba(74,222,128,0.09) / color #4ADE80 / weight 600
+---
 
-Sign in: border 1px --border / border-radius 20px / padding 7px 16px
-Join: background #4ADE80 / color #052E16 / border-radius 20px / weight 700
-```
+## Components
 
-### Post Card
+### Navigation (Top Bar)
 
 ```
-background: --surface
-border: 1px solid rgba(255,255,255,0.055)
-border-radius: 14px
-margin-bottom: 10px
+height: 44px
+background: var(--bg) — SOLID BLACK, no glass
+border-bottom: 1px solid var(--border)
+position: sticky; top: 0; z-index: 200
 
-On hover:
-  border-color: rgba(255,255,255,0.10)
+Logo: IBM Plex Mono / 11px / weight 700 / letter-spacing 0.06em / uppercase
+Accent label: IBM Plex Mono / 9px / weight 700 / letter-spacing 1.2px / uppercase / color: --amber
 
-Header (author row):
-  padding: 15px 15px 0
-  avatar: 44x44px circle
-  author name: 14px / weight 700 / letter-spacing: -0.2px
-  meta row: 11.5px / color --text-muted
-  verified badge: color #4ADE80
+Nav links:
+  font-size: 11px / weight 500 / color: --text-muted
+  padding: 4px 10px / border-radius: 2px
+  hover: background --surface-2 / color --text
+  active: color --amber / border-bottom: 2px solid --amber
 
-Body:
-  padding: 10px 15px 0
-  font-size: 14px / line-height: 1.7 / color: --text-2
-  clamped at 5 lines with "...see more" in #4ADE80
-
-Tags:
-  font-size: 12px / weight 600 / color: --blue
-
-Action bar:
-  border-top: 1px solid rgba(255,255,255,0.055)
-  buttons: 12.5px / weight 500 / color --text-muted / border-radius 10px
-  On hover: background --surface-2
-
-Type badges:
-  solution:  background rgba(74,222,128,0.1)   / color #4ADE80
-  funding:   background rgba(251,191,36,0.1)   / color #FBBF24
-  research:  background rgba(167,139,250,0.1)  / color #A78BFA
-  update:    background rgba(160,160,168,0.07) / color --text-muted
+Right side: Avatar 28×28 / border-radius 2px
+Theme toggle: simple icon button
 ```
 
-### Left Sidebar Navigation
+### Cards / Panels
 
 ```
-Each item:
-  padding: 9px 11px
-  border-radius: 10px
-  font-size: 13.5px / weight 500
+background: var(--surface)
+border: 1px solid var(--border)
+border-radius: 3px (or 0 for table-style panels)
+NO box-shadow
+
+Accent left-border variant:
+  border-left: 3px solid var(--amber)  — used for hero panels, featured items
+
+Hover state:
+  background: var(--surface-2)
+  border-color: var(--border-strong)
+
+Table inside card:
+  width: 100%
+  header: 10px / IBM Plex Mono / weight 700 / ALL-CAPS / --text-muted / letter-spacing 0.08em
+  row: 12px / Inter / border-bottom: 1px solid var(--border)
+  row hover: background --surface-2
+```
+
+### Data Tables (Bloomberg Style)
+
+```
+table { width: 100%; border-collapse: collapse; }
+
+thead th {
+  font-family: IBM Plex Mono
+  font-size: 10px
+  font-weight: 700
+  letter-spacing: 0.08em
+  text-transform: uppercase
   color: --text-muted
-  NO border, NO background by default
-
-Hover:
-  background: --surface-2
-  color: --text
-
-Active:
-  background: rgba(74,222,128,0.09)
-  color: #4ADE80
-  weight: 600
-
-Section dividers: NONE — just natural spacing
-```
-
-### Right Sidebar Widgets
-
-```
-Widget container:
+  padding: 8px 14px
+  border-bottom: 1px solid --border
   background: --surface
-  border: 1px solid rgba(255,255,255,0.055)
-  border-radius: 14px
-  padding: 14px
+  text-align: left
+}
 
-Widget title:
-  font-size: 13px / weight 700 / color: --text / letter-spacing: -0.2px
-  NOT uppercase, NOT small-caps, NOT muted color
+tbody tr {
+  border-bottom: 1px solid --border
+  transition: background 0.12s ease
+}
 
-"See all" link:
-  font-size: 11.5px / weight 600 / color: #4ADE80
+tbody tr:hover { background: --surface-2 }
 
-Leaderboard rank medals:
-  #1: #FBBF24 (gold)
-  #2: #94A3B8 (silver)
-  #3: #CD7C3E (bronze)
-  4+: --text-muted
+tbody td {
+  padding: 8px 14px
+  font-size: 12px
+  color: --text
+}
 
-Leaderboard tabs (Weekly/Monthly/All Time):
-  Default: 1px solid --border / color --text-muted
-  Active: background rgba(74,222,128,0.09) / color #4ADE80 / border rgba(74,222,128,0.22)
+Data value cells: IBM Plex Mono / 12px / --amber or --cyan
 ```
 
 ### Buttons
 
 ```
-Primary CTA (Post, Submit, Confirm):
-  background: #4ADE80
-  color: #052E16
-  border-radius: 8px
+Primary (CTA):
+  background: --amber (#FF6600)
+  color: #000000
   padding: 7px 20px
-  font-size: 13px / weight 700
+  border-radius: 2px (NOT rounded pill)
+  font-family: IBM Plex Mono
+  font-size: 11px / weight 700
+  letter-spacing: 0.06em
+  text-transform: uppercase
+  border: none
+  hover: background --amber-dim
 
-Follow / Join (pill shape):
-  background: #4ADE80 on hover
-  border: 1px solid rgba(255,255,255,0.10) default
-  border-radius: 20px
-  padding: 5px 13px
-  font-size: 11.5px / weight 600
+Outline:
+  background: none
+  border: 1px solid --border-strong
+  color: --text-2
+  padding: 6px 18px
+  border-radius: 2px
+  font-family: IBM Plex Mono
+  font-size: 11px / weight 600
+  letter-spacing: 0.06em
+  text-transform: uppercase
+  hover: border-color --amber / color --amber
 
-Secondary (Cancel):
-  background: --surface-2
-  border: 1px solid --border
-  border-radius: 20px
-
-Reaction/action buttons (in post card):
-  No background
-  border-radius: 10px
-  padding: 8px 4px
-  color: --text-muted
-  Hover: background --surface-2
+Destructive / Alert:
+  background: rgba(255,51,51,0.08)
+  border: 1px solid rgba(255,51,51,0.25)
+  color: --red
 ```
 
-### Feed Filter Tabs
+### KPI / Metric Cards
 
 ```
-Container: background --surface / border --border / border-radius 14px / padding 4px
-Each tab: border-radius 10px / font-size 12.5px / weight 500
-Default: color --text-muted
-Active: background --surface-2 / color --text / weight 600
+background: --surface
+border: 1px solid --border
+border-radius: 0 (table-grid style)
+
+Label: IBM Plex Mono / 9px / weight 500 / letter-spacing 0.08em / uppercase / --text-muted
+Value: IBM Plex Mono / 18–24px / weight 700 / letter-spacing -0.03em / --amber or --cyan
+Delta: 11px / weight 700 / --green (positive) or --red (negative)
+
+Grid layout: adjacent KPIs separated by 1px --border vertical lines (not gaps)
 ```
 
-### Modals / Overlays
+### Status Badges / Chips
 
 ```
-Overlay: background rgba(0,0,0,0.72) with backdrop-filter: blur(4px)
-Modal: background --surface / border 1px solid --border-strong
-       border-radius 14px
-       animation: scale(0.96) → scale(1) + translateY(12px → 0) in 200ms cubic-bezier(0.4,0,0.2,1)
-Modal title: 15px / weight 700 / letter-spacing -0.2px
+Default: background --surface-3 / color --text-2 / border 1px solid --border
+Positive: background rgba(0,204,68,0.08) / color --green / border rgba(0,204,68,0.2)
+Negative: background rgba(255,51,51,0.08) / color --red / border rgba(255,51,51,0.2)
+Amber: background rgba(255,102,0,0.08) / color --amber / border rgba(255,102,0,0.2)
+
+Font: IBM Plex Mono / 8–9px / weight 700 / letter-spacing 0.1em / uppercase
+Padding: 2px 7px
+Border-radius: 2px (NEVER pill)
 ```
 
-### Score Ring (Profile)
+### Form Inputs
 
 ```
-SVG circle stroke: animates to #4ADE80 (green) at score≥80, #FBBF24 (gold) at score≥50, #F87171 (red) below
-Score number: 22px / weight 800 / letter-spacing -1px / color #4ADE80
-Score label: 9px / weight 600 / uppercase / letter-spacing 0.9px / color --text-muted
+background: --surface (dark) or #fff (light)
+border: 1px solid --border
+border-radius: 2px
+padding: 8px 12px
+font-size: 13px
+color: --text
+
+focus:
+  outline: none
+  border-color: --amber
+  box-shadow: none (no glow ring)
+
+placeholder: color --text-muted
+```
+
+### Progress / Score Indicators
+
+```
+Bar:
+  height: 3px (thin, terminal style)
+  background: --border (track)
+  fill: --amber or --green or --red based on value
+  NO border-radius on bar
+
+Ring (SVG):
+  stroke: --amber (>75%), --green (50-75%), --red (<50%)
+  value text: IBM Plex Mono / 16–22px / weight 800 / letter-spacing -0.03em
+```
+
+### Live / Alert Indicators
+
+```
+Live dot:
+  width: 5px / height: 5px / border-radius: 50%
+  background: --green
+  animation: pulse (box-shadow only, no scale, no glow)
+
+Alert banner:
+  background: rgba(255,51,51,0.07)
+  border-bottom: 1px solid rgba(255,51,51,0.2)
+  font-size: 11px / IBM Plex Mono
+
+Ticker strip:
+  height: 36px
+  background: --surface
+  border-top/bottom: 1px solid --border
+  Label tag: background --amber / color #000 / IBM Plex Mono / 9px / uppercase
+  Items: IBM Plex Mono / 11px / --text-2
+  Values: --amber / weight 700
 ```
 
 ---
 
-## layout
+## Layout System
 
-### 3-Column Grid
+### Page Architecture
 
 ```
-max-width: 1200px
-columns: 260px | 1fr | 298px
-gap: 18px
-padding: 0 16px
-responsive:
-  ≤1100px: 240px | 1fr (right panel hidden)
-  ≤720px:  1fr   (left panel hidden, mobile view)
+Standard page:
+  max-width: 1160–1560px depending on content density
+  margin: 0 auto
+  padding: 0 20px
+
+Terminal / Dashboard:
+  Full-width workspace
+  Left rail: 220px (collapsible)
+  Main panel: 1fr
+  Right panel: 240–320px (optional)
+
+Three-column:
+  Left sidebar: 220–260px
+  Main: 1fr
+  Right panel: 280–320px
+  gap: 16–20px
+
+Two-column:
+  Left: 220–280px
+  Main: 1fr
+  gap: 16–20px
 ```
 
-### Content Hierarchy Rule
+### Section Spacing
 
-**Content dominates. Chrome recedes.**
-- Post text is `--text-2` (secondary color) — the content doesn't compete with UI chrome
-- Post author is `--text` (primary) — person > content
-- Meta (time, views) is `--text-muted` — lowest priority
-- Actions (React, Comment) are `--text-muted` — available but not distracting
+- **Homepage hero**: 80–100px vertical padding
+- **Homepage sections**: 60–80px vertical padding  
+- **Inner page heroes**: 28–40px vertical padding
+- **Dashboard panels**: 14–20px internal padding
+- **Table rows**: 8–10px vertical padding
+- **Card internal**: 14–20px padding
+
+**Rule**: Inner pages are WORKSPACES, not landing pages. They use terminal-style spacing, not marketing-site spacing.
 
 ---
 
-## motion
+## Information Architecture Principles
 
-All transitions: `0.16s cubic-bezier(0.4, 0, 0.2, 1)` (Material standard easing)
+### Bloomberg DNA Rules
 
-```
-Hover states:     background / border-color transition at --t
-Modal open:       scale(0.96)→scale(1) + translateY(12px→0) at 200ms
-Score ring:       stroke-dashoffset animated at 600ms ease
-Challenge bars:   width animated at 500ms ease
-Battle bars:      width animated at 600ms ease
-Score float:      opacity 0→1→0 + translateY 0→-48px at 1600ms ease
-Toast:            translateY(80px)→translateY(0) at 300ms cubic-bezier(0.4,0,0.2,1)
-Reaction picker:  scale(1.15) + translateY(-2px) on hover
+1. **Data at 12px or smaller is acceptable** — professionals read dense screens
+2. **Monospace numbers always** — IBM Plex Mono for every metric, score, price, stat
+3. **ALL-CAPS labels in mono** — section eyebrows, table headers, metric labels
+4. **Amber for live/active** — anything "live" or "active" should be amber
+5. **No empty state decorations** — no cute SVG illustrations for empty states; use simple text
+6. **Borders create structure** — use 1px lines to separate zones, not margins/padding alone
+7. **Left-border accent** — `border-left: 3px solid --amber` on featured/pinned items is acceptable; it's Bloomberg style
+8. **Ticker strips** — scrolling data tickers are a Bloomberg staple; use them where relevant
+
+### Anti-Patterns (Absolutely Forbidden)
+
+- Rounded corners > 6px anywhere except avatar circles
+- `backdrop-filter: blur()` on any surface
+- Gradient text effects
+- `transform: scale()` hover effects
+- Glowing box-shadows on cards
+- Startup-style "pill" buttons (border-radius > 6px)
+- Emoji icons in UI (SVG icons or IBM Plex Mono symbols only)
+- Large hero sections with 100vh full-screen takeovers on inner pages
+- Marketing-site section padding (80px+) on analytics/dashboard pages
+- Colorful gradient hero backgrounds
+- Social-media card aesthetics for community features
+- Rounded avatar squares (use 2px radius, not 50% except community profile avatars)
+
+---
+
+## Theme System
+
+### Dark Mode (Bloomberg Terminal — Default)
+
+The canonical institutional terminal experience.
+- Canvas: `#000000` pure matte black
+- Primary accent: Bloomberg Amber `#FF6600`
+
+### Light Mode (Bloomberg Day Mode)
+
+Financial report / executive presentation aesthetic.
+- Canvas: `#FFFFFF` pure white
+- Surfaces: `#EBEBEB`, `#E0E0E0`
+- Text: `#000000` and `#333333`
+- Accent: Bloomberg Amber `#FF6600` (consistent across themes)
+
+### Theme Persistence
+
+```javascript
+// On load (before first paint):
+(function(){
+  var t = localStorage.getItem('cx-theme') || 'dark';
+  if(t === 'light') document.documentElement.setAttribute('data-theme','light');
+})();
+
+// On toggle:
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('cx-theme', t);
+}
 ```
 
 ---
 
-## do / don't
+## Motion
 
-### DO
+All transitions: `0.12s ease` (faster than typical — terminal responsiveness)
 
-- Use `rgba(255,255,255, x)` borders — never hardcoded hex border colors
-- Use `--surface` / `--surface-2` / `--surface-3` for elevation hierarchy
-- Use negative letter-spacing on all headings ≥ 18px
-- Keep section headers in sentence case, weight 700, `--text` color
-- Use `#4ADE80` as the SINGLE accent — scarcely, meaningfully
-- Use `backdrop-filter: blur()` on the navigation for frosted glass
-- Use `cubic-bezier(0.4, 0, 0.2, 1)` for all transitions
-- Make content text `--text-2` (slightly muted) and author/title text `--text` (full brightness)
-- Border-radius 14px on cards, 20px on pill buttons, 8px on action buttons
+```
+Hover states:       background / border-color at 0.12s ease
+Row highlights:     background at 0.10s ease
+Toast / alerts:     translateY(20px→0) at 0.20s ease
+Modal open:         opacity(0→1) + translateY(8px→0) at 0.18s ease
+Score animations:   stroke-dashoffset at 0.6s ease
+Chart animations:   0.4–0.8s ease
+Live data update:   color flash 0.3s ease (--amber flashes --text, returns to --amber)
 
-### DON'T
-
-- DON'T use `text-transform: uppercase` + `letter-spacing` on widget headers → reads as dashboard
-- DON'T use `#00C896` (neon cyan) → reads as "AI / crypto UI"
-- DON'T use `box-shadow` on cards, nav, or sidebar items → use surface ladder instead
-- DON'T use `JetBrains Mono` or monospace for score numbers in UI → use Inter weight 800
-- DON'T use explicit colored hex borders like `#1A2B40` → use rgba white overlays
-- DON'T make the nav bg solid opaque → use backdrop-filter frosted glass
-- DON'T use `#060E1C` or cold navy backgrounds → use warm charcoal `#0C0C0E`
-- DON'T use gradient backgrounds on cards → flat surface, subtle border only
-- DON'T use multiple accent colors → single green accent only
-- DON'T make the feed feel like a dashboard with labeled widgets → let content breathe
+FORBIDDEN:
+- transform: translateY on hover (no lift effects)
+- transform: scale on hover
+- Any animation > 1s for UI interactions
+- Keyframe glow / pulse on cards
+- Floating / levitating elements
+```
 
 ---
 
-## reference design systems (blended)
+## Data Visualization
 
-This design system draws from the following `awesome-design-md` sources:
+### Chart Standards
 
-| Brand       | What we borrow                                                       |
-|-------------|----------------------------------------------------------------------|
-| **Linear**  | Surface ladder, hairline borders, near-black canvas philosophy       |
-| **Vercel**  | Geist/Inter typography, negative letter-spacing, stark precision     |
-| **Superhuman** | Premium whitespace, single-CTA discipline, editorial density     |
-| **Apple**   | Content-first hierarchy, chrome-recedes principle, product-screenshot dominant |
-| **Notion**  | Warm dark navy hero, workspace feel, collaborative tone             |
-| **xAI**     | Near-black canvas, minimal chrome, engineered restraint             |
+- Background: `--surface` (not transparent, not white)
+- Grid lines: `--border` at 0.5–1px
+- Axes: `--text-muted` / 10px IBM Plex Mono
+- Legend: 10px IBM Plex Mono / --text-muted
+- Primary line/bar: `--amber` or `--cyan`
+- Secondary: `--blue`, `--green`, `--red`
+- Annotations: IBM Plex Mono / 10px
 
-Source repository: https://github.com/VoltAgent/awesome-design-md
+### Risk Color Scale
+
+```
+Critical:  --red    (#FF3333) — >80% risk score
+High:      --amber  (#FF6600) — 60–80% risk score  
+Medium:    #92400E            — 40–60% risk score
+Low:       --green  (#00CC44) — <40% risk score
+```
+
+### Globe / Map Standards
+
+- Base map: dark institutional palette, no bright country fills
+- Overlays: amber/red/cyan for risk layers
+- Country hover tooltips: `--surface-3` background, `--amber` data values
+- Asset markers: `--amber` for primary, `--cyan` for secondary
+- Status bar below map: IBM Plex Mono / 9px / ALL-CAPS / --text-muted
+
+---
+
+## Reference Implementation
+
+The canonical implementation files:
+- `style.css` — Global design tokens and base styles
+- `institutional.css` — Component library and shared patterns
+- `dashboard.html` — Reference terminal implementation
+- `simulation.html` — Reference full-screen workspace implementation
+- `community.html` — Reference three-column institutional layout
+- `leaderboard.html` — Reference data table implementation
+
+All new pages must match the visual standard of these reference implementations.

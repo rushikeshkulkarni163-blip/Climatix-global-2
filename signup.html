@@ -6,455 +6,178 @@
   <title>Create Account · Climactix Global</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --primary:        #0A1F44;
-      --primary-dark:   #07152E;
-      --text:           #0D1117;
-      --text-2:         #333333;
-      --muted:          #555555;
-      --border:         #D1D5DB;
-      --border-focus:   #2F80ED;
-      --bg:             #F8FAFC;
-      --white:          #FFFFFF;
-      --success:        #16A34A;
-      --error-bg:       #FFF5F5;
-      --error-border:   #FCA5A5;
-      --error-text:     #B91C1C;
-      --panel-bg:       #0A1F44;
-      --panel-border:   #2C2C2C;
-      --panel-muted:    rgba(255,255,255,0.50);
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#000000;--bg1:#0F0F0F;--bg2:#1A1A1A;--bg3:#242424;
+      --bd:#2C2C2C;--bd2:#333333;
+      --tx:#FFFFFF;--tx2:#888888;--tx3:#555555;
+      --amb:#FF6600;--amb-dim:#CC5200;--amb-glow:rgba(255,102,0,0.10);
+      --grn:#00CC44;--red:#FF3333;
+      --font:'Inter',system-ui,sans-serif;
+      --mono:'IBM Plex Mono',monospace;
     }
+    html,body{height:100%;-webkit-font-smoothing:antialiased}
+    body{font-family:var(--font);background:var(--bg);color:var(--tx);display:grid;grid-template-columns:380px 1fr;min-height:100vh}
 
-    html { height: 100%; }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
+    /* ── LEFT PANEL ── */
+    .panel-left{
+      background:var(--bg1);border-right:1px solid var(--bd);
+      display:flex;flex-direction:column;padding:32px 36px;position:relative;overflow:hidden;
+    }
+    .panel-left::before{
+      content:'';position:absolute;inset:0;
+      background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);
+      background-size:40px 40px;opacity:0.25;pointer-events:none;
     }
 
-    /* ── LEFT PANEL ─────────────────────────────────────────── */
-    .panel-left {
-      background: var(--panel-bg);
-      display: flex;
-      flex-direction: column;
-      padding: 48px 40px;
-      position: relative;
-      overflow: hidden;
+    .pl-brand{display:flex;align-items:center;gap:10px;margin-bottom:48px;position:relative;z-index:1}
+    .pl-brand-logo{width:28px;height:28px;object-fit:contain;filter:brightness(0) invert(1)}
+    .pl-brand-name{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--tx);letter-spacing:.08em;text-transform:uppercase}
+
+    .pl-content{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1}
+
+    .pl-eyebrow{
+      font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);
+      letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px;
+      display:flex;align-items:center;gap:8px;
     }
-    .panel-left::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
+    .pl-eyebrow::before{content:'';display:inline-block;width:20px;height:1px;background:var(--amb)}
+
+    .pl-heading{font-size:20px;font-weight:800;color:var(--tx);line-height:1.25;letter-spacing:-.025em;margin-bottom:12px}
+    .pl-sub{font-size:12px;color:var(--tx2);line-height:1.65;margin-bottom:24px}
+
+    .pl-checklist{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+    .pl-check{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--tx2);line-height:1.5}
+    .pl-check-icon{
+      width:16px;height:16px;border-radius:2px;background:var(--amb-glow);
+      border:1px solid rgba(255,102,0,0.25);display:flex;align-items:center;
+      justify-content:center;flex-shrink:0;font-size:9px;margin-top:1px;color:var(--amb);
     }
 
-    .pl-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 56px;
-      position: relative;
-      z-index: 1;
+    .pl-frameworks{display:flex;flex-wrap:wrap;gap:5px}
+    .pl-fw-label{
+      font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx3);
+      letter-spacing:.10em;text-transform:uppercase;width:100%;margin-bottom:6px;
     }
-    .pl-brand-logo {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-      filter: brightness(0) invert(1);
-    }
-    .pl-brand-name {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.01em;
+    .pl-fw-tag{
+      font-family:var(--mono);font-size:9px;font-weight:600;color:var(--tx2);
+      background:var(--bg2);border:1px solid var(--bd);padding:3px 8px;border-radius:2px;
+      letter-spacing:.04em;text-transform:uppercase;
     }
 
-    .pl-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      z-index: 1;
+    .pl-footer{
+      position:relative;z-index:1;padding-top:20px;border-top:1px solid var(--bd);
+      display:flex;gap:16px;flex-wrap:wrap;margin-top:24px;
     }
+    .pl-footer a{font-size:11px;color:var(--tx3);text-decoration:none;transition:color .15s}
+    .pl-footer a:hover{color:var(--tx2)}
 
-    .pl-eyebrow {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(64,168,220,0.8);
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    /* ── RIGHT FORM PANEL ── */
+    .panel-right{
+      background:var(--bg);display:flex;align-items:center;justify-content:center;
+      padding:48px 48px;overflow-y:auto;min-height:100vh;
     }
-    .pl-eyebrow::before {
-      content: '';
-      display: inline-block;
-      width: 20px;
-      height: 1px;
-      background: rgba(64,168,220,0.6);
-    }
+    .auth-form-wrap{width:100%;max-width:440px}
 
-    .pl-heading {
-      font-size: 26px;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.2;
-      letter-spacing: -0.03em;
-      margin-bottom: 16px;
-    }
+    .auth-header{margin-bottom:28px}
+    .auth-header-eyebrow{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+    .auth-title{font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.025em;margin-bottom:6px}
+    .auth-sub{font-size:12px;color:var(--tx2);line-height:1.5}
 
-    .pl-sub {
-      font-size: 13.5px;
-      color: var(--panel-muted);
-      line-height: 1.7;
-      margin-bottom: 40px;
+    .alert{
+      border-radius:2px;padding:9px 12px;font-size:12px;font-weight:500;
+      margin-bottom:16px;display:none;line-height:1.5;
     }
-
-    .pl-checklist {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 40px;
-    }
-    .pl-check {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 13px;
-      color: rgba(255,255,255,0.75);
-      line-height: 1.5;
-    }
-    .pl-check-icon {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: rgba(64,168,220,0.15);
-      border: 1px solid rgba(64,168,220,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 10px;
-      margin-top: 1px;
-      color: rgba(64,168,220,0.9);
-    }
-
-    .pl-frameworks {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .pl-fw-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--panel-muted);
-      width: 100%;
-      margin-bottom: 4px;
-    }
-    .pl-fw-tag {
-      font-size: 10px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.5);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.09);
-      padding: 3px 9px;
-      border-radius: 3px;
-      letter-spacing: 0.03em;
-    }
-
-    .pl-footer {
-      position: relative;
-      z-index: 1;
-      padding-top: 28px;
-      border-top: 1px solid var(--panel-border);
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .pl-footer a {
-      font-size: 11px;
-      color: var(--panel-muted);
-      text-decoration: none;
-    }
-    .pl-footer a:hover { color: rgba(255,255,255,0.75); }
-
-    /* ── RIGHT PANEL ────────────────────────────────────────── */
-    .panel-right {
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 48px 48px;
-      overflow-y: auto;
-      min-height: 100vh;
-    }
-
-    .auth-form-wrap {
-      width: 100%;
-      max-width: 460px;
-    }
-
-    .auth-header { margin-bottom: 32px; }
-    .auth-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.02em;
-      margin-bottom: 6px;
-    }
-    .auth-sub {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    .alert.error{background:rgba(255,51,51,0.08);color:#FF6666;border:1px solid rgba(255,51,51,0.20);border-left:3px solid #FF3333}
+    .alert.show{display:block}
 
     /* Form */
-    .field { margin-bottom: 16px; }
-    .field label {
-      display: block;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--text-2);
-      margin-bottom: 6px;
+    .field{margin-bottom:14px}
+    .field label{
+      display:block;font-family:var(--mono);font-size:10px;font-weight:700;
+      color:var(--tx2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;
     }
-    .field-opt {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 400;
-      margin-left: 4px;
+    .field-opt{font-family:var(--font);font-size:10px;color:var(--tx3);font-weight:400;margin-left:4px;text-transform:none;letter-spacing:0}
+    .field input,.field select{
+      width:100%;padding:8px 12px;
+      border:1px solid var(--bd);border-radius:2px;
+      font-size:13px;font-family:var(--font);color:var(--tx);
+      background:var(--bg1);outline:none;
+      transition:border-color .15s,background .15s;
     }
-    .field input, .field select {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 4px;
-      font-size: 13.5px;
-      font-family: 'Inter', sans-serif;
-      color: var(--text);
-      background: var(--white);
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .field input::placeholder { color: #888888; }
-    .field input:focus, .field select:focus {
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px rgba(10,31,68,0.10);
-    }
+    .field input::placeholder{color:var(--tx3)}
+    .field input:focus,.field select:focus{border-color:var(--amb);background:var(--bg2)}
+    .field select option{background:var(--bg2);color:var(--tx)}
 
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
     /* Password strength */
-    .pw-strength-bar {
-      display: flex;
-      gap: 3px;
-      margin-top: 8px;
-    }
-    .psb-seg {
-      flex: 1;
-      height: 3px;
-      background: var(--border);
-      border-radius: 2px;
-      transition: background 0.2s;
-    }
-    .psb-seg.weak   { background: #FF3333; }
-    .psb-seg.fair   { background: #FF6600; }
-    .psb-seg.strong { background: #00CC44; }
+    .pw-strength-bar{display:flex;gap:3px;margin-top:6px}
+    .psb-seg{flex:1;height:2px;background:var(--bd);border-radius:1px;transition:background .2s}
+    .psb-seg.weak{background:var(--red)}
+    .psb-seg.fair{background:var(--amb)}
+    .psb-seg.strong{background:var(--grn)}
 
-    .pw-rules {
-      margin-top: 8px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px 16px;
-    }
-    .pw-rule {
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: color 0.2s;
-    }
-    .pw-rule.met { color: var(--success); }
-    .pw-rule-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--border);
-      flex-shrink: 0;
-      transition: background 0.2s;
-    }
-    .pw-rule.met .pw-rule-dot { background: var(--success); }
+    .pw-rules{margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+    .pw-rule{font-family:var(--mono);font-size:10px;color:var(--tx3);display:flex;align-items:center;gap:5px;transition:color .2s}
+    .pw-rule.met{color:var(--grn)}
+    .pw-rule-dot{width:4px;height:4px;border-radius:50%;background:var(--bd);flex-shrink:0;transition:background .2s}
+    .pw-rule.met .pw-rule-dot{background:var(--grn)}
 
-    .terms-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin: 18px 0;
-    }
-    .terms-row input[type="checkbox"] {
-      width: 15px;
-      height: 15px;
-      accent-color: var(--primary-dark);
-      cursor: pointer;
-      margin-top: 1px;
-      flex-shrink: 0;
-    }
-    .terms-row label {
-      font-size: 12.5px;
-      color: var(--muted);
-      cursor: pointer;
-      line-height: 1.5;
-      font-weight: 400;
-    }
-    .terms-row a { color: var(--primary); text-decoration: none; font-weight: 600; }
-    .terms-row a:hover { text-decoration: underline; }
+    .terms-row{display:flex;align-items:flex-start;gap:10px;margin:16px 0}
+    .terms-row input[type="checkbox"]{width:14px;height:14px;accent-color:var(--amb);cursor:pointer;margin-top:1px;flex-shrink:0}
+    .terms-row label{font-size:11px;color:var(--tx3);cursor:pointer;line-height:1.5}
+    .terms-row a{color:var(--amb);text-decoration:none;font-weight:600}
 
-    .btn-primary {
-      width: 100%;
-      padding: 11px 20px;
-      background: var(--primary-dark);
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: background 0.15s, box-shadow 0.15s;
-      letter-spacing: 0.01em;
+    .btn-primary{
+      width:100%;padding:10px 20px;background:var(--amb);color:#000;border:none;
+      border-radius:2px;font-family:var(--mono);font-size:11px;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .15s;
     }
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary);
-      box-shadow: 0 2px 12px rgba(11,61,46,0.20);
-    }
-    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-primary:hover:not(:disabled){background:var(--amb-dim)}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
 
-    /* Alerts */
-    .alert {
-      border-radius: 4px;
-      padding: 10px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 18px;
-      display: none;
-      line-height: 1.5;
-    }
-    .alert.error { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); border-left: 3px solid var(--error-text); }
-    .alert.show { display: block; }
-
-    .auth-switch {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .auth-switch a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    .auth-switch{text-align:center;margin-top:16px;font-size:12px;color:var(--tx3)}
+    .auth-switch a{color:var(--amb);font-weight:600;text-decoration:none}
 
     /* Success state */
-    .success-view {
-      text-align: center;
-      padding: 16px 0;
+    .success-view{text-align:center;padding:16px 0}
+    .sv-icon-wrap{
+      width:48px;height:48px;border-radius:2px;
+      background:rgba(0,204,68,0.10);border:1px solid rgba(0,204,68,0.25);
+      display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:20px;
     }
-    .sv-icon-wrap {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #ECFDF5;
-      border: 1px solid #86EFAC;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 22px;
+    .sv-title{font-size:20px;font-weight:800;color:var(--tx);letter-spacing:-.02em;margin-bottom:8px}
+    .sv-text{font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:24px}
+    .sv-verify-box{
+      background:rgba(0,204,68,0.06);border:1px solid rgba(0,204,68,0.20);
+      border-left:3px solid var(--grn);border-radius:2px;
+      padding:16px 18px;margin-bottom:16px;text-align:left;
     }
-    .sv-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
+    .sv-verify-box p{font-size:12px;color:#33CC66;margin-bottom:12px;line-height:1.6}
+    .btn-verify{
+      width:100%;padding:10px;background:var(--grn);color:#000;border:none;
+      border-radius:2px;font-family:var(--mono);font-size:11px;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .15s;
     }
-    .sv-text {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 28px;
-    }
-    .sv-verify-box {
-      background: #F0FDF4;
-      border: 1px solid #BBF7D0;
-      border-radius: 4px;
-      padding: 18px 20px;
-      margin-bottom: 16px;
-      text-align: left;
-    }
-    .sv-verify-box p {
-      font-size: 13px;
-      color: #15803D;
-      margin-bottom: 12px;
-      line-height: 1.6;
-    }
-    .btn-verify {
-      width: 100%;
-      padding: 11px;
-      background: #15803D;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .btn-verify:hover { background: #166534; }
+    .btn-verify:hover{background:#00AA33}
 
-    /* Loading */
-    .spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255,255,255,0.35);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.65s linear infinite;
-      vertical-align: middle;
-      margin-right: 7px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin .65s linear infinite;vertical-align:middle;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    @media (max-width: 860px) {
-      body { grid-template-columns: 1fr; }
-      .panel-left { display: none; }
-      .panel-right { padding: 40px 24px; }
-      .two-col { grid-template-columns: 1fr; }
+    @media(max-width:860px){
+      body{grid-template-columns:1fr}
+      .panel-left{display:none}
+      .panel-right{padding:40px 24px}
+      .two-col{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
 
-  <!-- LEFT BRAND PANEL -->
+  <!-- LEFT PANEL -->
   <aside class="panel-left">
     <div class="pl-brand">
       <img src="Climatix_logo.png" alt="Climactix" class="pl-brand-logo" />
@@ -463,28 +186,28 @@
 
     <div class="pl-content">
       <div class="pl-eyebrow">Free access</div>
-      <h1 class="pl-heading">Start your ESG journey today</h1>
+      <h1 class="pl-heading">Institutional ESG intelligence — free to start</h1>
       <p class="pl-sub">Join 2,400+ climate professionals using Climactix to assess, disclose, and improve ESG performance.</p>
 
       <div class="pl-checklist">
         <div class="pl-check">
-          <div class="pl-check-icon"></div>
+          <div class="pl-check-icon">✓</div>
           <div>Full ESG assessment with TCFD, ISSB, and GRI alignment — free</div>
         </div>
         <div class="pl-check">
-          <div class="pl-check-icon"></div>
+          <div class="pl-check-icon">✓</div>
           <div>AI-powered narrative generation for ESG disclosures</div>
         </div>
         <div class="pl-check">
-          <div class="pl-check-icon"></div>
-          <div>Access climate finance community, funding hub, and investor matching</div>
+          <div class="pl-check-icon">✓</div>
+          <div>Climate finance community, funding hub, and investor matching</div>
         </div>
         <div class="pl-check">
-          <div class="pl-check-icon"></div>
+          <div class="pl-check-icon">✓</div>
           <div>Climate Impact Score benchmarked against 2,400+ peers</div>
         </div>
         <div class="pl-check">
-          <div class="pl-check-icon"></div>
+          <div class="pl-check-icon">✓</div>
           <div>No credit card required. No trial. Fully functional.</div>
         </div>
       </div>
@@ -516,8 +239,9 @@
       <!-- FORM VIEW -->
       <div id="formView">
         <div class="auth-header">
-          <h2 class="auth-title">Create your account</h2>
-          <p class="auth-sub">Free access to the full Climactix Global ESG platform.</p>
+          <div class="auth-header-eyebrow">New Account</div>
+          <h2 class="auth-title">Create your workspace</h2>
+          <p class="auth-sub">Free access to the full Climactix Global ESG intelligence platform.</p>
         </div>
 
         <div class="alert error" id="errorAlert"></div>
@@ -547,8 +271,8 @@
               <div class="psb-seg" id="ps4"></div>
             </div>
             <div class="pw-rules">
-              <div class="pw-rule" id="r-length"><span class="pw-rule-dot"></span>At least 8 characters</div>
-              <div class="pw-rule" id="r-upper"><span class="pw-rule-dot"></span>One uppercase letter</div>
+              <div class="pw-rule" id="r-length"><span class="pw-rule-dot"></span>8+ characters</div>
+              <div class="pw-rule" id="r-upper"><span class="pw-rule-dot"></span>Uppercase letter</div>
               <div class="pw-rule" id="r-number"><span class="pw-rule-dot"></span>One number</div>
               <div class="pw-rule" id="r-match"><span class="pw-rule-dot"></span>Passwords match</div>
             </div>
@@ -567,20 +291,20 @@
         </form>
 
         <div class="auth-switch">
-          Already have an account? <a href="login.html">Sign in</a>
+          Already have an account? <a href="login.html">Sign in →</a>
         </div>
       </div>
 
       <!-- SUCCESS VIEW -->
       <div id="successView" style="display:none;" class="success-view">
-        <div class="sv-icon-wrap"></div>
+        <div class="sv-icon-wrap">✓</div>
         <h2 class="sv-title">Account created</h2>
         <p class="sv-text">Welcome to Climactix Global, <strong id="welcomeName"></strong>. Your workspace is ready.</p>
         <div class="sv-verify-box">
           <p>Click below to verify your email address and access the full ESG Assessment platform immediately.</p>
           <button class="btn-verify" id="verifyNowBtn">Verify Email &amp; Access Platform →</button>
         </div>
-        <p style="font-size:12px;color:var(--muted);">In production, a verification link is sent to your registered email.</p>
+        <p style="font-size:11px;color:var(--tx3);">In production, a verification link is sent to your registered email.</p>
       </div>
 
     </div>
@@ -599,22 +323,16 @@
       const cp = document.getElementById('confirmPassword').value;
       tog('r-match', cp.length > 0 && pw === cp);
     }
-    function tog(id, met) {
-      const el = document.getElementById(id);
-      el.classList.toggle('met', met);
-    }
+    function tog(id, met) { document.getElementById(id).classList.toggle('met', met); }
     function updateStrengthBar(val) {
-      const segs = [document.getElementById('ps1'), document.getElementById('ps2'), document.getElementById('ps3'), document.getElementById('ps4')];
+      const segs = ['ps1','ps2','ps3','ps4'].map(id => document.getElementById(id));
       let score = 0;
       if (val.length >= 8)     score++;
       if (/[A-Z]/.test(val))   score++;
       if (/[0-9]/.test(val))   score++;
       if (/[^A-Za-z0-9]/.test(val)) score++;
       const cls = score <= 1 ? 'weak' : score <= 2 ? 'fair' : 'strong';
-      segs.forEach((s, i) => {
-        s.className = 'psb-seg';
-        if (i < score) s.classList.add(cls);
-      });
+      segs.forEach((s, i) => { s.className = 'psb-seg'; if (i < score) s.classList.add(cls); });
     }
   </script>
 
@@ -637,22 +355,19 @@
     $('signupForm').addEventListener('submit', async e => {
       e.preventDefault();
       $('errorAlert').classList.remove('show');
-
       const fullName    = $('fullName').value.trim();
       const email       = $('email').value.trim();
       const password    = $('password').value;
       const confirm     = $('confirmPassword').value;
       const companyName = $('companyName').value.trim();
-
-      if (!fullName)           { showError('Please enter your full name.'); return; }
-      if (!email)              { showError('Please enter your email address.'); return; }
-      if (!password)           { showError('Please enter a password.'); return; }
+      if (!fullName)            { showError('Please enter your full name.'); return; }
+      if (!email)               { showError('Please enter your email address.'); return; }
+      if (!password)            { showError('Please enter a password.'); return; }
       if (password !== confirm) { showError('Passwords do not match.'); return; }
-      if (password.length < 8) { showError('Password must be at least 8 characters.'); return; }
+      if (password.length < 8)  { showError('Password must be at least 8 characters.'); return; }
       if (!/[A-Z]/.test(password)) { showError('Password must contain at least one uppercase letter.'); return; }
       if (!/[0-9]/.test(password)) { showError('Password must contain at least one number.'); return; }
       if (!$('termsCheck').checked) { showError('Please accept the Terms of Service to continue.'); return; }
-
       setLoading(true);
       try {
         const result = await signUp({ fullName, email, companyName, password });
