@@ -23,38 +23,56 @@
 
   /* ── 1. HERO GLOBE SPLIT LAYOUT ── */
   .cx-hero-split {
-    max-width: 1280px !important;
+    max-width: 1360px !important;
     display: grid !important;
-    grid-template-columns: 1fr 540px;
-    align-items: start;
-    gap: 56px;
-    padding: 60px 0 56px !important;
+    grid-template-columns: 1fr 580px;
+    align-items: center;
+    gap: 48px;
+    padding: 56px 0 52px !important;
   }
   .cx-hero-text { min-width: 0; }
 
-  /* Globe module — outer wrapper column */
+  /* Globe module — right column, vertically centered */
   .cx-globe-module {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    align-self: flex-start;
-    width: 540px;
+    align-self: center;
+    width: 580px;
+    position: relative;
   }
+
+  /* Atmospheric ambient glow — pure depth, no neon */
+  .cx-globe-glow {
+    position: absolute;
+    top: -60px; left: -60px; right: -60px; bottom: -60px;
+    background: radial-gradient(ellipse 75% 75% at 50% 48%,
+      rgba(10,40,90,0.22) 0%,
+      rgba(5,20,50,0.10) 45%,
+      transparent 72%
+    );
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 50%;
+  }
+
+  /* Globe canvas container — free-floating, no box frame */
   .cx-hero-globe-wrap {
     position: relative;
     width: 100%;
-    height: 490px;
-    background: #000008;
-    overflow: hidden;
-    border: 1px solid var(--border, #2C2C2C);
-    border-bottom: none;
+    height: 530px;
+    background: transparent;
+    overflow: visible;
+    border: none;
+    z-index: 1;
   }
-  /* Globe canvas — fills entire container minus 24px status strip */
+
+  /* Globe canvas — fills full container */
   #heroGlobeCanvas {
     position: absolute;
     top: 0; left: 0;
     width: 100% !important;
-    height: calc(100% - 24px) !important;
+    height: 100% !important;
     z-index: 1;
     pointer-events: auto;
     cursor: grab;
@@ -62,54 +80,62 @@
     background: transparent;
   }
   #heroGlobeCanvas:active { cursor: grabbing; }
+
   /* Kill all floating badges — hover tooltip replaces them */
   .hg-data-badge,
   .cx-sat-ring-wrap,
   .cx-sat-pivot-root { display: none !important; }
 
-  /* ── Layer controls — clean bar BELOW the globe wrap ── */
+  /* ── Layer controls — Bloomberg terminal tab underline style ── */
   .globe-layer-controls {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 0 10px;
-    height: 38px;
-    background: rgba(5,5,8,0.98);
-    border: 1px solid var(--border, #2C2C2C);
-    border-top: 1px solid rgba(255,255,255,0.06);
+    gap: 0;
+    padding: 0;
+    height: 36px;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--border);
     overflow-x: auto;
     overflow-y: hidden;
     flex-wrap: nowrap;
     scrollbar-width: none;
+    position: relative;
+    z-index: 2;
+    margin-top: 4px;
   }
   .globe-layer-controls::-webkit-scrollbar { display: none; }
+
   .glc-btn {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    border-radius: 2px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.04);
-    color: rgba(255,255,255,0.48);
+    padding: 0 14px;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
     font-family: var(--mono);
-    font-size: 9.5px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.14s;
+    transition: color 0.12s ease, border-color 0.12s ease;
     white-space: nowrap;
     flex-shrink: 0;
+    margin-bottom: -1px;
   }
   .glc-btn:hover {
-    border-color: rgba(255,255,255,0.25);
-    color: rgba(255,255,255,0.85);
-    background: rgba(255,255,255,0.07);
+    color: var(--text);
+    background: transparent;
+    border-color: rgba(255,255,255,0.2);
   }
   .glc-btn.active {
-    background: rgba(255,102,0,0.12);
-    border-color: var(--amber);
     color: var(--amber);
+    border-bottom-color: var(--amber);
+    background: transparent;
   }
 
   /* Globe hover tooltip — Bloomberg-style country panel */
@@ -130,32 +156,35 @@
   .ght-risk-bar-wrap { height: 2px; background: var(--surface-2); margin: 6px 0 2px; }
   .ght-risk-bar      { height: 100%; background: var(--amber); width: 0%; transition: width 0.25s; }
 
-  /* Globe status bar — very bottom strip */
+  /* Globe status bar — inline strip below canvas, above layer tabs */
   .globe-status-bar {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
-    height: 24px;
-    background: rgba(0,0,0,0.88);
-    border-top: 1px solid var(--border);
+    padding: 0 2px;
+    height: 22px;
+    background: transparent;
     z-index: 4;
+    position: relative;
   }
   .gsb-source {
     font-size: 8px;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
+    color: var(--text-muted);
     font-family: var(--mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 68%;
   }
   .gsb-updated {
     font-size: 8px;
     color: var(--text-muted);
     font-weight: 600;
     font-family: var(--mono);
+    white-space: nowrap;
   }
   .gsb-dot {
     width: 5px; height: 5px;
@@ -164,6 +193,11 @@
     display: inline-block;
     margin-right: 5px;
     vertical-align: middle;
+    animation: gsb-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes gsb-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,204,68,0.4); }
+    55% { box-shadow: 0 0 0 4px rgba(0,204,68,0); }
   }
 
   /* Loading pulse overlay */
@@ -619,17 +653,24 @@
   }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 1100px) {
+  @media (max-width: 1200px) {
+    .cx-globe-module { width: 500px; }
+    .cx-hero-globe-wrap { height: 480px; }
+  }
+  @media (max-width: 1050px) {
     .cx-hero-split {
       grid-template-columns: 1fr !important;
       gap: 0 !important;
     }
-    .cx-hero-globe-wrap { display: none; }
-    .cx-concerns-grid { grid-template-columns: repeat(2,1fr); }
-    .cx-frameworks-grid { grid-template-columns: repeat(2,1fr); }
-    .cx-hm-stats { grid-template-columns: repeat(2,1fr); }
+    .cx-globe-module {
+      width: 100% !important;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .cx-hero-globe-wrap { height: 400px; }
   }
   @media (max-width: 680px) {
+    .cx-hero-globe-wrap { height: 320px; }
     .cx-concerns-grid  { grid-template-columns: 1fr; }
     .cx-frameworks-grid { grid-template-columns: 1fr; }
     .cx-hm-stats { grid-template-columns: repeat(2,1fr); }
@@ -1112,15 +1153,17 @@
 </style>
 <style>
 /* ── INSTITUTIONAL OVERRIDES — lock in dark theme ── */
-/* Fix heatmap layer controls */
+/* Globe layer tab controls — terminal underline style */
 .glc-btn {
-  background: var(--surface-2) !important;
-  border: 1px solid var(--border) !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
   color: var(--text-muted) !important;
-  border-radius: 2px !important;
+  box-shadow: none !important;
 }
-.glc-btn:hover { background: var(--surface-3) !important; color: var(--text) !important; border-color: var(--border-strong) !important; }
-.glc-btn.active { background: var(--amber-glow) !important; border-color: var(--border-accent) !important; color: var(--amber) !important; box-shadow: none !important; }
+.glc-btn:hover { background: transparent !important; color: var(--text) !important; border-color: rgba(255,255,255,0.2) !important; }
+.glc-btn.active { background: transparent !important; border-bottom-color: var(--amber) !important; color: var(--amber) !important; box-shadow: none !important; }
 
 /* Fix heatmap tooltip */
 .heatmap-tooltip { background: var(--surface-2) !important; border: 1px solid var(--border-strong) !important; border-radius: 2px !important; box-shadow: 0 8px 24px rgba(0,0,0,0.6) !important; }
@@ -1356,11 +1399,14 @@
           <!-- Hero Globe Column -->
           <div class="cx-globe-module">
 
-            <!-- Globe canvas container — no overlays, free-spinning -->
+            <!-- Ambient atmospheric glow — depth layer behind sphere -->
+            <div class="cx-globe-glow" aria-hidden="true"></div>
+
+            <!-- Globe canvas container — free-floating, no box frame -->
             <div class="cx-hero-globe-wrap">
 
-              <!-- Canvas -->
-              <canvas id="heroGlobeCanvas" width="540" height="466"></canvas>
+              <!-- Three.js WebGL canvas -->
+              <canvas id="heroGlobeCanvas" width="580" height="530"></canvas>
 
               <!-- Hover tooltip (JS-positioned) -->
               <div id="globeHoverTip">
@@ -1384,15 +1430,15 @@
                 <div class="glo-label">Loading data…</div>
               </div>
 
-              <!-- Status bar — bottom 24px strip -->
-              <div class="globe-status-bar">
-                <span class="gsb-source" id="gsbSource">Loading World Bank climate data…</span>
-                <span class="gsb-updated"><span class="gsb-dot"></span><span id="gsbUpdated">WB API</span></span>
-              </div>
-
             </div>
 
-            <!-- Layer controls — outside globe, below canvas, no overlap -->
+            <!-- Status row — below canvas, above tab controls -->
+            <div class="globe-status-bar">
+              <span class="gsb-source" id="gsbSource">World Bank Climate Intelligence · Live</span>
+              <span class="gsb-updated"><span class="gsb-dot"></span><span id="gsbUpdated">WB CCKP</span></span>
+            </div>
+
+            <!-- Layer controls — Bloomberg terminal tab underline style -->
             <div class="globe-layer-controls" id="globeLayerControls">
               <button class="glc-btn active" data-layer="temperature">Temp</button>
               <button class="glc-btn" data-layer="co2">CO₂</button>
@@ -3597,67 +3643,193 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
 
     function _initThreeGlobe(canvas, CONTINENTS) {
       const wrap = canvas.parentElement;
-      const W = wrap.clientWidth  || 540;
-      const H = (wrap.clientHeight || 490) - 24;
+      const W = wrap.clientWidth  || 580;
+      const H = wrap.clientHeight || 530;
       canvas.width  = W;
       canvas.height = H;
 
-      /* ── Renderer ── */
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      /* ── Renderer — high quality, transparent bg ── */
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
       renderer.setSize(W, H);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setClearColor(0x000000, 0);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.1;
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
-      camera.position.z = 2.7;
 
-      /* ── Lighting ── */
-      scene.add(new THREE.AmbientLight(0x223355, 0.7));
-      const sun = new THREE.DirectionalLight(0xffd8b0, 1.6);
-      sun.position.set(4, 2, 3);
-      scene.add(sun);
-      const fill = new THREE.DirectionalLight(0x113366, 0.4);
-      fill.position.set(-3, -1, -2);
+      /* ── Camera — cinematic FOV, centred on globe ── */
+      const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
+      camera.position.z = 2.55;
+
+      /* ── Lighting — institutional key + cool fill + warm rim ── */
+      scene.add(new THREE.AmbientLight(0x0a1428, 1.2));
+
+      /* Key light — institutional cool-white from upper-right */
+      const key = new THREE.DirectionalLight(0xd0e4f8, 2.2);
+      key.position.set(5, 3, 3);
+      scene.add(key);
+
+      /* Fill — deep navy, left side depth */
+      const fill = new THREE.DirectionalLight(0x0a1a3a, 0.8);
+      fill.position.set(-4, -1, -1);
       scene.add(fill);
 
-      /* ── Procedural Earth texture ── */
+      /* Rim — warm amber from behind, Bloomberg signature accent */
+      const rim = new THREE.DirectionalLight(0x331400, 0.35);
+      rim.position.set(-2, 1, -3);
+      scene.add(rim);
+
+      /* ── Procedural Earth texture — institutional dark ocean, deep continents ── */
       function makeEarthTexture() {
-        const S = 1024, SH = 512;
+        const S = 2048, SH = 1024;
         const tc = document.createElement('canvas');
         tc.width = S; tc.height = SH;
         const ctx = tc.getContext('2d');
+
+        /* Deep ocean gradient — matte institutional */
         const og = ctx.createLinearGradient(0, 0, 0, SH);
-        og.addColorStop(0, '#061c34'); og.addColorStop(0.5, '#07203c'); og.addColorStop(1, '#030e1a');
+        og.addColorStop(0,   '#03111f');
+        og.addColorStop(0.3, '#041526');
+        og.addColorStop(0.5, '#051929');
+        og.addColorStop(0.7, '#041526');
+        og.addColorStop(1,   '#020d17');
         ctx.fillStyle = og; ctx.fillRect(0, 0, S, SH);
-        ctx.strokeStyle = 'rgba(40,90,140,0.15)'; ctx.lineWidth = 0.6;
-        for (let lat = -80; lat <= 80; lat += 20) { const y = ((90-lat)/180)*SH; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(S,y); ctx.stroke(); }
-        for (let lon = -180; lon <= 180; lon += 20) { const x = ((lon+180)/360)*S; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,SH); ctx.stroke(); }
-        ctx.strokeStyle = 'rgba(255,102,0,0.12)'; ctx.lineWidth = 1;
-        const eqY = (90/180)*SH; ctx.beginPath(); ctx.moveTo(0,eqY); ctx.lineTo(S,eqY); ctx.stroke();
+
+        /* Fine lat/lon grid — very subtle */
+        ctx.strokeStyle = 'rgba(20,55,90,0.18)'; ctx.lineWidth = 0.5;
+        for (let lat = -80; lat <= 80; lat += 10) {
+          const y = ((90-lat)/180)*SH;
+          ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(S,y); ctx.stroke();
+        }
+        for (let lon = -180; lon <= 180; lon += 15) {
+          const x = ((lon+180)/360)*S;
+          ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,SH); ctx.stroke();
+        }
+
+        /* Equator — Bloomberg amber accent line */
+        ctx.strokeStyle = 'rgba(255,102,0,0.14)'; ctx.lineWidth = 1.2;
+        const eqY = (90/180)*SH;
+        ctx.beginPath(); ctx.moveTo(0,eqY); ctx.lineTo(S,eqY); ctx.stroke();
+
+        /* Tropics — faint amber */
+        ctx.strokeStyle = 'rgba(255,102,0,0.06)'; ctx.lineWidth = 0.8;
+        [23.5, -23.5].forEach(lat => {
+          const y = ((90-lat)/180)*SH;
+          ctx.beginPath(); ctx.setLineDash([6,8]); ctx.moveTo(0,y); ctx.lineTo(S,y); ctx.stroke();
+        });
+        ctx.setLineDash([]);
+
+        /* Continents — deep forest, institutional */
         function toUV(la, ln) { return [((ln+180)/360)*S, ((90-la)/180)*SH]; }
         for (const poly of CONTINENTS) {
           ctx.beginPath();
           const [x0,y0] = toUV(poly[0][0], poly[0][1]); ctx.moveTo(x0,y0);
-          for (let i = 1; i < poly.length; i++) { const [x,y] = toUV(poly[i][0],poly[i][1]); ctx.lineTo(x,y); }
+          for (let i = 1; i < poly.length; i++) {
+            const [x,y] = toUV(poly[i][0],poly[i][1]); ctx.lineTo(x,y);
+          }
           ctx.closePath();
-          ctx.fillStyle = '#0e2419'; ctx.strokeStyle = 'rgba(40,110,70,0.5)'; ctx.lineWidth = 1.2;
-          ctx.fill(); ctx.stroke();
+          /* Continent fill — deep matte charcoal-green */
+          const cg = ctx.createLinearGradient(0,0,0,SH);
+          cg.addColorStop(0, '#0d1f14');
+          cg.addColorStop(1, '#0b1c11');
+          ctx.fillStyle = cg;
+          ctx.fill();
+          /* Coast border — slightly lighter, sharp */
+          ctx.strokeStyle = 'rgba(30,80,50,0.65)'; ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        /* Subtle noise texture — depth & realism */
+        const id = ctx.getImageData(0,0,S,SH);
+        const d = id.data;
+        for (let i = 0; i < d.length; i += 4) {
+          const n = (Math.random() - 0.5) * 5;
+          d[i]   = Math.max(0, Math.min(255, d[i]   + n));
+          d[i+1] = Math.max(0, Math.min(255, d[i+1] + n));
+          d[i+2] = Math.max(0, Math.min(255, d[i+2] + n));
+        }
+        ctx.putImageData(id,0,0);
+
+        return new THREE.CanvasTexture(tc);
+      }
+
+      /* ── Specular / roughness texture ── */
+      function makeSpecularTexture() {
+        const S = 512, SH = 256;
+        const tc = document.createElement('canvas'); tc.width=S; tc.height=SH;
+        const ctx = tc.getContext('2d');
+        /* Oceans: high specular (bright); continents: low (dark) */
+        ctx.fillStyle = '#334466'; ctx.fillRect(0,0,S,SH);
+        function toUV(la,ln){return[((ln+180)/360)*S,((90-la)/180)*SH];}
+        for (const poly of CONTINENTS) {
+          ctx.beginPath();
+          const [x0,y0]=toUV(poly[0][0],poly[0][1]); ctx.moveTo(x0,y0);
+          for(let i=1;i<poly.length;i++){const[x,y]=toUV(poly[i][0],poly[i][1]);ctx.lineTo(x,y);}
+          ctx.closePath(); ctx.fillStyle='#080c0a'; ctx.fill();
         }
         return new THREE.CanvasTexture(tc);
       }
 
-      /* ── Globe sphere ── */
-      const globeGeo = new THREE.SphereGeometry(1, 64, 64);
-      const globeMat = new THREE.MeshPhongMaterial({ map: makeEarthTexture(), specular: new THREE.Color(0x0a1828), shininess: 6 });
+      /* ── Globe sphere — high-detail, physically accurate ── */
+      const globeGeo = new THREE.SphereGeometry(1, 96, 96);
+      const globeMat = new THREE.MeshPhongMaterial({
+        map:      makeEarthTexture(),
+        specularMap: makeSpecularTexture(),
+        specular: new THREE.Color(0x0d2244),
+        shininess: 14,
+        bumpScale: 0.002,
+      });
       const globe = new THREE.Mesh(globeGeo, globeMat);
       scene.add(globe);
 
-      /* ── Atmosphere shaders ── */
-      const atmoV = `varying vec3 vN; void main(){ vN=normalize(normalMatrix*normal); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`;
-      const mkAtmo = (frag, r) => new THREE.Mesh(new THREE.SphereGeometry(r,32,32), new THREE.ShaderMaterial({ vertexShader:atmoV, fragmentShader:frag, side:THREE.BackSide, blending:THREE.AdditiveBlending, transparent:true, depthWrite:false }));
-      scene.add(mkAtmo(`varying vec3 vN; void main(){ float i=pow(max(0.0,0.65-dot(vN,vec3(0,0,1))),2.2); gl_FragColor=vec4(0.08,0.28,0.75,1.0)*i*0.9; }`, 1.055));
-      scene.add(mkAtmo(`varying vec3 vN; void main(){ float i=pow(max(0.0,0.55-dot(vN,vec3(0,0,1))),3.0); gl_FragColor=vec4(0.05,0.15,0.55,1.0)*i*0.5; }`, 1.09));
+      /* ── Atmosphere — multi-layer scattering ── */
+      const atmoV = `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vPosition = normalize((modelViewMatrix * vec4(position, 1.0)).xyz);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
+
+      /* Inner atmosphere — Rayleigh blue scatter */
+      const innerAtmoF = `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+          float cosAngle = dot(vNormal, vec3(0.0, 0.0, 1.0));
+          float rim = pow(max(0.0, 0.72 - cosAngle), 2.8);
+          vec3 atmoColor = vec3(0.08, 0.22, 0.72);
+          gl_FragColor = vec4(atmoColor, 1.0) * rim * 1.1;
+        }
+      `;
+
+      /* Outer haze — deep space fade */
+      const outerAtmoF = `
+        varying vec3 vNormal;
+        void main() {
+          float rim = pow(max(0.0, 0.60 - dot(vNormal, vec3(0.0, 0.0, 1.0))), 3.5);
+          gl_FragColor = vec4(0.04, 0.10, 0.45, 1.0) * rim * 0.55;
+        }
+      `;
+
+      function mkAtmo(fragSrc, radius) {
+        return new THREE.Mesh(
+          new THREE.SphereGeometry(radius, 48, 48),
+          new THREE.ShaderMaterial({
+            vertexShader: atmoV,
+            fragmentShader: fragSrc,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+            depthWrite: false,
+          })
+        );
+      }
+      scene.add(mkAtmo(innerAtmoF, 1.058));
+      scene.add(mkAtmo(outerAtmoF, 1.095));
 
       /* ── lat/lon → Vec3 ── */
       function ll2v(lat, lon, r) {
@@ -3665,41 +3837,90 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(th), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(th));
       }
 
-      /* ── Country point cloud (data-driven, one dot per country centroid) ── */
+      /* ── Country point cloud — data-driven, one glow dot per country centroid ── */
       const countryIsos = Object.keys(COUNTRY_GEO);
       const N = countryIsos.length;
       const ptPos = new Float32Array(N * 3);
       const ptCol = new Float32Array(N * 3);
+      /* Target colors for smooth transitions */
+      const ptColTarget = new Float32Array(N * 3);
 
       for (let i = 0; i < N; i++) {
         const [la, ln] = COUNTRY_GEO[countryIsos[i]];
-        const v = ll2v(la, ln, 1.022);
-        ptPos[i*3] = v.x; ptPos[i*3+1] = v.y; ptPos[i*3+2] = v.z;
-        ptCol[i*3] = 0.12; ptCol[i*3+1] = 0.55; ptCol[i*3+2] = 0.25;
+        const v = ll2v(la, ln, 1.024);
+        ptPos[i*3]   = v.x; ptPos[i*3+1] = v.y; ptPos[i*3+2] = v.z;
+        /* Start with neutral institutional cool grey */
+        ptCol[i*3]   = 0.08; ptCol[i*3+1] = 0.18; ptCol[i*3+2] = 0.38;
+        ptColTarget[i*3]   = ptCol[i*3];
+        ptColTarget[i*3+1] = ptCol[i*3+1];
+        ptColTarget[i*3+2] = ptCol[i*3+2];
       }
 
-      /* Round glow sprite for points */
+      /* Crisp circular glow sprite */
       function mkPtTex() {
-        const c = document.createElement('canvas'); c.width = c.height = 32;
+        const c = document.createElement('canvas'); c.width = c.height = 64;
         const ctx = c.getContext('2d');
-        const g = ctx.createRadialGradient(16,16,0,16,16,15);
-        g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.5,'rgba(255,255,255,0.7)'); g.addColorStop(1,'rgba(255,255,255,0)');
-        ctx.fillStyle = g; ctx.fillRect(0,0,32,32);
+        const g = ctx.createRadialGradient(32,32,0,32,32,30);
+        g.addColorStop(0,   'rgba(255,255,255,1.0)');
+        g.addColorStop(0.25,'rgba(255,255,255,0.85)');
+        g.addColorStop(0.55,'rgba(255,255,255,0.35)');
+        g.addColorStop(1,   'rgba(255,255,255,0.0)');
+        ctx.fillStyle = g; ctx.fillRect(0,0,64,64);
         return new THREE.CanvasTexture(c);
       }
 
       const ptGeo = new THREE.BufferGeometry();
-      ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos, 3));
-      ptGeo.setAttribute('color',    new THREE.BufferAttribute(ptCol, 3));
+      ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos,    3));
+      ptGeo.setAttribute('color',    new THREE.BufferAttribute(ptCol,    3));
 
       const ptMat = new THREE.PointsMaterial({
-        vertexColors: true, size: 0.028, sizeAttenuation: true,
-        map: mkPtTex(), transparent: true, opacity: 0.92, alphaTest: 0.04, depthWrite: false,
+        vertexColors:    true,
+        size:            0.034,
+        sizeAttenuation: true,
+        map:             mkPtTex(),
+        transparent:     true,
+        opacity:         0.88,
+        alphaTest:       0.02,
+        depthWrite:      false,
+        blending:        THREE.AdditiveBlending,
       });
       const countryPoints = new THREE.Points(ptGeo, ptMat);
       globe.add(countryPoints);
 
-      /* ── Color palette per layer ── */
+      /* ── Smooth colour interpolation for layer transitions ── */
+      let _transitionActive = false;
+      let _transitionAlpha  = 0;
+      const _transitionFrom = new Float32Array(N * 3);
+      const _transitionTo   = new Float32Array(N * 3);
+
+      function startColorTransition(newNormData, palette) {
+        /* Snapshot current colours as the "from" */
+        _transitionFrom.set(ptCol);
+        /* Build "to" colours */
+        for (let i = 0; i < N; i++) {
+          const v = newNormData[countryIsos[i]] !== undefined
+            ? Math.max(0, Math.min(1, newNormData[countryIsos[i]])) : 0.06;
+          const [r,g,b] = lerp3(palette, v);
+          _transitionTo[i*3]   = r;
+          _transitionTo[i*3+1] = g;
+          _transitionTo[i*3+2] = b;
+        }
+        _transitionAlpha  = 0;
+        _transitionActive = true;
+      }
+
+      function tickTransition(dt) {
+        if (!_transitionActive) return;
+        _transitionAlpha = Math.min(1, _transitionAlpha + dt * 1.8); /* ~0.55s */
+        const a = _transitionAlpha, b = 1 - a;
+        for (let i = 0; i < N * 3; i++) {
+          ptCol[i] = _transitionFrom[i] * b + _transitionTo[i] * a;
+        }
+        ptGeo.attributes.color.needsUpdate = true;
+        if (_transitionAlpha >= 1) _transitionActive = false;
+      }
+
+      /* ── Color palette per layer — institutional, data-precise ── */
       function h2rgb(h) { return [(h>>16&255)/255,(h>>8&255)/255,(h&255)/255]; }
       function lerp3(stops, t) {
         const n = stops.length-1, i = Math.min(n-1, Math.floor(t*n)), f = t*n-i;
@@ -3707,12 +3928,18 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         return [r1+(r2-r1)*f, g1+(g2-g1)*f, b1+(b2-b1)*f];
       }
       const PALETTES = {
-        temperature: [0x0d47a1,0x1976d2,0x42a5f5,0xffeb3b,0xff9800,0xd32f2f,0xb71c1c],
-        co2:         [0x1b5e20,0x2e7d32,0x66bb6a,0xffee58,0xff9800,0xe64a19,0xb71c1c],
-        heatwave:    [0xfff9c4,0xffd54f,0xff9800,0xe64a19,0xb71c1c,0x7f0000],
-        sea_level:   [0x0a0f2e,0x0d47a1,0x1565c0,0x1976d2,0x29b6f6,0x80d8ff],
-        ice:         [0x311b92,0x4527a0,0x5e35b1,0x7986cb,0xbbdefb,0xe8f5e9,0xffffff],
-        regulatory:  [0x1a1a1a,0x37474f,0x827717,0x1b5e20,0x2e7d32],
+        /* Temperature — cold deep blue → neutral → hot crimson */
+        temperature: [0x08205a,0x0d3a8c,0x1a6cc2,0x5ba3dc,0xf5d060,0xf07020,0xcc2200,0x8b0000],
+        /* CO₂ — straw yellow → deep orange-red emission source */
+        co2:         [0x1a3020,0x2d5c38,0x538840,0xd4b830,0xe87820,0xcc3000,0x880000],
+        /* Heatwave — cream to deep blood red */
+        heatwave:    [0x2a1a00,0x7a3800,0xcc6600,0xff9900,0xff4400,0xcc0000,0x660000],
+        /* Sea Level — palest sky to deep ocean */
+        sea_level:   [0x060818,0x0a1a40,0x0d2e6e,0x154ea0,0x2272c8,0x44a0e0,0x80ccff],
+        /* Ice Loss — midnight navy to frost white */
+        ice:         [0x0a0818,0x14204a,0x1e3878,0x3060b0,0x6090d8,0x99c4ef,0xcce4ff,0xffffff],
+        /* Regulatory — dark to amber-green coverage signal */
+        regulatory:  [0x0f0f0f,0x1a1a0a,0x2a2800,0x554400,0x886600,0xcc8800,0xff6600],
       };
 
       /* ── Layer data cache and state ── */
@@ -3721,13 +3948,8 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       const cache = {};
 
       function applyColors(normData) {
-        const pal = PALETTES[activeLayer];
-        for (let i = 0; i < N; i++) {
-          const v = normData[countryIsos[i]] !== undefined ? Math.max(0,Math.min(1,normData[countryIsos[i]])) : 0.08;
-          const [r,g,b] = lerp3(pal, v);
-          ptCol[i*3]=r; ptCol[i*3+1]=g; ptCol[i*3+2]=b;
-        }
-        ptGeo.attributes.color.needsUpdate = true;
+        /* Use animated transition instead of instant swap */
+        startColorTransition(normData, PALETTES[activeLayer]);
       }
 
       /* ── World Bank data fetchers ── */
@@ -3943,37 +4165,99 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       });
       canvas.addEventListener('mouseleave', () => { if (tip) tip.style.display = 'none'; });
 
-      /* ── Supply-chain arcs (trade route overlays) ── */
-      const ARCS = [[[31.2,121.5],[51.5,-0.1]],[[35.7,139.7],[40.7,-74.0]],[[1.3,103.8],[22.3,114.2]],[[19.1,72.9],[24.7,46.7]],[[55.8,37.6],[48.9,2.3]]];
+      /* ── Climate data arcs — institutional cyan, very subtle ── */
+      const ARCS = [
+        [[31.2,121.5],[51.5,-0.1]],  /* Shanghai → London */
+        [[35.7,139.7],[40.7,-74.0]], /* Tokyo → New York */
+        [[1.3,103.8],[22.3,114.2]],  /* Singapore → Hong Kong */
+        [[19.1,72.9],[24.7,46.7]],   /* Mumbai → Riyadh */
+        [[55.8,37.6],[48.9,2.3]],    /* Moscow → Paris */
+        [[-23.5,-46.6],[40.7,-74.0]],/* São Paulo → New York */
+      ];
       function mkArc(la1,ln1,la2,ln2) {
         const pts=[];
-        for(let t=0;t<=1;t+=0.02){const la=la1+(la2-la1)*t,ln=ln1+(ln2-ln1)*t;pts.push(ll2v(la,ln,1.05+0.1*Math.sin(Math.PI*t)));}
-        return new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0x0077bb,transparent:true,opacity:0.20}));
+        for(let t=0;t<=1;t+=0.018){
+          const la=la1+(la2-la1)*t, ln=ln1+(ln2-ln1)*t;
+          /* Parabolic arc height */
+          const h = 0.055 * Math.sin(Math.PI*t);
+          pts.push(ll2v(la,ln,1.015+h));
+        }
+        return new THREE.Line(
+          new THREE.BufferGeometry().setFromPoints(pts),
+          new THREE.LineBasicMaterial({ color:0x004466, transparent:true, opacity:0.18, linewidth:1 })
+        );
       }
       ARCS.forEach(([a,b])=>globe.add(mkArc(a[0],a[1],b[0],b[1])));
 
+      /* ── Responsive resize ── */
+      function onResize() {
+        const W2 = wrap.clientWidth  || 580;
+        const H2 = wrap.clientHeight || 530;
+        camera.aspect = W2 / H2;
+        camera.updateProjectionMatrix();
+        renderer.setSize(W2, H2);
+      }
+      window.addEventListener('resize', onResize);
+
       /* ── Drag & spin interaction ── */
       let isDragging = false, prevX = 0, prevY = 0, autoSpin = true;
-      canvas.addEventListener('mousedown', e=>{isDragging=true;autoSpin=false;prevX=e.clientX;prevY=e.clientY;canvas.style.cursor='grabbing';});
-      canvas.addEventListener('touchstart', e=>{isDragging=true;autoSpin=false;prevX=e.touches[0].clientX;prevY=e.touches[0].clientY;},{passive:true});
-      window.addEventListener('mouseup', ()=>{isDragging=false;canvas.style.cursor='grab';setTimeout(()=>{autoSpin=true;},2000);});
+      let velX = 0, spinResume = null;
+
+      canvas.addEventListener('mousedown', e=>{
+        isDragging=true; autoSpin=false; velX=0;
+        prevX=e.clientX; prevY=e.clientY;
+        canvas.style.cursor='grabbing';
+        if (spinResume) { clearTimeout(spinResume); spinResume=null; }
+      });
+      canvas.addEventListener('touchstart', e=>{
+        isDragging=true; autoSpin=false; velX=0;
+        prevX=e.touches[0].clientX; prevY=e.touches[0].clientY;
+      },{passive:true});
+
+      window.addEventListener('mouseup', ()=>{
+        if (!isDragging) return;
+        isDragging=false; canvas.style.cursor='grab';
+        /* Resume auto-spin with momentum decay */
+        spinResume = setTimeout(()=>{ autoSpin=true; velX=0; }, 2200);
+      });
+
       window.addEventListener('mousemove', e=>{
         if(!isDragging)return;
-        globe.rotation.y+=(e.clientX-prevX)*0.005;
-        globe.rotation.x+=(e.clientY-prevY)*0.003;
-        globe.rotation.x=Math.max(-0.6,Math.min(0.6,globe.rotation.x));
-        prevX=e.clientX;prevY=e.clientY;
+        const dx = e.clientX - prevX;
+        const dy = e.clientY - prevY;
+        velX = dx * 0.005;
+        globe.rotation.y += velX;
+        globe.rotation.x += dy * 0.003;
+        globe.rotation.x = Math.max(-0.7, Math.min(0.7, globe.rotation.x));
+        prevX=e.clientX; prevY=e.clientY;
       });
       canvas.addEventListener('touchmove', e=>{
         if(!isDragging)return;
-        globe.rotation.y+=(e.touches[0].clientX-prevX)*0.005;
-        prevX=e.touches[0].clientX;e.preventDefault();
+        globe.rotation.y += (e.touches[0].clientX - prevX) * 0.005;
+        prevX=e.touches[0].clientX; e.preventDefault();
       },{passive:false});
 
-      /* ── Animation loop ── */
+      /* ── Animation loop — cinematic slow rotation ── */
+      let prevTime = performance.now();
       (function animate() {
         requestAnimationFrame(animate);
-        if (autoSpin) globe.rotation.y += 0.0015;
+        const now = performance.now();
+        const dt  = Math.min((now - prevTime) / 1000, 0.05);
+        prevTime  = now;
+
+        /* Slow institutional rotation — not flashy */
+        if (autoSpin) {
+          globe.rotation.y += 0.0014;
+        } else if (!isDragging) {
+          /* Post-drag momentum decay */
+          globe.rotation.y += velX;
+          velX *= 0.90;
+          if (Math.abs(velX) < 0.0001) velX = 0;
+        }
+
+        /* Tick animated layer colour transition */
+        tickTransition(dt);
+
         renderer.render(scene, camera);
       })();
 
