@@ -27,98 +27,62 @@
     display: grid !important;
     grid-template-columns: 1fr 540px;
     align-items: start;
-    gap: 48px;
+    gap: 56px;
     padding: 60px 0 56px !important;
   }
   .cx-hero-text { min-width: 0; }
 
-  .cx-hero-globe-wrap {
-    position: relative;
+  /* Globe module — outer wrapper column */
+  .cx-globe-module {
+    display: flex;
+    flex-direction: column;
     flex-shrink: 0;
     align-self: flex-start;
     width: 540px;
-    height: 530px;
+  }
+  .cx-hero-globe-wrap {
+    position: relative;
+    width: 100%;
+    height: 490px;
     background: #000008;
     overflow: hidden;
     border: 1px solid var(--border, #2C2C2C);
+    border-bottom: none;
   }
-  /* Globe canvas — fills top portion, leaves room for controls + status */
+  /* Globe canvas — fills entire container minus 24px status strip */
   #heroGlobeCanvas {
     position: absolute;
     top: 0; left: 0;
     width: 100% !important;
-    height: calc(100% - 62px) !important;
+    height: calc(100% - 24px) !important;
     z-index: 1;
     pointer-events: auto;
     cursor: grab;
     display: block;
-    opacity: 1;
     background: transparent;
-    border-radius: 0 !important;
   }
   #heroGlobeCanvas:active { cursor: grabbing; }
-  /* Layer controls — solid bar between canvas and status */
-  .globe-layer-controls {
-    position: absolute !important;
-    bottom: 24px !important;
-    top: auto !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 38px !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    padding: 0 10px !important;
-    background: rgba(0,0,0,0.92) !important;
-    border-top: 1px solid rgba(255,255,255,0.055) !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    z-index: 5 !important;
-    flex-wrap: nowrap !important;
-  }
-  /* Hide old data badges — replaced by hover tooltip */
-  .hg-data-badge { display: none !important; }
+  /* Kill all floating badges — hover tooltip replaces them */
+  .hg-data-badge,
+  .cx-sat-ring-wrap,
+  .cx-sat-pivot-root { display: none !important; }
 
-  .hg-data-badge {
-    position: absolute;
-    background: rgba(0,0,0,0.88);
-    border: 1px solid var(--border);
-    border-left: 2px solid var(--amber);
-    padding: 6px 10px;
-    pointer-events: none;
-    z-index: 3;
-  }
-  .hg-b1 { top: 10%; right: 6%; }
-  .hg-b2 { top: 40%; right: 4%; }
-  .hg-b3 { bottom: 22%; right: 8%; }
-  .hg-val {
-    display: block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--amber);
-    line-height: 1;
-  }
-  .hg-loc {
-    display: block;
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 500;
-    color: var(--text-2);
-    margin-top: 4px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  /* ── 1b. GLOBE LAYER CONTROLS ── */
+  /* ── Layer controls — clean bar BELOW the globe wrap ── */
   .globe-layer-controls {
     display: flex;
+    align-items: center;
     gap: 4px;
-    flex-wrap: wrap;
-    z-index: 4;
-    pointer-events: auto;
+    padding: 0 10px;
+    height: 38px;
+    background: rgba(5,5,8,0.98);
+    border: 1px solid var(--border, #2C2C2C);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
   }
+  .globe-layer-controls::-webkit-scrollbar { display: none; }
   .glc-btn {
     display: inline-flex;
     align-items: center;
@@ -1390,9 +1354,45 @@
           </div>
 
           <!-- Hero Globe Column -->
-          <div class="cx-hero-globe-wrap">
+          <div class="cx-globe-module">
 
-            <!-- Layer toggle controls -->
+            <!-- Globe canvas container — no overlays, free-spinning -->
+            <div class="cx-hero-globe-wrap">
+
+              <!-- Canvas -->
+              <canvas id="heroGlobeCanvas" width="540" height="466"></canvas>
+
+              <!-- Hover tooltip (JS-positioned) -->
+              <div id="globeHoverTip">
+                <div class="ght-country" id="ghtCountry">—</div>
+                <div class="ght-row">
+                  <span class="ght-label" id="ghtMetricLabel">METRIC</span>
+                  <span class="ght-data" id="ghtMetricValue">—</span>
+                </div>
+                <div class="ght-risk-bar-wrap">
+                  <div class="ght-risk-bar" id="ghtRiskBar"></div>
+                </div>
+                <div class="ght-row" id="ghtExtraRow">
+                  <span class="ght-label" id="ghtExtraLabel">DATA</span>
+                  <span class="ght-data" id="ghtExtraValue" style="color:var(--text-2);font-size:9px;">—</span>
+                </div>
+              </div>
+
+              <!-- Loading overlay -->
+              <div id="globeLoadingOverlay">
+                <div class="glo-ring"></div>
+                <div class="glo-label">Loading data…</div>
+              </div>
+
+              <!-- Status bar — bottom 24px strip -->
+              <div class="globe-status-bar">
+                <span class="gsb-source" id="gsbSource">Loading World Bank climate data…</span>
+                <span class="gsb-updated"><span class="gsb-dot"></span><span id="gsbUpdated">WB API</span></span>
+              </div>
+
+            </div>
+
+            <!-- Layer controls — outside globe, below canvas, no overlap -->
             <div class="globe-layer-controls" id="globeLayerControls">
               <button class="glc-btn active" data-layer="temperature">Temp</button>
               <button class="glc-btn" data-layer="co2">CO₂</button>
@@ -1400,37 +1400,6 @@
               <button class="glc-btn" data-layer="sea_level">Sea Level</button>
               <button class="glc-btn" data-layer="ice">Ice Loss</button>
               <button class="glc-btn" data-layer="regulatory">Regulatory</button>
-            </div>
-
-            <!-- Globe canvas -->
-            <canvas id="heroGlobeCanvas" width="400" height="400"></canvas>
-
-            <!-- Hover tooltip (positioned by JS raycaster) -->
-            <div id="globeHoverTip">
-              <div class="ght-country" id="ghtCountry">—</div>
-              <div class="ght-row">
-                <span class="ght-label" id="ghtMetricLabel">METRIC</span>
-                <span class="ght-data" id="ghtMetricValue">—</span>
-              </div>
-              <div class="ght-risk-bar-wrap">
-                <div class="ght-risk-bar" id="ghtRiskBar"></div>
-              </div>
-              <div class="ght-row" id="ghtExtraRow">
-                <span class="ght-label" id="ghtExtraLabel">DATA</span>
-                <span class="ght-data" id="ghtExtraValue" style="color:var(--text-2);font-size:9px;">—</span>
-              </div>
-            </div>
-
-            <!-- Loading overlay -->
-            <div id="globeLoadingOverlay">
-              <div class="glo-ring"></div>
-              <div class="glo-label">Loading data…</div>
-            </div>
-
-            <!-- Status bar -->
-            <div class="globe-status-bar">
-              <span class="gsb-source" id="gsbSource">Loading World Bank climate data…</span>
-              <span class="gsb-updated"><span class="gsb-dot"></span><span id="gsbUpdated">WB API</span></span>
             </div>
 
           </div>
@@ -3629,7 +3598,7 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
     function _initThreeGlobe(canvas, CONTINENTS) {
       const wrap = canvas.parentElement;
       const W = wrap.clientWidth  || 540;
-      const H = (wrap.clientHeight || 530) - 62;
+      const H = (wrap.clientHeight || 490) - 24;
       canvas.width  = W;
       canvas.height = H;
 
