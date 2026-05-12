@@ -23,31 +23,31 @@
 
   /* ── 1. HERO GLOBE SPLIT LAYOUT ── */
   .cx-hero-split {
-    max-width: 1200px !important;
+    max-width: 1280px !important;
     display: grid !important;
-    grid-template-columns: 1fr 460px;
-    align-items: center;
-    gap: 56px;
-    padding: 72px 0 64px !important;
+    grid-template-columns: 1fr 540px;
+    align-items: start;
+    gap: 48px;
+    padding: 60px 0 56px !important;
   }
   .cx-hero-text { min-width: 0; }
 
   .cx-hero-globe-wrap {
     position: relative;
     flex-shrink: 0;
-    align-self: center;
-    width: 460px;
-    height: 480px;
+    align-self: flex-start;
+    width: 540px;
+    height: 530px;
     background: #000008;
     overflow: hidden;
     border: 1px solid var(--border, #2C2C2C);
   }
-  /* Globe canvas — fills container */
+  /* Globe canvas — fills top portion, leaves room for controls + status */
   #heroGlobeCanvas {
     position: absolute;
     top: 0; left: 0;
     width: 100% !important;
-    height: calc(100% - 80px) !important;
+    height: calc(100% - 62px) !important;
     z-index: 1;
     pointer-events: auto;
     cursor: grab;
@@ -57,16 +57,28 @@
     border-radius: 0 !important;
   }
   #heroGlobeCanvas:active { cursor: grabbing; }
-  /* Layer controls — absolute overlay at top of globe canvas */
+  /* Layer controls — solid bar between canvas and status */
   .globe-layer-controls {
     position: absolute !important;
-    top: 8px !important;
-    left: 6px !important;
-    right: 6px !important;
+    bottom: 24px !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 38px !important;
     margin: 0 !important;
     display: flex !important;
-    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 0 10px !important;
+    background: rgba(0,0,0,0.92) !important;
+    border-top: 1px solid rgba(255,255,255,0.055) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    z-index: 5 !important;
+    flex-wrap: nowrap !important;
   }
+  /* Hide old data badges — replaced by hover tooltip */
+  .hg-data-badge { display: none !important; }
 
   .hg-data-badge {
     position: absolute;
@@ -110,32 +122,31 @@
   .glc-btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 11px;
-    border-radius: 3px;
-    border: 1px solid rgba(255,255,255,0.14);
-    background: rgba(7,14,32,0.78);
-    color: rgba(255,255,255,0.58);
-    font-size: 10.5px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.48);
+    font-family: var(--mono);
+    font-size: 9.5px;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.18s;
-    backdrop-filter: blur(6px);
+    transition: all 0.14s;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .glc-btn:hover {
-    background: rgba(15,42,90,0.75);
-    border-color: rgba(64,168,220,0.4);
-    color: #fff;
+    border-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.07);
   }
   .glc-btn.active {
-    background: var(--surface-3);
+    background: rgba(255,102,0,0.12);
     border-color: var(--amber);
     color: var(--amber);
-    
   }
-  .glc-btn .glc-icon { font-size: 11px; line-height: 1; }
 
   /* Globe hover tooltip — Bloomberg-style country panel */
   #globeHoverTip {
@@ -155,16 +166,16 @@
   .ght-risk-bar-wrap { height: 2px; background: var(--surface-2); margin: 6px 0 2px; }
   .ght-risk-bar      { height: 100%; background: var(--amber); width: 0%; transition: width 0.25s; }
 
-  /* Globe status bar — bottom strip inside wrap */
+  /* Globe status bar — very bottom strip */
   .globe-status-bar {
     position: absolute;
-    bottom: 80px; left: 0; right: 0;
+    bottom: 0; left: 0; right: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
     height: 24px;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.88);
     border-top: 1px solid var(--border);
     z-index: 4;
   }
@@ -1416,80 +1427,10 @@
               <div class="glo-label">Loading data…</div>
             </div>
 
-            <!-- Dynamic data badges (updated by JS) -->
-            <div class="hg-data-badge hg-b1" id="hgBadge1">
-              <span class="hg-val" id="hgVal1">+3.2°C</span>
-              <span class="hg-loc" id="hgLoc1">Arctic Circle</span>
-            </div>
-            <div class="hg-data-badge hg-b2" id="hgBadge2">
-              <span class="hg-val" id="hgVal2">+2.9°C</span>
-              <span class="hg-loc" id="hgLoc2">Middle East</span>
-            </div>
-            <div class="hg-data-badge hg-b3" id="hgBadge3">
-              <span class="hg-val" id="hgVal3">+1.9°C</span>
-              <span class="hg-loc" id="hgLoc3">South Asia</span>
-            </div>
-
             <!-- Status bar -->
             <div class="globe-status-bar">
-              <span class="gsb-source" id="gsbSource">Climactix Climate Intelligence</span>
-              <span class="gsb-updated"><span class="gsb-dot"></span><span id="gsbUpdated">Live</span></span>
-            </div>
-
-            <!-- KPMG-style stat tiles below globe -->
-            <div class="kpmg-stats-wrap">
-              <div class="kpmg-hero-stat">
-                <span class="kpmg-hero-stat-val">$30T+</span>
-                <span class="kpmg-hero-stat-label">Global Sustainable Investment Assets</span>
-              </div>
-              <div class="kpmg-hero-stat">
-                <span class="kpmg-hero-stat-val">50k+</span>
-                <span class="kpmg-hero-stat-label">Companies Under CSRD Mandate</span>
-              </div>
-              <div class="kpmg-hero-stat">
-                <span class="kpmg-hero-stat-val">$9.5B</span>
-                <span class="kpmg-hero-stat-label">ESG Analytics Market by 2027</span>
-              </div>
-              <div class="kpmg-hero-stat">
-                <span class="kpmg-hero-stat-val">79%</span>
-                <span class="kpmg-hero-stat-label">Investors Demand ESG Assurance</span>
-              </div>
-            </div>
-
-            <!-- Satellite orbit (hidden by CSS) -->
-            <div class="cx-sat-ring-wrap" aria-hidden="true">
-              <div class="cx-sat-ring"></div>
-              <div class="cx-sat-ring-inner"></div>
-            </div>
-            <!-- Layer 2: satellite + name on clean pivot (no scaleY distortion) -->
-            <div class="cx-sat-pivot-root" aria-hidden="true">
-              <div class="cx-sat-arm">
-                <div class="cx-sat-group">
-                  <div class="cx-sat">
-                    <div class="cx-sat-panel-l">
-                      <div class="cx-sat-panel-cell"></div>
-                      <div class="cx-sat-panel-cell"></div>
-                    </div>
-                    <div class="cx-sat-core">
-                      <div class="cx-sat-antenna">
-                        <div class="cx-sat-dish"></div>
-                        <div class="cx-sat-signal"></div>
-                        <div class="cx-sat-signal cx-sat-signal-2"></div>
-                      </div>
-                      <div class="cx-sat-led"></div>
-                      <div class="cx-sat-led cx-sat-led-2"></div>
-                    </div>
-                    <div class="cx-sat-panel-r">
-                      <div class="cx-sat-panel-cell"></div>
-                      <div class="cx-sat-panel-cell"></div>
-                    </div>
-                  </div>
-                  <!-- Name counter-rotates to stay horizontal while arm spins -->
-                  <div class="cx-sat-name">
-                    <span class="cx-sat-name-dot"></span>CLIMACTIX GLOBAL
-                  </div>
-                </div>
-              </div>
+              <span class="gsb-source" id="gsbSource">Loading World Bank climate data…</span>
+              <span class="gsb-updated"><span class="gsb-dot"></span><span id="gsbUpdated">WB API</span></span>
             </div>
 
           </div>
@@ -3687,8 +3628,8 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
 
     function _initThreeGlobe(canvas, CONTINENTS) {
       const wrap = canvas.parentElement;
-      const W = wrap.clientWidth  || 460;
-      const H = (wrap.clientHeight || 480) - 80;
+      const W = wrap.clientWidth  || 540;
+      const H = (wrap.clientHeight || 530) - 62;
       canvas.width  = W;
       canvas.height = H;
 
