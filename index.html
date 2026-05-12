@@ -3687,17 +3687,17 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         tc.width = S; tc.height = SH;
         const ctx = tc.getContext('2d');
 
-        /* Deep ocean gradient — matte institutional */
+        /* Deep ocean — institutional dark navy, visible depth */
         const og = ctx.createLinearGradient(0, 0, 0, SH);
-        og.addColorStop(0,   '#03111f');
-        og.addColorStop(0.3, '#041526');
-        og.addColorStop(0.5, '#051929');
-        og.addColorStop(0.7, '#041526');
-        og.addColorStop(1,   '#020d17');
+        og.addColorStop(0,   '#061828');
+        og.addColorStop(0.3, '#071e30');
+        og.addColorStop(0.5, '#082032');
+        og.addColorStop(0.7, '#071e30');
+        og.addColorStop(1,   '#050f1c');
         ctx.fillStyle = og; ctx.fillRect(0, 0, S, SH);
 
-        /* Fine lat/lon grid — very subtle */
-        ctx.strokeStyle = 'rgba(20,55,90,0.18)'; ctx.lineWidth = 0.5;
+        /* Lat/lon grid — clearly visible, Bloomberg terminal style */
+        ctx.strokeStyle = 'rgba(30,75,120,0.28)'; ctx.lineWidth = 0.7;
         for (let lat = -80; lat <= 80; lat += 10) {
           const y = ((90-lat)/180)*SH;
           ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(S,y); ctx.stroke();
@@ -3707,20 +3707,20 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
           ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,SH); ctx.stroke();
         }
 
-        /* Equator — Bloomberg amber accent line */
-        ctx.strokeStyle = 'rgba(255,102,0,0.14)'; ctx.lineWidth = 1.2;
+        /* Equator — Bloomberg amber accent */
+        ctx.strokeStyle = 'rgba(255,102,0,0.22)'; ctx.lineWidth = 1.5;
         const eqY = (90/180)*SH;
         ctx.beginPath(); ctx.moveTo(0,eqY); ctx.lineTo(S,eqY); ctx.stroke();
 
-        /* Tropics — faint amber */
-        ctx.strokeStyle = 'rgba(255,102,0,0.06)'; ctx.lineWidth = 0.8;
+        /* Tropics of Cancer/Capricorn — dashed amber */
+        ctx.strokeStyle = 'rgba(255,102,0,0.10)'; ctx.lineWidth = 1.0;
         [23.5, -23.5].forEach(lat => {
           const y = ((90-lat)/180)*SH;
-          ctx.beginPath(); ctx.setLineDash([6,8]); ctx.moveTo(0,y); ctx.lineTo(S,y); ctx.stroke();
+          ctx.beginPath(); ctx.setLineDash([8,10]); ctx.moveTo(0,y); ctx.lineTo(S,y); ctx.stroke();
         });
         ctx.setLineDash([]);
 
-        /* Continents — deep forest, institutional */
+        /* Continents — clearly visible institutional green-grey */
         function toUV(la, ln) { return [((ln+180)/360)*S, ((90-la)/180)*SH]; }
         for (const poly of CONTINENTS) {
           ctx.beginPath();
@@ -3729,27 +3729,13 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
             const [x,y] = toUV(poly[i][0],poly[i][1]); ctx.lineTo(x,y);
           }
           ctx.closePath();
-          /* Continent fill — deep matte charcoal-green */
-          const cg = ctx.createLinearGradient(0,0,0,SH);
-          cg.addColorStop(0, '#0d1f14');
-          cg.addColorStop(1, '#0b1c11');
-          ctx.fillStyle = cg;
+          /* Continent fill — visible muted sage green, clearly distinct from ocean */
+          ctx.fillStyle = '#1e3828';
           ctx.fill();
-          /* Coast border — slightly lighter, sharp */
-          ctx.strokeStyle = 'rgba(30,80,50,0.65)'; ctx.lineWidth = 1.5;
+          /* Coast border — bright institutional green-white edge */
+          ctx.strokeStyle = 'rgba(60,140,90,0.80)'; ctx.lineWidth = 2.0;
           ctx.stroke();
         }
-
-        /* Subtle noise texture — depth & realism */
-        const id = ctx.getImageData(0,0,S,SH);
-        const d = id.data;
-        for (let i = 0; i < d.length; i += 4) {
-          const n = (Math.random() - 0.5) * 5;
-          d[i]   = Math.max(0, Math.min(255, d[i]   + n));
-          d[i+1] = Math.max(0, Math.min(255, d[i+1] + n));
-          d[i+2] = Math.max(0, Math.min(255, d[i+2] + n));
-        }
-        ctx.putImageData(id,0,0);
 
         return new THREE.CanvasTexture(tc);
       }

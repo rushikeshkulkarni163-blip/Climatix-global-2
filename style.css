@@ -509,12 +509,12 @@ h3 { font-size: clamp(14px, 2vw, 17px); }
 }
 
 .cx-hero-split {
-  max-width: 1200px;
+  max-width: 1360px;
   margin: 0 auto;
   padding: 56px 24px 52px;
   display: grid;
-  grid-template-columns: 1fr 420px;
-  align-items: start;
+  grid-template-columns: 1fr 580px;
+  align-items: center;
   gap: 48px;
   position: relative;
   z-index: 1;
@@ -553,41 +553,46 @@ h3 { font-size: clamp(14px, 2vw, 17px); }
   margin-bottom: 28px;
 }
 
-/* Globe + stat tiles — globe on top, 2×2 stats below */
+/* Globe container — free-floating, no box frame */
 .cx-hero-globe-wrap {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 0 !important;
+  display: block !important;
+  flex-direction: unset !important;
+  align-items: unset !important;
+  gap: unset !important;
   padding: 0 !important;
-  height: auto !important;
+  height: 530px !important;
   position: relative !important;
-  align-self: start !important;
-  width: 420px !important;
+  align-self: unset !important;
+  width: 100% !important;
+  background: transparent !important;
+  overflow: visible !important;
+  border: none !important;
 }
 
-/* Visible globe canvas */
+/* Canvas — fills wrap, transparent, no frame */
 #heroGlobeCanvas {
   display: block !important;
-  width: 400px !important;
-  height: 400px !important;
-  border-radius: 50% !important;
-  border: 1px solid var(--border) !important;
-  background: #071828 !important;
-  margin: 0 auto 16px !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  margin: 0 !important;
   opacity: 1 !important;
-  position: relative !important;
-  transform: none !important;
-  top: auto !important;
-  left: auto !important;
   pointer-events: auto !important;
   cursor: grab !important;
   flex-shrink: 0 !important;
+  transform: none !important;
 }
 
-.globe-layer-controls { display: none !important; }
-#globeHoverTip { display: none !important; }
-#globeLoadingOverlay { display: none !important; }
+/* Layer controls visible */
+.globe-layer-controls { display: flex !important; }
+/* Tooltip and overlay managed by JS */
+#globeHoverTip { display: none; }
+#globeLoadingOverlay { opacity: 0; }
 /* Data badges and status bar shown with Three.js globe */
 .cx-satellite-rig { display: none !important; }
 .cx-sat-ring-wrap { display: none !important; }
@@ -2789,7 +2794,7 @@ footer h3, footer h4, .site-footer h3, .site-footer h4 {
   .roadmap-grid { grid-template-columns: 1fr; }
   .theme-grid { grid-template-columns: 1fr; }
   .newsletter-inner { grid-template-columns: 1fr; gap: 24px; }
-  #heroGlobeCanvas { width: 300px !important; height: 300px !important; }
+  /* heroGlobeCanvas resizes responsively via .cx-hero-globe-wrap height */
 }
 @media (max-width: 768px) {
   .problems-grid { grid-template-columns: 1fr; }
