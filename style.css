@@ -588,51 +588,55 @@ h3 { font-size: clamp(14px, 2vw, 17px); }
 .globe-layer-controls { display: none !important; }
 #globeHoverTip { display: none !important; }
 #globeLoadingOverlay { display: none !important; }
-.hg-data-badge { display: none !important; }
-.globe-status-bar { display: none !important; }
+/* Data badges and status bar shown with Three.js globe */
 .cx-satellite-rig { display: none !important; }
 .cx-sat-ring-wrap { display: none !important; }
 .cx-sat-pivot-root { display: none !important; }
 
-/* 2×2 stat tiles below globe */
+/* 4-column stat strip — absolute bottom of globe container */
 .kpmg-stats-wrap {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  width: 400px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: rgba(0,0,0,0.9);
+  border-top: 1px solid var(--border);
+  z-index: 2;
+  height: 80px;
 }
 
 .kpmg-hero-stat {
-  background: var(--surface);
+  background: transparent;
   border: none;
-  border-top: 2px solid var(--amber);
-  padding: 16px 14px;
+  border-right: 1px solid var(--border);
+  padding: 10px 12px;
   text-align: left;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
+.kpmg-hero-stat:last-child { border-right: none; }
 
 .kpmg-hero-stat-val {
   display: block;
   font-family: var(--mono);
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 700;
-  color: var(--text);
+  color: var(--amber);
   line-height: 1;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
   letter-spacing: -0.02em;
 }
 
 .kpmg-hero-stat-label {
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 7.5px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
+  line-height: 1.3;
 }
 
 /* Hero CTA buttons */
@@ -2794,4 +2798,420 @@ footer h3, footer h4, .site-footer h3, .site-footer h4 {
   .cx-arch-stats { flex-direction: column; }
   .cx-arch-stat-div { width: 100%; height: 1px; }
   .theme-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CLIMACTIX GLOBAL — UI/UX REFINEMENT v4.0
+   Bloomberg-grade density · Institutional typography
+   Better grids · Improved visual hierarchy
+═══════════════════════════════════════════════════════ */
+
+/* ── 1. Stronger heading scale ── */
+.section-heading, .cx-section-dark-heading {
+  font-size: clamp(20px, 2.8vw, 30px) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.2 !important;
+}
+
+/* ── 2. Hero section improvements ── */
+.cx-hero-title {
+  font-size: clamp(28px, 4vw, 48px) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.08 !important;
+}
+.cx-hero-sub {
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+  color: var(--text-2) !important;
+  max-width: 520px;
+}
+.cx-hero-badge {
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  padding: 5px 12px !important;
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--amber) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  margin-bottom: 20px !important;
+}
+.cx-hero-badge .badge-dot {
+  width: 5px; height: 5px;
+  background: var(--green);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── 3. Market stats in hero ── */
+.cx-market-stats {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  background: var(--border) !important;
+  border: 1px solid var(--border) !important;
+  margin-top: 32px !important;
+}
+.ms-item {
+  flex: 1;
+  background: var(--surface);
+  padding: 14px 16px !important;
+  text-align: left !important;
+}
+.ms-val {
+  font-family: var(--mono) !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: var(--amber) !important;
+  line-height: 1 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 4px !important;
+}
+.ms-label {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--text-2) !important;
+  line-height: 1.3 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+.ms-cite {
+  font-family: var(--mono) !important;
+  font-size: 8px !important;
+  color: var(--text-muted) !important;
+  margin-top: 3px !important;
+}
+.ms-divider {
+  width: 1px !important;
+  background: var(--border) !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── 4. CTA buttons — Bloomberg style ── */
+.cta-primary {
+  background: var(--amber) !important;
+  color: #000 !important;
+  padding: 9px 22px !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+  border: none !important;
+  border-radius: 0 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  transition: background var(--t) !important;
+}
+.cta-primary:hover { background: var(--amber-dim) !important; color: #000 !important; }
+
+.cta-secondary {
+  background: transparent !important;
+  color: var(--text-2) !important;
+  padding: 8px 20px !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 0 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  transition: all var(--t) !important;
+}
+.cta-secondary:hover { border-color: var(--amber) !important; color: var(--amber) !important; }
+
+/* ── 5. Problem cards — tighter, Bloomberg density ── */
+.problems-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 1px !important;
+  background: var(--border) !important;
+  border: 1px solid var(--border) !important;
+  margin-top: 28px !important;
+}
+.problem-card {
+  background: var(--surface) !important;
+  border: none !important;
+  border-top: 2px solid var(--border-strong) !important;
+  padding: 18px 16px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.problem-card:hover {
+  background: var(--surface-2) !important;
+  border-top-color: var(--amber) !important;
+  transform: none !important;
+}
+.prob-icon { display: none !important; }
+.prob-title {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-bottom: 8px !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em !important;
+}
+.prob-text {
+  font-size: 11px !important;
+  color: var(--text-2) !important;
+  line-height: 1.55 !important;
+}
+
+/* ── 6. Solution/Services cards ── */
+.solution-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1px !important;
+  background: var(--border) !important;
+  border: 1px solid var(--border) !important;
+  margin-top: 24px !important;
+}
+.solution-card {
+  background: var(--surface) !important;
+  border: none !important;
+  border-top: 2px solid var(--border-strong) !important;
+  padding: 18px 16px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.solution-card:hover {
+  background: var(--surface-2) !important;
+  border-top-color: var(--amber) !important;
+  transform: none !important;
+}
+.sol-icon { display: none !important; }
+.sol-title {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-bottom: 7px !important;
+  line-height: 1.3 !important;
+}
+.sol-text {
+  font-size: 11.5px !important;
+  color: var(--text-2) !important;
+  line-height: 1.55 !important;
+}
+
+/* ── 7. Section blocks tighter spacing ── */
+.section-block {
+  padding: 48px 0 !important;
+}
+
+/* ── 8. Vision section improvements ── */
+.two-col-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+.col-text .section-heading { font-size: clamp(18px, 2.2vw, 24px) !important; }
+.body-text {
+  font-size: 13px !important;
+  color: var(--text-2) !important;
+  line-height: 1.6 !important;
+  margin-bottom: 12px !important;
+}
+
+/* ── 9. Mission card ── */
+.cx-mission-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-left: 3px solid var(--amber) !important;
+  padding: 20px 22px !important;
+  border-radius: 0 !important;
+}
+.cx-mission-list {
+  list-style: none !important;
+  padding: 0 !important;
+}
+.cx-mission-list li {
+  font-size: 12px !important;
+  color: var(--text-2) !important;
+  padding: 7px 0 !important;
+  border-bottom: 1px solid var(--border) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  line-height: 1.4 !important;
+}
+.cx-mission-list li:last-child { border-bottom: none !important; }
+.bullet-icon {
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  color: var(--amber) !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── 10. Strategic imperative section ── */
+.cx-imperative-pillars {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 1px !important;
+  background: var(--border) !important;
+  border: 1px solid var(--border) !important;
+  margin-top: 28px !important;
+}
+.cx-imperative-card {
+  background: var(--surface) !important;
+  padding: 20px 20px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  display: grid !important;
+  grid-template-columns: 40px 1fr !important;
+  gap: 16px !important;
+  align-items: start !important;
+}
+.cx-imperative-card:hover { background: var(--surface-2) !important; transform: none !important; }
+.cx-imp-number {
+  font-family: var(--mono) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--amber) !important;
+  padding-top: 2px !important;
+}
+.cx-imp-heading {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-bottom: 7px !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em !important;
+}
+.cx-imp-text {
+  font-size: 11.5px !important;
+  color: var(--text-2) !important;
+  line-height: 1.55 !important;
+}
+.cx-imperative-intro {
+  font-size: 13px !important;
+  color: var(--text-2) !important;
+  line-height: 1.6 !important;
+  max-width: 700px !important;
+  margin-top: 12px !important;
+}
+
+/* ── 11. Framework cards ── */
+.cx-frameworks-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 1px !important;
+  background: var(--border) !important;
+  border: 1px solid var(--border) !important;
+  margin-top: 24px !important;
+}
+.cx-fw-card {
+  background: var(--surface) !important;
+  padding: 16px 16px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-top: 2px solid var(--border-strong) !important;
+  box-shadow: none !important;
+}
+.cx-fw-card:hover { background: var(--surface-2) !important; border-top-color: var(--amber) !important; transform: none !important; }
+.cx-fw-tag {
+  font-family: var(--mono) !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  padding: 2px 7px !important;
+  border-radius: 1px !important;
+  margin-bottom: 8px !important;
+  display: inline-block !important;
+}
+.cx-fw-name {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-bottom: 4px !important;
+  line-height: 1.3 !important;
+}
+.cx-fw-org {
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  color: var(--text-muted) !important;
+  margin-bottom: 10px !important;
+  letter-spacing: 0.02em !important;
+}
+.cx-fw-desc {
+  font-size: 11px !important;
+  color: var(--text-2) !important;
+  line-height: 1.55 !important;
+}
+
+/* ── 12. Climate concern cards ── */
+.cx-concerns-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1px !important;
+  background: var(--border) !important;
+  border: 1px solid var(--border) !important;
+  margin-top: 24px !important;
+}
+.cx-concern-card {
+  background: var(--surface) !important;
+  padding: 20px 18px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-top: 2px solid var(--border-strong) !important;
+  box-shadow: none !important;
+}
+.cx-concern-card:hover { background: var(--surface-2) !important; border-top-color: var(--amber) !important; transform: none !important; }
+.cc-icon-wrap {
+  width: 32px; height: 32px;
+  display: flex; align-items: center;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+.cc-title {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin-bottom: 7px !important;
+  line-height: 1.3 !important;
+}
+.cc-desc {
+  font-size: 11.5px !important;
+  color: var(--text-2) !important;
+  line-height: 1.55 !important;
+  margin-bottom: 10px !important;
+}
+.cc-metric {
+  font-family: var(--mono) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--amber) !important;
+}
+
+/* ── 13. Responsive grid adjustments ── */
+@media (max-width: 1200px) {
+  .problems-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .cx-frameworks-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+@media (max-width: 900px) {
+  .problems-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .solution-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .cx-frameworks-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .cx-concerns-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .cx-imperative-pillars { grid-template-columns: 1fr !important; }
+  .two-col-grid { grid-template-columns: 1fr !important; }
+  .kpmg-stats-wrap { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 600px) {
+  .problems-grid, .solution-grid { grid-template-columns: 1fr !important; }
+  .cx-frameworks-grid, .cx-concerns-grid { grid-template-columns: 1fr !important; }
+  .kpmg-stats-wrap { grid-template-columns: repeat(2, 1fr) !important; height: auto !important; }
 }

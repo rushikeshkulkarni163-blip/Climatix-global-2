@@ -23,58 +23,57 @@
 
   /* ── 1. HERO GLOBE SPLIT LAYOUT ── */
   .cx-hero-split {
-    max-width: 1120px !important;
+    max-width: 1200px !important;
     display: grid !important;
-    grid-template-columns: 1fr 420px;
+    grid-template-columns: 1fr 460px;
     align-items: center;
-    gap: 64px;
-    padding: 88px 0 80px !important;
+    gap: 56px;
+    padding: 72px 0 64px !important;
   }
   .cx-hero-text { min-width: 0; }
 
   .cx-hero-globe-wrap {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
     flex-shrink: 0;
-    align-self: start;
-    width: 420px;
-  }
-  /* Globe canvas — full opacity, prominent */
-  #heroGlobeCanvas {
-    display: block;
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
+    align-self: center;
+    width: 460px;
+    height: 480px;
+    background: #000008;
+    overflow: hidden;
     border: 1px solid var(--border, #2C2C2C);
-    background: #071828;
-    margin: 0 auto 0;
-    opacity: 1;
-    position: relative;
+  }
+  /* Globe canvas — fills container */
+  #heroGlobeCanvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100% !important;
+    height: calc(100% - 80px) !important;
+    z-index: 1;
+    pointer-events: auto;
     cursor: grab;
-    flex-shrink: 0;
+    display: block;
+    opacity: 1;
+    background: transparent;
+    border-radius: 0 !important;
   }
   #heroGlobeCanvas:active { cursor: grabbing; }
-  /* Layer controls hidden — not needed with stat tiles */
+  /* Layer controls hidden */
   .globe-layer-controls { display: none !important; }
-  /* Hide tooltip/overlay badges on this layout */
+  /* Hide tooltip */
   #globeHoverTip { display: none !important; }
 
   .hg-data-badge {
     position: absolute;
-    background: rgba(0,0,0,0.92);
+    background: rgba(0,0,0,0.88);
     border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 7px 11px;
-    backdrop-filter: blur(8px);
+    border-left: 2px solid var(--amber);
+    padding: 6px 10px;
     pointer-events: none;
     z-index: 3;
   }
-  .hg-b1 { top: 12%; right: -8%; }
-  .hg-b2 { top: 50%; right: -12%; }
-  .hg-b3 { bottom: 14%; right: -4%; }
+  .hg-b1 { top: 10%; right: 6%; }
+  .hg-b2 { top: 40%; right: 4%; }
+  .hg-b3 { bottom: 22%; right: 8%; }
   .hg-val {
     display: block;
     font-family: 'IBM Plex Mono', monospace;
@@ -152,32 +151,37 @@
   .ght-risk-bar-wrap { height: 2px; background: var(--surface-2); margin: 6px 0 2px; }
   .ght-risk-bar      { height: 100%; background: var(--amber); width: 0%; transition: width 0.25s; }
 
-  /* Globe status bar */
+  /* Globe status bar — bottom strip inside wrap */
   .globe-status-bar {
+    position: absolute;
+    bottom: 80px; left: 0; right: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 8px;
-    padding: 0 2px;
-    position: relative;
+    padding: 0 12px;
+    height: 24px;
+    background: rgba(0,0,0,0.6);
+    border-top: 1px solid var(--border);
     z-index: 4;
   }
   .gsb-source {
-    font-size: 9px;
+    font-size: 8px;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.28);
+    color: rgba(255,255,255,0.3);
+    font-family: var(--mono);
   }
   .gsb-updated {
-    font-size: 9px;
+    font-size: 8px;
     color: var(--text-muted);
-    font-weight: 500;
+    font-weight: 600;
+    font-family: var(--mono);
   }
   .gsb-dot {
     width: 5px; height: 5px;
     border-radius: 50%;
-    background: var(--amber);
+    background: var(--green);
     display: inline-block;
     margin-right: 5px;
     vertical-align: middle;
@@ -1701,56 +1705,56 @@
             <span class="cx-fw-tag">UN Treaty</span>
             <div class="cx-fw-name">Paris Agreement</div>
             <div class="cx-fw-org">United Nations · UNFCCC · 2015</div>
-            <div class="cx-fw-desc">The foundational international treaty binding 196 nations to 1.5–2°C pathways and mid-century net-zero commitments. Sets the policy floor on which all corporate transition plans and national climate regulation are built.</div>
+            <div class="cx-fw-desc">196 nations committed to 1.5–2°C pathways and mid-century net-zero. The policy floor for all corporate transition plans and national climate regulation.</div>
           </div>
 
           <div class="cx-fw-card fw-sdg">
             <span class="cx-fw-tag">17 Goals</span>
             <div class="cx-fw-name">UN Sustainable Development Goals</div>
             <div class="cx-fw-org">United Nations · 2030 Agenda</div>
-            <div class="cx-fw-desc">The global architecture for sustainable investment and impact measurement. SDGs 7, 12, 13, 14 &amp; 15 are directly embedded in ESG ratings, impact bond structures, and blended finance mandates — providing an internationally recognised alignment framework for capital deployment.</div>
+            <div class="cx-fw-desc">SDGs 7, 12, 13, 14 &amp; 15 embedded in ESG ratings, impact bond structures, and blended finance mandates. Internationally recognised capital alignment framework.</div>
           </div>
 
           <div class="cx-fw-card fw-ghg">
             <span class="cx-fw-tag">Accounting</span>
             <div class="cx-fw-name">GHG Protocol</div>
             <div class="cx-fw-org">WRI &amp; WBCSD · Global Standard</div>
-            <div class="cx-fw-desc">The global baseline for corporate GHG accounting — Scope 1, 2, and 3. Forms the quantitative backbone of net-zero commitments, SBTi targets, and investor-grade carbon disclosures. Compliance is the entry point for institutional ESG integration.</div>
+            <div class="cx-fw-desc">Global baseline for Scope 1, 2, and 3 GHG accounting. Backbone of net-zero commitments, SBTi targets, and investor-grade carbon disclosures.</div>
           </div>
 
           <div class="cx-fw-card fw-tcfd">
             <span class="cx-fw-tag">Disclosure</span>
             <div class="cx-fw-name">TCFD</div>
             <div class="cx-fw-org">Task Force on Climate-related Financial Disclosures</div>
-            <div class="cx-fw-desc">The primary climate-related financial risk disclosure framework — covering governance, strategy, risk management, and quantitative metrics. Now absorbed into ISSB S2 and mandatory across the UK, EU, and major G20 markets. The de facto standard for investor-grade climate risk communication.</div>
+            <div class="cx-fw-desc">Climate risk disclosure covering governance, strategy, risk management, and metrics. Absorbed into ISSB S2. Mandatory across UK, EU, and major G20 markets.</div>
           </div>
 
           <div class="cx-fw-card fw-gri">
             <span class="cx-fw-tag">Reporting</span>
             <div class="cx-fw-name">GRI Standards</div>
             <div class="cx-fw-org">Global Reporting Initiative · Since 2000</div>
-            <div class="cx-fw-desc">The most widely adopted sustainability disclosure standard globally. GRI 305 (Emissions), 302 (Energy), and 303 (Water) provide the reporting architecture for multi-stakeholder ESG intelligence — enabling comparability, auditability, and regulatory alignment across jurisdictions.</div>
+            <div class="cx-fw-desc">Most widely adopted sustainability disclosure standard globally. GRI 305 (Emissions), 302 (Energy), 303 (Water) — enabling comparability and auditability across jurisdictions.</div>
           </div>
 
           <div class="cx-fw-card fw-sasb">
             <span class="cx-fw-tag">Industry</span>
             <div class="cx-fw-name">SASB Standards</div>
             <div class="cx-fw-org">Sustainability Accounting Standards Board</div>
-            <div class="cx-fw-desc">77 industry-specific sustainability accounting standards — providing the sector-level precision institutional investors require for cross-company performance comparison. Now integrated into IFRS/ISSB as the granular disclosure layer within the global baseline framework.</div>
+            <div class="cx-fw-desc">77 industry-specific standards for sector-level precision. Integrated into IFRS/ISSB as the granular disclosure layer within the global baseline framework.</div>
           </div>
 
           <div class="cx-fw-card fw-issb">
             <span class="cx-fw-tag">IFRS · S1/S2</span>
             <div class="cx-fw-name">ISSB Standards</div>
             <div class="cx-fw-org">IFRS Foundation · Since 2023</div>
-            <div class="cx-fw-desc">The emerging global baseline for sustainability-related financial disclosures, adopted by 20+ jurisdictions. IFRS S1 establishes general requirements; S2 mandates climate-related risk and opportunity disclosures. The convergence standard replacing fragmented national regimes — and the foundation of future mandatory reporting.</div>
+            <div class="cx-fw-desc">Global baseline for sustainability disclosures. Adopted in 20+ jurisdictions. S1: general requirements; S2: climate risk mandates. The convergence standard replacing fragmented national regimes.</div>
           </div>
 
           <div class="cx-fw-card fw-csrd">
             <span class="cx-fw-tag">EU Regulation</span>
             <div class="cx-fw-name">CSRD</div>
             <div class="cx-fw-org">Corporate Sustainability Reporting Directive · EU</div>
-            <div class="cx-fw-desc">The most demanding mandatory disclosure regime globally — applying to 50,000+ companies with double materiality assessment, third-party assurance, and XBRL digital tagging. CSRD sets the standard for what investor-grade ESG reporting looks like across the European single market and for global supply chain participants.</div>
+            <div class="cx-fw-desc">50,000+ companies required. Double materiality, third-party assurance, XBRL digital tagging. The most demanding mandatory disclosure regime globally.</div>
           </div>
 
         </div>
@@ -1766,7 +1770,7 @@
       <div style="position:absolute;inset:0;pointer-events:none;"></div>
       <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:900px;height:2px;display:none;"></div>
 
-      <div style="position:relative;z-index:1;max-width:960px;margin:0 auto;padding:104px 40px 112px;">
+      <div style="position:relative;z-index:1;max-width:960px;margin:0 auto;padding:64px 40px 72px;">
 
         <!-- Section label -->
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:72px;">
@@ -1776,21 +1780,21 @@
         </div>
 
         <!-- Opening statement -->
-        <h2 style="font-family:'Inter',sans-serif;font-size:clamp(32px,4.5vw,58px);font-weight:900;line-height:1.04;letter-spacing:-0.03em;color:var(--text);margin-bottom:60px;max-width:820px;">
+        <h2 style="font-family:'Inter',sans-serif;font-size:clamp(26px,3.5vw,42px);font-weight:800;line-height:1.1;letter-spacing:-0.025em;color:var(--text);margin-bottom:44px;max-width:760px;">
           A new financial reality has emerged.<br>
-          <span style="color:rgba(255,255,255,0.3);">Most companies are still operating inside the old one.</span>
+          <span style="color:var(--text-muted);">Most companies are still operating inside the old one.</span>
         </h2>
 
         <!-- ── SECTION 1: THE SHIFT ── -->
-        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:72px;padding-bottom:72px;border-bottom:1px solid #2C2C2C;">
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid #2C2C2C;">
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.14em;margin-bottom:8px;">01 ──────</div>
             <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;text-transform:uppercase;">The Shift</div>
           </div>
           <div>
-            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(20px,2.2vw,26px);font-weight:800;color:var(--text);line-height:1.2;letter-spacing:-0.025em;margin-bottom:16px;">ESG is no longer a reporting function. It is financial and regulatory infrastructure — and that transition is permanent.</h3>
-            <p style="font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.52);line-height:1.78;margin-bottom:24px;">ISSB S1 and S2 now set the global baseline for what constitutes material financial risk — adopted or referenced by regulators in over 20 jurisdictions. The EU's Corporate Sustainability Reporting Directive mandates structured disclosure from 50,000+ companies, backed by legal enforcement. India's BRSR framework is now mandatory for the top 1,000 listed entities. The SEC has codified climate risk as financially material. This is not a policy trend. It is a restructuring of the legal and capital architecture that governs how money moves.</p>
-            <div style="display:flex;gap:32px;flex-wrap:wrap;">
+            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(18px,2vw,22px);font-weight:700;color:var(--text);line-height:1.25;letter-spacing:-0.02em;margin-bottom:16px;">ESG is no longer a reporting function. It is financial and regulatory infrastructure — and that transition is permanent.</h3>
+            <p style="font-family:'Inter',sans-serif;font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:20px;">ISSB S1/S2 adopted in 20+ jurisdictions. CSRD mandates structured disclosure from 50,000+ companies with legal enforcement. BRSR covers India's top 1,000 listed entities. SEC has codified climate risk as financially material.</p>
+            <div style="display:flex;gap:24px;flex-wrap:wrap;">
               <div style="border-left:2px solid var(--amber);padding-left:16px;">
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:#3d8bff;line-height:1;">50,000+</div>
                 <div style="font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.06em;">Companies under CSRD mandate</div>
@@ -1808,20 +1812,33 @@
         </div>
 
         <!-- ── SECTION 2: THE FAILURE ── -->
-        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:72px;padding-bottom:72px;border-bottom:1px solid #2C2C2C;">
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid #2C2C2C;">
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:rgba(239,68,68,0.6);letter-spacing:0.14em;margin-bottom:8px;">02 ──────</div>
             <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;text-transform:uppercase;">The Failure</div>
           </div>
           <div>
-            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(20px,2.2vw,26px);font-weight:800;color:var(--text);line-height:1.2;letter-spacing:-0.025em;margin-bottom:16px;">The existing ESG reporting system is not equipped for the regulatory environment it is being asked to operate in.</h3>
-            <p style="font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.52);line-height:1.78;margin-bottom:20px;">Six major frameworks — GRI, SASB, TCFD, ISSB S1/S2, CSRD/ESRS, and BRSR — each require different data points, different assurance standards, and different output formats. There is no unified architecture. There is no single system of record. Companies spend between $200,000 and $700,000 per year on ESG consulting engagements that produce static PDF reports — documents that cannot be ingested by financial models, cannot be audited programmatically, and cannot be compared across investment portfolios.</p>
-            <p style="font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.52);line-height:1.78;">The output is not intelligence. It is documentation. And documentation does not satisfy regulators, does not move capital, and does not protect boards.</p>
+            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(18px,2vw,22px);font-weight:700;color:var(--text);line-height:1.25;letter-spacing:-0.02em;margin-bottom:16px;">The existing ESG reporting system is not equipped for the regulatory environment it is being asked to operate in.</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:16px;">
+              <div style="background:var(--surface-2);padding:14px 16px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:var(--red);line-height:1;margin-bottom:6px;">6</div>
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Fragmented frameworks with no unified architecture</div>
+              </div>
+              <div style="background:var(--surface-2);padding:14px 16px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:var(--amber);line-height:1;margin-bottom:6px;">$700K</div>
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Annual ESG consulting cost producing static PDFs</div>
+              </div>
+              <div style="background:var(--surface-2);padding:14px 16px;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:var(--text-2);line-height:1;margin-bottom:6px;">0</div>
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Machine-readable outputs that satisfy investor models</div>
+              </div>
+            </div>
+            <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);border-left:2px solid var(--red);padding-left:12px;line-height:1.5;">The output is documentation — not intelligence. Documentation does not satisfy regulators, does not move capital, and does not protect boards.</p>
           </div>
         </div>
 
         <!-- ── SECTION 3: THE CONSEQUENCE ── -->
-        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:72px;padding-bottom:72px;border-bottom:1px solid #2C2C2C;">
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid #2C2C2C;">
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:rgba(239,68,68,0.6);letter-spacing:0.14em;margin-bottom:8px;">03 ──────</div>
             <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;text-transform:uppercase;">The Consequence</div>
@@ -1833,21 +1850,21 @@
                 <div style="flex-shrink:0;width:3px;border-radius:2px;background:rgba(239,68,68,0.5);"></div>
                 <div>
                   <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(239,68,68,0.9);margin-bottom:6px;">Capital Exclusion</div>
-                  <div style="font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.48);line-height:1.65;">Institutional investors managing $130+ trillion in assets now screen ESG disclosure quality as a condition of deployment. Companies without credible, structured disclosures are being systematically removed from sustainable finance mandates, ESG indices, and institutional portfolios.</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.55;">$130T+ in institutional assets now screens ESG disclosure quality as a deployment condition. Companies without credible disclosures are systematically excluded from sustainable finance mandates and ESG indices.</div>
                 </div>
               </div>
               <div style="display:flex;gap:20px;background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.14);border-radius:6px;padding:18px 20px;">
                 <div style="flex-shrink:0;width:3px;border-radius:2px;background:rgba(239,68,68,0.5);"></div>
                 <div>
                   <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(239,68,68,0.9);margin-bottom:6px;">Legal Exposure</div>
-                  <div style="font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.48);line-height:1.65;">CSRD non-compliance carries penalties up to €10 million or 5% of global turnover in EU member states. SEBI's BRSR enforcement mechanism is active. The SEC has established climate disclosure as a material obligation. Boards are personally accountable for the accuracy of sustainability disclosures in an increasing number of jurisdictions.</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.55;">CSRD penalties up to €10M or 5% of global turnover. BRSR enforcement active. SEC climate disclosure is a material obligation. Board-level personal accountability is now law in multiple jurisdictions.</div>
                 </div>
               </div>
               <div style="display:flex;gap:20px;background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.14);border-radius:6px;padding:18px 20px;">
                 <div style="flex-shrink:0;width:3px;border-radius:2px;background:rgba(239,68,68,0.5);"></div>
                 <div>
                   <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(239,68,68,0.9);margin-bottom:6px;">Valuation Impact</div>
-                  <div style="font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.48);line-height:1.65;">The cost of capital divergence between credible ESG disclosers and non-disclosers is now documented at a statistically significant level. ESG-laggard companies face higher borrowing costs, compressed multiples, and reduced access to green finance instruments — a structural disadvantage that compounds annually.</div>
+                  <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.55;">Cost of capital divergence between disclosers and non-disclosers is statistically documented. ESG laggards face higher borrowing costs, compressed multiples, and reduced access to green finance instruments.</div>
                 </div>
               </div>
             </div>
@@ -1855,14 +1872,27 @@
         </div>
 
         <!-- ── SECTION 4: THE MISSING LAYER ── -->
-        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:72px;padding-bottom:72px;border-bottom:1px solid #2C2C2C;">
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid #2C2C2C;">
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:rgba(245,158,11,0.6);letter-spacing:0.14em;margin-bottom:8px;">04 ──────</div>
             <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;text-transform:uppercase;">The Missing Layer</div>
           </div>
           <div>
-            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(20px,2.2vw,26px);font-weight:800;color:var(--text);line-height:1.2;letter-spacing:-0.025em;margin-bottom:16px;">Between raw ESG data and the financial decisions it should inform — there is no infrastructure.</h3>
-            <p style="font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.52);line-height:1.78;margin-bottom:24px;">Companies collect sustainability data. Consultants package it into disclosure documents. Capital markets receive static PDFs. At no point in this chain does structured, machine-readable, audit-ready ESG intelligence flow directly into investment models, credit risk assessments, or regulatory databases. The infrastructure layer — the one that converts performance data into verified, decision-useful intelligence — does not exist in any scalable, accessible form.</p>
+            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(18px,2vw,22px);font-weight:700;color:var(--text);line-height:1.25;letter-spacing:-0.02em;margin-bottom:16px;">Between raw ESG data and the financial decisions it should inform — there is no infrastructure.</h3>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:20px;">
+              <div style="background:var(--surface-2);padding:12px 14px;text-align:center;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Data Origin</div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-2);">Raw sustainability metrics</div>
+              </div>
+              <div style="background:var(--surface-2);padding:12px 14px;text-align:center;position:relative;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:6px;">Missing Layer</div>
+                <div style="font-size:11px;font-weight:600;color:var(--red);">No structured intelligence</div>
+              </div>
+              <div style="background:var(--surface-2);padding:12px 14px;text-align:center;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Capital Destination</div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-2);">Static PDF — unusable</div>
+              </div>
+            </div>
             <div style="background:var(--surface-2);border:1px solid var(--border);border-left:2px solid var(--amber);padding:24px 28px;">
               <div style="font-family:'Inter',sans-serif;font-size:17px;font-weight:700;color:rgba(245,158,11,0.9);line-height:1.45;letter-spacing:-0.01em;">"The gap is not between companies and sustainability. The gap is between ESG performance data and the financial system that needs to price it."</div>
             </div>
@@ -1870,42 +1900,50 @@
         </div>
 
         <!-- ── SECTION 5: WHY CLIMACTIX EXISTS ── -->
-        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:72px;padding-bottom:72px;border-bottom:1px solid #2C2C2C;">
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid #2C2C2C;">
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:rgba(74,222,128,0.6);letter-spacing:0.14em;margin-bottom:8px;">05 ──────</div>
             <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;text-transform:uppercase;">Why We Exist</div>
           </div>
           <div>
-            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(20px,2.2vw,26px);font-weight:800;color:var(--text);line-height:1.2;letter-spacing:-0.025em;margin-bottom:16px;">Climactix Global is not an ESG reporting tool. It is the infrastructure layer that the system is missing.</h3>
-            <p style="font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.52);line-height:1.78;margin-bottom:20px;">We built a system that ingests sustainability performance data from any source, maps it simultaneously across GRI, SASB, TCFD, ISSB S1/S2, CSRD/ESRS, and India's BRSR — validates every claim against regulatory thresholds using AI-powered gap analysis, identifies greenwashing risk, and produces verified, audit-ready, investor-grade disclosure outputs in minutes.</p>
-            <p style="font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,0.52);line-height:1.78;">We do not help companies write ESG reports. We build the system through which ESG data becomes financially credible — structured, machine-readable, assurance-ready, and directly connected to the capital decisions it should be informing. We replace a $700,000 consulting cycle with infrastructure. We replace static PDFs with structured intelligence. We replace fragmented compliance with a unified disclosure architecture.</p>
+            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(18px,2vw,22px);font-weight:700;color:var(--text);line-height:1.25;letter-spacing:-0.02em;margin-bottom:16px;">Climactix Global is not an ESG reporting tool. It is the infrastructure layer that the system is missing.</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:16px;">
+              <div style="background:var(--surface-2);padding:14px 16px;border-left:2px solid var(--amber);">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;">We Replace</div>
+                <div style="font-size:12px;color:var(--text-2);line-height:1.5;">$700K consulting cycles with infrastructure · Static PDFs with structured intelligence · Fragmented compliance with unified architecture</div>
+              </div>
+              <div style="background:var(--surface-2);padding:14px 16px;border-left:2px solid var(--green);">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">We Build</div>
+                <div style="font-size:12px;color:var(--text-2);line-height:1.5;">GRI · SASB · TCFD · ISSB S1/S2 · CSRD/ESRS · BRSR — mapped simultaneously, audit-ready, machine-readable, investor-grade</div>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- ── SECTION 6: STRATEGIC ADVANTAGE ── -->
-        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:72px;padding-bottom:72px;border-bottom:1px solid #2C2C2C;">
+        <div style="display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start;margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid #2C2C2C;">
           <div>
             <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:rgba(74,222,128,0.6);letter-spacing:0.14em;margin-bottom:8px;">06 ──────</div>
             <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:0.06em;text-transform:uppercase;">The Advantage</div>
           </div>
           <div>
-            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(20px,2.2vw,26px);font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.02em;margin-bottom:28px;">For companies operating on Climactix infrastructure, ESG stops being a cost centre and becomes a structural financial asset.</h3>
+            <h3 style="font-family:'Inter',sans-serif;font-size:clamp(17px,1.8vw,20px);font-weight:700;color:var(--text);line-height:1.25;letter-spacing:-0.02em;margin-bottom:20px;">For companies operating on Climactix infrastructure, ESG stops being a cost centre and becomes a structural financial asset.</h3>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
               <div style="background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.14);border-radius:6px;padding:20px 22px;">
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(74,222,128,0.6);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Lower cost of capital</div>
-                <div style="font-family:'Inter',sans-serif;font-size:13.5px;color:rgba(255,255,255,0.5);line-height:1.65;">Credible, audited ESG disclosure is directly priced into borrowing rates and equity multiples by institutional investors and ESG-screened indices.</div>
+                <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.5;">Audited ESG disclosure is priced into borrowing rates and equity multiples by institutional investors and ESG indices.</div>
               </div>
               <div style="background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.14);border-radius:6px;padding:20px 22px;">
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(74,222,128,0.6);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Continuous regulatory readiness</div>
-                <div style="font-family:'Inter',sans-serif;font-size:13.5px;color:rgba(255,255,255,0.5);line-height:1.65;">Framework updates — new ISSB revisions, ESRS amendments, BRSR expansions — are absorbed into the platform automatically. Compliance is not a project; it is a state.</div>
+                <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.5;">ISSB revisions, ESRS amendments, and BRSR expansions are absorbed automatically. Compliance is a persistent state, not a deadline project.</div>
               </div>
               <div style="background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.14);border-radius:6px;padding:20px 22px;">
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(74,222,128,0.6);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Investor due diligence at speed</div>
-                <div style="font-family:'Inter',sans-serif;font-size:13.5px;color:rgba(255,255,255,0.5);line-height:1.65;">Institutional due diligence timelines compress from months to hours when ESG data is structured, verified, and machine-readable from the point of origin.</div>
+                <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.5;">Due diligence timelines compress from months to hours when ESG data is structured and verified from point of origin.</div>
               </div>
               <div style="background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.14);border-radius:6px;padding:20px 22px;">
                 <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(74,222,128,0.6);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Board-level decision intelligence</div>
-                <div style="font-family:'Inter',sans-serif;font-size:13.5px;color:rgba(255,255,255,0.5);line-height:1.65;">ESG performance becomes a live operational input to strategy — not a retrospective annual report produced for regulators twelve months after the decisions were already made.</div>
+                <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--text-2);line-height:1.5;">ESG performance becomes a live operational input to strategy — not a retrospective annual report produced after decisions are made.</div>
               </div>
             </div>
           </div>
@@ -1938,12 +1976,12 @@
         <div class="col-text">
           <div class="cx-eyebrow">Vision</div>
           <h2 class="section-heading">To become the foundational ESG intelligence and disclosure infrastructure layer for corporations, investors, and regulators navigating the transition to a sustainable economy.</h2>
-          <p class="body-text">Climactix Global is building the operating system for decision-useful ESG intelligence. By integrating AI-powered disclosure engines, multi-framework data mapping, and real-time analytics, we transform raw sustainability performance data — aligned with GRI, SASB, TCFD, ISSB, and CSRD — into audit-ready, investor-grade intelligence that informs capital allocation, regulatory compliance, and board-level strategy.</p>
-          <p class="body-text">The vision: make ESG data as structurally embedded in corporate decision-making as financial reporting — not as a communications overlay, but as a <strong>core operating infrastructure</strong> that drives transparency, accountability, and measurable value creation across the full stakeholder ecosystem.</p>
+          <p class="body-text">AI-powered disclosure engine mapping raw sustainability data across GRI, SASB, TCFD, ISSB, and CSRD — into audit-ready intelligence for capital allocation, regulatory compliance, and board strategy.</p>
+          <p class="body-text">ESG as <strong>core operating infrastructure</strong> — not a communications overlay. Structurally embedded in corporate decision-making the same way financial reporting is.</p>
         </div>
         <div class="cx-mission-card">
           <div class="cx-eyebrow" style="color:var(--primary);">Mission</div>
-          <p class="body-text" style="margin-bottom:18px;">Integrate ESG performance data into verified, financially material intelligence that enables organisations to:</p>
+          <p class="body-text" style="margin-bottom:14px;font-size:12px;color:var(--text-2);">Convert ESG performance data into verified, financially material intelligence:</p>
           <ul class="cx-mission-list">
             <li><span class="bullet-icon">↑</span>Attract and retain institutional capital</li>
             <li><span class="bullet-icon"></span>Meet mandatory disclosure obligations (CSRD, ISSB, BRSR)</li>
@@ -1964,7 +2002,7 @@
           <div class="cx-eyebrow">Strategic Imperative</div>
           <h2 class="section-heading" style="max-width:720px;">Why ESG Intelligence is a Board-Level Strategic Imperative</h2>
           <p class="cx-imperative-intro">
-            ESG has crossed from voluntary reporting into financially material territory. Mandatory disclosure regimes, investor screening models, and legal liability frameworks have transformed ESG from a communications exercise into a core governance function. Organisations that treat it as infrastructure gain measurable advantages in capital cost, regulatory positioning, and risk-adjusted valuation. Those that do not are accumulating liabilities they cannot yet see on their balance sheet.
+            ESG has crossed into financially material territory. Mandatory disclosure regimes and investor screening models have made it a core governance function — not a communications exercise. Infrastructure-grade ESG delivers measurable advantages in capital cost, regulatory positioning, and risk-adjusted valuation.
           </p>
         </div>
 
@@ -1974,7 +2012,7 @@
             <div class="cx-imp-number">01</div>
             <div class="cx-imp-body">
               <div class="cx-imp-heading">Capital Follows Credible Intelligence</div>
-              <p class="cx-imp-text">Institutional investors overseeing more than $120 trillion in assets now embed ESG disclosures directly into capital allocation models. Fragmented, unverifiable, or inconsistent disclosures elevate perceived risk — raising the cost of capital and triggering exclusion from ESG-screened portfolios. Organisations that produce decision-useful ESG intelligence unlock preferential financing; those that do not are systematically priced out.</p>
+              <p class="cx-imp-text">$120T in institutional assets now embeds ESG disclosures into capital allocation models. Fragmented or unverifiable data raises cost of capital and triggers exclusion from ESG-screened portfolios.</p>
             </div>
           </div>
 
@@ -1982,7 +2020,7 @@
             <div class="cx-imp-number">02</div>
             <div class="cx-imp-body">
               <div class="cx-imp-heading">Credibility is a Valuation Variable</div>
-              <p class="cx-imp-text">67% of institutional investors question the accuracy of corporate ESG claims. In an environment of SEC enforcement, EU greenwashing litigation, and SEBI BRSR mandates, credibility gaps carry direct financial consequences — from exclusion-list placement to regulatory penalties. Verified, audit-ready disclosures are no longer a reputational nicety; they are a balance-sheet protection mechanism.</p>
+              <p class="cx-imp-text">67% of institutional investors question ESG accuracy. SEC enforcement, EU greenwashing litigation, and SEBI mandates mean credibility gaps carry direct financial consequences — from exclusion lists to regulatory penalties.</p>
             </div>
           </div>
 
@@ -1990,7 +2028,7 @@
             <div class="cx-imp-number">03</div>
             <div class="cx-imp-body">
               <div class="cx-imp-heading">Regulatory Convergence is Structural, Not Cyclical</div>
-              <p class="cx-imp-text">CSRD applies to 50,000+ companies. ISSB S1/S2 is being adopted across 20+ jurisdictions. SEBI's BRSR mandate expanded in 2024 to cover 1,000+ Indian companies. This is not a regulatory trend — it is a structural convergence. Organisations that build disclosure infrastructure now will absorb compliance costs far below those who react at the deadline.</p>
+              <p class="cx-imp-text">CSRD: 50,000+ companies. ISSB: 20+ jurisdictions. BRSR: 1,000+ Indian companies. Structural convergence, not a trend. Build disclosure infrastructure now or pay deadline-reactive costs.</p>
             </div>
           </div>
 
@@ -1998,7 +2036,7 @@
             <div class="cx-imp-number">04</div>
             <div class="cx-imp-body">
               <div class="cx-imp-heading">Human Capital Risk is an ESG Variable</div>
-              <p class="cx-imp-text">76% of millennial professionals factor environmental and social commitments into employment decisions. As demographic transitions accelerate, organisations with credible ESG positioning consistently outperform peers in talent acquisition and retention. ESG performance data, disclosed clearly and consistently, is a material input to workforce strategy — not merely external positioning.</p>
+              <p class="cx-imp-text">76% of millennial professionals factor ESG commitments into employment decisions. Credible ESG positioning is a material input to talent acquisition — not external positioning.</p>
             </div>
           </div>
 
@@ -2006,7 +2044,7 @@
             <div class="cx-imp-number">05</div>
             <div class="cx-imp-body">
               <div class="cx-imp-heading">Measurement Without Intelligence is Stranded Investment</div>
-              <p class="cx-imp-text">Most organisations invest $200K–$700K annually in ESG measurement and reporting — yet the data rarely reaches investors or regulators in a decision-useful form. Structuring, interpreting, and contextualising ESG data is where disclosure becomes intelligence. Organisations that close this gap command stronger investor confidence, lower compliance friction, and a sustainable information advantage over peers that produce compliance documents instead of strategic insight.</p>
+              <p class="cx-imp-text">$200K–$700K invested annually in ESG measurement — yet data rarely reaches investors in a decision-useful form. Organisations that close this gap command lower compliance friction and a durable information advantage.</p>
             </div>
           </div>
 
@@ -3309,6 +3347,8 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
     </div>
   </div>
 
+  <!-- Three.js for WebGL 3D globe -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
   <script src="globe-gis.js"></script>
 
   <script>
@@ -3615,187 +3655,305 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
     }
 
     /* ═══════════════════════════════════════════
-       A. HERO GLOBE — Three.js + Climate Heatmap
+       A. HERO GLOBE — Three.js WebGL 3D Globe
     ═══════════════════════════════════════════ */
     function initHeroGlobe(worldData) {
       const canvas = document.getElementById('heroGlobeCanvas');
       if (!canvas) return;
 
-      const W = 400, H = 400;
-      canvas.width  = W;
-      canvas.height = H;
-      const ctx = canvas.getContext('2d');
-      const cx = W / 2, cy = H / 2, R = 182;
-      let rotY = 0.4; // initial rotation offset (radians)
-
       /* ── Continent polygons [lat, lon] ── */
       const CONTINENTS = [
-        /* North America */
         [[72,-141],[71,-96],[60,-85],[50,-80],[47,-75],[40,-70],[35,-76],[25,-80],[10,-85],[8,-77],[3,-77],[14,-87],[22,-106],[23,-110],[30,-116],[34,-120],[48,-124],[55,-131],[60,-141],[72,-141]],
-        /* Greenland */
         [[83,-40],[76,-18],[72,-24],[65,-43],[65,-52],[68,-56],[76,-69],[82,-52],[83,-40]],
-        /* South America */
         [[12,-72],[10,-62],[8,-60],[3,-52],[-5,-35],[-15,-38],[-23,-43],[-34,-52],[-55,-68],[-56,-72],[-40,-73],[-20,-70],[-5,-80],[5,-77],[12,-72]],
-        /* Europe */
         [[71,28],[65,14],[58,8],[51,2],[43,-9],[36,-9],[36,3],[37,14],[40,18],[37,23],[38,26],[41,29],[44,28],[46,30],[48,38],[43,44],[47,53],[55,37],[59,28],[65,25],[68,29],[71,28]],
-        /* Africa */
         [[37,-5],[37,10],[33,12],[28,33],[22,37],[15,42],[12,43],[10,42],[3,40],[-5,40],[-10,38],[-18,35],[-25,33],[-35,26],[-35,20],[-30,17],[-15,13],[-5,9],[0,9],[3,-10],[5,-15],[10,-17],[15,-17],[28,-14],[33,-5],[37,-5]],
-        /* Asia */
         [[70,30],[70,80],[70,140],[60,160],[50,140],[40,130],[35,125],[22,114],[10,104],[1,104],[-8,115],[-8,132],[0,130],[5,118],[10,108],[20,107],[25,90],[22,88],[22,80],[28,72],[22,60],[20,57],[22,55],[28,50],[35,36],[35,28],[40,26],[42,44],[47,53],[55,60],[55,80],[65,80],[70,60],[70,30]],
-        /* Australia */
         [[-15,130],[-15,140],[-18,146],[-22,150],[-34,151],[-38,147],[-38,140],[-35,137],[-32,116],[-22,113],[-15,130]],
-        /* Japan */
         [[40,140],[37,137],[34,131],[31,130],[33,131],[36,136],[38,141],[40,141],[41,140],[40,140]],
       ];
 
-      /* Climate risk (red) and mitigation (green) markers */
       const RISK = [[23.7,90.4],[-8.5,179.2],[-3.5,-60],[12,17],[30,70],[13,122],[18.5,-70],[78,15],[5,46]];
       const MITI = [[51,10],[35,105],[39,-98],[20,78],[31,-8],[65,-18],[10,-84],[56,10]];
 
-      function project(lat, lon) {
-        const phi = lat * Math.PI / 180;
-        const lam = lon * Math.PI / 180;
-        const x3  =  Math.cos(phi) * Math.sin(lam - rotY);
-        const y3  =  Math.sin(phi);
-        const z3  =  Math.cos(phi) * Math.cos(lam - rotY);
-        return { x: cx + R * x3, y: cy - R * y3, z: z3 };
+      /* ── THREE.js WebGL Globe ── */
+      if (typeof THREE !== 'undefined') {
+        _initThreeGlobe(canvas, CONTINENTS, RISK, MITI);
+        return;
       }
+      /* Fallback: Canvas 2D */
+      _initCanvas2DGlobe(canvas, CONTINENTS, RISK, MITI);
+    }
 
-      function drawFrame(ts) {
-        ctx.clearRect(0, 0, W, H);
+    function _initThreeGlobe(canvas, CONTINENTS, RISK, MITI) {
+      const wrap = canvas.parentElement;
+      const W = wrap.clientWidth  || 460;
+      const H = (wrap.clientHeight || 480) - 80;
+      canvas.width  = W;
+      canvas.height = H;
 
-        /* — Ocean sphere — */
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.clip();
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setSize(W, H);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setClearColor(0x000000, 0);
 
-        const oceanGrad = ctx.createRadialGradient(cx - R*0.25, cy - R*0.25, 0, cx, cy, R);
-        oceanGrad.addColorStop(0,   '#0d2540');
-        oceanGrad.addColorStop(0.6, '#071828');
-        oceanGrad.addColorStop(1,   '#030c14');
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+      camera.position.z = 2.7;
+
+      /* Lighting — sun from top-right, dim blue fill */
+      scene.add(new THREE.AmbientLight(0x223355, 0.7));
+      const sun = new THREE.DirectionalLight(0xffd8b0, 1.6);
+      sun.position.set(4, 2, 3);
+      scene.add(sun);
+      const fill = new THREE.DirectionalLight(0x113366, 0.4);
+      fill.position.set(-3, -1, -2);
+      scene.add(fill);
+
+      /* Earth texture — procedural from continent polygons */
+      function makeEarthTexture() {
+        const S = 1024, SH = 512;
+        const tc = document.createElement('canvas');
+        tc.width = S; tc.height = SH;
+        const ctx = tc.getContext('2d');
+        /* Ocean */
+        const oceanGrad = ctx.createLinearGradient(0, 0, 0, SH);
+        oceanGrad.addColorStop(0,   '#061c34');
+        oceanGrad.addColorStop(0.5, '#07203c');
+        oceanGrad.addColorStop(1,   '#030e1a');
         ctx.fillStyle = oceanGrad;
-        ctx.fillRect(0, 0, W, H);
-
-        /* — Grid lines — */
-        ctx.strokeStyle = 'rgba(80,130,180,0.13)';
-        ctx.lineWidth   = 0.6;
-        for (let lat = -60; lat <= 60; lat += 30) {
-          ctx.beginPath();
-          let first = true;
-          for (let lon = -180; lon <= 180; lon += 2) {
-            const p = project(lat, lon);
-            if (p.z < 0) { first = true; continue; }
-            first ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
-            first = false;
-          }
-          ctx.stroke();
+        ctx.fillRect(0, 0, S, SH);
+        /* Grid lines */
+        ctx.strokeStyle = 'rgba(40,90,140,0.18)';
+        ctx.lineWidth = 0.6;
+        for (let lat = -80; lat <= 80; lat += 20) {
+          const y = ((90 - lat) / 180) * SH;
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(S, y); ctx.stroke();
         }
-        for (let lon = 0; lon < 360; lon += 30) {
-          ctx.beginPath();
-          let first = true;
-          for (let lat = -85; lat <= 85; lat += 2) {
-            const p = project(lat, lon);
-            if (p.z < 0) { first = true; continue; }
-            first ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
-            first = false;
-          }
-          ctx.stroke();
+        for (let lon = -180; lon <= 180; lon += 20) {
+          const x = ((lon + 180) / 360) * S;
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, SH); ctx.stroke();
         }
-
-        /* — Equator highlight — */
-        ctx.beginPath();
-        ctx.strokeStyle = 'rgba(255,102,0,0.18)';
-        ctx.lineWidth = 1;
-        let first = true;
-        for (let lon = -180; lon <= 180; lon += 2) {
-          const p = project(0, lon);
-          if (p.z < 0) { first = true; continue; }
-          first ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
-          first = false;
+        /* Equator */
+        ctx.strokeStyle = 'rgba(255,102,0,0.14)';
+        ctx.lineWidth = 1.2;
+        const eqY = (90 / 180) * SH;
+        ctx.beginPath(); ctx.moveTo(0, eqY); ctx.lineTo(S, eqY); ctx.stroke();
+        /* Continents */
+        function toUV(lat, lon) {
+          return [((lon + 180) / 360) * S, ((90 - lat) / 180) * SH];
         }
-        ctx.stroke();
-
-        /* — Continents — */
-        ctx.fillStyle   = '#1e4030';
-        ctx.strokeStyle = 'rgba(60,130,90,0.35)';
-        ctx.lineWidth   = 0.8;
-
         for (const poly of CONTINENTS) {
           ctx.beginPath();
-          let started = false, prevVis = false;
-          for (let i = 0; i < poly.length; i++) {
-            const [la, ln] = poly[i];
-            const p = project(la, ln);
-            if (p.z >= -0.05) {
-              if (!started || !prevVis) ctx.moveTo(p.x, p.y);
-              else ctx.lineTo(p.x, p.y);
-              started = true; prevVis = true;
-            } else { prevVis = false; }
+          const [x0, y0] = toUV(poly[0][0], poly[0][1]);
+          ctx.moveTo(x0, y0);
+          for (let i = 1; i < poly.length; i++) {
+            const [x, y] = toUV(poly[i][0], poly[i][1]);
+            ctx.lineTo(x, y);
           }
-          if (started) { ctx.closePath(); ctx.fill(); ctx.stroke(); }
-        }
-
-        ctx.restore(); /* end clip */
-
-        /* — Globe ring — */
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(80,150,220,0.20)';
-        ctx.lineWidth   = 1.5;
-        ctx.stroke();
-
-        /* — Atmosphere glow — */
-        const atmoGrad = ctx.createRadialGradient(cx, cy, R * 0.88, cx, cy, R + 14);
-        atmoGrad.addColorStop(0,   'rgba(20,60,120,0)');
-        atmoGrad.addColorStop(0.5, 'rgba(20,60,120,0.07)');
-        atmoGrad.addColorStop(1,   'rgba(10,30,80,0.22)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, R + 14, 0, Math.PI * 2);
-        ctx.fillStyle = atmoGrad;
-        ctx.fill();
-
-        /* — Risk markers (red pulsing) — */
-        const pulse = 0.5 + 0.5 * Math.sin(ts / 600);
-        for (const [la, ln] of RISK) {
-          const p = project(la, ln);
-          if (p.z < 0.05) continue;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 2 + pulse * 2.5, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(255,51,51,' + (0.25 + pulse * 0.25) + ')';
+          ctx.closePath();
+          ctx.fillStyle   = '#1a3d28';
+          ctx.strokeStyle = 'rgba(60,140,90,0.55)';
+          ctx.lineWidth   = 1.5;
           ctx.fill();
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-          ctx.fillStyle = '#FF3333';
-          ctx.fill();
+          ctx.stroke();
         }
-
-        /* — Mitigation markers (amber) — */
-        for (const [la, ln] of MITI) {
-          const p = project(la, ln);
-          if (p.z < 0.05) continue;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-          ctx.fillStyle = '#FF6600';
-          ctx.fill();
-        }
-
-        /* — Slow auto-rotation — */
-        rotY += 0.0025;
-        requestAnimationFrame(drawFrame);
+        return new THREE.CanvasTexture(tc);
       }
 
-      requestAnimationFrame(drawFrame);
-
-      /* — Drag to rotate — */
-      let dragging = false, lastX = 0;
-      canvas.addEventListener('mousedown', e => { dragging = true; lastX = e.clientX; });
-      window.addEventListener('mouseup',   () => { dragging = false; });
-      window.addEventListener('mousemove', e => {
-        if (!dragging) return;
-        rotY -= (e.clientX - lastX) * 0.005;
-        lastX = e.clientX;
+      /* Globe sphere */
+      const globeGeo = new THREE.SphereGeometry(1, 64, 64);
+      const globeMat = new THREE.MeshPhongMaterial({
+        map:       makeEarthTexture(),
+        specular:  new THREE.Color(0x0a1828),
+        shininess: 6,
       });
+      const globe = new THREE.Mesh(globeGeo, globeMat);
+      scene.add(globe);
+
+      /* Atmosphere glow (custom shader) */
+      const atmoGeo = new THREE.SphereGeometry(1.055, 32, 32);
+      const atmoMat = new THREE.ShaderMaterial({
+        vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+          }`,
+        fragmentShader: `
+          varying vec3 vNormal;
+          void main() {
+            float i = pow(max(0.0, 0.65 - dot(vNormal, vec3(0.0,0.0,1.0))), 2.2);
+            gl_FragColor = vec4(0.08, 0.28, 0.75, 1.0) * i * 0.9;
+          }`,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true,
+        depthWrite: false,
+      });
+      scene.add(new THREE.Mesh(atmoGeo, atmoMat));
+
+      /* Outer halo ring */
+      const haloGeo = new THREE.SphereGeometry(1.09, 32, 32);
+      const haloMat = new THREE.ShaderMaterial({
+        vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+          }`,
+        fragmentShader: `
+          varying vec3 vNormal;
+          void main() {
+            float i = pow(max(0.0, 0.55 - dot(vNormal, vec3(0.0,0.0,1.0))), 3.0);
+            gl_FragColor = vec4(0.05, 0.15, 0.55, 1.0) * i * 0.5;
+          }`,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true,
+        depthWrite: false,
+      });
+      scene.add(new THREE.Mesh(haloGeo, haloMat));
+
+      /* Climate markers */
+      function latLonToVec3(lat, lon, r) {
+        const phi   = (90 - lat) * Math.PI / 180;
+        const theta = (lon + 180) * Math.PI / 180;
+        return new THREE.Vector3(
+          -r * Math.sin(phi) * Math.cos(theta),
+           r * Math.cos(phi),
+           r * Math.sin(phi) * Math.sin(theta)
+        );
+      }
+
+      const pulseRings = [];
+      function addMarker(lat, lon, hex) {
+        const pos = latLonToVec3(lat, lon, 1.012);
+        const dot = new THREE.Mesh(
+          new THREE.SphereGeometry(0.020, 8, 8),
+          new THREE.MeshBasicMaterial({ color: hex })
+        );
+        dot.position.copy(pos);
+        globe.add(dot);
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(0.022, 0.044, 16),
+          new THREE.MeshBasicMaterial({ color: hex, transparent: true, opacity: 0.55, side: THREE.DoubleSide })
+        );
+        ring.position.copy(pos);
+        ring.lookAt(new THREE.Vector3(0, 0, 0));
+        globe.add(ring);
+        pulseRings.push(ring);
+      }
+      RISK.forEach(([la, ln]) => addMarker(la, ln, 0xFF3333));
+      MITI.forEach(([la, ln]) => addMarker(la, ln, 0xFF6600));
+
+      /* Supply-chain arcs as animated Lines */
+      const ARCS = [
+        [[31.2,121.5],[51.5,-0.1]],
+        [[35.7,139.7],[40.7,-74.0]],
+        [[1.3,103.8],[22.3,114.2]],
+        [[19.1,72.9],[24.7,46.7]],
+        [[55.8,37.6],[48.9,2.3]],
+      ];
+
+      function makeArc(lat1, lon1, lat2, lon2) {
+        const pts = [];
+        for (let t = 0; t <= 1; t += 0.02) {
+          const la = lat1 + (lat2 - lat1) * t;
+          const ln = lon1 + (lon2 - lon1) * t;
+          const elev = 1.05 + 0.12 * Math.sin(Math.PI * t);
+          pts.push(latLonToVec3(la, ln, elev));
+        }
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        const mat = new THREE.LineBasicMaterial({ color: 0x0088cc, transparent: true, opacity: 0.28 });
+        return new THREE.Line(geo, mat);
+      }
+      ARCS.forEach(([a, b]) => globe.add(makeArc(a[0], a[1], b[0], b[1])));
+
+      /* Interaction */
+      let isDragging = false, prevX = 0, prevY = 0, autoSpin = true;
+      canvas.addEventListener('mousedown', e => {
+        isDragging = true; autoSpin = false;
+        prevX = e.clientX; prevY = e.clientY;
+        canvas.style.cursor = 'grabbing';
+      });
+      canvas.addEventListener('touchstart', e => {
+        isDragging = true; autoSpin = false;
+        prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
+      }, { passive: true });
+      window.addEventListener('mouseup', () => {
+        isDragging = false; canvas.style.cursor = 'grab';
+        setTimeout(() => { autoSpin = true; }, 2000);
+      });
+      window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        globe.rotation.y += (e.clientX - prevX) * 0.005;
+        globe.rotation.x += (e.clientY - prevY) * 0.003;
+        globe.rotation.x = Math.max(-0.6, Math.min(0.6, globe.rotation.x));
+        prevX = e.clientX; prevY = e.clientY;
+      });
+      canvas.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        globe.rotation.y += (e.touches[0].clientX - prevX) * 0.005;
+        prevX = e.touches[0].clientX;
+        e.preventDefault();
+      }, { passive: false });
+
+      /* Animation */
+      let frame = 0;
+      (function animate() {
+        requestAnimationFrame(animate);
+        frame++;
+        if (autoSpin) globe.rotation.y += 0.0016;
+        const pulse = 0.7 + 0.3 * Math.sin(frame * 0.045);
+        pulseRings.forEach(r => { r.scale.setScalar(pulse); r.material.opacity = 0.2 + 0.5 * pulse; });
+        renderer.render(scene, camera);
+      })();
+    }
+
+    /* Canvas 2D fallback (used if THREE not loaded) */
+    function _initCanvas2DGlobe(canvas, CONTINENTS, RISK, MITI) {
+      const W = 460, H = 400;
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      const cx = W/2, cy = H/2, R = 188;
+      let rotY = 0.4;
+      function project(lat, lon) {
+        const phi = lat*Math.PI/180, lam = lon*Math.PI/180;
+        const x3 = Math.cos(phi)*Math.sin(lam-rotY);
+        const y3 = Math.sin(phi);
+        const z3 = Math.cos(phi)*Math.cos(lam-rotY);
+        return { x: cx+R*x3, y: cy-R*y3, z: z3 };
+      }
+      function drawFrame(ts) {
+        ctx.clearRect(0,0,W,H);
+        ctx.save();
+        ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.clip();
+        const g = ctx.createRadialGradient(cx-R*0.25,cy-R*0.25,0,cx,cy,R);
+        g.addColorStop(0,'#0d2540'); g.addColorStop(0.6,'#071828'); g.addColorStop(1,'#030c14');
+        ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+        ctx.strokeStyle='rgba(80,130,180,0.13)'; ctx.lineWidth=0.6;
+        for (let lat=-60;lat<=60;lat+=30) {
+          ctx.beginPath(); let f=true;
+          for (let lon=-180;lon<=180;lon+=2) { const p=project(lat,lon); if(p.z<0){f=true;continue;} f?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); f=false; } ctx.stroke();
+        }
+        for (const poly of CONTINENTS) {
+          ctx.beginPath(); let s=false,pv=false;
+          for (let i=0;i<poly.length;i++) { const [la,ln]=poly[i],p=project(la,ln); if(p.z>=-0.05){if(!s||!pv)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);s=true;pv=true;}else pv=false; }
+          if(s){ctx.closePath();ctx.fillStyle='#1e4030';ctx.fill();ctx.strokeStyle='rgba(60,130,90,0.35)';ctx.lineWidth=0.8;ctx.stroke();}
+        }
+        ctx.restore();
+        ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='rgba(80,150,220,0.20)';ctx.lineWidth=1.5;ctx.stroke();
+        const pulse=0.5+0.5*Math.sin(ts/600);
+        RISK.forEach(([la,ln])=>{ const p=project(la,ln); if(p.z<0.05)return; ctx.beginPath();ctx.arc(p.x,p.y,2+pulse*2.5,0,Math.PI*2);ctx.fillStyle='rgba(255,51,51,'+(0.25+pulse*0.25)+')';ctx.fill(); ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fillStyle='#FF3333';ctx.fill(); });
+        MITI.forEach(([la,ln])=>{ const p=project(la,ln); if(p.z<0.05)return; ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fillStyle='#FF6600';ctx.fill(); });
+        rotY+=0.0022; requestAnimationFrame(drawFrame);
+      }
+      requestAnimationFrame(drawFrame);
+      let dragging=false,lastX=0;
+      canvas.addEventListener('mousedown',e=>{dragging=true;lastX=e.clientX;});
+      window.addEventListener('mouseup',()=>{dragging=false;});
+      window.addEventListener('mousemove',e=>{ if(!dragging)return; rotY-=(e.clientX-lastX)*0.005; lastX=e.clientX; });
     }
 
     /* ══════════════════════════════════════════════
