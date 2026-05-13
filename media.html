@@ -149,7 +149,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 /* FEATURED */
 .feat-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:border-color var(--t);animation:fade-in .3s ease both;margin-bottom:10px}
 .feat-card:hover{border-color:var(--border-strong)}
-.feat-band{position:relative;overflow:hidden;min-height:180px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 18px 16px}
+.feat-band{position:relative;overflow:hidden;min-height:260px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 18px 16px}
 .feat-band-bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .feat-band-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.5) 50%,rgba(0,0,0,.2) 100%)}
 .feat-band-cat{position:absolute;top:0;left:0;right:0;height:3px}
@@ -170,7 +170,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .art-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:border-color var(--t),background var(--t);animation:fade-in .3s ease both}
 .art-card:hover{background:var(--surface-2);border-color:var(--border-strong)}
 /* Image area — shows real thumbnail when available, else category color */
-.art-img{height:100px;position:relative;overflow:hidden;background:var(--surface-2)}
+.art-img{height:160px;position:relative;overflow:hidden;background:var(--surface-2)}
 .art-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
 .art-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 55%)}
 .art-img-noimg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.35}
@@ -204,6 +204,32 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .ls-inner{display:flex;flex-direction:column}
 .ls-inner.scrolling{animation:scroll-up 30s linear infinite}
 .ls-inner:hover{animation-play-state:paused}
+
+/* BLUR-UP / FADE-IN IMAGE LOADING */
+.blur-load{opacity:0;transition:opacity 0.35s ease}
+.blur-load.loaded{opacity:1}
+
+/* PUBLISHER LOGO CHIP */
+.art-logo{display:inline-flex;align-items:center;gap:3px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.1);padding:2px 6px;border-radius:1px;backdrop-filter:none}
+.art-logo img{width:12px;height:12px;border-radius:1px;object-fit:contain}
+.art-logo-txt{font-family:var(--mono);font-size:7px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.04em}
+
+/* TERMINAL THUMBNAIL */
+.t-thumb{width:56px;height:42px;flex-shrink:0;border-radius:2px;background-size:cover;background-position:center;background-color:var(--surface-3)}
+
+/* STORY CLUSTERS */
+.cluster-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.cluster-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:border-color var(--t);animation:fade-in .3s ease both}
+.cluster-card:hover{border-color:var(--border-strong)}
+.cluster-imgs{display:grid;grid-template-columns:2fr 1fr;height:130px;gap:2px;background:var(--surface-3)}
+.cluster-img-l{background-size:cover;background-position:center;background-color:var(--surface-3)}
+.cluster-imgs-col{display:flex;flex-direction:column;gap:2px}
+.cluster-img-sm{flex:1;background-size:cover;background-position:center;background-color:var(--surface-3)}
+.cluster-body{padding:10px 12px}
+.cluster-name{font-size:13px;font-weight:700;letter-spacing:-.015em;color:var(--text);margin-bottom:4px;line-height:1.3}
+.cluster-meta{display:flex;align-items:center;gap:8px;margin-top:4px}
+.cluster-cnt{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amber)}
+.cluster-desc{font-size:10px;color:var(--text-muted)}
 .ls-item{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
 .ls-item:hover{background:var(--surface-2)}
 .ls-bullet{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
@@ -489,6 +515,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
     </div>
   </div>
 
+  <!-- STORY CLUSTERS -->
+  <div>
+    <div class="sec-hdr">
+      <div class="sec-title">AI STORY CLUSTERS <span class="sec-live">&#9679; AGGREGATING</span></div>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">CLIMACTIX AI · 4 ACTIVE CLUSTERS</span>
+    </div>
+    <div class="cluster-grid" id="clusterGrid"></div>
+  </div>
+
   <!-- LIVE SCROLL STREAM -->
   <div class="live-stream">
     <div class="ls-hdr">
@@ -656,27 +691,32 @@ const MOCK_ARTICLES = [
   {id:1,cat:'regulation',featured:true,badge:'NEW REGULATION',btype:'regulation',
    headline:'SEC Finalizes Climate Disclosure Rules: Scope 1 & 2 Emissions Mandatory for Large Accelerated Filers',
    summary:'The SEC adopted final climate disclosure rules requiring registrants to disclose material climate-related risks, GHG emissions, and transition plans. Large accelerated filers must comply for FY beginning Jan 2026.',
-   src:'SEC',time:'14 min ago',region:'United States',impact:'HIGH',imgUrl:'',
+   src:'SEC',time:'14 min ago',region:'United States',impact:'HIGH',
+   imgUrl:'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&q=80&auto=format&fit=crop',
    url:'https://sec.gov'},
   {id:2,cat:'climate',badge:'HIGH RISK',btype:'climate',
    headline:'Amazon Basin Megadrought — 2.4M km² Under Extreme Designation, Supply Chains at Risk',
    summary:'INPE reports Amazon moisture deficit at 40-year record. Major supply chain disruption for agriculture and energy sectors. Soy, beef, and hydropower most exposed.',
-   src:'INPE/NOAA',time:'32 min ago',region:'South America',impact:'HIGH',imgUrl:'',
+   src:'INPE/NOAA',time:'32 min ago',region:'South America',impact:'HIGH',
+   imgUrl:'https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=900&q=80&auto=format&fit=crop',
    url:'https://www.nasa.gov/earth'},
   {id:3,cat:'market',badge:'MARKET ALERT',btype:'market',
    headline:'EU ETS Carbon Price Surges 12% on Tighter Phase 5 Supply — Analysts See €80 by Q4 2025',
    summary:'European carbon allowances hit €63.40 as the EU Commission announced a 4.2% reduction in 2026 auction volumes. Market analysts forecast prices reaching €80 by Q4 2025.',
-   src:'ICE/Bloomberg',time:'1 hr ago',region:'Europe',impact:'MEDIUM',imgUrl:'',
+   src:'ICE/Bloomberg',time:'1 hr ago',region:'Europe',impact:'MEDIUM',
+   imgUrl:'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80&auto=format&fit=crop',
    url:''},
   {id:4,cat:'regulation',badge:'POLICY UPDATE',btype:'policy',
    headline:'ISSB Confirms Mandatory IFRS S1/S2 Adoption Across 20 Jurisdictions — 55% of Global GDP',
    summary:'The ISSB confirmed 20 jurisdictions covering 55% of global GDP committed to mandatory IFRS S1/S2 adoption, a major expansion of climate financial disclosure requirements.',
-   src:'IFRS Foundation',time:'2 hr ago',region:'Global',impact:'HIGH',imgUrl:'',
+   src:'IFRS Foundation',time:'2 hr ago',region:'Global',impact:'HIGH',
+   imgUrl:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=900&q=80&auto=format&fit=crop',
    url:'https://www.ifrs.org'},
   {id:5,cat:'esg',badge:'ESG DISCLOSURE',btype:'esg',
    headline:'BlackRock Revised Voting Policy: All Portfolio Companies Must Disclose TCFD-Aligned Climate Plans',
    summary:'BlackRock\'s 2025 global proxy voting policy expands climate requirements. Companies without credible net-zero transition plans will face votes against directors.',
-   src:'BlackRock',time:'3 hr ago',region:'Global',impact:'HIGH',imgUrl:'',
+   src:'BlackRock',time:'3 hr ago',region:'Global',impact:'HIGH',
+   imgUrl:'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80&auto=format&fit=crop',
    url:'https://www.blackrock.com'},
 ];
 
@@ -828,6 +868,106 @@ const CAT_BG   ={regulation:'#1C0A00',market:'#001322',climate:'#1C0400',esg:'#0
 function catColor(cat){return CAT_COLOR[cat]||'#FF6600';}
 function catBg(cat)   {return CAT_BG[cat]   ||'#111111';}
 
+/* ── IMAGE POOLS — Unsplash fallbacks per category ── */
+const IMG_POOLS={
+  regulation:[
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=900&q=80&auto=format&fit=crop',
+  ],
+  policy:[
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=900&q=80&auto=format&fit=crop',
+  ],
+  climate:[
+    'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1574169208507-84376144848b?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=900&q=80&auto=format&fit=crop',
+  ],
+  market:[
+    'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1535320903710-d993d3d77d29?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=900&q=80&auto=format&fit=crop',
+  ],
+  esg:[
+    'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=900&q=80&auto=format&fit=crop',
+  ],
+  investor:[
+    'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=900&q=80&auto=format&fit=crop',
+  ],
+  finance:[
+    'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80&auto=format&fit=crop',
+  ],
+  alert:[
+    'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=900&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1574169208507-84376144848b?w=900&q=80&auto=format&fit=crop',
+  ],
+};
+
+const CLUSTERS=[
+  {id:'wildfire',name:'Wildfire & Drought Intelligence',cat:'climate',
+   desc:'Amazon megadrought · California fires · East Africa drought',liveCount:12,
+   imgs:[
+    'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1574169208507-84376144848b?w=400&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=400&q=80&auto=format&fit=crop',
+   ]},
+  {id:'carbon',name:'Carbon Market Intelligence',cat:'market',
+   desc:'EU ETS Phase 5 surge · VCM growth · Article 6 deals',liveCount:8,
+   imgs:[
+    'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=600&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1535320903710-d993d3d77d29?w=400&q=80&auto=format&fit=crop',
+   ]},
+  {id:'csrd',name:'CSRD & ESG Regulation Wave',cat:'regulation',
+   desc:'CSRD Wave 1 · SEC Climate Rules · ISSB S2 mandates',liveCount:15,
+   imgs:[
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&q=80&auto=format&fit=crop',
+   ]},
+  {id:'greenfin',name:'Green Finance & Net Zero',cat:'esg',
+   desc:'$502B green bonds · BlackRock voting · fund flows',liveCount:11,
+   imgs:[
+    'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=400&q=80&auto=format&fit=crop',
+   ]},
+];
+
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++){h=(Math.imul(31,h)+s.charCodeAt(i))|0;}return Math.abs(h);}
+function getArticleImage(a){
+  if(a.imgUrl) return a.imgUrl;
+  const cat=a.cat||a.btype||'climate';
+  const pool=IMG_POOLS[cat]||IMG_POOLS.climate;
+  return pool[hashStr(a.headline||String(a.id))%pool.length];
+}
+function getPublisherLogo(url){
+  try{const d=new URL(url).hostname.replace('www.','');return d?`https://logo.clearbit.com/${d}`:''}
+  catch{return '';}
+}
+function lazyLoadImages(){
+  if(!window.IntersectionObserver){
+    document.querySelectorAll('[data-src]').forEach(el=>{el.style.backgroundImage=`url('${el.dataset.src}')`;el.classList.add('loaded');el.removeAttribute('data-src');});
+    return;
+  }
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const el=e.target,src=el.getAttribute('data-src');
+      if(src){el.style.backgroundImage=`url('${src}')`;setTimeout(()=>el.classList.add('loaded'),30);el.removeAttribute('data-src');}
+      io.unobserve(el);
+    });
+  },{rootMargin:'150px'});
+  document.querySelectorAll('[data-src]').forEach(el=>io.observe(el));
+}
+
 async function loadLiveArticles(){
   setApiStatus('loading');
   const results = await Promise.allSettled(RSS_FEEDS.map(f=>fetchFeed(f)));
@@ -922,13 +1062,11 @@ function renderFeatured(arts){
   if(!a){document.getElementById('featWrap').innerHTML='';return;}
   const cc = catColor(a.cat||a.btype||'climate');
   const bg = catBg(a.cat||a.btype||'climate');
-  const hasImg = !!(a.imgUrl);
-  const bandStyle = hasImg
-    ? `background-image:url('${a.imgUrl}');background-size:cover;background-position:center;background-color:${bg}`
-    : `background:${bg}`;
+  const imgSrc = getArticleImage(a);
+  const logoSrc = getPublisherLogo(a.url||'');
   document.getElementById('featWrap').innerHTML = `
     <div class="feat-card" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
-      <div class="feat-band" style="${bandStyle}">
+      <div class="feat-band" style="background-image:url('${imgSrc}');background-size:cover;background-position:center;background-color:${bg}">
         <div class="feat-band-cat" style="background:${cc}"></div>
         <div class="feat-band-overlay"></div>
         <div class="feat-band-content">
@@ -937,6 +1075,7 @@ function renderFeatured(arts){
             ${a.live?'<span class="badge b-red">LIVE</span>':''}
             <span class="badge b-neutral">${a.region||'Global'}</span>
             ${impact(a.impact||'MEDIUM')}
+            ${logoSrc?`<span class="art-logo" style="margin-left:auto"><img src="${logoSrc}" onerror="this.parentNode.style.display='none'" loading="lazy"><span class="art-logo-txt">${(a.src||'').slice(0,14)}</span></span>`:''}
           </div>
           <div class="feat-headline">${a.headline}</div>
           <div class="feat-meta-row">
@@ -957,22 +1096,19 @@ function renderGrid(arts){
   document.getElementById('artGrid').innerHTML = cards.map((a,i)=>{
     const cc = catColor(a.cat||a.btype||'climate');
     const bg = catBg(a.cat||a.btype||'climate');
-    const hasImg = !!(a.imgUrl);
-    const imgSection = hasImg
-      ? `<div class="art-img">
-           <div class="art-img-bg" style="background-image:url('${a.imgUrl}');background-color:${bg}"></div>
-           <div class="art-img-overlay"></div>
-           <div style="position:absolute;bottom:6px;left:8px;z-index:1">${badge(a.btype||a.cat)}</div>
-         </div>`
-      : `<div class="art-stripe" style="background:${cc}"></div>`;
+    const imgSrc = getArticleImage(a);
+    const logoSrc = getPublisherLogo(a.url||'');
     return `
     <div class="art-card" style="animation-delay:${i*0.06}s" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
-      ${imgSection}
-      <div class="art-body">
-        <div class="art-badges">
+      <div class="art-img">
+        <div class="art-img-bg blur-load" data-src="${imgSrc}" style="background-color:${bg}"></div>
+        <div class="art-img-overlay"></div>
+        <div style="position:absolute;bottom:6px;left:8px;z-index:1;display:flex;align-items:center;gap:5px">
           ${badge(a.btype||a.cat)}
-          <span style="font-family:var(--mono);font-size:8px;color:var(--text-muted);padding:2px 5px">${a.region||'Global'}</span>
+          ${logoSrc?`<span class="art-logo"><img src="${logoSrc}" onerror="this.parentNode.style.display='none'" loading="lazy"><span class="art-logo-txt">${(a.src||'').slice(0,12)}</span></span>`:''}
         </div>
+      </div>
+      <div class="art-body">
         <div class="art-headline">${a.headline}</div>
         <div class="art-summary">${a.summary||''}</div>
         <div class="art-meta">
@@ -984,12 +1120,16 @@ function renderGrid(arts){
       </div>
     </div>`;
   }).join('');
+  lazyLoadImages();
 }
 
 function renderTerminal(arts){
-  document.getElementById('termFeed').innerHTML = arts.map((a,i)=>`
+  document.getElementById('termFeed').innerHTML = arts.map((a,i)=>{
+    const imgSrc = getArticleImage(a);
+    return `
     <div class="t-item" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
       <span class="t-idx">${String(i+1).padStart(2,'0')}</span>
+      <div class="t-thumb blur-load" data-src="${imgSrc}"></div>
       <div class="t-body">
         <div class="t-headline">${a.headline||a.title||''}</div>
         <div class="t-meta">
@@ -998,7 +1138,38 @@ function renderTerminal(arts){
           ${badge(a.cat||a.btype||'climate')}
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+  lazyLoadImages();
+}
+
+function renderClusters(){
+  document.getElementById('clusterGrid').innerHTML = CLUSTERS.map((c,i)=>{
+    const cc = catColor(c.cat);
+    const bg = catBg(c.cat);
+    const [img1,img2,img3] = c.imgs;
+    return `<div class="cluster-card" style="animation-delay:${i*0.07}s">
+      <div class="cluster-imgs">
+        <div class="cluster-img-l blur-load" data-src="${img1}" style="background-color:${bg}"></div>
+        <div class="cluster-imgs-col">
+          <div class="cluster-img-sm blur-load" data-src="${img2}" style="background-color:${bg}"></div>
+          <div class="cluster-img-sm blur-load" data-src="${img3}" style="background-color:${bg}"></div>
+        </div>
+      </div>
+      <div class="cluster-body">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <span class="badge" style="background:${cc}18;border:1px solid ${cc}44;color:${cc};font-size:7px">${c.cat.toUpperCase()}</span>
+          <span style="display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:8px;color:var(--green)"><span class="live-dot" style="width:4px;height:4px;flex-shrink:0"></span>${c.liveCount} LIVE ARTICLES</span>
+        </div>
+        <div class="cluster-name">${c.name}</div>
+        <div class="cluster-meta">
+          <span class="cluster-cnt">${c.liveCount} stories</span>
+          <span class="cluster-desc">${c.desc}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  lazyLoadImages();
 }
 
 function renderCats(){
@@ -1265,6 +1436,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   renderFeed(MOCK_ARTICLES);
   renderLiveStream(MOCK_ARTICLES);
   renderTerminal(TERMINAL_MOCK);
+  renderClusters();
   renderRegs(REGULATIONS);
   renderCarbon();
   renderDeadlines();
