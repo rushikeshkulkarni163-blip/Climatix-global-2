@@ -147,14 +147,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .impact-chip{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:1px;margin-left:auto}
 
 /* FEATURED */
-.feat-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:3px;overflow:hidden;cursor:pointer;transition:border-color var(--t);animation:fade-in .3s ease both;margin-bottom:10px}
-.feat-card:hover{border-color:var(--border-strong);border-left-color:var(--amber)}
-.feat-img{height:220px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px}
-.feat-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.2) 60%,transparent 100%)}
-.feat-content{position:relative;z-index:1;width:100%}
-.feat-badges{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
-.feat-headline{font-size:19px;font-weight:800;letter-spacing:-.025em;color:#fff;line-height:1.25}
-.feat-body{padding:12px 14px}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:border-color var(--t);animation:fade-in .3s ease both;margin-bottom:10px}
+.feat-card:hover{border-color:var(--border-strong)}
+.feat-band{position:relative;overflow:hidden;min-height:180px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 18px 16px}
+.feat-band-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.feat-band-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.92) 0%,rgba(0,0,0,.5) 50%,rgba(0,0,0,.2) 100%)}
+.feat-band-cat{position:absolute;top:0;left:0;right:0;height:3px}
+.feat-band-content{position:relative;z-index:1}
+.feat-badges{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.feat-headline{font-size:20px;font-weight:800;letter-spacing:-.025em;color:#fff;line-height:1.28}
+.feat-meta-row{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.feat-body{padding:12px 14px 14px}
 .feat-summary{font-size:12.5px;color:var(--text-2);line-height:1.6;margin-bottom:10px}
 .art-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .m-src{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--amber)}
@@ -166,9 +169,13 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .art-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .art-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:border-color var(--t),background var(--t);animation:fade-in .3s ease both}
 .art-card:hover{background:var(--surface-2);border-color:var(--border-strong)}
-.art-img{height:110px;position:relative;overflow:hidden}
-.art-img-inner{position:absolute;inset:0}
-.art-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 60%)}
+/* Image area — shows real thumbnail when available, else category color */
+.art-img{height:100px;position:relative;overflow:hidden;background:var(--surface-2)}
+.art-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+.art-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 55%)}
+.art-img-noimg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.35}
+/* Top category stripe on cards without real images */
+.art-stripe{height:3px;width:100%}
 .art-body{padding:10px 12px}
 .art-badges{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}
 .art-headline{font-size:13px;font-weight:700;letter-spacing:-.015em;color:var(--text);line-height:1.35;margin-bottom:6px}
@@ -646,35 +653,30 @@ const KPIS = [
 
 /* MOCK ARTICLES — fallback + initial load */
 const MOCK_ARTICLES = [
-  {id:1,cat:'regulation',featured:true,badge:'NEW REGULATION',btype:'reg',
+  {id:1,cat:'regulation',featured:true,badge:'NEW REGULATION',btype:'regulation',
    headline:'SEC Finalizes Climate Disclosure Rules: Scope 1 & 2 Emissions Mandatory for Large Accelerated Filers',
    summary:'The SEC adopted final climate disclosure rules requiring registrants to disclose material climate-related risks, GHG emissions, and transition plans. Large accelerated filers must comply for FY beginning Jan 2026.',
-   src:'SEC',time:'14 min ago',region:'United States',impact:'HIGH',
-   imgStyle:'background:linear-gradient(135deg,#3D1A00 0%,#1A0E00 40%,#0A0A0A 100%)',
+   src:'SEC',time:'14 min ago',region:'United States',impact:'HIGH',imgUrl:'',
    url:'https://sec.gov'},
-  {id:2,cat:'climate',badge:'HIGH RISK',btype:'alert',
+  {id:2,cat:'climate',badge:'HIGH RISK',btype:'climate',
    headline:'Amazon Basin Megadrought — 2.4M km² Under Extreme Designation, Supply Chains at Risk',
-   summary:'Brazil\'s INPE reports Amazon moisture deficit at 40-year record. Major supply chain disruption risk for agriculture and energy sectors. Soy, beef, and hydropower most exposed.',
-   src:'INPE/NOAA',time:'32 min ago',region:'South America',impact:'HIGH',
-   imgStyle:'background:linear-gradient(135deg,#2D0A00 0%,#1A0800 40%,#0A0A0A 100%)',
+   summary:'INPE reports Amazon moisture deficit at 40-year record. Major supply chain disruption for agriculture and energy sectors. Soy, beef, and hydropower most exposed.',
+   src:'INPE/NOAA',time:'32 min ago',region:'South America',impact:'HIGH',imgUrl:'',
    url:'https://www.nasa.gov/earth'},
   {id:3,cat:'market',badge:'MARKET ALERT',btype:'market',
    headline:'EU ETS Carbon Price Surges 12% on Tighter Phase 5 Supply — Analysts See €80 by Q4 2025',
    summary:'European carbon allowances hit €63.40 as the EU Commission announced a 4.2% reduction in 2026 auction volumes. Market analysts forecast prices reaching €80 by Q4 2025.',
-   src:'ICE/Bloomberg',time:'1 hr ago',region:'Europe',impact:'MEDIUM',
-   imgStyle:'background:linear-gradient(135deg,#001A1A 0%,#001010 40%,#0A0A0A 100%)',
+   src:'ICE/Bloomberg',time:'1 hr ago',region:'Europe',impact:'MEDIUM',imgUrl:'',
    url:''},
   {id:4,cat:'regulation',badge:'POLICY UPDATE',btype:'policy',
    headline:'ISSB Confirms Mandatory IFRS S1/S2 Adoption Across 20 Jurisdictions — 55% of Global GDP',
-   summary:'The ISSB confirmed that 20 jurisdictions covering 55% of global GDP committed to mandatory IFRS S1/S2 adoption, a major expansion of climate financial disclosure requirements worldwide.',
-   src:'IFRS Foundation',time:'2 hr ago',region:'Global',impact:'HIGH',
-   imgStyle:'background:linear-gradient(135deg,#0A0A1E 0%,#050512 40%,#0A0A0A 100%)',
+   summary:'The ISSB confirmed 20 jurisdictions covering 55% of global GDP committed to mandatory IFRS S1/S2 adoption, a major expansion of climate financial disclosure requirements.',
+   src:'IFRS Foundation',time:'2 hr ago',region:'Global',impact:'HIGH',imgUrl:'',
    url:'https://www.ifrs.org'},
   {id:5,cat:'esg',badge:'ESG DISCLOSURE',btype:'esg',
    headline:'BlackRock Revised Voting Policy: All Portfolio Companies Must Disclose TCFD-Aligned Climate Plans',
    summary:'BlackRock\'s 2025 global proxy voting policy expands climate requirements. Companies without credible net-zero transition plans will face votes against directors.',
-   src:'BlackRock',time:'3 hr ago',region:'Global',impact:'HIGH',
-   imgStyle:'background:linear-gradient(135deg,#001A0A 0%,#00100A 40%,#0A0A0A 100%)',
+   src:'BlackRock',time:'3 hr ago',region:'Global',impact:'HIGH',imgUrl:'',
    url:'https://www.blackrock.com'},
 ];
 
@@ -801,7 +803,7 @@ async function fetchFeed(feed){
       time: timeAgo(new Date(item.pubDate)),
       region: 'Global',
       impact: 'MEDIUM',
-      imgStyle: `background-image:url('${item.thumbnail||item.enclosure?.link||''}');background-size:cover;background-position:center;` + catGradient(feed.cat),
+      imgUrl: item.thumbnail || (item.enclosure && item.enclosure.link) || '',
       url: item.link || '#',
       live: true,
     }));
@@ -820,14 +822,11 @@ function timeAgo(date){
   return Math.floor(s/86400)+' days ago';
 }
 
-function catGradient(cat){
-  const map={esg:'linear-gradient(to bottom,rgba(0,20,10,0.7),rgba(0,0,0,0.9))',
-    climate:'linear-gradient(to bottom,rgba(30,5,0,0.7),rgba(0,0,0,0.9))',
-    market:'linear-gradient(to bottom,rgba(0,10,20,0.7),rgba(0,0,0,0.9))',
-    regulation:'linear-gradient(to bottom,rgba(20,10,0,0.7),rgba(0,0,0,0.9))',
-    investor:'linear-gradient(to bottom,rgba(0,10,30,0.7),rgba(0,0,0,0.9))'};
-  return 'background:' + (map[cat]||map.climate);
-}
+/* Solid category accent colors — always visible */
+const CAT_COLOR={regulation:'#FF6600',market:'#0099CC',climate:'#FF3333',esg:'#00CC44',investor:'#3399FF',finance:'#3399FF',alert:'#FF3333',policy:'#FF6600'};
+const CAT_BG   ={regulation:'#1C0A00',market:'#001322',climate:'#1C0400',esg:'#001A0D',investor:'#001430',finance:'#001430',alert:'#1C0400',policy:'#1C0A00'};
+function catColor(cat){return CAT_COLOR[cat]||'#FF6600';}
+function catBg(cat)   {return CAT_BG[cat]   ||'#111111';}
 
 async function loadLiveArticles(){
   setApiStatus('loading');
@@ -921,45 +920,60 @@ function renderFeed(articles){
 function renderFeatured(arts){
   const a = arts.find(x=>x.featured) || arts[0];
   if(!a){document.getElementById('featWrap').innerHTML='';return;}
+  const cc = catColor(a.cat||a.btype||'climate');
+  const bg = catBg(a.cat||a.btype||'climate');
+  const hasImg = !!(a.imgUrl);
+  const bandStyle = hasImg
+    ? `background-image:url('${a.imgUrl}');background-size:cover;background-position:center;background-color:${bg}`
+    : `background:${bg}`;
   document.getElementById('featWrap').innerHTML = `
     <div class="feat-card" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
-      <div class="feat-img" style="${a.imgStyle||catGradient(a.cat||'climate')}">
-        <div class="feat-overlay"></div>
-        <div class="feat-content">
+      <div class="feat-band" style="${bandStyle}">
+        <div class="feat-band-cat" style="background:${cc}"></div>
+        <div class="feat-band-overlay"></div>
+        <div class="feat-band-content">
           <div class="feat-badges">
             ${badge(a.btype||a.cat)}
             ${a.live?'<span class="badge b-red">LIVE</span>':''}
             <span class="badge b-neutral">${a.region||'Global'}</span>
+            ${impact(a.impact||'MEDIUM')}
           </div>
           <div class="feat-headline">${a.headline}</div>
+          <div class="feat-meta-row">
+            <span class="m-src">${a.src||a.source||''}</span>
+            <div class="m-sep"></div>
+            <span class="m-time">${a.time||''}</span>
+          </div>
         </div>
       </div>
       <div class="feat-body">
         <p class="feat-summary">${a.summary||''}</p>
-        <div class="art-meta">
-          <span class="m-src">${a.src||a.source||''}</span>
-          <div class="m-sep"></div>
-          <span class="m-time">${a.time||''}</span>
-          <div class="m-sep"></div>
-          <span class="m-region">&#9679; ${a.region||'Global'}</span>
-          ${impact(a.impact||'MEDIUM')}
-        </div>
       </div>
     </div>`;
 }
 
 function renderGrid(arts){
   const cards = arts.filter(a=>!a.featured).slice(0,4);
-  document.getElementById('artGrid').innerHTML = cards.map((a,i)=>`
+  document.getElementById('artGrid').innerHTML = cards.map((a,i)=>{
+    const cc = catColor(a.cat||a.btype||'climate');
+    const bg = catBg(a.cat||a.btype||'climate');
+    const hasImg = !!(a.imgUrl);
+    const imgSection = hasImg
+      ? `<div class="art-img">
+           <div class="art-img-bg" style="background-image:url('${a.imgUrl}');background-color:${bg}"></div>
+           <div class="art-img-overlay"></div>
+           <div style="position:absolute;bottom:6px;left:8px;z-index:1">${badge(a.btype||a.cat)}</div>
+         </div>`
+      : `<div class="art-stripe" style="background:${cc}"></div>`;
+    return `
     <div class="art-card" style="animation-delay:${i*0.06}s" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
-      <div class="art-img">
-        <div class="art-img-inner" style="${a.imgStyle||catGradient(a.cat||'climate')}"></div>
-        <div class="art-img-overlay"></div>
-        <div style="position:absolute;bottom:8px;left:10px;z-index:1">${badge(a.btype||a.cat)}</div>
-      </div>
+      ${imgSection}
       <div class="art-body">
-        <div class="art-headlines">${badge(a.btype||a.cat)}</div>
-        <div class="art-headline" style="margin-top:6px">${a.headline}</div>
+        <div class="art-badges">
+          ${badge(a.btype||a.cat)}
+          <span style="font-family:var(--mono);font-size:8px;color:var(--text-muted);padding:2px 5px">${a.region||'Global'}</span>
+        </div>
+        <div class="art-headline">${a.headline}</div>
         <div class="art-summary">${a.summary||''}</div>
         <div class="art-meta">
           <span class="m-src">${a.src||a.source||''}</span>
@@ -968,7 +982,8 @@ function renderGrid(arts){
           ${impact(a.impact||'MEDIUM')}
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderTerminal(arts){
