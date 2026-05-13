@@ -4,1632 +4,1265 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Media & Intelligence Center — Climactix Global</title>
-<meta name="description" content="Real-time climate & ESG intelligence. Regulatory monitoring, carbon markets, climate risk signals, and institutional-grade news for capital markets."/>
 <link rel="icon" type="image/png" href="Climatix_logo.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
 <style>
-/* ═══════════════════════════════════════════════════════════
-   CLIMACTIX GLOBAL — MEDIA & INTELLIGENCE CENTER
-   Bloomberg · Reuters · BlackRock — Institutional Grade
-   Matte Black · Bloomberg Amber · IBM Plex Mono
-═══════════════════════════════════════════════════════════ */
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-:root {
-  --bg:         #000000;
-  --bg-alt:     #0A0A0A;
-  --surface:    #0F0F0F;
-  --surface-2:  #1A1A1A;
-  --surface-3:  #242424;
-  --surface-4:  #2E2E2E;
-  --border:        #2C2C2C;
-  --border-strong: #333333;
-  --amber:      #FF6600;
-  --amber-dim:  #CC5200;
-  --amber-glow: rgba(255,102,0,0.08);
-  --cyan:       #0099CC;
-  --cyan-glow:  rgba(0,153,204,0.08);
-  --green:      #00CC44;
-  --green-glow: rgba(0,204,68,0.08);
-  --red:        #FF3333;
-  --red-glow:   rgba(255,51,51,0.08);
-  --blue:       #3399FF;
-  --text:       #FFFFFF;
-  --text-2:     #888888;
-  --text-muted: #555555;
-  --font: 'Inter', -apple-system, system-ui, sans-serif;
-  --mono: 'IBM Plex Mono', 'Courier New', monospace;
-  --t: 0.12s ease;
-  --nav-h: 44px;
+:root{
+  --bg:#000;--bg-alt:#0A0A0A;
+  --surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;
+  --border:#2C2C2C;--border-strong:#333;
+  --amber:#FF6600;--amber-dim:#CC5200;--amber-bg:rgba(255,102,0,0.08);
+  --cyan:#0099CC;--cyan-bg:rgba(0,153,204,0.08);
+  --green:#00CC44;--green-bg:rgba(0,204,68,0.08);
+  --red:#FF3333;--red-bg:rgba(255,51,51,0.08);
+  --blue:#3399FF;--blue-bg:rgba(51,153,255,0.08);
+  --text:#FFF;--text-2:#888;--text-muted:#555;
+  --font:'Inter',-apple-system,sans-serif;
+  --mono:'IBM Plex Mono','Courier New',monospace;
+  --t:0.12s ease;--nav-h:44px;
 }
-[data-theme="light"] {
-  --bg:#F8FAFC; --bg-alt:#FFFFFF; --surface:#FFFFFF; --surface-2:#F0F2F5;
-  --surface-3:#E8EAED; --surface-4:#DEE1E6;
-  --border:#DCDCDC; --border-strong:#C8C8C8;
-  --text:#0F172A; --text-2:#334155; --text-muted:#64748B;
+[data-theme="light"]{
+  --bg:#F8FAFC;--bg-alt:#FFF;--surface:#FFF;--surface-2:#F0F2F5;--surface-3:#E8EAED;
+  --border:#DCDCDC;--border-strong:#C8C8C8;
+  --text:#0F172A;--text-2:#334155;--text-muted:#64748B;
 }
-html{scroll-behavior:smooth;font-size:13px}
+html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 ::-webkit-scrollbar{width:4px;height:4px;background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px}
 
-/* ── ANIMATIONS ── */
-@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@keyframes pulse-live{0%,100%{box-shadow:0 0 0 0 rgba(0,204,68,0.4)}50%{box-shadow:0 0 0 4px rgba(0,204,68,0)}}
-@keyframes fade-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+/* ANIMATIONS */
+@keyframes ticker-h{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes scroll-up{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,204,68,.4)}50%{box-shadow:0 0 0 5px rgba(0,204,68,0)}}
+@keyframes fade-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
 
-/* ══════════════════════ NAV ══════════════════════ */
-.nav{
-  position:sticky;top:0;z-index:300;
-  height:var(--nav-h);background:var(--bg);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 16px;gap:10px;
-}
-.nav-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+/* NAV */
+.nav{position:sticky;top:0;z-index:300;height:var(--nav-h);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px}
+.nav-brand{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .nav-brand img{height:22px}
-.nav-brand-text{display:flex;flex-direction:column;line-height:1.1}
-.nav-brand-name{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text)}
-.nav-brand-sub{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
-.nav-sep{width:1px;height:18px;background:var(--border);flex-shrink:0}
-.nav-links{display:flex;align-items:center;gap:1px}
-.nav-link{
-  font-size:11px;font-weight:500;color:var(--text-muted);
-  padding:5px 10px;border-radius:2px;transition:var(--t);
-  white-space:nowrap;
-}
-.nav-link:hover{background:var(--surface-2);color:var(--text)}
-.nav-link.active{color:var(--amber);border-bottom:2px solid var(--amber)}
-.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto}
-.nav-search-btn{
-  display:flex;align-items:center;gap:6px;
-  font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em;
-  color:var(--text-muted);background:var(--surface);
-  border:1px solid var(--border);padding:5px 12px;border-radius:2px;
-  transition:var(--t);
-}
-.nav-search-btn:hover{border-color:var(--amber);color:var(--amber)}
-.nav-theme{
-  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-  font-size:14px;color:var(--text-muted);border-radius:2px;
-  border:1px solid var(--border);transition:var(--t);
-}
-.nav-theme:hover{background:var(--surface-2);color:var(--text)}
-.nav-live-badge{
-  display:flex;align-items:center;gap:5px;
-  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;
-  color:var(--green);padding:3px 8px;
-  background:var(--green-glow);border:1px solid rgba(0,204,68,0.2);border-radius:2px;
-}
-.nav-live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse-live 2s infinite}
+.nav-name{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text)}
+.nav-sub{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);line-height:1}
+.nav-sep{width:1px;height:18px;background:var(--border)}
+.nav-links{display:flex;gap:1px}
+.nl{font-size:11px;font-weight:500;color:var(--text-muted);padding:5px 10px;border-radius:2px;transition:var(--t)}
+.nl:hover{background:var(--surface-2);color:var(--text)}
+.nl.active{color:var(--amber);border-bottom:2px solid var(--amber)}
+.nav-r{display:flex;align-items:center;gap:8px;margin-left:auto}
+.live-badge{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--green);padding:3px 8px;background:var(--green-bg);border:1px solid rgba(0,204,68,.2);border-radius:2px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.btn-search{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:2px;transition:var(--t)}
+.btn-search:hover{border-color:var(--amber);color:var(--amber)}
+.btn-theme{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-muted);border:1px solid var(--border);border-radius:2px;transition:var(--t)}
+.btn-theme:hover{background:var(--surface-2);color:var(--text)}
 
-/* ══════════════════════ TICKER STRIP ══════════════════════ */
-.ticker-wrap{
-  height:34px;background:var(--surface);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;overflow:hidden;position:relative;
-}
-.ticker-label{
-  flex-shrink:0;height:100%;
-  display:flex;align-items:center;
-  padding:0 12px;
-  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;
-  background:var(--amber);color:#000;
-  border-right:1px solid rgba(0,0,0,0.2);
-  z-index:2;
-}
-.ticker-track{display:flex;align-items:center;gap:0;overflow:hidden;flex:1}
-.ticker-inner{
-  display:flex;align-items:center;gap:0;
-  animation:ticker-scroll 60s linear infinite;
-  white-space:nowrap;
-}
-.ticker-inner:hover{animation-play-state:paused}
-.tick-item{
-  display:flex;align-items:center;gap:8px;
-  padding:0 20px;border-right:1px solid var(--border);
-  font-family:var(--mono);font-size:10px;
-}
-.tick-name{color:var(--text-muted);font-weight:500;letter-spacing:.04em}
-.tick-val{color:var(--text);font-weight:700}
-.tick-up{color:var(--green)}
-.tick-dn{color:var(--red)}
-.tick-chg{font-size:9px}
+/* TICKER */
+.ticker{height:34px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden}
+.tick-tag{flex-shrink:0;height:100%;display:flex;align-items:center;padding:0 12px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;background:var(--amber);color:#000;border-right:1px solid rgba(0,0,0,.2)}
+.tick-track{flex:1;overflow:hidden;display:flex;align-items:center}
+.tick-inner{display:flex;align-items:center;animation:ticker-h 80s linear infinite;white-space:nowrap}
+.tick-inner:hover{animation-play-state:paused}
+.ti{display:flex;align-items:center;gap:8px;padding:0 18px;border-right:1px solid var(--border);font-family:var(--mono);font-size:10px}
+.ti-name{color:var(--text-muted);font-weight:500}
+.ti-val{color:var(--text);font-weight:700}
+.up{color:var(--green)}
+.dn{color:var(--red)}
 
-/* ══════════════════════ ALERT BANNER ══════════════════════ */
-.alert-banner{
-  background:rgba(255,51,51,0.05);
-  border-bottom:1px solid rgba(255,51,51,0.15);
-  padding:7px 16px;
-  display:flex;align-items:center;gap:10px;
-  font-family:var(--mono);font-size:10px;
-}
-.alert-label{
-  background:var(--red);color:#fff;
-  padding:2px 7px;border-radius:1px;
-  font-size:8px;font-weight:700;letter-spacing:.12em;flex-shrink:0;
-}
-.alert-text{color:var(--text-2);font-size:10px}
-.alert-text strong{color:var(--text)}
+/* ALERT BANNER */
+.alert{display:flex;align-items:center;gap:10px;padding:7px 16px;background:rgba(255,51,51,.05);border-bottom:1px solid rgba(255,51,51,.15);font-family:var(--mono);font-size:10px}
+.alert-lbl{background:var(--red);color:#fff;padding:2px 7px;border-radius:1px;font-size:8px;font-weight:700;letter-spacing:.12em;flex-shrink:0}
+.alert-txt{color:var(--text-2)}
+.alert-txt strong{color:var(--text)}
 .alert-time{margin-left:auto;color:var(--text-muted);font-size:9px;flex-shrink:0}
-.alert-close{
-  width:18px;height:18px;display:flex;align-items:center;justify-content:center;
-  color:var(--text-muted);font-size:14px;cursor:pointer;flex-shrink:0;
-  border-radius:2px;transition:var(--t);
-}
-.alert-close:hover{background:var(--surface-3);color:var(--text)}
+.alert-x{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;border-radius:2px;transition:var(--t);font-size:14px}
+.alert-x:hover{background:var(--surface-3);color:var(--text)}
 
-/* ══════════════════════ MAIN LAYOUT ══════════════════════ */
-.mc-outer{max-width:1520px;margin:0 auto;padding:0 16px 60px}
-.mc-grid{
-  display:grid;
-  grid-template-columns:240px 1fr 300px;
-  gap:16px;align-items:start;
-  padding-top:16px;
-}
+/* LAYOUT */
+.wrap{max-width:1540px;margin:0 auto;padding:0 14px 60px}
+.grid{display:grid;grid-template-columns:236px 1fr 296px;gap:14px;padding-top:14px;align-items:start}
 
-/* ══════════════════════ LEFT SIDEBAR ══════════════════════ */
-.sidebar-left{position:sticky;top:calc(var(--nav-h) + 34px + 36px + 8px);display:flex;flex-direction:column;gap:12px}
-.sidebar-panel{
-  background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;
-}
-.sidebar-hdr{
-  padding:8px 12px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.sidebar-hdr-title{
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);
-}
-.sidebar-hdr-action{
-  font-family:var(--mono);font-size:9px;font-weight:600;
-  color:var(--amber);letter-spacing:.04em;cursor:pointer;
-}
-.cat-list{padding:6px}
-.cat-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:7px 8px;border-radius:2px;cursor:pointer;
-  transition:var(--t);
-}
+/* LEFT */
+.sl{position:sticky;top:calc(var(--nav-h) + 78px);display:flex;flex-direction:column;gap:10px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.ph{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-alt)}
+.ph-title{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.ph-action{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--amber);cursor:pointer}
+.cat-list{padding:5px}
+.cat-item{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:2px;cursor:pointer;transition:var(--t);border-left:2px solid transparent}
 .cat-item:hover{background:var(--surface-2)}
-.cat-item.active{background:var(--amber-glow);border-left:2px solid var(--amber)}
+.cat-item.active{background:var(--amber-bg);border-left-color:var(--amber)}
 .cat-left{display:flex;align-items:center;gap:8px}
-.cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cat-dot{width:6px;height:6px;border-radius:50%}
 .cat-name{font-size:12px;font-weight:500;color:var(--text-2);transition:var(--t)}
-.cat-item.active .cat-name,.cat-item:hover .cat-name{color:var(--text)}
-.cat-count{
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  color:var(--text-muted);background:var(--surface-3);
-  padding:1px 6px;border-radius:2px;
-}
-.cat-item.active .cat-count{background:rgba(255,102,0,0.15);color:var(--amber)}
+.cat-item:hover .cat-name,.cat-item.active .cat-name{color:var(--text)}
+.cat-n{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text-muted);background:var(--surface-3);padding:1px 6px;border-radius:2px}
+.cat-item.active .cat-n{background:rgba(255,102,0,.15);color:var(--amber)}
 
-/* Watchlist */
-.watchlist-body{padding:10px 12px}
-.watch-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:6px 0;border-bottom:1px solid var(--border);
-}
-.watch-item:last-child{border-bottom:none}
-.watch-name{font-size:11px;font-weight:600;color:var(--text-2)}
-.watch-tag{
-  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.08em;
-  padding:2px 5px;border-radius:1px;
-}
-.watch-tag.reg{background:rgba(255,102,0,0.1);color:var(--amber);border:1px solid rgba(255,102,0,0.2)}
-.watch-tag.mkt{background:var(--cyan-glow);color:var(--cyan);border:1px solid rgba(0,153,204,0.2)}
-.watch-tag.evt{background:var(--red-glow);color:var(--red);border:1px solid rgba(255,51,51,0.2)}
+/* Watch / Source rows */
+.list-body{padding:8px 12px}
+.list-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.list-row:last-child{border-bottom:none}
+.source-logo{width:22px;height:22px;border-radius:2px;background:var(--surface-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:7px;font-weight:700;color:var(--amber);flex-shrink:0}
+.tag-sm{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.08em;padding:2px 5px;border-radius:1px}
+.tag-reg{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(255,102,0,.2)}
+.tag-mkt{background:var(--cyan-bg);color:var(--cyan);border:1px solid rgba(0,153,204,.2)}
+.tag-evt{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,51,51,.2)}
+.l-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
 
-/* Sources panel */
-.source-list{padding:8px 12px}
-.source-row{
-  display:flex;align-items:center;gap:8px;
-  padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;
-}
-.source-row:last-child{border-bottom:none}
-.source-logo{
-  width:22px;height:22px;border-radius:2px;
-  background:var(--surface-3);border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:7px;font-weight:700;color:var(--amber);
-  letter-spacing:.02em;flex-shrink:0;
-}
-.source-name{font-size:11px;font-weight:500;color:var(--text-2);flex:1}
-.source-count{font-family:var(--mono);font-size:9px;color:var(--text-muted)}
-.source-live-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse-live 2s infinite;flex-shrink:0}
+/* KPI STRIP */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:14px}
+.kpi-c{padding:10px 14px;border-right:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.kpi-c:last-child{border-right:none}
+.kpi-c:hover{background:var(--surface-2)}
+.kpi-lbl{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.kpi-val{font-family:var(--mono);font-size:18px;font-weight:700;letter-spacing:-.02em;color:var(--amber);line-height:1}
+.kpi-delta{display:flex;align-items:center;gap:3px;margin-top:3px;font-family:var(--mono);font-size:9px;font-weight:700}
 
-/* ══════════════════════ MAIN CONTENT ══════════════════════ */
-.main-content{min-width:0;display:flex;flex-direction:column;gap:20px}
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.sec-title{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+.sec-live{display:inline-flex;align-items:center;gap:4px;background:var(--amber-bg);border:1px solid rgba(255,102,0,.2);color:var(--amber);padding:1px 6px;border-radius:1px;font-size:9px}
+.tabs{display:flex;gap:2px}
+.tab{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:4px 10px;border-radius:2px;cursor:pointer;transition:var(--t);border:1px solid transparent}
+.tab:hover{background:var(--surface-2);color:var(--text)}
+.tab.active{background:var(--surface-3);color:var(--text);border-color:var(--border)}
 
-/* Section header */
-.section-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:14px;
-}
-.section-title{
-  font-family:var(--mono);font-size:10px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);
-  display:flex;align-items:center;gap:8px;
-}
-.section-title-accent{
-  display:inline-flex;align-items:center;gap:4px;
-  background:var(--amber-glow);border:1px solid rgba(255,102,0,0.2);
-  color:var(--amber);padding:1px 6px;border-radius:1px;font-size:9px;
-}
-.section-tabs{display:flex;gap:2px}
-.stab{
-  font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--text-muted);
-  padding:4px 10px;border-radius:2px;cursor:pointer;transition:var(--t);
-  border:1px solid transparent;
-}
-.stab:hover{background:var(--surface-2);color:var(--text)}
-.stab.active{background:var(--surface-3);color:var(--text);border-color:var(--border)}
+/* BADGES */
+.badge{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;padding:2px 7px;border-radius:1px}
+.b-red{background:var(--red);color:#fff}
+.b-amber{background:var(--amber);color:#000}
+.b-cyan{background:var(--cyan);color:#000}
+.b-outline-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(255,51,51,.2)}
+.b-outline-amber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(255,102,0,.2)}
+.b-outline-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,204,68,.2)}
+.b-outline-cyan{background:var(--cyan-bg);color:var(--cyan);border:1px solid rgba(0,153,204,.2)}
+.b-outline-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(51,153,255,.2)}
+.b-neutral{background:var(--surface-3);color:var(--text-muted);border:1px solid var(--border)}
+.impact-chip{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:1px;margin-left:auto}
 
-/* ── FEATURED ARTICLE ── */
-.featured-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-left:3px solid var(--amber);border-radius:3px;
-  overflow:hidden;cursor:pointer;transition:border-color var(--t);
-  animation:fade-up .3s ease both;
-}
-.featured-card:hover{border-color:var(--border-strong);border-left-color:var(--amber)}
-.featured-img{
-  height:240px;position:relative;overflow:hidden;
-  display:flex;align-items:flex-end;padding:16px;
-}
-.featured-img-bg{
-  position:absolute;inset:0;
-  background-image:linear-gradient(135deg,#0F0F0F 0%,#1A1A1A 100%);
-}
-.featured-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 60%)}
-.featured-img-content{position:relative;z-index:1;width:100%}
-.featured-category-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
-.news-badge{
-  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;
-  padding:2px 7px;border-radius:1px;
-}
-.badge-breaking{background:var(--red);color:#fff}
-.badge-regulation{background:var(--amber);color:#000}
-.badge-market{background:var(--cyan);color:#000}
-.badge-alert{background:rgba(255,51,51,0.15);border:1px solid rgba(255,51,51,0.3);color:var(--red)}
-.badge-investor{background:rgba(0,153,204,0.15);border:1px solid rgba(0,153,204,0.3);color:var(--cyan)}
-.badge-policy{background:rgba(51,153,255,0.15);border:1px solid rgba(51,153,255,0.3);color:var(--blue)}
-.badge-climate{background:rgba(0,204,68,0.12);border:1px solid rgba(0,204,68,0.25);color:var(--green)}
-.featured-headline{
-  font-size:20px;font-weight:800;letter-spacing:-.03em;color:var(--text);
-  line-height:1.25;
-}
-.featured-body{padding:14px 16px}
-.featured-summary{font-size:12.5px;color:var(--text-2);line-height:1.6;margin-bottom:12px}
-.article-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.meta-source{
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  letter-spacing:.06em;text-transform:uppercase;color:var(--amber);
-}
-.meta-sep{width:1px;height:10px;background:var(--border)}
-.meta-time{font-family:var(--mono);font-size:10px;color:var(--text-muted)}
-.meta-region{
-  font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.04em;
-  color:var(--text-muted);display:flex;align-items:center;gap:3px;
-}
-.meta-impact{
-  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;
-  padding:2px 6px;border-radius:1px;margin-left:auto;
-}
-.impact-high{background:var(--red-glow);color:var(--red);border:1px solid rgba(255,51,51,0.2)}
-.impact-medium{background:var(--amber-glow);color:var(--amber);border:1px solid rgba(255,102,0,0.2)}
-.impact-low{background:var(--green-glow);color:var(--green);border:1px solid rgba(0,204,68,0.2)}
+/* FEATURED */
+.feat-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:3px;overflow:hidden;cursor:pointer;transition:border-color var(--t);animation:fade-in .3s ease both;margin-bottom:10px}
+.feat-card:hover{border-color:var(--border-strong);border-left-color:var(--amber)}
+.feat-img{height:220px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px}
+.feat-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.2) 60%,transparent 100%)}
+.feat-content{position:relative;z-index:1;width:100%}
+.feat-badges{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+.feat-headline{font-size:19px;font-weight:800;letter-spacing:-.025em;color:#fff;line-height:1.25}
+.feat-body{padding:12px 14px}
+.feat-summary{font-size:12.5px;color:var(--text-2);line-height:1.6;margin-bottom:10px}
+.art-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.m-src{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--amber)}
+.m-sep{width:1px;height:10px;background:var(--border)}
+.m-time{font-family:var(--mono);font-size:10px;color:var(--text-muted)}
+.m-region{font-family:var(--mono);font-size:9px;color:var(--text-muted)}
 
-/* ── ARTICLE GRID ── */
-.article-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.article-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:3px;overflow:hidden;cursor:pointer;
-  transition:border-color var(--t),background var(--t);
-  animation:fade-up .3s ease both;
-}
-.article-card:hover{background:var(--surface-2);border-color:var(--border-strong)}
-.article-card-img{
-  height:120px;position:relative;overflow:hidden;
-}
-.article-card-img-bg{position:absolute;inset:0}
-.article-card-body{padding:12px}
-.article-card-badges{display:flex;gap:4px;margin-bottom:7px;flex-wrap:wrap}
-.article-card-headline{
-  font-size:13.5px;font-weight:700;letter-spacing:-.015em;
-  color:var(--text);line-height:1.35;margin-bottom:7px;
-}
-.article-card-summary{
-  font-size:11.5px;color:var(--text-2);line-height:1.55;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-  margin-bottom:8px;
-}
-.article-card-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+/* ARTICLE GRID */
+.art-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.art-card{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;cursor:pointer;transition:border-color var(--t),background var(--t);animation:fade-in .3s ease both}
+.art-card:hover{background:var(--surface-2);border-color:var(--border-strong)}
+.art-img{height:110px;position:relative;overflow:hidden}
+.art-img-inner{position:absolute;inset:0}
+.art-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 60%)}
+.art-body{padding:10px 12px}
+.art-badges{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap}
+.art-headline{font-size:13px;font-weight:700;letter-spacing:-.015em;color:var(--text);line-height:1.35;margin-bottom:6px}
+.art-summary{font-size:11px;color:var(--text-2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:7px}
 
-/* ── COMPACT TERMINAL CARDS ── */
-.terminal-feed{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:3px;overflow:hidden;
-}
-.terminal-feed-hdr{
-  padding:8px 12px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--bg-alt);
-}
-.terminal-feed-title{
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);
-  display:flex;align-items:center;gap:6px;
-}
-.tf-item{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:9px 12px;border-bottom:1px solid var(--border);
-  cursor:pointer;transition:background var(--t);
-}
-.tf-item:last-child{border-bottom:none}
-.tf-item:hover{background:var(--surface-2)}
-.tf-index{
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  color:var(--text-muted);width:16px;flex-shrink:0;padding-top:1px;
-}
-.tf-body{flex:1;min-width:0}
-.tf-headline{font-size:12px;font-weight:600;color:var(--text);line-height:1.35;margin-bottom:3px}
-.tf-meta{display:flex;align-items:center;gap:6px}
-.tf-source{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amber);letter-spacing:.04em}
-.tf-time{font-family:var(--mono);font-size:9px;color:var(--text-muted)}
-.tf-badge{margin-left:auto;flex-shrink:0}
+/* TERMINAL STREAM */
+.t-feed{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.t-feed-hdr{padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:space-between}
+.t-hdr-title{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.t-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.t-item:last-child{border-bottom:none}
+.t-item:hover{background:var(--surface-2)}
+.t-idx{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text-muted);width:16px;flex-shrink:0;padding-top:1px}
+.t-body{flex:1;min-width:0}
+.t-headline{font-size:12px;font-weight:600;color:var(--text);line-height:1.35;margin-bottom:3px}
+.t-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.t-src{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amber);letter-spacing:.04em}
+.t-time{font-family:var(--mono);font-size:9px;color:var(--text-muted)}
 
-/* ══════════════════════ REGULATION TRACKER ══════════════════════ */
-.reg-section{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.reg-hdr{
-  padding:10px 16px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--bg-alt);
-}
-.reg-hdr-left{display:flex;align-items:center;gap:12px}
-.reg-hdr-title{
-  font-family:var(--mono);font-size:10px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);
-}
-.reg-hdr-count{
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  background:var(--amber-glow);border:1px solid rgba(255,102,0,0.2);
-  color:var(--amber);padding:2px 7px;border-radius:1px;
-}
-.reg-tabs{display:flex;gap:2px}
-.reg-tab{
-  font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--text-muted);
-  padding:4px 10px;border-radius:2px;cursor:pointer;transition:var(--t);
-}
-.reg-tab:hover{background:var(--surface-3);color:var(--text)}
-.reg-tab.active{background:var(--surface-3);color:var(--amber);border-bottom:1px solid var(--amber)}
+/* LIVE SCROLL STREAM */
+.live-stream{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.ls-hdr{padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:space-between}
+.ls-title{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.ls-body{height:280px;overflow:hidden;position:relative}
+.ls-body::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,var(--surface),transparent);pointer-events:none;z-index:2}
+.ls-inner{display:flex;flex-direction:column}
+.ls-inner.scrolling{animation:scroll-up 30s linear infinite}
+.ls-inner:hover{animation-play-state:paused}
+.ls-item{display:flex;align-items:flex-start;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.ls-item:hover{background:var(--surface-2)}
+.ls-bullet{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ls-text{flex:1;min-width:0;font-size:11.5px;font-weight:500;color:var(--text-2);line-height:1.4}
+.ls-time{font-family:var(--mono);font-size:9px;color:var(--text-muted);flex-shrink:0;white-space:nowrap;padding-top:1px}
 
-/* Regulation table */
+/* REGULATION TABLE */
+.reg-sec{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.reg-hdr{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:space-between}
 .reg-table-wrap{overflow-x:auto}
 .reg-table{width:100%;border-collapse:collapse}
-.reg-table thead th{
-  padding:8px 14px;
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);
-  background:var(--surface);border-bottom:1px solid var(--border);
-  text-align:left;white-space:nowrap;
-}
-.reg-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t);cursor:pointer}
+.reg-table thead th{padding:7px 12px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);background:var(--surface);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+.reg-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
 .reg-table tbody tr:last-child{border-bottom:none}
 .reg-table tbody tr:hover{background:var(--surface-2)}
-.reg-table td{padding:10px 14px;font-size:12px;vertical-align:middle}
-.reg-name{font-weight:700;color:var(--text);font-size:12px}
-.reg-full-name{font-size:10px;color:var(--text-muted);margin-top:1px;font-family:var(--mono)}
-.reg-status{
-  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;
-  padding:2px 7px;border-radius:1px;white-space:nowrap;
-}
-.status-force{background:rgba(0,204,68,0.1);color:var(--green);border:1px solid rgba(0,204,68,0.2)}
-.status-final{background:rgba(0,153,204,0.1);color:var(--cyan);border:1px solid rgba(0,153,204,0.2)}
-.status-phase{background:rgba(255,102,0,0.1);color:var(--amber);border:1px solid rgba(255,102,0,0.2)}
-.status-proposed{background:var(--surface-3);color:var(--text-muted);border:1px solid var(--border)}
-.status-deadline{background:var(--red-glow);color:var(--red);border:1px solid rgba(255,51,51,0.2)}
+.reg-table td{padding:9px 12px;font-size:12px;vertical-align:middle}
+.reg-name{font-weight:700;color:var(--text)}
+.reg-abbr{font-family:var(--mono);font-size:9px;color:var(--text-muted);margin-top:1px}
+.reg-status{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;padding:2px 6px;border-radius:1px;white-space:nowrap}
+.rs-force{background:var(--green-bg);color:var(--green);border:1px solid rgba(0,204,68,.2)}
+.rs-final{background:var(--cyan-bg);color:var(--cyan);border:1px solid rgba(0,153,204,.2)}
+.rs-phase{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(255,102,0,.2)}
+.rs-prop{background:var(--surface-3);color:var(--text-muted);border:1px solid var(--border)}
 .reg-date{font-family:var(--mono);font-size:10px;color:var(--text-2)}
-.countdown-chip{
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  color:var(--amber);background:var(--amber-glow);
-  border:1px solid rgba(255,102,0,0.2);
-  padding:2px 7px;border-radius:1px;white-space:nowrap;display:inline-block;
-}
-.countdown-chip.urgent{color:var(--red);background:var(--red-glow);border-color:rgba(255,51,51,0.25)}
-.countdown-chip.done{color:var(--green);background:var(--green-glow);border-color:rgba(0,204,68,0.2)}
-.reg-regions{display:flex;gap:3px;flex-wrap:wrap}
-.region-chip{
-  font-family:var(--mono);font-size:8px;font-weight:600;
-  color:var(--text-muted);background:var(--surface-3);
-  border:1px solid var(--border);padding:1px 5px;border-radius:1px;
-}
-.reg-risk-bar{display:flex;align-items:center;gap:6px}
-.risk-bar-track{height:3px;background:var(--border);flex:1;border-radius:0}
-.risk-bar-fill{height:3px;border-radius:0}
-.risk-val{font-family:var(--mono);font-size:9px;font-weight:700;width:28px}
+.cd{font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 6px;border-radius:1px;white-space:nowrap;display:inline-block;margin-top:2px}
+.cd-ok{color:var(--amber);background:var(--amber-bg);border:1px solid rgba(255,102,0,.2)}
+.cd-hot{color:var(--red);background:var(--red-bg);border:1px solid rgba(255,51,51,.25)}
+.cd-done{color:var(--green);background:var(--green-bg);border:1px solid rgba(0,204,68,.2)}
+.risk-row{display:flex;align-items:center;gap:6px}
+.risk-track{height:3px;background:var(--border);flex:1}
+.risk-fill{height:3px}
+.risk-pct{font-family:var(--mono);font-size:9px;font-weight:700;width:28px}
 
-/* ══════════════════════ TIMELINE ══════════════════════ */
-.timeline-section{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.timeline-hdr{
-  padding:10px 16px;border-bottom:1px solid var(--border);
-  background:var(--bg-alt);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.timeline-body{padding:16px;overflow-x:auto}
-.timeline-track{
-  position:relative;padding:8px 0 24px;
-  min-width:700px;
-}
-.timeline-axis{
-  position:absolute;top:30px;left:0;right:0;height:1px;
-  background:var(--border);
-}
-.timeline-events{display:flex;align-items:flex-start;position:relative;gap:0}
-.tl-event{
-  flex:1;min-width:100px;padding:0 6px;
-  display:flex;flex-direction:column;align-items:center;
-  cursor:pointer;
-}
-.tl-dot-wrap{
-  width:10px;height:10px;border-radius:50%;
-  border:2px solid var(--border);
-  background:var(--surface);position:relative;z-index:1;margin-bottom:6px;
-  transition:var(--t);
-}
-.tl-event:hover .tl-dot-wrap{transform:none;border-color:var(--amber)}
-.tl-dot-wrap.active{background:var(--amber);border-color:var(--amber)}
-.tl-dot-wrap.past{background:var(--surface-3);border-color:var(--border-strong)}
-.tl-dot-wrap.urgent{background:var(--red);border-color:var(--red)}
-.tl-date{font-family:var(--mono);font-size:8px;font-weight:700;color:var(--text-muted);margin-bottom:4px;text-align:center}
-.tl-name{font-size:10px;font-weight:600;color:var(--text-2);text-align:center;line-height:1.3}
-.tl-tag{
-  font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.08em;
-  margin-top:3px;padding:1px 5px;border-radius:1px;
-}
-
-/* ══════════════════════ RIGHT PANEL ══════════════════════ */
-.sidebar-right{position:sticky;top:calc(var(--nav-h) + 34px + 36px + 8px);display:flex;flex-direction:column;gap:12px}
-.rpanel{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.rpanel-hdr{
-  padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg-alt);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.rpanel-title{
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);
-  display:flex;align-items:center;gap:6px;
-}
-.rpanel-live-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse-live 2s infinite}
-.rpanel-link{font-family:var(--mono);font-size:9px;color:var(--amber);cursor:pointer}
-
-/* Carbon market table */
-.carbon-table{width:100%;border-collapse:collapse}
-.carbon-table tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
-.carbon-table tr:last-child{border-bottom:none}
-.carbon-table tr:hover{background:var(--surface-2)}
-.carbon-table td{padding:8px 12px;font-size:11px}
-.carbon-name{color:var(--text-2);font-weight:500}
-.carbon-abbr{font-family:var(--mono);font-size:9px;color:var(--text-muted)}
-.carbon-price{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text);text-align:right}
-.carbon-chg{font-family:var(--mono);font-size:10px;font-weight:700;text-align:right}
-.carbon-chg.up{color:var(--green)}
-.carbon-chg.dn{color:var(--red)}
-
-/* Upcoming deadlines */
-.deadline-list{padding:8px}
-.deadline-item{
-  display:flex;align-items:flex-start;gap:8px;
-  padding:8px;border-radius:2px;border:1px solid var(--border);
-  background:var(--surface-2);margin-bottom:6px;cursor:pointer;
-  transition:border-color var(--t);
-}
-.deadline-item:last-child{margin-bottom:0}
-.deadline-item:hover{border-color:var(--border-strong)}
-.deadline-item.urgent{border-left:2px solid var(--red)}
-.deadline-item.soon{border-left:2px solid var(--amber)}
-.deadline-item.ok{border-left:2px solid var(--green)}
-.dl-date{
-  font-family:var(--mono);font-size:10px;font-weight:700;
-  color:var(--text);text-align:center;width:36px;flex-shrink:0;
-}
-.dl-month{font-family:var(--mono);font-size:8px;font-weight:500;color:var(--text-muted);text-align:center}
-.dl-info{flex:1;min-width:0}
-.dl-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.3}
-.dl-detail{font-size:10px;color:var(--text-muted);margin-top:2px}
-.dl-cd{
-  font-family:var(--mono);font-size:9px;font-weight:700;flex-shrink:0;
-}
-
-/* Signal panel */
-.signal-list{padding:8px 12px}
-.signal-item{
-  display:flex;align-items:center;gap:8px;
-  padding:7px 0;border-bottom:1px solid var(--border);
-}
-.signal-item:last-child{border-bottom:none}
-.signal-icon{width:22px;height:22px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
-.signal-body{flex:1;min-width:0}
-.signal-name{font-size:11px;font-weight:600;color:var(--text)}
-.signal-detail{font-size:10px;color:var(--text-muted);margin-top:1px}
-.signal-val{font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0}
-
-/* ══════════════════════ MAP SECTION ══════════════════════ */
-.map-section{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.map-hdr{
-  padding:10px 16px;border-bottom:1px solid var(--border);
-  background:var(--bg-alt);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.map-hdr-left{display:flex;align-items:center;gap:12px}
-.map-legend{display:flex;align-items:center;gap:12px}
-.map-leg-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--text-muted)}
-.map-leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.map-container{position:relative;height:360px;background:#050505;overflow:hidden}
-.map-svg{width:100%;height:100%;opacity:.75}
-.map-event-dot{
-  position:absolute;border-radius:50%;cursor:pointer;
-  transition:transform var(--t);
-}
-.map-event-dot:hover{transform:scale(1.4);z-index:10}
-.map-event-dot::after{
-  content:'';position:absolute;inset:-4px;border-radius:50%;
-  border:1px solid currentColor;opacity:.3;animation:pulse-live 2s infinite;
-}
-.map-tooltip{
-  position:absolute;z-index:50;
-  background:var(--surface-3);border:1px solid var(--border-strong);
-  padding:10px 12px;border-radius:3px;min-width:200px;
-  pointer-events:none;display:none;
-  font-size:11px;
-}
-.map-tooltip.visible{display:block}
-.map-tt-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:5px}
-.map-tt-row{display:flex;align-items:center;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--border);font-size:10.5px;color:var(--text-2)}
+/* MAP */
+.map-sec{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.map-hdr{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:space-between}
+.map-legend{display:flex;gap:12px}
+.ml-item{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;color:var(--text-muted)}
+.ml-dot{width:7px;height:7px;border-radius:50%}
+.map-box{position:relative;height:340px;background:#040404;overflow:hidden}
+.map-svg{width:100%;height:100%}
+.ev-dot{position:absolute;border-radius:50%;cursor:pointer;transform:translate(-50%,-50%);transition:transform var(--t)}
+.ev-dot:hover{transform:translate(-50%,-50%) scale(1.5);z-index:10}
+.ev-dot::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:1px solid currentColor;opacity:.25;animation:pulse 2s infinite}
+.map-tt{position:absolute;z-index:50;background:var(--surface-3);border:1px solid var(--border-strong);padding:10px 12px;border-radius:3px;min-width:200px;pointer-events:none;display:none;font-size:11px}
+.map-tt.on{display:block}
+.map-tt-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px}
+.map-tt-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--border);font-size:10.5px;color:var(--text-2)}
 .map-tt-row:last-child{border-bottom:none}
 .map-tt-val{font-family:var(--mono);font-weight:700;font-size:10px}
-.map-status-bar{
-  padding:6px 12px;border-top:1px solid var(--border);
-  display:flex;align-items:center;gap:16px;
-  font-family:var(--mono);font-size:9px;color:var(--text-muted);letter-spacing:.04em;
-}
-.map-status-val{color:var(--text-2);font-weight:600}
+.map-bar{padding:6px 12px;border-top:1px solid var(--border);display:flex;gap:16px;font-family:var(--mono);font-size:9px;color:var(--text-muted)}
+.map-bar-val{color:var(--text-2);font-weight:600}
 
-/* ══════════════════════ INVESTOR INTELLIGENCE ══════════════════════ */
-.investor-section{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+/* INVESTOR GRID */
+.inv-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.inv-cell{padding:14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.inv-cell:hover{background:var(--surface-2)}
+.inv-label{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.inv-val{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.inv-delta{font-family:var(--mono);font-size:10px;font-weight:700;margin-top:3px}
+.inv-title{font-size:11px;font-weight:600;color:var(--text);margin-top:6px}
+.inv-note{font-family:var(--mono);font-size:9px;color:var(--text-muted);margin-top:2px}
 
-/* ══════════════════════ SEARCH OVERLAY ══════════════════════ */
-.search-overlay{
-  position:fixed;inset:0;z-index:500;
-  background:rgba(0,0,0,.85);
-  display:none;align-items:flex-start;justify-content:center;
-  padding-top:80px;
-}
-.search-overlay.open{display:flex}
-.search-box{
-  width:100%;max-width:680px;
-  background:var(--surface);border:1px solid var(--border-strong);
-  border-radius:3px;overflow:hidden;animation:fade-up .18s ease;
-}
-.search-input-wrap{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
-.search-input{
-  flex:1;height:32px;background:none;border:none;outline:none;
-  font-size:14px;font-weight:500;color:var(--text);font-family:var(--font);
-}
-.search-input::placeholder{color:var(--text-muted)}
-.search-ico{font-size:16px;color:var(--text-muted)}
-.search-close{
-  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;
-  color:var(--text-muted);padding:4px 8px;border:1px solid var(--border);
-  border-radius:2px;cursor:pointer;transition:var(--t);
-}
-.search-close:hover{border-color:var(--border-strong);color:var(--text)}
-.search-filters{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
-.sf-chip{
-  font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;
-  color:var(--text-muted);background:var(--surface-2);
-  border:1px solid var(--border);padding:3px 9px;border-radius:2px;cursor:pointer;transition:var(--t);
-}
-.sf-chip:hover,.sf-chip.active{border-color:var(--amber);color:var(--amber);background:var(--amber-glow)}
-.search-results{max-height:400px;overflow-y:auto}
-.search-result-item{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:10px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t);
-}
-.search-result-item:hover{background:var(--surface-2)}
-.sr-icon{
-  width:28px;height:28px;border-radius:2px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;flex-shrink:0;background:var(--surface-3);border:1px solid var(--border);
-}
-.sr-body{flex:1;min-width:0}
-.sr-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px}
-.sr-meta{font-size:10.5px;color:var(--text-muted);font-family:var(--mono)}
-.search-footer{
-  padding:8px 16px;border-top:1px solid var(--border);
-  font-family:var(--mono);font-size:9px;color:var(--text-muted);
-  display:flex;align-items:center;gap:12px;
-}
-.search-shortcut{
-  display:flex;align-items:center;gap:4px;
-}
-.kbd{
-  background:var(--surface-3);border:1px solid var(--border-strong);
-  padding:1px 5px;border-radius:2px;font-size:9px;color:var(--text-2);
-}
+/* TIMELINE */
+.tl-sec{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.tl-hdr{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:space-between}
+.tl-body{padding:16px;overflow-x:auto}
+.tl-track{position:relative;padding:8px 0 28px;min-width:740px}
+.tl-axis{position:absolute;top:28px;left:0;right:0;height:1px;background:var(--border)}
+.tl-events{display:flex;position:relative}
+.tl-ev{flex:1;min-width:90px;padding:0 4px;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.tl-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--border);background:var(--surface);position:relative;z-index:1;margin-bottom:5px;transition:var(--t)}
+.tl-ev:hover .tl-dot{border-color:var(--amber)}
+.tl-dot.past{background:var(--surface-3);border-color:var(--border-strong)}
+.tl-dot.urgent{background:var(--red);border-color:var(--red)}
+.tl-dot.active{background:var(--amber);border-color:var(--amber)}
+.tl-date{font-family:var(--mono);font-size:8px;font-weight:700;color:var(--text-muted);text-align:center;margin-bottom:3px}
+.tl-name{font-size:10px;font-weight:600;color:var(--text-2);text-align:center;line-height:1.3}
 
-/* ══════════════════════ KPI ROW ══════════════════════ */
-.kpi-strip{
-  display:grid;grid-template-columns:repeat(5,1fr);
-  background:var(--surface);border:1px solid var(--border);border-radius:3px;
-  overflow:hidden;margin-bottom:16px;
-}
-.kpi-cell{
-  padding:10px 14px;border-right:1px solid var(--border);
-  cursor:pointer;transition:background var(--t);
-}
-.kpi-cell:last-child{border-right:none}
-.kpi-cell:hover{background:var(--surface-2)}
-.kpi-label{
-  font-family:var(--mono);font-size:8px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);
-  margin-bottom:4px;
-}
-.kpi-value{font-family:var(--mono);font-size:18px;font-weight:700;letter-spacing:-.02em;color:var(--amber);line-height:1}
-.kpi-delta{
-  display:flex;align-items:center;gap:3px;margin-top:3px;
-  font-family:var(--mono);font-size:9px;font-weight:700;
-}
-.kpi-delta.up{color:var(--green)}
-.kpi-delta.dn{color:var(--red)}
-.kpi-sub{font-family:var(--mono);font-size:9px;color:var(--text-muted);margin-top:1px}
+/* RIGHT PANEL */
+.sr{position:sticky;top:calc(var(--nav-h) + 78px);display:flex;flex-direction:column;gap:10px}
+.rp{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.rph{padding:8px 12px;border-bottom:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:space-between}
+.rpt{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:5px}
 
-/* ══════════════════════ RESPONSIVE ══════════════════════ */
-@media(max-width:1200px){
-  .mc-grid{grid-template-columns:200px 1fr 260px}
-}
-@media(max-width:1024px){
-  .mc-grid{grid-template-columns:1fr 260px}
-  .sidebar-left{display:none}
-  .kpi-strip{grid-template-columns:repeat(3,1fr)}
-}
-@media(max-width:768px){
-  .mc-grid{grid-template-columns:1fr}
-  .sidebar-right{display:none}
-  .article-grid{grid-template-columns:1fr}
-  .kpi-strip{grid-template-columns:repeat(2,1fr)}
-  .nav-links{display:none}
-}
+/* CARBON TABLE */
+.c-table{width:100%;border-collapse:collapse}
+.c-table tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.c-table tr:last-child{border-bottom:none}
+.c-table tr:hover{background:var(--surface-2)}
+.c-table td{padding:8px 12px;font-size:11px;vertical-align:middle}
+.c-name{color:var(--text-2);font-weight:500;font-size:11px}
+.c-abbr{font-family:var(--mono);font-size:8px;color:var(--text-muted)}
+.c-price{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text);text-align:right;transition:color .3s ease}
+.c-chg{font-family:var(--mono);font-size:10px;font-weight:700;text-align:right}
+
+/* DEADLINES */
+.dl-list{padding:8px}
+.dl-item{display:flex;align-items:flex-start;gap:8px;padding:8px;border-radius:2px;border:1px solid var(--border);background:var(--surface-2);margin-bottom:6px;cursor:pointer;transition:border-color var(--t)}
+.dl-item:last-child{margin-bottom:0}
+.dl-item:hover{border-color:var(--border-strong)}
+.dl-item.hot{border-left:2px solid var(--red)}
+.dl-item.soon{border-left:2px solid var(--amber)}
+.dl-item.ok{border-left:2px solid var(--green)}
+.dl-day{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text);text-align:center;width:34px;flex-shrink:0}
+.dl-mo{font-family:var(--mono);font-size:8px;color:var(--text-muted);text-align:center}
+.dl-info{flex:1;min-width:0}
+.dl-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.3}
+.dl-det{font-size:10px;color:var(--text-muted);margin-top:1px}
+.dl-cd{font-family:var(--mono);font-size:9px;font-weight:700;flex-shrink:0}
+
+/* SIGNALS */
+.sig-list{padding:8px 12px}
+.sig-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.sig-row:last-child{border-bottom:none}
+.sig-icon{width:22px;height:22px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.sig-body{flex:1;min-width:0}
+.sig-name{font-size:11px;font-weight:600;color:var(--text)}
+.sig-det{font-size:10px;color:var(--text-muted);margin-top:1px}
+.sig-val{font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0}
+
+/* TRENDING */
+.trend-list{padding:8px 12px}
+.trend-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.trend-row:last-child{border-bottom:none}
+.trend-n{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text-muted);width:14px}
+.trend-name{font-size:11px;font-weight:600;color:var(--text);flex:1}
+.trend-cnt{font-family:var(--mono);font-size:9px;color:var(--text-muted)}
+
+/* SEARCH */
+.search-ov{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.85);display:none;align-items:flex-start;justify-content:center;padding-top:80px}
+.search-ov.open{display:flex}
+.search-box{width:100%;max-width:660px;background:var(--surface);border:1px solid var(--border-strong);border-radius:3px;overflow:hidden;animation:fade-in .18s ease}
+.s-input-wrap{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.s-input{flex:1;height:32px;background:none;border:none;outline:none;font-size:14px;font-weight:500;color:var(--text);font-family:var(--font)}
+.s-input::placeholder{color:var(--text-muted)}
+.s-esc{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--text-muted);padding:4px 8px;border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:var(--t)}
+.s-esc:hover{border-color:var(--border-strong);color:var(--text)}
+.s-filters{display:flex;gap:5px;padding:8px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.s-chip{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);padding:3px 9px;border-radius:2px;cursor:pointer;transition:var(--t)}
+.s-chip:hover,.s-chip.active{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.s-results{max-height:380px;overflow-y:auto}
+.s-item{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.s-item:hover{background:var(--surface-2)}
+.s-ico{width:28px;height:28px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--surface-3);border:1px solid var(--border)}
+.s-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px}
+.s-meta{font-size:10px;color:var(--text-muted);font-family:var(--mono)}
+.s-footer{padding:8px 16px;font-family:var(--mono);font-size:9px;color:var(--text-muted);display:flex;gap:12px;border-top:1px solid var(--border)}
+.kbd{background:var(--surface-3);border:1px solid var(--border-strong);padding:1px 5px;border-radius:2px;font-size:9px;color:var(--text-2)}
+
+/* SKELETON */
+.skel{background:linear-gradient(90deg,var(--surface) 0%,var(--surface-2) 50%,var(--surface) 100%);background-size:400px 100%;animation:shimmer 1.5s infinite;border-radius:2px}
+.skel-text{height:12px;margin-bottom:5px}
+.skel-card{height:180px;border-radius:3px;margin-bottom:8px}
+
+/* LOADING */
+.api-status{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:var(--text-muted)}
+.api-dot{width:5px;height:5px;border-radius:50%;background:var(--amber)}
+.api-dot.ok{background:var(--green)}
+.api-dot.err{background:var(--red)}
+
+/* RESPONSIVE */
+@media(max-width:1280px){.grid{grid-template-columns:200px 1fr 260px}}
+@media(max-width:1024px){.grid{grid-template-columns:1fr 260px}.sl{display:none}.kpi-row{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){.grid{grid-template-columns:1fr}.sr{display:none}.art-grid{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}.nav-links{display:none}}
 </style>
 </head>
 <body>
 
-<!-- ══ SEARCH OVERLAY ══ -->
-<div class="search-overlay" id="searchOverlay">
+<!-- SEARCH -->
+<div class="search-ov" id="sOv">
   <div class="search-box">
-    <div class="search-input-wrap">
-      <span class="search-ico">&#9906;</span>
-      <input class="search-input" id="searchInput" type="text" placeholder="Search intelligence: regulation, company, region, sector..."/>
-      <button class="search-close" onclick="closeSearch()">ESC</button>
+    <div class="s-input-wrap">
+      <span style="font-size:16px;color:var(--text-muted)">&#9906;</span>
+      <input class="s-input" id="sInput" placeholder="Search intelligence: regulation, company, region, sector..."/>
+      <button class="s-esc" onclick="closeSearch()">ESC</button>
     </div>
-    <div class="search-filters">
-      <button class="sf-chip active" onclick="filterSearch(this,'all')">ALL</button>
-      <button class="sf-chip" onclick="filterSearch(this,'regulation')">REGULATION</button>
-      <button class="sf-chip" onclick="filterSearch(this,'market')">MARKETS</button>
-      <button class="sf-chip" onclick="filterSearch(this,'climate')">CLIMATE EVENTS</button>
-      <button class="sf-chip" onclick="filterSearch(this,'esg')">ESG</button>
-      <button class="sf-chip" onclick="filterSearch(this,'investor')">INVESTOR</button>
+    <div class="s-filters">
+      <button class="s-chip active" onclick="sFilter(this,'all')">ALL</button>
+      <button class="s-chip" onclick="sFilter(this,'regulation')">REGULATION</button>
+      <button class="s-chip" onclick="sFilter(this,'market')">MARKETS</button>
+      <button class="s-chip" onclick="sFilter(this,'climate')">CLIMATE</button>
+      <button class="s-chip" onclick="sFilter(this,'esg')">ESG</button>
     </div>
-    <div class="search-results" id="searchResults"></div>
-    <div class="search-footer">
-      <span class="search-shortcut"><span class="kbd">↑↓</span> Navigate</span>
-      <span class="search-shortcut"><span class="kbd">↵</span> Open</span>
-      <span class="search-shortcut"><span class="kbd">Esc</span> Close</span>
-      <span style="margin-left:auto;color:var(--text-muted)">Climactix Intelligence Database</span>
+    <div class="s-results" id="sResults"></div>
+    <div class="s-footer">
+      <span><span class="kbd">↑↓</span> Navigate</span>
+      <span><span class="kbd">↵</span> Open</span>
+      <span><span class="kbd">Esc</span> Close</span>
+      <span><span class="kbd">⌘K</span> Quick open</span>
+      <span style="margin-left:auto">Climactix Intelligence Database</span>
     </div>
   </div>
 </div>
 
-<!-- ══ NAV ══ -->
+<!-- NAV -->
 <nav class="nav">
   <a class="nav-brand" href="index.html">
     <img src="Climatix_logo.png" alt="Climactix"/>
-    <div class="nav-brand-text">
-      <span class="nav-brand-name">Climactix</span>
-      <span class="nav-brand-sub">Global</span>
+    <div style="display:flex;flex-direction:column;line-height:1.1">
+      <span class="nav-name">Climactix</span>
+      <span class="nav-sub">Global</span>
     </div>
   </a>
   <div class="nav-sep"></div>
   <div class="nav-links">
-    <a class="nav-link" href="community.html">Feed</a>
-    <a class="nav-link" href="dashboard.html">Dashboard</a>
-    <a class="nav-link" href="leaderboard.html">Rankings</a>
-    <a class="nav-link active" href="media.html">Intelligence</a>
-    <a class="nav-link" href="simulation.html">Risk Sim</a>
-    <a class="nav-link" href="funding-hub.html">VC Hub</a>
-    <a class="nav-link" href="solutions.html">Solutions</a>
+    <a class="nl" href="community.html">Feed</a>
+    <a class="nl" href="dashboard.html">Dashboard</a>
+    <a class="nl" href="leaderboard.html">Rankings</a>
+    <a class="nl active" href="media.html">Intelligence</a>
+    <a class="nl" href="simulation.html">Risk Sim</a>
+    <a class="nl" href="funding-hub.html">VC Hub</a>
+    <a class="nl" href="solutions.html">Solutions</a>
   </div>
-  <div class="nav-right">
-    <div class="nav-live-badge">
-      <div class="nav-live-dot"></div>
-      LIVE
-    </div>
-    <button class="nav-search-btn" onclick="openSearch()">
-      &#9906; &nbsp;SEARCH
-    </button>
-    <button class="nav-theme" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">&#9681;</button>
+  <div class="nav-r">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="api-status" id="apiStatus"><div class="api-dot" id="apiDot"></div><span id="apiLabel">CONNECTING...</span></div>
+    <button class="btn-search" onclick="openSearch()">&#9906; &nbsp;SEARCH</button>
+    <button class="btn-theme" onclick="toggleTheme()">&#9681;</button>
   </div>
 </nav>
 
-<!-- ══ TICKER ══ -->
-<div class="ticker-wrap">
-  <div class="ticker-label">LIVE INTELLIGENCE</div>
-  <div class="ticker-track">
-    <div class="ticker-inner" id="tickerInner"></div>
-  </div>
+<!-- TICKER -->
+<div class="ticker">
+  <div class="tick-tag">LIVE INTELLIGENCE</div>
+  <div class="tick-track"><div class="tick-inner" id="tickerEl"></div></div>
 </div>
 
-<!-- ══ ALERT BANNER ══ -->
-<div class="alert-banner" id="alertBanner">
-  <span class="alert-label">BREAKING</span>
-  <span class="alert-text"><strong>EU Commission</strong> adopts final CSRD delegated acts — large listed companies must file first ESRS reports by <strong>Jan 2026</strong>. Scope expands to 50,000+ EU entities.</span>
+<!-- ALERT -->
+<div class="alert" id="alertBanner">
+  <span class="alert-lbl">BREAKING</span>
+  <span class="alert-txt"><strong>EU Commission</strong> — CSRD first-wave ESRS reports due <strong>Jun 30, 2026</strong> for large listed EU companies · ISSB confirms mandatory S2 adoption in <strong>20 jurisdictions</strong> · EU ETS hits <strong>€63.40/tCO₂</strong></span>
   <span class="alert-time" id="alertTime"></span>
-  <button class="alert-close" onclick="document.getElementById('alertBanner').style.display='none'">&#x2715;</button>
+  <button class="alert-x" onclick="document.getElementById('alertBanner').style.display='none'">&#x2715;</button>
 </div>
 
-<!-- ══ MAIN ══ -->
-<div class="mc-outer">
-  <div class="mc-grid">
+<!-- MAIN -->
+<div class="wrap">
+<div class="grid">
 
-    <!-- ══ LEFT SIDEBAR ══ -->
-    <aside class="sidebar-left">
-      <div class="sidebar-panel">
-        <div class="sidebar-hdr">
-          <span class="sidebar-hdr-title">INTELLIGENCE CATEGORIES</span>
-        </div>
-        <div class="cat-list" id="catList"></div>
+<!-- LEFT SIDEBAR -->
+<aside class="sl">
+  <div class="panel">
+    <div class="ph"><span class="ph-title">CATEGORIES</span></div>
+    <div class="cat-list" id="catList"></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><span class="ph-title">WATCHLIST</span><span class="ph-action">+ ADD</span></div>
+    <div class="list-body" id="watchBody"></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><span class="ph-title">ACTIVE SOURCES</span></div>
+    <div class="list-body" id="srcBody"></div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main id="mainContent" style="min-width:0;display:flex;flex-direction:column;gap:18px">
+
+  <!-- KPI -->
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <!-- FEED -->
+  <div>
+    <div class="sec-hdr">
+      <div class="sec-title">INTELLIGENCE FEED <span class="sec-live">&#9679; LIVE</span></div>
+      <div class="tabs">
+        <button class="tab active" onclick="setTab(this,'all')">ALL</button>
+        <button class="tab" onclick="setTab(this,'regulation')">REGULATION</button>
+        <button class="tab" onclick="setTab(this,'climate')">CLIMATE</button>
+        <button class="tab" onclick="setTab(this,'market')">MARKETS</button>
+        <button class="tab" onclick="setTab(this,'esg')">ESG</button>
       </div>
-      <div class="sidebar-panel">
-        <div class="sidebar-hdr">
-          <span class="sidebar-hdr-title">WATCHLIST</span>
-          <span class="sidebar-hdr-action">+ ADD</span>
-        </div>
-        <div class="watchlist-body" id="watchlistBody"></div>
+    </div>
+    <div id="featWrap"></div>
+    <div class="art-grid" id="artGrid"></div>
+    <div class="t-feed">
+      <div class="t-feed-hdr">
+        <span class="t-hdr-title"><span class="live-dot"></span>RAPID INTELLIGENCE STREAM</span>
+        <span id="streamUpdated" style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">LOADING...</span>
       </div>
-      <div class="sidebar-panel">
-        <div class="sidebar-hdr">
-          <span class="sidebar-hdr-title">ACTIVE SOURCES</span>
-        </div>
-        <div class="source-list" id="sourceList"></div>
+      <div id="termFeed"></div>
+    </div>
+  </div>
+
+  <!-- LIVE SCROLL STREAM -->
+  <div class="live-stream">
+    <div class="ls-hdr">
+      <span class="ls-title"><span class="live-dot"></span>AUTO-SCROLL LIVE FEED — REAL-TIME UPDATES</span>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)" id="lsCount">0 ARTICLES</span>
+    </div>
+    <div class="ls-body">
+      <div class="ls-inner" id="lsInner"></div>
+    </div>
+  </div>
+
+  <!-- REGULATION TRACKER -->
+  <div class="reg-sec">
+    <div class="reg-hdr">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">ESG REGULATION TRACKER</span>
+        <span class="badge b-outline-amber">18 FRAMEWORKS</span>
       </div>
-    </aside>
-
-    <!-- ══ MAIN CONTENT ══ -->
-    <main class="main-content">
-
-      <!-- KPI strip -->
-      <div class="kpi-strip" id="kpiStrip"></div>
-
-      <!-- Featured + Grid -->
-      <div>
-        <div class="section-hdr">
-          <div class="section-title">
-            INTELLIGENCE FEED
-            <span class="section-title-accent">&#9679; LIVE</span>
-          </div>
-          <div class="section-tabs">
-            <button class="stab active" onclick="setTab(this,'all')">ALL</button>
-            <button class="stab" onclick="setTab(this,'regulation')">REGULATION</button>
-            <button class="stab" onclick="setTab(this,'climate')">CLIMATE</button>
-            <button class="stab" onclick="setTab(this,'market')">MARKETS</button>
-            <button class="stab" onclick="setTab(this,'esg')">ESG</button>
-          </div>
-        </div>
-
-        <!-- Featured -->
-        <div id="featuredContainer" style="margin-bottom:10px"></div>
-
-        <!-- Grid -->
-        <div class="article-grid" id="articleGrid" style="margin-bottom:10px"></div>
-
-        <!-- Terminal feed -->
-        <div class="terminal-feed">
-          <div class="terminal-feed-hdr">
-            <span class="terminal-feed-title">
-              <span class="rpanel-live-dot"></span>
-              RAPID INTELLIGENCE STREAM
-            </span>
-            <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">UPDATED 2 MIN AGO</span>
-          </div>
-          <div id="terminalFeed"></div>
-        </div>
+      <div class="tabs">
+        <button class="tab active" onclick="setRegTab(this,'all')">ALL</button>
+        <button class="tab" onclick="setRegTab(this,'force')">IN FORCE</button>
+        <button class="tab" onclick="setRegTab(this,'upcoming')">UPCOMING</button>
       </div>
+    </div>
+    <div class="reg-table-wrap">
+      <table class="reg-table"><thead><tr>
+        <th>FRAMEWORK</th><th>STATUS</th><th>EFFECTIVE</th><th>NEXT DEADLINE</th><th>REGIONS</th><th>SECTOR RISK</th><th>SCOPE</th>
+      </tr></thead><tbody id="regBody"></tbody></table>
+    </div>
+  </div>
 
-      <!-- Regulation Tracker -->
-      <div class="reg-section">
-        <div class="reg-hdr">
-          <div class="reg-hdr-left">
-            <span class="reg-hdr-title">ESG REGULATION TRACKER</span>
-            <span class="reg-hdr-count">18 FRAMEWORKS</span>
-          </div>
-          <div class="reg-tabs">
-            <button class="reg-tab active" onclick="setRegTab(this,'all')">ALL</button>
-            <button class="reg-tab" onclick="setRegTab(this,'inforce')">IN FORCE</button>
-            <button class="reg-tab" onclick="setRegTab(this,'upcoming')">UPCOMING</button>
-            <button class="reg-tab" onclick="setRegTab(this,'proposed')">PROPOSED</button>
-          </div>
-        </div>
-        <div class="reg-table-wrap">
-          <table class="reg-table">
-            <thead>
-              <tr>
-                <th>FRAMEWORK</th>
-                <th>STATUS</th>
-                <th>EFFECTIVE DATE</th>
-                <th>NEXT DEADLINE</th>
-                <th>REGIONS</th>
-                <th>SECTOR RISK</th>
-                <th>SCOPE</th>
-              </tr>
-            </thead>
-            <tbody id="regTableBody"></tbody>
-          </table>
-        </div>
+  <!-- MAP -->
+  <div class="map-sec">
+    <div class="map-hdr">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">CLIMATE EVENT MAP</span>
+        <span class="badge b-outline-red">47 ACTIVE EVENTS</span>
       </div>
-
-      <!-- Climate Map -->
-      <div class="map-section">
-        <div class="map-hdr">
-          <div class="map-hdr-left">
-            <span style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">CLIMATE EVENT INTELLIGENCE MAP</span>
-            <span style="font-family:var(--mono);font-size:9px;background:var(--red-glow);border:1px solid rgba(255,51,51,0.2);color:var(--red);padding:2px 7px;border-radius:1px">47 ACTIVE EVENTS</span>
-          </div>
-          <div class="map-legend">
-            <div class="map-leg-item"><div class="map-leg-dot" style="background:var(--red)"></div>Extreme</div>
-            <div class="map-leg-item"><div class="map-leg-dot" style="background:var(--amber)"></div>High</div>
-            <div class="map-leg-item"><div class="map-leg-dot" style="background:var(--cyan)"></div>Flood</div>
-            <div class="map-leg-item"><div class="map-leg-dot" style="background:#CC5200"></div>Wildfire</div>
-            <div class="map-leg-item"><div class="map-leg-dot" style="background:var(--blue)"></div>Cyclone</div>
-          </div>
-        </div>
-        <div class="map-container" id="mapContainer">
-          <div id="mapEventDots"></div>
-          <div class="map-tooltip" id="mapTooltip"></div>
-        </div>
-        <div class="map-status-bar">
-          <span>ACTIVE EVENTS <span class="map-status-val">47</span></span>
-          <span>CRITICAL <span class="map-status-val" style="color:var(--red)">12</span></span>
-          <span>HIGH <span class="map-status-val" style="color:var(--amber)">19</span></span>
-          <span>AFFECTED ASSETS <span class="map-status-val">3,420+</span></span>
-          <span>EST. ECONOMIC IMPACT <span class="map-status-val" style="color:var(--amber)">$847B</span></span>
-          <span style="margin-left:auto;color:var(--text-muted)">DATA: NASA · NOAA · GDACS · RELIEFWEB</span>
-        </div>
+      <div class="map-legend">
+        <div class="ml-item"><div class="ml-dot" style="background:#FF3333"></div>Extreme</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#FF6600"></div>Wildfire</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#0099CC"></div>Flood</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#3399FF"></div>Cyclone</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#CC5200"></div>Drought</div>
       </div>
+    </div>
+    <div class="map-box" id="mapBox">
+      <div id="mapDots"></div>
+      <div class="map-tt" id="mapTT"></div>
+    </div>
+    <div class="map-bar">
+      <span>ACTIVE <span class="map-bar-val">47</span></span>
+      <span>CRITICAL <span class="map-bar-val" style="color:var(--red)">12</span></span>
+      <span>HIGH <span class="map-bar-val" style="color:var(--amber)">19</span></span>
+      <span>AFFECTED ASSETS <span class="map-bar-val">3,420+</span></span>
+      <span>EST. IMPACT <span class="map-bar-val" style="color:var(--amber)">$847B</span></span>
+      <span style="margin-left:auto">SOURCE: NASA · NOAA · GDACS</span>
+    </div>
+  </div>
 
-      <!-- Investor Intelligence -->
-      <div class="investor-section">
-        <div style="padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg-alt);display:flex;align-items:center;justify-content:space-between">
-          <span style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">INVESTOR ESG INTELLIGENCE</span>
-          <div style="display:flex;gap:6px">
-            <button class="stab active" style="font-size:9px">GREEN BONDS</button>
-            <button class="stab" style="font-size:9px">FUND FLOWS</button>
-            <button class="stab" style="font-size:9px">NET ZERO</button>
-            <button class="stab" style="font-size:9px">STRESS TESTS</button>
-          </div>
-        </div>
-        <div id="investorGrid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;"></div>
+  <!-- INVESTOR -->
+  <div class="reg-sec">
+    <div class="reg-hdr">
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">INVESTOR ESG INTELLIGENCE</span>
+      <div class="tabs">
+        <button class="tab active" style="font-size:8px">GREEN BONDS</button>
+        <button class="tab" style="font-size:8px">FUND FLOWS</button>
+        <button class="tab" style="font-size:8px">NET ZERO</button>
       </div>
+    </div>
+    <div class="inv-grid" id="invGrid"></div>
+  </div>
 
-      <!-- Regulations Calendar / Timeline -->
-      <div class="timeline-section">
-        <div class="timeline-hdr">
-          <span style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">REGULATORY CALENDAR 2025–2027</span>
-          <div style="display:flex;gap:6px">
-            <button class="sf-chip active" style="font-size:8px">ALL REGIONS</button>
-            <button class="sf-chip" style="font-size:8px">EU</button>
-            <button class="sf-chip" style="font-size:8px">US</button>
-            <button class="sf-chip" style="font-size:8px">APAC</button>
-            <button class="sf-chip" style="font-size:8px">GLOBAL</button>
-          </div>
-        </div>
-        <div class="timeline-body">
-          <div class="timeline-track" id="timelineTrack">
-            <div class="timeline-axis"></div>
-            <div class="timeline-events" id="timelineEvents"></div>
-          </div>
-        </div>
+  <!-- TIMELINE -->
+  <div class="tl-sec">
+    <div class="tl-hdr">
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">REGULATORY CALENDAR 2025–2027</span>
+      <div style="display:flex;gap:5px">
+        <button class="s-chip active" style="font-size:8px">ALL</button>
+        <button class="s-chip" style="font-size:8px">EU</button>
+        <button class="s-chip" style="font-size:8px">US</button>
+        <button class="s-chip" style="font-size:8px">GLOBAL</button>
       </div>
-
-    </main>
-
-    <!-- ══ RIGHT PANEL ══ -->
-    <aside class="sidebar-right">
-
-      <!-- Carbon Markets -->
-      <div class="rpanel">
-        <div class="rpanel-hdr">
-          <span class="rpanel-title"><span class="rpanel-live-dot"></span>CARBON MARKETS</span>
-          <span class="rpanel-link">FULL TABLE ›</span>
-        </div>
-        <table class="carbon-table" id="carbonTable"></table>
+    </div>
+    <div class="tl-body">
+      <div class="tl-track">
+        <div class="tl-axis"></div>
+        <div class="tl-events" id="tlEvents"></div>
       </div>
+    </div>
+  </div>
 
-      <!-- Upcoming Deadlines -->
-      <div class="rpanel">
-        <div class="rpanel-hdr">
-          <span class="rpanel-title">UPCOMING DEADLINES</span>
-          <span class="rpanel-link">CALENDAR ›</span>
-        </div>
-        <div class="deadline-list" id="deadlineList"></div>
-      </div>
+</main>
 
-      <!-- ESG Signals -->
-      <div class="rpanel">
-        <div class="rpanel-hdr">
-          <span class="rpanel-title">ESG SIGNALS</span>
-          <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">LAST 24H</span>
-        </div>
-        <div class="signal-list" id="signalList"></div>
-      </div>
+<!-- RIGHT SIDEBAR -->
+<aside class="sr">
+  <div class="rp">
+    <div class="rph"><span class="rpt"><span class="live-dot"></span>CARBON MARKETS</span><span style="font-family:var(--mono);font-size:9px;color:var(--amber);cursor:pointer">TABLE ›</span></div>
+    <table class="c-table" id="cTable"></table>
+  </div>
+  <div class="rp">
+    <div class="rph"><span class="rpt">UPCOMING DEADLINES</span></div>
+    <div class="dl-list" id="dlList"></div>
+  </div>
+  <div class="rp">
+    <div class="rph"><span class="rpt">ESG SIGNALS</span><span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">24H</span></div>
+    <div class="sig-list" id="sigList"></div>
+  </div>
+  <div class="rp">
+    <div class="rph"><span class="rpt">TRENDING TOPICS</span></div>
+    <div class="trend-list" id="trendList"></div>
+  </div>
+</aside>
 
-      <!-- Trending -->
-      <div class="rpanel">
-        <div class="rpanel-hdr">
-          <span class="rpanel-title">TRENDING TOPICS</span>
-        </div>
-        <div id="trendingList" style="padding:8px 12px"></div>
-      </div>
-
-    </aside>
-
-  </div><!-- /mc-grid -->
-</div><!-- /mc-outer -->
+</div><!-- grid -->
+</div><!-- wrap -->
 
 <script>
-/* ═══════════════════ DATA LAYER ═══════════════════ */
+/* ═══════════════════════════════════════════════════════
+   CLIMACTIX MEDIA — DATA LAYER + LIVE API ENGINE
+   RSS feeds via rss2json · Guardian Open API fallback
+═══════════════════════════════════════════════════════ */
 
-const TICKER_DATA = [
-  {name:'EU ETS',val:'€63.40',chg:'+1.2%',up:true},
-  {name:'CA CCA',val:'$31.85',chg:'+0.7%',up:true},
-  {name:'UK ETS',val:'£44.10',chg:'-0.4%',up:false},
-  {name:'RGGI',val:'$14.22',chg:'-0.2%',up:false},
-  {name:'VCM Nature',val:'$5.80',chg:'+3.1%',up:true},
-  {name:'MSCI ESG',val:'1,847.3',chg:'+0.3%',up:true},
-  {name:'S&P ESG',val:'4,312.6',chg:'+0.5%',up:true},
-  {name:'FTSE4Good',val:'7,241.1',chg:'-0.1%',up:false},
-  {name:'Climate Bonds',val:'$948B',chg:'+2.4%',up:true},
-  {name:'Green Bonds',val:'$502B',chg:'+1.8%',up:true},
-  {name:'Carbon Budget',val:'380 GtCO₂',chg:'REMAINING',up:null},
-  {name:'Global Temp',val:'+1.18°C',chg:'ABOVE PRE-IND',up:null},
-  {name:'Sea Level',val:'+3.7mm/yr',chg:'+0.2mm',up:false},
-  {name:'Arctic Ice',val:'-13.2%/dec',chg:'VS 1981-2010',up:null},
-  {name:'IEF Index',val:'42.1',chg:'+0.8',up:true},
+/* ── STATIC DATA ── */
+const TICKER_STATIC = [
+  {n:'EU ETS',v:'€63.40',c:'+1.2%',up:true},{n:'CA CCA',v:'$31.85',c:'+0.7%',up:true},
+  {n:'UK ETS',v:'£44.10',c:'-0.4%',up:false},{n:'RGGI',v:'$14.22',c:'-0.2%',up:false},
+  {n:'VCM Nature',v:'$5.80',c:'+3.1%',up:true},{n:'MSCI ESG',v:'1,847.3',c:'+0.3%',up:true},
+  {n:'S&P ESG',v:'4,312.6',c:'+0.5%',up:true},{n:'FTSE4Good',v:'7,241.1',c:'-0.1%',up:false},
+  {n:'Carbon Budget',v:'380 GtCO₂',c:'REMAINING',up:null},{n:'Global Temp',v:'+1.18°C',c:'ABOVE 1850',up:null},
+  {n:'Green Bonds',v:'$502B',c:'+23%',up:true},{n:'IEF Index',v:'42.1',c:'+0.8',up:true},
 ];
 
-const CATEGORIES = [
-  {id:'all',   name:'All Intelligence',color:'#FF6600',count:247},
-  {id:'regulation',name:'Regulation & Policy',color:'#FF6600',count:64},
-  {id:'market',name:'Carbon Markets',color:'#0099CC',count:38},
-  {id:'climate',name:'Climate Events',color:'#FF3333',count:52},
-  {id:'esg',   name:'ESG Disclosures',color:'#00CC44',count:43},
-  {id:'investor',name:'Investor Signals',color:'#3399FF',count:29},
-  {id:'finance',name:'Green Finance',color:'#3399FF',count:21},
+const CATS = [
+  {id:'all',name:'All Intelligence',col:'#FF6600',n:247},
+  {id:'regulation',name:'Regulation & Policy',col:'#FF6600',n:64},
+  {id:'market',name:'Carbon Markets',col:'#0099CC',n:38},
+  {id:'climate',name:'Climate Events',col:'#FF3333',n:52},
+  {id:'esg',name:'ESG Disclosures',col:'#00CC44',n:43},
+  {id:'investor',name:'Investor Signals',col:'#3399FF',n:29},
+  {id:'finance',name:'Green Finance',col:'#3399FF',n:21},
 ];
 
 const WATCHLIST = [
-  {name:'CSRD Reporting',tag:'REG',type:'reg'},
-  {name:'EU ETS Phase 5',tag:'MKT',type:'mkt'},
-  {name:'SEC Climate Rules',tag:'REG',type:'reg'},
-  {name:'Amazon Wildfire',tag:'EVT',type:'evt'},
-  {name:'ISSB S2 Adoption',tag:'REG',type:'reg'},
-  {name:'California Wildfires',tag:'EVT',type:'evt'},
+  {n:'CSRD Reporting',t:'REG',cls:'reg'},{n:'EU ETS Phase 5',t:'MKT',cls:'mkt'},
+  {n:'SEC Climate Rules',t:'REG',cls:'reg'},{n:'Amazon Wildfire',t:'EVT',cls:'evt'},
+  {n:'ISSB S2 Adoption',t:'REG',cls:'reg'},{n:'California Wildfires',t:'EVT',cls:'evt'},
 ];
 
-const SOURCES = [
-  {abbr:'SEC', name:'SEC.gov', count:18, live:true},
-  {abbr:'EU',  name:'EU Commission', count:14, live:true},
-  {abbr:'ESG', name:'ESG Today', count:31, live:true},
-  {abbr:'FT',  name:'FT Climate', count:22, live:false},
-  {abbr:'BB',  name:'Bloomberg ESG', count:19, live:true},
-  {abbr:'RTS', name:'Reuters Climate', count:27, live:true},
-  {abbr:'CB',  name:'Carbon Brief', count:15, live:false},
-  {abbr:'UNEP',name:'UNEP', count:9, live:true},
+const SOURCES_DATA = [
+  {a:'SEC',n:'SEC.gov',c:18,live:true},{a:'EU',n:'EU Commission',c:14,live:true},
+  {a:'ESG',n:'ESG Today',c:31,live:true},{a:'FT',n:'FT Climate',c:22,live:false},
+  {a:'BB',n:'Bloomberg ESG',c:19,live:true},{a:'CB',n:'Carbon Brief',c:15,live:false},
+  {a:'UNEP',n:'UNEP',c:9,live:true},{a:'G',n:'Guardian Climate',c:27,live:true},
 ];
 
-const KPI_DATA = [
-  {label:'ACTIVE REGULATIONS',val:'127',delta:'+8',up:true,sub:'vs. prior year'},
-  {label:'LIVE EVENTS',val:'47',delta:'-3',up:false,sub:'global events'},
-  {label:'ARTICLES TODAY',val:'248',delta:'+12%',up:true,sub:'sources tracked'},
-  {label:'CARBON ALERTS',val:'6',delta:'HIGH',up:false,sub:'market disruptions',red:true},
-  {label:'COMPANIES COVERED',val:'4,200+',delta:'ESG RATED',up:true,sub:'global universe'},
+const KPIS = [
+  {l:'ACTIVE REGULATIONS',v:'127',d:'+8',up:true},{l:'LIVE EVENTS',v:'47',d:'-3',up:false},
+  {l:'ARTICLES TODAY',v:'248',d:'+12%',up:true},{l:'CARBON ALERTS',v:'6',d:'HIGH',up:false,red:true},
+  {l:'COMPANIES COVERED',v:'4,200+',d:'ESG RATED',up:true},
 ];
 
-const ARTICLES = [
-  {
-    id:1,cat:'regulation',featured:true,
-    badge:'NEW REGULATION',badgeType:'regulation',
-    headline:'SEC Finalizes Enhanced Climate Disclosure Rules: Scope 1 & 2 Emissions Mandatory for Large Accelerated Filers',
-    summary:'The U.S. Securities and Exchange Commission adopted its final climate disclosure rules, requiring registrants to disclose material climate-related risks, GHG emissions, and transition plan details in annual reports. Large accelerated filers must comply for fiscal years beginning Jan 1, 2026.',
-    source:'SEC',time:'14 min ago',region:'United States',impact:'HIGH',
-    color:'linear-gradient(135deg,#1a0a00 0%,#0F0F0F 60%,#141414 100%)',
-  },
-  {
-    id:2,cat:'climate',
-    badge:'HIGH RISK',badgeType:'alert',
-    headline:'Amazon Megadrought Reaches Critical Threshold — 2.4M km² Under Extreme Drought Designation',
-    summary:'Brazil\'s INPE reports Amazon basin moisture deficit at 40-year record. Major supply chain disruption risk for agriculture and energy sectors.',
-    source:'INPE / NOAA',time:'32 min ago',region:'South America',impact:'HIGH',
-    color:'linear-gradient(135deg,#1a0500 0%,#0F0F0F 60%)',
-  },
-  {
-    id:3,cat:'market',
-    badge:'MARKET ALERT',badgeType:'market',
-    headline:'EU ETS Carbon Price Surges 12% on Tighter Supply Forecast Ahead of Phase 5 Auction',
-    summary:'European carbon allowances hit €63.40 as the EU Commission announced a 4.2% reduction in 2026 auction volumes. Market analysts forecast prices reaching €80 by Q4 2025.',
-    source:'ICE / Bloomberg',time:'1 hr ago',region:'Europe',impact:'MEDIUM',
-    color:'linear-gradient(135deg,#001a1a 0%,#0F0F0F 60%)',
-  },
-  {
-    id:4,cat:'regulation',
-    badge:'POLICY UPDATE',badgeType:'policy',
-    headline:'ISSB Confirms Mandatory IFRS S1/S2 Adoption Timeline for 20 Jurisdictions Through 2026',
-    summary:'The International Sustainability Standards Board confirmed that 20 jurisdictions—covering 55% of global GDP—have committed to mandatory IFRS S1/S2 adoption, representing a major expansion of climate financial disclosure requirements.',
-    source:'IFRS Foundation',time:'2 hr ago',region:'Global',impact:'HIGH',
-    color:'linear-gradient(135deg,#0a0a1a 0%,#0F0F0F 60%)',
-  },
-  {
-    id:5,cat:'esg',
-    badge:'ESG DISCLOSURE',badgeType:'climate',
-    headline:'BlackRock Issues Revised Voting Policy: All Portfolio Companies Must Disclose TCFD-Aligned Climate Plans',
-    summary:'BlackRock\'s 2025 global proxy voting policy expands climate requirements. Companies without credible net-zero transition plans will face votes against directors.',
-    source:'BlackRock',time:'3 hr ago',region:'Global',impact:'HIGH',
-    color:'linear-gradient(135deg,#001a0a 0%,#0F0F0F 60%)',
-  },
-  {
-    id:6,cat:'finance',
-    badge:'GREEN FINANCE',badgeType:'investor',
-    headline:'Green Bond Market Exceeds $502B in 2025 H1 — Sustainability-Linked Bonds Drive 23% Growth',
-    summary:'Climate Bonds Initiative reports record $502B in green bond issuance for H1 2025. Corporate sustainability-linked bonds account for 38% of total, with energy transition the leading use of proceeds.',
-    source:'Climate Bonds Initiative',time:'4 hr ago',region:'Global',impact:'MEDIUM',
-    color:'linear-gradient(135deg,#001a1a 0%,#0F0F0F 60%)',
-  },
+/* MOCK ARTICLES — fallback + initial load */
+const MOCK_ARTICLES = [
+  {id:1,cat:'regulation',featured:true,badge:'NEW REGULATION',btype:'reg',
+   headline:'SEC Finalizes Climate Disclosure Rules: Scope 1 & 2 Emissions Mandatory for Large Accelerated Filers',
+   summary:'The SEC adopted final climate disclosure rules requiring registrants to disclose material climate-related risks, GHG emissions, and transition plans. Large accelerated filers must comply for FY beginning Jan 2026.',
+   src:'SEC',time:'14 min ago',region:'United States',impact:'HIGH',
+   imgStyle:'background:linear-gradient(135deg,#3D1A00 0%,#1A0E00 40%,#0A0A0A 100%)',
+   url:'https://sec.gov'},
+  {id:2,cat:'climate',badge:'HIGH RISK',btype:'alert',
+   headline:'Amazon Basin Megadrought — 2.4M km² Under Extreme Designation, Supply Chains at Risk',
+   summary:'Brazil\'s INPE reports Amazon moisture deficit at 40-year record. Major supply chain disruption risk for agriculture and energy sectors. Soy, beef, and hydropower most exposed.',
+   src:'INPE/NOAA',time:'32 min ago',region:'South America',impact:'HIGH',
+   imgStyle:'background:linear-gradient(135deg,#2D0A00 0%,#1A0800 40%,#0A0A0A 100%)',
+   url:'https://www.nasa.gov/earth'},
+  {id:3,cat:'market',badge:'MARKET ALERT',btype:'market',
+   headline:'EU ETS Carbon Price Surges 12% on Tighter Phase 5 Supply — Analysts See €80 by Q4 2025',
+   summary:'European carbon allowances hit €63.40 as the EU Commission announced a 4.2% reduction in 2026 auction volumes. Market analysts forecast prices reaching €80 by Q4 2025.',
+   src:'ICE/Bloomberg',time:'1 hr ago',region:'Europe',impact:'MEDIUM',
+   imgStyle:'background:linear-gradient(135deg,#001A1A 0%,#001010 40%,#0A0A0A 100%)',
+   url:''},
+  {id:4,cat:'regulation',badge:'POLICY UPDATE',btype:'policy',
+   headline:'ISSB Confirms Mandatory IFRS S1/S2 Adoption Across 20 Jurisdictions — 55% of Global GDP',
+   summary:'The ISSB confirmed that 20 jurisdictions covering 55% of global GDP committed to mandatory IFRS S1/S2 adoption, a major expansion of climate financial disclosure requirements worldwide.',
+   src:'IFRS Foundation',time:'2 hr ago',region:'Global',impact:'HIGH',
+   imgStyle:'background:linear-gradient(135deg,#0A0A1E 0%,#050512 40%,#0A0A0A 100%)',
+   url:'https://www.ifrs.org'},
+  {id:5,cat:'esg',badge:'ESG DISCLOSURE',btype:'esg',
+   headline:'BlackRock Revised Voting Policy: All Portfolio Companies Must Disclose TCFD-Aligned Climate Plans',
+   summary:'BlackRock\'s 2025 global proxy voting policy expands climate requirements. Companies without credible net-zero transition plans will face votes against directors.',
+   src:'BlackRock',time:'3 hr ago',region:'Global',impact:'HIGH',
+   imgStyle:'background:linear-gradient(135deg,#001A0A 0%,#00100A 40%,#0A0A0A 100%)',
+   url:'https://www.blackrock.com'},
 ];
 
-const TERMINAL_ARTICLES = [
-  {id:7,headline:'Australia introduces mandatory climate reporting — AASB adopts IFRS S1/S2 with 2026 deadline',source:'AASB',time:'5 min ago',cat:'regulation',badge:'regulation'},
-  {id:8,headline:'California SB 253 compliance portal launches — 5,400 companies must file by March 2026',source:'CA Air Resources',time:'18 min ago',cat:'regulation',badge:'regulation'},
-  {id:9,headline:'Typhoon Mawar intensifies to Category 5 — Philippines supply chain alert issued',source:'JTWC / NOAA',time:'22 min ago',cat:'climate',badge:'alert'},
-  {id:10,headline:'Vanguard ESG U.S. Stock ETF receives $2.1B inflow — largest single-day ESG fund movement of 2025',source:'Vanguard',time:'38 min ago',cat:'investor',badge:'investor'},
-  {id:11,headline:'CBAM Phase 2 implementation confirmed — cement, steel, aluminium exporters face full carbon pricing from Oct 2026',source:'EU Commission',time:'1 hr ago',cat:'regulation',badge:'regulation'},
-  {id:12,headline:'Arctic sea ice extent 14.3% below average — new June record low recorded by NSIDC',source:'NSIDC / NASA',time:'1.5 hr ago',cat:'climate',badge:'climate'},
-  {id:13,headline:'JP Morgan Chase publishes 2025 Climate Report — $2.5T sustainable finance target confirmed',source:'JP Morgan',time:'2 hr ago',cat:'esg',badge:'climate'},
-  {id:14,headline:'India announces national carbon market framework — 1,000+ large emitters to be covered',source:'MoEFCC India',time:'2.5 hr ago',cat:'market',badge:'market'},
-  {id:15,headline:'TNFD Scope 3 nature disclosures — pilot results from 38 companies released',source:'TNFD',time:'3 hr ago',cat:'esg',badge:'climate'},
+const TERMINAL_MOCK = [
+  {id:10,headline:'Australia introduces mandatory climate reporting — AASB adopts IFRS S1/S2 with 2026 deadline',src:'AASB',time:'5 min ago',cat:'regulation'},
+  {id:11,headline:'California SB 253 compliance portal launches — 5,400 companies must file by March 2026',src:'CA ARB',time:'18 min ago',cat:'regulation'},
+  {id:12,headline:'Typhoon Mawar intensifies to Category 5 — Philippines supply chain alert issued',src:'JTWC/NOAA',time:'22 min ago',cat:'climate'},
+  {id:13,headline:'Vanguard ESG ETF receives $2.1B inflow — largest single-day ESG fund movement of 2025',src:'Vanguard',time:'38 min ago',cat:'investor'},
+  {id:14,headline:'CBAM Phase 2 confirmed — cement, steel, aluminium exporters face full carbon pricing from Oct 2026',src:'EU Commission',time:'1 hr ago',cat:'regulation'},
+  {id:15,headline:'Arctic sea ice extent 14.3% below average — new June record by NSIDC',src:'NSIDC/NASA',time:'1.5 hr ago',cat:'climate'},
+  {id:16,headline:'JP Morgan Chase 2025 Climate Report — $2.5T sustainable finance target confirmed',src:'JP Morgan',time:'2 hr ago',cat:'esg'},
+  {id:17,headline:'India announces national carbon market framework — 1,000+ large emitters to be covered',src:'MoEFCC',time:'2.5 hr ago',cat:'market'},
 ];
 
 const REGULATIONS = [
-  {id:'csrd', name:'CSRD', full:'Corporate Sustainability Reporting Directive', status:'phase', statusLabel:'PHASE-IN', effective:'Jan 2024', deadline:'Jun 30, 2026', deadlineDays:42, regions:['EU','EEA'], risk:88, scope:'~50,000 EU companies'},
-  {id:'sec',  name:'SEC Climate', full:'SEC Climate Disclosure Rule', status:'final', statusLabel:'FINAL RULE', effective:'Mar 2024', deadline:'Jan 1, 2026', deadlineDays:228, regions:['US'], risk:82, scope:'All SEC registrants'},
-  {id:'issb', name:'IFRS S1/S2', full:'IFRS Sustainability & Climate Standards', status:'force', statusLabel:'IN FORCE', effective:'Jan 2025', deadline:'Dec 31, 2025', deadlineDays:231, regions:['Global','20+ jurisdictions'], risk:90, scope:'Listed companies in adopting jurisdictions'},
-  {id:'sfdr', name:'SFDR', full:'Sustainable Finance Disclosure Regulation', status:'force', statusLabel:'IN FORCE', effective:'Mar 2021', deadline:'Jun 30, 2025', deadlineDays:47, regions:['EU'], risk:75, scope:'EU financial market participants'},
-  {id:'eu-tax',name:'EU Taxonomy', full:'EU Taxonomy Regulation', status:'phase', statusLabel:'PHASE-IN', effective:'Jan 2022', deadline:'Jan 1, 2026', deadlineDays:228, regions:['EU'], risk:78, scope:'Large EU companies, financial products'},
-  {id:'tcfd', name:'TCFD', full:'Task Force on Climate-Related Financial Disclosures', status:'force', statusLabel:'IN FORCE', effective:'2017', deadline:'Ongoing', deadlineDays:0, regions:['Global'], risk:70, scope:'Voluntary → mandatory in many jurisdictions'},
-  {id:'tnfd', name:'TNFD', full:'Taskforce on Nature-Related Financial Disclosures', status:'phase', statusLabel:'PHASE-IN', effective:'Sep 2023', deadline:'2026 mandates', deadlineDays:400, regions:['Global'], risk:65, scope:'Voluntary; G7 governments reviewing'},
-  {id:'cbam', name:'CBAM', full:'Carbon Border Adjustment Mechanism', status:'phase', statusLabel:'PHASE-IN', effective:'Oct 2023', deadline:'Oct 2026', deadlineDays:500, regions:['EU'], risk:85, scope:'Importers of covered goods into EU'},
-  {id:'sb253',name:'CA SB 253', full:'California Climate Corporate Data Accountability Act', status:'final', statusLabel:'COMPLIANCE DUE', effective:'Jan 2026', deadline:'Mar 31, 2026', deadlineDays:315, regions:['US-CA'], risk:80, scope:'$1B+ revenue companies in California'},
-  {id:'esrs', name:'ESRS', full:'European Sustainability Reporting Standards', status:'force', statusLabel:'IN FORCE', effective:'Jul 2023', deadline:'Jan 2026', deadlineDays:228, regions:['EU'], risk:82, scope:'CSRD-covered entities'},
+  {n:'CSRD',full:'Corporate Sustainability Reporting Directive',st:'phase',sl:'PHASE-IN',eff:'Jan 2024',dl:'Jun 30, 2026',days:48,regions:['EU','EEA'],risk:88,scope:'~50,000 EU companies'},
+  {n:'SEC Climate',full:'SEC Climate Disclosure Rule',st:'final',sl:'FINAL RULE',eff:'Mar 2024',dl:'Jan 1, 2026',days:230,regions:['US'],risk:82,scope:'All SEC registrants'},
+  {n:'IFRS S1/S2',full:'IFRS Sustainability & Climate Standards',st:'force',sl:'IN FORCE',eff:'Jan 2025',dl:'Dec 31, 2025',days:232,regions:['Global','20+ juris.'],risk:90,scope:'Listed companies'},
+  {n:'SFDR',full:'Sustainable Finance Disclosure Regulation',st:'force',sl:'IN FORCE',eff:'Mar 2021',dl:'Jun 30, 2025',days:48,regions:['EU'],risk:75,scope:'EU fin. participants'},
+  {n:'EU Taxonomy',full:'EU Taxonomy Regulation',st:'phase',sl:'PHASE-IN',eff:'Jan 2022',dl:'Jan 1, 2026',days:230,regions:['EU'],risk:78,scope:'Large EU companies'},
+  {n:'TCFD',full:'Task Force on Climate-Related Financial Disclosures',st:'force',sl:'IN FORCE',eff:'2017',dl:'Ongoing',days:0,regions:['Global'],risk:70,scope:'Voluntary → mandatory'},
+  {n:'TNFD',full:'Taskforce on Nature-Related Financial Disclosures',st:'phase',sl:'PHASE-IN',eff:'Sep 2023',dl:'2026 mandates',days:400,regions:['Global'],risk:65,scope:'Voluntary; G7 reviewing'},
+  {n:'CBAM',full:'Carbon Border Adjustment Mechanism',st:'phase',sl:'PHASE-IN',eff:'Oct 2023',dl:'Oct 2026',days:500,regions:['EU'],risk:85,scope:'EU goods importers'},
+  {n:'CA SB 253',full:'California Climate Corporate Data Accountability Act',st:'final',sl:'COMPLIANCE DUE',eff:'Jan 2026',dl:'Mar 31, 2026',days:320,regions:['US-CA'],risk:80,scope:'$1B+ revenue in CA'},
+  {n:'ESRS',full:'European Sustainability Reporting Standards',st:'force',sl:'IN FORCE',eff:'Jul 2023',dl:'Jan 2026',days:230,regions:['EU'],risk:82,scope:'CSRD-covered entities'},
 ];
 
-const CARBON_MARKETS = [
-  {name:'EU Emissions Trading System',abbr:'EU ETS',price:'€63.40',chg:'+1.2%',up:true},
-  {name:'California Cap-and-Trade',abbr:'CA CCA',price:'$31.85',chg:'+0.7%',up:true},
-  {name:'UK Emissions Trading Scheme',abbr:'UK ETS',price:'£44.10',chg:'-0.4%',up:false},
-  {name:'Regional Greenhouse Gas Initiative',abbr:'RGGI',price:'$14.22',chg:'-0.2%',up:false},
-  {name:'Voluntary Carbon — Nature',abbr:'VCM Nature',price:'$5.80',chg:'+3.1%',up:true},
-  {name:'Voluntary Carbon — Technology',abbr:'VCM Tech',price:'$12.50',chg:'+1.6%',up:true},
-  {name:'Article 6 Bilateral Credits',abbr:'Art.6',price:'$18.40',chg:'+0.9%',up:true},
+const CARBON = [
+  {n:'EU Emissions Trading System',a:'EU ETS',p:'€63.40',c:'+1.2%',up:true},
+  {n:'California Cap-and-Trade',a:'CA CCA',p:'$31.85',c:'+0.7%',up:true},
+  {n:'UK Emissions Trading Scheme',a:'UK ETS',p:'£44.10',c:'-0.4%',up:false},
+  {n:'Regional GHG Initiative',a:'RGGI',p:'$14.22',c:'-0.2%',up:false},
+  {n:'Voluntary Carbon — Nature',a:'VCM Nature',p:'$5.80',c:'+3.1%',up:true},
+  {n:'Voluntary Carbon — Tech',a:'VCM Tech',p:'$12.50',c:'+1.6%',up:true},
+  {n:'Article 6 Bilateral Credits',a:'Art.6',p:'$18.40',c:'+0.9%',up:true},
 ];
 
 const DEADLINES = [
-  {day:'30',month:'JUN',name:'SFDR Level 2 RTS',detail:'EU fund managers — PAI disclosure',urgency:'urgent',cd:'48D'},
-  {day:'15',month:'JUL',name:'CSRD First Wave',detail:'Large listed EU companies FY2024',urgency:'urgent',cd:'65D'},
-  {day:'01',month:'OCT',name:'CBAM Phase 2',detail:'Full carbon pricing for importers',urgency:'soon',cd:'140D'},
-  {day:'01',month:'JAN',name:'SEC Climate Rules',detail:'LAF compliance year begins',urgency:'soon',cd:'230D'},
-  {day:'31',month:'MAR',name:'CA SB 253',detail:'Scope 1+2 filing deadline',urgency:'ok',cd:'318D'},
+  {day:'30',mo:'JUN',n:'SFDR Level 2',d:'EU fund managers PAI disclosure',u:'hot',cd:'48D'},
+  {day:'15',mo:'JUL',n:'CSRD First Wave',d:'Large listed EU companies FY2024',u:'hot',cd:'65D'},
+  {day:'01',mo:'OCT',n:'CBAM Phase 2',d:'Full carbon pricing importers',u:'soon',cd:'140D'},
+  {day:'01',mo:'JAN',n:'SEC Climate Rules',d:'LAF compliance year begins',u:'soon',cd:'230D'},
+  {day:'31',mo:'MAR',n:'CA SB 253',d:'Scope 1+2 filing deadline',u:'ok',cd:'318D'},
 ];
 
 const SIGNALS = [
-  {icon:'📈',bg:'rgba(0,204,68,0.1)',name:'Net-Zero Pledges',detail:'+24 new corporate pledges this week',val:'+24',valColor:'var(--green)'},
-  {icon:'📉',bg:'rgba(255,51,51,0.1)',name:'ESG Fund Outflows',detail:'$2.1B net outflows from ESG ETFs',val:'-$2.1B',valColor:'var(--red)'},
-  {icon:'⚡',bg:'rgba(255,102,0,0.1)',name:'Carbon Price Volatility',detail:'EU ETS 30-day vol at 18.4%',val:'18.4%',valColor:'var(--amber)'},
-  {icon:'🏦',bg:'rgba(51,153,255,0.1)',name:'Green Bond Issuance',detail:'$28.4B new green bonds this week',val:'+$28B',valColor:'var(--blue)'},
-  {icon:'⚠️',bg:'rgba(255,51,51,0.08)',name:'Climate Litigation',detail:'14 new ESG litigation filings',val:'14',valColor:'var(--red)'},
+  {ico:'📈',bg:'rgba(0,204,68,0.1)',n:'Net-Zero Pledges',d:'+24 new corporate pledges this week',v:'+24',vc:'#00CC44'},
+  {ico:'📉',bg:'rgba(255,51,51,0.1)',n:'ESG Fund Outflows',d:'$2.1B net outflows from ESG ETFs',v:'-$2.1B',vc:'#FF3333'},
+  {ico:'⚡',bg:'rgba(255,102,0,0.1)',n:'Carbon Price Vol.',d:'EU ETS 30-day vol at 18.4%',v:'18.4%',vc:'#FF6600'},
+  {ico:'🏦',bg:'rgba(51,153,255,0.1)',n:'Green Bond Issuance',d:'$28.4B new green bonds this week',v:'+$28B',vc:'#3399FF'},
+  {ico:'⚠️',bg:'rgba(255,51,51,0.08)',n:'Climate Litigation',d:'14 new ESG litigation filings',v:'14',vc:'#FF3333'},
 ];
 
 const TRENDING = [
-  {topic:'CSRD ESRS E1',count:'1,247 articles',cat:'regulation'},
-  {topic:'EU ETS Phase 5',count:'842 articles',cat:'market'},
-  {topic:'California Wildfires',count:'731 articles',cat:'climate'},
-  {topic:'ISSB S2 Adoption',count:'619 articles',cat:'regulation'},
-  {topic:'Net Zero Banking Alliance',count:'584 articles',cat:'esg'},
-  {topic:'Amazon Deforestation',count:'521 articles',cat:'climate'},
-  {topic:'Green Hydrogen Policy',count:'498 articles',cat:'finance'},
+  {n:'CSRD ESRS E1',c:'1,247 articles',cat:'regulation'},
+  {n:'EU ETS Phase 5',c:'842 articles',cat:'market'},
+  {n:'California Wildfires',c:'731 articles',cat:'climate'},
+  {n:'ISSB S2 Adoption',c:'619 articles',cat:'regulation'},
+  {n:'Net Zero Banking',c:'584 articles',cat:'esg'},
+  {n:'Amazon Deforestation',c:'521 articles',cat:'climate'},
+  {n:'Green Hydrogen Policy',c:'498 articles',cat:'finance'},
 ];
 
-const TIMELINE_EVENTS = [
-  {date:'Q4 2024',name:'CSRD Wave 1',tag:'EU',type:'regulation',past:true},
-  {date:'Q1 2025',name:'SEC Final Rule',tag:'US',type:'regulation',past:true},
-  {date:'Jun 2025',name:'SFDR Level 2',tag:'EU',type:'regulation',urgent:true},
-  {date:'Q3 2025',name:'CBAM Reports',tag:'EU',type:'market'},
-  {date:'Oct 2025',name:'TCFD UK Mandate',tag:'UK',type:'regulation'},
-  {date:'Jan 2026',name:'SEC LAF Filing',tag:'US',type:'regulation'},
-  {date:'Jan 2026',name:'CSRD Wave 2',tag:'EU',type:'regulation'},
-  {date:'Q1 2026',name:'IFRS S1/S2',tag:'GLOBAL',type:'regulation'},
-  {date:'Mar 2026',name:'CA SB 253',tag:'CA',type:'regulation'},
-  {date:'Oct 2026',name:'CBAM Phase 2',tag:'EU',type:'market'},
-  {date:'2027',name:'TNFD Mandates',tag:'G7',type:'regulation'},
+const MAP_EVS = [
+  {id:1,type:'wildfire',label:'California Wildfire Complex',x:10,y:36,col:'#CC5200',sev:'critical',co:'PG&E, Agriculture',eco:'$18.2B'},
+  {id:2,type:'cyclone',label:'Typhoon Mawar — Philippines',x:76,y:42,col:'#3399FF',sev:'high',co:'Samsung, Supply Chain',eco:'$3.1B'},
+  {id:3,type:'flood',label:'Bangladesh Monsoon Flooding',x:66,y:45,col:'#0099CC',sev:'high',co:'Garment factories',eco:'$1.8B'},
+  {id:4,type:'drought',label:'Amazon Basin Megadrought',x:22,y:58,col:'#FF3333',sev:'critical',co:'Soy, beef, energy',eco:'$42B'},
+  {id:5,type:'heatwave',label:'North Africa Heatwave 52°C+',x:47,y:40,col:'#FF6600',sev:'critical',co:'Agriculture, logistics',eco:'$8.4B'},
+  {id:6,type:'flood',label:'Northern Europe Flooding',x:46,y:27,col:'#0099CC',sev:'medium',co:'Insurance, infrastructure',eco:'$5.1B'},
+  {id:7,type:'wildfire',label:'Australian East Coast Fires',x:82,y:70,col:'#CC5200',sev:'high',co:'Mining, livestock',eco:'$6.3B'},
+  {id:8,type:'drought',label:'East Africa Drought — Horn',x:55,y:53,col:'#FF3333',sev:'critical',co:'Food security, 18M affected',eco:'$9.2B'},
+  {id:9,type:'cyclone',label:'Bay of Bengal Cyclone',x:67,y:47,col:'#3399FF',sev:'high',co:'Port operations',eco:'$2.7B'},
+  {id:10,type:'heatwave',label:'India Heat Corridor 48°C',x:65,y:43,col:'#FF6600',sev:'high',co:'Manufacturing, labor risk',eco:'$12.1B'},
+  {id:11,type:'flood',label:'China Yangtze Valley Floods',x:76,y:37,col:'#0099CC',sev:'high',co:'Auto, electronics supply',eco:'$7.8B'},
+  {id:12,type:'heatwave',label:'Iberian Peninsula Heat',x:42,y:33,col:'#FF6600',sev:'medium',co:'Tourism, energy grid',eco:'$3.5B'},
 ];
 
-const MAP_EVENTS = [
-  {id:1,type:'wildfire',label:'California Wildfire Complex',x:10.5,y:34,color:'#CC5200',severity:'critical',company:'PG&E, Agriculture, Tourism',economic:'$18.2B'},
-  {id:2,type:'cyclone',label:'Typhoon Mawar – Philippines',x:75,y:42,color:'var(--blue)',severity:'high',company:'Samsung, Supply Chain',economic:'$3.1B'},
-  {id:3,type:'flood',label:'Bangladesh Monsoon Flooding',x:65,y:44,color:'var(--cyan)',severity:'high',company:'Garment manufacturing, 22 factories',economic:'$1.8B'},
-  {id:4,type:'drought',label:'Amazon Basin Megadrought',x:22,y:56,color:'var(--red)',severity:'critical',company:'Soy, beef, energy sector',economic:'$42B'},
-  {id:5,type:'heatwave',label:'North Africa Heatwave 52°C+',x:47,y:40,color:'var(--amber)',severity:'critical',company:'Agriculture, logistics',economic:'$8.4B'},
-  {id:6,type:'flood',label:'Northern Europe Flooding',x:46,y:28,color:'var(--cyan)',severity:'medium',company:'Insurance, infrastructure',economic:'$5.1B'},
-  {id:7,type:'wildfire',label:'Australian East Coast Fires',x:82,y:68,color:'#CC5200',severity:'high',company:'Mining, livestock',economic:'$6.3B'},
-  {id:8,type:'drought',label:'East Africa Drought – Horn',x:54,y:52,color:'var(--red)',severity:'critical',company:'Food security, 18M affected',economic:'$9.2B'},
-  {id:9,type:'cyclone',label:'Bay of Bengal Cyclone',x:67,y:47,color:'var(--blue)',severity:'high',company:'Port operations, shipping',economic:'$2.7B'},
-  {id:10,type:'heatwave',label:'India Heat Corridor 48°C',x:65,y:42,color:'var(--amber)',severity:'high',company:'Manufacturing, labor risk',economic:'$12.1B'},
-  {id:11,type:'flood',label:'China Yangtze Valley Floods',x:75,y:37,color:'var(--cyan)',severity:'high',company:'Auto, electronics supply chain',economic:'$7.8B'},
-  {id:12,type:'heatwave',label:'Iberian Peninsula Extreme Heat',x:43,y:33,color:'var(--amber)',severity:'medium',company:'Tourism, energy grid stress',economic:'$3.5B'},
+const TIMELINE_EVS = [
+  {d:'Q4 2024',n:'CSRD Wave 1',tag:'EU',past:true},{d:'Q1 2025',n:'SEC Final Rule',tag:'US',past:true},
+  {d:'Jun 2025',n:'SFDR Level 2',tag:'EU',urgent:true},{d:'Q3 2025',n:'CBAM Reports',tag:'EU'},
+  {d:'Oct 2025',n:'TCFD UK',tag:'UK'},{d:'Jan 2026',n:'SEC Filing',tag:'US'},
+  {d:'Jan 2026',n:'CSRD Wave 2',tag:'EU'},{d:'Q1 2026',n:'IFRS S1/S2',tag:'GLOBAL'},
+  {d:'Mar 2026',n:'CA SB 253',tag:'CA'},{d:'Oct 2026',n:'CBAM Ph.2',tag:'EU'},
+  {d:'2027',n:'TNFD Mandates',tag:'G7'},
 ];
 
-const INVESTOR_DATA = [
-  {title:'Green Bond Market H1 2025',val:'$502B',label:'ISSUANCE',delta:'+23% YoY',up:true,note:'Climate Bonds Initiative'},
-  {title:'Sustainable Fund AUM',val:'$3.74T',label:'TOTAL AUM',delta:'+8% QoQ',up:true,note:'Morningstar ESG Funds'},
-  {title:'Net Zero Bank Commitments',val:'$130T',label:'MANAGED ASSETS',delta:'143 institutions',up:true,note:'NZBA Signatories'},
-  {title:'Carbon Credit Market Vol.',val:'$2.1B',label:'DAILY VOLUME',delta:'+18%',up:true,note:'Voluntary Carbon Market'},
-  {title:'Climate Litigation Cases',val:'2,341',label:'ACTIVE CASES',delta:'+245 new cases',up:false,note:'LSE Grantham Institute'},
-  {title:'ESG Rating Divergence',val:'41%',label:'AVG. CORRELATION',delta:'-3pts',up:false,note:'MSCI/S&P divergence index'},
+const INV_DATA = [
+  {l:'ISSUANCE',v:'$502B',d:'+23% YoY',up:true,t:'Green Bond Market H1 2025',note:'Climate Bonds Initiative',col:'#00CC44'},
+  {l:'TOTAL AUM',v:'$3.74T',d:'+8% QoQ',up:true,t:'Sustainable Fund AUM',note:'Morningstar ESG Funds',col:'#0099CC'},
+  {l:'MANAGED ASSETS',v:'$130T',d:'143 institutions',up:true,t:'Net Zero Bank Commitments',note:'NZBA Signatories',col:'#FF6600'},
+  {l:'DAILY VOLUME',v:'$2.1B',d:'+18%',up:true,t:'Carbon Credit Market Vol.',note:'Voluntary Carbon Market',col:'#3399FF'},
+  {l:'ACTIVE CASES',v:'2,341',d:'+245 new cases',up:false,t:'Climate Litigation',note:'LSE Grantham Institute',col:'#FF3333'},
+  {l:'AVG CORRELATION',v:'41%',d:'-3pts divergence',up:false,t:'ESG Rating Divergence',note:'MSCI/S&P index',col:'#888'},
 ];
 
-/* ═══════════════════ RENDER FUNCTIONS ═══════════════════ */
+/* ── LIVE RSS FEED ENGINE ── */
+const RSS_FEEDS = [
+  {url:'https://www.esgtoday.com/feed/',label:'ESG Today',cat:'esg'},
+  {url:'https://www.theguardian.com/environment/climate-crisis/rss',label:'Guardian Climate',cat:'climate'},
+  {url:'https://www.carbonbrief.org/feed',label:'Carbon Brief',cat:'climate'},
+  {url:'https://feeds.bbci.co.uk/news/science_and_environment/rss.xml',label:'BBC Science',cat:'climate'},
+];
 
-function renderTicker(){
-  const inner = document.getElementById('tickerInner');
-  const items = [...TICKER_DATA,...TICKER_DATA];
-  inner.innerHTML = items.map(t=>`
-    <div class="tick-item">
-      <span class="tick-name">${t.name}</span>
-      <span class="tick-val">${t.val}</span>
-      ${t.up===null?`<span class="tick-chg" style="color:var(--text-muted)">${t.chg}</span>`
-        :`<span class="tick-chg ${t.up?'tick-up':'tick-dn'}">${t.up?'▲':'▼'} ${t.chg}</span>`}
-    </div>
-  `).join('');
+const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
+let liveArticles = [];
+let currentCat = 'all';
+let apiOk = false;
+
+async function fetchFeed(feed){
+  try{
+    const r = await fetch(RSS2JSON + encodeURIComponent(feed.url) + '&count=12', {signal:AbortSignal.timeout(8000)});
+    const d = await r.json();
+    if(d.status !== 'ok') return [];
+    return d.items.map(item=>({
+      id: item.guid || item.link,
+      cat: feed.cat,
+      featured: false,
+      badge: feed.cat === 'esg' ? 'ESG UPDATE' : feed.cat === 'climate' ? 'CLIMATE' : 'MARKET',
+      btype: feed.cat,
+      headline: item.title,
+      summary: stripHTML(item.description || item.content || '').slice(0,200) + '...',
+      src: feed.label,
+      time: timeAgo(new Date(item.pubDate)),
+      region: 'Global',
+      impact: 'MEDIUM',
+      imgStyle: `background-image:url('${item.thumbnail||item.enclosure?.link||''}');background-size:cover;background-position:center;` + catGradient(feed.cat),
+      url: item.link || '#',
+      live: true,
+    }));
+  }catch{return []}
 }
 
-function renderCategories(){
-  const el = document.getElementById('catList');
-  el.innerHTML = CATEGORIES.map(c=>`
-    <div class="cat-item ${c.id==='all'?'active':''}" onclick="filterCat(this,'${c.id}')">
-      <div class="cat-left">
-        <div class="cat-dot" style="background:${c.color}"></div>
-        <span class="cat-name">${c.name}</span>
-      </div>
-      <span class="cat-count">${c.count}</span>
-    </div>
-  `).join('');
+function stripHTML(html){
+  return html.replace(/<[^>]*>/g,'').replace(/&[a-z]+;/g,' ').replace(/\s+/g,' ').trim();
 }
 
-function renderWatchlist(){
-  document.getElementById('watchlistBody').innerHTML = WATCHLIST.map(w=>`
-    <div class="watch-item">
-      <span class="watch-name">${w.name}</span>
-      <span class="watch-tag ${w.type}">${w.tag}</span>
-    </div>
-  `).join('');
+function timeAgo(date){
+  const s = Math.floor((Date.now()-date)/1000);
+  if(s<60) return s+'s ago';
+  if(s<3600) return Math.floor(s/60)+' min ago';
+  if(s<86400) return Math.floor(s/3600)+' hr ago';
+  return Math.floor(s/86400)+' days ago';
 }
 
-function renderSources(){
-  document.getElementById('sourceList').innerHTML = SOURCES.map(s=>`
-    <div class="source-row">
-      <div class="source-logo">${s.abbr}</div>
-      <span class="source-name">${s.name}</span>
-      <span class="source-count">${s.count}</span>
-      ${s.live?'<div class="source-live-dot"></div>':''}
-    </div>
-  `).join('');
+function catGradient(cat){
+  const map={esg:'linear-gradient(to bottom,rgba(0,20,10,0.7),rgba(0,0,0,0.9))',
+    climate:'linear-gradient(to bottom,rgba(30,5,0,0.7),rgba(0,0,0,0.9))',
+    market:'linear-gradient(to bottom,rgba(0,10,20,0.7),rgba(0,0,0,0.9))',
+    regulation:'linear-gradient(to bottom,rgba(20,10,0,0.7),rgba(0,0,0,0.9))',
+    investor:'linear-gradient(to bottom,rgba(0,10,30,0.7),rgba(0,0,0,0.9))'};
+  return 'background:' + (map[cat]||map.climate);
 }
 
-function renderKPIs(){
-  document.getElementById('kpiStrip').innerHTML = KPI_DATA.map(k=>`
-    <div class="kpi-cell">
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-value" style="${k.red?'color:var(--red)':''}">${k.val}</div>
-      <div class="kpi-delta ${k.up?'up':'dn'}">${k.up?'▲':'▼'} ${k.delta}</div>
-    </div>
-  `).join('');
+async function loadLiveArticles(){
+  setApiStatus('loading');
+  const results = await Promise.allSettled(RSS_FEEDS.map(f=>fetchFeed(f)));
+  const all = results.filter(r=>r.status==='fulfilled').flatMap(r=>r.value);
+  if(all.length > 0){
+    liveArticles = all;
+    apiOk = true;
+    setApiStatus('ok', all.length + ' LIVE ARTICLES');
+    // Mark first as featured
+    if(liveArticles[0]) liveArticles[0].featured = true;
+    renderFeed(liveArticles);
+    renderLiveStream(liveArticles);
+    renderTerminal(liveArticles.slice(5,14));
+    updateTickerWithNews(liveArticles);
+  } else {
+    setApiStatus('err', 'USING CACHED DATA');
+    renderFeed(MOCK_ARTICLES);
+    renderLiveStream(MOCK_ARTICLES);
+    renderTerminal(TERMINAL_MOCK);
+  }
+  document.getElementById('streamUpdated').textContent = 'UPDATED ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}) + ' UTC';
 }
 
-function badgeHTML(type){
-  const map={regulation:'badge-regulation',alert:'badge-alert',market:'badge-market',
-    policy:'badge-policy',climate:'badge-climate',investor:'badge-investor'};
-  const labels={regulation:'REGULATION',alert:'HIGH RISK',market:'MARKET',
-    policy:'POLICY',climate:'CLIMATE',investor:'INVESTOR ALERT'};
-  return `<span class="news-badge ${map[type]||'badge-climate'}">${labels[type]||type.toUpperCase()}</span>`;
+function setApiStatus(state, txt){
+  const dot = document.getElementById('apiDot');
+  const lbl = document.getElementById('apiLabel');
+  dot.className = 'api-dot ' + (state==='ok'?'ok':state==='err'?'err':'');
+  lbl.textContent = state==='loading'?'FETCHING FEEDS...':(txt||'');
 }
 
-function impactHTML(level){
-  const m={HIGH:'impact-high',MEDIUM:'impact-medium',LOW:'impact-low'};
-  return `<span class="meta-impact ${m[level]||'impact-medium'}">${level} IMPACT</span>`;
+/* ── LIVE SCROLL STREAM ── */
+function renderLiveStream(articles){
+  const all = articles.slice(0, 20);
+  const catCols = {regulation:'#FF6600',market:'#0099CC',climate:'#FF3333',esg:'#00CC44',investor:'#3399FF',finance:'#3399FF'};
+  const html = [...all,...all].map(a=>`
+    <div class="ls-item" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
+      <div class="ls-bullet" style="background:${catCols[a.cat]||'#FF6600'}"></div>
+      <span class="ls-text">${a.headline}</span>
+      <span class="ls-time">${a.time}</span>
+    </div>`).join('');
+  const el = document.getElementById('lsInner');
+  el.innerHTML = html;
+  document.getElementById('lsCount').textContent = all.length + ' ARTICLES';
+  // Trigger animation
+  el.classList.remove('scrolling');
+  void el.offsetWidth;
+  el.classList.add('scrolling');
 }
 
-function renderFeatured(articles){
-  const art = articles.find(a=>a.featured) || articles[0];
-  document.getElementById('featuredContainer').innerHTML = `
-    <div class="featured-card" onclick="openArticle(${art.id})">
-      <div class="featured-img" style="background:${art.color||'linear-gradient(135deg,#0F0F0F,#1A1A1A)'}">
-        <div class="featured-img-overlay"></div>
-        <div class="featured-img-content">
-          <div class="featured-category-row">
-            ${badgeHTML(art.badgeType)}
-            <span class="news-badge" style="background:rgba(255,255,255,0.06);color:var(--text-2);border:1px solid var(--border)">${art.region}</span>
+/* ── NEWS TICKER UPDATE ── */
+function updateTickerWithNews(articles){
+  const extra = articles.slice(0,8).map(a=>({n:a.src,v:a.headline.slice(0,50)+(a.headline.length>50?'…':''),c:'',up:null}));
+  renderTicker([...TICKER_STATIC,...extra]);
+}
+
+/* ── RENDER FUNCTIONS ── */
+function renderTicker(items){
+  const el = document.getElementById('tickerEl');
+  const src = items || TICKER_STATIC;
+  const doubled = [...src,...src];
+  el.innerHTML = doubled.map(t=>`
+    <div class="ti">
+      <span class="ti-name">${t.n}</span>
+      <span class="ti-val">${t.v}</span>
+      ${t.up===null?`<span style="color:var(--text-muted);font-size:9px">${t.c}</span>`
+        :`<span class="${t.up?'up':'dn'}" style="font-size:9px">${t.up?'▲':'▼'} ${t.c}</span>`}
+    </div>`).join('');
+}
+
+function badge(type){
+  const m={reg:'b-outline-amber',alert:'b-outline-red',market:'b-cyan',policy:'b-outline-blue',
+    esg:'b-outline-green',investor:'b-outline-blue',climate:'b-outline-green',finance:'b-outline-blue'};
+  const l={reg:'REGULATION',alert:'HIGH RISK',market:'MARKET',policy:'POLICY',
+    esg:'ESG',investor:'INVESTOR',climate:'CLIMATE',finance:'GREEN FINANCE'};
+  return `<span class="badge ${m[type]||'b-neutral'}">${l[type]||type.toUpperCase()}</span>`;
+}
+
+function impact(lv){
+  const m={HIGH:'b-outline-red',MEDIUM:'b-outline-amber',LOW:'b-outline-green'};
+  return `<span class="badge ${m[lv]||'b-neutral'} impact-chip">${lv} IMPACT</span>`;
+}
+
+function renderFeed(articles){
+  const show = currentCat==='all' ? articles : articles.filter(a=>a.cat===currentCat||a.btype===currentCat);
+  const display = show.length ? show : articles;
+  renderFeatured(display);
+  renderGrid(display);
+}
+
+function renderFeatured(arts){
+  const a = arts.find(x=>x.featured) || arts[0];
+  if(!a){document.getElementById('featWrap').innerHTML='';return;}
+  document.getElementById('featWrap').innerHTML = `
+    <div class="feat-card" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
+      <div class="feat-img" style="${a.imgStyle||catGradient(a.cat||'climate')}">
+        <div class="feat-overlay"></div>
+        <div class="feat-content">
+          <div class="feat-badges">
+            ${badge(a.btype||a.cat)}
+            ${a.live?'<span class="badge b-red">LIVE</span>':''}
+            <span class="badge b-neutral">${a.region||'Global'}</span>
           </div>
-          <div class="featured-headline">${art.headline}</div>
+          <div class="feat-headline">${a.headline}</div>
         </div>
       </div>
-      <div class="featured-body">
-        <p class="featured-summary">${art.summary}</p>
-        <div class="article-meta">
-          <span class="meta-source">${art.source}</span>
-          <div class="meta-sep"></div>
-          <span class="meta-time">${art.time}</span>
-          <div class="meta-sep"></div>
-          <span class="meta-region">&#9679; ${art.region}</span>
-          ${impactHTML(art.impact)}
+      <div class="feat-body">
+        <p class="feat-summary">${a.summary||''}</p>
+        <div class="art-meta">
+          <span class="m-src">${a.src||a.source||''}</span>
+          <div class="m-sep"></div>
+          <span class="m-time">${a.time||''}</span>
+          <div class="m-sep"></div>
+          <span class="m-region">&#9679; ${a.region||'Global'}</span>
+          ${impact(a.impact||'MEDIUM')}
         </div>
       </div>
     </div>`;
 }
 
-function renderGrid(articles){
-  const grid = articles.filter(a=>!a.featured).slice(0,4);
-  document.getElementById('articleGrid').innerHTML = grid.map((a,i)=>`
-    <div class="article-card" style="animation-delay:${i*0.05}s" onclick="openArticle(${a.id})">
-      <div class="article-card-img">
-        <div class="article-card-img-bg" style="background:${a.color||'linear-gradient(135deg,#0F0F0F,#1A1A1A)'}"></div>
+function renderGrid(arts){
+  const cards = arts.filter(a=>!a.featured).slice(0,4);
+  document.getElementById('artGrid').innerHTML = cards.map((a,i)=>`
+    <div class="art-card" style="animation-delay:${i*0.06}s" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
+      <div class="art-img">
+        <div class="art-img-inner" style="${a.imgStyle||catGradient(a.cat||'climate')}"></div>
+        <div class="art-img-overlay"></div>
+        <div style="position:absolute;bottom:8px;left:10px;z-index:1">${badge(a.btype||a.cat)}</div>
       </div>
-      <div class="article-card-body">
-        <div class="article-card-badges">
-          ${badgeHTML(a.badgeType)}
-          <span class="news-badge" style="background:var(--surface-3);color:var(--text-muted);border:1px solid var(--border)">${a.region}</span>
-        </div>
-        <div class="article-card-headline">${a.headline}</div>
-        <div class="article-card-summary">${a.summary}</div>
-        <div class="article-card-meta">
-          <span class="meta-source" style="font-size:9px">${a.source}</span>
-          <div class="meta-sep"></div>
-          <span class="meta-time">${a.time}</span>
-          ${impactHTML(a.impact)}
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-function renderTerminalFeed(articles){
-  document.getElementById('terminalFeed').innerHTML = articles.map((a,i)=>`
-    <div class="tf-item" onclick="openArticle(${a.id})">
-      <span class="tf-index">${String(i+1).padStart(2,'0')}</span>
-      <div class="tf-body">
-        <div class="tf-headline">${a.headline}</div>
-        <div class="tf-meta">
-          <span class="tf-source">${a.source}</span>
-          <span class="tf-time">${a.time}</span>
-          <span class="tf-badge">${badgeHTML(a.badge)}</span>
+      <div class="art-body">
+        <div class="art-headlines">${badge(a.btype||a.cat)}</div>
+        <div class="art-headline" style="margin-top:6px">${a.headline}</div>
+        <div class="art-summary">${a.summary||''}</div>
+        <div class="art-meta">
+          <span class="m-src">${a.src||a.source||''}</span>
+          <div class="m-sep"></div>
+          <span class="m-time">${a.time||''}</span>
+          ${impact(a.impact||'MEDIUM')}
         </div>
       </div>
     </div>`).join('');
 }
 
-function renderRegTable(regs){
-  document.getElementById('regTableBody').innerHTML = regs.map(r=>{
-    const statusMap={force:'status-force',final:'status-final',phase:'status-phase',proposed:'status-proposed',deadline:'status-deadline'};
-    const riskColor = r.risk>=80?'var(--red)':r.risk>=60?'var(--amber)':'var(--green)';
-    const cdClass = r.deadlineDays===0?'done':r.deadlineDays<60?'urgent':'';
-    const cdText = r.deadlineDays===0?'ONGOING':r.deadlineDays>0?`${r.deadlineDays}D REMAINING`:'PASSED';
+function renderTerminal(arts){
+  document.getElementById('termFeed').innerHTML = arts.map((a,i)=>`
+    <div class="t-item" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
+      <span class="t-idx">${String(i+1).padStart(2,'0')}</span>
+      <div class="t-body">
+        <div class="t-headline">${a.headline||a.title||''}</div>
+        <div class="t-meta">
+          <span class="t-src">${a.src||a.source||''}</span>
+          <span class="t-time">${a.time||''}</span>
+          ${badge(a.cat||a.btype||'climate')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderCats(){
+  document.getElementById('catList').innerHTML = CATS.map(c=>`
+    <div class="cat-item${c.id==='all'?' active':''}" onclick="filterCat(this,'${c.id}')">
+      <div class="cat-left"><div class="cat-dot" style="background:${c.col}"></div><span class="cat-name">${c.name}</span></div>
+      <span class="cat-n">${c.n}</span>
+    </div>`).join('');
+}
+
+function renderWL(){
+  document.getElementById('watchBody').innerHTML = WATCHLIST.map(w=>`
+    <div class="list-row">
+      <span style="font-size:11px;font-weight:600;color:var(--text-2);flex:1">${w.n}</span>
+      <span class="tag-sm tag-${w.cls}">${w.t}</span>
+    </div>`).join('');
+}
+
+function renderSrcs(){
+  document.getElementById('srcBody').innerHTML = SOURCES_DATA.map(s=>`
+    <div class="list-row">
+      <div class="source-logo">${s.a}</div>
+      <span style="font-size:11px;font-weight:500;color:var(--text-2);flex:1">${s.n}</span>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">${s.c}</span>
+      ${s.live?'<div class="l-dot"></div>':''}
+    </div>`).join('');
+}
+
+function renderKPIs(){
+  document.getElementById('kpiRow').innerHTML = KPIS.map(k=>`
+    <div class="kpi-c">
+      <div class="kpi-lbl">${k.l}</div>
+      <div class="kpi-val" style="${k.red?'color:#FF3333':''}">${k.v}</div>
+      <div class="kpi-delta ${k.up?'up':'dn'}">${k.up?'▲':'▼'} ${k.d}</div>
+    </div>`).join('');
+}
+
+function renderRegs(list){
+  const stMap={force:'rs-force',final:'rs-final',phase:'rs-phase',proposed:'rs-prop'};
+  document.getElementById('regBody').innerHTML = list.map(r=>{
+    const rc = r.risk>=80?'#FF3333':r.risk>=60?'#FF6600':'#00CC44';
+    const cdcls = r.days===0?'cd-done':r.days<60?'cd-hot':'cd-ok';
+    const cdt = r.days===0?'ONGOING':(r.days>0?r.days+'D LEFT':'PASSED');
     return `<tr>
-      <td>
-        <div class="reg-name">${r.name}</div>
-        <div class="reg-full-name">${r.full}</div>
-      </td>
-      <td><span class="reg-status ${statusMap[r.status]}">${r.statusLabel}</span></td>
-      <td><span class="reg-date">${r.effective}</span></td>
-      <td>
-        <div class="reg-date" style="margin-bottom:3px">${r.deadline}</div>
-        <span class="countdown-chip ${cdClass}">${cdText}</span>
-      </td>
-      <td>
-        <div class="reg-regions">${r.regions.map(rg=>`<span class="region-chip">${rg}</span>`).join('')}</div>
-      </td>
-      <td>
-        <div class="reg-risk-bar">
-          <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${r.risk}%;background:${riskColor}"></div></div>
-          <span class="risk-val" style="color:${riskColor}">${r.risk}%</span>
-        </div>
-      </td>
-      <td style="font-size:10.5px;color:var(--text-2);max-width:160px">${r.scope}</td>
+      <td><div class="reg-name">${r.n}</div><div class="reg-abbr">${r.full}</div></td>
+      <td><span class="reg-status ${stMap[r.st]}">${r.sl}</span></td>
+      <td><span class="reg-date">${r.eff}</span></td>
+      <td><div class="reg-date">${r.dl}</div><span class="cd ${cdcls}">${cdt}</span></td>
+      <td>${r.regions.map(rg=>`<span class="badge b-neutral" style="font-size:7px;margin:1px">${rg}</span>`).join('')}</td>
+      <td><div class="risk-row"><div class="risk-track"><div class="risk-fill" style="width:${r.risk}%;background:${rc}"></div></div><span class="risk-pct" style="color:${rc}">${r.risk}%</span></div></td>
+      <td style="font-size:10.5px;color:var(--text-2);max-width:150px">${r.scope}</td>
     </tr>`;
   }).join('');
 }
 
-function renderCarbonTable(){
-  document.getElementById('carbonTable').innerHTML = CARBON_MARKETS.map(c=>`
+function renderCarbon(){
+  document.getElementById('cTable').innerHTML = CARBON.map(c=>`
     <tr>
-      <td>
-        <div class="carbon-name">${c.name}</div>
-        <div class="carbon-abbr">${c.abbr}</div>
-      </td>
-      <td class="carbon-price">${c.price}</td>
-      <td class="carbon-chg ${c.up?'up':'dn'}">${c.up?'▲':'▼'} ${c.chg}</td>
+      <td><div class="c-name">${c.n}</div><div class="c-abbr">${c.a}</div></td>
+      <td class="c-price">${c.p}</td>
+      <td class="c-chg ${c.up?'up':'dn'}">${c.up?'▲':'▼'} ${c.c}</td>
     </tr>`).join('');
 }
 
 function renderDeadlines(){
-  document.getElementById('deadlineList').innerHTML = DEADLINES.map(d=>`
-    <div class="deadline-item ${d.urgency}">
-      <div>
-        <div class="dl-date">${d.day}</div>
-        <div class="dl-month">${d.month}</div>
-      </div>
-      <div class="dl-info">
-        <div class="dl-name">${d.name}</div>
-        <div class="dl-detail">${d.detail}</div>
-      </div>
-      <div class="dl-cd" style="color:${d.urgency==='urgent'?'var(--red)':d.urgency==='soon'?'var(--amber)':'var(--green)'}">${d.cd}</div>
+  document.getElementById('dlList').innerHTML = DEADLINES.map(d=>`
+    <div class="dl-item ${d.u}">
+      <div><div class="dl-day">${d.day}</div><div class="dl-mo">${d.mo}</div></div>
+      <div class="dl-info"><div class="dl-name">${d.n}</div><div class="dl-det">${d.d}</div></div>
+      <div class="dl-cd" style="color:${d.u==='hot'?'#FF3333':d.u==='soon'?'#FF6600':'#00CC44'}">${d.cd}</div>
     </div>`).join('');
 }
 
 function renderSignals(){
-  document.getElementById('signalList').innerHTML = SIGNALS.map(s=>`
-    <div class="signal-item">
-      <div class="signal-icon" style="background:${s.bg}">${s.icon}</div>
-      <div class="signal-body">
-        <div class="signal-name">${s.name}</div>
-        <div class="signal-detail">${s.detail}</div>
-      </div>
-      <span class="signal-val" style="color:${s.valColor}">${s.val}</span>
+  document.getElementById('sigList').innerHTML = SIGNALS.map(s=>`
+    <div class="sig-row">
+      <div class="sig-icon" style="background:${s.bg}">${s.ico}</div>
+      <div class="sig-body"><div class="sig-name">${s.n}</div><div class="sig-det">${s.d}</div></div>
+      <span class="sig-val" style="color:${s.vc}">${s.v}</span>
     </div>`).join('');
 }
 
 function renderTrending(){
-  const catColors={regulation:'var(--amber)',market:'var(--cyan)',climate:'var(--red)',esg:'var(--green)',finance:'var(--blue)'};
-  document.getElementById('trendingList').innerHTML = TRENDING.map((t,i)=>`
-    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);cursor:pointer">
-      <span style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text-muted);width:14px">${i+1}</span>
+  const cc={regulation:'#FF6600',market:'#0099CC',climate:'#FF3333',esg:'#00CC44',finance:'#3399FF'};
+  document.getElementById('trendList').innerHTML = TRENDING.map((t,i)=>`
+    <div class="trend-row">
+      <span class="trend-n">${i+1}</span>
       <div style="flex:1;min-width:0">
-        <div style="font-size:11px;font-weight:600;color:var(--text)">${t.topic}</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">${t.count}</div>
+        <div class="trend-name">${t.n}</div>
+        <div class="trend-cnt">${t.c}</div>
       </div>
-      <span class="news-badge" style="background:${catColors[t.cat]}22;border:1px solid ${catColors[t.cat]}44;color:${catColors[t.cat]};font-size:7px;padding:1px 4px">${t.cat.toUpperCase()}</span>
+      <span class="badge" style="background:${cc[t.cat]||'#888'}18;border:1px solid ${cc[t.cat]||'#888'}44;color:${cc[t.cat]||'#888'};font-size:7px">${t.cat.toUpperCase()}</span>
     </div>`).join('');
 }
 
 function renderTimeline(){
-  const tagColorsHex={EU:'#3399FF',US:'#FF6600',UK:'#0099CC',GLOBAL:'#00CC44',CA:'#FF6600',G7:'#888888'};
-  document.getElementById('timelineEvents').innerHTML = TIMELINE_EVENTS.map(e=>{
-    const dotClass = e.past?'past':e.urgent?'urgent':e.active?'active':'';
-    const c = tagColorsHex[e.tag]||'#FF6600';
-    return `<div class="tl-event" title="${e.name}">
-      <div style="height:30px;display:flex;align-items:flex-end;justify-content:center">
-        <div class="tl-dot-wrap ${dotClass}"></div>
-      </div>
-      <div class="tl-date">${e.date}</div>
-      <div class="tl-name">${e.name}</div>
-      <span class="tl-tag news-badge" style="background:${c}18;border:1px solid ${c}44;color:${c};font-size:7px;margin-top:3px">${e.tag}</span>
+  const tagCol={EU:'#3399FF',US:'#FF6600',UK:'#0099CC',GLOBAL:'#00CC44',CA:'#FF6600',G7:'#888'};
+  document.getElementById('tlEvents').innerHTML = TIMELINE_EVS.map(e=>{
+    const dc = e.past?'past':e.urgent?'urgent':e.active?'active':'';
+    const c = tagCol[e.tag]||'#FF6600';
+    return `<div class="tl-ev" title="${e.n}">
+      <div style="height:28px;display:flex;align-items:flex-end;justify-content:center"><div class="tl-dot ${dc}"></div></div>
+      <div class="tl-date">${e.d}</div>
+      <div class="tl-name">${e.n}</div>
+      <span class="badge" style="background:${c}18;border:1px solid ${c}44;color:${c};font-size:7px;margin-top:3px">${e.tag}</span>
     </div>`;
   }).join('');
 }
 
-function renderInvestorGrid(){
-  const bg=['rgba(0,204,68,0.06)','rgba(0,153,204,0.06)','rgba(255,102,0,0.06)','rgba(51,153,255,0.06)','rgba(255,51,51,0.06)','rgba(136,136,136,0.06)'];
-  const vc=['#00CC44','#0099CC','#FF6600','#3399FF','#FF3333','#888888'];
-  document.getElementById('investorGrid').innerHTML = INVESTOR_DATA.map((d,i)=>`
-    <div style="padding:14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:${bg[i]};cursor:pointer;transition:background 0.12s ease">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">${d.label}</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;letter-spacing:-.02em;color:${vc[i]};line-height:1">${d.val}</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:${d.up?'#00CC44':'#FF3333'};margin-top:3px">${d.up?'▲':'▼'} ${d.delta}</div>
-      <div style="font-size:11px;font-weight:600;color:var(--text);margin-top:6px">${d.title}</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);margin-top:2px">${d.note}</div>
+function renderInv(){
+  document.getElementById('invGrid').innerHTML = INV_DATA.map((d,i)=>`
+    <div class="inv-cell" style="background:${d.col}0A">
+      <div class="inv-label">${d.l}</div>
+      <div class="inv-val" style="color:${d.col}">${d.v}</div>
+      <div class="inv-delta" style="color:${d.up?'#00CC44':'#FF3333'}">${d.up?'▲':'▼'} ${d.d}</div>
+      <div class="inv-title">${d.t}</div>
+      <div class="inv-note">${d.note}</div>
     </div>`).join('');
 }
 
 function renderMap(){
-  const container = document.getElementById('mapContainer');
-  // SVG world map (simplified continental outlines)
-  const svgMap = `<svg class="map-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
-    <rect width="1000" height="500" fill="#050505"/>
+  const box = document.getElementById('mapBox');
+  const svg = `<svg class="map-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1000" height="500" fill="#040404"/>
+    <!-- Subtle grid -->
+    <line x1="0" y1="250" x2="1000" y2="250" stroke="#111" stroke-width="0.5"/>
+    <line x1="500" y1="0" x2="500" y2="500" stroke="#111" stroke-width="0.5"/>
+    <line x1="0" y1="125" x2="1000" y2="125" stroke="#0D0D0D" stroke-width="0.3"/>
+    <line x1="0" y1="375" x2="1000" y2="375" stroke="#0D0D0D" stroke-width="0.3"/>
     <!-- North America -->
-    <path d="M60,40 L160,40 L200,80 L220,130 L200,160 L180,200 L160,220 L150,260 L130,240 L100,200 L80,160 L60,120 L40,80 Z" fill="#111111" stroke="#2C2C2C" stroke-width="0.5"/>
+    <path d="M50,30 L80,25 L130,30 L170,50 L195,80 L210,120 L205,155 L185,185 L165,210 L155,250 L135,235 L110,195 L85,165 L65,130 L45,90 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.7"/>
+    <!-- Central/Mexico -->
+    <path d="M135,235 L155,250 L160,275 L148,285 L130,265 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.5"/>
     <!-- South America -->
-    <path d="M160,260 L200,260 L230,280 L240,320 L230,380 L210,420 L190,440 L170,420 L160,380 L150,340 L155,300 Z" fill="#111111" stroke="#2C2C2C" stroke-width="0.5"/>
+    <path d="M155,270 L195,265 L225,280 L238,315 L232,370 L215,415 L195,440 L175,435 L160,400 L148,360 L148,315 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.7"/>
     <!-- Europe -->
-    <path d="M400,40 L480,40 L500,70 L490,100 L470,110 L450,100 L430,110 L410,100 L390,80 Z" fill="#111111" stroke="#2C2C2C" stroke-width="0.5"/>
+    <path d="M390,30 L435,25 L465,35 L490,55 L495,80 L480,100 L460,108 L445,100 L430,108 L412,100 L396,85 L388,60 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.7"/>
+    <!-- Scandinavia -->
+    <path d="M420,20 L440,15 L455,22 L450,40 L435,38 L420,30 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.5"/>
     <!-- Africa -->
-    <path d="M420,130 L490,130 L510,160 L520,210 L510,270 L490,320 L460,360 L430,370 L400,350 L380,300 L370,250 L380,200 L400,160 Z" fill="#111111" stroke="#2C2C2C" stroke-width="0.5"/>
-    <!-- Asia -->
-    <path d="M510,30 L700,30 L780,60 L800,100 L790,150 L750,180 L720,170 L700,190 L650,200 L600,190 L560,170 L530,150 L510,120 L500,80 Z" fill="#111111" stroke="#2C2C2C" stroke-width="0.5"/>
-    <!-- South Asia / SE Asia -->
-    <path d="M600,170 L660,170 L700,190 L720,220 L710,250 L680,260 L650,250 L620,230 L600,210 Z" fill="#111111" stroke="#2C2C2C" stroke-width="0.5"/>
+    <path d="M410,120 L470,118 L505,135 L520,165 L525,210 L515,260 L500,305 L478,345 L455,365 L430,370 L405,350 L385,305 L375,255 L382,205 L398,165 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.7"/>
+    <!-- Middle East -->
+    <path d="M490,100 L540,95 L565,110 L570,140 L545,155 L510,145 L490,130 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.5"/>
+    <!-- Asia (main) -->
+    <path d="M510,25 L620,20 L720,28 L780,50 L810,90 L805,135 L780,162 L750,175 L715,168 L685,180 L650,188 L610,178 L572,158 L545,142 L530,120 L510,95 L500,60 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.7"/>
+    <!-- India -->
+    <path d="M572,155 L615,150 L645,168 L660,200 L645,240 L620,258 L598,245 L580,215 L570,185 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.5"/>
+    <!-- SE Asia -->
+    <path d="M685,168 L720,162 L750,172 L760,200 L740,215 L710,210 L688,195 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.5"/>
+    <!-- Japan/Korea -->
+    <path d="M770,80 L790,75 L802,85 L798,105 L782,110 L768,100 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.5"/>
     <!-- Australia -->
-    <path d="M720,300 L820,295 L850,320 L840,370 L810,390 L770,390 L740,370 L710,340 Z" fill="#111111" stroke="#2C2C2C" stroke-width="0.5"/>
-    <!-- Grid lines (subtle) -->
-    <line x1="0" y1="250" x2="1000" y2="250" stroke="#1A1A1A" stroke-width="0.5"/>
-    <line x1="500" y1="0" x2="500" y2="500" stroke="#1A1A1A" stroke-width="0.5"/>
-    <line x1="0" y1="125" x2="1000" y2="125" stroke="#161616" stroke-width="0.3"/>
-    <line x1="0" y1="375" x2="1000" y2="375" stroke="#161616" stroke-width="0.3"/>
+    <path d="M715,300 L800,292 L845,308 L858,345 L848,380 L820,400 L785,402 L752,385 L728,360 L712,330 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.7"/>
+    <!-- NZ -->
+    <path d="M862,350 L875,340 L882,360 L872,375 L858,368 Z" fill="#141414" stroke="#2A2A2A" stroke-width="0.4"/>
   </svg>`;
 
-  const dotsHTML = MAP_EVENTS.map(e=>`
-    <div class="map-event-dot"
-      style="left:${e.x}%;top:${e.y}%;width:10px;height:10px;background:${e.color};color:${e.color}"
-      data-id="${e.id}"
-      onmouseenter="showMapTooltip(event,${e.id})"
-      onmouseleave="hideMapTooltip()">
-    </div>`).join('');
+  const dots = MAP_EVS.map(e=>`
+    <div class="ev-dot" style="left:${e.x}%;top:${e.y}%;width:9px;height:9px;background:${e.col};color:${e.col}"
+      data-id="${e.id}" onmouseenter="showTT(event,${e.id})" onmouseleave="hideTT()"></div>`).join('');
 
-  container.innerHTML = svgMap + `<div id="mapEventDots">${dotsHTML}</div><div class="map-tooltip" id="mapTooltip"></div>`;
+  box.innerHTML = svg + `<div id="mapDots">${dots}</div><div class="map-tt" id="mapTT"></div>`;
 }
 
-function showMapTooltip(evt, id){
-  const e = MAP_EVENTS.find(x=>x.id===id);
-  if(!e) return;
-  const tt = document.getElementById('mapTooltip');
-  const typeIcons={wildfire:'&#128293;',cyclone:'&#127744;',flood:'&#128166;',drought:'&#127926;',heatwave:'&#9728;'};
-  tt.innerHTML = `
-    <div class="map-tt-title">${typeIcons[e.type]||''} ${e.label}</div>
-    <div class="map-tt-row"><span>Severity</span><span class="map-tt-val" style="color:${e.severity==='critical'?'var(--red)':'var(--amber)'}">${e.severity.toUpperCase()}</span></div>
-    <div class="map-tt-row"><span>Affected Assets</span><span class="map-tt-val">${e.company}</span></div>
-    <div class="map-tt-row"><span>Est. Economic Impact</span><span class="map-tt-val" style="color:var(--amber)">${e.economic}</span></div>`;
-  const rect = evt.target.getBoundingClientRect();
-  const containerRect = document.getElementById('mapContainer').getBoundingClientRect();
-  let left = rect.left - containerRect.left + 14;
-  let top = rect.top - containerRect.top - 10;
-  if(left + 220 > containerRect.width) left = left - 234;
-  if(top + 100 > containerRect.height) top = top - 110;
-  tt.style.left = left+'px';
-  tt.style.top = top+'px';
-  tt.classList.add('visible');
+function showTT(evt,id){
+  const e=MAP_EVS.find(x=>x.id===id); if(!e)return;
+  const icons={wildfire:'🔥',cyclone:'🌀',flood:'💧',drought:'⚠️',heatwave:'☀️'};
+  const tt=document.getElementById('mapTT');
+  tt.innerHTML=`<div class="map-tt-name">${icons[e.type]||''} ${e.label}</div>
+    <div class="map-tt-row"><span>Severity</span><span class="map-tt-val" style="color:${e.sev==='critical'?'#FF3333':'#FF6600'}">${e.sev.toUpperCase()}</span></div>
+    <div class="map-tt-row"><span>Assets Affected</span><span class="map-tt-val">${e.co}</span></div>
+    <div class="map-tt-row"><span>Economic Impact</span><span class="map-tt-val" style="color:#FF6600">${e.eco}</span></div>`;
+  const r=evt.target.getBoundingClientRect(),
+        b=document.getElementById('mapBox').getBoundingClientRect();
+  let L=r.left-b.left+14, T=r.top-b.top-8;
+  if(L+210>b.width) L=L-224;
+  if(T+110>b.height) T=T-120;
+  tt.style.left=L+'px'; tt.style.top=T+'px';
+  tt.classList.add('on');
 }
-function hideMapTooltip(){
-  const tt = document.getElementById('mapTooltip');
-  if(tt) tt.classList.remove('visible');
-}
+function hideTT(){const tt=document.getElementById('mapTT');if(tt)tt.classList.remove('on');}
 
-function renderSearchResults(query=''){
-  const all = [...ARTICLES,...TERMINAL_ARTICLES];
-  const filtered = query ? all.filter(a=>a.headline.toLowerCase().includes(query.toLowerCase())) : all.slice(0,8);
-  const icons={regulation:'&#128221;',alert:'&#9888;',market:'&#128200;',climate:'&#127757;',esg:'&#9989;',investor:'&#127968;'};
-  document.getElementById('searchResults').innerHTML = filtered.map(a=>`
-    <div class="search-result-item" onclick="openArticle(${a.id})">
-      <div class="sr-icon">${icons[a.badgeType||a.badge||'climate']||'&#128240;'}</div>
-      <div class="sr-body">
-        <div class="sr-title">${a.headline}</div>
-        <div class="sr-meta">${a.source||''} &nbsp;·&nbsp; ${a.time||''} &nbsp;·&nbsp; ${a.region||a.cat||''}</div>
-      </div>
-    </div>`).join('') || '<div style="padding:20px 16px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text-muted)">NO RESULTS FOUND</div>';
-}
-
-/* ═══════════════════ INTERACTION ═══════════════════ */
-
-let currentTab = 'all';
-
+/* ── INTERACTIONS ── */
 function setTab(btn, cat){
-  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  currentTab = cat;
-  const filtered = cat==='all' ? ARTICLES : ARTICLES.filter(a=>a.cat===cat||a.badgeType===cat);
-  const display = filtered.length ? filtered : ARTICLES;
-  renderFeatured(display);
-  renderGrid(display);
+  currentCat = cat;
+  const arts = liveArticles.length ? liveArticles : MOCK_ARTICLES;
+  renderFeed(arts);
 }
 
 function filterCat(el, cat){
   document.querySelectorAll('.cat-item').forEach(x=>x.classList.remove('active'));
   el.classList.add('active');
-  setTab({classList:{remove:()=>{},add:()=>{}}}, cat);
+  currentCat = cat;
+  const arts = liveArticles.length ? liveArticles : MOCK_ARTICLES;
+  renderFeed(arts);
 }
 
-function setRegTab(btn, filter){
-  document.querySelectorAll('.reg-tab').forEach(b=>b.classList.remove('active'));
+function setRegTab(btn, f){
+  document.querySelectorAll('.reg-sec .tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  const map={all:REGULATIONS,inforce:REGULATIONS.filter(r=>r.status==='force'),upcoming:REGULATIONS.filter(r=>r.status==='phase'||r.status==='final'),proposed:REGULATIONS.filter(r=>r.status==='proposed')};
-  renderRegTable(map[filter]||REGULATIONS);
+  const m={all:REGULATIONS,force:REGULATIONS.filter(r=>r.st==='force'),upcoming:REGULATIONS.filter(r=>r.st==='phase'||r.st==='final')};
+  renderRegs(m[f]||REGULATIONS);
 }
+
+function openArt(url){if(url&&url!=='#')window.open(url,'_blank');}
 
 function openSearch(){
-  document.getElementById('searchOverlay').classList.add('open');
-  renderSearchResults('');
-  setTimeout(()=>document.getElementById('searchInput').focus(),100);
+  document.getElementById('sOv').classList.add('open');
+  renderSearch('');
+  setTimeout(()=>document.getElementById('sInput').focus(),80);
 }
-function closeSearch(){
-  document.getElementById('searchOverlay').classList.remove('open');
-}
-function filterSearch(btn,cat){
-  document.querySelectorAll('.sf-chip').forEach(b=>b.classList.remove('active'));
+function closeSearch(){document.getElementById('sOv').classList.remove('open');}
+function sFilter(btn,cat){
+  document.querySelectorAll('.s-chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  renderSearch(document.getElementById('sInput').value, cat);
 }
 
-document.getElementById('searchInput').addEventListener('input', function(){
-  renderSearchResults(this.value);
-});
-document.getElementById('searchOverlay').addEventListener('click',function(e){
-  if(e.target===this) closeSearch();
-});
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape') closeSearch();
+function renderSearch(q, cat='all'){
+  const all = [...(liveArticles.length?liveArticles:MOCK_ARTICLES), ...TERMINAL_MOCK];
+  const filtered = all.filter(a=>!q||a.headline.toLowerCase().includes(q.toLowerCase())).filter(a=>cat==='all'||a.cat===cat).slice(0,8);
+  const icons={regulation:'📋',alert:'⚠️',market:'📈',climate:'🌍',esg:'✅',investor:'🏦',finance:'💰'};
+  document.getElementById('sResults').innerHTML = filtered.map(a=>`
+    <div class="s-item" onclick="openArt('${(a.url||'').replace(/'/g,"&#39;")}')">
+      <div class="s-ico">${icons[a.cat||a.btype]||'📰'}</div>
+      <div>
+        <div class="s-title">${a.headline||a.title||''}</div>
+        <div class="s-meta">${a.src||a.source||''} &nbsp;·&nbsp; ${a.time||''} &nbsp;·&nbsp; ${a.region||a.cat||''}</div>
+      </div>
+    </div>`).join('') || '<div style="padding:20px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--text-muted)">NO RESULTS</div>';
+}
+
+document.getElementById('sInput').addEventListener('input',function(){renderSearch(this.value);});
+document.getElementById('sOv').addEventListener('click',function(e){if(e.target===this)closeSearch();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeSearch();
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}
 });
 
-function openArticle(id){
-  // In production: navigate to article page
-  console.log('Open article', id);
-}
-
 function toggleTheme(){
-  const t = document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+  const t=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
   document.documentElement.setAttribute('data-theme',t);
   localStorage.setItem('cx-theme',t);
 }
 
-/* ═══════════════════ LIVE DATA SIMULATION ═══════════════════ */
-function updateAlertTime(){
-  document.getElementById('alertTime').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false})+' UTC';
-}
-
-function simulatePriceUpdates(){
-  const rows = document.querySelectorAll('.carbon-table tr');
-  rows.forEach(row=>{
-    const priceEl = row.querySelector('.carbon-price');
-    if(!priceEl) return;
-    // Subtle flash animation on price update
-    priceEl.style.color = 'var(--amber)';
-    setTimeout(()=>priceEl.style.color='', 400);
+/* ── LIVE PRICE FLICKER ── */
+function flickerPrices(){
+  document.querySelectorAll('.c-price').forEach(el=>{
+    el.style.color='#FF6600';
+    setTimeout(()=>el.style.color='',500);
   });
 }
 
-/* ═══════════════════ INIT ═══════════════════ */
-document.addEventListener('DOMContentLoaded',()=>{
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded',async()=>{
   renderTicker();
-  renderCategories();
-  renderWatchlist();
-  renderSources();
+  renderCats();
+  renderWL();
+  renderSrcs();
   renderKPIs();
-  renderFeatured(ARTICLES);
-  renderGrid(ARTICLES);
-  renderTerminalFeed(TERMINAL_ARTICLES);
-  renderRegTable(REGULATIONS);
-  renderCarbonTable();
+  // Show mock immediately for fast paint
+  renderFeed(MOCK_ARTICLES);
+  renderLiveStream(MOCK_ARTICLES);
+  renderTerminal(TERMINAL_MOCK);
+  renderRegs(REGULATIONS);
+  renderCarbon();
   renderDeadlines();
   renderSignals();
   renderTrending();
   renderTimeline();
-  renderInvestorGrid();
+  renderInv();
   renderMap();
-  updateAlertTime();
-  setInterval(updateAlertTime, 60000);
-  setInterval(simulatePriceUpdates, 8000);
+  document.getElementById('alertTime').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false})+' UTC';
+  // Then fetch live data
+  await loadLiveArticles();
+  setInterval(loadLiveArticles, 600000); // refresh every 10 min
+  setInterval(flickerPrices, 10000);
 });
 </script>
 </body>
