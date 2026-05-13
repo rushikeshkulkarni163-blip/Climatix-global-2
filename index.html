@@ -3653,8 +3653,6 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       renderer.setSize(W, H);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setClearColor(0x000000, 0);
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.1;
 
       const scene = new THREE.Scene();
 
@@ -3662,22 +3660,23 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
       camera.position.z = 2.55;
 
-      /* ── Lighting — institutional key + cool fill + warm rim ── */
-      scene.add(new THREE.AmbientLight(0x0a1428, 1.2));
+      /* ── Lighting — institutional 3-point rig ── */
+      /* Lifted ambient so dark-side geography is still legible */
+      scene.add(new THREE.AmbientLight(0x1a2e48, 2.2));
 
-      /* Key light — institutional cool-white from upper-right */
-      const key = new THREE.DirectionalLight(0xd0e4f8, 2.2);
-      key.position.set(5, 3, 3);
+      /* Key — cool institutional white, upper-right-front */
+      const key = new THREE.DirectionalLight(0xe8f4ff, 2.8);
+      key.position.set(4, 2.5, 2);
       scene.add(key);
 
-      /* Fill — deep navy, left side depth */
-      const fill = new THREE.DirectionalLight(0x0a1a3a, 0.8);
-      fill.position.set(-4, -1, -1);
+      /* Fill — dim navy from left to create depth without blacking out */
+      const fill = new THREE.DirectionalLight(0x102244, 1.0);
+      fill.position.set(-3, -0.5, 0.5);
       scene.add(fill);
 
-      /* Rim — warm amber from behind, Bloomberg signature accent */
-      const rim = new THREE.DirectionalLight(0x331400, 0.35);
-      rim.position.set(-2, 1, -3);
+      /* Rim — very subtle warm from behind for sphere edge definition */
+      const rim = new THREE.DirectionalLight(0x1a0800, 0.4);
+      rim.position.set(-1, 0.5, -3);
       scene.add(rim);
 
       /* ── Procedural Earth texture — institutional dark ocean, deep continents ── */
@@ -3720,7 +3719,7 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         });
         ctx.setLineDash([]);
 
-        /* Continents — clearly visible institutional green-grey */
+        /* Continents — clearly visible, high-contrast vs ocean */
         function toUV(la, ln) { return [((ln+180)/360)*S, ((90-la)/180)*SH]; }
         for (const poly of CONTINENTS) {
           ctx.beginPath();
@@ -3729,11 +3728,11 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
             const [x,y] = toUV(poly[i][0],poly[i][1]); ctx.lineTo(x,y);
           }
           ctx.closePath();
-          /* Continent fill — visible muted sage green, clearly distinct from ocean */
-          ctx.fillStyle = '#1e3828';
+          /* Continent fill — bright enough to be clearly visible under lighting */
+          ctx.fillStyle = '#3a5a46';
           ctx.fill();
-          /* Coast border — bright institutional green-white edge */
-          ctx.strokeStyle = 'rgba(60,140,90,0.80)'; ctx.lineWidth = 2.0;
+          /* Coast — crisp bright edge for definition */
+          ctx.strokeStyle = 'rgba(100,200,130,0.95)'; ctx.lineWidth = 2.5;
           ctx.stroke();
         }
 
@@ -3757,16 +3756,19 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         return new THREE.CanvasTexture(tc);
       }
 
-      /* ── Globe sphere — high-detail, physically accurate ── */
+      /* ── Globe sphere — high-detail ── */
       const globeGeo = new THREE.SphereGeometry(1, 96, 96);
       const globeMat = new THREE.MeshPhongMaterial({
         map:      makeEarthTexture(),
         specularMap: makeSpecularTexture(),
         specular: new THREE.Color(0x0d2244),
-        shininess: 14,
-        bumpScale: 0.002,
+        shininess: 12,
       });
       const globe = new THREE.Mesh(globeGeo, globeMat);
+      /* Start with Atlantic/Europe view (lon≈-25°) facing camera.
+         rotation.y = -π*0.35 rotates clockwise so Europe/Africa becomes
+         visible at centre rather than the all-water Pacific view. */
+      globe.rotation.y = -Math.PI * 0.35;
       scene.add(globe);
 
       /* ── Atmosphere — multi-layer scattering ── */
@@ -3835,8 +3837,8 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         const [la, ln] = COUNTRY_GEO[countryIsos[i]];
         const v = ll2v(la, ln, 1.024);
         ptPos[i*3]   = v.x; ptPos[i*3+1] = v.y; ptPos[i*3+2] = v.z;
-        /* Start with neutral institutional cool grey */
-        ptCol[i*3]   = 0.08; ptCol[i*3+1] = 0.18; ptCol[i*3+2] = 0.38;
+        /* Visible default — neutral mid-blue, clearly shows against texture */
+        ptCol[i*3]   = 0.18; ptCol[i*3+1] = 0.42; ptCol[i*3+2] = 0.75;
         ptColTarget[i*3]   = ptCol[i*3];
         ptColTarget[i*3+1] = ptCol[i*3+1];
         ptColTarget[i*3+2] = ptCol[i*3+2];
