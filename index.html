@@ -21,46 +21,40 @@
 
   /* ── 1. HERO GLOBE SPLIT LAYOUT ── */
   .cx-hero-split {
-    max-width: 1360px !important;
     display: grid !important;
-    grid-template-columns: 1fr 580px;
-    align-items: center;
-    gap: 48px;
-    padding: 56px 0 52px !important;
+    grid-template-columns: 1fr 600px !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
   }
-  .cx-hero-text { min-width: 0; }
+  .cx-hero-text {
+    min-width: 0;
+    padding-right: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
 
-  /* Globe module — right column, vertically centered */
+  .cx-globe-glow { display: none !important; }
+
+  /* Globe canvas container — full-height, edge-bleed */
   .cx-globe-module {
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
-    align-self: center;
-    width: 580px;
+    align-self: stretch;
     position: relative;
+    margin-right: calc(-1 * var(--page-px));
   }
-
-  /* Atmospheric ambient glow — pure depth, no neon */
-  .cx-globe-glow {
-    position: absolute;
-    top: -60px; left: -60px; right: -60px; bottom: -60px;
-    background: radial-gradient(ellipse 75% 75% at 50% 48%,
-      rgba(10,40,90,0.22) 0%,
-      rgba(5,20,50,0.10) 45%,
-      transparent 72%
-    );
-    pointer-events: none;
-    z-index: 0;
-    border-radius: 50%;
-  }
-
-  /* Globe canvas container — free-floating, no box frame */
   .cx-hero-globe-wrap {
     position: relative;
+    flex: 1;
     width: 100%;
-    height: 530px;
-    background: transparent;
-    overflow: visible;
+    min-height: 100vh;
+    background: #0A1428;
+    overflow: hidden;
     border: none;
     z-index: 1;
   }
@@ -1136,16 +1130,16 @@
 .cxla-x{background:none;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:16px;padding:0 2px;line-height:1;flex-shrink:0;transition:color .2s}
 .cxla-x:hover{color:rgba(255,255,255,.65)}
 
-#cx-live-metrics{background:var(--surface);border-bottom:1px solid var(--border);padding:0 22px;display:flex;align-items:center;height:44px;overflow:hidden}
-.cxlm-src{display:flex;align-items:center;gap:7px;font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);padding-right:22px;border-right:1px solid var(--border);flex-shrink:0;white-space:nowrap;font-family:var(--mono)}
-.cxlm-live{width:5px;height:5px;background:var(--green);flex-shrink:0;animation:cxlm-live 2.4s ease-in-out infinite}
-@keyframes cxlm-live{0%,100%{box-shadow:0 0 0 0 rgba(0,204,68,.45)}55%{box-shadow:0 0 0 5px rgba(0,204,68,0)}}
+#cx-live-metrics{background:rgba(12,16,24,0.96);border-bottom:1px solid rgba(255,255,255,0.05);padding:0 var(--page-px);display:flex;align-items:center;height:40px;overflow:hidden}
+.cxlm-src{display:flex;align-items:center;gap:7px;font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-bright);padding-right:20px;border-right:1px solid rgba(255,255,255,0.07);flex-shrink:0;white-space:nowrap;font-family:var(--mono)}
+.cxlm-live{width:5px;height:5px;border-radius:50%;background:var(--blue-bright);flex-shrink:0;animation:cxlm-live 2.8s ease-in-out infinite}
+@keyframes cxlm-live{0%,100%{opacity:1}50%{opacity:.3}}
 .cxlm-items{display:flex;flex:1;height:100%;overflow:hidden}
-.cxlm-item{display:flex;align-items:center;gap:10px;padding:0 18px;border-right:1px solid var(--border);height:100%;flex-shrink:0}
+.cxlm-item{display:flex;align-items:center;gap:12px;padding:0 20px;border-right:1px solid rgba(255,255,255,0.05);height:100%;flex-shrink:0}
 .cxlm-item:last-child{border-right:none}
-.cxlm-lbl{font-size:8px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);white-space:nowrap;font-family:var(--mono)}
-.cxlm-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--amber);white-space:nowrap;letter-spacing:.01em;transition:color .5s}
-.cxlm-val.cx-blue{color:var(--cyan)}
+.cxlm-lbl{font-size:8px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.28);white-space:nowrap;font-family:var(--mono)}
+.cxlm-val{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;letter-spacing:.02em;transition:color .5s}
+.cxlm-val.cx-blue{color:var(--blue-bright)}
 .cxlm-val.cx-green{color:var(--green)}
 .cxlm-val.cx-amber{color:var(--amber)}
 </style>
@@ -1209,41 +1203,26 @@
     <div class="cx-util-left">
       <div class="cx-util-item">
         <span class="cx-util-dot"></span>
-        <span>Systems Operational</span>
+        <span>All systems operational</span>
       </div>
       <div class="cx-util-sep"></div>
       <div class="cx-util-item">
-        <span>CO&#x2082;</span>
-        <span id="cxlm-co2-util" style="color:var(--text-2)">— ppm</span>
+        <span>CO&#x2082;&nbsp;<span id="cxlm-co2-util" style="color:rgba(255,255,255,0.6)">—</span> ppm</span>
       </div>
       <div class="cx-util-sep"></div>
       <div class="cx-util-item">
-        <span>Temp Anomaly</span>
-        <span id="cxlm-temp-util" style="color:var(--amber)">— °C</span>
-      </div>
-      <div class="cx-util-sep"></div>
-      <div class="cx-util-item">
-        <span>Active Events</span>
-        <span id="cxlm-evts-util" style="color:var(--red)">—</span>
+        <span>&#x394;T&nbsp;<span id="cxlm-temp-util" style="color:var(--amber)">—</span> °C</span>
       </div>
     </div>
     <div class="cx-util-right">
-      <div class="cx-util-item">
-        <a href="terminal.html">Terminal Access</a>
-      </div>
+      <div class="cx-util-item"><a href="terminal.html">Terminal</a></div>
       <div class="cx-util-sep"></div>
-      <div class="cx-util-item">
-        <a href="api-docs.html">API</a>
-      </div>
+      <div class="cx-util-item"><a href="careers.html">Careers</a></div>
       <div class="cx-util-sep"></div>
-      <div class="cx-util-item">
-        <a href="careers.html">Careers</a>
-      </div>
-      <div class="cx-util-sep"></div>
-      <button id="cx-theme-toggle" title="Toggle light/dark theme"
-        style="background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;font-weight:500;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;padding:0;"
-        onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);var btn=document.getElementById('cx-theme-toggle');btn.textContent=t==='light'?'Dark Mode':'Light Mode';})()">
-        Light Mode
+      <button id="cx-theme-toggle" title="Toggle theme"
+        style="background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;font-weight:500;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;padding:0;white-space:nowrap;"
+        onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);var btn=document.getElementById('cx-theme-toggle');btn.textContent=t==='light'?'Dark':'Light';})()">
+        Light
       </button>
     </div>
   </div>
