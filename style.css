@@ -541,26 +541,20 @@ body {
   position: absolute;
   inset: 0;
   z-index: 0;
+  /* Gradient fallback — mimics ISS oblique Earth view when image is loading */
   background-color: #000;
-  background-image: url('https://science.nasa.gov/wp-content/uploads/2024/02/304765158-615003676989374-3689670236967468275-n.jpg');
+  background-image:
+    /* Dark space at top */
+    linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.60) 8%, transparent 18%),
+    /* Atmospheric limb — thin blue arc */
+    radial-gradient(ellipse 160% 22% at 50% 16%, rgba(50,120,240,0.55) 0%, rgba(20,70,200,0.25) 45%, transparent 65%),
+    /* Earth surface — warm golden clouds + ocean */
+    radial-gradient(ellipse 140% 110% at 62% 72%, rgba(170,130,65,0.50) 0%, rgba(120,170,220,0.35) 30%, rgba(35,75,155,0.55) 60%, #030810 82%),
+    /* Photo — ISS oblique Earth from NASA/Unsplash */
+    url('https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?q=85&w=2560&auto=format&fit=crop');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-}
-
-/* WebGL canvas hidden — photo is the background */
-#heroGlobeCanvas {
-  display: none !important;
-}
-
-/* Loading overlay hidden — no WebGL to wait for */
-#globeLoadingOverlay {
-  display: none !important;
-}
-
-/* Hover tooltip hidden — no interactive globe */
-#globeHoverTip {
-  display: none !important;
 }
 
 /* Overlay — matches NASA reference: subtle left fade, strong bottom for strip */
@@ -605,8 +599,9 @@ body {
   padding-left: var(--page-px);
   padding-right: var(--page-px);
   padding-top: calc(var(--util-h) + var(--nav-h));
-  padding-bottom: 120px;
-  max-width: 700px;
+  /* Push content above Vital Signs strip (~130px) + comfortable gap */
+  padding-bottom: 168px;
+  max-width: 620px;
   opacity: 1;
 }
 
@@ -638,16 +633,16 @@ body {
   50%      { opacity: 0.35; }
 }
 
-/* NASA-scale headline — matches reference exactly */
+/* Bloomberg × NASA institutional headline — controlled scale, 3-line */
 .cx-hero-title {
   font-family: 'Inter', sans-serif;
-  font-size: clamp(64px, 8.5vw, 120px);
+  font-size: clamp(36px, 4.2vw, 64px);
   font-weight: 900;
   color: #fff;
-  line-height: 1.0;
-  letter-spacing: -0.025em;
-  margin: 0 0 28px;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.7) !important;
+  line-height: 1.06;
+  letter-spacing: -0.022em;
+  margin: 0 0 20px;
+  text-shadow: 0 2px 32px rgba(0,0,0,0.75) !important;
 }
 .cx-hero-title em {
   font-style: normal;
@@ -655,12 +650,30 @@ body {
 }
 
 .cx-hero-sub {
-  font-size: clamp(14px, 1.1vw, 16px);
+  font-size: clamp(13px, 1.0vw, 15px);
   font-weight: 400;
-  color: rgba(255,255,255,0.82);
-  line-height: 1.65;
-  max-width: 520px;
-  margin: 0;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.70;
+  max-width: 540px;
+  margin: 0 0 18px;
+}
+
+/* Regulatory framework tags — Bloomberg data taxonomy */
+.cx-hero-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cx-hero-tags span {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.36);
+  border: 1px solid rgba(255,255,255,0.14);
+  padding: 3px 7px;
+  border-radius: 1px;
 }
 
 .cx-hero-cta {
@@ -3046,13 +3059,13 @@ body {
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 1200px) {
-  .cx-hero-content { max-width: 580px; }
+  .cx-hero-content { max-width: 540px; }
   .cx-vs-items { gap: 0; }
 }
 
 @media (max-width: 1040px) {
-  .cx-hero-content { max-width: 480px; padding-bottom: 120px; }
-  .cx-hero-title { font-size: clamp(52px, 6.5vw, 88px); }
+  .cx-hero-content { max-width: 440px; padding-bottom: 168px; }
+  .cx-hero-title { font-size: clamp(30px, 4.2vw, 52px); }
   .cx-vs-item { min-width: 140px; }
   .cx-vs-num { font-size: 24px; }
   .ms-item { min-width: 45%; }
@@ -3077,8 +3090,9 @@ body {
   .site-header { top: 0; }
   body { padding-top: var(--nav-h); }
   .cx-hero { height: 100svh; min-height: 600px; }
-  .cx-hero-content { max-width: 100%; padding-right: 32px; padding-bottom: 140px; }
-  .cx-hero-title { font-size: clamp(44px, 11vw, 72px); }
+  .cx-hero-content { max-width: 100%; padding-right: 32px; padding-bottom: 160px; }
+  .cx-hero-title { font-size: clamp(28px, 8vw, 44px); }
+  .cx-hero-tags { display: none; }
   .globe-layer-controls { display: none !important; }
   .cx-vs-item { min-width: 120px; }
   .cx-vs-name { font-size: 11px; }
