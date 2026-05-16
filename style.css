@@ -536,66 +536,61 @@ body {
   background: #000;
 }
 
-/* Full-bleed WebGL canvas container */
+/* Full-bleed photo background — NASA ISS orbital photograph */
 .cx-hero-globe-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: #000;
+  background-color: #000;
+  background-image: url('https://science.nasa.gov/wp-content/uploads/2024/02/304765158-615003676989374-3689670236967468275-n.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
+/* WebGL canvas hidden — photo is the background */
 #heroGlobeCanvas {
-  position: absolute;
-  inset: 0;
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-  cursor: grab;
+  display: none !important;
 }
-#heroGlobeCanvas:active { cursor: grabbing; }
 
-/* Cinematic overlay: dark-left gradient + bottom fade */
+/* Loading overlay hidden — no WebGL to wait for */
+#globeLoadingOverlay {
+  display: none !important;
+}
+
+/* Hover tooltip hidden — no interactive globe */
+#globeHoverTip {
+  display: none !important;
+}
+
+/* Overlay — matches NASA reference: subtle left fade, strong bottom for strip */
 .cx-hero-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
   background:
+    /* Left fade — enough to make white text legible over the photo */
     linear-gradient(to right,
-      rgba(0,0,0,0.82) 0%,
-      rgba(0,0,0,0.60) 28%,
-      rgba(0,0,0,0.22) 52%,
-      transparent 68%
+      rgba(0,0,0,0.55) 0%,
+      rgba(0,0,0,0.30) 25%,
+      rgba(0,0,0,0.08) 48%,
+      transparent 60%
     ),
+    /* Bottom fade — smooth transition to Vital Signs strip */
     linear-gradient(to top,
-      rgba(0,0,0,0.92) 0%,
-      rgba(0,0,0,0.55) 14%,
-      transparent 30%
+      rgba(0,0,0,0.80) 0%,
+      rgba(0,0,0,0.30) 10%,
+      transparent 22%
     ),
+    /* Top edge — space is dark above the atmospheric limb */
     linear-gradient(to bottom,
-      rgba(0,0,0,0.60) 0%,
-      transparent 20%
+      rgba(0,0,0,0.30) 0%,
+      transparent 12%
     );
 }
 
-/* Star-field particles in dark upper-left */
-.cx-hero-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1px 1px at 5%  12%, rgba(255,255,255,0.55) 0%, transparent 100%),
-    radial-gradient(1px 1px at 12% 38%, rgba(255,255,255,0.35) 0%, transparent 100%),
-    radial-gradient(1px 1px at 7%  62%, rgba(255,255,255,0.30) 0%, transparent 100%),
-    radial-gradient(1.2px 1.2px at 18% 8%,  rgba(255,255,255,0.45) 0%, transparent 100%),
-    radial-gradient(1px 1px at 22% 55%, rgba(255,255,255,0.22) 0%, transparent 100%),
-    radial-gradient(1px 1px at 3%  80%, rgba(255,255,255,0.28) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 14% 25%, rgba(91,163,245,0.30) 0%, transparent 100%),
-    radial-gradient(1px 1px at 9%  47%, rgba(255,255,255,0.18) 0%, transparent 100%),
-    radial-gradient(1px 1px at 27% 18%, rgba(255,255,255,0.20) 0%, transparent 100%),
-    radial-gradient(1px 1px at 2%  34%, rgba(255,255,255,0.32) 0%, transparent 100%);
-}
+/* No star-field overlay — the real photograph has real atmosphere */
 
 /* Hero text content — absolute left-center overlay */
 .cx-hero-content {
@@ -606,11 +601,12 @@ body {
   z-index: 10;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 0 var(--page-px);
-  max-width: 680px;
-  padding-top: calc(var(--util-h) + var(--nav-h) + 48px);
-  padding-bottom: 160px;
+  justify-content: flex-end;
+  padding-left: var(--page-px);
+  padding-right: var(--page-px);
+  padding-top: calc(var(--util-h) + var(--nav-h));
+  padding-bottom: 120px;
+  max-width: 700px;
   opacity: 1;
 }
 
@@ -625,7 +621,7 @@ body {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.42);
-  margin-bottom: 32px;
+  margin-bottom: 20px;
   width: fit-content;
 }
 
@@ -642,16 +638,16 @@ body {
   50%      { opacity: 0.35; }
 }
 
-/* NASA-scale headline */
+/* NASA-scale headline — matches reference exactly */
 .cx-hero-title {
-  font-family: var(--font);
-  font-size: clamp(56px, 7.5vw, 112px);
-  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(64px, 8.5vw, 120px);
+  font-weight: 900;
   color: #fff;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  margin-bottom: 32px;
-  text-shadow: 0 2px 40px rgba(0,0,0,0.6);
+  line-height: 1.0;
+  letter-spacing: -0.025em;
+  margin: 0 0 28px;
+  text-shadow: 0 2px 40px rgba(0,0,0,0.7) !important;
 }
 .cx-hero-title em {
   font-style: normal;
@@ -659,12 +655,12 @@ body {
 }
 
 .cx-hero-sub {
-  font-size: clamp(14px, 1.2vw, 17px);
+  font-size: clamp(14px, 1.1vw, 16px);
   font-weight: 400;
-  color: rgba(255,255,255,0.52);
-  line-height: 1.75;
-  max-width: 480px;
-  margin-bottom: 40px;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0;
 }
 
 .cx-hero-cta {
@@ -830,13 +826,10 @@ body {
   max-width: 100px;
 }
 
-/* Globe controls — overlay bottom-right on hero */
-.cx-hero .globe-layer-controls {
-  position: absolute;
-  bottom: 130px;
-  right: var(--page-px);
-  z-index: 25;
-}
+/* Globe controls — hidden (photo hero, no interactive globe) */
+.cx-hero .globe-layer-controls,
+.cx-hero .globe-status-bar,
+.cx-hero-badge { display: none; }
 
 /* Keep market stats below hero (not inside hero) */
 .cx-market-stats {
@@ -3053,13 +3046,13 @@ body {
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 1200px) {
-  .cx-hero-content { max-width: 560px; }
+  .cx-hero-content { max-width: 580px; }
   .cx-vs-items { gap: 0; }
 }
 
 @media (max-width: 1040px) {
-  .cx-hero-content { max-width: 480px; padding-bottom: 160px; }
-  .cx-hero-title { font-size: clamp(48px, 6vw, 80px); }
+  .cx-hero-content { max-width: 480px; padding-bottom: 120px; }
+  .cx-hero-title { font-size: clamp(52px, 6.5vw, 88px); }
   .cx-vs-item { min-width: 140px; }
   .cx-vs-num { font-size: 24px; }
   .ms-item { min-width: 45%; }
@@ -3084,8 +3077,8 @@ body {
   .site-header { top: 0; }
   body { padding-top: var(--nav-h); }
   .cx-hero { height: 100svh; min-height: 600px; }
-  .cx-hero-content { max-width: 100%; padding-right: 24px; padding-bottom: 180px; }
-  .cx-hero-title { font-size: clamp(42px, 10vw, 72px); }
+  .cx-hero-content { max-width: 100%; padding-right: 32px; padding-bottom: 140px; }
+  .cx-hero-title { font-size: clamp(44px, 11vw, 72px); }
   .globe-layer-controls { display: none !important; }
   .cx-vs-item { min-width: 120px; }
   .cx-vs-name { font-size: 11px; }

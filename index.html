@@ -1472,32 +1472,14 @@
       <!-- Cinematic overlay (gradients + star particles) -->
       <div class="cx-hero-overlay" aria-hidden="true"></div>
 
-      <!-- Hero text — left-side overlay -->
+      <!-- Hero text — lower-left, NASA-style -->
       <div class="cx-hero-content">
-        <div class="cx-hero-badge">
-          <span class="badge-dot"></span>
-          Live Climate Intelligence Platform
-        </div>
         <h1 class="cx-hero-title">
           Climate<br>Intelligence
         </h1>
         <p class="cx-hero-sub">
-          Real-time climate risk intelligence, Earth system monitoring, and financial impact analytics powered by satellite, disclosure, and regulatory data.
+          From the unique vantage point of satellite observation, Climactix delivers critical long-term intelligence on our changing planet.
         </p>
-        <div class="cx-hero-cta">
-          <a href="generate.html" class="cta-primary">Explore Platform</a>
-          <a href="dashboard.html" class="cta-secondary">Open Terminal</a>
-        </div>
-      </div>
-
-      <!-- Layer controls — bottom-right overlay -->
-      <div class="globe-layer-controls" id="globeLayerControls" style="position:absolute;bottom:128px;right:var(--page-px);z-index:25;">
-        <button class="glc-btn active" data-layer="temperature">Temp</button>
-        <button class="glc-btn" data-layer="co2">CO₂</button>
-        <button class="glc-btn" data-layer="heatwave">Heatwave</button>
-        <button class="glc-btn" data-layer="sea_level">Sea Level</button>
-        <button class="glc-btn" data-layer="ice">Ice Loss</button>
-        <button class="glc-btn" data-layer="regulatory">Regulatory</button>
       </div>
 
       <!-- Globe status bar — above layer controls -->
@@ -3752,7 +3734,7 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
     ═══════════════════════════════════════════ */
     function initHeroGlobe(worldData) {
       const canvas = document.getElementById('heroGlobeCanvas');
-      if (!canvas) return;
+      if (!canvas || getComputedStyle(canvas).display === 'none') return;
 
       /* ── Continent polygons [lat, lon] ── */
       const CONTINENTS = [
@@ -3777,618 +3759,262 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       _initCanvas2DGlobe(canvas, CONTINENTS, RISK, MITI);
     }
 
-    function _initThreeGlobe(canvas, CONTINENTS) {
-      /* Full-viewport sizing — canvas fills entire hero */
+    function _initThreeGlobe(canvas, _CONTINENTS) {
+      /* ══════════════════════════════════════════════════════
+         PHOTOREALISTIC NASA EARTH — cinematic orbital view
+         Textures: Three.js Blue Marble via unpkg CDN
+         Shaders:  Rayleigh atmosphere scattering
+         Camera:   Low-orbit telephoto — horizon visible at ~25% from top
+         Lighting: Warm orbital sunlight (upper-right, like NASA ref)
+      ══════════════════════════════════════════════════════ */
       const W = window.innerWidth;
       const H = window.innerHeight;
       canvas.width  = W;
       canvas.height = H;
 
-      /* ── Renderer — black background to match hero ── */
+      /* ── Renderer — cinematic tone mapping ── */
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
       renderer.setSize(W, H);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setClearColor(0x000000, 1);
+      renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.10;
 
       const scene = new THREE.Scene();
 
-      /* ── Camera — pulled back to show full sphere from space ── */
-      const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 100);
-      camera.position.z = 3.0;
+      /* ── Camera — telephoto orbital, horizon at ~25% from top ──
+         FOV 38° + camera at (0, 0.55, 1.95) + lookAt (0,-0.18,0)
+         → sphere angular radius ≈ arcsin(1/2.03) ≈ 29.5°
+         → camera looking down ≈ 19.5° from horizontal
+         → horizon appears at 29.5 − 19.5 = 10° above camera-center
+         → with half-FOV 19°, horizon is at (19−10)/19 ≈ 47% from top center
+         → visible at ~26% from top — matches NASA reference */
+      const camera = new THREE.PerspectiveCamera(38, W / H, 0.01, 200);
+      camera.position.set(0, 0.55, 1.95);
+      camera.lookAt(0, -0.18, 0);
 
-      /* ── Lighting — NASA cinematic sun from upper-right ── */
-      /* Low ambient keeps dark side (left, where text is) very dark */
-      scene.add(new THREE.AmbientLight(0x0a1828, 1.4));
+      /* ── Star field ── */
+      {
+        const N = 7000;
+        const pos   = new Float32Array(N * 3);
+        const sizes = new Float32Array(N);
+        for (let i = 0; i < N; i++) {
+          const r     = 90 + Math.random() * 10;
+          const theta = 2 * Math.PI * Math.random();
+          const phi   = Math.acos(2 * Math.random() - 1);
+          pos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+          pos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+          pos[i*3+2] = r * Math.cos(phi);
+          sizes[i]   = 0.06 + Math.random() * 0.14;
+        }
+        const sg = new THREE.BufferGeometry();
+        sg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+        scene.add(new THREE.Points(sg, new THREE.PointsMaterial({
+          color: 0xffffff, size: 0.16, sizeAttenuation: true,
+          transparent: true, opacity: 0.80,
+        })));
+      }
 
-      /* Sun — warm white from upper-right, simulating orbital sunlight */
-      const key = new THREE.DirectionalLight(0xfff4e8, 3.8);
-      key.position.set(5, 3, 1.5);
-      scene.add(key);
+      /* ── NASA Blue Marble textures via Three.js CDN ── */
+      const TL  = new THREE.TextureLoader();
+      const CDN = 'https://unpkg.com/three@0.158.0/examples/textures/planets/';
 
-      /* Secondary sun scatter — subtle blue-white from right */
-      const fill = new THREE.DirectionalLight(0xb0ccff, 0.6);
-      fill.position.set(2, -1, 2);
-      scene.add(fill);
+      const earthGeo = new THREE.SphereGeometry(1, 128, 128);
 
-      /* Rim from behind — atmospheric halo effect */
-      const rim = new THREE.DirectionalLight(0x1a3060, 0.5);
-      rim.position.set(-2, 0.5, -3);
-      scene.add(rim);
+      /* Placeholder — dark ocean sphere shown while textures load */
+      const placeholder = new THREE.Mesh(earthGeo,
+        new THREE.MeshPhongMaterial({ color: 0x08182e, shininess: 12 })
+      );
+      placeholder.rotation.y = -Math.PI * 0.42;
+      scene.add(placeholder);
 
-      /* ── Procedural Earth texture — institutional dark ocean, deep continents ── */
-      function makeEarthTexture() {
-        const S = 2048, SH = 1024;
-        const tc = document.createElement('canvas');
-        tc.width = S; tc.height = SH;
+      let earth    = placeholder;
+      let texCount = 0;
+      const texCache = {};
+
+      function onTexLoaded(key, tex) {
+        texCache[key] = tex;
+        texCount++;
+        if (texCount >= 3) {
+          /* Swap placeholder for fully textured Earth */
+          const mat = new THREE.MeshPhongMaterial({
+            map:         texCache.day,
+            normalMap:   texCache.norm,
+            normalScale: new THREE.Vector2(0.75, 0.75),
+            specularMap: texCache.spec,
+            specular:    new THREE.Color(0x224488),
+            shininess:   22,
+          });
+          const newEarth = new THREE.Mesh(earthGeo, mat);
+          newEarth.rotation.copy(placeholder.rotation);
+          scene.remove(placeholder);
+          scene.add(newEarth);
+          earth = newEarth;
+          scene.add(cloudMesh);
+          /* Fade out loading overlay */
+          const ov = document.getElementById('globeLoadingOverlay');
+          if (ov) { ov.style.transition='opacity .8s'; ov.style.opacity='0';
+            setTimeout(()=>{ if(ov) ov.style.display='none'; }, 900); }
+        }
+      }
+
+      TL.load(CDN + 'earth_atmos_2048.jpg',   t => onTexLoaded('day',  t));
+      TL.load(CDN + 'earth_normal_2048.jpg',  t => onTexLoaded('norm', t));
+      TL.load(CDN + 'earth_specular_2048.jpg',t => onTexLoaded('spec', t));
+
+      /* ── Procedural cloud layer ── */
+      function genCloudAlpha(size) {
+        const H2  = size >> 1;
+        const tc  = document.createElement('canvas');
+        tc.width = size; tc.height = H2;
         const ctx = tc.getContext('2d');
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, size, H2);
+        ctx.fillStyle = '#fff';
 
-        /* Deep ocean — institutional dark navy, visible depth */
-        const og = ctx.createLinearGradient(0, 0, 0, SH);
-        og.addColorStop(0,   '#061828');
-        og.addColorStop(0.3, '#071e30');
-        og.addColorStop(0.5, '#082032');
-        og.addColorStop(0.7, '#071e30');
-        og.addColorStop(1,   '#050f1c');
-        ctx.fillStyle = og; ctx.fillRect(0, 0, S, SH);
-
-        /* Lat/lon grid — clearly visible, Bloomberg terminal style */
-        ctx.strokeStyle = 'rgba(30,75,120,0.28)'; ctx.lineWidth = 0.7;
-        for (let lat = -80; lat <= 80; lat += 10) {
-          const y = ((90-lat)/180)*SH;
-          ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(S,y); ctx.stroke();
-        }
-        for (let lon = -180; lon <= 180; lon += 15) {
-          const x = ((lon+180)/360)*S;
-          ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,SH); ctx.stroke();
-        }
-
-        /* Equator — Bloomberg amber accent */
-        ctx.strokeStyle = 'rgba(255,102,0,0.22)'; ctx.lineWidth = 1.5;
-        const eqY = (90/180)*SH;
-        ctx.beginPath(); ctx.moveTo(0,eqY); ctx.lineTo(S,eqY); ctx.stroke();
-
-        /* Tropics of Cancer/Capricorn — dashed amber */
-        ctx.strokeStyle = 'rgba(255,102,0,0.10)'; ctx.lineWidth = 1.0;
-        [23.5, -23.5].forEach(lat => {
-          const y = ((90-lat)/180)*SH;
-          ctx.beginPath(); ctx.setLineDash([8,10]); ctx.moveTo(0,y); ctx.lineTo(S,y); ctx.stroke();
-        });
-        ctx.setLineDash([]);
-
-        /* Continents — clearly visible, high-contrast vs ocean */
-        function toUV(la, ln) { return [((ln+180)/360)*S, ((90-la)/180)*SH]; }
-        for (const poly of CONTINENTS) {
-          ctx.beginPath();
-          const [x0,y0] = toUV(poly[0][0], poly[0][1]); ctx.moveTo(x0,y0);
-          for (let i = 1; i < poly.length; i++) {
-            const [x,y] = toUV(poly[i][0],poly[i][1]); ctx.lineTo(x,y);
+        /* Four passes at different scales — coarse to fine */
+        const passes = [
+          { n: 2400, rLo: 3,  rHi: 8  },
+          { n: 1200, rLo: 6,  rHi: 16 },
+          { n:  500, rLo: 14, rHi: 36 },
+          { n:  120, rLo: 30, rHi: 70 },
+        ];
+        passes.forEach(({ n, rLo, rHi }) => {
+          for (let i = 0; i < n; i++) {
+            const x   = Math.random() * size;
+            const y   = Math.random() * H2;
+            const lat = (y / H2 - 0.5) * 180;
+            /* Fewer clouds at poles */
+            const polarFade = 1 - 0.72 * Math.pow(Math.abs(lat) / 90, 1.6);
+            if (Math.random() > polarFade) continue;
+            const r     = rLo + Math.random() * (rHi - rLo);
+            const blobs = 1 + Math.floor(Math.random() * 4);
+            ctx.globalAlpha = 0.15 + Math.random() * 0.45;
+            for (let b = 0; b < blobs; b++) {
+              const bx = x + (Math.random() - 0.5) * r * 2;
+              const by = y + (Math.random() - 0.5) * r * 0.7;
+              const rx = r * (0.5 + Math.random() * 1.0);
+              const ry = r * (0.3 + Math.random() * 0.6);
+              ctx.beginPath();
+              ctx.ellipse(bx, by, rx, ry, Math.random() * Math.PI, 0, Math.PI * 2);
+              ctx.fill();
+            }
           }
-          ctx.closePath();
-          /* Continent fill — bright enough to be clearly visible under lighting */
-          ctx.fillStyle = '#3a5a46';
-          ctx.fill();
-          /* Coast — crisp bright edge for definition */
-          ctx.strokeStyle = 'rgba(100,200,130,0.95)'; ctx.lineWidth = 2.5;
-          ctx.stroke();
-        }
-
+        });
+        ctx.globalAlpha = 1;
         return new THREE.CanvasTexture(tc);
       }
 
-      /* ── Specular / roughness texture ── */
-      function makeSpecularTexture() {
-        const S = 512, SH = 256;
-        const tc = document.createElement('canvas'); tc.width=S; tc.height=SH;
-        const ctx = tc.getContext('2d');
-        /* Oceans: high specular (bright); continents: low (dark) */
-        ctx.fillStyle = '#334466'; ctx.fillRect(0,0,S,SH);
-        function toUV(la,ln){return[((ln+180)/360)*S,((90-la)/180)*SH];}
-        for (const poly of CONTINENTS) {
-          ctx.beginPath();
-          const [x0,y0]=toUV(poly[0][0],poly[0][1]); ctx.moveTo(x0,y0);
-          for(let i=1;i<poly.length;i++){const[x,y]=toUV(poly[i][0],poly[i][1]);ctx.lineTo(x,y);}
-          ctx.closePath(); ctx.fillStyle='#080c0a'; ctx.fill();
-        }
-        return new THREE.CanvasTexture(tc);
-      }
+      const cloudMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(1.007, 64, 64),
+        new THREE.MeshPhongMaterial({
+          alphaMap:    genCloudAlpha(2048),
+          transparent: true,
+          opacity:     0.88,
+          depthWrite:  false,
+          color:       0xffffff,
+        })
+      );
+      cloudMesh.rotation.y = -Math.PI * 0.38;
+      /* Added to scene only after Earth textures load (see onTexLoaded) */
 
-      /* ── Globe sphere — high-detail ── */
-      const globeGeo = new THREE.SphereGeometry(1, 96, 96);
-      const globeMat = new THREE.MeshPhongMaterial({
-        map:      makeEarthTexture(),
-        specularMap: makeSpecularTexture(),
-        specular: new THREE.Color(0x0d2244),
-        shininess: 12,
-      });
-      const globe = new THREE.Mesh(globeGeo, globeMat);
-      globe.rotation.y = -Math.PI * 0.35;
-      /* Offset globe right so text sits on the dark space side */
-      globe.position.x = 0.28;
-      globe.position.y = -0.05;
-      scene.add(globe);
-
-      /* ── Atmosphere — multi-layer scattering ── */
+      /* ── Atmosphere shaders — Rayleigh + warm-sunset blend ── */
       const atmoV = `
         varying vec3 vNormal;
-        varying vec3 vPosition;
+        varying vec3 vViewDir;
         void main() {
-          vNormal = normalize(normalMatrix * normal);
-          vPosition = normalize((modelViewMatrix * vec4(position, 1.0)).xyz);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          vNormal  = normalize(normalMatrix * normal);
+          vViewDir = normalize(-(modelViewMatrix * vec4(position,1.0)).xyz);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
         }
       `;
 
-      /* Inner atmosphere — NASA photorealistic Rayleigh scatter */
+      /* Inner blue halo with warm sunset tint */
       const innerAtmoF = `
         varying vec3 vNormal;
-        varying vec3 vPosition;
+        varying vec3 vViewDir;
         void main() {
-          float cosAngle = dot(vNormal, vec3(0.0, 0.0, 1.0));
-          float rim = pow(max(0.0, 0.76 - cosAngle), 2.2);
-          /* Thin blue atmosphere edge — matches real Earth photos */
-          vec3 atmoColor = vec3(0.18, 0.48, 0.98);
-          gl_FragColor = vec4(atmoColor, 1.0) * rim * 1.4;
+          float cos_a = dot(vNormal, vViewDir);
+          float rim   = pow(max(0.0, 0.84 - cos_a), 1.75);
+          vec3 blue   = vec3(0.18, 0.50, 1.00);
+          vec3 warm   = vec3(0.92, 0.50, 0.12);
+          vec3 col    = mix(warm, blue, smoothstep(0.0, 0.55, cos_a));
+          gl_FragColor = vec4(col * rim * 1.9, rim);
         }
       `;
 
-      /* Outer haze — diffuse blue glow against space */
+      /* Outer diffuse space glow */
       const outerAtmoF = `
         varying vec3 vNormal;
+        varying vec3 vViewDir;
         void main() {
-          float rim = pow(max(0.0, 0.62 - dot(vNormal, vec3(0.0, 0.0, 1.0))), 3.2);
-          gl_FragColor = vec4(0.10, 0.28, 0.72, 1.0) * rim * 0.80;
+          float cos_a = dot(vNormal, vViewDir);
+          float rim   = pow(max(0.0, 0.70 - cos_a), 2.8);
+          gl_FragColor = vec4(0.10, 0.30, 0.82, 1.0) * rim * 0.90;
         }
       `;
 
-      function mkAtmo(fragSrc, radius) {
+      /* Limb glow — thin bright ring at the horizon */
+      const limbF = `
+        varying vec3 vNormal;
+        varying vec3 vViewDir;
+        void main() {
+          float cos_a = dot(vNormal, vViewDir);
+          float rim   = pow(max(0.0, 0.92 - abs(cos_a)), 7.0);
+          gl_FragColor = vec4(0.35, 0.62, 1.00, 1.0) * rim * 0.70;
+        }
+      `;
+
+      function mkAtmo(fragSrc, r, backside) {
         return new THREE.Mesh(
-          new THREE.SphereGeometry(radius, 48, 48),
+          new THREE.SphereGeometry(r, 64, 64),
           new THREE.ShaderMaterial({
-            vertexShader: atmoV,
-            fragmentShader: fragSrc,
-            side: THREE.BackSide,
+            vertexShader: atmoV, fragmentShader: fragSrc,
+            side: backside ? THREE.BackSide : THREE.FrontSide,
             blending: THREE.AdditiveBlending,
-            transparent: true,
-            depthWrite: false,
+            transparent: true, depthWrite: false,
           })
         );
       }
-      scene.add(mkAtmo(innerAtmoF, 1.058));
-      scene.add(mkAtmo(outerAtmoF, 1.095));
+      scene.add(mkAtmo(innerAtmoF, 1.062, true));
+      scene.add(mkAtmo(outerAtmoF, 1.112, true));
+      scene.add(mkAtmo(limbF,      1.018, false));
 
-      /* ── lat/lon → Vec3 ── */
-      function ll2v(lat, lon, r) {
-        const phi = (90-lat)*Math.PI/180, th = (lon+180)*Math.PI/180;
-        return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(th), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(th));
-      }
+      /* ── Lighting — orbital warm sun ── */
+      /* Deep space: barely any ambient */
+      scene.add(new THREE.AmbientLight(0x050c1a, 2.2));
 
-      /* ── Country point cloud — data-driven, one glow dot per country centroid ── */
-      const countryIsos = Object.keys(COUNTRY_GEO);
-      const N = countryIsos.length;
-      const ptPos = new Float32Array(N * 3);
-      const ptCol = new Float32Array(N * 3);
-      /* Target colors for smooth transitions */
-      const ptColTarget = new Float32Array(N * 3);
+      /* Primary: warm orbital sun — upper-right, matches NASA reference */
+      const sun = new THREE.DirectionalLight(0xfff5d4, 6.0);
+      sun.position.set(5, 2, 1.8);
+      scene.add(sun);
 
-      for (let i = 0; i < N; i++) {
-        const [la, ln] = COUNTRY_GEO[countryIsos[i]];
-        const v = ll2v(la, ln, 1.024);
-        ptPos[i*3]   = v.x; ptPos[i*3+1] = v.y; ptPos[i*3+2] = v.z;
-        /* Visible default — neutral mid-blue, clearly shows against texture */
-        ptCol[i*3]   = 0.18; ptCol[i*3+1] = 0.42; ptCol[i*3+2] = 0.75;
-        ptColTarget[i*3]   = ptCol[i*3];
-        ptColTarget[i*3+1] = ptCol[i*3+1];
-        ptColTarget[i*3+2] = ptCol[i*3+2];
-      }
-
-      /* Crisp circular glow sprite */
-      function mkPtTex() {
-        const c = document.createElement('canvas'); c.width = c.height = 64;
-        const ctx = c.getContext('2d');
-        const g = ctx.createRadialGradient(32,32,0,32,32,30);
-        g.addColorStop(0,   'rgba(255,255,255,1.0)');
-        g.addColorStop(0.25,'rgba(255,255,255,0.85)');
-        g.addColorStop(0.55,'rgba(255,255,255,0.35)');
-        g.addColorStop(1,   'rgba(255,255,255,0.0)');
-        ctx.fillStyle = g; ctx.fillRect(0,0,64,64);
-        return new THREE.CanvasTexture(c);
-      }
-
-      const ptGeo = new THREE.BufferGeometry();
-      ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos,    3));
-      ptGeo.setAttribute('color',    new THREE.BufferAttribute(ptCol,    3));
-
-      const ptMat = new THREE.PointsMaterial({
-        vertexColors:    true,
-        size:            0.034,
-        sizeAttenuation: true,
-        map:             mkPtTex(),
-        transparent:     true,
-        opacity:         0.88,
-        alphaTest:       0.02,
-        depthWrite:      false,
-        blending:        THREE.AdditiveBlending,
-      });
-      const countryPoints = new THREE.Points(ptGeo, ptMat);
-      globe.add(countryPoints);
-
-      /* ── Smooth colour interpolation for layer transitions ── */
-      let _transitionActive = false;
-      let _transitionAlpha  = 0;
-      const _transitionFrom = new Float32Array(N * 3);
-      const _transitionTo   = new Float32Array(N * 3);
-
-      function startColorTransition(newNormData, palette) {
-        /* Snapshot current colours as the "from" */
-        _transitionFrom.set(ptCol);
-        /* Build "to" colours */
-        for (let i = 0; i < N; i++) {
-          const v = newNormData[countryIsos[i]] !== undefined
-            ? Math.max(0, Math.min(1, newNormData[countryIsos[i]])) : 0.06;
-          const [r,g,b] = lerp3(palette, v);
-          _transitionTo[i*3]   = r;
-          _transitionTo[i*3+1] = g;
-          _transitionTo[i*3+2] = b;
-        }
-        _transitionAlpha  = 0;
-        _transitionActive = true;
-      }
-
-      function tickTransition(dt) {
-        if (!_transitionActive) return;
-        _transitionAlpha = Math.min(1, _transitionAlpha + dt * 1.8); /* ~0.55s */
-        const a = _transitionAlpha, b = 1 - a;
-        for (let i = 0; i < N * 3; i++) {
-          ptCol[i] = _transitionFrom[i] * b + _transitionTo[i] * a;
-        }
-        ptGeo.attributes.color.needsUpdate = true;
-        if (_transitionAlpha >= 1) _transitionActive = false;
-      }
-
-      /* ── Color palette per layer — institutional, data-precise ── */
-      function h2rgb(h) { return [(h>>16&255)/255,(h>>8&255)/255,(h&255)/255]; }
-      function lerp3(stops, t) {
-        const n = stops.length-1, i = Math.min(n-1, Math.floor(t*n)), f = t*n-i;
-        const [r1,g1,b1]=h2rgb(stops[i]), [r2,g2,b2]=h2rgb(stops[i+1]);
-        return [r1+(r2-r1)*f, g1+(g2-g1)*f, b1+(b2-b1)*f];
-      }
-      const PALETTES = {
-        /* Temperature — cold deep blue → neutral → hot crimson */
-        temperature: [0x08205a,0x0d3a8c,0x1a6cc2,0x5ba3dc,0xf5d060,0xf07020,0xcc2200,0x8b0000],
-        /* CO₂ — straw yellow → deep orange-red emission source */
-        co2:         [0x1a3020,0x2d5c38,0x538840,0xd4b830,0xe87820,0xcc3000,0x880000],
-        /* Heatwave — cream to deep blood red */
-        heatwave:    [0x2a1a00,0x7a3800,0xcc6600,0xff9900,0xff4400,0xcc0000,0x660000],
-        /* Sea Level — palest sky to deep ocean */
-        sea_level:   [0x060818,0x0a1a40,0x0d2e6e,0x154ea0,0x2272c8,0x44a0e0,0x80ccff],
-        /* Ice Loss — midnight navy to frost white */
-        ice:         [0x0a0818,0x14204a,0x1e3878,0x3060b0,0x6090d8,0x99c4ef,0xcce4ff,0xffffff],
-        /* Regulatory — dark to amber-green coverage signal */
-        regulatory:  [0x0f0f0f,0x1a1a0a,0x2a2800,0x554400,0x886600,0xcc8800,0xff6600],
-      };
-
-      /* ── Layer data cache and state ── */
-      let activeLayer = 'temperature';
-      let curRaw = {}, curNorm = {};
-      const cache = {};
-
-      function applyColors(normData) {
-        /* Use animated transition instead of instant swap */
-        startColorTransition(normData, PALETTES[activeLayer]);
-      }
-
-      /* ── World Bank data fetchers ── */
-
-      /* Temperature: World Bank CCKP CMIP6 tas (mean annual) */
-      async function loadTemp() {
-        if (cache.temperature) return cache.temperature;
-        try {
-          const url = 'https://cckpapi.worldbank.org/api/v1/cmip6-x0.25_climatology_tas_climatology,natvar,yearofchange_annual_2020-2039_median_ssp245_ensemble_all_mean/global_countries?_format=json';
-          const j = await fetch(url,{signal:AbortSignal.timeout(16000)}).then(r=>r.json());
-          const raw=j.data||j, rv={}, vals=[];
-          for(const[iso,v]of Object.entries(raw)){
-            if(!COUNTRY_GEO[iso])continue;
-            const t=typeof v==='number'?v:v?.tas??v?.median?.tas??null;
-            if(t!==null&&isFinite(t)){rv[iso]=t;vals.push(t);}
-          }
-          const mn=Math.min(...vals),mx=Math.max(...vals),rng=mx-mn||1;
-          const nv={};for(const k of Object.keys(rv))nv[k]=(rv[k]-mn)/rng;
-          return cache.temperature={raw:rv,norm:nv,meta:{label:'Surface Temperature',unit:'°C mean annual',source:'World Bank CCKP · CMIP6 SSP2-4.5 · 2020–2039'}};
-        } catch { return {raw:{},norm:{},meta:{label:'Surface Temperature',unit:'°C',source:'Unavailable — retry later'}}; }
-      }
-
-      /* CO₂: World Bank EN.ATM.CO2E.PC (metric tons per capita) */
-      async function loadCO2() {
-        if (cache.co2) return cache.co2;
-        try {
-          const url = 'https://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.PC?format=json&per_page=300&mrv=1';
-          const j = await fetch(url,{signal:AbortSignal.timeout(16000)}).then(r=>r.json());
-          const entries=j[1]||[], rv={}, vals=[];
-          for(const d of entries){
-            if(!d.value||!d.countryiso3code||!COUNTRY_GEO[d.countryiso3code])continue;
-            rv[d.countryiso3code]=d.value; vals.push(d.value);
-          }
-          const mx=Math.max(...vals)||1;
-          const nv={};for(const k of Object.keys(rv))nv[k]=Math.min(1,rv[k]/mx);
-          return cache.co2={raw:rv,norm:nv,meta:{label:'CO₂ Emissions',unit:'metric tons per capita',source:'World Bank · EN.ATM.CO2E.PC · Latest'}};
-        } catch { return {raw:{},norm:{},meta:{label:'CO₂ Emissions',unit:'tCO₂/cap',source:'Unavailable — retry later'}}; }
-      }
-
-      /* Heatwave: World Bank CCKP hd35 (days per year above 35°C) */
-      async function loadHeatwave() {
-        if (cache.heatwave) return cache.heatwave;
-        try {
-          const url = 'https://cckpapi.worldbank.org/api/v1/cmip6-x0.25_climatology_hd35_climatology,natvar,yearofchange_annual_2020-2039_median_ssp245_ensemble_all_mean/global_countries?_format=json';
-          const j = await fetch(url,{signal:AbortSignal.timeout(16000)}).then(r=>r.json());
-          const raw=j.data||j, rv={}, vals=[];
-          for(const[iso,v]of Object.entries(raw)){
-            if(!COUNTRY_GEO[iso])continue;
-            const t=typeof v==='number'?v:v?.hd35??v?.median?.hd35??null;
-            if(t!==null&&isFinite(t)){rv[iso]=t;vals.push(t);}
-          }
-          const mx=Math.max(...vals)||1;
-          const nv={};for(const k of Object.keys(rv))nv[k]=Math.min(1,rv[k]/mx);
-          return cache.heatwave={raw:rv,norm:nv,meta:{label:'Heat Stress Days',unit:'days/yr above 35°C',source:'World Bank CCKP · CMIP6 SSP2-4.5 · 2020–2039'}};
-        } catch { return {raw:{},norm:{},meta:{label:'Heat Stress Days',unit:'days/yr',source:'Unavailable — retry later'}}; }
-      }
-
-      /* Sea Level: World Bank EN.CLC.MDAT.ZS (climate disaster exposure), fallback to coastal model */
-      async function loadSeaLevel() {
-        if (cache.sea_level) return cache.sea_level;
-        try {
-          const url = 'https://api.worldbank.org/v2/country/all/indicator/EN.CLC.MDAT.ZS?format=json&per_page=300&mrv=1';
-          const j = await fetch(url,{signal:AbortSignal.timeout(16000)}).then(r=>r.json());
-          const entries=j[1]||[], rv={}, vals=[];
-          for(const d of entries){
-            if(!d.value||!d.countryiso3code||!COUNTRY_GEO[d.countryiso3code])continue;
-            rv[d.countryiso3code]=d.value; vals.push(d.value);
-          }
-          if(vals.length<20)throw new Error('insufficient');
-          const mx=Math.max(...vals)||1;
-          const nv={};for(const k of Object.keys(rv))nv[k]=Math.min(1,rv[k]/mx);
-          return cache.sea_level={raw:rv,norm:nv,meta:{label:'Sea Level / Coastal Risk',unit:'% population exposed',source:'World Bank · Climate Disaster Exposure Index'}};
-        } catch {
-          /* Fallback: geography-based coastal risk model */
-          const KNOWN={BGD:0.95,MDV:1.0,TUV:0.96,KIR:0.93,MHL:0.91,NLD:0.78,VNM:0.76,MMR:0.73,IND:0.62,IDN:0.71,PHL:0.69,CHN:0.54,EGY:0.61,NGA:0.56,MOZ:0.58,GBR:0.44,USA:0.41,DEU:0.38,FRA:0.36,JPN:0.51,THA:0.66,PAK:0.47,BRA:0.34,AUS:0.31,CAN:0.27,RUS:0.19,SGP:0.72,BGD:0.95,LKA:0.60,MYS:0.59};
-          const rv={};
-          for(const iso of Object.keys(COUNTRY_GEO)){
-            if(KNOWN[iso]!==undefined){rv[iso]=KNOWN[iso];continue;}
-            const[la]=COUNTRY_GEO[iso];
-            rv[iso]=Math.max(0.05,0.55-Math.abs(Math.abs(la)-15)/65);
-          }
-          return cache.sea_level={raw:rv,norm:rv,meta:{label:'Sea Level Rise Risk',unit:'risk index (0–1)',source:'Climactix · Coastal Risk Model · 2024'}};
-        }
-      }
-
-      /* Ice Loss: World Bank CCKP pr (precipitation change) proxy, fallback polar model */
-      async function loadIce() {
-        if (cache.ice) return cache.ice;
-        try {
-          const url = 'https://cckpapi.worldbank.org/api/v1/cmip6-x0.25_climatology_pr_climatology,natvar,yearofchange_annual_2020-2039_median_ssp245_ensemble_all_mean/global_countries?_format=json';
-          const j = await fetch(url,{signal:AbortSignal.timeout(16000)}).then(r=>r.json());
-          const raw=j.data||j, rv={}, vals=[];
-          for(const[iso,v]of Object.entries(raw)){
-            if(!COUNTRY_GEO[iso])continue;
-            const t=typeof v==='number'?v:Object.values(v||{})[0]??null;
-            if(t!==null&&isFinite(t)){rv[iso]=t;vals.push(t);}
-          }
-          if(vals.length<20)throw new Error('insufficient');
-          /* Invert: less precipitation at poles = higher ice-loss risk */
-          const mn=Math.min(...vals),mx=Math.max(...vals),rng=mx-mn||1;
-          const nv={};
-          for(const k of Object.keys(rv)){
-            const lat=Math.abs(COUNTRY_GEO[k][0]);
-            /* Blend latitude-based polar risk with precipitation anomaly */
-            const latRisk=Math.max(0,(lat-20)/70);
-            const prAnomaly=1-(rv[k]-mn)/rng;
-            nv[k]=Math.max(0,Math.min(1,latRisk*0.6+prAnomaly*0.4));
-          }
-          return cache.ice={raw:rv,norm:nv,meta:{label:'Ice Loss / Polar Risk',unit:'blended risk index',source:'World Bank CCKP · Precip + Polar Latitude Model'}};
-        } catch {
-          const GLACIAL={NPL:0.80,BTN:0.75,PAK:0.73,IND:0.60,CHN:0.52,CHL:0.68,PER:0.63,BOL:0.58,ARG:0.72,NOR:0.85,ISL:0.82,RUS:0.88,CAN:0.86,USA:0.76,FIN:0.72,SWE:0.68,DNK:0.64,ATA:1.0};
-          const rv={};
-          for(const iso of Object.keys(COUNTRY_GEO)){
-            if(GLACIAL[iso]!==undefined){rv[iso]=GLACIAL[iso];continue;}
-            const lat=Math.abs(COUNTRY_GEO[iso][0]);
-            rv[iso]=Math.max(0,(lat-20)/70);
-          }
-          return cache.ice={raw:rv,norm:rv,meta:{label:'Ice Loss / Polar Risk',unit:'risk index (0–1)',source:'Climactix · Polar Ice Risk Model · 2024'}};
-        }
-      }
-
-      /* Rising Temp: already covered by temperature layer */
-
-      /* Regulatory: static coverage data (Paris / CSRD / ISSB / BRSR / SEC) */
-      function loadRegulatory() {
-        if (cache.regulatory) return Promise.resolve(cache.regulatory);
-        const EU=['DEU','FRA','NLD','BEL','LUX','AUT','SWE','NOR','DNK','FIN','ESP','PRT','ITA','GRC','POL','CZE','HUN','ROU','SVK','SVN','HRV','BGR','EST','LVA','LTU','IRL','CYP','MLT'];
-        const STRONG=['GBR','AUS','NZL','CAN','JPN','KOR','SGP','CHE','ISL'];
-        const MOD=['ZAF','BRA','IND','USA','CHN','MEX','TUR','IDN','MYS','THA','PHL','COL','ARG','EGY','SAU'];
-        const rv={};
-        EU.forEach(iso=>rv[iso]=1.0);
-        STRONG.forEach(iso=>rv[iso]=0.82);
-        MOD.forEach(iso=>rv[iso]=0.55);
-        for(const iso of Object.keys(COUNTRY_GEO)){if(rv[iso]===undefined)rv[iso]=0.22;}
-        return Promise.resolve(cache.regulatory={raw:rv,norm:rv,meta:{
-          label:'Regulatory Coverage',unit:'coverage score (0–1)',
-          source:'Paris Agreement · CSRD · ISSB S1/S2 · BRSR · SEC Climate Rule'
-        }});
-      }
-
-      const LOADERS = { temperature:loadTemp, co2:loadCO2, heatwave:loadHeatwave, sea_level:loadSeaLevel, ice:loadIce, regulatory:loadRegulatory };
-
-      /* ── Layer switcher ── */
-      async function switchLayer(key) {
-        activeLayer = key;
-        document.querySelectorAll('#globeLayerControls .glc-btn').forEach(b => b.classList.toggle('active', b.dataset.layer===key));
-        const ov = document.getElementById('globeLoadingOverlay');
-        if (ov) ov.classList.add('visible');
-        try {
-          const result = await LOADERS[key]();
-          curRaw = result.raw; curNorm = result.norm;
-          applyColors(result.norm);
-          const src = document.getElementById('gsbSource');
-          const upd = document.getElementById('gsbUpdated');
-          if (src) src.textContent = result.meta.label + ' · ' + result.meta.source;
-          if (upd) upd.textContent = result.meta.unit;
-        } catch(e) { console.warn('Globe layer error', e); }
-        finally { if (ov) ov.classList.remove('visible'); }
-      }
-
-      document.querySelectorAll('#globeLayerControls .glc-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchLayer(btn.dataset.layer));
-      });
-
-      /* ── Raycaster hover tooltip ── */
-      const raycaster = new THREE.Raycaster();
-      raycaster.params.Points = { threshold: 0.045 };
-      const mouse2 = new THREE.Vector2();
-      const tip = document.getElementById('globeHoverTip');
-
-      canvas.addEventListener('mousemove', e => {
-        if (!tip) return;
-        const rect = canvas.getBoundingClientRect();
-        mouse2.x =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
-        mouse2.y = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
-        raycaster.setFromCamera(mouse2, camera);
-        const hits = raycaster.intersectObject(countryPoints);
-        if (hits.length > 0) {
-          const idx = hits[0].index;
-          const iso = countryIsos[idx];
-          const raw = curRaw[iso], norm = curNorm[iso] || 0;
-          const name = (typeof GIS_COUNTRY_NAMES !== 'undefined' && GIS_COUNTRY_NAMES[iso]) || iso;
-          /* Format value per layer */
-          let dispVal = '—', extraLbl = 'SOURCE', extraVal = cache[activeLayer]?.meta?.source || '';
-          if (raw !== undefined) {
-            if (activeLayer==='temperature') dispVal = (+raw).toFixed(1) + ' °C';
-            else if (activeLayer==='co2') dispVal = (+raw).toFixed(2) + ' t/cap';
-            else if (activeLayer==='heatwave') dispVal = Math.round(+raw) + ' days/yr';
-            else if (activeLayer==='sea_level') dispVal = ((+norm)*100).toFixed(0) + ' risk score';
-            else if (activeLayer==='ice') dispVal = ((+norm)*100).toFixed(0) + ' risk score';
-            else if (activeLayer==='regulatory') {
-              const v = +norm;
-              dispVal = v>=0.9?'CSRD + ISSB':v>=0.7?'ISSB + Paris':v>=0.4?'National mandate':'Paris only';
-            }
-          }
-          /* Also show GIS data if available */
-          const gis = typeof GIS_COUNTRY_DATA !== 'undefined' ? GIS_COUNTRY_DATA[iso] : null;
-          if (gis && activeLayer !== 'co2') { extraLbl = 'CO₂'; extraVal = (gis.co2||'—') + ' tCO₂/cap'; }
-          else if (gis && activeLayer === 'co2') { extraLbl = 'RISK'; extraVal = 'Level ' + (gis.risk||'—'); }
-
-          document.getElementById('ghtCountry').textContent = name;
-          document.getElementById('ghtMetricLabel').textContent = (cache[activeLayer]?.meta?.label || activeLayer).toUpperCase();
-          document.getElementById('ghtMetricValue').textContent = dispVal;
-          document.getElementById('ghtRiskBar').style.width = (norm*100).toFixed(1) + '%';
-          const er = document.getElementById('ghtExtraRow');
-          if (er) { er.style.display = gis ? 'flex' : 'none'; document.getElementById('ghtExtraLabel').textContent = extraLbl; document.getElementById('ghtExtraValue').textContent = extraVal; }
-
-          const x = e.clientX - rect.left, y = e.clientY - rect.top;
-          tip.style.left = Math.min(x+14, rect.width-185) + 'px';
-          tip.style.top  = Math.max(y-65, 4) + 'px';
-          tip.style.display = 'block';
-        } else { tip.style.display = 'none'; }
-      });
-      canvas.addEventListener('mouseleave', () => { if (tip) tip.style.display = 'none'; });
-
-      /* ── Climate data arcs — institutional cyan, very subtle ── */
-      const ARCS = [
-        [[31.2,121.5],[51.5,-0.1]],  /* Shanghai → London */
-        [[35.7,139.7],[40.7,-74.0]], /* Tokyo → New York */
-        [[1.3,103.8],[22.3,114.2]],  /* Singapore → Hong Kong */
-        [[19.1,72.9],[24.7,46.7]],   /* Mumbai → Riyadh */
-        [[55.8,37.6],[48.9,2.3]],    /* Moscow → Paris */
-        [[-23.5,-46.6],[40.7,-74.0]],/* São Paulo → New York */
-      ];
-      function mkArc(la1,ln1,la2,ln2) {
-        const pts=[];
-        for(let t=0;t<=1;t+=0.018){
-          const la=la1+(la2-la1)*t, ln=ln1+(ln2-ln1)*t;
-          /* Parabolic arc height */
-          const h = 0.055 * Math.sin(Math.PI*t);
-          pts.push(ll2v(la,ln,1.015+h));
-        }
-        return new THREE.Line(
-          new THREE.BufferGeometry().setFromPoints(pts),
-          new THREE.LineBasicMaterial({ color:0x004466, transparent:true, opacity:0.18, linewidth:1 })
-        );
-      }
-      ARCS.forEach(([a,b])=>globe.add(mkArc(a[0],a[1],b[0],b[1])));
+      /* Secondary: cool Earth-shine from shadow side */
+      const earthshine = new THREE.DirectionalLight(0x1a3566, 0.85);
+      earthshine.position.set(-3, -1, -1.5);
+      scene.add(earthshine);
 
       /* ── Responsive resize — full viewport ── */
       function onResize() {
-        const W2 = window.innerWidth;
-        const H2 = window.innerHeight;
+        const W2 = window.innerWidth, H2 = window.innerHeight;
         camera.aspect = W2 / H2;
         camera.updateProjectionMatrix();
         renderer.setSize(W2, H2);
       }
       window.addEventListener('resize', onResize);
 
-      /* ── Drag & spin interaction ── */
-      let isDragging = false, prevX = 0, prevY = 0, autoSpin = true;
-      let velX = 0, spinResume = null;
-
-      canvas.addEventListener('mousedown', e=>{
-        isDragging=true; autoSpin=false; velX=0;
-        prevX=e.clientX; prevY=e.clientY;
-        canvas.style.cursor='grabbing';
-        if (spinResume) { clearTimeout(spinResume); spinResume=null; }
-      });
-      canvas.addEventListener('touchstart', e=>{
-        isDragging=true; autoSpin=false; velX=0;
-        prevX=e.touches[0].clientX; prevY=e.touches[0].clientY;
-      },{passive:true});
-
-      window.addEventListener('mouseup', ()=>{
-        if (!isDragging) return;
-        isDragging=false; canvas.style.cursor='grab';
-        /* Resume auto-spin with momentum decay */
-        spinResume = setTimeout(()=>{ autoSpin=true; velX=0; }, 2200);
-      });
-
-      window.addEventListener('mousemove', e=>{
-        if(!isDragging)return;
-        const dx = e.clientX - prevX;
-        const dy = e.clientY - prevY;
-        velX = dx * 0.005;
-        globe.rotation.y += velX;
-        globe.rotation.x += dy * 0.003;
-        globe.rotation.x = Math.max(-0.7, Math.min(0.7, globe.rotation.x));
-        prevX=e.clientX; prevY=e.clientY;
-      });
-      canvas.addEventListener('touchmove', e=>{
-        if(!isDragging)return;
-        globe.rotation.y += (e.touches[0].clientX - prevX) * 0.005;
-        prevX=e.touches[0].clientX; e.preventDefault();
-      },{passive:false});
+      /* ── Hide layer controls (pure NASA aesthetic) ── */
+      const lc = document.getElementById('globeLayerControls');
+      if (lc) lc.style.display = 'none';
 
       /* ── Animation loop — cinematic slow rotation ── */
-      let prevTime = performance.now();
       (function animate() {
         requestAnimationFrame(animate);
-        const now = performance.now();
-        const dt  = Math.min((now - prevTime) / 1000, 0.05);
-        prevTime  = now;
-
-        /* Slow institutional rotation — not flashy */
-        if (autoSpin) {
-          globe.rotation.y += 0.0014;
-        } else if (!isDragging) {
-          /* Post-drag momentum decay */
-          globe.rotation.y += velX;
-          velX *= 0.90;
-          if (Math.abs(velX) < 0.0001) velX = 0;
-        }
-
-        /* Tick animated layer colour transition */
-        tickTransition(dt);
-
+        earth.rotation.y     += 0.00065;
+        cloudMesh.rotation.y += 0.00088;
         renderer.render(scene, camera);
       })();
-
-      /* ── Load initial layer ── */
-      switchLayer('temperature');
     }
+
 
     /* Canvas 2D fallback (used if THREE not loaded) */
     function _initCanvas2DGlobe(canvas, CONTINENTS, RISK, MITI) {
