@@ -536,10 +536,32 @@ body {
   background: #000;
 }
 
+/* ── Ken Burns keyframes — imperceptibly slow zoom + drift ── */
+@keyframes cx-kb {
+  0%   { transform: scale(1.000) translate(0%,    0%);    }
+  30%  { transform: scale(1.032) translate(-0.4%, -0.25%); }
+  65%  { transform: scale(1.048) translate( 0.3%, -0.5%);  }
+  100% { transform: scale(1.000) translate(0%,    0%);    }
+}
+
+/* Cloud-shimmer pulse — a soft white veil that breathes across the surface */
+@keyframes cx-shimmer {
+  0%   { opacity: 0;    transform: translateX(0px)   scaleX(1.00); }
+  40%  { opacity: 0.07; transform: translateX(-12px)  scaleX(1.02); }
+  75%  { opacity: 0.04; transform: translateX(-22px)  scaleX(1.04); }
+  100% { opacity: 0;    transform: translateX(0px)   scaleX(1.00); }
+}
+
+/* Atmospheric depth pulse — faint blue limb glow cycles */
+@keyframes cx-atmo {
+  0%,100% { opacity: 0.55; }
+  50%     { opacity: 0.80; }
+}
+
 /* Full-bleed photo background — NASA ISS oblique horizon photograph */
 .cx-hero-globe-bg {
   position: absolute;
-  inset: 0;
+  inset: -4%;          /* slight bleed so Ken Burns never reveals edges */
   z-index: 0;
   background-color: #000;
   background-image:
@@ -552,6 +574,35 @@ body {
   background-size: cover;
   background-position: center 25%;
   background-repeat: no-repeat;
+  /* Ken Burns — 38 s, eased, infinite, GPU-composited */
+  animation: cx-kb 38s ease-in-out infinite;
+  transform-origin: 58% 52%;
+  will-change: transform;
+}
+
+/* Atmospheric limb glow — breathes on its own cycle */
+.cx-hero-globe-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 180% 14% at 50% 8%, rgba(60,130,255,0.30) 0%, transparent 65%);
+  animation: cx-atmo 14s ease-in-out infinite;
+  will-change: opacity;
+}
+
+/* Cloud animation canvas — sits between photo and gradient overlay */
+#heroCloudCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;           /* above .cx-hero-globe-bg (0), below .cx-hero-overlay (2) */
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: block;
+  /* GPU-composite this layer independently */
+  will-change: contents;
+  mix-blend-mode: screen; /* clouds brighten the photo naturally, never darken */
 }
 
 /* Overlay — matches NASA reference: subtle left fade, strong bottom for strip */
