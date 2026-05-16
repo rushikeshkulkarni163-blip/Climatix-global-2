@@ -1430,111 +1430,143 @@
 
   <main>
 
-    <!-- HERO -->
+    <!-- ══════════════════════════════════════════
+         HERO — NASA Earth Science style
+         Full-viewport WebGL globe + text overlay + Vital Signs strip
+    ══════════════════════════════════════════ -->
     <section class="cx-hero">
-      <div class="cx-hero-bg"></div>
-      <div class="page-wrapper">
-        <div class="cx-hero-inner fade-in cx-hero-split">
 
-          <!-- Hero Text Column -->
-          <div class="cx-hero-text">
-            <div class="cx-hero-badge">
-              <span class="badge-dot"></span>
-              ESG Intelligence &amp; Disclosure Infrastructure
-            </div>
-            <h1 class="cx-hero-title">
-              Climate data, turned into institutional intelligence.
-            </h1>
-            <p class="cx-hero-sub">
-              Climactix converts fragmented sustainability data into audit-ready disclosures, investor-grade analysis, and regulatory-aligned reporting — aligned to TCFD, ISSB S1/S2, CSRD, and BRSR.
-            </p>
-            <div class="cx-hero-cta">
-              <a href="generate.html" class="cta-primary">Access ESG Engine</a>
-              <a href="#vision" class="cta-secondary">Explore platform ↓</a>
-            </div>
-            <div class="cx-market-stats fade-in fade-in-2">
-              <div class="ms-item">
-                <div class="ms-val">$30.3T</div>
-                <div class="ms-label">Global sustainable investment assets</div>
-                <div class="ms-cite">GSIA Global Sustainable Investment Review, 2022</div>
-              </div>
-              <div class="ms-divider"></div>
-              <div class="ms-item">
-                <div class="ms-val">$9.5B</div>
-                <div class="ms-label">ESG software &amp; analytics market by 2027</div>
-                <div class="ms-cite">MarketsandMarkets ESG Software Report, 2023</div>
-              </div>
-              <div class="ms-divider"></div>
-              <div class="ms-item">
-                <div class="ms-val">50,000+</div>
-                <div class="ms-label">Companies under mandatory EU CSRD reporting</div>
-                <div class="ms-cite">European Commission CSRD Impact Assessment, 2022</div>
-              </div>
-              <div class="ms-divider"></div>
-              <div class="ms-item">
-                <div class="ms-val">79%</div>
-                <div class="ms-label">Investors demanding independent ESG data assurance</div>
-                <div class="ms-cite">PwC Global Investor ESG Survey, 2023</div>
-              </div>
-            </div>
+      <!-- Full-bleed WebGL globe background -->
+      <div class="cx-hero-globe-bg" id="cx-hero-globe-bg">
+        <canvas id="heroGlobeCanvas"></canvas>
+
+        <!-- JS-required tooltip (positioned by globe.js) -->
+        <div id="globeHoverTip">
+          <div class="ght-country" id="ghtCountry">—</div>
+          <div class="ght-row">
+            <span class="ght-label" id="ghtMetricLabel">METRIC</span>
+            <span class="ght-data" id="ghtMetricValue">—</span>
           </div>
-
-          <!-- Hero Globe Column -->
-          <div class="cx-globe-module">
-
-            <!-- Ambient atmospheric glow — depth layer behind sphere -->
-            <div class="cx-globe-glow" aria-hidden="true"></div>
-
-            <!-- Globe canvas container — free-floating, no box frame -->
-            <div class="cx-hero-globe-wrap">
-
-              <!-- Three.js WebGL canvas -->
-              <canvas id="heroGlobeCanvas" width="580" height="530"></canvas>
-
-              <!-- Hover tooltip (JS-positioned) -->
-              <div id="globeHoverTip">
-                <div class="ght-country" id="ghtCountry">—</div>
-                <div class="ght-row">
-                  <span class="ght-label" id="ghtMetricLabel">METRIC</span>
-                  <span class="ght-data" id="ghtMetricValue">—</span>
-                </div>
-                <div class="ght-risk-bar-wrap">
-                  <div class="ght-risk-bar" id="ghtRiskBar"></div>
-                </div>
-                <div class="ght-row" id="ghtExtraRow">
-                  <span class="ght-label" id="ghtExtraLabel">DATA</span>
-                  <span class="ght-data" id="ghtExtraValue" style="color:var(--text-2);font-size:9px;">—</span>
-                </div>
-              </div>
-
-              <!-- Loading overlay -->
-              <div id="globeLoadingOverlay">
-                <div class="glo-ring"></div>
-                <div class="glo-label">Loading data…</div>
-              </div>
-
-            </div>
-
-            <!-- Status row — below canvas, above tab controls -->
-            <div class="globe-status-bar">
-              <span class="gsb-source" id="gsbSource">World Bank Climate Intelligence · Live</span>
-              <span class="gsb-updated"><span class="gsb-dot"></span><span id="gsbUpdated">WB CCKP</span></span>
-            </div>
-
-            <!-- Layer controls — Bloomberg terminal tab underline style -->
-            <div class="globe-layer-controls" id="globeLayerControls">
-              <button class="glc-btn active" data-layer="temperature">Temp</button>
-              <button class="glc-btn" data-layer="co2">CO₂</button>
-              <button class="glc-btn" data-layer="heatwave">Heatwave</button>
-              <button class="glc-btn" data-layer="sea_level">Sea Level</button>
-              <button class="glc-btn" data-layer="ice">Ice Loss</button>
-              <button class="glc-btn" data-layer="regulatory">Regulatory</button>
-            </div>
-
+          <div class="ght-risk-bar-wrap">
+            <div class="ght-risk-bar" id="ghtRiskBar"></div>
           </div>
+          <div class="ght-row" id="ghtExtraRow">
+            <span class="ght-label" id="ghtExtraLabel">DATA</span>
+            <span class="ght-data" id="ghtExtraValue" style="color:var(--text-2);font-size:9px;">—</span>
+          </div>
+        </div>
 
+        <!-- Loading state -->
+        <div id="globeLoadingOverlay">
+          <div class="glo-ring"></div>
+          <div class="glo-label">Initialising Earth System…</div>
         </div>
       </div>
+
+      <!-- Hidden original globe wrap — kept for JS ID compatibility -->
+      <div class="cx-hero-globe-wrap" aria-hidden="true">
+        <span id="gsbSource" style="display:none;">World Bank Climate Intelligence · Live</span>
+        <span id="gsbUpdated" style="display:none;">WB CCKP</span>
+      </div>
+
+      <!-- Cinematic overlay (gradients + star particles) -->
+      <div class="cx-hero-overlay" aria-hidden="true"></div>
+
+      <!-- Hero text — left-side overlay -->
+      <div class="cx-hero-content fade-in">
+        <div class="cx-hero-badge">
+          <span class="badge-dot"></span>
+          Live Climate Intelligence Platform
+        </div>
+        <h1 class="cx-hero-title">
+          Climate<br>Intelligence
+        </h1>
+        <p class="cx-hero-sub">
+          Real-time climate risk intelligence, Earth system monitoring, and financial impact analytics powered by satellite, disclosure, and regulatory data.
+        </p>
+        <div class="cx-hero-cta">
+          <a href="generate.html" class="cta-primary">Explore Platform</a>
+          <a href="dashboard.html" class="cta-secondary">Open Terminal</a>
+        </div>
+      </div>
+
+      <!-- Layer controls — bottom-right overlay -->
+      <div class="globe-layer-controls" id="globeLayerControls" style="position:absolute;bottom:128px;right:var(--page-px);z-index:25;">
+        <button class="glc-btn active" data-layer="temperature">Temp</button>
+        <button class="glc-btn" data-layer="co2">CO₂</button>
+        <button class="glc-btn" data-layer="heatwave">Heatwave</button>
+        <button class="glc-btn" data-layer="sea_level">Sea Level</button>
+        <button class="glc-btn" data-layer="ice">Ice Loss</button>
+        <button class="glc-btn" data-layer="regulatory">Regulatory</button>
+      </div>
+
+      <!-- Globe status bar — above layer controls -->
+      <div class="globe-status-bar" style="position:absolute;bottom:106px;right:var(--page-px);z-index:25;">
+        <span class="gsb-source">World Bank Climate Intelligence · Live</span>
+        <span class="gsb-updated"><span class="gsb-dot"></span><span>WB CCKP</span></span>
+      </div>
+
+      <!-- VITAL SIGNS STRIP — NASA-style bottom panel -->
+      <div class="cx-vital-signs">
+        <div class="cx-vs-header">
+          <span class="cx-vs-label">Vital Signs</span>
+          <a href="#data" class="cx-vs-showall">
+            Show All
+            <span class="cx-vs-showall-circle">→</span>
+          </a>
+        </div>
+        <div class="cx-vs-items">
+          <div class="cx-vs-item">
+            <div class="cx-vs-name">Carbon Dioxide</div>
+            <div class="cx-vs-row">
+              <span class="cx-vs-arrow up">↑</span>
+              <span class="cx-vs-num">429</span>
+              <span class="cx-vs-unit">parts per million</span>
+            </div>
+          </div>
+          <div class="cx-vs-item">
+            <div class="cx-vs-name">Global Temperature</div>
+            <div class="cx-vs-row">
+              <span class="cx-vs-arrow up">↑</span>
+              <span class="cx-vs-num">1.19</span>
+              <span class="cx-vs-unit">°C since preindustrial</span>
+            </div>
+          </div>
+          <div class="cx-vs-item">
+            <div class="cx-vs-name">Methane</div>
+            <div class="cx-vs-row">
+              <span class="cx-vs-arrow up">↑</span>
+              <span class="cx-vs-num">1,946</span>
+              <span class="cx-vs-unit">parts per billion</span>
+            </div>
+          </div>
+          <div class="cx-vs-item">
+            <div class="cx-vs-name">Arctic Ice Minimum</div>
+            <div class="cx-vs-row">
+              <span class="cx-vs-arrow down">↓</span>
+              <span class="cx-vs-num">12.2</span>
+              <span class="cx-vs-unit">% per decade since 1979</span>
+            </div>
+          </div>
+          <div class="cx-vs-item">
+            <div class="cx-vs-name">Sea Level Rise</div>
+            <div class="cx-vs-row">
+              <span class="cx-vs-arrow up">↑</span>
+              <span class="cx-vs-num">101</span>
+              <span class="cx-vs-unit">mm since 1993</span>
+            </div>
+          </div>
+          <div class="cx-vs-item">
+            <div class="cx-vs-name">Physical Risk Index</div>
+            <div class="cx-vs-row">
+              <span class="cx-vs-arrow up">↑</span>
+              <span class="cx-vs-num">68.4</span>
+              <span class="cx-vs-unit">global composite</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- ═══════════════════════════════════════════════
@@ -3746,41 +3778,41 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
     }
 
     function _initThreeGlobe(canvas, CONTINENTS) {
-      const wrap = canvas.parentElement;
-      const W = wrap.clientWidth  || 580;
-      const H = wrap.clientHeight || 530;
+      /* Full-viewport sizing — canvas fills entire hero */
+      const W = window.innerWidth;
+      const H = window.innerHeight;
       canvas.width  = W;
       canvas.height = H;
 
-      /* ── Renderer — high quality, transparent bg ── */
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+      /* ── Renderer — black background to match hero ── */
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
       renderer.setSize(W, H);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setClearColor(0x000000, 0);
+      renderer.setClearColor(0x000000, 1);
 
       const scene = new THREE.Scene();
 
-      /* ── Camera — cinematic FOV, centred on globe ── */
-      const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
-      camera.position.z = 2.55;
+      /* ── Camera — wide FOV for cinematic Earth-from-orbit feel ── */
+      const camera = new THREE.PerspectiveCamera(48, W / H, 0.1, 100);
+      camera.position.z = 2.15;
 
-      /* ── Lighting — institutional 3-point rig ── */
-      /* Lifted ambient so dark-side geography is still legible */
-      scene.add(new THREE.AmbientLight(0x1a2e48, 2.2));
+      /* ── Lighting — NASA cinematic sun from upper-right ── */
+      /* Low ambient keeps dark side (left, where text is) very dark */
+      scene.add(new THREE.AmbientLight(0x0a1828, 1.4));
 
-      /* Key — cool institutional white, upper-right-front */
-      const key = new THREE.DirectionalLight(0xe8f4ff, 2.8);
-      key.position.set(4, 2.5, 2);
+      /* Sun — warm white from upper-right, simulating orbital sunlight */
+      const key = new THREE.DirectionalLight(0xfff4e8, 3.8);
+      key.position.set(5, 3, 1.5);
       scene.add(key);
 
-      /* Fill — dim navy from left to create depth without blacking out */
-      const fill = new THREE.DirectionalLight(0x102244, 1.0);
-      fill.position.set(-3, -0.5, 0.5);
+      /* Secondary sun scatter — subtle blue-white from right */
+      const fill = new THREE.DirectionalLight(0xb0ccff, 0.6);
+      fill.position.set(2, -1, 2);
       scene.add(fill);
 
-      /* Rim — very subtle warm from behind for sphere edge definition */
-      const rim = new THREE.DirectionalLight(0x1a0800, 0.4);
-      rim.position.set(-1, 0.5, -3);
+      /* Rim from behind — atmospheric halo effect */
+      const rim = new THREE.DirectionalLight(0x1a3060, 0.5);
+      rim.position.set(-2, 0.5, -3);
       scene.add(rim);
 
       /* ── Procedural Earth texture — institutional dark ocean, deep continents ── */
@@ -3869,10 +3901,11 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         shininess: 12,
       });
       const globe = new THREE.Mesh(globeGeo, globeMat);
-      /* Start with Atlantic/Europe view (lon≈-25°) facing camera.
-         rotation.y = -π*0.35 rotates clockwise so Europe/Africa becomes
-         visible at centre rather than the all-water Pacific view. */
       globe.rotation.y = -Math.PI * 0.35;
+      /* Offset globe right and slightly down — leaves dark space on left
+         for text overlay, matching NASA Earth-from-orbit composition */
+      globe.position.x = 0.42;
+      globe.position.y = -0.08;
       scene.add(globe);
 
       /* ── Atmosphere — multi-layer scattering ── */
@@ -3886,24 +3919,25 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
         }
       `;
 
-      /* Inner atmosphere — Rayleigh blue scatter */
+      /* Inner atmosphere — NASA photorealistic Rayleigh scatter */
       const innerAtmoF = `
         varying vec3 vNormal;
         varying vec3 vPosition;
         void main() {
           float cosAngle = dot(vNormal, vec3(0.0, 0.0, 1.0));
-          float rim = pow(max(0.0, 0.72 - cosAngle), 2.8);
-          vec3 atmoColor = vec3(0.08, 0.22, 0.72);
-          gl_FragColor = vec4(atmoColor, 1.0) * rim * 1.1;
+          float rim = pow(max(0.0, 0.76 - cosAngle), 2.2);
+          /* Thin blue atmosphere edge — matches real Earth photos */
+          vec3 atmoColor = vec3(0.18, 0.48, 0.98);
+          gl_FragColor = vec4(atmoColor, 1.0) * rim * 1.4;
         }
       `;
 
-      /* Outer haze — deep space fade */
+      /* Outer haze — diffuse blue glow against space */
       const outerAtmoF = `
         varying vec3 vNormal;
         void main() {
-          float rim = pow(max(0.0, 0.60 - dot(vNormal, vec3(0.0, 0.0, 1.0))), 3.5);
-          gl_FragColor = vec4(0.04, 0.10, 0.45, 1.0) * rim * 0.55;
+          float rim = pow(max(0.0, 0.62 - dot(vNormal, vec3(0.0, 0.0, 1.0))), 3.2);
+          gl_FragColor = vec4(0.10, 0.28, 0.72, 1.0) * rim * 0.80;
         }
       `;
 
@@ -4281,10 +4315,10 @@ Rushikesh’s work is driven by a single conviction: ESG is not a communications
       }
       ARCS.forEach(([a,b])=>globe.add(mkArc(a[0],a[1],b[0],b[1])));
 
-      /* ── Responsive resize ── */
+      /* ── Responsive resize — full viewport ── */
       function onResize() {
-        const W2 = wrap.clientWidth  || 580;
-        const H2 = wrap.clientHeight || 530;
+        const W2 = window.innerWidth;
+        const H2 = window.innerHeight;
         camera.aspect = W2 / H2;
         camera.updateProjectionMatrix();
         renderer.setSize(W2, H2);

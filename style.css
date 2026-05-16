@@ -522,82 +522,97 @@ body {
 /* ══════════════════════════════════════════════════════════
    HERO SECTION
    ══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   NASA-STYLE HERO — full-viewport cinematic Earth
+   ═══════════════════════════════════════════════════════ */
 .cx-hero {
   position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: stretch;
-  overflow: hidden;
-  background: var(--bg);
-  padding: 0;
   width: 100%;
+  /* Pull up behind the fixed header + utility bar */
+  margin-top: calc(-1 * (var(--util-h) + var(--nav-h)));
+  height: calc(100vh + var(--util-h) + var(--nav-h));
+  min-height: 680px;
+  overflow: hidden;
+  background: #000;
 }
 
-.cx-hero-bg {
+/* Full-bleed WebGL canvas container */
+.cx-hero-globe-bg {
   position: absolute;
   inset: 0;
-  pointer-events: none;
   z-index: 0;
-  /* Right side matches Three.js globe canvas background ~#0A1428 */
-  background:
-    radial-gradient(ellipse 55% 90% at 75% 50%, #0A1428 0%, #080D18 40%, transparent 72%),
-    radial-gradient(ellipse 40% 60% at 18% 40%, rgba(27,110,235,0.04) 0%, transparent 70%),
-    radial-gradient(ellipse 120% 40% at 50% 100%, rgba(3,5,8,0.9) 0%, transparent 60%);
+  background: #000;
 }
 
-/* Star field — left half only, right half is the globe canvas */
-.cx-hero-bg::before {
+#heroGlobeCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  cursor: grab;
+}
+#heroGlobeCanvas:active { cursor: grabbing; }
+
+/* Cinematic overlay: dark-left gradient + bottom fade */
+.cx-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to right,
+      rgba(0,0,0,0.82) 0%,
+      rgba(0,0,0,0.60) 28%,
+      rgba(0,0,0,0.22) 52%,
+      transparent 68%
+    ),
+    linear-gradient(to top,
+      rgba(0,0,0,0.92) 0%,
+      rgba(0,0,0,0.55) 14%,
+      transparent 30%
+    ),
+    linear-gradient(to bottom,
+      rgba(0,0,0,0.60) 0%,
+      transparent 20%
+    );
+}
+
+/* Star-field particles in dark upper-left */
+.cx-hero-overlay::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(1px 1px at 8%  22%, rgba(255,255,255,0.40) 0%, transparent 100%),
-    radial-gradient(1px 1px at 16% 68%, rgba(255,255,255,0.28) 0%, transparent 100%),
-    radial-gradient(1px 1px at 24% 14%, rgba(255,255,255,0.32) 0%, transparent 100%),
-    radial-gradient(1px 1px at 32% 79%, rgba(255,255,255,0.22) 0%, transparent 100%),
-    radial-gradient(1px 1px at 6%  52%, rgba(255,255,255,0.20) 0%, transparent 100%),
-    radial-gradient(1px 1px at 13% 38%, rgba(255,255,255,0.18) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 19% 88%, rgba(91,163,245,0.22) 0%, transparent 100%),
-    radial-gradient(1px 1px at 29% 48%, rgba(255,255,255,0.15) 0%, transparent 100%),
-    radial-gradient(1px 1px at 4%  84%, rgba(255,255,255,0.25) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 37% 10%, rgba(91,163,245,0.18) 0%, transparent 100%);
   pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 5%  12%, rgba(255,255,255,0.55) 0%, transparent 100%),
+    radial-gradient(1px 1px at 12% 38%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 7%  62%, rgba(255,255,255,0.30) 0%, transparent 100%),
+    radial-gradient(1.2px 1.2px at 18% 8%,  rgba(255,255,255,0.45) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 55%, rgba(255,255,255,0.22) 0%, transparent 100%),
+    radial-gradient(1px 1px at 3%  80%, rgba(255,255,255,0.28) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 14% 25%, rgba(91,163,245,0.30) 0%, transparent 100%),
+    radial-gradient(1px 1px at 9%  47%, rgba(255,255,255,0.18) 0%, transparent 100%),
+    radial-gradient(1px 1px at 27% 18%, rgba(255,255,255,0.20) 0%, transparent 100%),
+    radial-gradient(1px 1px at 2%  34%, rgba(255,255,255,0.32) 0%, transparent 100%);
 }
 
-.cx-hero-bg::after { display: none; }
-
-.cx-hero > .page-wrapper {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0 0 0 var(--page-px);
-  display: flex;
-  align-items: stretch;
-  flex: 1;
-}
-
-/* Split grid: text left, globe right — NASA full-bleed */
-.cx-hero-split {
-  display: grid;
-  grid-template-columns: 1fr 600px;
-  align-items: stretch;
-  gap: 0;
-  width: 100%;
-  min-height: 100vh;
-}
-
-.cx-hero-text {
-  min-width: 0;
+/* Hero text content — absolute left-center overlay */
+.cx-hero-content {
+  position: absolute;
+  top: calc(var(--util-h) + var(--nav-h));
+  left: 0;
+  bottom: 0;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-right: 40px;
+  padding: 0 var(--page-px);
   max-width: 700px;
+  padding-bottom: 140px; /* lift above vital signs strip */
 }
 
-/* Hero mission badge — NASA classification label */
+/* Hero badge */
 .cx-hero-badge {
   display: inline-flex;
   align-items: center;
@@ -605,9 +620,9 @@ body {
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.42);
   margin-bottom: 32px;
   width: fit-content;
 }
@@ -625,15 +640,16 @@ body {
   50%      { opacity: 0.35; }
 }
 
-/* Hero headline — NASA editorial scale */
+/* NASA-scale headline */
 .cx-hero-title {
   font-family: var(--font);
-  font-size: clamp(40px, 5.6vw, 82px);
+  font-size: clamp(56px, 7.5vw, 112px);
   font-weight: 800;
-  color: var(--text);
-  line-height: 1.02;
+  color: #fff;
+  line-height: 0.95;
   letter-spacing: -0.04em;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
+  text-shadow: 0 2px 40px rgba(0,0,0,0.6);
 }
 .cx-hero-title em {
   font-style: normal;
@@ -641,23 +657,22 @@ body {
 }
 
 .cx-hero-sub {
-  font-size: clamp(15px, 1.4vw, 18px);
+  font-size: clamp(14px, 1.2vw, 17px);
   font-weight: 400;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.52);
   line-height: 1.75;
-  max-width: 500px;
+  max-width: 480px;
   margin-bottom: 40px;
 }
 
-/* Hero CTA buttons */
 .cx-hero-cta {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 64px;
 }
 
+/* CTA buttons */
 .cta-primary {
   display: inline-flex;
   align-items: center;
@@ -671,14 +686,10 @@ body {
   border: none;
   border-radius: 0;
   text-decoration: none;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.18s ease;
   letter-spacing: 0.01em;
 }
-.cta-primary:hover {
-  background: #2678ff;
-  color: #fff;
-  transform: translateY(-1px);
-}
+.cta-primary:hover { background: #2678ff; color: #fff; }
 
 .cta-secondary {
   display: inline-flex;
@@ -687,17 +698,145 @@ body {
   padding: 14px 28px;
   font-size: 14px;
   font-weight: 500;
-  color: rgba(255,255,255,0.6);
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.65);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.16);
   border-radius: 0;
   text-decoration: none;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
   letter-spacing: 0.01em;
 }
-.cta-secondary:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+.cta-secondary:hover {
+  color: #fff;
+  border-color: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.1);
+}
 
-/* Hero market stats row */
+/* ── VITAL SIGNS STRIP — NASA bottom panel ── */
+.cx-vital-signs {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,0.10);
+}
+
+.cx-vs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px var(--page-px) 0;
+}
+
+.cx-vs-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+}
+
+.cx-vs-showall {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: opacity 0.18s;
+}
+.cx-vs-showall:hover { opacity: 0.7; }
+.cx-vs-showall-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #c0392b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.cx-vs-items {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0 var(--page-px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.cx-vs-items::-webkit-scrollbar { display: none; }
+
+.cx-vs-item {
+  flex: 1;
+  min-width: 180px;
+  padding: 16px 0 18px;
+  border-top: 2px solid rgba(255,255,255,0.07);
+  margin-top: 8px;
+  padding-right: 24px;
+}
+.cx-vs-item + .cx-vs-item {
+  padding-left: 24px;
+  border-left: 1px solid rgba(255,255,255,0.06);
+}
+
+.cx-vs-name {
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.80);
+  margin-bottom: 6px;
+  white-space: nowrap;
+}
+
+.cx-vs-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.cx-vs-arrow {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.cx-vs-arrow.up   { color: #c0392b; }
+.cx-vs-arrow.down { color: #3498db; }
+
+.cx-vs-num {
+  font-family: var(--font);
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.cx-vs-unit {
+  font-size: 11px;
+  color: rgba(255,255,255,0.38);
+  font-weight: 400;
+  line-height: 1.3;
+  max-width: 100px;
+}
+
+/* Globe controls — overlay bottom-right on hero */
+.cx-hero .globe-layer-controls {
+  position: absolute;
+  bottom: 130px;
+  right: var(--page-px);
+  z-index: 25;
+}
+
+/* Keep market stats below hero (not inside hero) */
 .cx-market-stats {
   display: flex;
   align-items: stretch;
@@ -708,7 +847,6 @@ body {
   overflow: hidden;
   padding-top: 4px;
 }
-
 .ms-item {
   flex: 1;
   padding: 20px 0 20px 24px;
@@ -716,7 +854,6 @@ body {
   border-left: 1px solid rgba(255,255,255,0.06);
 }
 .ms-item:first-child { border-left: none; padding-left: 0; }
-
 .ms-val {
   font-family: var(--font);
   font-size: clamp(20px, 1.8vw, 28px);
@@ -726,7 +863,6 @@ body {
   letter-spacing: -0.03em;
   margin-bottom: 8px;
 }
-
 .ms-label {
   font-size: 11px;
   font-weight: 400;
@@ -734,50 +870,23 @@ body {
   line-height: 1.45;
   margin-bottom: 4px;
 }
-
 .ms-cite {
   font-family: var(--mono);
   font-size: 8.5px;
   color: var(--text-muted);
   line-height: 1.4;
 }
-
 .ms-divider { display: none; }
 
-/* ── Globe module (hero right column) — full-bleed edge ── */
-.cx-globe-module {
-  display: flex;
-  flex-direction: column;
-  align-self: stretch;
-  position: relative;
-  margin-right: calc(-1 * var(--page-px));
-}
-
-.cx-globe-glow { display: none; }
-
+/* Globe module kept for JS compat — hidden in new layout */
+.cx-globe-module { display: none; }
+.cx-globe-glow   { display: none; }
 .cx-hero-globe-wrap {
-  position: relative;
-  width: 100%;
-  flex: 1;
-  min-height: 580px;
-  background: #0A1428;
-  overflow: hidden;
-  border: none;
-  z-index: 1;
-}
-
-#heroGlobeCanvas {
   position: absolute;
-  top: 0; left: 0;
-  width: 100% !important;
-  height: 100% !important;
-  z-index: 1;
-  pointer-events: auto;
-  cursor: grab;
-  display: block;
-  background: transparent;
+  inset: 0;
+  pointer-events: none;
+  visibility: hidden;
 }
-#heroGlobeCanvas:active { cursor: grabbing; }
 
 /* Kill floating badges */
 .hg-data-badge,
@@ -2938,20 +3047,15 @@ body {
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 1200px) {
-  .cx-hero-split { grid-template-columns: 1fr 480px; }
+  .cx-hero-content { max-width: 560px; }
+  .cx-vs-items { gap: 0; }
 }
 
 @media (max-width: 1040px) {
-  .cx-hero-split {
-    grid-template-columns: 1fr !important;
-  }
-  .cx-globe-module {
-    margin-right: 0 !important;
-    min-height: 420px;
-  }
-  .cx-hero-globe-wrap { min-height: 420px; height: 420px; }
-  .cx-hero-text { padding-right: 0; padding-top: 40px; padding-bottom: 0; }
-  .cx-market-stats { flex-wrap: wrap; }
+  .cx-hero-content { max-width: 480px; padding-bottom: 160px; }
+  .cx-hero-title { font-size: clamp(48px, 6vw, 80px); }
+  .cx-vs-item { min-width: 140px; }
+  .cx-vs-num { font-size: 24px; }
   .ms-item { min-width: 45%; }
   .footer-top { grid-template-columns: 200px 1fr; gap: 40px; }
   .footer-socials { flex-direction: row; grid-column: 1 / -1; }
@@ -2973,8 +3077,14 @@ body {
   .cx-util-bar { display: none; }
   .site-header { top: 0; }
   body { padding-top: var(--nav-h); }
-  .cx-hero-split { min-height: auto; padding-top: 40px; padding-bottom: 40px; }
-  .cx-hero-globe-wrap { height: 320px; }
+  .cx-hero { height: 100svh; min-height: 600px; }
+  .cx-hero-content { max-width: 100%; padding-right: 24px; padding-bottom: 180px; }
+  .cx-hero-title { font-size: clamp(42px, 10vw, 72px); }
+  .globe-layer-controls { display: none !important; }
+  .cx-vs-item { min-width: 120px; }
+  .cx-vs-name { font-size: 11px; }
+  .cx-vs-num { font-size: 20px; }
+  .cx-vs-unit { display: none; }
   .cx-concerns-grid { grid-template-columns: 1fr; }
   .cx-concerns-grid .cx-concern-card + .cx-concern-card { border-left: none; border-top: 1px solid var(--border); }
   .cx-concerns-grid .cx-concern-card:nth-child(4),
