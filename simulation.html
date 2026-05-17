@@ -7,7 +7,7 @@
 <meta name="description" content="Real-time climate risk simulation on a global asset graph. NGFS scenarios, physical + transition risk, financial impact modelling."/>
 <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
 <link rel="stylesheet" href="site.css" />
 <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
@@ -21,72 +21,60 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root {
-  /* ── Backgrounds — Institutional Matte Black */
-  --bg0: #000000;
-  --bg1: #0F0F0F;
-  --bg2: #1A1A1A;
-  --bg3: #242424;
-  --bg4: #2E2E2E;
-  --bghov: #1A1A1A;
+  /* ══ CLIMACTIX — Institutional Intelligence Terminal
+     Bloomberg · Palantir · NASA · BlackRock Aladdin
+     Matte. Flat. Precise. No glow theater.         */
 
-  /* ── Borders — neutral graphite */
-  --bd0: #2C2C2C;
-  --bd1: #2C2C2C;
-  --bd2: #333333;
-  --bd3: rgba(255,255,255,0.14);
+  --bg0: #030508;
+  --bg1: #070B12;
+  --bg2: #0C1420;
+  --bg3: #101923;
+  --bg4: #151F2E;
+  --bghov: #0A1018;
 
-  /* ── Text hierarchy — clean white/gray */
-  --tx0: #FFFFFF;
-  --tx1: #888888;
-  --tx2: #555555;
-  --tx3: #333333;
-  --tx4: #1F2937;
+  --bd0: rgba(255,255,255,0.05);
+  --bd1: rgba(255,255,255,0.08);
+  --bd2: rgba(255,255,255,0.13);
+  --bd3: rgba(255,255,255,0.22);
 
-  /* ── Risk colours — institutional, muted */
-  --rc: #CC0000;   /* critical  */
-  --rh: #CC5200;   /* high      */
-  --rm: #92400E;   /* medium    */
-  --rl: #166534;   /* low       */
+  --tx0: #F0F4F8;
+  --tx1: rgba(240,244,248,0.55);
+  --tx2: rgba(240,244,248,0.32);
+  --tx3: rgba(240,244,248,0.16);
+  --tx4: rgba(240,244,248,0.06);
 
-  /* ── Scenario colours — Bloomberg palette */
-  --s15: #00CC44;  /* 1.5°C net zero   — green  */
-  --s20: #CC5200;  /* 2.0°C delayed    — amber  */
-  --s30: #CC0000;  /* 3.0°C current    — red    */
+  --rc: #C9372C;
+  --rh: #C26000;
+  --rm: #8A6000;
+  --rl: #1A6E44;
 
-  /* ── UI accent — Bloomberg Amber */
-  --acc: #FF6600;
-  --acc2: rgba(245,158,11,0.10);
+  --s15: #1A6E44;
+  --s20: #C26000;
+  --s30: #C9372C;
 
-  /* ── Metrics */
-  --pos: #00CC44;
-  --neg: #CC0000;
-  --neu: #888888;
+  --acc: #3A8FA8;
+  --acc2: rgba(58,143,168,0.07);
 
-  /* ── Dimensions */
+  --pos: #1A6E44;
+  --neg: #C9372C;
+  --neu: rgba(240,244,248,0.38);
+
   --nav-h: 48px;
-  --stats-h: 40px;
-  --tl-h: 60px;
+  --stats-h: 42px;
+  --tl-h: 64px;
 
-  --font: 'Inter', system-ui, sans-serif;
-  --mono: 'IBM Plex Mono', var(--mono);
+  --font: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
 }
 
 [data-theme="light"] {
-  --bg0: #F5F5F5;
-  --bg1: #FFFFFF;
-  --bg2: #EBEBEB;
-  --bg3: #E0E0E0;
-  --bg4: #DDE2E8;
-  --bghov: #EDF0F3;
-  --bd0: rgba(0,0,0,0.05);
-  --bd1: #E0E0E0;
-  --bd2: #C8C8C8;
-  --bd3: rgba(0,0,0,0.18);
-  --tx0: #000000;
-  --tx1: #333333;
-  --tx2: #555555;
-  --tx3: #888888;
-  --tx4: #D1D5DB;
+  --bg0: #F2F4F7; --bg1: #FFFFFF; --bg2: #EEF1F7;
+  --bg3: #E4EAF3; --bg4: #D8E0EE; --bghov: #EAF0F8;
+  --bd0: rgba(0,0,0,0.06); --bd1: rgba(0,0,0,0.10);
+  --bd2: rgba(0,0,0,0.16); --bd3: rgba(0,0,0,0.26);
+  --tx0: #0A1020; --tx1: rgba(10,16,32,0.60);
+  --tx2: rgba(10,16,32,0.38); --tx3: rgba(10,16,32,0.20);
+  --tx4: rgba(10,16,32,0.08);
 }
 
 html { scroll-behavior: smooth; }
@@ -666,7 +654,7 @@ body {
   padding: 0 20px; height: 0; overflow: hidden;
   display: flex; align-items: center; justify-content: space-between;
   background: rgba(5,5,5,0.97);
-  border-bottom: 1px solid #2C2C2C;
+  border-bottom: 1px solid rgba(63,211,255,0.15);
   transition: height .28s ease, opacity .28s ease;
   opacity: 0; backdrop-filter: blur(10px);
 }
@@ -1146,11 +1134,307 @@ body {
 .gl-title { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--tx2); margin-bottom: 5px; }
 .gl-bar {
   width: 120px; height: 6px;
-  background: linear-gradient(to right, #1F2937, #CC5200, #CC0000, #7F1D1D);
+  background: linear-gradient(to right, #1A6E44, #3A8FA8, #C26000, #C9372C);
   margin-bottom: 3px;
 }
 .gl-ticks { display: flex; justify-content: space-between; }
 .gl-tick { font-family: var(--mono); font-size: 9px; color: var(--tx2); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CLIMACTIX — INSTITUTIONAL INTELLIGENCE TERMINAL
+   Visual refinement: Bloomberg · Palantir · NASA Earth Data
+   Philosophy: matte, flat, engineered, quiet confidence
+═══════════════════════════════════════════════════════════════════ */
+
+/* Body — deep obsidian, no noise, no stars */
+body {
+  background: var(--bg0) !important;
+  background-image:
+    radial-gradient(ellipse 100% 50% at 50% 0%,
+      rgba(10,25,55,0.4) 0%, transparent 55%) !important;
+  font-size: 12px !important;
+}
+
+/* NAV — command header, flat obsidian */
+.nav {
+  background: rgba(3,5,8,0.98) !important;
+  border-bottom: 1px solid var(--bd1) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+.nav-brand-text .b1 {
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 12px !important; font-weight: 700 !important;
+  letter-spacing: 0.06em !important; text-transform: uppercase !important;
+}
+.nav-brand-text .b2 {
+  color: var(--acc) !important;
+  letter-spacing: 0.22em !important; font-size: 8px !important;
+}
+.nav-links a { color: var(--tx2) !important; font-size: 10px !important; letter-spacing: 0.10em !important; }
+.nav-links a:hover { color: var(--tx0) !important; }
+.nav-links a.cur { color: var(--tx0) !important; border-bottom-color: var(--acc) !important; }
+.nav-sep { background: var(--bd1) !important; }
+.nav-cta {
+  background: var(--tx0) !important; color: var(--bg0) !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 9px !important; letter-spacing: 0.10em !important;
+}
+.nav-pill {
+  background: var(--bg3) !important; border-color: var(--bd2) !important;
+  color: var(--tx2) !important;
+}
+
+/* STATS BAR — telemetry ribbon */
+#sbar {
+  background: var(--bg0) !important;
+  border-bottom: 1px solid var(--bd1) !important;
+}
+.sb-lbl {
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 9px !important; letter-spacing: 0.12em !important;
+  color: var(--tx2) !important;
+}
+.sb-val {
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 12px !important; color: var(--tx0) !important;
+}
+.sb-item { border-right-color: var(--bd0) !important; }
+.sb-year-val {
+  font-size: 14px !important; color: var(--tx0) !important;
+  font-weight: 700 !important;
+}
+.sb-scn-label { font-family: 'Space Grotesk', sans-serif !important; }
+.sb-scn-dot { width: 4px !important; height: 4px !important; }
+
+/* LEFT PANEL */
+#lp {
+  background: var(--bg1) !important;
+  border-right: 1px solid var(--bd1) !important;
+}
+.pb { border-bottom: 1px solid var(--bd0) !important; }
+.ph {
+  font-size: 8.5px !important; letter-spacing: 0.16em !important;
+  color: var(--tx2) !important; padding: 8px 14px !important;
+}
+.ph svg { opacity: 0.4 !important; }
+
+/* Scenario buttons — mission profiles */
+.scb {
+  background: transparent !important;
+  border-bottom: 1px solid var(--bd0) !important;
+  border-left: 2px solid transparent !important;
+}
+.scb:hover { background: var(--bghov) !important; }
+.scb.on { background: var(--bg2) !important; }
+.scb-cell { background: var(--bg0) !important; border: none !important; }
+.scb-cell-lbl { color: var(--tx2) !important; }
+.scb-cell-val { color: var(--tx1) !important; }
+.scb-row { background: var(--bd0) !important; border-color: var(--bd0) !important; }
+
+/* Layer buttons */
+.lyb { background: transparent !important; }
+.lyb:hover { background: var(--bghov) !important; }
+.lyb.on { background: var(--bg2) !important; }
+.lyb-ico {
+  border: 1px solid var(--bd1) !important;
+  background: var(--bg0) !important; border-radius: 1px !important;
+}
+.lyb.on .lyb-ico { border-color: var(--acc) !important; background: var(--bg2) !important; }
+.lyb.on .lyb-name { color: var(--tx0) !important; }
+.lyb-name { color: var(--tx1) !important; }
+.lyb-desc { color: var(--tx2) !important; font-size: 9.5px !important; }
+
+/* Toggles */
+.tog { background: var(--bd2) !important; border-radius: 0 !important; }
+.tog.on { background: var(--acc) !important; }
+.tog::after { border-radius: 0 !important; }
+.tog-lbl { color: var(--tx1) !important; font-size: 11px !important; }
+
+/* Hazard buttons */
+.haz-btn {
+  background: var(--bg0) !important; border-color: var(--bd1) !important;
+  color: var(--tx2) !important;
+}
+.haz-btn:hover { border-color: var(--bd2) !important; color: var(--tx0) !important; }
+.haz-btn.on { border-color: currentColor !important; }
+
+/* Asset list */
+.a-item:hover { background: var(--bghov) !important; }
+.a-item.sel { background: var(--bg2) !important; border-left-color: var(--acc) !important; }
+.a-name { color: var(--tx0) !important; }
+.a-sub { color: var(--tx2) !important; }
+.btn-add { border-color: var(--bd2) !important; color: var(--tx2) !important; }
+.btn-add:hover { border-color: var(--bd3) !important; color: var(--tx0) !important; }
+.btn-add.on { border-color: var(--acc) !important; color: var(--acc) !important; background: var(--acc2) !important; }
+.al-lbl { color: var(--tx2) !important; }
+.al-count { color: var(--tx2) !important; }
+
+/* MAP */
+#map { background: #040608 !important; }
+#mload { background: var(--bg0) !important; }
+.ml-label { color: var(--tx2) !important; letter-spacing: 0.20em !important; }
+.ml-track { background: var(--bd1) !important; }
+.ml-bar { background: var(--tx2) !important; }
+
+/* Map overlays */
+#map-stats {
+  background: rgba(3,5,8,0.94) !important;
+  border: 1px solid var(--bd2) !important;
+  backdrop-filter: blur(8px) !important;
+}
+#grad-legend {
+  background: rgba(3,5,8,0.90) !important;
+  border-color: var(--bd2) !important;
+}
+.mwm-1 { color: rgba(240,244,248,0.08) !important; }
+.mwm-2 { color: rgba(240,244,248,0.04) !important; }
+
+/* Add modal */
+#amodal {
+  background: var(--bg2) !important; border-color: var(--bd3) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7) !important;
+}
+.f-input, .f-select {
+  background: var(--bg1) !important; border-color: var(--bd2) !important; color: var(--tx0) !important;
+}
+.f-input:focus { border-color: var(--acc) !important; box-shadow: none !important; }
+.btn-confirm { background: var(--tx0) !important; color: var(--bg0) !important; }
+#ahint {
+  background: rgba(3,5,8,0.97) !important;
+  border-color: var(--bd3) !important; color: var(--tx1) !important;
+}
+
+/* RIGHT PANEL */
+#rp { background: var(--bg1) !important; border-left: 1px solid var(--bd1) !important; }
+.rp-head { background: var(--bg1) !important; border-bottom-color: var(--bd1) !important; }
+.rp-eyebrow { font-size: 8.5px !important; letter-spacing: 0.18em !important; color: var(--tx2) !important; }
+.rp-name { font-family: 'Space Grotesk', sans-serif !important; font-size: 14px !important; }
+.rp-loc { color: var(--tx2) !important; }
+
+/* Risk badge */
+.risk-badge { background: transparent !important; }
+.rb-label, .rb-scn-lbl { color: var(--tx2) !important; }
+
+/* Stranded */
+.stranded {
+  background: rgba(201,55,44,0.06) !important;
+  border-color: rgba(201,55,44,0.18) !important;
+}
+
+/* Risk bars */
+.rb-track { background: var(--bd0) !important; }
+.rb-lbl { color: var(--tx1) !important; }
+
+/* Financial grid */
+.fin-grid { background: var(--bd0) !important; border-color: var(--bd0) !important; }
+.fin-cell { background: var(--bg0) !important; }
+.fin-lbl { color: var(--tx2) !important; }
+
+/* Intel cells */
+.intel-cell { background: var(--bg0) !important; border-color: var(--bd1) !important; }
+.intel-lbl { color: var(--tx2) !important; }
+.intel-sub { color: var(--tx2) !important; }
+
+/* Right panel tabs */
+.rp-tabs { border-bottom-color: var(--bd1) !important; }
+.rp-tab { color: var(--tx2) !important; font-size: 9px !important; letter-spacing: 0.07em !important; }
+.rp-tab:hover { color: var(--tx1) !important; }
+.rp-tab.on { color: var(--tx0) !important; border-bottom-color: var(--acc) !important; }
+
+/* Risk sections */
+.rp-sec { border-top-color: var(--bd0) !important; }
+.rp-sec-title { font-size: 8.5px !important; letter-spacing: 0.16em !important; color: var(--tx2) !important; }
+
+/* Live API */
+.api-dot.live { background: var(--pos) !important; }
+.live-sec { border-top-color: var(--bd0) !important; }
+.live-sec-title { color: var(--tx2) !important; }
+.src-badge {
+  background: var(--bg3) !important; border-color: var(--bd1) !important; color: var(--tx2) !important;
+}
+.lk { color: var(--tx1) !important; }
+.lv { color: var(--tx0) !important; }
+
+/* Sections */
+.decision-box { background: transparent !important; }
+.decision-label { color: var(--tx2) !important; }
+
+/* Compare grid */
+.cmp-grid { background: var(--bd0) !important; border-color: var(--bd0) !important; }
+.cmp-col { background: var(--bg0) !important; }
+.cmp-lbl { color: var(--tx2) !important; }
+
+/* Investment summary */
+.inv-summary { border-color: var(--bd1) !important; background: var(--bg0) !important; }
+.inv-sum-head { background: var(--bg2) !important; border-bottom-color: var(--bd1) !important; color: var(--tx1) !important; }
+.inv-k { color: var(--tx1) !important; }
+
+/* PDF button */
+.btn-pdf { border-color: var(--bd2) !important; color: var(--tx1) !important; }
+.btn-pdf:hover { border-color: var(--bd3) !important; background: var(--bg2) !important; color: var(--tx0) !important; }
+
+/* Spinner */
+.spin { border-color: var(--bd2) !important; border-top-color: var(--acc) !important; }
+
+/* Toast */
+#toast {
+  background: var(--bg3) !important; border-color: var(--bd2) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+}
+
+/* TIMELINE */
+#tlbar { background: var(--bg0) !important; border-top: 1px solid var(--bd1) !important; }
+.tl-ctrl {
+  border-color: var(--bd2) !important; color: var(--tx2) !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 10px !important; letter-spacing: 0.10em !important;
+}
+.tl-ctrl:hover { border-color: var(--bd3) !important; color: var(--tx0) !important; }
+.tl-rst:hover { color: var(--tx0) !important; }
+.ty-dot { border-color: var(--bd2) !important; background: var(--bg2) !important; }
+.ty-dot.on { border-color: var(--tx0) !important; background: var(--tx0) !important; transform: translateX(-50%) !important; }
+.ty-lbl { font-size: 10px !important; color: var(--tx2) !important; }
+.ty-lbl.on { color: var(--tx0) !important; font-weight: 700 !important; }
+.ty-lbl.past { color: var(--tx1) !important; }
+#tl-year-val { font-size: 22px !important; color: var(--tx0) !important; }
+#tl-year-lbl { letter-spacing: 0.14em !important; color: var(--tx2) !important; }
+#tl-year-box { border-left-color: var(--bd1) !important; }
+
+/* Scenario banner */
+#scn-banner { background: rgba(3,5,8,0.98) !important; border-bottom-color: var(--bd1) !important; }
+.scn-banner-msg strong { color: var(--acc) !important; }
+
+/* News popup */
+#news-popup {
+  background: rgba(7,11,18,0.98) !important;
+  border-color: var(--bd3) !important;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.7) !important;
+}
+.npu-head { border-bottom-color: var(--bd1) !important; }
+
+/* Econ pill */
+.econ-pill { background: var(--bg3) !important; border-color: var(--bd2) !important; color: var(--tx2) !important; }
+
+/* Intensity slider */
+.intensity-slider { background: var(--bd1) !important; }
+.intensity-slider::-webkit-slider-thumb { background: var(--acc) !important; }
+
+/* Legend */
+.leg-lbl { color: var(--tx2) !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar-track { background: var(--bg1) !important; }
+::-webkit-scrollbar-thumb { background: var(--bd2) !important; }
+
+/* Z-order */
+.nav { z-index: 1001 !important; position: fixed !important; }
+#mload { position: absolute !important; z-index: 10 !important; }
+#amodal { z-index: 21 !important; }
+#ahint { z-index: 20 !important; }
+#scn-banner { z-index: 30 !important; }
+#news-popup { z-index: 40 !important; }
+#toast { z-index: 9999 !important; }
 </style>
 </head>
 <body>
