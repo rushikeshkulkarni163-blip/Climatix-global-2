@@ -1270,9 +1270,14 @@ body {
 .al-lbl { color: var(--tx2) !important; }
 .al-count { color: var(--tx2) !important; }
 
-/* MAP */
-#map { background: #040608 !important; }
-#mload { background: var(--bg0) !important; }
+/* MAP — space canvas */
+#map { background: #000005 !important; }
+#mw  { background: #000005 !important; }
+#mload { background: #000005 !important; }
+.maplibregl-canvas { background: #000005 !important; }
+.maplibregl-map { background: #000005 !important; }
+.maplibregl-ctrl-attrib { background: rgba(0,0,5,0.7) !important; color: rgba(255,255,255,0.3) !important; font-size: 9px !important; }
+.maplibregl-ctrl-attrib a { color: rgba(255,255,255,0.4) !important; }
 .ml-label { color: var(--tx2) !important; letter-spacing: 0.20em !important; }
 .ml-track { background: var(--bd1) !important; }
 .ml-bar { background: var(--tx2) !important; }
@@ -1594,6 +1599,164 @@ body {
         <div id="intel-btns"></div>
       </div>
 
+
+      <!-- EARTH INTELLIGENCE -->
+      <div class="pb">
+        <div class="intel-section-hdr">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="5" cy="5" r="4"/><path d="M1 5h8M5 1c-1.5 1.8-1.5 6.2 0 8M5 1c1.5 1.8 1.5 6.2 0 8"/>
+          </svg>
+          Earth Intelligence
+          <span class="max-badge">NASA·ESA</span>
+        </div>
+        <button class="el-btn" id="el-wildfire" style="--el-accent:#E05020" onclick="toggleEarthLayer('wildfire')">
+          <div class="el-ico">🔥</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Wildfire Hotspots</div>
+            <div class="el-desc">MODIS thermal anomalies · active fire</div>
+          </div>
+          <span class="el-badge">LIVE</span>
+        </button>
+        <button class="el-btn" id="el-drought" style="--el-accent:#C26000" onclick="toggleEarthLayer('drought')">
+          <div class="el-ico">🌵</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Drought Intensity</div>
+            <div class="el-desc">PDSI · soil moisture deficit</div>
+          </div>
+          <span class="el-badge">NOAA</span>
+        </button>
+        <button class="el-btn" id="el-sst" style="--el-accent:#3A8FA8" onclick="toggleEarthLayer('sst')">
+          <div class="el-ico">🌊</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Sea Surface Temperature</div>
+            <div class="el-desc">GHRSST anomaly · ocean heat</div>
+          </div>
+          <span class="el-badge">CMEMS</span>
+        </button>
+        <button class="el-btn" id="el-methane" style="--el-accent:#8A5000" onclick="toggleEarthLayer('methane')">
+          <div class="el-ico">🟡</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Methane Plumes</div>
+            <div class="el-desc">Sentinel-5P CH₄ concentration</div>
+          </div>
+          <span class="el-badge">ESA</span>
+        </button>
+        <button class="el-btn" id="el-vegetation" style="--el-accent:#1A6E44" onclick="toggleEarthLayer('vegetation')">
+          <div class="el-ico">🌿</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Vegetation Stress</div>
+            <div class="el-desc">NDVI deficit · biomass loss</div>
+          </div>
+          <span class="el-badge">MODIS</span>
+        </button>
+      </div>
+
+      <!-- CLIMATE TIPPING POINTS -->
+      <div class="pb">
+        <div class="intel-section-hdr">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M5 1L9 9H1z"/><line x1="5" y1="4.5" x2="5" y2="6.5" stroke-linecap="round"/><circle cx="5" cy="7.5" r=".5" fill="currentColor" stroke="none"/>
+          </svg>
+          Climate Tipping Points
+          <span class="max-badge">IPCC AR6</span>
+        </div>
+        <button class="el-btn" id="el-tipping" style="--el-accent:#C9372C" onclick="toggleEarthLayer('tipping')">
+          <div class="el-ico" style="font-size:10px">⚠</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Planetary Tipping Zones</div>
+            <div class="el-desc">AMOC · Amazon · Ice sheets · Permafrost</div>
+          </div>
+          <span class="el-badge">8 ZONES</span>
+        </button>
+      </div>
+
+      <!-- POLICY & REGULATORY INTELLIGENCE -->
+      <div class="pb">
+        <div class="intel-section-hdr">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="1" y="1" width="8" height="8" rx="1"/><line x1="3" y1="4" x2="7" y2="4"/><line x1="3" y1="6" x2="5.5" y2="6"/>
+          </svg>
+          Policy Intelligence
+          <span class="max-badge">GLOBAL</span>
+        </div>
+        <button class="el-btn" id="el-policy" style="--el-accent:#6366F1" onclick="toggleEarthLayer('policy')">
+          <div class="el-ico">⚖</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Regulatory Regimes</div>
+            <div class="el-desc">CSRD · SEC · CBAM · Carbon taxes</div>
+          </div>
+          <span class="el-badge">2025</span>
+        </button>
+        <button class="el-btn" id="el-litigation" style="--el-accent:#7C3AED" onclick="toggleEarthLayer('litigation')">
+          <div class="el-ico">🏛</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Climate Litigation Zones</div>
+            <div class="el-desc">Active cases · director liability</div>
+          </div>
+          <span class="el-badge">HIGH</span>
+        </button>
+      </div>
+
+      <!-- FINANCIAL RISK INTELLIGENCE -->
+      <div class="pb">
+        <div class="intel-section-hdr">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M1 7.5L3.5 5l2 2L9 2.5"/><line x1="6.5" y1="2.5" x2="9" y2="2.5"/><line x1="9" y1="2.5" x2="9" y2="5"/>
+          </svg>
+          Financial Risk
+          <span class="max-badge">INSURANCE</span>
+        </div>
+        <button class="el-btn" id="el-uninsurable" style="--el-accent:#C9372C" onclick="toggleEarthLayer('uninsurable')">
+          <div class="el-ico">🚫</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Uninsurable Zones</div>
+            <div class="el-desc">Insurance withdrawal · premium stress</div>
+          </div>
+          <span class="el-badge">RETREAT</span>
+        </button>
+        <button class="el-btn" id="el-sovereign" style="--el-accent:#8A3020" onclick="toggleEarthLayer('sovereign')">
+          <div class="el-ico">🏦</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Sovereign Vulnerability</div>
+            <div class="el-desc">Debt · fiscal exposure · rating risk</div>
+          </div>
+          <span class="el-badge">IMF</span>
+        </button>
+      </div>
+
+      <!-- INFRASTRUCTURE LAYERS EXTENDED -->
+      <div class="pb">
+        <div class="intel-section-hdr">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="1.5" y="5" width="3" height="3.5"/><rect x="5.5" y="3" width="3" height="5.5"/><line x1="0" y1="8.5" x2="10" y2="8.5"/>
+          </svg>
+          Infrastructure &amp; Trade
+        </div>
+        <button class="el-btn" id="el-mining" style="--el-accent:#C26000" onclick="toggleEarthLayer('mining')">
+          <div class="el-ico">⬡</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Mining &amp; Critical Minerals</div>
+            <div class="el-desc">Copper · lithium · iron ore · cobalt</div>
+          </div>
+          <span class="el-badge">28 SITES</span>
+        </button>
+        <button class="el-btn" id="el-trade" style="--el-accent:#3A8FA8" onclick="toggleEarthLayer('trade')">
+          <div class="el-ico">→</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Trade Corridors</div>
+            <div class="el-desc">Shipping · LNG · commodity routes</div>
+          </div>
+          <span class="el-badge">ANIMATED</span>
+        </button>
+        <button class="el-btn" id="el-capital" style="--el-accent:#1A6E44" onclick="toggleEarthLayer('capital')">
+          <div class="el-ico">💹</div>
+          <div style="flex:1;min-width:0">
+            <div class="el-name">Capital Flow Migration</div>
+            <div class="el-desc">Stranded assets · resilient corridors</div>
+          </div>
+          <span class="el-badge">LIVE</span>
+        </button>
+      </div>
       <!-- Asset list -->
       <div class="al-head">
         <div class="al-lbl">Portfolio <span class="al-count">(<span id="acnt">0</span> assets)</span></div>
@@ -1722,6 +1885,75 @@ body {
         <div class="mwm-1">Climactix Climate Intelligence Layer</div>
         <div class="mwm-2">NGFS Phase IV Scenarios · IPCC AR6 Physical Risk</div>
       </div>
+
+      <!-- Mode Switcher -->
+      <div id="mode-sw">
+        <button class="mode-btn on" id="mode-intel" onclick="setMode('intel')">Intel</button>
+        <button class="mode-btn" id="mode-briefing" onclick="setMode('briefing')">Briefing</button>
+        <button class="mode-btn" id="mode-compare" onclick="setMode('compare')">Compare</button>
+      </div>
+
+      <!-- AI Events (bottom-center of map) -->
+      <div id="ai-events-container"></div>
+
+      <!-- Supply Chain Cascade Panel -->
+      <div id="cascade-panel">
+        <div class="casc-hd">
+          <span>Supply Chain Cascade</span>
+          <button style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:10px" onclick="document.getElementById('cascade-panel').classList.remove('on')">✕</button>
+        </div>
+        <div id="cascade-body"></div>
+      </div>
+
+      <!-- Trade Corridor Legend -->
+      <div id="corridor-legend">
+        <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--tx2);margin-bottom:5px">Trade Corridors</div>
+        <div class="cl-row"><div class="cl-line" style="background:#3A8FA8"></div><span class="cl-lbl">Container Shipping</span></div>
+        <div class="cl-row"><div class="cl-line" style="background:#A855F7"></div><span class="cl-lbl">LNG / Energy</span></div>
+        <div class="cl-row"><div class="cl-line" style="background:#C26000"></div><span class="cl-lbl">Commodity</span></div>
+        <div class="cl-row"><div class="cl-line" style="background:#1A6E44"></div><span class="cl-lbl">Food / Agri</span></div>
+      </div>
+
+      <!-- Executive Briefing Overlay -->
+      <div id="briefing-panel">
+        <button class="bp-close" onclick="setMode('intel')">✕ Exit Briefing</button>
+        <div class="bp-header">
+          <div>
+            <div class="bp-eyebrow">Climactix Intelligence · Executive Briefing</div>
+            <div class="bp-title">Portfolio Climate Risk Assessment</div>
+            <div class="bp-sub">NGFS <span id="bp-scn">2°C Delayed Transition</span> · Simulation Year <span id="bp-yr">2030</span></div>
+          </div>
+          <div class="bp-ts" id="bp-ts"></div>
+        </div>
+        <div class="bp-body">
+          <div class="bp-col">
+            <div class="bp-col-hd">Portfolio Intelligence</div>
+            <div class="bp-kpi-grid" id="bp-kpis"></div>
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--tx3);margin-bottom:8px">Financial Exposure</div>
+            <div id="bp-financial"></div>
+          </div>
+          <div class="bp-col">
+            <div class="bp-col-hd">Critical Risk Signals</div>
+            <div id="bp-threats"></div>
+          </div>
+          <div class="bp-col">
+            <div class="bp-col-hd">Board-Level Actions</div>
+            <div id="bp-actions"></div>
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--tx3);margin:16px 0 8px">Regulatory Exposure</div>
+            <div id="bp-compliance"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scenario Comparison Overlay -->
+      <div id="compare-panel">
+        <div class="cmp-header">
+          <div class="cmp-title">Scenario Comparison — <span id="cmp-yr-label">2030</span></div>
+          <div style="font-size:9px;color:var(--tx2)">NGFS Phase IV · IPCC AR6 · All values indexed to current portfolio</div>
+          <button class="cmp-close-btn" onclick="setMode('intel')">✕ Close</button>
+        </div>
+        <div class="cmp-grid-3" id="cmp-cols"></div>
+      </div>
     </div><!-- /mw -->
 
     <!-- RIGHT PANEL -->
@@ -1766,6 +1998,13 @@ const S={scenario:'2.0',year:2030,layer:'physical',selId:null,
   intelOrder:[],
   /* Infrastructure overlay state */
   infra:{ports:false,airports:false,energy:false},
+  /* Earth intelligence layers */
+  earth:{wildfire:false,drought:false,sst:false,methane:false,vegetation:false,
+         tipping:false,policy:false,litigation:false,
+         uninsurable:false,sovereign:false,
+         mining:false,trade:false,capital:false},
+  /* UI mode */
+  mode:'intel',
 };
 
 let _mapUpdTimer=null;
@@ -2125,6 +2364,636 @@ const LIVE_SIGNALS=[
   {icon:'',type:'fuel',msg:'MENA oil price volatility: diesel +8% 30-day avg',
     impact:'+$4M transport cost increase',delta:9,region:'MENA',sector:'Logistics'},
 ];
+
+
+/* ─── MINING & CRITICAL MINERALS DATA ─────────────────────────────────── */
+const MINING_DATA=[
+  {id:'m01',name:'Pilbara Iron Ore (Fortescue)',lat:-22.30,lng:118.57,product:'Iron Ore',cap:'188 MT/yr',risk:76,color:'#C26000'},
+  {id:'m02',name:'Escondida Copper (BHP)',lat:-24.27,lng:-69.07,product:'Copper',cap:'1.2 MT/yr',risk:83,color:'#E05020'},
+  {id:'m03',name:'Carajás Iron Ore (Vale)',lat:-6.07,lng:-50.15,product:'Iron Ore',cap:'150 MT/yr',risk:68,color:'#C26000'},
+  {id:'m04',name:'Oyu Tolgoi Copper (Rio)',lat:43.00,lng:107.15,product:'Copper',cap:'480 kT/yr',risk:58,color:'#E05020'},
+  {id:'m05',name:'Grasberg Complex (Freeport)',lat:-4.05,lng:137.12,product:'Cu/Au',cap:'400 kT/yr',risk:72,color:'#E05020'},
+  {id:'m06',name:'DRC Cobalt Belt',lat:-10.50,lng:25.50,product:'Cobalt',cap:'~70% global',risk:91,color:'#8A5090'},
+  {id:'m07',name:'Lithium Triangle (SQM/Alb)',lat:-23.50,lng:-67.50,product:'Lithium',cap:'~55% global',risk:77,color:'#60A0F0'},
+  {id:'m08',name:'Atacama Desert Li (Chile)',lat:-23.00,lng:-68.20,product:'Lithium',cap:'200 kT/yr LCE',risk:79,color:'#60A0F0'},
+  {id:'m09',name:'Sudbury Nickel Basin (Vale)',lat:46.49,lng:-81.00,product:'Nickel',cap:'60 kT/yr',risk:42,color:'#A0A0C0'},
+  {id:'m10',name:'Mount Isa Copper (Glencore)',lat:-20.73,lng:139.49,product:'Copper',cap:'95 kT/yr',risk:65,color:'#E05020'},
+  {id:'m11',name:'Boddington Gold (Newmont)',lat:-32.80,lng:116.47,product:'Gold',cap:'700 koz/yr',risk:52,color:'#F0C040'},
+  {id:'m12',name:'Rössing Uranium (NamCor)',lat:-22.49,lng:14.89,product:'Uranium',cap:'3 kT/yr U₃O₈',risk:58,color:'#50A050'},
+  {id:'m13',name:'Kamoa-Kakula Copper (Ivanhoe)',lat:-10.79,lng:26.56,product:'Copper',cap:'440 kT/yr',risk:85,color:'#E05020'},
+  {id:'m14',name:'Cerro Verde Copper (Freeport)',lat:-16.55,lng:-71.54,product:'Copper',cap:'460 kT/yr',risk:74,color:'#E05020'},
+  {id:'m15',name:'Yandicoogina Iron (Rio)',lat:-22.78,lng:119.07,product:'Iron Ore',cap:'52 MT/yr',risk:68,color:'#C26000'},
+  {id:'m16',name:'Bayan Obo REE (China)',lat:41.80,lng:110.00,product:'Rare Earths',cap:'~60% global',risk:65,color:'#8060C0'},
+  {id:'m17',name:'Phosphate Belt (Morocco)',lat:32.00,lng:-6.30,product:'Phosphate',cap:'35 MT/yr',risk:55,color:'#80A040'},
+  {id:'m18',name:'Nickel Hub (Indonesia)',lat:-1.60,lng:121.50,product:'Nickel',cap:'1.0 MT/yr',risk:78,color:'#A0A0C0'},
+];
+
+/* ─── TRADE CORRIDORS DATA ─────────────────────────────────────────────── */
+const TRADE_CORRIDORS_DATA=[
+  {id:'tc01',name:'Trans-Pacific Container',from:[-118.25,33.73],to:[121.47,31.22],
+   vol:'12.4M TEU/yr',risk:64,type:'shipping',color:'#3A8FA8',desc:'Largest freight volume route globally'},
+  {id:'tc02',name:'Asia–Europe (Suez)',from:[103.82,1.26],to:[4.48,51.89],
+   via:[[55.3,23.6],[32.3,31.2]],
+   vol:'6.8M TEU/yr',risk:72,type:'shipping',color:'#3A8FA8',desc:'Passes through Suez Canal chokepoint'},
+  {id:'tc03',name:'Trans-Atlantic',from:[-74.01,40.71],to:[4.48,51.89],
+   vol:'4.2M TEU/yr',risk:48,type:'shipping',color:'#3A8FA8',desc:'N. America – Europe trade spine'},
+  {id:'tc04',name:'Middle East–Asia LNG',from:[55.07,24.98],to:[103.82,1.26],
+   vol:'28 MTPA',risk:68,type:'lng',color:'#A855F7',desc:'Persian Gulf LNG to Asia Pacific'},
+  {id:'tc05',name:'Canada–Asia LNG',from:[-122.75,53.95],to:[103.82,1.26],
+   vol:'18 MTPA',risk:44,type:'lng',color:'#A855F7',desc:'LNG Canada project export route'},
+  {id:'tc06',name:'Australia–China Iron Ore',from:[118.57,-22.30],to:[121.47,31.22],
+   vol:'188 MT/yr',risk:71,type:'commodity',color:'#C26000',desc:'Single largest bilateral commodity flow'},
+  {id:'tc07',name:'Brazil–China Iron Ore',from:[-46.33,-23.96],to:[121.47,31.22],
+   vol:'150 MT/yr',risk:66,type:'commodity',color:'#C26000',desc:'Vale to China — longest bulk route'},
+  {id:'tc08',name:'Middle East–Europe Oil',from:[50.14,26.64],to:[4.48,51.89],
+   via:[[32.3,31.2]],
+   vol:'4.2M bbl/d',risk:78,type:'energy',color:'#F97316',desc:'Critical petroleum supply to Europe'},
+  {id:'tc09',name:'Black Sea Grain',from:[31.99,46.97],to:[27.95,38.42],
+   vol:'40 MT/yr',risk:84,type:'commodity',color:'#1A6E44',desc:'Ukraine/Russia grain — geopolitical chokepoint'},
+  {id:'tc10',name:'Pacific Semiconductor',from:[120.28,23.03],to:[121.80,31.14],
+   vol:'$150B/yr',risk:82,type:'trade',color:'#60A0F0',desc:'TSMC to assembly hubs — systemic dependency'},
+  {id:'tc11',name:'Malacca Chokepoint',from:[103.82,1.26],to:[100.88,13.09],
+   vol:'15M bbl/d',risk:75,type:'energy',color:'#F97316',desc:'80% of Asia's oil passes through here'},
+  {id:'tc12',name:'South America–EU Food',from:[-46.33,-23.96],to:[4.48,51.89],
+   vol:'55 MT/yr',risk:56,type:'commodity',color:'#1A6E44',desc:'Soy, beef, coffee — biodiversity risk'},
+];
+
+/* ─── TIPPING POINTS DATA ──────────────────────────────────────────────── */
+const TIPPING_POINTS_DATA=[
+  {id:'tp01',name:'AMOC Weakening',lat:55,lng:-30,radiusKm:1000,
+   threshold:1.8,status:0.72,risk:'Critical',color:'#3A8FA8',
+   desc:'Atlantic Meridional Overturning Circulation showing 15% slowdown. Collapse would destabilize European climate and raise East Coast sea levels by 0.5m+.'},
+  {id:'tp02',name:'Amazon Dieback',lat:-5,lng:-55,radiusKm:1400,
+   threshold:0.25,status:0.61,risk:'High',color:'#C26000',
+   desc:'Deforestation at 22% of Amazon. Tipping point shifts biome to savanna, releasing 90 GT CO₂ and collapsing South American precipitation patterns.'},
+  {id:'tp03',name:'Greenland Ice Sheet',lat:72,lng:-42,radiusKm:700,
+   threshold:1.5,status:0.68,risk:'Critical',color:'#5090C0',
+   desc:'Above 1.5°C warming triggers irreversible ice sheet loss. Full collapse contributes 7m sea level rise over centuries.'},
+  {id:'tp04',name:'West Antarctic Ice Sheet',lat:-78,lng:-90,radiusKm:800,
+   threshold:1.5,status:0.54,risk:'High',color:'#5090C0',
+   desc:'Marine ice sheet instability possibly triggered below 2°C. Contributes 3.3m sea level rise. High uncertainty on timing.'},
+  {id:'tp05',name:'Arctic Sea Ice Loss',lat:85,lng:0,radiusKm:600,
+   threshold:1.5,status:0.88,risk:'Critical',color:'#60A0B0',
+   desc:'Summer Arctic ice disappears by ~2040. Amplifies jet stream disruption, accelerates permafrost thaw, reshapes Northern Hemisphere weather.'},
+  {id:'tp06',name:'Siberian Permafrost',lat:65,lng:110,radiusKm:1200,
+   threshold:2.0,status:0.58,risk:'High',color:'#8A6000',
+   desc:'1,700 GT carbon reservoir. Methane plumes detected at 150+ sites. Non-linear feedback creates irreversible warming acceleration.'},
+  {id:'tp07',name:'Coral Bleaching Cascade',lat:15,lng:145,radiusKm:700,
+   threshold:1.5,status:0.91,risk:'Critical',color:'#C9372C',
+   desc:'99% of tropical reefs experience annual bleaching above 2°C. Ecosystem collapse removes coastal protection for 500M+ people.'},
+  {id:'tp08',name:'Sahel Desertification',lat:14,lng:18,radiusKm:900,
+   threshold:2.5,status:0.47,risk:'Medium',color:'#9A7000',
+   desc:'Sahara expanding south at 48 km/yr. Threatens agriculture across 10 nations. Climate migration toward Mediterranean accelerating.'},
+];
+
+/* ─── EARTH INTELLIGENCE LAYER DATA ────────────────────────────────────── */
+const WILDFIRE_DATA={type:'FeatureCollection',features:[
+  // North America West Coast
+  {type:'Feature',geometry:{type:'Point',coordinates:[-120,38]},properties:{intensity:0.92}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-115,34]},properties:{intensity:0.85}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-118,35]},properties:{intensity:0.88}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-121,40]},properties:{intensity:0.78}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-119,37]},properties:{intensity:0.82}},
+  // Amazon
+  {type:'Feature',geometry:{type:'Point',coordinates:[-60,-10]},properties:{intensity:0.76}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-55,-8]},properties:{intensity:0.72}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-62,-12]},properties:{intensity:0.80}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-57,-5]},properties:{intensity:0.68}},
+  // Sub-Saharan Africa
+  {type:'Feature',geometry:{type:'Point',coordinates:[20,5]},properties:{intensity:0.82}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[25,2]},properties:{intensity:0.78}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[15,10]},properties:{intensity:0.74}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[30,-5]},properties:{intensity:0.70}},
+  // Australia
+  {type:'Feature',geometry:{type:'Point',coordinates:[150,-35]},properties:{intensity:0.84}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[146,-38]},properties:{intensity:0.79}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[152,-32]},properties:{intensity:0.75}},
+  // Siberia
+  {type:'Feature',geometry:{type:'Point',coordinates:[110,60]},properties:{intensity:0.71}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[120,58]},properties:{intensity:0.68}},
+  // Mediterranean
+  {type:'Feature',geometry:{type:'Point',coordinates:[22,38]},properties:{intensity:0.74}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[28,37]},properties:{intensity:0.69}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[14,42]},properties:{intensity:0.65}},
+  // SE Asia
+  {type:'Feature',geometry:{type:'Point',coordinates:[104,0]},properties:{intensity:0.72}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[110,-2]},properties:{intensity:0.68}},
+]};
+
+const DROUGHT_DATA={type:'FeatureCollection',features:[
+  // US Southwest
+  {type:'Feature',geometry:{type:'Point',coordinates:[-112,35]},properties:{intensity:0.90}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-105,37]},properties:{intensity:0.82}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-116,32]},properties:{intensity:0.85}},
+  // Horn of Africa
+  {type:'Feature',geometry:{type:'Point',coordinates:[42,9]},properties:{intensity:0.94}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[38,5]},properties:{intensity:0.88}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[47,3]},properties:{intensity:0.86}},
+  // Central Asia
+  {type:'Feature',geometry:{type:'Point',coordinates:[63,40]},properties:{intensity:0.80}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[60,42]},properties:{intensity:0.76}},
+  // India - Deccan
+  {type:'Feature',geometry:{type:'Point',coordinates:[76,17]},properties:{intensity:0.78}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[78,22]},properties:{intensity:0.74}},
+  // Northern China
+  {type:'Feature',geometry:{type:'Point',coordinates:[110,38]},properties:{intensity:0.72}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[104,36]},properties:{intensity:0.75}},
+  // MENA
+  {type:'Feature',geometry:{type:'Point',coordinates:[45,30]},properties:{intensity:0.88}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[50,25]},properties:{intensity:0.92}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[38,28]},properties:{intensity:0.85}},
+  // Southern Africa
+  {type:'Feature',geometry:{type:'Point',coordinates:[26,-25]},properties:{intensity:0.82}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[20,-22]},properties:{intensity:0.78}},
+  // South America
+  {type:'Feature',geometry:{type:'Point',coordinates:[-65,-22]},properties:{intensity:0.76}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-72,-30]},properties:{intensity:0.80}},
+]};
+
+const SST_DATA={type:'FeatureCollection',features:[
+  // El Niño / Pacific warm pool
+  {type:'Feature',geometry:{type:'Point',coordinates:[-120,5]},properties:{intensity:0.88}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-140,0]},properties:{intensity:0.84}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-160,-5]},properties:{intensity:0.78}},
+  // Indian Ocean warm anomaly
+  {type:'Feature',geometry:{type:'Point',coordinates:[70,0]},properties:{intensity:0.82}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[80,5]},properties:{intensity:0.79}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[85,-5]},properties:{intensity:0.75}},
+  // Atlantic - Gulf of Mexico
+  {type:'Feature',geometry:{type:'Point',coordinates:[-88,25]},properties:{intensity:0.86}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-75,20]},properties:{intensity:0.82}},
+  // North Atlantic warm blob
+  {type:'Feature',geometry:{type:'Point',coordinates:[-35,48]},properties:{intensity:0.72}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-20,42]},properties:{intensity:0.68}},
+  // South China Sea
+  {type:'Feature',geometry:{type:'Point',coordinates:[115,15]},properties:{intensity:0.75}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[125,10]},properties:{intensity:0.71}},
+  // Mediterranean heat anomaly
+  {type:'Feature',geometry:{type:'Point',coordinates:[15,37]},properties:{intensity:0.74}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[25,35]},properties:{intensity:0.70}},
+  // Coral Sea
+  {type:'Feature',geometry:{type:'Point',coordinates:[150,-18]},properties:{intensity:0.84}},
+]};
+
+const METHANE_DATA={type:'FeatureCollection',features:[
+  // Siberian permafrost
+  {type:'Feature',geometry:{type:'Point',coordinates:[110,65]},properties:{intensity:0.88}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[130,70]},properties:{intensity:0.84}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[90,68]},properties:{intensity:0.80}},
+  // Permian Basin (US fracking)
+  {type:'Feature',geometry:{type:'Point',coordinates:[-103,32]},properties:{intensity:0.82}},
+  // Bakken
+  {type:'Feature',geometry:{type:'Point',coordinates:[-103,47]},properties:{intensity:0.74}},
+  // Turkmenistan / Darvaza
+  {type:'Feature',geometry:{type:'Point',coordinates:[58,40]},properties:{intensity:0.91}},
+  // Arctic Ocean shelf
+  {type:'Feature',geometry:{type:'Point',coordinates:[80,75]},properties:{intensity:0.78}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[60,74]},properties:{intensity:0.74}},
+  // Niger Delta
+  {type:'Feature',geometry:{type:'Point',coordinates:[5,5]},properties:{intensity:0.86}},
+  // Saudi oil fields
+  {type:'Feature',geometry:{type:'Point',coordinates:[49,25]},properties:{intensity:0.72}},
+  // Paddy fields / SE Asia rice
+  {type:'Feature',geometry:{type:'Point',coordinates:[105,20]},properties:{intensity:0.68}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[82,22]},properties:{intensity:0.65}},
+  // Amazon wetlands
+  {type:'Feature',geometry:{type:'Point',coordinates:[-60,-5]},properties:{intensity:0.76}},
+  // Canadian oil sands
+  {type:'Feature',geometry:{type:'Point',coordinates:[-111,57]},properties:{intensity:0.78}},
+]};
+
+const VEGETATION_DATA={type:'FeatureCollection',features:[
+  {type:'Feature',geometry:{type:'Point',coordinates:[-60,-5]},properties:{intensity:0.88}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-55,-8]},properties:{intensity:0.82}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[-50,-10]},properties:{intensity:0.78}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[20,5]},properties:{intensity:0.76}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[25,0]},properties:{intensity:0.72}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[16,-5]},properties:{intensity:0.74}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[103,0]},properties:{intensity:0.80}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[110,-2]},properties:{intensity:0.76}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[120,-4]},properties:{intensity:0.72}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[76,17]},properties:{intensity:0.70}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[82,22]},properties:{intensity:0.67}},
+  {type:'Feature',geometry:{type:'Point',coordinates:[30,-5]},properties:{intensity:0.68}},
+]};
+
+/* ─── POLICY ZONES DATA ────────────────────────────────────────────────── */
+const POLICY_ZONES_DATA=[
+  {id:'pol1',name:'EU CSRD Zone',lat:50,lng:10,radiusKm:1500,regime:'CSRD',burden:92,color:'#6366F1',
+   desc:'50,000+ companies · mandatory from 2025 · CBAM adds €50–150/tCO₂ import cost'},
+  {id:'pol2',name:'US SEC Climate Rules',lat:38,lng:-97,radiusKm:1600,regime:'SEC',burden:74,color:'#4F46E5',
+   desc:'Mandatory climate disclosure for public companies · Scope 3 phased for large filers'},
+  {id:'pol3',name:'UK TCFD Mandatory',lat:54,lng:-2,radiusKm:450,regime:'TCFD/UK',burden:82,color:'#7C3AED',
+   desc:'Mandatory TCFD for listed companies · Transition plan required · FCA enforcement active'},
+  {id:'pol4',name:'China National ETS',lat:35,lng:105,radiusKm:1800,regime:'CN-ETS',burden:65,color:'#2563EB',
+   desc:'Phase III expanding to 8 sectors covering 9 GT CO₂ · Price reaching ¥120/tCO₂'},
+  {id:'pol5',name:'APAC Green Finance',lat:1,lng:118,radiusKm:1200,regime:'ISSB/APAC',burden:59,color:'#0891B2',
+   desc:'Singapore, Japan, South Korea implementing green taxonomy · ISSB convergence accelerating'},
+  {id:'pol6',name:'Australia Safeguard Mech.',lat:-28,lng:134,radiusKm:900,regime:'AUS',burden:67,color:'#0369A1',
+   desc:'Expanded safeguard mechanism · 215 facilities covered · A$32/tCO₂ and rising'},
+];
+
+/* ─── FINANCIAL RISK DATA ──────────────────────────────────────────────── */
+const UNINSURABLE_ZONES=[
+  {id:'ui1',name:'Florida Coast',lat:26,lng:-81,radiusKm:400,risk:94,pressure:'Extreme',
+   desc:'Major insurers withdrawing · State-backed insurer of last resort overstretched'},
+  {id:'ui2',name:'Bangladesh Delta',lat:23,lng:90,radiusKm:500,risk:91,pressure:'Extreme',
+   desc:'80% of delta at sea level risk · mortgage market effectively frozen'},
+  {id:'ui3',name:'Australian North QLD',lat:-18,lng:146,radiusKm:350,risk:87,pressure:'Very High',
+   desc:'Cyclone + flood premium increases 200%+ · ICA filing record claims'},
+  {id:'ui4',name:'California Wildfire Zone',lat:37,lng:-121,radiusKm:450,risk:88,pressure:'Extreme',
+   desc:'State Farm, Allstate withdrawals 2023–24 · FAIR plan capacity strained'},
+  {id:'ui5',name:'Po Valley Flood Zone',lat:44.5,lng:12,radiusKm:300,risk:82,pressure:'High',
+   desc:'2023 floods €9B damage · Adriatic coast subsidence accelerating'},
+  {id:'ui6',name:'Jakarta Subsidence',lat:-6.2,lng:106.8,radiusKm:200,risk:93,pressure:'Extreme',
+   desc:'Sinking at 25cm/yr · Capital relocation underway · Coastal zone uninsurable'},
+  {id:'ui7',name:'Miami Metro',lat:25.8,lng:-80.2,radiusKm:250,risk:89,pressure:'Extreme',
+   desc:'King tide flooding now annual · sea level rise 3mm/yr · bond market pricing risk'},
+  {id:'ui8',name:'Horn of Africa Drought',lat:9,lng:42,radiusKm:800,risk:86,pressure:'Very High',
+   desc:'Agricultural insurance collapsed · sovereign debt downgrade risk · IMF support required'},
+];
+
+/* ─── AI RISK EVENTS POOL ───────────────────────────────────────────────── */
+const AI_EVENTS_POOL=[
+  {sev:'critical',icon:'⚠',label:'Tipping Point Alert',msg:'AMOC slowdown probability elevated to 72% under current trajectory',meta:'RAPID · Atlantic Systems'},
+  {sev:'high',icon:'🔥',label:'Physical Risk Signal',msg:'Wildfire season extending 3.1 months — logistics corridor exposure rising',meta:'Western NA · +$2.1B revenue at risk'},
+  {sev:'high',icon:'💧',label:'Water Stress Threshold',msg:'Water stress score exceeded critical threshold at 4 portfolio assets',meta:'Water Risk Pulse · AQUEDUCT'},
+  {sev:'medium',icon:'⚖',label:'Regulatory Acceleration',msg:'EU CBAM Phase 2 expansion confirmed — steel, cement, chemicals added',meta:'Carbon Border Adjustment · Q1 2026'},
+  {sev:'critical',icon:'🌊',label:'Sea Level Acceleration',msg:'Satellite altimetry shows +0.4mm/yr acceleration in Pacific basin',meta:'Copernicus Marine · CDS'},
+  {sev:'high',icon:'📉',label:'Insurance Withdrawal',msg:'Insurance withdrawal probability elevated for 3 coastal infrastructure assets',meta:'Swiss Re Cat Model · 2025 Update'},
+  {sev:'medium',icon:'🏭',label:'Supply Chain Signal',msg:'Flood exposure affecting major logistics corridor — disruption probability 62%',meta:'Supply Chain Intelligence · SCRI'},
+  {sev:'high',icon:'💰',label:'EBITDA Exposure',msg:'Carbon price escalation expected to impact EBITDA by 4.2% under 2°C pathway',meta:'Transition Risk Engine · NGFS P4'},
+  {sev:'medium',icon:'🌡',label:'Thermal Anomaly',msg:'Sea surface temperature anomaly +2.1°C above baseline in North Atlantic',meta:'GHRSST · NOAA Coral Reef Watch'},
+  {sev:'critical',icon:'🏔',label:'Glacier Retreat',msg:'Himalayan glaciers retreating 1.6m/yr — freshwater security risk for 1.9B people',meta:'ICIMOD Cryosphere Monitor'},
+  {sev:'high',icon:'⚡',label:'Transition Risk',msg:'Stranded asset value estimated at $1.4T under orderly 1.5°C transition',meta:'Carbon Tracker · 2025 Report'},
+  {sev:'medium',icon:'🌿',label:'Biodiversity Risk',msg:'Nature-related financial disclosure mandatory across 45 jurisdictions by 2026',meta:'TNFD · Framework v1.0'},
+];
+
+/* ─── SUPPLY CHAIN CASCADE TEMPLATES ────────────────────────────────────── */
+function getSupplyChainCascade(assetName, sector, riskScore){
+  const cascades = {
+    'Energy': [
+      {step:'Primary', event:'Physical damage to facility', impact:`-${(riskScore*0.8).toFixed(0)}% generation capacity`},
+      {step:'Downstream', event:'Grid instability in region', impact:`${(riskScore*0.3).toFixed(0)} industrial customers affected`},
+      {step:'Financial', event:'Revenue loss + insurance claim', impact:`Est. $${(riskScore*2.1).toFixed(0)}M exposure`},
+      {step:'Systemic', event:'Carbon credit invalidation', impact:`Regulatory penalty risk: HIGH`},
+    ],
+    'Manufacturing': [
+      {step:'Primary', event:'Production halt from flood/heat', impact:`-${(riskScore*0.7).toFixed(0)}% quarterly output`},
+      {step:'Upstream', event:'Raw material supply disruption', impact:`${(riskScore*0.4).toFixed(0)} Tier-1 suppliers affected`},
+      {step:'Downstream', event:'Customer delivery failure', impact:`$${(riskScore*3.2).toFixed(0)}M revenue at risk`},
+      {step:'Systemic', event:'Credit rating review triggered', impact:`Cost of capital +0.8% projected`},
+    ],
+    'Logistics': [
+      {step:'Primary', event:'Route disruption / port closure', impact:`-${(riskScore*0.9).toFixed(0)}% throughput capacity`},
+      {step:'Cascade 1', event:'Shipping lane rerouting', impact:`+${(riskScore*0.5).toFixed(0)} days average transit time`},
+      {step:'Cascade 2', event:'Inventory stockout across clients', impact:`${(riskScore*0.6).toFixed(0)} client facilities affected`},
+      {step:'Financial', event:'Force majeure clause invoked', impact:`$${(riskScore*4.1).toFixed(0)}M contract exposure`},
+    ],
+    'Mining': [
+      {step:'Primary', event:'Water stress — extraction halt', impact:`-${(riskScore*0.6).toFixed(0)}% annual production`},
+      {step:'Commodity', event:'Critical mineral supply shock', impact:`Market price +${(riskScore*0.8).toFixed(0)}% projected`},
+      {step:'Industrial', event:'Battery / tech manufacturing slowdown', impact:`EV supply chain delay 6–18 months`},
+      {step:'Financial', event:'Stranded asset re-rating', impact:`NAV reduction: $${(riskScore*5.2).toFixed(0)}M`},
+    ],
+    'default': [
+      {step:'Primary', event:'Climate event impact', impact:`Risk score: ${riskScore}/100`},
+      {step:'Operational', event:'Business continuity disruption', impact:`Recovery timeline: ${Math.round(riskScore/15)} months`},
+      {step:'Financial', event:'Revenue exposure crystallised', impact:`$${(riskScore*2.0).toFixed(0)}M at risk`},
+      {step:'Systemic', event:'Reputational + regulatory signal', impact:`Disclosure obligation triggered`},
+    ],
+  };
+  return cascades[sector] || cascades['default'];
+}
+
+/* ─── EARTH LAYER TOGGLE ────────────────────────────────────────────────── */
+function toggleEarthLayer(type){
+  S.earth[type] = !S.earth[type];
+  const btn = document.getElementById('el-'+type);
+  if(btn) btn.classList.toggle('on', S.earth[type]);
+  updateAllEarthLayers();
+  /* Show/hide corridor legend */
+  document.getElementById('corridor-legend').classList.toggle('on', S.earth.trade);
+}
+
+function updateAllEarthLayers(){
+  if(!map) return;
+  const show=(lid,vis)=>{try{if(map.getLayer(lid))map.setLayoutProperty(lid,'visibility',vis?'visible':'none');}catch(e){}};
+  show('wildfire-layer', S.earth.wildfire);
+  show('drought-layer', S.earth.drought);
+  show('sst-layer', S.earth.sst);
+  show('methane-layer', S.earth.methane);
+  show('vegetation-layer', S.earth.vegetation);
+  /* Tipping points */
+  show('tipping-fill', S.earth.tipping);
+  show('tipping-border', S.earth.tipping);
+  /* Policy */
+  show('policy-fill', S.earth.policy);
+  show('policy-border', S.earth.policy);
+  /* Litigation */
+  show('litigation-fill', S.earth.litigation);
+  /* Financial risk */
+  show('uninsurable-fill', S.earth.uninsurable);
+  show('uninsurable-border', S.earth.uninsurable);
+  show('sovereign-fill', S.earth.sovereign);
+  /* Infrastructure extended */
+  show('mining-layer', S.earth.mining);
+  show('mining-glow', S.earth.mining);
+  /* Trade corridors */
+  ['tc-shipping','tc-lng','tc-commodity','tc-energy','tc-trade','tc-food'].forEach(l=>show(l, S.earth.trade));
+  /* Capital flows */
+  show('capital-flows', S.earth.capital);
+}
+
+/* ─── GeoJSON GENERATORS ────────────────────────────────────────────────── */
+function miningGJ(){
+  return{type:'FeatureCollection',features:MINING_DATA.map(m=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[m.lng,m.lat]},
+    properties:{
+      id:m.id,name:m.name,product:m.product,cap:m.cap,risk:m.risk,color:m.color,
+      radius:6,glowRadius:14,
+      badge:'MINING',
+      detail:`<div style="color:var(--tx1);font-size:10px;line-height:1.7">
+        <div style="color:var(--tx2);font-size:9px">${m.product}</div>
+        <div style="margin-top:4px"><span style="color:var(--tx2)">Capacity</span> <span style="color:${m.color};font-weight:700">${m.cap}</span></div>
+        <div><span style="color:var(--tx2)">Climate Risk</span> <span style="color:${m.risk>75?'var(--rc)':m.risk>55?'var(--rh)':'var(--rl)'};font-weight:700">${m.risk}/100</span></div>
+        <div style="height:3px;background:var(--bd0);margin-top:6px"><div style="height:100%;background:${m.color};width:${m.risk}%"></div></div>
+      </div>`
+    }
+  }))};
+}
+
+function tradeCorridorsGJ(){
+  const features=[];
+  TRADE_CORRIDORS_DATA.forEach(tc=>{
+    let coords=[tc.from];
+    if(tc.via) coords=[...coords,...tc.via];
+    coords.push(tc.to);
+    features.push({
+      type:'Feature',
+      geometry:{type:'LineString',coordinates:coords},
+      properties:{id:tc.id,name:tc.name,vol:tc.vol,risk:tc.risk,type:tc.type,color:tc.color,desc:tc.desc}
+    });
+  });
+  return{type:'FeatureCollection',features};
+}
+
+function tippingZonesGJ(){
+  return{type:'FeatureCollection',features:TIPPING_POINTS_DATA.map(tp=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[tp.lng,tp.lat]},
+    properties:{
+      id:tp.id,name:tp.name,risk:tp.risk,color:tp.color,
+      status:tp.status,threshold:tp.threshold,desc:tp.desc,
+      radiusKm:tp.radiusKm
+    }
+  }))};
+}
+
+function policyZonesGJ(){
+  return{type:'FeatureCollection',features:POLICY_ZONES_DATA.map(p=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[p.lng,p.lat]},
+    properties:{name:p.name,regime:p.regime,burden:p.burden,color:p.color,desc:p.desc,radiusKm:p.radiusKm}
+  }))};
+}
+
+function uninsurableZonesGJ(){
+  return{type:'FeatureCollection',features:UNINSURABLE_ZONES.map(u=>({
+    type:'Feature',
+    geometry:{type:'Point',coordinates:[u.lng,u.lat]},
+    properties:{name:u.name,risk:u.risk,pressure:u.pressure,desc:u.desc,radiusKm:u.radiusKm}
+  }))};
+}
+
+function capitalFlowsGJ(){
+  /* Simulated capital migration from high-risk to resilient corridors */
+  return{type:'FeatureCollection',features:[
+    {type:'Feature',geometry:{type:'LineString',coordinates:[[-81,26],[55.07,24.98]]},
+     properties:{type:'outflow',label:'Coastal FL → Gulf sovereign funds',color:'rgba(201,55,44,0.6)'}},
+    {type:'Feature',geometry:{type:'LineString',coordinates:[[-74,40.7],[4.48,51.89]]},
+     properties:{type:'outflow',label:'US RE → European green bonds',color:'rgba(201,55,44,0.5)'}},
+    {type:'Feature',geometry:{type:'LineString',coordinates:[[4.48,51.89],[103.82,1.26]]},
+     properties:{type:'inflow',label:'EU Capital → APAC Clean Tech',color:'rgba(26,110,68,0.65)'}},
+    {type:'Feature',geometry:{type:'LineString',coordinates:[[-97,38],[120.28,23.03]]},
+     properties:{type:'inflow',label:'US VC → Taiwan Semiconductor',color:'rgba(26,110,68,0.6)'}},
+    {type:'Feature',geometry:{type:'LineString',coordinates:[[118.57,-22.30],[-67.5,-23.5]]},
+     properties:{type:'inflow',label:'Mining capital → Lithium Triangle',color:'rgba(58,143,168,0.6)'}},
+    {type:'Feature',geometry:{type:'LineString',coordinates:[[121.47,31.22],[103.82,1.26]]},
+     properties:{type:'inflow',label:'China Mfg → ASEAN diversification',color:'rgba(26,110,68,0.55)'}},
+  ]};
+}
+
+/* ─── MODE SWITCHING ────────────────────────────────────────────────────── */
+function setMode(mode){
+  S.mode = mode;
+  ['intel','briefing','compare'].forEach(m=>{
+    const btn=document.getElementById('mode-'+m);
+    if(btn) btn.classList.toggle('on', m===mode);
+  });
+  document.getElementById('briefing-panel').classList.toggle('on', mode==='briefing');
+  document.getElementById('compare-panel').classList.toggle('on', mode==='compare');
+  if(mode==='briefing') renderBriefingPanel();
+  if(mode==='compare') renderComparePanel();
+}
+
+/* ─── EXECUTIVE BRIEFING PANEL ──────────────────────────────────────────── */
+function renderBriefingPanel(){
+  const scnMap={'1.5':'1.5°C Net Zero 2050','2.0':'2°C Delayed Transition','3.0':'3°C+ Current Policies'};
+  document.getElementById('bp-scn').textContent = scnMap[S.scenario]||'2°C';
+  document.getElementById('bp-yr').textContent = S.year;
+  document.getElementById('bp-ts').textContent = new Date().toISOString().slice(0,19).replace('T',' ')+'Z';
+
+  const assets = S.assets;
+  if(assets.length===0){
+    document.getElementById('bp-kpis').innerHTML='<div style="grid-column:1/-1;padding:16px;text-align:center;color:var(--tx3);font-size:9px;text-transform:uppercase;letter-spacing:.1em">No assets in portfolio</div>';
+    document.getElementById('bp-threats').innerHTML='<div style="padding:8px 0;color:var(--tx3);font-size:9px">Add assets to portfolio to generate briefing</div>';
+    document.getElementById('bp-actions').innerHTML='';
+    document.getElementById('bp-financial').innerHTML='';
+    return;
+  }
+
+  /* Portfolio stats */
+  let totalRev=0,totalRisk=0,criticalCt=0,highCt=0;
+  const risks=[];
+  assets.forEach(a=>{
+    const r=a.risk||50;
+    totalRev+=a.revenue||0;
+    totalRisk+=r;
+    if(r>=75) criticalCt++;
+    else if(r>=50) highCt++;
+    risks.push({name:a.name,risk:r,sector:a.sector,revenue:a.revenue||0});
+  });
+  risks.sort((a,b)=>b.risk-a.risk);
+  const avgRisk=totalRisk/assets.length;
+  const revAtRisk=totalRev*(avgRisk/100)*0.35;
+  const complianceCost=totalRev*0.028;
+
+  document.getElementById('bp-kpis').innerHTML=`
+    <div class="bp-kpi-cell">
+      <div class="bp-kpi-lbl">Assets</div>
+      <div class="bp-kpi-val" style="color:var(--tx0)">${assets.length}</div>
+      <div class="bp-kpi-sub">${criticalCt} critical</div>
+    </div>
+    <div class="bp-kpi-cell">
+      <div class="bp-kpi-lbl">Avg Risk</div>
+      <div class="bp-kpi-val" style="color:${avgRisk>=75?'var(--rc)':avgRisk>=50?'var(--rh)':'var(--rl)'}">${avgRisk.toFixed(0)}</div>
+      <div class="bp-kpi-sub">out of 100</div>
+    </div>
+    <div class="bp-kpi-cell">
+      <div class="bp-kpi-lbl">Portfolio Rev</div>
+      <div class="bp-kpi-val" style="color:var(--tx0)">$${(totalRev/1000).toFixed(1)}B</div>
+      <div class="bp-kpi-sub">total exposure</div>
+    </div>
+    <div class="bp-kpi-cell">
+      <div class="bp-kpi-lbl">EBITDA Risk</div>
+      <div class="bp-kpi-val" style="color:var(--rh)">$${(revAtRisk/1000).toFixed(1)}B</div>
+      <div class="bp-kpi-sub">at risk by ${S.year}</div>
+    </div>
+  `;
+
+  document.getElementById('bp-financial').innerHTML=`
+    ${[
+      {k:'Rev at Physical Risk',v:`$${(revAtRisk*0.6/1000).toFixed(2)}B`},
+      {k:'Transition Cost Est.',v:`$${(revAtRisk*0.4/1000).toFixed(2)}B`},
+      {k:'Compliance Burden',v:`$${(complianceCost/1e6).toFixed(0)}M/yr`},
+      {k:'Stranded Asset Risk',v:criticalCt>0?'HIGH':'MODERATE'},
+    ].map(r=>`<div class="bp-threat-row" style="padding:6px 0">
+      <div class="bp-threat-body"><div style="font-size:10px;color:var(--tx2)">${r.k}</div></div>
+      <div class="bp-threat-score" style="color:var(--tx0)">${r.v}</div>
+    </div>`).join('')}
+  `;
+
+  document.getElementById('bp-threats').innerHTML=risks.slice(0,5).map((a,i)=>`
+    <div class="bp-threat-row">
+      <div class="bp-threat-rank">${i+1}</div>
+      <div class="bp-threat-body">
+        <div class="bp-threat-name">${a.name}</div>
+        <div class="bp-threat-meta">${a.sector} · $${(a.revenue/1000).toFixed(1)}B revenue</div>
+      </div>
+      <div class="bp-threat-score" style="color:${a.risk>=75?'var(--rc)':a.risk>=50?'var(--rh)':'var(--rl)'}">${a.risk}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('bp-actions').innerHTML=[
+    criticalCt>0?`Initiate stress testing for ${criticalCt} critical-risk assets`:null,
+    avgRisk>60?'Commission physical risk scenario analysis under TCFD framework':null,
+    'Quantify Scope 3 financed emissions across full supply chain',
+    revAtRisk>500?`Develop transition plan for $${(revAtRisk/1000).toFixed(1)}B revenue at risk`:null,
+    'Engage insurance brokers on parametric cover for extreme weather events',
+    'File ISSB IFRS S2 disclosure with physical risk scenario analysis',
+  ].filter(Boolean).map(a=>`<div class="bp-action-row">${a}</div>`).join('');
+
+  document.getElementById('bp-compliance').innerHTML=[
+    {fw:'TCFD',pct:68,color:'var(--acc)'},
+    {fw:'ISSB S2',pct:44,color:'var(--rh)'},
+    {fw:'CSRD',pct:52,color:'var(--rh)'},
+    {fw:'BRSR',pct:71,color:'var(--acc)'},
+  ].map(c=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+    <div style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx2);width:50px">${c.fw}</div>
+    <div style="flex:1;height:3px;background:var(--bd0)"><div style="height:100%;background:${c.color};width:${c.pct}%"></div></div>
+    <div style="font-family:var(--mono);font-size:9px;font-weight:700;color:${c.color};width:28px;text-align:right">${c.pct}%</div>
+  </div>`).join('');
+}
+
+/* ─── SCENARIO COMPARISON PANEL ─────────────────────────────────────────── */
+function renderComparePanel(){
+  document.getElementById('cmp-yr-label').textContent = S.year;
+  const scns=[
+    {label:'1.5°C Net Zero 2050',temp:'1.5°C',color:'#1A6E44',
+     data:{physRisk:38,transRisk:82,compCost:'$94M',carbonPrice:'$130/t',sealevel:'+0.18m',stranded:'$890B',evAtRisk:'14%',gdpImpact:'-1.2%'}},
+    {label:'2°C Delayed Transition',temp:'2°C',color:'#C26000',
+     data:{physRisk:58,transRisk:55,compCost:'$61M',carbonPrice:'$75/t',sealevel:'+0.26m',stranded:'$1.4T',evAtRisk:'22%',gdpImpact:'-2.8%'}},
+    {label:'3°C+ Current Policies',temp:'3°C+',color:'#C9372C',
+     data:{physRisk:84,transRisk:22,compCost:'$18M',carbonPrice:'$12/t',sealevel:'+0.45m',stranded:'$3.9T',evAtRisk:'38%',gdpImpact:'-6.4%'}},
+  ];
+  document.getElementById('cmp-cols').innerHTML=scns.map(s=>`
+    <div class="cmp-scn-col">
+      <div class="cmp-scn-hd" style="color:${s.color}">${s.temp}</div>
+      <div class="cmp-scn-sub">${s.label}</div>
+      ${[
+        {k:'Avg Physical Risk',v:s.data.physRisk+'/100'},
+        {k:'Avg Transition Risk',v:s.data.transRisk+'/100'},
+        {k:'Compliance Cost',v:s.data.compCost},
+        {k:'Carbon Price ('+S.year+')',v:s.data.carbonPrice},
+        {k:'Sea Level Rise',v:s.data.sealevel},
+        {k:'Global Stranded Assets',v:s.data.stranded},
+        {k:'EBITDA at Risk',v:s.data.evAtRisk},
+        {k:'GDP Impact',v:s.data.gdpImpact},
+      ].map(r=>`<div class="cmp-row">
+        <div class="cmp-k">${r.k}</div>
+        <div class="cmp-v" style="color:${s.color}">${r.v}</div>
+      </div>`).join('')}
+    </div>
+  `).join('');
+}
+
+/* ─── AI RISK EVENTS SYSTEM ─────────────────────────────────────────────── */
+let _aiEvtIdx=0;
+let _aiEvtTimer=null;
+function startAIEvents(){
+  showNextAIEvent();
+  _aiEvtTimer=setInterval(()=>{
+    const ctr=document.getElementById('ai-events-container');
+    if(ctr&&ctr.children.length>3){ctr.removeChild(ctr.lastChild);}
+    showNextAIEvent();
+  }, 22000);
+}
+function showNextAIEvent(){
+  const evts=AI_EVENTS_POOL;
+  const e=evts[_aiEvtIdx%evts.length]; _aiEvtIdx++;
+  const el=document.createElement('div');
+  el.className=`ai-evt ${e.sev}`;
+  el.innerHTML=`
+    <div class="ai-evt-icon">${e.icon}</div>
+    <div class="ai-evt-body">
+      <div class="ai-evt-label">${e.label}</div>
+      <div class="ai-evt-msg">${e.msg}</div>
+      <div class="ai-evt-meta">${e.meta}</div>
+    </div>
+    <button class="ai-evt-close" onclick="this.closest('.ai-evt').remove()">✕</button>
+  `;
+  const ctr=document.getElementById('ai-events-container');
+  if(ctr){ctr.insertBefore(el,ctr.firstChild);}
+  setTimeout(()=>{if(el.parentNode){el.style.transition='opacity .5s';el.style.opacity='0';setTimeout(()=>{if(el.parentNode)el.remove();},500);}},18000);
+}
+
+/* ─── SUPPLY CHAIN CASCADE ───────────────────────────────────────────────── */
+function showSupplyChainCascade(asset){
+  if(!asset) return;
+  const cascade=getSupplyChainCascade(asset.name, asset.sector, asset.risk||50);
+  document.getElementById('cascade-body').innerHTML=cascade.map(c=>`
+    <div class="casc-item">
+      <div class="casc-arrow">→</div>
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--tx3);text-transform:uppercase;margin-bottom:2px">${c.step}</div>
+        <div style="font-size:10px;color:var(--tx0);line-height:1.4">${c.event}</div>
+        <div class="casc-impact" style="color:var(--rh)">${c.impact}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('cascade-panel').classList.add('on');
+}
+
+/* ─── TRADE CORRIDOR ANIMATION ───────────────────────────────────────────── */
+let _dashOffset=0;
+let _dashAnim=null;
+function startCorridorAnimation(){
+  if(_dashAnim) cancelAnimationFrame(_dashAnim);
+  function step(){
+    _dashOffset=(_dashOffset+0.3)%16;
+    try{
+      if(map&&map.getLayer('tc-shipping')){
+        ['tc-shipping','tc-lng','tc-commodity','tc-energy','tc-trade','tc-food'].forEach(l=>{
+          if(map.getLayer(l)) map.setPaintProperty(l,'line-dasharray',[3,5]);
+        });
+      }
+    }catch(e){}
+    _dashAnim=requestAnimationFrame(step);
+  }
+  step();
+}
 
 /* ─── API LAYER ─── */
 const API='http://localhost:8000';
@@ -2809,46 +3678,74 @@ let map=null;
 function initMap(){
   map=new maplibregl.Map({
     container:'map',
+    projection:'globe',
     style:{version:8,
       glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
-      sources:{carto:{type:'raster',
-        tiles:['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-               'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
-        tileSize:256,attribution:'© OpenStreetMap contributors © CARTO',maxzoom:19}},
-      layers:[{id:'bg',type:'background',paint:{'background-color':'#0A0A0A'}},
-              {id:'ct',type:'raster',source:'carto',paint:{'raster-opacity':.80}}]},
-    center:[20,22],zoom:2.1,minZoom:1.2,maxZoom:14,attributionControl:false});
+      sources:{
+        nasa:{type:'raster',
+          tiles:['https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_Black_Marble_STV_3Band_nighttime_2022/default/2022-01-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg'],
+          tileSize:256,attribution:'NASA GIBS · Imagery courtesy of NASA Earth Observatory',maxzoom:8},
+        nasaday:{type:'raster',
+          tiles:['https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/2004-08/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg'],
+          tileSize:256,maxzoom:8},
+        labels:{type:'raster',
+          tiles:[
+            'https://a.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png',
+            'https://b.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png',
+            'https://c.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png'
+          ],
+          tileSize:256,maxzoom:19,
+          attribution:'© OpenStreetMap contributors © CARTO'}
+      },
+      layers:[
+        {id:'bg',type:'background',paint:{'background-color':'#000005'}},
+        {id:'day',type:'raster',source:'nasaday',paint:{'raster-opacity':.28}},
+        {id:'ct',type:'raster',source:'nasa',paint:{'raster-opacity':.94}},
+        {id:'lbl',type:'raster',source:'labels',paint:{'raster-opacity':.82}}
+      ]},
+    center:[-50,25],zoom:2.4,minZoom:1.2,maxZoom:14,attributionControl:false});
   map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
   map.on('load',()=>{
+    /* Globe atmosphere — space black with blue limb glow */
+    try {
+      map.setFog({
+        color:'rgba(2,8,30,0.7)',
+        'high-color':'rgba(5,20,80,1.0)',
+        'space-color':'#000005',
+        'star-intensity':0.18,
+        'horizon-blend':0.35
+      });
+    } catch(e){}
+
     map.addSource('rg',{type:'geojson',data:heatGJ()});
     map.addLayer({id:'rh',type:'heatmap',source:'rg',paint:{
       'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
-      'heatmap-intensity':1.6,
+      'heatmap-intensity':2.0,
       'heatmap-color':['interpolate',['linear'],['heatmap-density'],
         0,'rgba(0,0,0,0)',
-        .08,'rgba(31,41,55,.55)',
-        .25,'rgba(180,83,9,.60)',
-        .45,'rgba(146,64,14,.75)',
-        .65,'rgba(220,38,38,.85)',
-        .82,'rgba(127,29,29,.92)',
-        1, 'rgba(100,10,10,1.0)'],
-      'heatmap-radius':56,'heatmap-intensity':2.2,'heatmap-opacity':S.heatmapOpacity}});
+        .06,'rgba(0,80,160,.40)',
+        .20,'rgba(180,83,9,.72)',
+        .40,'rgba(200,64,14,.84)',
+        .62,'rgba(220,38,38,.92)',
+        .82,'rgba(180,20,20,.96)',
+        1, 'rgba(140,8,8,1.0)'],
+      'heatmap-radius':64,'heatmap-opacity':S.heatmapOpacity}});
     map.addSource('lk',{type:'geojson',data:linkGJ()});
     /* Animated supply-chain links — pulsing dashes */
     map.addLayer({id:'lkl-bg',type:'line',source:'lk',
       layout:{'line-cap':'round','line-join':'round'},
-      paint:{'line-color':'rgba(255,255,255,.06)','line-width':2}});
+      paint:{'line-color':'rgba(255,255,255,.10)','line-width':2}});
     map.addLayer({id:'lkl',type:'line',source:'lk',
       layout:{'line-cap':'round','line-join':'round'},
-      paint:{'line-color':'rgba(255,255,255,.28)','line-width':1.2,'line-dasharray':[3,5],'line-opacity':.75}});
+      paint:{'line-color':'rgba(200,220,255,.50)','line-width':1.4,'line-dasharray':[3,5],'line-opacity':.85}});
     map.addSource('as',{type:'geojson',data:assetGJ()});
     /* Outer glow — size = revenue exposure */
     map.addLayer({id:'ash',type:'circle',source:'as',
-      paint:{'circle-radius':['get','glowRadius'],'circle-color':['get','color'],'circle-opacity':.12,'circle-blur':1.6}});
+      paint:{'circle-radius':['get','glowRadius'],'circle-color':['get','color'],'circle-opacity':.22,'circle-blur':1.2}});
     /* Core dot — size = revenue */
     map.addLayer({id:'ac',type:'circle',source:'as',
       paint:{'circle-radius':['get','radius'],'circle-color':['get','color'],
-             'circle-stroke-width':1.8,'circle-stroke-color':'rgba(240,242,245,.7)','circle-opacity':.94}});
+             'circle-stroke-width':2.2,'circle-stroke-color':'rgba(255,255,255,.90)','circle-opacity':1.0}});
     /* Sector tag labels */
     map.addLayer({id:'al',type:'symbol',source:'as',
       layout:{
@@ -3066,6 +3963,293 @@ function initMap(){
     });
     map.on('mouseenter','ac',()=>{if(!S.addMode)map.getCanvas().style.cursor='pointer';});
     map.on('mouseleave','ac',()=>{if(!S.addMode)map.getCanvas().style.cursor='';});
+
+    /* ── MINING ASSETS ── */
+    map.addSource('mining-src',{type:'geojson',data:miningGJ()});
+    map.addLayer({id:'mining-glow',type:'circle',source:'mining-src',layout:{visibility:'none'},
+      paint:{'circle-radius':16,'circle-color':['get','color'],'circle-opacity':.10,'circle-blur':1.2}});
+    map.addLayer({id:'mining-layer',type:'circle',source:'mining-src',layout:{visibility:'none'},
+      paint:{'circle-radius':6,'circle-color':['get','color'],
+             'circle-stroke-width':1.8,'circle-stroke-color':'rgba(255,255,255,.75)','circle-opacity':.95}});
+    /* Mining click */
+    map.on('click','mining-layer',e=>{
+      if(!e.features||!e.features.length)return;
+      e.preventDefault();
+      const p=e.features[0].properties;
+      const popup=document.getElementById('infra-popup');
+      document.getElementById('ipu-badge').textContent='MINING';
+      document.getElementById('ipu-badge').style.cssText=`background:rgba(194,96,0,.12);border-color:rgba(194,96,0,.35);color:#C26000`;
+      document.getElementById('ipu-name').textContent=p.name;
+      document.getElementById('ipu-body').innerHTML=p.detail;
+      const cv=map.getCanvas().getBoundingClientRect();
+      const pt=map.project(e.lngLat);
+      popup.style.left=`${Math.min(cv.width-270,pt.x+14)}px`;
+      popup.style.top=`${Math.max(10,pt.y-90)}px`;
+      popup.classList.add('on');
+    });
+    map.on('mouseenter','mining-layer',()=>{if(!S.addMode)map.getCanvas().style.cursor='pointer';});
+    map.on('mouseleave','mining-layer',()=>{if(!S.addMode)map.getCanvas().style.cursor='';});
+
+    /* ── TRADE CORRIDORS ── */
+    map.addSource('trade-corridors',{type:'geojson',data:tradeCorridorsGJ()});
+    /* Different lines per trade type */
+    const corridorTypeFilter=(type)=>['==',['get','type'],type];
+    map.addLayer({id:'tc-shipping',type:'line',source:'trade-corridors',
+      filter:corridorTypeFilter('shipping'),layout:{visibility:'none','line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#3A8FA8','line-width':1.6,'line-dasharray':[4,6],'line-opacity':.70}});
+    map.addLayer({id:'tc-lng',type:'line',source:'trade-corridors',
+      filter:corridorTypeFilter('lng'),layout:{visibility:'none','line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#A855F7','line-width':1.4,'line-dasharray':[4,8],'line-opacity':.65}});
+    map.addLayer({id:'tc-commodity',type:'line',source:'trade-corridors',
+      filter:corridorTypeFilter('commodity'),layout:{visibility:'none','line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#C26000','line-width':1.4,'line-dasharray':[3,6],'line-opacity':.65}});
+    map.addLayer({id:'tc-energy',type:'line',source:'trade-corridors',
+      filter:corridorTypeFilter('energy'),layout:{visibility:'none','line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#F97316','line-width':1.4,'line-dasharray':[4,7],'line-opacity':.65}});
+    map.addLayer({id:'tc-trade',type:'line',source:'trade-corridors',
+      filter:corridorTypeFilter('trade'),layout:{visibility:'none','line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#60A0F0','line-width':1.2,'line-dasharray':[3,7],'line-opacity':.60}});
+    map.addLayer({id:'tc-food',type:'line',source:'trade-corridors',
+      filter:corridorTypeFilter('food'),layout:{visibility:'none','line-cap':'round','line-join':'round'},
+      paint:{'line-color':'#1A6E44','line-width':1.2,'line-dasharray':[3,6],'line-opacity':.60}});
+
+    /* ── CAPITAL FLOWS ── */
+    map.addSource('capital-src',{type:'geojson',data:capitalFlowsGJ()});
+    map.addLayer({id:'capital-flows',type:'line',source:'capital-src',layout:{visibility:'none','line-cap':'round'},
+      paint:{'line-color':['get','color'],'line-width':1.8,'line-dasharray':[2,5],'line-opacity':.75}});
+
+    /* ── EARTH INTELLIGENCE LAYERS ── */
+    map.addSource('wildfire-src',{type:'geojson',data:WILDFIRE_DATA});
+    map.addLayer({id:'wildfire-layer',type:'heatmap',source:'wildfire-src',layout:{visibility:'none'},
+      paint:{
+        'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
+        'heatmap-intensity':2.0,
+        'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+          0,'rgba(0,0,0,0)',
+          .10,'rgba(200,80,0,.42)',
+          .30,'rgba(220,100,10,.68)',
+          .60,'rgba(240,60,0,.84)',
+          .85,'rgba(200,20,0,.92)',
+          1,'rgba(160,10,0,1.0)'],
+        'heatmap-radius':70,'heatmap-opacity':0.72}});
+
+    map.addSource('drought-src',{type:'geojson',data:DROUGHT_DATA});
+    map.addLayer({id:'drought-layer',type:'heatmap',source:'drought-src',layout:{visibility:'none'},
+      paint:{
+        'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
+        'heatmap-intensity':1.8,
+        'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+          0,'rgba(0,0,0,0)',
+          .12,'rgba(160,100,0,.40)',
+          .35,'rgba(180,120,10,.65)',
+          .65,'rgba(200,100,0,.80)',
+          .88,'rgba(180,70,0,.90)',
+          1,'rgba(160,40,0,1.0)'],
+        'heatmap-radius':90,'heatmap-opacity':0.68}});
+
+    map.addSource('sst-src',{type:'geojson',data:SST_DATA});
+    map.addLayer({id:'sst-layer',type:'heatmap',source:'sst-src',layout:{visibility:'none'},
+      paint:{
+        'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
+        'heatmap-intensity':1.6,
+        'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+          0,'rgba(0,0,0,0)',
+          .10,'rgba(0,80,160,.38)',
+          .35,'rgba(0,120,200,.58)',
+          .65,'rgba(58,143,168,.76)',
+          .88,'rgba(220,100,20,.82)',
+          1,'rgba(200,60,0,.92)'],
+        'heatmap-radius':120,'heatmap-opacity':0.58}});
+
+    map.addSource('methane-src',{type:'geojson',data:METHANE_DATA});
+    map.addLayer({id:'methane-layer',type:'heatmap',source:'methane-src',layout:{visibility:'none'},
+      paint:{
+        'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
+        'heatmap-intensity':1.5,
+        'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+          0,'rgba(0,0,0,0)',
+          .12,'rgba(120,80,0,.38)',
+          .40,'rgba(160,100,0,.60)',
+          .70,'rgba(200,140,0,.75)',
+          1,'rgba(200,120,0,.88)'],
+        'heatmap-radius':100,'heatmap-opacity':0.62}});
+
+    map.addSource('vegetation-src',{type:'geojson',data:VEGETATION_DATA});
+    map.addLayer({id:'vegetation-layer',type:'heatmap',source:'vegetation-src',layout:{visibility:'none'},
+      paint:{
+        'heatmap-weight':['interpolate',['linear'],['get','intensity'],0,0,1,1],
+        'heatmap-intensity':1.8,
+        'heatmap-color':['interpolate',['linear'],['heatmap-density'],
+          0,'rgba(0,0,0,0)',
+          .15,'rgba(20,80,20,.40)',
+          .45,'rgba(40,120,40,.65)',
+          .75,'rgba(80,180,80,.78)',
+          1,'rgba(20,110,44,.90)'],
+        'heatmap-radius':80,'heatmap-opacity':0.64}});
+
+    /* ── TIPPING POINT ZONES ── */
+    map.addSource('tipping-src',{type:'geojson',data:tippingZonesGJ()});
+    map.addLayer({id:'tipping-fill',type:'circle',source:'tipping-src',layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['interpolate',['linear'],['zoom'],
+          1,['*',['/',['get','radiusKm'],111],0.9],
+          4,['*',['/',['get','radiusKm'],111],3.5]],
+        'circle-color':['get','color'],
+        'circle-opacity':0.08,'circle-blur':0.8}});
+    map.addLayer({id:'tipping-border',type:'circle',source:'tipping-src',layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['interpolate',['linear'],['zoom'],
+          1,['*',['/',['get','radiusKm'],111],0.92],
+          4,['*',['/',['get','radiusKm'],111],3.6]],
+        'circle-color':'rgba(0,0,0,0)',
+        'circle-stroke-width':1.5,'circle-stroke-color':['get','color'],
+        'circle-stroke-opacity':0.45,'circle-opacity':0}});
+    /* Tipping point click */
+    map.on('click','tipping-border',e=>{
+      if(!e.features||!e.features.length)return;
+      e.preventDefault();
+      const p=e.features[0].properties;
+      const popup=document.getElementById('infra-popup');
+      document.getElementById('ipu-badge').textContent=p.risk.toUpperCase();
+      const rColor=p.risk==='Critical'?'var(--rc)':p.risk==='High'?'var(--rh)':'var(--rm)';
+      document.getElementById('ipu-badge').style.cssText=`background:rgba(201,55,44,.10);border-color:rgba(201,55,44,.35);color:${rColor}`;
+      document.getElementById('ipu-name').textContent='⚠ '+p.name;
+      document.getElementById('ipu-body').innerHTML=`
+        <div style="color:var(--tx1);font-size:9.5px;line-height:1.6;padding:4px 0">
+          ${p.desc}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd0);border:1px solid var(--bd0);margin-top:8px">
+          <div style="background:var(--bg2);padding:6px 8px">
+            <div style="font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3)">Proximity</div>
+            <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:${rColor}">${Math.round(p.status*100)}%</div>
+          </div>
+          <div style="background:var(--bg2);padding:6px 8px">
+            <div style="font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3)">Threshold</div>
+            <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--tx0)">${p.threshold}°C</div>
+          </div>
+        </div>
+      `;
+      const cv=map.getCanvas().getBoundingClientRect();
+      const pt=map.project(e.lngLat);
+      popup.style.left=`${Math.min(cv.width-270,pt.x+14)}px`;
+      popup.style.top=`${Math.max(10,pt.y-90)}px`;
+      popup.classList.add('on');
+    });
+    map.on('mouseenter','tipping-border',()=>{map.getCanvas().style.cursor='pointer';});
+    map.on('mouseleave','tipping-border',()=>{map.getCanvas().style.cursor='';});
+
+    /* ── POLICY ZONES ── */
+    map.addSource('policy-src',{type:'geojson',data:policyZonesGJ()});
+    map.addLayer({id:'policy-fill',type:'circle',source:'policy-src',layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['interpolate',['linear'],['zoom'],
+          1,['*',['/',['get','radiusKm'],111],0.85],
+          4,['*',['/',['get','radiusKm'],111],3.2]],
+        'circle-color':['get','color'],'circle-opacity':0.07,'circle-blur':0.6}});
+    map.addLayer({id:'policy-border',type:'circle',source:'policy-src',layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['interpolate',['linear'],['zoom'],
+          1,['*',['/',['get','radiusKm'],111],0.88],
+          4,['*',['/',['get','radiusKm'],111],3.3]],
+        'circle-color':'rgba(0,0,0,0)',
+        'circle-stroke-width':1.2,'circle-stroke-color':['get','color'],
+        'circle-stroke-opacity':0.40,'circle-opacity':0}});
+    /* Policy label dots */
+    map.on('click','policy-border',e=>{
+      if(!e.features||!e.features.length)return;
+      e.preventDefault();
+      const p=e.features[0].properties;
+      const popup=document.getElementById('infra-popup');
+      document.getElementById('ipu-badge').textContent=p.regime;
+      document.getElementById('ipu-badge').style.cssText='background:rgba(99,102,241,.10);border-color:rgba(99,102,241,.35);color:#6366F1';
+      document.getElementById('ipu-name').textContent='⚖ '+p.name;
+      document.getElementById('ipu-body').innerHTML=`
+        <div style="color:var(--tx1);font-size:9.5px;line-height:1.6;padding:4px 0">${p.desc}</div>
+        <div style="margin-top:8px;padding:6px 8px;background:var(--bg2);border:1px solid var(--bd1)">
+          <div style="font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--tx3)">Compliance Burden</div>
+          <div style="height:4px;background:var(--bd0);margin-top:5px"><div style="height:100%;background:#6366F1;width:${p.burden}%"></div></div>
+          <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:#6366F1;margin-top:3px">${p.burden}/100</div>
+        </div>
+      `;
+      const cv=map.getCanvas().getBoundingClientRect();
+      const pt=map.project(e.lngLat);
+      popup.style.left=`${Math.min(cv.width-270,pt.x+14)}px`;
+      popup.style.top=`${Math.max(10,pt.y-90)}px`;
+      popup.classList.add('on');
+    });
+    map.on('mouseenter','policy-border',()=>{map.getCanvas().style.cursor='pointer';});
+    map.on('mouseleave','policy-border',()=>{map.getCanvas().style.cursor='';});
+
+    /* ── LITIGATION ZONES ── */
+    map.addSource('litigation-src',{type:'geojson',data:{type:'FeatureCollection',features:[
+      {type:'Feature',geometry:{type:'Point',coordinates:[-4,52]},properties:{radiusKm:550,name:'UK/EU Litigation Hub',risk:'High'}},
+      {type:'Feature',geometry:{type:'Point',coordinates:[-100,40]},properties:{radiusKm:1400,name:'US Climate Litigation',risk:'Critical'}},
+      {type:'Feature',geometry:{type:'Point',coordinates:[135,-28]},properties:{radiusKm:900,name:'Australia Climate Law',risk:'High'}},
+      {type:'Feature',geometry:{type:'Point',coordinates:[5,52]},properties:{radiusKm:800,name:'Dutch/German Climate Cases',risk:'High'}},
+    ]}});
+    map.addLayer({id:'litigation-fill',type:'circle',source:'litigation-src',layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['interpolate',['linear'],['zoom'],
+          1,['*',['/',['get','radiusKm'],111],0.80],
+          4,['*',['/',['get','radiusKm'],111],3.0]],
+        'circle-color':'#7C3AED','circle-opacity':0.06,'circle-blur':0.6}});
+
+    /* ── UNINSURABLE ZONES ── */
+    map.addSource('uninsurable-src',{type:'geojson',data:uninsurableZonesGJ()});
+    map.addLayer({id:'uninsurable-fill',type:'circle',source:'uninsurable-src',layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['interpolate',['linear'],['zoom'],
+          1,['*',['/',['get','radiusKm'],111],0.85],
+          4,['*',['/',['get','radiusKm'],111],3.2]],
+        'circle-color':'#C9372C','circle-opacity':0.10,'circle-blur':0.5}});
+    map.addLayer({id:'uninsurable-border',type:'circle',source:'uninsurable-src',layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['interpolate',['linear'],['zoom'],
+          1,['*',['/',['get','radiusKm'],111],0.88],
+          4,['*',['/',['get','radiusKm'],111],3.3]],
+        'circle-color':'rgba(0,0,0,0)',
+        'circle-stroke-width':1.5,'circle-stroke-color':'#C9372C',
+        'circle-stroke-opacity':0.55,'circle-opacity':0}});
+    map.on('click','uninsurable-border',e=>{
+      if(!e.features||!e.features.length)return;
+      e.preventDefault();
+      const p=e.features[0].properties;
+      const popup=document.getElementById('infra-popup');
+      document.getElementById('ipu-badge').textContent='UNINSURABLE';
+      document.getElementById('ipu-badge').style.cssText='background:rgba(201,55,44,.12);border-color:rgba(201,55,44,.40);color:var(--rc)';
+      document.getElementById('ipu-name').textContent='🚫 '+p.name;
+      document.getElementById('ipu-body').innerHTML=`
+        <div style="color:var(--tx1);font-size:9.5px;line-height:1.6;padding:4px 0">${p.desc}</div>
+        <div style="margin-top:6px;font-size:9px;color:var(--tx2)">Insurance Pressure: <span style="color:var(--rc);font-weight:700">${p.pressure}</span></div>
+        <div style="font-size:9px;color:var(--tx2)">Risk Score: <span style="font-family:var(--mono);color:var(--rc);font-weight:700">${p.risk}/100</span></div>
+      `;
+      const cv=map.getCanvas().getBoundingClientRect();
+      const pt=map.project(e.lngLat);
+      popup.style.left=`${Math.min(cv.width-270,pt.x+14)}px`;
+      popup.style.top=`${Math.max(10,pt.y-90)}px`;
+      popup.classList.add('on');
+    });
+    map.on('mouseenter','uninsurable-border',()=>{map.getCanvas().style.cursor='pointer';});
+    map.on('mouseleave','uninsurable-border',()=>{map.getCanvas().style.cursor='';});
+
+    /* ── SOVEREIGN VULNERABILITY ── */
+    map.addSource('sovereign-src',{type:'geojson',data:{type:'FeatureCollection',features:[
+      {type:'Feature',geometry:{type:'Point',coordinates:[47,8]},properties:{radiusKm:600,name:'East Africa Sovereign',risk:89}},
+      {type:'Feature',geometry:{type:'Point',coordinates:[120,14]},properties:{radiusKm:500,name:'Pacific Island States',risk:94}},
+      {type:'Feature',geometry:{type:'Point',coordinates:[80,8]},properties:{radiusKm:400,name:'South Asia Coastal',risk:86}},
+      {type:'Feature',geometry:{type:'Point',coordinates:[-72,19]},properties:{radiusKm:300,name:'Caribbean Sovereigns',risk:88}},
+      {type:'Feature',geometry:{type:'Point',coordinates:[25,-10]},properties:{radiusKm:500,name:'Southern Africa',risk:78}},
+    ]}});
+    map.addLayer({id:'sovereign-fill',type:'circle',source:'sovereign-src',layout:{visibility:'none'},
+      paint:{
+        'circle-radius':['interpolate',['linear'],['zoom'],
+          1,['*',['/',['get','radiusKm'],111],0.82],
+          4,['*',['/',['get','radiusKm'],111],3.1]],
+        'circle-color':'#8A3020','circle-opacity':0.09,'circle-blur':0.7}});
+
+    /* ── INIT AI EVENTS ── */
+    setTimeout(startAIEvents, 4000);
+
     document.getElementById('mload').style.display='none';
   });
 }
@@ -3684,6 +4868,10 @@ function buildStaticMacro(country){
 
 /* ─── ASSET PANEL ─── */
 function pickAsset(id){
+  /* Show supply chain cascade if asset selected */
+  const pickedAsset = S.assets.find(a=>a.id===id);
+  if(pickedAsset) setTimeout(()=>showSupplyChainCascade(pickedAsset), 400);
+
   if(S.selId===id){S.selId=null;document.getElementById('rp').classList.remove('on');}
   else{S.selId=id;const a=S.assets.find(x=>x.id===id);if(a)drawPanel(a);}
   renderList();
