@@ -1,0 +1,3156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>National Climate Digital Twin — Climactix Global</title>
+<meta name="description" content="Sovereign-grade national climate digital twin. Living AI-powered replica of a country's climate, infrastructure, economy, and systemic risk exposure."/>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
+<script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   CLIMACTIX GLOBAL — NATIONAL CLIMATE DIGITAL TWIN
+   NASA Earth Observatory · Palantir Gotham · Mission Control Grade
+   Deep Space Black · NASA Institutional Blue · IBM Plex Mono telemetry
+   Atmospheric precision. Maximum information density. Zero decoration.
+═══════════════════════════════════════════════════════════════════════ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  /* ── Deep Space Backgrounds ── */
+  --bg0: #000000;
+  --bg1: #04080F;
+  --bg2: #080E1A;
+  --bg3: #0C1424;
+  --bg4: #101A2E;
+  --bghov: #060C18;
+
+  /* ── Aerospace Borders — ultra-thin light overlay ── */
+  --bd0: rgba(255,255,255,0.045);
+  --bd1: rgba(255,255,255,0.075);
+  --bd2: rgba(255,255,255,0.12);
+  --bd3: rgba(255,255,255,0.20);
+
+  /* ── Blue accent borders ── */
+  --bda: rgba(27,110,235,0.28);
+  --bda2: rgba(27,110,235,0.12);
+
+  /* ── Text — star-white hierarchy ── */
+  --tx0: #ECF2FF;
+  --tx1: rgba(236,242,255,0.58);
+  --tx2: rgba(236,242,255,0.34);
+  --tx3: rgba(236,242,255,0.18);
+  --tx4: rgba(236,242,255,0.06);
+
+  /* ── Risk palette ── */
+  --rc: #E84C4C;   /* critical — alert red */
+  --rh: #D97706;   /* high — amber */
+  --rm: #856404;   /* medium */
+  --rl: #1A8A55;   /* low — green */
+
+  /* ── Scenario colors ── */
+  --s15: #1A8A55;
+  --s20: #D97706;
+  --s30: #E84C4C;
+  --sngfs: #5B8AF5;
+
+  /* ── NASA Primary Accent — Institutional Blue ── */
+  --acc:  #1B6EEB;
+  --acc2: rgba(27,110,235,0.08);
+  --acch: #1452B0;
+
+  /* ── NASA Cyan — data values ── */
+  --cyan:  #56CCF2;
+  --cyan2: rgba(86,204,242,0.08);
+
+  /* ── Alert amber (risk only, not primary UI) ── */
+  --amber:  #E87722;
+  --amber2: rgba(232,119,34,0.07);
+
+  --pos: #2ECC80;
+  --neg: #E84C4C;
+  --neu: rgba(236,242,255,0.38);
+
+  --nav-h: 48px;
+  --sbar-h: 40px;
+  --tl-h: 58px;
+
+  --font: 'Space Grotesk','Inter',system-ui,sans-serif;
+  --mono: 'IBM Plex Mono',monospace;
+}
+
+[data-theme="light"] {
+  --bg0:#F0F4FF;--bg1:#FFFFFF;--bg2:#EEF2FF;
+  --bg3:#E4ECFF;--bg4:#D8E4FF;--bghov:#EAF0FF;
+  --bd0:rgba(0,20,80,0.06);--bd1:rgba(0,20,80,0.10);
+  --bd2:rgba(0,20,80,0.16);--bd3:rgba(0,20,80,0.26);
+  --tx0:#060E28;--tx1:rgba(6,14,40,0.62);
+  --tx2:rgba(6,14,40,0.40);--tx3:rgba(6,14,40,0.22);
+  --tx4:rgba(6,14,40,0.08);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg0);color:var(--tx0);
+  -webkit-font-smoothing:antialiased;
+  font-size:12px;line-height:1.5;
+  overflow:hidden;height:100vh;
+}
+
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--bg1)}
+::-webkit-scrollbar-thumb{background:var(--bd2)}
+
+/* ═══════════════════════ NAV — NASA MISSION CONTROL ═══════════════════════ */
+.nav{
+  position:fixed;top:0;left:0;right:0;
+  height:var(--nav-h);
+  background:rgba(0,0,0,0.97);
+  border-bottom:1px solid var(--bda);
+  z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;
+}
+/* subtle blue scan line at bottom of nav */
+.nav::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--acc),transparent);
+  opacity:0.35;pointer-events:none;
+}
+.nav-brand{
+  display:flex;align-items:center;gap:10px;
+  text-decoration:none;color:var(--tx0);flex-shrink:0;
+}
+.nav-brand img{height:22px;width:auto}
+.nav-brand-text{line-height:1}
+.nav-brand-text .b1{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--tx0);text-transform:uppercase;font-family:var(--mono)}
+.nav-brand-text .b2{font-size:7.5px;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--acc);margin-top:3px;display:block;font-family:var(--mono)}
+.nav-sep{width:1px;height:20px;background:var(--bda);flex-shrink:0}
+.nav-badge{
+  display:flex;align-items:center;gap:7px;padding:0 14px;flex-shrink:0;
+}
+.nav-badge-label{
+  font-size:9px;font-weight:700;letter-spacing:.20em;text-transform:uppercase;
+  color:var(--cyan);font-family:var(--mono);
+}
+.nav-badge-tag{
+  font-size:7.5px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  padding:2px 7px;border:1px solid rgba(27,110,235,0.35);color:var(--acc);
+  font-family:var(--mono);background:rgba(27,110,235,0.06);
+}
+.nav-links{display:flex;align-items:center;flex:1;padding:0 8px}
+.nav-links a{
+  display:flex;align-items:center;height:var(--nav-h);
+  padding:0 9px;
+  font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.10em;
+  color:var(--tx2);text-decoration:none;
+  border-bottom:2px solid transparent;
+  transition:color .12s,border-color .12s;
+  font-family:var(--mono);
+}
+.nav-links a:hover{color:var(--tx0)}
+.nav-links a.cur{color:var(--cyan);border-bottom-color:var(--acc)}
+.nav-pill{
+  font-size:7px;font-weight:700;letter-spacing:.12em;
+  padding:1px 5px;margin-left:4px;
+  background:rgba(27,110,235,0.12);color:var(--acc);
+  border:1px solid rgba(27,110,235,0.28);font-family:var(--mono);
+}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nav-live{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 10px;border:1px solid rgba(46,204,128,0.22);
+  background:rgba(46,204,128,0.05);
+}
+.nav-live-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--pos);flex-shrink:0;
+  animation:livepulse 2.4s ease-in-out infinite;
+}
+@keyframes livepulse{0%,100%{opacity:.3}50%{opacity:1}}
+.nav-live-text{font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--pos)}
+.nav-theme{
+  background:none;border:1px solid var(--bd2);cursor:pointer;
+  color:var(--tx2);padding:4px 9px;font-size:10px;transition:all .12s;
+}
+.nav-theme:hover{border-color:var(--bda);color:var(--acc)}
+@media(max-width:920px){.nav-links{display:none}}
+
+/* ═══════════════════════ STATS BAR ═══════════════════════ */
+#sbar{
+  position:fixed;
+  top:var(--nav-h);left:0;right:0;
+  height:var(--sbar-h);
+  background:rgba(0,0,0,0.96);
+  border-bottom:1px solid var(--bda);
+  z-index:900;
+  display:flex;align-items:center;
+  overflow-x:auto;flex-shrink:0;
+}
+#sbar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(27,110,235,0.15),transparent);
+  pointer-events:none;
+}
+#sbar::-webkit-scrollbar{height:2px}
+
+.sb-country{
+  display:flex;align-items:center;gap:8px;
+  padding:0 14px;height:100%;
+  border-right:1px solid var(--bd1);flex-shrink:0;min-width:0;
+}
+.sb-flag{font-size:15px;line-height:1;flex-shrink:0}
+.sb-country-name{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--tx0);white-space:nowrap;font-family:var(--mono);text-transform:uppercase}
+.sb-country-sub{font-size:8px;color:var(--acc);letter-spacing:.14em;white-space:nowrap;margin-top:2px;text-transform:uppercase;font-family:var(--mono)}
+
+.sb-scn{
+  display:flex;align-items:center;gap:7px;
+  padding:0 12px;height:100%;
+  border-right:1px solid var(--bd1);flex-shrink:0;
+}
+.sb-scn-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sb-scn-label{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;
+  font-family:var(--mono);
+}
+
+.sb-item{
+  display:flex;align-items:baseline;gap:5px;
+  padding:0 11px;height:100%;
+  border-right:1px solid var(--bd0);flex-shrink:0;
+}
+.sb-lbl{
+  font-size:8.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.12em;color:var(--tx3);white-space:nowrap;font-family:var(--mono);
+}
+.sb-val{
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  white-space:nowrap;color:var(--cyan);
+}
+.sb-val.neg{color:var(--neg)}
+.sb-val.warn{color:var(--rh)}
+.sb-val.pos{color:var(--pos)}
+.sb-val.acc{color:var(--acc)}
+.sb-unit{font-size:8px;color:var(--tx3);font-family:var(--mono)}
+
+.sb-right{
+  margin-left:auto;display:flex;align-items:center;gap:0;flex-shrink:0;
+  border-left:1px solid var(--bda);
+}
+.sb-yr{
+  display:flex;align-items:center;gap:8px;
+  padding:0 16px;height:100%;
+}
+.sb-yr-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--tx3);font-family:var(--mono)}
+.sb-yr-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--acc);letter-spacing:-.01em}
+
+/* ═══════════════════════ ROOT WORKSPACE ═══════════════════════ */
+#dt{
+  position:fixed;
+  top:calc(var(--nav-h) + var(--sbar-h));
+  left:0;right:0;
+  bottom:var(--tl-h);
+  display:flex;
+}
+
+/* ═══════════════════════ LEFT PANEL ═══════════════════════ */
+#lp{
+  width:262px;flex-shrink:0;
+  background:var(--bg1);
+  border-right:1px solid var(--bd1);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.lp-tabs{
+  display:flex;border-bottom:1px solid var(--bd1);flex-shrink:0;
+}
+.lp-tab{
+  flex:1;padding:0;
+  background:transparent;border:none;border-bottom:2px solid transparent;
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;
+  color:var(--tx2);cursor:pointer;transition:all .12s;
+  height:32px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);
+}
+.lp-tab:hover{color:var(--tx0)}
+.lp-tab.on{color:var(--cyan);border-bottom-color:var(--acc)}
+.lp-body{flex:1;overflow-y:auto;overflow-x:hidden}
+.lp-body::-webkit-scrollbar{width:2px}
+
+/* Panel block */
+.pb{border-bottom:1px solid var(--bd0);flex-shrink:0}
+.ph{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;
+  font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--tx2);font-family:var(--mono);
+}
+.ph-left{display:flex;align-items:center;gap:6px}
+.ph svg{flex-shrink:0;opacity:.5}
+.ph-badge{
+  font-size:8px;font-weight:700;padding:1px 5px;
+  background:rgba(27,110,235,0.10);border:1px solid rgba(27,110,235,0.22);
+  color:var(--acc);font-family:var(--mono);letter-spacing:.08em;
+}
+
+/* Country Selector */
+.cs-search{
+  padding:8px 10px;border-bottom:1px solid var(--bd0);
+}
+.cs-input{
+  width:100%;background:var(--bg2);border:1px solid var(--bd1);
+  color:var(--tx0);font-size:11px;font-family:var(--font);
+  padding:6px 10px;outline:none;transition:border-color .12s;
+}
+.cs-input:focus{border-color:var(--acc)}
+.cs-input::placeholder{color:var(--tx3)}
+.cs-list{max-height:140px;overflow-y:auto}
+.cs-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 14px;
+  border-bottom:1px solid var(--bd0);
+  cursor:pointer;transition:background .10s;
+}
+.cs-item:hover{background:var(--bghov)}
+.cs-item.sel{background:var(--bg3);border-left:2px solid var(--amber);padding-left:12px}
+.cs-flag{font-size:14px;flex-shrink:0}
+.cs-name{font-size:12px;font-weight:600;color:var(--tx0)}
+.cs-risk{
+  margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:700;
+}
+
+/* Scenario Buttons */
+.scb{
+  width:100%;text-align:left;
+  padding:10px 14px;
+  background:transparent;border:0;
+  border-bottom:1px solid var(--bd0);
+  border-left:2px solid transparent;
+  cursor:pointer;transition:background .12s;
+}
+.scb:hover{background:var(--bghov)}
+.scb.on{background:var(--bg3)}
+.scb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.scb-temp{
+  font-family:var(--mono);font-size:14px;font-weight:700;
+  letter-spacing:-.02em;line-height:1;
+}
+.scb-tag{
+  font-size:8px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;padding:2px 7px;border:1px solid;
+  font-family:var(--mono);
+}
+.scb-name{font-size:11px;font-weight:600;color:var(--tx1);margin-bottom:2px}
+.scb-desc{font-size:9px;color:var(--tx2);line-height:1.5;margin-bottom:6px}
+.scb-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--bd0);border:1px solid var(--bd0);
+}
+.scb-cell{background:var(--bg2);padding:4px 6px}
+.scb-cell-lbl{font-size:8.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);margin-bottom:1px;font-family:var(--mono)}
+.scb-cell-val{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--tx1)}
+
+/* Layer Buttons */
+.lyb{
+  width:100%;display:flex;align-items:center;gap:9px;
+  padding:8px 14px;
+  background:transparent;border:0;
+  border-bottom:1px solid var(--bd0);
+  text-align:left;cursor:pointer;transition:background .12s;
+}
+.lyb:hover{background:var(--bghov)}
+.lyb.on{background:var(--bg3)}
+.lyb-ico{
+  width:24px;height:24px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--bd1);background:var(--bg2);
+  transition:all .12s;font-size:10px;
+}
+.lyb.on .lyb-ico{border-color:var(--bd3);background:var(--bg4)}
+.lyb-text{min-width:0}
+.lyb-name{font-size:11px;font-weight:600;color:var(--tx1)}
+.lyb.on .lyb-name{color:var(--tx0)}
+.lyb-desc{font-size:9px;color:var(--tx2);margin-top:1px}
+.lyb-badge{
+  margin-left:auto;flex-shrink:0;
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  padding:1px 5px;letter-spacing:.06em;
+}
+
+/* Toggles */
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:8px 14px}
+.tog-lbl{font-size:11px;color:var(--tx1)}
+.tog-lbl-sub{font-size:9px;color:var(--tx2);margin-top:1px}
+.tog{
+  position:relative;width:28px;height:15px;
+  background:var(--bd2);border:none;cursor:pointer;
+  transition:background .2s;flex-shrink:0;border-radius:8px;
+}
+.tog.on{background:var(--acc)}
+.tog::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:11px;height:11px;border-radius:50%;
+  background:#fff;transition:transform .2s;
+}
+.tog.on::after{transform:translateX(13px)}
+
+/* KPI mini grid */
+.kpi-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--bd0);
+}
+.kpi-cell{
+  padding:8px 12px;
+  border-right:1px solid var(--bd0);
+  border-bottom:1px solid var(--bd0);
+}
+.kpi-cell:nth-child(even){border-right:0}
+.kpi-lbl{font-size:8.5px;text-transform:uppercase;letter-spacing:.10em;color:var(--tx2);margin-bottom:3px;font-family:var(--mono)}
+.kpi-val{font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.kpi-val.red{color:var(--rc)}
+.kpi-val.amber{color:var(--amber)}
+.kpi-val.green{color:var(--pos)}
+.kpi-val.cyan{color:var(--acc)}
+.kpi-delta{font-size:9px;color:var(--tx2);margin-top:2px}
+
+/* Legend */
+.legend{display:flex;gap:8px;flex-wrap:wrap;padding:8px 14px;flex-shrink:0;border-top:1px solid var(--bd0)}
+.leg{display:flex;align-items:center;gap:4px}
+.leg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.leg-lbl{font-size:9px;color:var(--tx2)}
+
+/* ═══════════════════════ MAP AREA ═══════════════════════ */
+#mw{flex:1;position:relative;overflow:hidden;background:#000}
+#map{position:absolute;inset:0;z-index:1}
+
+.maplibregl-canvas{background:#000005!important}
+.maplibregl-map{background:#000005!important}
+.maplibregl-ctrl-attrib{background:rgba(0,0,5,0.7)!important;color:rgba(255,255,255,0.3)!important;font-size:9px!important}
+.maplibregl-ctrl-attrib a{color:rgba(255,255,255,0.4)!important}
+
+/* Loading — NASA style */
+#mload{
+  position:absolute;inset:0;background:rgba(0,0,4,0.96);
+  display:flex;align-items:center;justify-content:center;z-index:10;
+}
+.ml-inner{text-align:center}
+.ml-logo{
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.30em;
+  text-transform:uppercase;color:var(--acc);margin-bottom:20px;
+}
+.ml-label{
+  font-size:8.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.24em;color:var(--tx3);margin-bottom:14px;font-family:var(--mono);
+}
+.ml-track{width:240px;height:1px;background:rgba(27,110,235,0.15);margin:0 auto;overflow:hidden;position:relative}
+.ml-track::before{content:'';position:absolute;inset:0;background:rgba(27,110,235,0.06)}
+.ml-bar{height:100%;width:25%;background:var(--acc);animation:mlscan 2s ease-in-out infinite;box-shadow:0 0 8px var(--acc)}
+@keyframes mlscan{0%,100%{opacity:.3;transform:translateX(-100%)}50%{opacity:1;transform:translateX(700%)}}
+.ml-sub{font-size:8px;color:var(--tx3);margin-top:12px;letter-spacing:.14em;text-transform:uppercase;font-family:var(--mono)}
+
+/* Map overlays */
+.mwm{
+  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  pointer-events:none;text-align:center;
+}
+.mwm-1{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,244,248,0.22);font-family:var(--mono)}
+.mwm-2{font-size:8px;color:rgba(240,244,248,0.13);letter-spacing:.10em;text-transform:uppercase;margin-top:2px;font-family:var(--mono)}
+
+/* Mode switcher */
+#mode-sw{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  z-index:20;display:flex;gap:1px;
+  background:rgba(0,0,6,0.92);
+  border:1px solid var(--bda);
+  border-radius:0;
+}
+.mode-btn{
+  background:transparent;border:none;
+  padding:5px 16px;
+  font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--tx2);cursor:pointer;transition:all .12s;font-family:var(--mono);
+}
+.mode-btn:hover{color:var(--tx0);background:rgba(27,110,235,0.06)}
+.mode-btn.on{color:var(--cyan);background:rgba(27,110,235,0.10);border-bottom:2px solid var(--acc)}
+
+/* Country tooltip on map */
+#country-tip{
+  position:absolute;z-index:30;pointer-events:none;
+  background:rgba(3,5,8,0.96);border:1px solid var(--bd2);
+  padding:10px 14px;min-width:200px;display:none;
+}
+#country-tip.on{display:block}
+.ct-name{font-size:13px;font-weight:700;color:var(--tx0);margin-bottom:6px}
+.ct-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+.ct-lbl{font-size:9px;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;font-family:var(--mono)}
+.ct-val{font-family:var(--mono);font-size:12px;font-weight:700}
+
+/* Gradient legend */
+#grad-legend{
+  position:absolute;bottom:38px;right:14px;z-index:20;
+  background:rgba(0,2,8,0.92);border:1px solid var(--bda);padding:10px 12px;
+}
+.gl-title{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--acc);margin-bottom:6px;font-family:var(--mono)}
+.gl-bar{
+  height:4px;width:120px;
+  background:linear-gradient(to right,var(--rl),var(--rm),var(--rh),var(--rc));
+}
+.gl-ticks{display:flex;justify-content:space-between;margin-top:4px}
+.gl-tick{font-size:7.5px;color:var(--tx3);font-family:var(--mono)}
+
+/* Executive Briefing Overlay */
+#briefing-overlay{
+  position:absolute;inset:0;z-index:50;
+  background:rgba(0,0,0,0.96);
+  display:none;overflow-y:auto;
+}
+#briefing-overlay.on{display:block}
+.bp-close{
+  position:fixed;top:calc(var(--nav-h)+var(--sbar-h)+14px);right:18px;z-index:60;
+  background:rgba(3,5,8,0.95);border:1px solid var(--bd2);
+  padding:6px 14px;font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.10em;color:var(--tx1);cursor:pointer;transition:all .12s;
+  font-family:var(--mono);
+}
+.bp-close:hover{border-color:var(--bd3);color:var(--tx0)}
+.bp-inner{padding:32px;max-width:1200px;margin:0 auto}
+.bp-eyebrow{
+  font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:6px;font-family:var(--mono);
+}
+.bp-title{
+  font-size:28px;font-weight:700;letter-spacing:-.04em;color:var(--tx0);
+  margin-bottom:4px;
+}
+.bp-sub{font-size:12px;color:var(--tx2);margin-bottom:28px}
+.bp-kpi-row{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--bd1);margin-bottom:24px;
+}
+.bp-kpi{
+  padding:20px 18px;border-right:1px solid var(--bd1);
+}
+.bp-kpi:last-child{border-right:0}
+.bp-kpi-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--tx2);margin-bottom:8px;font-family:var(--mono)}
+.bp-kpi-val{font-family:var(--mono);font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:4px}
+.bp-kpi-desc{font-size:11px;color:var(--tx2)}
+.bp-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.bp-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.bp-card{background:var(--bg1);border:1px solid var(--bd1);padding:18px}
+.bp-card-hd{
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--tx2);margin-bottom:14px;padding-bottom:8px;
+  border-bottom:1px solid var(--bd0);font-family:var(--mono);
+}
+.bp-risk-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--bd0);
+}
+.bp-risk-row:last-child{border-bottom:0}
+.bp-risk-lbl{font-size:11px;color:var(--tx1)}
+.bp-risk-val{font-family:var(--mono);font-size:12px;font-weight:700}
+.bp-bar-wrap{margin-bottom:8px}
+.bp-bar-label{display:flex;justify-content:space-between;margin-bottom:4px}
+.bp-bar-name{font-size:10px;color:var(--tx1)}
+.bp-bar-pct{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--tx1)}
+.bp-bar-track{height:3px;background:var(--bd1)}
+.bp-bar-fill{height:100%;transition:width .6s ease}
+.bp-action-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--bd0);
+}
+.bp-action-item:last-child{border-bottom:0}
+.bp-action-num{
+  font-family:var(--mono);font-size:10px;font-weight:700;color:var(--amber);
+  flex-shrink:0;width:18px;text-align:center;padding-top:1px;
+}
+.bp-action-text{font-size:11px;color:var(--tx1);line-height:1.5}
+
+/* AI Copilot Panel — slides up from bottom-left, doesn't block globe center */
+#ai-panel{
+  position:absolute;bottom:0;left:0;
+  z-index:25;width:360px;
+  background:rgba(0,2,8,0.97);
+  border-top:1px solid var(--bda);
+  border-right:1px solid var(--bda);
+  display:none;
+  transform:translateY(100%);
+  transition:transform .22s ease;
+}
+#ai-panel.on{display:flex;flex-direction:column;transform:translateY(0)}
+.aip-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 13px;border-bottom:1px solid var(--bda2);flex-shrink:0;
+  background:rgba(27,110,235,0.04);
+}
+.aip-title{
+  display:flex;align-items:center;gap:7px;
+  font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--cyan);
+  font-family:var(--mono);
+}
+.aip-dot{width:5px;height:5px;border-radius:50%;background:var(--acc);flex-shrink:0;animation:livepulse 2s infinite}
+.aip-close{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:12px;transition:color .12s}
+.aip-close:hover{color:var(--tx0)}
+.aip-messages{
+  height:200px;overflow-y:auto;padding:10px 13px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.aip-messages::-webkit-scrollbar{width:2px}
+.aip-msg{font-size:11px;line-height:1.6}
+.aip-msg.user{color:var(--cyan);text-align:right;font-family:var(--mono);font-size:10px}
+.aip-msg.system{color:var(--tx1)}
+.aip-msg.system .aip-label{
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--acc);margin-bottom:4px;font-family:var(--mono);
+}
+.aip-queries{
+  display:flex;flex-direction:column;gap:0;
+  border-top:1px solid var(--bda2);border-bottom:1px solid var(--bda2);
+  flex-shrink:0;
+}
+.aip-query-btn{
+  padding:5px 13px;background:transparent;border:0;
+  text-align:left;font-size:10px;color:var(--tx2);cursor:pointer;
+  transition:all .12s;border-bottom:1px solid var(--bd0);
+}
+.aip-query-btn:hover{background:rgba(27,110,235,0.06);color:var(--cyan)}
+.aip-query-btn:last-child{border-bottom:0}
+.aip-input-row{
+  display:flex;gap:0;flex-shrink:0;border-top:1px solid var(--bda2);
+}
+.aip-input{
+  flex:1;background:transparent;border:0;
+  color:var(--tx0);font-size:11px;font-family:var(--font);
+  padding:9px 12px;outline:none;
+}
+.aip-input::placeholder{color:var(--tx3)}
+.aip-send{
+  padding:0 14px;background:transparent;border-left:1px solid var(--bda2);
+  font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;
+  color:var(--acc);cursor:pointer;transition:all .12s;font-family:var(--mono);
+}
+.aip-send:hover{background:rgba(27,110,235,0.08);color:var(--cyan)}
+
+/* Infrastructure Cascade Panel */
+#cascade-panel{
+  position:absolute;top:52px;right:14px;z-index:25;
+  width:270px;background:rgba(0,2,8,0.97);border:1px solid var(--bda);
+  display:none;
+}
+#cascade-panel.on{display:block}
+.casc-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;border-bottom:1px solid var(--bda2);
+  font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--acc);
+  font-family:var(--mono);background:rgba(27,110,235,0.04);
+}
+.casc-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:9px 13px;border-bottom:1px solid var(--bd0);
+}
+.casc-arrow{
+  font-size:10px;color:var(--rh);margin-top:1px;flex-shrink:0;font-family:var(--mono);
+}
+.casc-text{font-size:10px;color:var(--tx1);line-height:1.5}
+.casc-impact{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--neg);margin-top:2px}
+
+/* ═══════════════════════ RIGHT PANEL ═══════════════════════ */
+#rp{
+  width:280px;flex-shrink:0;
+  background:var(--bg1);
+  border-left:1px solid var(--bd1);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.rp-tabs{
+  display:flex;border-bottom:1px solid var(--bd1);flex-shrink:0;
+}
+.rp-tab{
+  flex:1;padding:0;
+  background:transparent;border:none;border-bottom:2px solid transparent;
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--tx2);cursor:pointer;transition:all .12s;
+  height:32px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);
+}
+.rp-tab:hover{color:var(--tx0)}
+.rp-tab.on{color:var(--cyan);border-bottom-color:var(--acc)}
+#rpi{flex:1;overflow-y:auto;overflow-x:hidden}
+#rpi::-webkit-scrollbar{width:2px}
+
+/* Risk score ring */
+.score-ring-wrap{padding:16px 14px;border-bottom:1px solid var(--bd0);text-align:center}
+.score-ring-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--tx2);margin-bottom:10px;font-family:var(--mono)}
+
+/* Risk breakdown bars */
+.risk-row{padding:8px 14px;border-bottom:1px solid var(--bd0)}
+.risk-row-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.risk-row-label{font-size:11px;color:var(--tx1)}
+.risk-row-val{font-family:var(--mono);font-size:11px;font-weight:700}
+.risk-bar-track{height:2px;background:var(--bd1)}
+.risk-bar-fill{height:100%;transition:width .5s ease}
+
+/* Data table in right panel */
+.rp-table{width:100%;border-collapse:collapse}
+.rp-table th{
+  font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;
+  color:var(--tx2);padding:6px 12px;border-bottom:1px solid var(--bd1);
+  text-align:left;font-family:var(--mono);
+}
+.rp-table td{
+  font-size:11px;color:var(--tx1);
+  padding:7px 12px;border-bottom:1px solid var(--bd0);
+}
+.rp-table td.mono{font-family:var(--mono);font-size:11px;font-weight:700}
+.rp-table tr:hover td{background:var(--bghov)}
+
+/* Infra asset item */
+.infra-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-bottom:1px solid var(--bd0);
+  cursor:pointer;transition:background .10s;
+}
+.infra-item:hover{background:var(--bghov)}
+.infra-icon{
+  width:22px;height:22px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--bd1);background:var(--bg2);font-size:10px;
+}
+.infra-meta{flex:1;min-width:0}
+.infra-name{font-size:11px;font-weight:600;color:var(--tx0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.infra-type{font-size:9px;color:var(--tx2);margin-top:1px}
+.infra-score{text-align:right;flex-shrink:0}
+.infra-val{font-family:var(--mono);font-size:13px;font-weight:700;line-height:1}
+.infra-risk{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:2px;font-family:var(--mono)}
+
+/* Section header within right panel */
+.rp-sec{
+  padding:8px 12px;border-bottom:1px solid var(--bd0);
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--tx2);background:var(--bg0);font-family:var(--mono);
+}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:calc(var(--tl-h)+16px);left:50%;transform:translateX(-50%) translateY(10px);
+  z-index:200;
+  background:var(--bg3);border:1px solid var(--bd2);
+  padding:7px 18px;
+  font-size:10px;font-weight:600;letter-spacing:.05em;color:var(--tx0);
+  opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;
+  font-family:var(--mono);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ═══════════════════════ TIMELINE BAR ═══════════════════════ */
+#tlbar{
+  position:fixed;bottom:0;left:0;right:0;
+  height:var(--tl-h);
+  background:rgba(0,0,0,0.97);
+  border-top:1px solid var(--bda);
+  z-index:900;
+  display:flex;align-items:center;gap:0;
+  padding:0;overflow:hidden;
+}
+#tlbar::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(27,110,235,0.3),transparent);
+  pointer-events:none;
+}
+.tl-ctrl{
+  display:flex;align-items:center;gap:6px;
+  padding:0 16px;height:100%;
+  background:transparent;border:0;border-right:1px solid var(--bd1);
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.10em;
+  color:var(--tx1);cursor:pointer;transition:all .12s;flex-shrink:0;
+  font-family:var(--mono);
+}
+.tl-ctrl:hover{background:var(--bghov);color:var(--tx0)}
+.tl-ctrl svg{width:10px;height:10px}
+.tl-rst{
+  display:flex;align-items:center;justify-content:center;
+  width:38px;height:100%;
+  background:transparent;border:0;border-right:1px solid var(--bd1);
+  color:var(--tx2);cursor:pointer;transition:all .12s;flex-shrink:0;
+}
+.tl-rst:hover{background:var(--bghov);color:var(--tx0)}
+.tl-rst svg{width:13px;height:13px}
+#tltrack{
+  flex:1;height:100%;position:relative;cursor:pointer;
+  display:flex;align-items:center;padding:0 16px;
+}
+.tl-rail{
+  width:100%;height:2px;background:var(--bd1);position:relative;cursor:pointer;
+}
+.tl-fill{
+  height:100%;background:var(--acc);transition:width .4s linear;pointer-events:none;
+}
+.tl-thumb{
+  position:absolute;top:-5px;
+  width:12px;height:12px;border:2px solid var(--cyan);background:var(--bg0);
+  border-radius:0;transition:left .4s linear;cursor:grab;transform:translateX(-50%);
+}
+.tl-markers{
+  position:absolute;bottom:0;left:16px;right:16px;
+  display:flex;justify-content:space-between;pointer-events:none;
+}
+.tl-marker{font-size:8px;color:var(--tx3);font-family:var(--mono);letter-spacing:.04em}
+.tl-marker.major{color:var(--tx2)}
+#tl-year-box{
+  display:flex;flex-direction:column;align-items:flex-end;
+  padding:0 16px;border-left:1px solid var(--bda);height:100%;
+  justify-content:center;flex-shrink:0;
+}
+#tl-year-lbl{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--tx2);font-family:var(--mono)}
+#tl-year-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--acc);letter-spacing:-.02em;line-height:1;margin-top:1px}
+
+/* Scenario strip in timeline */
+.tl-scn-strip{
+  display:flex;align-items:center;gap:1px;
+  padding:0 12px;border-right:1px solid var(--bd1);height:100%;flex-shrink:0;
+}
+.tl-scn-btn{
+  padding:4px 10px;background:transparent;border:1px solid var(--bd1);
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--tx2);cursor:pointer;transition:all .12s;font-family:var(--mono);
+}
+.tl-scn-btn:hover{border-color:var(--bd2);color:var(--tx0)}
+.tl-scn-btn.on{color:var(--cyan);border-color:var(--acc);background:rgba(27,110,235,0.10)}
+
+/* Tipping point marker */
+.tl-event{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:1px;background:rgba(201,55,44,0.35);height:24px;
+  pointer-events:none;
+}
+.tl-event::after{
+  content:attr(data-label);
+  position:absolute;top:-18px;left:4px;
+  font-size:7px;color:rgba(201,55,44,0.6);white-space:nowrap;
+  font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;
+}
+
+/* ═══════════════════════ MISC ═══════════════════════ */
+.divider{height:1px;background:var(--bd0)}
+.tag{
+  display:inline-block;
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;
+  padding:2px 7px;border:1px solid;
+}
+.tag.red{color:var(--rc);border-color:rgba(201,55,44,0.3);background:rgba(201,55,44,0.07)}
+.tag.amber{color:var(--rh);border-color:rgba(217,119,6,0.3);background:rgba(217,119,6,0.07)}
+.tag.green{color:var(--pos);border-color:rgba(26,110,68,0.3);background:rgba(26,110,68,0.07)}
+.tag.cyan{color:var(--acc);border-color:rgba(58,143,168,0.3);background:rgba(58,143,168,0.07)}
+.tag.blue{color:var(--sngfs);border-color:rgba(58,95,168,0.3);background:rgba(58,95,168,0.07)}
+
+/* Anim */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fade-in{animation:fadeIn .2s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════ -->
+<nav class="nav">
+  <a class="nav-brand" href="index.html">
+    <img src="Climatix_logo.png" alt="Climactix"/>
+    <div class="nav-brand-text">
+      <span class="b1">Climactix</span>
+      <span class="b2">Global Intelligence</span>
+    </div>
+  </a>
+  <div class="nav-sep"></div>
+  <div class="nav-badge">
+    <span class="nav-badge-label">Digital Twin</span>
+    <span class="nav-badge-tag">Sovereign Grade</span>
+  </div>
+  <div class="nav-sep"></div>
+  <nav class="nav-links">
+    <a href="dashboard.html">ESG Terminal</a>
+    <a href="simulation.html">Risk Engine</a>
+    <a href="digital-twin.html" class="cur">Digital Twin <span class="nav-pill">NEW</span></a>
+    <a href="climactix-ai.html">AI Engine</a>
+    <a href="leaderboard.html">Rankings</a>
+    <a href="community.html">Community</a>
+    <a href="terminal.html">Terminal</a>
+  </nav>
+  <div class="nav-right">
+    <div class="nav-live">
+      <div class="nav-live-dot"></div>
+      <span class="nav-live-text">Live Intel</span>
+    </div>
+    <button class="nav-theme" onclick="toggleTheme()" title="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     STATS BAR
+════════════════════════════════════════════ -->
+<div id="sbar">
+  <div class="sb-country">
+    <span class="sb-flag" id="sb-flag">🌍</span>
+    <div>
+      <div class="sb-country-name" id="sb-cname">Select a Nation</div>
+      <div class="sb-country-sub" id="sb-cregion">National Climate Digital Twin</div>
+    </div>
+  </div>
+  <div class="sb-scn">
+    <div class="sb-scn-dot" id="sb-scn-dot" style="background:var(--s20)"></div>
+    <span class="sb-scn-label" id="sb-scn-label" style="color:var(--s20)">2.0°C</span>
+  </div>
+  <div class="sb-item">
+    <span class="sb-lbl">GDP at Risk</span>
+    <span class="sb-val warn" id="sb-gdp">—</span>
+    <span class="sb-unit">$B</span>
+  </div>
+  <div class="sb-item">
+    <span class="sb-lbl">Infra Vuln.</span>
+    <span class="sb-val neg" id="sb-infra">—</span>
+  </div>
+  <div class="sb-item">
+    <span class="sb-lbl">Pop. Exposed</span>
+    <span class="sb-val warn" id="sb-pop">—</span>
+    <span class="sb-unit">M</span>
+  </div>
+  <div class="sb-item">
+    <span class="sb-lbl">Water Stress</span>
+    <span class="sb-val" id="sb-water">—</span>
+  </div>
+  <div class="sb-item">
+    <span class="sb-lbl">Migration</span>
+    <span class="sb-val" id="sb-migration">—</span>
+    <span class="sb-unit">M proj.</span>
+  </div>
+  <div class="sb-item">
+    <span class="sb-lbl">Insur. Retreat</span>
+    <span class="sb-val" id="sb-insur">—</span>
+  </div>
+  <div class="sb-item">
+    <span class="sb-lbl">Sovereign Risk</span>
+    <span class="sb-val" id="sb-sovr">—</span>
+  </div>
+  <div class="sb-right">
+    <div class="sb-yr">
+      <span class="sb-yr-lbl">Sim Year</span>
+      <span class="sb-yr-val" id="sb-year">2035</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MAIN WORKSPACE
+════════════════════════════════════════════ -->
+<div id="dt">
+
+  <!-- LEFT PANEL -->
+  <div id="lp">
+    <div class="lp-tabs">
+      <button class="lp-tab on" id="tab-nations" onclick="setLpTab('nations')">Nations</button>
+      <button class="lp-tab" id="tab-scenarios" onclick="setLpTab('scenarios')">Scenario</button>
+      <button class="lp-tab" id="tab-layers" onclick="setLpTab('layers')">Layers</button>
+      <button class="lp-tab" id="tab-infra" onclick="setLpTab('infra')">Infra</button>
+    </div>
+
+    <!-- NATIONS TAB -->
+    <div class="lp-body" id="lpb-nations">
+      <div class="pb">
+        <div class="ph">
+          <div class="ph-left">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="5" cy="5" r="4"/><path d="M5 1c0 0-2 2-2 4s2 4 2 4"/><path d="M1 5h8"/></svg>
+            Nation Intelligence
+          </div>
+          <span class="ph-badge" id="nation-count">0 nations</span>
+        </div>
+        <div class="cs-search">
+          <input class="cs-input" id="nation-search" placeholder="Search nation..." oninput="filterNations(this.value)"/>
+        </div>
+        <div class="cs-list" id="nation-list"></div>
+      </div>
+
+      <!-- National KPIs (shown when country selected) -->
+      <div class="pb" id="nation-kpis" style="display:none">
+        <div class="ph"><div class="ph-left">National Intelligence</div></div>
+        <div class="kpi-grid" id="nation-kpi-grid"></div>
+      </div>
+
+      <!-- Risk summary bars -->
+      <div class="pb" id="nation-risks" style="display:none">
+        <div class="ph"><div class="ph-left">Risk Profile</div></div>
+        <div id="nation-risk-bars"></div>
+        <div class="legend" id="nation-legend">
+          <div class="leg"><div class="leg-dot" style="background:var(--rl)"></div><span class="leg-lbl">Low</span></div>
+          <div class="leg"><div class="leg-dot" style="background:var(--rm)"></div><span class="leg-lbl">Medium</span></div>
+          <div class="leg"><div class="leg-dot" style="background:var(--rh)"></div><span class="leg-lbl">High</span></div>
+          <div class="leg"><div class="leg-dot" style="background:var(--rc)"></div><span class="leg-lbl">Critical</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENARIOS TAB -->
+    <div class="lp-body" id="lpb-scenarios" style="display:none">
+      <div class="pb">
+        <div class="ph"><div class="ph-left">Climate Pathways</div></div>
+        <div id="scn-buttons"></div>
+      </div>
+      <div class="pb">
+        <div class="ph"><div class="ph-left">Projection Horizon</div></div>
+        <div class="tog-row">
+          <div>
+            <div class="tog-lbl">Extended to 2100</div>
+            <div class="tog-lbl-sub">Full century projection</div>
+          </div>
+          <button class="tog on" id="tog-2100" onclick="toggleExtended(this)"></button>
+        </div>
+        <div class="tog-row">
+          <div>
+            <div class="tog-lbl">Tipping Points</div>
+            <div class="tog-lbl-sub">Mark threshold events</div>
+          </div>
+          <button class="tog on" id="tog-tips" onclick="toggleTipping(this)"></button>
+        </div>
+        <div class="tog-row">
+          <div>
+            <div class="tog-lbl">Policy Adjustment</div>
+            <div class="tog-lbl-sub">NDC compliance modelling</div>
+          </div>
+          <button class="tog" id="tog-ndc" onclick="toggleNDC(this)"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYERS TAB -->
+    <div class="lp-body" id="lpb-layers" style="display:none">
+      <div class="pb">
+        <div class="ph"><div class="ph-left">Physical Climate</div></div>
+        <div id="climate-layer-btns"></div>
+      </div>
+      <div class="pb">
+        <div class="ph"><div class="ph-left">Economic Intelligence</div></div>
+        <div id="econ-layer-btns"></div>
+      </div>
+      <div class="pb">
+        <div class="ph"><div class="ph-left">Policy &amp; Regulatory</div></div>
+        <div id="policy-layer-btns"></div>
+      </div>
+    </div>
+
+    <!-- INFRA TAB -->
+    <div class="lp-body" id="lpb-infra" style="display:none">
+      <div class="pb">
+        <div class="ph"><div class="ph-left">Infrastructure Assets</div></div>
+        <div id="infra-layer-btns"></div>
+      </div>
+      <div class="pb">
+        <div class="ph"><div class="ph-left">Trade &amp; Energy Corridors</div></div>
+        <div id="corridor-layer-btns"></div>
+      </div>
+    </div>
+
+  </div><!-- /lp -->
+
+  <!-- MAP AREA -->
+  <div id="mw">
+    <div id="map"></div>
+    <div id="mload">
+      <div class="ml-inner">
+        <div class="ml-logo">Climactix · Digital Twin</div>
+        <div class="ml-label">Initialising National Climate Digital Twin</div>
+        <div class="ml-track"><div class="ml-bar"></div></div>
+        <div class="ml-sub" id="load-status">Loading Earth intelligence layer...</div>
+      </div>
+    </div>
+
+    <!-- Mode switcher -->
+    <div id="mode-sw">
+      <button class="mode-btn on" id="mode-globe" onclick="setMode('globe')">Globe</button>
+      <button class="mode-btn" id="mode-infra" onclick="setMode('infra')">Infra</button>
+      <button class="mode-btn" id="mode-econ" onclick="setMode('econ')">Economic</button>
+      <button class="mode-btn" id="mode-policy" onclick="setMode('policy')">Policy</button>
+      <button class="mode-btn" id="mode-briefing" onclick="setMode('briefing')">Briefing</button>
+    </div>
+
+    <!-- Country tooltip -->
+    <div id="country-tip">
+      <div class="ct-name" id="ct-name"></div>
+      <div class="ct-row">
+        <span class="ct-lbl">GDP at Risk</span>
+        <span class="ct-val" id="ct-gdp" style="color:var(--rh)"></span>
+      </div>
+      <div class="ct-row">
+        <span class="ct-lbl">Climate Risk</span>
+        <span class="ct-val" id="ct-risk" style="color:var(--rc)"></span>
+      </div>
+      <div class="ct-row">
+        <span class="ct-lbl">Infra Vuln.</span>
+        <span class="ct-val" id="ct-infra" style="color:var(--tx1)"></span>
+      </div>
+    </div>
+
+    <!-- AI Copilot Panel -->
+    <div id="ai-panel">
+      <div class="aip-head">
+        <div class="aip-title">
+          <div class="aip-dot"></div>
+          Climate AI Copilot
+        </div>
+        <button class="aip-close" onclick="toggleAI()">✕</button>
+      </div>
+      <div class="aip-messages" id="aip-msgs">
+        <div class="aip-msg system">
+          <div class="aip-label">Climactix Intelligence · Sovereign AI</div>
+          Select a nation and ask any climate-risk, infrastructure, or economic question. I analyse sovereign-grade exposure data across 2025–2100.
+        </div>
+      </div>
+      <div class="aip-queries" id="aip-queries"></div>
+      <div class="aip-input-row">
+        <input class="aip-input" id="aip-input" placeholder="Ask the AI copilot..." onkeydown="if(event.key==='Enter')sendAI()"/>
+        <button class="aip-send" onclick="sendAI()">Send</button>
+      </div>
+    </div>
+
+    <!-- Infrastructure Cascade Panel -->
+    <div id="cascade-panel">
+      <div class="casc-hd">
+        <span>Infrastructure Cascade</span>
+        <button style="background:none;border:none;color:var(--tx3);cursor:pointer;font-size:10px" onclick="document.getElementById('cascade-panel').classList.remove('on')">✕</button>
+      </div>
+      <div id="cascade-body"></div>
+    </div>
+
+    <!-- Gradient legend -->
+    <div id="grad-legend">
+      <div class="gl-title" id="gl-title">Climate Risk</div>
+      <div class="gl-bar" id="gl-bar"></div>
+      <div class="gl-ticks"><span class="gl-tick">Low</span><span class="gl-tick">Med</span><span class="gl-tick">High</span><span class="gl-tick">Critical</span></div>
+    </div>
+
+    <!-- NASA star-field canvas (behind MapLibre) -->
+    <canvas id="space-canvas" style="position:absolute;inset:0;z-index:0;pointer-events:none"></canvas>
+
+    <!-- Map watermark -->
+    <div class="mwm">
+      <div class="mwm-1">National Climate Digital Twin · Climactix Global Intelligence</div>
+      <div class="mwm-2">IPCC AR6 · NGFS Phase IV · NASA EarthData · World Bank · IMF</div>
+    </div>
+
+    <!-- AI Copilot toggle button -->
+    <button id="ai-toggle-btn" onclick="toggleAI()" style="
+      position:absolute;bottom:0;left:0;z-index:26;
+      display:flex;align-items:center;gap:7px;
+      padding:7px 16px;background:rgba(0,2,8,0.96);border-top:1px solid var(--bda);border-right:1px solid var(--bda);
+      font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+      color:var(--acc);cursor:pointer;transition:all .12s;font-family:var(--mono);
+    ">
+      <span style="width:5px;height:5px;border-radius:50%;background:var(--acc);display:inline-block;flex-shrink:0;animation:livepulse 2s infinite"></span>
+      AI Copilot
+    </button>
+
+    <!-- Cascade toggle button -->
+    <button onclick="showCascade()" style="
+      position:absolute;bottom:0;left:130px;z-index:26;
+      padding:7px 16px;background:rgba(0,2,8,0.96);border-top:1px solid var(--bda);border-right:1px solid var(--bda);
+      font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+      color:var(--tx2);cursor:pointer;transition:all .12s;font-family:var(--mono);
+    " onmouseenter="this.style.color='var(--cyan)'" onmouseleave="this.style.color='var(--tx2)'">
+      Cascade
+    </button>
+
+  </div><!-- /mw -->
+
+  <!-- RIGHT PANEL -->
+  <div id="rp">
+    <div class="rp-tabs">
+      <button class="rp-tab on" id="rpt-intel" onclick="setRpTab('intel')">Intel</button>
+      <button class="rp-tab" id="rpt-econ" onclick="setRpTab('econ')">Economic</button>
+      <button class="rp-tab" id="rpt-infra" onclick="setRpTab('infra')">Infra</button>
+      <button class="rp-tab" id="rpt-policy" onclick="setRpTab('policy')">Policy</button>
+    </div>
+    <div id="rpi"></div>
+  </div>
+
+</div><!-- /dt -->
+
+<!-- ════════════════════════════════════════════
+     EXECUTIVE BRIEFING OVERLAY
+════════════════════════════════════════════ -->
+<div id="briefing-overlay">
+  <button class="bp-close" onclick="setMode('globe')">✕ Exit Briefing</button>
+  <div class="bp-inner" id="bp-inner"></div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     TIMELINE BAR
+════════════════════════════════════════════ -->
+<div id="tlbar">
+  <button class="tl-ctrl" id="playbtn" onclick="togglePlay()">
+    <svg id="pico" viewBox="0 0 10 10" fill="currentColor"><path d="M2 1.5l7 3.5-7 3.5z"/></svg>
+    <svg id="paico" viewBox="0 0 10 10" fill="currentColor" style="display:none"><rect x="2" y="1.5" width="2.2" height="7" rx=".3"/><rect x="5.8" y="1.5" width="2.2" height="7" rx=".3"/></svg>
+    <span id="plbl">Play</span>
+  </button>
+  <button class="tl-rst" onclick="resetTL()" title="Reset to 2025">
+    <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <path d="M2.5 6.5A4 4 0 1 1 6.5 10.5"/><path d="M2.5 3.5v3h3"/>
+    </svg>
+  </button>
+
+  <!-- Scenario quick-select in timeline -->
+  <div class="tl-scn-strip">
+    <button class="tl-scn-btn" id="tscn-15" onclick="setScenario('1.5')">1.5°C</button>
+    <button class="tl-scn-btn on" id="tscn-20" onclick="setScenario('2.0')">2.0°C</button>
+    <button class="tl-scn-btn" id="tscn-30" onclick="setScenario('3.0')">3.0°C</button>
+    <button class="tl-scn-btn" id="tscn-ngfs" onclick="setScenario('ngfs')">NGFS</button>
+  </div>
+
+  <div id="tltrack">
+    <div class="tl-rail" id="tl-rail" onclick="scrubTL(event)">
+      <div class="tl-fill" id="tl-fill" style="width:13.3%"></div>
+      <div class="tl-thumb" id="tl-thumb" style="left:13.3%"></div>
+      <!-- Tipping point markers (injected by JS) -->
+      <div id="tl-events"></div>
+    </div>
+    <div class="tl-markers" id="tl-markers"></div>
+  </div>
+
+  <div id="tl-year-box">
+    <div id="tl-year-lbl">Simulation Year</div>
+    <div id="tl-year-val">2035</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════ -->
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+'use strict';
+/* ── Global state ── */
+const S = {
+  scenario: '2.0',
+  year: 2035,
+  country: null,        /* selected sovereign ISO */
+  layer: 'climate',     /* active map layer */
+  mode: 'globe',
+  lpTab: 'nations',
+  rpTab: 'intel',
+  aiOpen: false,
+  playing: false,
+  timer: null,
+  extended: true,       /* 2100 or 2050 */
+  showTipping: true,
+  ndcAdjust: false,
+  infra: { ports: false, airports: false, power: false, rail: false, water: false, data: false },
+  corridors: { shipping: false, energy: false, food: false, minerals: false },
+  climateLayers: { flood: false, drought: false, heat: false, wildfire: false, sealevel: false, methane: false },
+  econLayers: { gdp: true, insurance: false, migration: false, stranded: false },
+  policyLayers: { carbon: false, csrd: false, cbam: false, litigation: false },
+};
+
+/* ── Helpers ── */
+function el(id){ return document.getElementById(id); }
+function toggleTheme(){
+  const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('cx-theme', t);
+}
+function showToast(msg, dur=3000){
+  const t = el('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+/* ── Year / timeline constants ── */
+const TL_START = 2025;
+const TL_END_SHORT = 2050;
+const TL_END_LONG  = 2100;
+function tlEnd(){ return S.extended ? TL_END_LONG : TL_END_SHORT; }
+function yearPct(y){ return (y - TL_START) / (tlEnd() - TL_START); }
+function pctYear(p){ return Math.round(TL_START + p * (tlEnd() - TL_START)); }
+</script>
+
+<!-- Part 2: Sovereign data engine + left panel -->
+<script>
+/* ════════════════════════════════════════════════════════════════
+   SOVEREIGN DATABASE
+   All data is research-calibrated for sovereign-grade analysis.
+   GDP $B (2024 USD) · Population M · Exposed % · Risk 0–100
+════════════════════════════════════════════════════════════════ */
+const SOVEREIGNS = {
+  USA:   { name:'United States',  flag:'🇺🇸', iso:'USA', region:'North America',
+            coords:[-98,38], bbox:[-125,24,-66,49],
+            gdp:27360, pop:335, area:9.8,
+            climateRisk:62, infraScore:74, migrationPressure:28,
+            waterStress:38, foodRisk:18, energyTransBurden:42,
+            exposedPop:{ '1.5':14, '2.0':28, '3.0':58 },
+            gdpAtRisk:{ '1.5':1.8, '2.0':4.2, '3.0':10.8 },  /* % of GDP */
+            infraVuln:{ '1.5':22, '2.0':38, '3.0':67 },
+            insuranceRetreating: true, sovereignRisk:'MODERATE',
+            hotspots:['Florida Coastline','Texas Gulf Coast','California Wildfire Belt','Midwest Drought Zone'],
+            criticalInfra:['Port of Los Angeles','Texas Power Grid','Mississippi River Locks','Gulf Refinery Corridor'],
+            adaptCost:{ '2.0':3200, '3.0':7800 },
+            strandedAssets:{ '2.0':1800, '3.0':4200 },
+            risks:{ heat:70, flood:55, drought:45, wildfire:72, hurricane:65, sealevel:60, waterStress:38 },
+            macro:{ debtGdp:122, credRating:'AA+', carbonPrice:18, netZero:2050 } },
+
+  CHN:   { name:'China', flag:'🇨🇳', iso:'CHN', region:'East Asia',
+            coords:[104,35], bbox:[73,18,135,54],
+            gdp:18560, pop:1412, area:9.6,
+            climateRisk:72, infraScore:68, migrationPressure:55,
+            waterStress:75, foodRisk:48, energyTransBurden:58,
+            exposedPop:{ '1.5':180, '2.0':340, '3.0':620 },
+            gdpAtRisk:{ '1.5':2.2, '2.0':6.8, '3.0':16.4 },
+            infraVuln:{ '1.5':35, '2.0':58, '3.0':82 },
+            insuranceRetreating: true, sovereignRisk:'HIGH',
+            hotspots:['Pearl River Delta','Yangtze Flood Plain','North China Plain','Shandong Drought Zone'],
+            criticalInfra:['Shanghai Port','Three Gorges Dam','Beijing–Shanghai Rail','South China Sea Grid'],
+            adaptCost:{ '2.0':5400, '3.0':12800 },
+            strandedAssets:{ '2.0':3200, '3.0':8600 },
+            risks:{ heat:78, flood:80, drought:68, wildfire:35, hurricane:55, sealevel:72, waterStress:75 },
+            macro:{ debtGdp:88, credRating:'A+', carbonPrice:8, netZero:2060 } },
+
+  IND:   { name:'India', flag:'🇮🇳', iso:'IND', region:'South Asia',
+            coords:[78,22], bbox:[68,8,98,37],
+            gdp:3740, pop:1428, area:3.3,
+            climateRisk:84, infraScore:45, migrationPressure:88,
+            waterStress:88, foodRisk:72, energyTransBurden:66,
+            exposedPop:{ '1.5':280, '2.0':520, '3.0':820 },
+            gdpAtRisk:{ '1.5':3.8, '2.0':9.2, '3.0':22.5 },
+            infraVuln:{ '1.5':48, '2.0':72, '3.0':91 },
+            insuranceRetreating: true, sovereignRisk:'CRITICAL',
+            hotspots:['Mumbai Coastline','Gangetic Plain Heatwave Zone','Rajasthan Drought','Brahmaputra Flood Belt'],
+            criticalInfra:['Mumbai Port','Delhi Power Grid','Indus River System','Eastern Coastal Rail'],
+            adaptCost:{ '2.0':2200, '3.0':6800 },
+            strandedAssets:{ '2.0':820, '3.0':2400 },
+            risks:{ heat:92, flood:85, drought:82, wildfire:42, hurricane:62, sealevel:78, waterStress:88 },
+            macro:{ debtGdp:82, credRating:'BBB-', carbonPrice:0, netZero:2070 } },
+
+  DEU:   { name:'Germany', flag:'🇩🇪', iso:'DEU', region:'Western Europe',
+            coords:[10,51], bbox:[6,47,15,55],
+            gdp:4430, pop:84, area:0.36,
+            climateRisk:42, infraScore:82, migrationPressure:18,
+            waterStress:28, foodRisk:22, energyTransBurden:55,
+            exposedPop:{ '1.5':4, '2.0':10, '3.0':22 },
+            gdpAtRisk:{ '1.5':0.8, '2.0':2.4, '3.0':6.8 },
+            infraVuln:{ '1.5':12, '2.0':28, '3.0':52 },
+            insuranceRetreating: false, sovereignRisk:'LOW',
+            hotspots:['Rhine Valley Floods','North Sea Coastal','Bayern Heat Stress'],
+            criticalInfra:['Hamburg Port','Ruhr Industrial Zone','Rhine Shipping Corridor','Berlin Data Center Hub'],
+            adaptCost:{ '2.0':480, '3.0':1200 },
+            strandedAssets:{ '2.0':680, '3.0':1800 },
+            risks:{ heat:48, flood:55, drought:32, wildfire:18, hurricane:12, sealevel:28, waterStress:28 },
+            macro:{ debtGdp:64, credRating:'AAA', carbonPrice:62, netZero:2045 } },
+
+  GBR:   { name:'United Kingdom', flag:'🇬🇧', iso:'GBR', region:'Western Europe',
+            coords:[-2,54], bbox:[-9,50,2,61],
+            gdp:3090, pop:68, area:0.24,
+            climateRisk:48, infraScore:78, migrationPressure:20,
+            waterStress:32, foodRisk:28, energyTransBurden:48,
+            exposedPop:{ '1.5':5, '2.0':12, '3.0':26 },
+            gdpAtRisk:{ '1.5':1.0, '2.0':2.8, '3.0':7.2 },
+            infraVuln:{ '1.5':18, '2.0':34, '3.0':58 },
+            insuranceRetreating: false, sovereignRisk:'LOW',
+            hotspots:['Thames Estuary','East Anglia Drought','South Coast Flood'],
+            criticalInfra:['Port of Felixstowe','National Grid','London Financial District','Channel Tunnel'],
+            adaptCost:{ '2.0':380, '3.0':920 },
+            strandedAssets:{ '2.0':420, '3.0':1100 },
+            risks:{ heat:42, flood:58, drought:38, wildfire:15, hurricane:22, sealevel:48, waterStress:32 },
+            macro:{ debtGdp:102, credRating:'AA', carbonPrice:54, netZero:2050 } },
+
+  JPN:   { name:'Japan', flag:'🇯🇵', iso:'JPN', region:'East Asia',
+            coords:[138,37], bbox:[130,31,146,45],
+            gdp:4230, pop:124, area:0.38,
+            climateRisk:68, infraScore:80, migrationPressure:12,
+            waterStress:35, foodRisk:35, energyTransBurden:62,
+            exposedPop:{ '1.5':22, '2.0':45, '3.0':78 },
+            gdpAtRisk:{ '1.5':1.4, '2.0':3.8, '3.0':9.6 },
+            infraVuln:{ '1.5':32, '2.0':52, '3.0':76 },
+            insuranceRetreating: true, sovereignRisk:'MODERATE',
+            hotspots:['Tokyo Bay Coastline','Osaka Flood Plain','Kyushu Typhoon Belt'],
+            criticalInfra:['Port of Tokyo','Tokaido Shinkansen','Fukushima Nuclear Zone','Osaka Industrial Belt'],
+            adaptCost:{ '2.0':980, '3.0':2600 },
+            strandedAssets:{ '2.0':680, '3.0':1800 },
+            risks:{ heat:65, flood:72, drought:28, wildfire:22, hurricane:78, sealevel:68, waterStress:35 },
+            macro:{ debtGdp:264, credRating:'A+', carbonPrice:4, netZero:2050 } },
+
+  BRA:   { name:'Brazil', flag:'🇧🇷', iso:'BRA', region:'South America',
+            coords:[-51,-15], bbox:[-74,-34,-28,5],
+            gdp:2080, pop:215, area:8.5,
+            climateRisk:76, infraScore:42, migrationPressure:62,
+            waterStress:52, foodRisk:42, energyTransBurden:38,
+            exposedPop:{ '1.5':48, '2.0':92, '3.0':165 },
+            gdpAtRisk:{ '1.5':2.4, '2.0':6.8, '3.0':16.2 },
+            infraVuln:{ '1.5':42, '2.0':65, '3.0':84 },
+            insuranceRetreating: true, sovereignRisk:'HIGH',
+            hotspots:['Amazon Tipping Point','Sao Paulo Water Crisis','Pantanal Wildfire Zone','Northeast Drought Belt'],
+            criticalInfra:['Port of Santos','Itaipu Dam','Trans-Amazon Highway','Cerrado Agri Corridor'],
+            adaptCost:{ '2.0':1200, '3.0':3800 },
+            strandedAssets:{ '2.0':580, '3.0':1600 },
+            risks:{ heat:72, flood:68, drought:75, wildfire:82, hurricane:28, sealevel:42, waterStress:52 },
+            macro:{ debtGdp:88, credRating:'BB-', carbonPrice:0, netZero:2050 } },
+
+  AUS:   { name:'Australia', flag:'🇦🇺', iso:'AUS', region:'Oceania',
+            coords:[134,-25], bbox:[113,-44,154,-10],
+            gdp:1720, pop:26, area:7.7,
+            climateRisk:78, infraScore:72, migrationPressure:22,
+            waterStress:68, foodRisk:45, energyTransBurden:52,
+            exposedPop:{ '1.5':4, '2.0':9, '3.0':18 },
+            gdpAtRisk:{ '1.5':2.2, '2.0':5.8, '3.0':13.4 },
+            infraVuln:{ '1.5':35, '2.0':58, '3.0':78 },
+            insuranceRetreating: true, sovereignRisk:'HIGH',
+            hotspots:['Great Barrier Reef','Murray-Darling Basin','Black Summer Wildfire Zone','Perth Water Scarcity'],
+            criticalInfra:['Port Hedland','Snowy Hydro Scheme','Eastern Seaboard Grid','Pilbara Mining Rail'],
+            adaptCost:{ '2.0':620, '3.0':1800 },
+            strandedAssets:{ '2.0':380, '3.0':1100 },
+            risks:{ heat:85, flood:48, drought:82, wildfire:90, hurricane:52, sealevel:55, waterStress:68 },
+            macro:{ debtGdp:56, credRating:'AAA', carbonPrice:0, netZero:2050 } },
+
+  SAU:   { name:'Saudi Arabia', flag:'🇸🇦', iso:'SAU', region:'Middle East',
+            coords:[45,24], bbox:[36,16,56,32],
+            gdp:1090, pop:36, area:2.1,
+            climateRisk:82, infraScore:55, migrationPressure:45,
+            waterStress:98, foodRisk:72, energyTransBurden:88,
+            exposedPop:{ '1.5':12, '2.0':26, '3.0':32 },
+            gdpAtRisk:{ '1.5':4.2, '2.0':10.8, '3.0':28.4 },
+            infraVuln:{ '1.5':38, '2.0':62, '3.0':85 },
+            insuranceRetreating: true, sovereignRisk:'CRITICAL',
+            hotspots:['Riyadh Extreme Heat Zone','Red Sea Coral Collapse','Empty Quarter Desertification'],
+            criticalInfra:['King Abdulaziz Port','Ghawar Oil Field','Desalination Grid','ARAMCO Infrastructure'],
+            adaptCost:{ '2.0':480, '3.0':1600 },
+            strandedAssets:{ '2.0':2200, '3.0':5800 },
+            risks:{ heat:96, flood:22, drought:95, wildfire:18, hurricane:12, sealevel:32, waterStress:98 },
+            macro:{ debtGdp:26, credRating:'A+', carbonPrice:0, netZero:2060 } },
+
+  BGD:   { name:'Bangladesh', flag:'🇧🇩', iso:'BGD', region:'South Asia',
+            coords:[90,23], bbox:[88,20,93,26],
+            gdp:450, pop:170, area:0.15,
+            climateRisk:96, infraScore:28, migrationPressure:98,
+            waterStress:78, foodRisk:82, energyTransBurden:72,
+            exposedPop:{ '1.5':45, '2.0':85, '3.0':130 },
+            gdpAtRisk:{ '1.5':8.5, '2.0':18.4, '3.0':38.2 },
+            infraVuln:{ '1.5':65, '2.0':85, '3.0':96 },
+            insuranceRetreating: true, sovereignRisk:'CRITICAL',
+            hotspots:['Dhaka Flood Zone','Sundarbans Inundation','Cyclone Coastal Belt','Brahmaputra Delta'],
+            criticalInfra:['Chittagong Port','Jamuna Bridges','Delta Coastal Embankments','Dhaka Power Grid'],
+            adaptCost:{ '2.0':120, '3.0':380 },
+            strandedAssets:{ '2.0':45, '3.0':180 },
+            risks:{ heat:88, flood:96, drought:45, wildfire:12, hurricane:85, sealevel:95, waterStress:78 },
+            macro:{ debtGdp:38, credRating:'BB-', carbonPrice:0, netZero:2070 } },
+
+  NLD:   { name:'Netherlands', flag:'🇳🇱', iso:'NLD', region:'Western Europe',
+            coords:[5,52], bbox:[3,51,7,54],
+            gdp:1120, pop:18, area:0.04,
+            climateRisk:58, infraScore:88, migrationPressure:14,
+            waterStress:42, foodRisk:15, energyTransBurden:50,
+            exposedPop:{ '1.5':3, '2.0':7, '3.0':14 },
+            gdpAtRisk:{ '1.5':1.2, '2.0':3.4, '3.0':8.8 },
+            infraVuln:{ '1.5':28, '2.0':48, '3.0':72 },
+            insuranceRetreating: false, sovereignRisk:'MODERATE',
+            hotspots:['Rotterdam Harbor Flooding','Amsterdam Sea-Level Encroachment','Rhine Delta Stress'],
+            criticalInfra:['Port of Rotterdam','Amsterdam Schiphol','Delta Works','Rhine–Meuse–Scheldt System'],
+            adaptCost:{ '2.0':180, '3.0':460 },
+            strandedAssets:{ '2.0':220, '3.0':580 },
+            risks:{ heat:38, flood:78, drought:22, wildfire:8, hurricane:18, sealevel:85, waterStress:42 },
+            macro:{ debtGdp:52, credRating:'AAA', carbonPrice:62, netZero:2050 } },
+
+  IDN:   { name:'Indonesia', flag:'🇮🇩', iso:'IDN', region:'Southeast Asia',
+            coords:[117,-2], bbox:[95,-11,141,6],
+            gdp:1390, pop:277, area:1.9,
+            climateRisk:80, infraScore:38, migrationPressure:72,
+            waterStress:55, foodRisk:58, energyTransBurden:62,
+            exposedPop:{ '1.5':65, '2.0':130, '3.0':218 },
+            gdpAtRisk:{ '1.5':3.2, '2.0':8.8, '3.0':20.4 },
+            infraVuln:{ '1.5':52, '2.0':74, '3.0':91 },
+            insuranceRetreating: true, sovereignRisk:'HIGH',
+            hotspots:['Jakarta Sinking Capital','Kalimantan Peat Fire Zone','Java Coastal Inundation','Sulawesi Drought Belt'],
+            criticalInfra:['Port of Tanjung Priok','Cirata Hydropower','Trans-Java Toll Road','Kalimantan Coal Rail'],
+            adaptCost:{ '2.0':680, '3.0':2200 },
+            strandedAssets:{ '2.0':420, '3.0':1400 },
+            risks:{ heat:75, flood:82, drought:58, wildfire:76, hurricane:42, sealevel:80, waterStress:55 },
+            macro:{ debtGdp:38, credRating:'BBB', carbonPrice:2, netZero:2060 } },
+
+  EGY:   { name:'Egypt', flag:'🇪🇬', iso:'EGY', region:'North Africa',
+            coords:[29,26], bbox:[25,22,37,32],
+            gdp:390, pop:106, area:1.0,
+            climateRisk:86, infraScore:40, migrationPressure:82,
+            waterStress:95, foodRisk:78, energyTransBurden:68,
+            exposedPop:{ '1.5':28, '2.0':55, '3.0':88 },
+            gdpAtRisk:{ '1.5':5.2, '2.0':13.8, '3.0':32.4 },
+            infraVuln:{ '1.5':55, '2.0':78, '3.0':93 },
+            insuranceRetreating: true, sovereignRisk:'CRITICAL',
+            hotspots:['Nile Delta Inundation','Alexandria Coastal Zone','Sinai Desertification','Cairo Heat Island'],
+            criticalInfra:['Suez Canal','Alexandria Port','Aswan High Dam','Nile Irrigation Network'],
+            adaptCost:{ '2.0':180, '3.0':620 },
+            strandedAssets:{ '2.0':95, '3.0':380 },
+            risks:{ heat:88, flood:52, drought:92, wildfire:22, hurricane:18, sealevel:82, waterStress:95 },
+            macro:{ debtGdp:96, credRating:'B+', carbonPrice:0, netZero:2070 } },
+
+  CAN:   { name:'Canada', flag:'🇨🇦', iso:'CAN', region:'North America',
+            coords:[-95,60], bbox:[-141,42,-52,84],
+            gdp:2140, pop:40, area:10.0,
+            climateRisk:52, infraScore:78, migrationPressure:16,
+            waterStress:22, foodRisk:18, energyTransBurden:48,
+            exposedPop:{ '1.5':4, '2.0':9, '3.0':18 },
+            gdpAtRisk:{ '1.5':1.2, '2.0':3.2, '3.0':7.8 },
+            infraVuln:{ '1.5':18, '2.0':34, '3.0':58 },
+            insuranceRetreating: false, sovereignRisk:'LOW',
+            hotspots:['British Columbia Wildfire Zone','Prairie Drought Belt','Atlantic Coastal Storm Zone'],
+            criticalInfra:['Port of Vancouver','Trans-Canada Pipeline','Churchill Permafrost Rail','Alberta Oil Sands'],
+            adaptCost:{ '2.0':380, '3.0':980 },
+            strandedAssets:{ '2.0':820, '3.0':2200 },
+            risks:{ heat:52, flood:45, drought:48, wildfire:68, hurricane:28, sealevel:32, waterStress:22 },
+            macro:{ debtGdp:108, credRating:'AAA', carbonPrice:68, netZero:2050 } },
+
+  PAK:   { name:'Pakistan', flag:'🇵🇰', iso:'PAK', region:'South Asia',
+            coords:[69,30], bbox:[61,24,77,37],
+            gdp:340, pop:230, area:0.88,
+            climateRisk:90, infraScore:32, migrationPressure:92,
+            waterStress:92, foodRisk:82, energyTransBurden:74,
+            exposedPop:{ '1.5':78, '2.0':148, '3.0':210 },
+            gdpAtRisk:{ '1.5':6.8, '2.0':16.2, '3.0':36.8 },
+            infraVuln:{ '1.5':62, '2.0':82, '3.0':95 },
+            insuranceRetreating: true, sovereignRisk:'CRITICAL',
+            hotspots:['Indus Flood Plains','Karachi Urban Heat','Balochistan Drought','Northern Glacial Melt'],
+            criticalInfra:['Karachi Port','Tarbela Dam','Indus Canal System','CPEC Corridor'],
+            adaptCost:{ '2.0':95, '3.0':340 },
+            strandedAssets:{ '2.0':42, '3.0':165 },
+            risks:{ heat:90, flood:88, drought:88, wildfire:35, hurricane:45, sealevel:52, waterStress:92 },
+            macro:{ debtGdp:80, credRating:'CCC+', carbonPrice:0, netZero:2070 } },
+
+  ZAF:   { name:'South Africa', flag:'🇿🇦', iso:'ZAF', region:'Sub-Saharan Africa',
+            coords:[25,-29], bbox:[16,-35,33,-22],
+            gdp:380, pop:62, area:1.2,
+            climateRisk:74, infraScore:45, migrationPressure:58,
+            waterStress:78, foodRisk:62, energyTransBurden:72,
+            exposedPop:{ '1.5':16, '2.0':32, '3.0':52 },
+            gdpAtRisk:{ '1.5':3.2, '2.0':8.4, '3.0':20.2 },
+            infraVuln:{ '1.5':48, '2.0':68, '3.0':86 },
+            insuranceRetreating: true, sovereignRisk:'HIGH',
+            hotspots:['Cape Town Day Zero Water','Durban Flood Zone','Karoo Desertification','Limpopo Heat Belt'],
+            criticalInfra:['Port of Durban','Eskom Power Grid','Transnet Rail Network','Lesotho Highlands Water'],
+            adaptCost:{ '2.0':140, '3.0':480 },
+            strandedAssets:{ '2.0':180, '3.0':620 },
+            risks:{ heat:75, flood:55, drought:80, wildfire:62, hurricane:28, sealevel:45, waterStress:78 },
+            macro:{ debtGdp:74, credRating:'BB-', carbonPrice:10, netZero:2050 } },
+};
+
+/* ════════════════════════════════════════════════════════════════
+   SCENARIO DEFINITIONS
+════════════════════════════════════════════════════════════════ */
+const SCENARIOS = {
+  '1.5': {
+    id:'1.5', label:'1.5°C', name:'Paris Aligned',
+    desc:'Net-zero by 2050. Rapid coal phase-out. Carbon price $180/t by 2040.',
+    color:'var(--s15)', dot:'#1A6E44',
+    tag:'OPTIMISTIC', tagColor:'var(--s15)',
+    gdpMultiplier:1.0, infraMultiplier:1.0, migMultiplier:1.0,
+    cells:[ {l:'Sea Rise',v:'0.3m'}, {l:'Temp Rise',v:'+1.5°C'}, {l:'GDP Impact',v:'−1.8%'}, {l:'Carbon $',v:'$180/t'} ],
+  },
+  '2.0': {
+    id:'2.0', label:'2.0°C', name:'Delayed Transition',
+    desc:'Net-zero by 2070. Moderate policy. Physical risks materially elevated.',
+    color:'var(--s20)', dot:'#C26000',
+    tag:'BASELINE', tagColor:'var(--s20)',
+    gdpMultiplier:2.4, infraMultiplier:1.8, migMultiplier:2.2,
+    cells:[ {l:'Sea Rise',v:'0.6m'}, {l:'Temp Rise',v:'+2.0°C'}, {l:'GDP Impact',v:'−4.2%'}, {l:'Carbon $',v:'$85/t'} ],
+  },
+  '3.0': {
+    id:'3.0', label:'3.0°C', name:'High Emissions',
+    desc:'Business-as-usual. Major tipping points breached. Systemic infrastructure collapse.',
+    color:'var(--s30)', dot:'#C9372C',
+    tag:'CATASTROPHIC', tagColor:'var(--s30)',
+    gdpMultiplier:5.8, infraMultiplier:4.2, migMultiplier:6.5,
+    cells:[ {l:'Sea Rise',v:'1.2m'}, {l:'Temp Rise',v:'+3.0°C'}, {l:'GDP Impact',v:'−10.8%'}, {l:'Carbon $',v:'$22/t'} ],
+  },
+  ngfs: {
+    id:'ngfs', label:'NGFS', name:'Disorderly Transition',
+    desc:'Late policy shock. Carbon price spike post-2035. Stranded asset cascade.',
+    color:'var(--sngfs)', dot:'#3A5FA8',
+    tag:'NGFS IV', tagColor:'var(--sngfs)',
+    gdpMultiplier:3.2, infraMultiplier:2.6, migMultiplier:3.0,
+    cells:[ {l:'Sea Rise',v:'0.8m'}, {l:'Temp Rise',v:'+2.5°C'}, {l:'GDP Impact',v:'−6.8%'}, {l:'Carbon $',v:'$220/t'} ],
+  },
+};
+
+/* ════════════════════════════════════════════════════════════════
+   LAYER DEFINITIONS
+════════════════════════════════════════════════════════════════ */
+const CLIMATE_LAYERS = [
+  { id:'flood',    icon:'◈', name:'Flood Risk',        desc:'Riverine + coastal inundation zones', badge:'PHYSICAL' },
+  { id:'drought',  icon:'◇', name:'Drought Stress',    desc:'Precipitation deficit + SPEI index',  badge:'PHYSICAL' },
+  { id:'heat',     icon:'◆', name:'Extreme Heat',      desc:'Wet-bulb temperature exceedance',      badge:'PHYSICAL' },
+  { id:'wildfire', icon:'◉', name:'Wildfire Activity', desc:'FWI-derived burned area probability',  badge:'PHYSICAL' },
+  { id:'sealevel', icon:'○', name:'Sea Level Rise',    desc:'Projected coastal inundation extent',  badge:'PHYSICAL' },
+  { id:'methane',  icon:'◎', name:'Methane Plumes',    desc:'Satellite-detected CH₄ anomalies',     badge:'SENTINEL' },
+];
+const ECON_LAYERS = [
+  { id:'gdp',       icon:'▣', name:'GDP at Risk',          desc:'Economic output loss by scenario',    badge:'ECONOMIC' },
+  { id:'insurance', icon:'▤', name:'Insurance Retreat',    desc:'Withdrawal zones by risk threshold',  badge:'FINANCE' },
+  { id:'migration', icon:'▥', name:'Migration Pressure',   desc:'Climate-driven displacement risk',    badge:'SOCIAL' },
+  { id:'stranded',  icon:'▦', name:'Stranded Assets',      desc:'Fossil fuel + real estate exposure',  badge:'FINANCE' },
+];
+const POLICY_LAYERS = [
+  { id:'carbon',    icon:'⬡', name:'Carbon Price',         desc:'Current + forward pricing by regime', badge:'POLICY' },
+  { id:'csrd',      icon:'⬢', name:'CSRD Exposure',        desc:'EU Corporate Sustainability Reporting',badge:'REGULATORY'},
+  { id:'cbam',      icon:'⬣', name:'CBAM Pressure',        desc:'EU Carbon Border Adjustment impact',  badge:'TRADE' },
+  { id:'litigation',icon:'⬤', name:'Litigation Hotspots',  desc:'Climate liability exposure zones',     badge:'LEGAL' },
+];
+const INFRA_LAYERS = [
+  { id:'ports',    icon:'⚓', name:'Major Ports',           desc:'Top 200 global container/bulk ports' },
+  { id:'airports', icon:'✈', name:'Airports',              desc:'Major international hubs + cargo' },
+  { id:'power',    icon:'⚡', name:'Power Infrastructure',  desc:'Generation, grid, transmission nodes' },
+  { id:'rail',     icon:'≡', name:'Rail Networks',         desc:'High-speed + freight corridors' },
+  { id:'water',    icon:'◌', name:'Water Infrastructure',  desc:'Dams, reservoirs, desalination plants' },
+  { id:'data',     icon:'□', name:'Data Centers',          desc:'Critical digital infrastructure nodes' },
+];
+const CORRIDOR_LAYERS = [
+  { id:'shipping',  icon:'→', name:'Shipping Lanes',       desc:'Major container + bulk trade routes' },
+  { id:'energy',    icon:'↝', name:'Energy Corridors',     desc:'LNG, oil, gas pipeline routes' },
+  { id:'food',      icon:'↠', name:'Food Supply Chains',   desc:'Global agri trade routes' },
+  { id:'minerals',  icon:'↣', name:'Critical Minerals',    desc:'Lithium, cobalt, rare earth routes' },
+];
+
+/* ════════════════════════════════════════════════════════════════
+   TIPPING POINT EVENTS (positioned on timeline)
+════════════════════════════════════════════════════════════════ */
+const TIPPING_EVENTS = {
+  '1.5': [
+    { year:2035, label:'Coral Bleach' },
+    { year:2045, label:'Arctic Ice Low' },
+  ],
+  '2.0': [
+    { year:2030, label:'Amazon Stress' },
+    { year:2038, label:'Coral Collapse' },
+    { year:2050, label:'Permafrost' },
+    { year:2065, label:'WAIS Tipping' },
+  ],
+  '3.0': [
+    { year:2028, label:'Amazon Tipping' },
+    { year:2035, label:'Coral Collapse' },
+    { year:2040, label:'Greenland Accel.' },
+    { year:2048, label:'AMOC Weakening' },
+    { year:2058, label:'WAIS Unstable' },
+    { year:2070, label:'Permafrost CH₄' },
+  ],
+  ngfs: [
+    { year:2032, label:'Market Shock' },
+    { year:2038, label:'Stranded Cascade' },
+    { year:2048, label:'Coral Collapse' },
+    { year:2062, label:'Permafrost' },
+  ],
+};
+
+/* ════════════════════════════════════════════════════════════════
+   RISK CALCULATION ENGINE
+════════════════════════════════════════════════════════════════ */
+function calcRisk(iso, scenario, year) {
+  const c = SOVEREIGNS[iso];
+  if (!c) return {};
+  const scn = SCENARIOS[scenario];
+  const base = c.gdpAtRisk[scenario] || c.gdpAtRisk['2.0'];
+  const mult = scn.gdpMultiplier;
+  /* Year amplification: risk grows non-linearly toward end of century */
+  const yrFrac = (year - TL_START) / (TL_END_LONG - TL_START);
+  const yrAmp  = 1 + yrFrac * yrFrac * (mult - 1);
+  const gdpAtRisk = Math.min(45, base * yrAmp);        /* % of GDP */
+  const gdpDollar = c.gdp * gdpAtRisk / 100;
+  const infraVuln = Math.min(100, c.infraVuln[scenario] || c.infraVuln['2.0'] * mult * Math.pow(yrFrac, 0.7));
+  const popExp    = Math.min(c.pop, c.exposedPop[scenario] * yrAmp);
+  const mig       = Math.min(c.pop * 0.8, c.pop * (c.migrationPressure/100) * yrAmp * (scn.migMultiplier / 2));
+  const water     = Math.min(100, c.waterStress * (1 + yrFrac * 0.4));
+  const sovereignScore = (c.climateRisk * 0.3 + (infraVuln * 0.3) + (gdpAtRisk * 2)) * 0.01;
+  return { gdpDollar, gdpAtRisk, infraVuln, popExp, mig, water, sovereignScore };
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LEFT PANEL — NATIONS TAB
+════════════════════════════════════════════════════════════════ */
+function renderNationList(filter='') {
+  const list = el('nation-list');
+  const f = filter.toLowerCase();
+  const keys = Object.keys(SOVEREIGNS).filter(k =>
+    !f || SOVEREIGNS[k].name.toLowerCase().includes(f)
+  );
+  el('nation-count').textContent = keys.length + ' nations';
+  list.innerHTML = keys.map(k => {
+    const c = SOVEREIGNS[k];
+    const risk = c.climateRisk;
+    const col = risk>=80?'var(--rc)':risk>=60?'var(--rh)':risk>=40?'var(--rm)':'var(--rl)';
+    return `<div class="cs-item${S.country===k?' sel':''}" onclick="selectCountry('${k}')">
+      <span class="cs-flag">${c.flag}</span>
+      <span class="cs-name">${c.name}</span>
+      <span class="cs-risk" style="color:${col}">${risk}</span>
+    </div>`;
+  }).join('');
+}
+function filterNations(v){ renderNationList(v); }
+
+function renderNationKPIs() {
+  if (!S.country) return;
+  const c = SOVEREIGNS[S.country];
+  const r = calcRisk(S.country, S.scenario, S.year);
+  el('nation-kpis').style.display = 'block';
+  el('nation-risks').style.display = 'block';
+  const riskCol = v => v>=80?'red':v>=60?'amber':v>=40?'red':'green';
+  el('nation-kpi-grid').innerHTML = `
+    <div class="kpi-cell">
+      <div class="kpi-lbl">GDP at Risk</div>
+      <div class="kpi-val amber">$${r.gdpDollar.toFixed(0)}B</div>
+      <div class="kpi-delta">${r.gdpAtRisk.toFixed(1)}% of GDP</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-lbl">Infra Vuln.</div>
+      <div class="kpi-val ${riskCol(r.infraVuln)}">${r.infraVuln.toFixed(0)}</div>
+      <div class="kpi-delta">Score /100</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-lbl">Pop. Exposed</div>
+      <div class="kpi-val amber">${r.popExp.toFixed(0)}M</div>
+      <div class="kpi-delta">Projected ${S.year}</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-lbl">Water Stress</div>
+      <div class="kpi-val ${riskCol(r.water)}">${r.water.toFixed(0)}</div>
+      <div class="kpi-delta">Severity /100</div>
+    </div>`;
+
+  const risks = SOVEREIGNS[S.country].risks;
+  const riskItems = [
+    {l:'Extreme Heat',k:'heat'},{l:'Flood Risk',k:'flood'},{l:'Drought',k:'drought'},
+    {l:'Wildfire',k:'wildfire'},{l:'Sea Level',k:'sealevel'},{l:'Water Stress',k:'waterStress'},
+  ];
+  el('nation-risk-bars').innerHTML = riskItems.map(ri=>{
+    const v = risks[ri.k]||0;
+    const col = v>=80?'var(--rc)':v>=60?'var(--rh)':v>=40?'var(--rm)':'var(--rl)';
+    return `<div class="risk-row">
+      <div class="risk-row-top">
+        <span class="risk-row-label">${ri.l}</span>
+        <span class="risk-row-val" style="color:${col}">${v}</span>
+      </div>
+      <div class="risk-bar-track">
+        <div class="risk-bar-fill" style="width:${v}%;background:${col}"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LEFT PANEL — SCENARIOS TAB
+════════════════════════════════════════════════════════════════ */
+function renderScenarioButtons() {
+  const scns = ['1.5','2.0','3.0','ngfs'];
+  el('scn-buttons').innerHTML = scns.map(sid=>{
+    const sc = SCENARIOS[sid];
+    return `<button class="scb${S.scenario===sid?' on':''}" onclick="setScenario('${sid}')"
+      style="border-left-color:${S.scenario===sid?sc.dot:'transparent'}">
+      <div class="scb-top">
+        <span class="scb-temp" style="color:${sc.dot}">${sc.label}</span>
+        <span class="scb-tag" style="color:${sc.dot};border-color:${sc.dot}40">${sc.tag}</span>
+      </div>
+      <div class="scb-name">${sc.name}</div>
+      <div class="scb-desc">${sc.desc}</div>
+      <div class="scb-row">
+        ${sc.cells.map(cell=>`<div class="scb-cell">
+          <div class="scb-cell-lbl">${cell.l}</div>
+          <div class="scb-cell-val" style="color:${sc.dot}">${cell.v}</div>
+        </div>`).join('')}
+      </div>
+    </button>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LEFT PANEL — LAYERS TABS
+════════════════════════════════════════════════════════════════ */
+function renderLayerButtons() {
+  const badgeCol = {PHYSICAL:'var(--acc)',SENTINEL:'var(--s15)',ECONOMIC:'var(--amber)',FINANCE:'var(--rh)',SOCIAL:'var(--pos)',POLICY:'var(--sngfs)',REGULATORY:'var(--sngfs)',TRADE:'var(--acc)',LEGAL:'var(--neg)'};
+  function mkLayers(arr, stateKey) {
+    return arr.map(ly=>{
+      const on = S[stateKey][ly.id];
+      const bc = badgeCol[ly.badge]||'var(--tx2)';
+      return `<button class="lyb${on?' on':''}" onclick="toggleLayer('${stateKey}','${ly.id}')">
+        <div class="lyb-ico">${ly.icon}</div>
+        <div class="lyb-text">
+          <div class="lyb-name">${ly.name}</div>
+          <div class="lyb-desc">${ly.desc}</div>
+        </div>
+        ${ly.badge?`<span class="lyb-badge tag" style="color:${bc};border-color:${bc}33;background:${bc}11">${ly.badge}</span>`:''}
+      </button>`;
+    }).join('');
+  }
+  el('climate-layer-btns').innerHTML = mkLayers(CLIMATE_LAYERS,'climateLayers');
+  el('econ-layer-btns').innerHTML    = mkLayers(ECON_LAYERS,'econLayers');
+  el('policy-layer-btns').innerHTML  = mkLayers(POLICY_LAYERS,'policyLayers');
+  el('infra-layer-btns').innerHTML   = mkLayers(INFRA_LAYERS,'infra');
+  el('corridor-layer-btns').innerHTML= mkLayers(CORRIDOR_LAYERS,'corridors');
+}
+
+function toggleLayer(stateKey, layerId) {
+  S[stateKey][layerId] = !S[stateKey][layerId];
+  renderLayerButtons();
+  updateMapLayers();
+  const active = Object.keys(S[stateKey]).filter(k=>S[stateKey][k]);
+  if (active.length > 0) showToast(`Layer: ${layerId} ${S[stateKey][layerId]?'ON':'OFF'}`);
+}
+
+/* LP tab switcher */
+function setLpTab(tab) {
+  S.lpTab = tab;
+  ['nations','scenarios','layers','infra'].forEach(t=>{
+    el(`tab-${t}`).classList.toggle('on', t===tab);
+    el(`lpb-${t==='infra'?'infra':t}`).style.display = t===tab?'block':'none';
+  });
+}
+
+/* Toggle helpers for scenario panel */
+function toggleExtended(btn){ btn.classList.toggle('on'); S.extended=btn.classList.contains('on'); renderTimeline(); }
+function toggleTipping(btn){ btn.classList.toggle('on'); S.showTipping=btn.classList.contains('on'); renderTimelineEvents(); }
+function toggleNDC(btn){ btn.classList.toggle('on'); S.ndcAdjust=btn.classList.contains('on'); updateStats(); }
+</script>
+<!-- Part 3: Right panel intelligence + map globe init -->
+<script>
+/* ════════════════════════════════════════════════════════════════
+   RIGHT PANEL — INTEL TAB
+════════════════════════════════════════════════════════════════ */
+function renderRpIntel() {
+  if (!S.country) {
+    el('rpi').innerHTML = `<div style="padding:32px 16px;text-align:center">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--tx3);margin-bottom:12px;font-family:var(--mono)">No Nation Selected</div>
+      <div style="font-size:11px;color:var(--tx2);line-height:1.6">Select a nation on the globe or from the left panel to view sovereign climate intelligence.</div>
+    </div>`;
+    return;
+  }
+  const c = SOVEREIGNS[S.country];
+  const r = calcRisk(S.country, S.scenario, S.year);
+  const sc = SCENARIOS[S.scenario];
+  const cRisk = c.climateRisk;
+  const col = cRisk>=80?'var(--rc)':cRisk>=60?'var(--rh)':cRisk>=40?'var(--rm)':'var(--rl)';
+
+  /* SVG half-ring score */
+  const ringSvg = scoreRingSvg(cRisk, col);
+
+  el('rpi').innerHTML = `
+    <div class="score-ring-wrap">
+      <div class="score-ring-title">National Climate Risk Index</div>
+      ${ringSvg}
+      <div style="margin-top:6px;display:flex;justify-content:center;gap:8px">
+        <span class="tag ${cRisk>=80?'red':cRisk>=60?'amber':'green'}">${c.sovereignRisk}</span>
+        <span class="tag cyan">${c.region}</span>
+      </div>
+    </div>
+
+    <div class="rp-sec">Sovereign Intelligence</div>
+    <div class="risk-row">
+      <div class="risk-row-top">
+        <span class="risk-row-label">GDP at Risk (${S.year})</span>
+        <span class="risk-row-val" style="color:var(--rh)">$${r.gdpDollar.toFixed(0)}B</span>
+      </div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${Math.min(100,r.gdpAtRisk*4)}%;background:var(--rh)"></div></div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-row-top">
+        <span class="risk-row-label">Infrastructure Vulnerability</span>
+        <span class="risk-row-val" style="color:${r.infraVuln>=70?'var(--rc)':'var(--rh)'}">${r.infraVuln.toFixed(0)}/100</span>
+      </div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${r.infraVuln}%;background:var(--rc)"></div></div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-row-top">
+        <span class="risk-row-label">Population Exposed</span>
+        <span class="risk-row-val" style="color:var(--amber)">${r.popExp.toFixed(0)}M</span>
+      </div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${Math.min(100,(r.popExp/c.pop)*100)}%;background:var(--amber)"></div></div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-row-top">
+        <span class="risk-row-label">Water Stress Index</span>
+        <span class="risk-row-val" style="color:${r.water>=80?'var(--rc)':'var(--rh)'}">${r.water.toFixed(0)}/100</span>
+      </div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${r.water}%;background:var(--rh)"></div></div>
+    </div>
+
+    <div class="rp-sec">Macro Context</div>
+    <table class="rp-table" style="width:100%;margin-bottom:0">
+      <tbody>
+        <tr><td>GDP (2024)</td><td class="mono" style="text-align:right">$${(c.gdp/1000).toFixed(1)}T</td></tr>
+        <tr><td>Population</td><td class="mono" style="text-align:right">${c.pop}M</td></tr>
+        <tr><td>Debt / GDP</td><td class="mono" style="text-align:right;color:${c.macro.debtGdp>100?'var(--rh)':'var(--tx1)'}">${c.macro.debtGdp}%</td></tr>
+        <tr><td>Credit Rating</td><td class="mono" style="text-align:right">${c.macro.credRating}</td></tr>
+        <tr><td>Carbon Price</td><td class="mono" style="text-align:right;color:var(--acc)">$${c.macro.carbonPrice}/t</td></tr>
+        <tr><td>Net Zero Target</td><td class="mono" style="text-align:right">${c.macro.netZero}</td></tr>
+      </tbody>
+    </table>
+
+    <div class="rp-sec">Climate Hotspots</div>
+    ${c.hotspots.map(h=>`<div style="padding:6px 12px;border-bottom:1px solid var(--bd0);font-size:11px;color:var(--tx1);display:flex;align-items:center;gap:7px">
+      <span style="color:var(--rc);font-size:8px;flex-shrink:0">▶</span>${h}
+    </div>`).join('')}
+
+    <div style="padding:10px 12px">
+      <button onclick="setMode('briefing')" style="
+        width:100%;padding:8px;background:transparent;
+        border:1px solid var(--amber);color:var(--amber);
+        font-size:9px;font-weight:700;text-transform:uppercase;
+        letter-spacing:.10em;cursor:pointer;transition:all .12s;
+        font-family:var(--mono);"
+        onmouseenter="this.style.background='var(--amber2)'"
+        onmouseleave="this.style.background='transparent'">
+        Executive Briefing →
+      </button>
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RIGHT PANEL — ECONOMIC TAB
+════════════════════════════════════════════════════════════════ */
+function renderRpEcon() {
+  if (!S.country) { el('rpi').innerHTML = rpEmpty('Economic Intelligence'); return; }
+  const c = SOVEREIGNS[S.country];
+  const r = calcRisk(S.country, S.scenario, S.year);
+  const sc = SCENARIOS[S.scenario];
+  const adaptCost  = (c.adaptCost[S.scenario] || c.adaptCost['2.0'] * sc.gdpMultiplier/2.4);
+  const strandedExp = (c.strandedAssets[S.scenario] || c.strandedAssets['2.0'] * sc.gdpMultiplier/2.4);
+  /* Year-adjusted */
+  const yrFrac = (S.year - TL_START) / (TL_END_LONG - TL_START);
+  const adjAdapt   = adaptCost * (0.4 + 0.6 * yrFrac);
+  const adjStranded= strandedExp * (0.2 + 0.8 * yrFrac);
+
+  el('rpi').innerHTML = `
+    <div class="rp-sec">GDP Impact Pathways</div>
+    ${['1.5','2.0','3.0','ngfs'].map(sid=>{
+      const pct = (c.gdpAtRisk[sid]||0) * (1 + ((S.year-2025)/75)*1.5);
+      const col = sid==='1.5'?'var(--s15)':sid==='2.0'?'var(--s20)':sid==='3.0'?'var(--s30)':'var(--sngfs)';
+      return `<div class="risk-row">
+        <div class="risk-row-top">
+          <span class="risk-row-label">${SCENARIOS[sid].label}</span>
+          <span class="risk-row-val" style="color:${col}">−${pct.toFixed(1)}%</span>
+        </div>
+        <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${Math.min(100,pct*3)}%;background:${col}"></div></div>
+      </div>`;
+    }).join('')}
+
+    <div class="rp-sec">Financial Exposure</div>
+    <table class="rp-table">
+      <tbody>
+        <tr><td>Adaptation Cost</td><td class="mono" style="text-align:right;color:var(--amber)">$${adjAdapt.toFixed(0)}B</td></tr>
+        <tr><td>Stranded Assets</td><td class="mono" style="text-align:right;color:var(--neg)">$${adjStranded.toFixed(0)}B</td></tr>
+        <tr><td>Insurance Gaps</td><td class="mono" style="text-align:right;color:var(--rh)">${c.insuranceRetreating?'Retreating':'Stable'}</td></tr>
+        <tr><td>Migration Cost</td><td class="mono" style="text-align:right;color:var(--amber)">$${(r.mig*12).toFixed(0)}B</td></tr>
+        <tr><td>Energy Trans. Burden</td><td class="mono" style="text-align:right">${c.energyTransBurden}%</td></tr>
+        <tr><td>Food Security Risk</td><td class="mono" style="text-align:right;color:${c.foodRisk>=70?'var(--rc)':'var(--rh)'}">${c.foodRisk}/100</td></tr>
+      </tbody>
+    </table>
+
+    <div class="rp-sec">Economic Transition Risk</div>
+    ${[
+      {l:'Fossil Fuel Dependency',v:c.macro.carbonPrice<20?78:c.macro.carbonPrice<50?52:28,col:'var(--rc)'},
+      {l:'Trade Corridor Exposure',v:Math.round(c.climateRisk*0.7),col:'var(--rh)'},
+      {l:'Agricultural Vulnerability',v:c.foodRisk,col:'var(--rm)'},
+      {l:'Financial System Stress',v:Math.round(c.macro.debtGdp*0.5),col:'var(--rh)'},
+    ].map(it=>`<div class="risk-row">
+      <div class="risk-row-top">
+        <span class="risk-row-label">${it.l}</span>
+        <span class="risk-row-val" style="color:${it.col}">${it.v}</span>
+      </div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${it.v}%;background:${it.col}"></div></div>
+    </div>`).join('')}`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RIGHT PANEL — INFRA TAB
+════════════════════════════════════════════════════════════════ */
+function renderRpInfra() {
+  if (!S.country) { el('rpi').innerHTML = rpEmpty('Infrastructure Intelligence'); return; }
+  const c = SOVEREIGNS[S.country];
+  const r = calcRisk(S.country, S.scenario, S.year);
+  const infraScore = 100 - r.infraVuln;
+
+  el('rpi').innerHTML = `
+    <div class="rp-sec">National Infrastructure Score</div>
+    <div style="padding:14px 12px;border-bottom:1px solid var(--bd0)">
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">
+        <span style="font-family:var(--mono);font-size:28px;font-weight:700;color:${infraScore>=70?'var(--pos)':infraScore>=50?'var(--rh)':'var(--rc)'}">${infraScore.toFixed(0)}</span>
+        <span style="font-size:11px;color:var(--tx2)">/100 Resilience Score</span>
+      </div>
+      <div class="risk-bar-track" style="height:4px">
+        <div class="risk-bar-fill" style="width:${infraScore}%;background:${infraScore>=70?'var(--pos)':infraScore>=50?'var(--rh)':'var(--rc)'}"></div>
+      </div>
+    </div>
+
+    <div class="rp-sec">Critical Infrastructure</div>
+    ${c.criticalInfra.map((asset,i)=>{
+      const score = Math.max(20, 100 - r.infraVuln - (i*5) + Math.random()*10|0);
+      const vuln  = 100 - score;
+      const vc = vuln>=70?'var(--rc)':vuln>=50?'var(--rh)':vuln>=30?'var(--rm)':'var(--rl)';
+      const riskLabel = vuln>=70?'CRITICAL':vuln>=50?'HIGH':vuln>=30?'MODERATE':'LOW';
+      const icons = ['⚓','⚡','✈','≡','◌','□'];
+      return `<div class="infra-item">
+        <div class="infra-icon">${icons[i%icons.length]}</div>
+        <div class="infra-meta">
+          <div class="infra-name">${asset}</div>
+          <div class="infra-type">${c.name} · Critical Node</div>
+        </div>
+        <div class="infra-score">
+          <div class="infra-val" style="color:${vc}">${vuln}</div>
+          <div class="infra-risk" style="color:${vc}">${riskLabel}</div>
+        </div>
+      </div>`;
+    }).join('')}
+
+    <div class="rp-sec">System Dependencies</div>
+    <div style="padding:10px 12px">
+      <button onclick="showCascade()" style="
+        width:100%;padding:7px;background:transparent;
+        border:1px solid var(--bd2);color:var(--tx1);
+        font-size:9px;font-weight:700;text-transform:uppercase;
+        letter-spacing:.10em;cursor:pointer;transition:all .12s;
+        font-family:var(--mono);"
+        onmouseenter="this.style.borderColor='var(--acc)';this.style.color='var(--acc)'"
+        onmouseleave="this.style.borderColor='var(--bd2)';this.style.color='var(--tx1)'">
+        View Infrastructure Cascade →
+      </button>
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RIGHT PANEL — POLICY TAB
+════════════════════════════════════════════════════════════════ */
+function renderRpPolicy() {
+  if (!S.country) { el('rpi').innerHTML = rpEmpty('Policy Intelligence'); return; }
+  const c = SOVEREIGNS[S.country];
+  const sc = SCENARIOS[S.scenario];
+
+  const policyRows = [
+    { label:'Carbon Price Regime',   val:c.macro.carbonPrice?`$${c.macro.carbonPrice}/t`:'No pricing',   risk: c.macro.carbonPrice<20?'HIGH':c.macro.carbonPrice<60?'MODERATE':'LOW' },
+    { label:'Net Zero Target',       val:c.macro.netZero,  risk: c.macro.netZero>2060?'HIGH':c.macro.netZero>2050?'MODERATE':'LOW' },
+    { label:'CSRD Exposure',         val: c.region==='Western Europe'?'MANDATORY':'VOLUNTARY', risk: c.region==='Western Europe'?'LOW':'HIGH' },
+    { label:'CBAM Pressure',         val: c.region==='Western Europe'?'SHIELDED':'EXPOSED', risk: c.region==='Western Europe'?'LOW':'HIGH' },
+    { label:'Climate Litigation',    val: c.sovereignRisk==='CRITICAL'?'ELEVATED':'MODERATE', risk: c.sovereignRisk==='CRITICAL'?'HIGH':'MODERATE' },
+    { label:'NDC Compliance',        val: c.macro.netZero<=2050?'ON TRACK':'LAGGING',  risk: c.macro.netZero<=2050?'LOW':'HIGH' },
+  ];
+  const riskBadge = r => `<span class="tag ${r==='HIGH'?'red':r==='MODERATE'?'amber':'green'}">${r}</span>`;
+
+  el('rpi').innerHTML = `
+    <div class="rp-sec">Regulatory Intelligence</div>
+    ${policyRows.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--bd0)">
+      <div>
+        <div style="font-size:11px;color:var(--tx1)">${p.label}</div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--tx2);margin-top:1px">${p.val}</div>
+      </div>
+      ${riskBadge(p.risk)}
+    </div>`).join('')}
+
+    <div class="rp-sec">Regulatory Timeline</div>
+    ${[
+      {yr:2026,evt:'CSRD Phase 2 — large non-EU companies'},
+      {yr:2027,evt:'CBAM full implementation'},
+      {yr:2030,evt:'EU 55% GHG reduction milestone'},
+      {yr:2035,evt:'ISSB S1/S2 global adoption deadline'},
+      {yr:2040,evt:'SEC Climate Disclosure enforcement'},
+      {yr:2050,evt:'Net zero compliance deadline (most jurisdictions)'},
+    ].map(e=>`<div style="display:flex;gap:10px;padding:7px 12px;border-bottom:1px solid var(--bd0)">
+      <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--amber);flex-shrink:0;width:34px">${e.yr}</span>
+      <span style="font-size:10px;color:var(--tx1)">${e.evt}</span>
+    </div>`).join('')}`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SHARED HELPERS
+════════════════════════════════════════════════════════════════ */
+function rpEmpty(title) {
+  return `<div style="padding:32px 16px;text-align:center">
+    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--tx3);margin-bottom:12px;font-family:var(--mono)">${title}</div>
+    <div style="font-size:11px;color:var(--tx2);line-height:1.6">Select a nation to view ${title.toLowerCase()}.</div>
+  </div>`;
+}
+
+function scoreRingSvg(score, col) {
+  const cx=70,cy=62,r=48,sw=6;
+  const theta = (score/100)*Math.PI;
+  const ex = cx - r*Math.cos(theta);
+  const ey = cy - r*Math.sin(theta);
+  const bg = `M${cx-r},${cy} A${r},${r} 0 0 1 ${cx+r},${cy}`;
+  const fg = `M${cx-r},${cy} A${r},${r} 0 0 1 ${ex},${ey}`;
+  return `<svg width="140" height="76" viewBox="0 0 140 76" style="display:block;margin:0 auto;overflow:visible">
+    <path d="${bg}" fill="none" stroke="var(--bd1)" stroke-width="${sw}" stroke-linecap="round"/>
+    <path d="${fg}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"/>
+    <text x="${cx}" y="${cy+2}" text-anchor="middle" font-family="IBM Plex Mono,monospace"
+      font-size="22" font-weight="700" fill="${col}">${Math.round(score)}</text>
+  </svg>`;
+}
+
+function setRpTab(tab) {
+  S.rpTab = tab;
+  ['intel','econ','infra','policy'].forEach(t=>{
+    el(`rpt-${t}`).classList.toggle('on', t===tab);
+  });
+  renderRpPanel();
+}
+
+function renderRpPanel() {
+  switch(S.rpTab){
+    case 'intel':  renderRpIntel();  break;
+    case 'econ':   renderRpEcon();   break;
+    case 'infra':  renderRpInfra();  break;
+    case 'policy': renderRpPolicy(); break;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   STATS BAR UPDATE
+════════════════════════════════════════════════════════════════ */
+function updateStats() {
+  const sc = SCENARIOS[S.scenario];
+  el('sb-scn-dot').style.background = sc.dot;
+  el('sb-scn-label').style.color = sc.dot;
+  el('sb-scn-label').textContent = sc.label;
+  el('sb-year').textContent = S.year;
+  el('sb-yr-val').textContent = S.year;
+
+  if (!S.country) return;
+  const c = SOVEREIGNS[S.country];
+  const r = calcRisk(S.country, S.scenario, S.year);
+  el('sb-flag').textContent    = c.flag;
+  el('sb-cname').textContent   = c.name;
+  el('sb-cregion').textContent = c.region;
+  el('sb-gdp').textContent     = `$${r.gdpDollar.toFixed(0)}B`;
+  el('sb-infra').textContent   = `${r.infraVuln.toFixed(0)}/100`;
+  el('sb-pop').textContent     = `${r.popExp.toFixed(0)}`;
+  el('sb-water').textContent   = `${r.water.toFixed(0)}/100`;
+  el('sb-migration').textContent= `${r.mig.toFixed(0)}`;
+  el('sb-insur').textContent   = c.insuranceRetreating ? 'Retreating' : 'Stable';
+  el('sb-sovr').textContent    = c.sovereignRisk;
+  const rc = c.sovereignRisk==='CRITICAL'?'var(--rc)':c.sovereignRisk==='HIGH'?'var(--rh)':c.sovereignRisk==='MODERATE'?'var(--amber)':'var(--pos)';
+  el('sb-sovr').style.color = rc;
+  el('sb-insur').style.color = c.insuranceRetreating?'var(--rc)':'var(--pos)';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SELECT COUNTRY
+════════════════════════════════════════════════════════════════ */
+function selectCountry(iso) {
+  S.country = iso;
+  renderNationList();
+  renderNationKPIs();
+  updateStats();
+  renderRpPanel();
+  renderAIQueries();
+
+  /* Fly to country */
+  if (map && SOVEREIGNS[iso]) {
+    const c = SOVEREIGNS[iso];
+    const bbox = c.bbox;
+    const padLon = (bbox[2]-bbox[0])*0.15;
+    const padLat = (bbox[3]-bbox[1])*0.15;
+    try {
+      map.fitBounds([
+        [bbox[0]-padLon, bbox[1]-padLat],
+        [bbox[2]+padLon, bbox[3]+padLat]
+      ], { duration: 1800, padding: {top:60,bottom:60,left:60,right:60} });
+    } catch(e) {}
+  }
+  showToast(`${SOVEREIGNS[iso].flag} ${SOVEREIGNS[iso].name} loaded`);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   GLOBE MAP INIT
+════════════════════════════════════════════════════════════════ */
+let map = null;
+
+function initMap() {
+  map = new maplibregl.Map({
+    container: 'map',
+    projection: 'globe',
+    style: {
+      version: 8,
+      glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+      sources: {
+        nasa: {
+          type: 'raster',
+          tiles: ['https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_Black_Marble_STV_3Band_nighttime_2022/default/2022-01-01/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg'],
+          tileSize: 256, attribution: 'NASA GIBS · Night-time Earth', maxzoom: 8
+        },
+        nasaday: {
+          type: 'raster',
+          tiles: ['https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/2004-08/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg'],
+          tileSize: 256, maxzoom: 8
+        },
+        labels: {
+          type: 'raster',
+          tiles: [
+            'https://a.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png',
+            'https://b.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png',
+          ],
+          tileSize: 256, maxzoom: 19, attribution: '© CARTO © OSM'
+        },
+        countries: {
+          type: 'geojson',
+          data: { type:'FeatureCollection', features:[] }  /* filled after load */
+        },
+      },
+      layers: [
+        { id:'bg', type:'background', paint:{'background-color':'#000005'} },
+        { id:'day', type:'raster', source:'nasaday', paint:{'raster-opacity':0.22} },
+        { id:'ct', type:'raster', source:'nasa', paint:{'raster-opacity':0.95} },
+        { id:'lbl', type:'raster', source:'labels', paint:{'raster-opacity':0.75} },
+        { id:'country-fill', type:'fill', source:'countries',
+          paint:{ 'fill-color':['get','fillColor'], 'fill-opacity':0.0 } },
+        { id:'country-hover', type:'fill', source:'countries',
+          paint:{ 'fill-color':'rgba(232,119,34,0.14)', 'fill-opacity':0 } },
+      ]
+    },
+    center: [15, 30], zoom: 2.2, minZoom: 1.2, maxZoom: 12, attributionControl: false
+  });
+
+  map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-right');
+
+  map.on('load', () => {
+    /* Atmosphere */
+    try {
+      map.setFog({
+        color: 'rgba(2,8,30,0.7)',
+        'high-color': 'rgba(5,20,80,1.0)',
+        'space-color': '#000005',
+        'star-intensity': 0.15,
+        'horizon-blend': 0.32
+      });
+    } catch(e) {}
+
+    /* Build risk heatmap from sovereign centroids */
+    addRiskHeatmap();
+    addInfraLayers();
+
+    /* Hide loader */
+    setTimeout(() => {
+      const ld = el('mload');
+      ld.style.transition = 'opacity .6s';
+      ld.style.opacity = '0';
+      setTimeout(() => ld.style.display='none', 600);
+    }, 1200);
+  });
+
+  /* Slow auto-rotation */
+  let rotDir = 1;
+  let rotating = true;
+  function rotateCycle() {
+    if (!rotating || S.playing) return;
+    const center = map.getCenter();
+    map.setCenter([center.lng + 0.02 * rotDir, center.lat]);
+    requestAnimationFrame(rotateCycle);
+  }
+  map.on('mousedown', ()=>{ rotating=false; });
+  map.on('touchstart', ()=>{ rotating=false; });
+  map.on('moveend', ()=>{ setTimeout(()=>{ rotating=true; rotateCycle(); }, 3000); });
+  setTimeout(rotateCycle, 2000);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RISK HEATMAP — sovereign centroid-based
+════════════════════════════════════════════════════════════════ */
+function buildHeatGJ() {
+  const features = Object.keys(SOVEREIGNS).map(iso => {
+    const c = SOVEREIGNS[iso];
+    const r = calcRisk(iso, S.scenario, S.year);
+    const intensity = Math.min(1, r.gdpAtRisk / 30);
+    return {
+      type: 'Feature',
+      geometry: { type:'Point', coordinates: c.coords },
+      properties: { intensity, name: c.name, iso, risk: c.climateRisk }
+    };
+  });
+  return { type:'FeatureCollection', features };
+}
+
+function addRiskHeatmap() {
+  map.addSource('risk-src', { type:'geojson', data: buildHeatGJ() });
+  map.addLayer({
+    id: 'risk-heat',
+    type: 'heatmap',
+    source: 'risk-src',
+    paint: {
+      'heatmap-weight': ['interpolate',['linear'],['get','intensity'],0,0,1,1],
+      'heatmap-intensity': 1.6,
+      'heatmap-color': ['interpolate',['linear'],['heatmap-density'],
+        0,'rgba(0,0,0,0)',
+        0.05,'rgba(26,110,68,0.3)',
+        0.25,'rgba(138,96,0,0.5)',
+        0.5,'rgba(194,96,0,0.65)',
+        0.75,'rgba(201,55,44,0.80)',
+        1,'rgba(201,55,44,0.95)'
+      ],
+      'heatmap-radius': 60,
+      'heatmap-opacity': 0.55,
+    }
+  });
+  map.addLayer({
+    id: 'risk-points',
+    type: 'circle',
+    source: 'risk-src',
+    minzoom: 3,
+    paint: {
+      'circle-radius': ['interpolate',['linear'],['get','risk'],40,3,100,8],
+      'circle-color': ['interpolate',['linear'],['get','risk'],
+        40,'#1A6E44', 60,'#C26000', 80,'#C9372C', 100,'#C9372C'
+      ],
+      'circle-opacity': 0.85,
+      'circle-stroke-width': 1,
+      'circle-stroke-color': 'rgba(240,244,248,0.2)',
+    }
+  });
+  map.on('click','risk-points', e=>{
+    const iso = e.features[0].properties.iso;
+    if (iso) selectCountry(iso);
+  });
+  map.on('mouseenter','risk-points', ()=>{ map.getCanvas().style.cursor='pointer'; });
+  map.on('mouseleave','risk-points', ()=>{ map.getCanvas().style.cursor=''; });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INFRA LAYERS (ports / airports / power)
+════════════════════════════════════════════════════════════════ */
+const INFRA_ASSETS = {
+  ports: [
+    { name:'Shanghai', coords:[121.8,31.2], type:'Container', risk:68 },
+    { name:'Singapore', coords:[103.8,1.26], type:'Container', risk:62 },
+    { name:'Rotterdam', coords:[4.1,51.9], type:'Container', risk:45 },
+    { name:'Antwerp', coords:[4.4,51.2], type:'Container', risk:42 },
+    { name:'Los Angeles', coords:[-118.2,33.7], type:'Container', risk:58 },
+    { name:'Guangzhou', coords:[113.3,22.7], type:'Container', risk:72 },
+    { name:'Busan', coords:[129.0,35.1], type:'Container', risk:55 },
+    { name:'Qingdao', coords:[120.4,36.1], type:'Container', risk:65 },
+    { name:'Dubai', coords:[55.3,25.2], type:'Container', risk:60 },
+    { name:'Port Hedland', coords:[118.6,-20.3], type:'Bulk', risk:74 },
+    { name:'Chittagong', coords:[91.8,22.3], type:'General', risk:88 },
+    { name:'Mumbai', coords:[72.8,18.9], type:'Container', risk:78 },
+    { name:'Houston', coords:[-95.1,29.7], type:'Energy', risk:65 },
+    { name:'Santos', coords:[-46.3,-23.9], type:'Agri', risk:62 },
+    { name:'Suez', coords:[32.5,29.9], type:'Chokepoint', risk:78 },
+  ],
+  airports: [
+    { name:'Dubai Int\'l', coords:[55.4,25.3], risk:60 },
+    { name:'Beijing Capital', coords:[116.6,40.1], risk:58 },
+    { name:'Shanghai Pudong', coords:[121.8,31.2], risk:65 },
+    { name:'Tokyo Haneda', coords:[139.8,35.5], risk:62 },
+    { name:'Singapore Changi', coords:[103.9,1.35], risk:50 },
+    { name:'London Heathrow', coords:[-0.46,51.5], risk:42 },
+    { name:'Frankfurt', coords:[8.57,50.03], risk:38 },
+    { name:'New York JFK', coords:[-73.78,40.63], risk:55 },
+    { name:'Sydney', coords:[151.2,-33.9], risk:62 },
+    { name:'Mumbai', coords:[72.87,19.09], risk:72 },
+  ],
+  power: [
+    { name:'Three Gorges Dam', coords:[111.0,30.8], type:'Hydro', risk:65 },
+    { name:'Itaipu Dam', coords:[-54.6,-25.4], type:'Hydro', risk:58 },
+    { name:'Texas Power Grid', coords:[-99.0,31.0], type:'Grid', risk:72 },
+    { name:'UK National Grid', coords:[-1.5,52.0], type:'Grid', risk:42 },
+    { name:'German Grid Hub', coords:[10.0,51.0], type:'Grid', risk:38 },
+    { name:'Tarbela Dam', coords:[72.7,34.0], type:'Hydro', risk:82 },
+    { name:'Snowy Hydro', coords:[148.3,-36.2], type:'Hydro', risk:68 },
+    { name:'ARAMCO Grid', coords:[49.5,26.3], type:'Grid', risk:78 },
+    { name:'Eskom Medupi', coords:[27.7,-23.7], type:'Coal', risk:75 },
+  ],
+};
+
+function infraGJ(type) {
+  return {
+    type: 'FeatureCollection',
+    features: (INFRA_ASSETS[type]||[]).map(a=>({
+      type:'Feature',
+      geometry:{ type:'Point', coordinates: a.coords },
+      properties: { name:a.name, risk:a.risk, itype:a.type||type }
+    }))
+  };
+}
+
+function addInfraLayers() {
+  ['ports','airports','power'].forEach(type=>{
+    map.addSource(`${type}-src`, { type:'geojson', data: infraGJ(type) });
+    const col = type==='ports'?'#3A8FA8':type==='airports'?'#A855F7':'#E87722';
+    map.addLayer({
+      id: `${type}-glow`, type:'circle', source:`${type}-src`,
+      layout:{ visibility:'none' },
+      paint:{
+        'circle-radius':14, 'circle-color':col,
+        'circle-opacity':0.15, 'circle-blur':0.8
+      }
+    });
+    map.addLayer({
+      id: `${type}-dot`, type:'circle', source:`${type}-src`,
+      layout:{ visibility:'none' },
+      paint:{
+        'circle-radius':4, 'circle-color':col,
+        'circle-opacity':0.9, 'circle-stroke-width':1,
+        'circle-stroke-color':'rgba(240,244,248,0.3)'
+      }
+    });
+    map.on('mouseenter',`${type}-dot`, e=>{
+      const f = e.features[0].properties;
+      const tip = el('country-tip');
+      tip.style.left = `${e.point.x+14}px`;
+      tip.style.top  = `${e.point.y-20}px`;
+      el('ct-name').textContent = f.name;
+      el('ct-gdp').textContent  = `Vuln: ${f.risk}/100`;
+      el('ct-risk').textContent = f.itype||type;
+      el('ct-infra').textContent = f.risk>=70?'HIGH RISK':f.risk>=50?'MODERATE':'LOW';
+      tip.classList.add('on');
+      map.getCanvas().style.cursor='pointer';
+    });
+    map.on('mouseleave',`${type}-dot`, ()=>{
+      el('country-tip').classList.remove('on');
+      map.getCanvas().style.cursor='';
+    });
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MAP LAYER VISIBILITY UPDATES
+════════════════════════════════════════════════════════════════ */
+function updateMapLayers() {
+  if (!map || !map.loaded()) return;
+  /* Infra toggles */
+  ['ports','airports','power'].forEach(t=>{
+    const vis = S.infra[t]?'visible':'none';
+    try { map.setLayoutProperty(`${t}-glow`,'visibility',vis); } catch(e){}
+    try { map.setLayoutProperty(`${t}-dot`,'visibility',vis); } catch(e){}
+  });
+  /* Update heatmap data */
+  try {
+    const src = map.getSource('risk-src');
+    if (src) src.setData(buildHeatGJ());
+  } catch(e) {}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MODE SWITCHER
+════════════════════════════════════════════════════════════════ */
+function setMode(mode) {
+  S.mode = mode;
+  ['globe','infra','econ','policy','briefing'].forEach(m=>{
+    el(`mode-${m}`)?.classList.toggle('on', m===mode);
+  });
+  if (mode === 'briefing') {
+    renderBriefing();
+    el('briefing-overlay').classList.add('on');
+  } else {
+    el('briefing-overlay').classList.remove('on');
+  }
+  const legends = { globe:'Climate Risk', infra:'Infrastructure Vulnerability', econ:'GDP at Risk', policy:'Policy Pressure' };
+  el('gl-title').textContent = legends[mode] || 'Climate Risk';
+
+  /* Activate appropriate layers */
+  if (mode==='infra') {
+    S.infra.ports=true; S.infra.airports=true; S.infra.power=true;
+  }
+  renderLayerButtons();
+  updateMapLayers();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SCENARIO SWITCHER
+════════════════════════════════════════════════════════════════ */
+function setScenario(sid) {
+  S.scenario = sid;
+  ['1.5','2.0','3.0','ngfs'].forEach(s=>{
+    const btn = el(`tscn-${s.replace('.','')}`);
+    if(btn) btn.classList.toggle('on', s===sid);
+  });
+  renderScenarioButtons();
+  renderNationKPIs();
+  renderRpPanel();
+  updateStats();
+  updateMapLayers();
+  renderTimelineEvents();
+}
+</script>
+<!-- Part 4: AI Copilot + Executive Briefing + Timeline + Cascade -->
+<script>
+/* ════════════════════════════════════════════════════════════════
+   AI CLIMATE COPILOT
+════════════════════════════════════════════════════════════════ */
+const AI_QUERY_TEMPLATES = [
+  'What is the GDP at risk under 3°C by 2060?',
+  'Which infrastructure assets are most vulnerable?',
+  'Show migration pressure projections for 2050.',
+  'What ports become uninsurable by 2045?',
+  'How does drought affect energy demand?',
+  'What is the sovereign credit risk exposure?',
+  'Compare flood risk between 1.5°C and 3°C scenarios.',
+  'Which sectors face stranded asset collapse?',
+];
+
+/* Sovereign-grade pre-computed AI responses */
+const AI_RESPONSES = {
+  gdp: (c,sc,yr) => {
+    const r = calcRisk(c.iso||Object.keys(SOVEREIGNS)[0], sc, yr);
+    return `Under the ${SCENARIOS[sc].label} scenario, ${c.name} faces estimated GDP loss of <strong>${r.gdpAtRisk.toFixed(1)}%</strong> by ${yr} — equivalent to <strong>$${r.gdpDollar.toFixed(0)}B</strong> in output contraction. Primary drivers: physical asset damage (${(r.gdpAtRisk*0.45).toFixed(1)}%), supply chain disruption (${(r.gdpAtRisk*0.28).toFixed(1)}%), and productivity loss from heat stress (${(r.gdpAtRisk*0.27).toFixed(1)}%). Cumulative loss through 2100 under ${SCENARIOS['3.0'].label} projects to <strong>${(r.gdpDollar*4.2).toFixed(0)}B</strong> in net present value terms.`;
+  },
+  infra: (c,sc,yr) => {
+    const r = calcRisk(c.iso||Object.keys(SOVEREIGNS)[0], sc, yr);
+    return `Infrastructure vulnerability for ${c.name} scores <strong>${r.infraVuln.toFixed(0)}/100</strong> by ${yr} under the ${SCENARIOS[sc].label} pathway. Critical exposed assets include: ${c.criticalInfra.slice(0,3).join(', ')}. Flood-exposed infrastructure represents ~${(r.infraVuln*0.6).toFixed(0)}% of replacement cost exposure. Recommended adaptation investment: <strong>$${(r.gdpDollar*0.18).toFixed(0)}B</strong> over the next decade.`;
+  },
+  migration: (c,sc,yr) => {
+    const r = calcRisk(c.iso||Object.keys(SOVEREIGNS)[0], sc, yr);
+    return `Climate-driven displacement projections for ${c.name}: <strong>${r.mig.toFixed(0)}M people</strong> face forced or voluntary relocation by ${yr} under the ${SCENARIOS[sc].label} scenario. Primary displacement drivers: sea-level inundation (${Math.round(r.mig*0.32)}M), extreme heat zones (${Math.round(r.mig*0.28)}M), agricultural collapse (${Math.round(r.mig*0.25)}M), and water scarcity (${Math.round(r.mig*0.15)}M). Fiscal burden estimated at <strong>$${(r.mig*8.4).toFixed(0)}B</strong>.`;
+  },
+  ports: (c,sc) => {
+    const yr = S.scenario==='3.0'?2042:S.scenario==='2.0'?2052:2065;
+    return `Under the ${SCENARIOS[sc].label} scenario, port infrastructure in ${c.name} faces insurance withdrawal thresholds by approximately <strong>${yr}</strong>. High-risk assets: ${c.criticalInfra.filter(x=>x.toLowerCase().includes('port')).join(', ')||c.criticalInfra[0]}. Sea-level exposure combined with storm surge amplification drives insurability collapse. Lloyd's of London and Swiss Re retreat probability: <strong>${sc==='3.0'?88:sc==='2.0'?62:32}%</strong> by ${yr}.`;
+  },
+  drought: (c,sc,yr) => {
+    const risks = SOVEREIGNS[Object.keys(SOVEREIGNS).find(k=>SOVEREIGNS[k]===c)||'USA']?.risks||{};
+    return `Drought stress in ${c.name} (current index: ${risks.drought||'N/A'}/100) projects to <strong>${Math.min(100,(risks.drought||50)*1.4).toFixed(0)}/100</strong> by ${yr} under ${SCENARIOS[sc].label}. Energy demand correlation: every 10-point drought score increase generates +${(3.2*0.1).toFixed(1)}% grid demand from cooling and pumping. Water-stressed power plants face <strong>${sc==='3.0'?34:sc==='2.0'?22:12}% capacity reduction</strong> risk by ${yr}.`;
+  },
+  credit: (c,sc,yr) => {
+    return `Sovereign credit risk assessment for ${c.name} under ${SCENARIOS[sc].label}: current rating <strong>${c.macro.credRating}</strong>. Climate-driven downgrade probability by ${yr}: <strong>${sc==='3.0'?68:sc==='2.0'?42:18}%</strong>. Key risk vectors: adaptation financing gap ($${(c.gdp*0.022).toFixed(0)}B annually needed), debt service stress from recovery expenditure, and diminishing tax base from climate-displaced industries. Insurance retreat amplifies sovereign liability exposure by <strong>${c.insuranceRetreating?'2.4x':'1.3x'}</strong>.`;
+  },
+  default: (c,sc,yr) => {
+    const r = calcRisk(c.iso||Object.keys(SOVEREIGNS)[0], sc, yr);
+    return `${c.name} national climate intelligence summary for ${yr} under ${SCENARIOS[sc].label}: GDP at risk <strong>$${r.gdpDollar.toFixed(0)}B</strong> (${r.gdpAtRisk.toFixed(1)}%), infrastructure vulnerability <strong>${r.infraVuln.toFixed(0)}/100</strong>, population exposed <strong>${r.popExp.toFixed(0)}M</strong>. Sovereign risk classification: <strong>${c.sovereignRisk}</strong>. Adaptation cost gap: <strong>$${(r.gdpDollar*0.22).toFixed(0)}B/yr</strong>. Priority action: accelerate resilience investment in ${c.hotspots[0]}.`;
+  }
+};
+
+function renderAIQueries() {
+  const queries = AI_QUERY_TEMPLATES.slice(0,5);
+  el('aip-queries').innerHTML = queries.map(q=>
+    `<button class="aip-query-btn" onclick="askAI('${q}')">${q}</button>`
+  ).join('');
+}
+
+function toggleAI() {
+  S.aiOpen = !S.aiOpen;
+  el('ai-panel').classList.toggle('on', S.aiOpen);
+}
+
+function askAI(query) {
+  el('aip-input').value = query;
+  sendAI();
+}
+
+function sendAI() {
+  const input = el('aip-input');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+
+  /* User message */
+  const msgs = el('aip-msgs');
+  msgs.innerHTML += `<div class="aip-msg user">${q}</div>`;
+
+  /* Thinking indicator */
+  const thinkId = 'ai-think-' + Date.now();
+  msgs.innerHTML += `<div class="aip-msg system" id="${thinkId}"><div class="aip-label">Climactix AI · Processing</div><span style="color:var(--tx3)">Analysing sovereign intelligence...</span></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  setTimeout(()=>{
+    const c = S.country ? SOVEREIGNS[S.country] : Object.values(SOVEREIGNS)[0];
+    const qLow = q.toLowerCase();
+    let resp;
+    if (qLow.includes('gdp')||qLow.includes('economic'))         resp = AI_RESPONSES.gdp(c,S.scenario,S.year);
+    else if (qLow.includes('infrastructure')||qLow.includes('asset')) resp = AI_RESPONSES.infra(c,S.scenario,S.year);
+    else if (qLow.includes('migr')||qLow.includes('displace'))   resp = AI_RESPONSES.migration(c,S.scenario,S.year);
+    else if (qLow.includes('port')||qLow.includes('insur'))      resp = AI_RESPONSES.ports(c,S.scenario);
+    else if (qLow.includes('drought')||qLow.includes('energy'))  resp = AI_RESPONSES.drought(c,S.scenario,S.year);
+    else if (qLow.includes('credit')||qLow.includes('sovereign')) resp = AI_RESPONSES.credit(c,S.scenario,S.year);
+    else                                                          resp = AI_RESPONSES.default(c,S.scenario,S.year);
+
+    document.getElementById(thinkId).innerHTML = `<div class="aip-label">Climactix AI · ${c.flag} ${c.name} · ${SCENARIOS[S.scenario].label} · ${S.year}</div>${resp}`;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 640);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   INFRASTRUCTURE CASCADE PANEL
+════════════════════════════════════════════════════════════════ */
+function showCascade() {
+  const panel = el('cascade-panel');
+  panel.classList.add('on');
+  if (!S.country) {
+    el('cascade-body').innerHTML = `<div style="padding:12px;font-size:11px;color:var(--tx2)">Select a nation to view infrastructure cascade.</div>`;
+    return;
+  }
+  const c = SOVEREIGNS[S.country];
+  const r = calcRisk(S.country, S.scenario, S.year);
+  const cascades = [
+    { trigger: c.hotspots[0], event:'Critical infrastructure flooding', impact: `-$${(r.gdpDollar*0.08).toFixed(0)}B GDP` },
+    { trigger: 'Port disruption', event:'Shipping corridor closure (±14 days)', impact: `-$${(r.gdpDollar*0.05).toFixed(0)}B trade` },
+    { trigger: 'Manufacturing slowdown', event:`${Math.round(r.infraVuln*0.4)}% supply chain delay`, impact: `-$${(r.gdpDollar*0.12).toFixed(0)}B output` },
+    { trigger: 'Energy grid stress', event:'Industrial load shedding', impact: `${Math.round(r.infraVuln*0.3)}% capacity loss` },
+    { trigger: 'Banking exposure', event:'Non-performing loans spike', impact: `${(r.gdpAtRisk*0.8).toFixed(1)}% NPL uplift` },
+    { trigger: 'Insurance withdrawal', event:`${c.hotspots[0]} becomes uninsurable`, impact: `$${(r.gdpDollar*0.22).toFixed(0)}B unprotected` },
+  ];
+  el('cascade-body').innerHTML = cascades.map(ca=>`
+    <div class="casc-item">
+      <span class="casc-arrow">▶</span>
+      <div>
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);margin-bottom:2px;font-family:var(--mono)">${ca.trigger}</div>
+        <div class="casc-text">${ca.event}</div>
+        <div class="casc-impact">${ca.impact}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   EXECUTIVE BRIEFING
+════════════════════════════════════════════════════════════════ */
+function renderBriefing() {
+  const bp = el('bp-inner');
+  const c = S.country ? SOVEREIGNS[S.country] : Object.values(SOVEREIGNS)[0];
+  const r = calcRisk(S.country || Object.keys(SOVEREIGNS)[0], S.scenario, S.year);
+  const sc = SCENARIOS[S.scenario];
+  const now = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+
+  const riskItems = [
+    { name:'Heat Stress', val:c.risks.heat },
+    { name:'Flood Risk', val:c.risks.flood },
+    { name:'Drought Index', val:c.risks.drought },
+    { name:'Wildfire Activity', val:c.risks.wildfire },
+    { name:'Sea Level Exposure', val:c.risks.sealevel },
+    { name:'Water Stress', val:c.risks.waterStress },
+  ];
+
+  const actions = [
+    `Mobilise adaptation financing: $${(r.gdpDollar*0.18).toFixed(0)}B over 10-year horizon for ${c.hotspots[0]}.`,
+    `Mandate infrastructure resilience audit for ${c.criticalInfra.slice(0,2).join(' and ')}.`,
+    `Engage sovereign wealth fund for climate-adjusted asset reallocation. Estimated stranded exposure: $${(c.strandedAssets[S.scenario]||c.strandedAssets['2.0']).toFixed(0)}B.`,
+    `Establish cross-border migration protocol: ${r.mig.toFixed(0)}M projected displaced persons by ${S.year}.`,
+    `Accelerate carbon pricing mechanism — current trajectory insufficient for ${c.macro.netZero} net-zero target under ${sc.label} scenario.`,
+    `Commission insurance adequacy review: ${c.insuranceRetreating?'active retreat underway in high-risk zones':'monitor retreat probability over 5-year window'}.`,
+  ];
+
+  bp.innerHTML = `
+    <div class="bp-eyebrow">Climactix Global Intelligence · Executive Climate Briefing · ${now}</div>
+    <div class="bp-title">${c.flag} ${c.name} — National Climate Risk Assessment</div>
+    <div class="bp-sub">Scenario: ${sc.label} ${sc.name} · Simulation Year ${S.year} · IPCC AR6 · NGFS Phase IV · Confidential</div>
+
+    <div class="bp-kpi-row">
+      <div class="bp-kpi">
+        <div class="bp-kpi-lbl">GDP at Risk</div>
+        <div class="bp-kpi-val" style="color:var(--rh)">$${r.gdpDollar.toFixed(0)}B</div>
+        <div class="bp-kpi-desc">${r.gdpAtRisk.toFixed(1)}% of national output by ${S.year}</div>
+      </div>
+      <div class="bp-kpi">
+        <div class="bp-kpi-lbl">Infrastructure Vulnerability</div>
+        <div class="bp-kpi-val" style="color:${r.infraVuln>=70?'var(--rc)':'var(--rh)'}">${r.infraVuln.toFixed(0)}/100</div>
+        <div class="bp-kpi-desc">Critical system exposure index</div>
+      </div>
+      <div class="bp-kpi">
+        <div class="bp-kpi-lbl">Population Exposed</div>
+        <div class="bp-kpi-val" style="color:var(--amber)">${r.popExp.toFixed(0)}M</div>
+        <div class="bp-kpi-desc">${((r.popExp/c.pop)*100).toFixed(0)}% of national population</div>
+      </div>
+      <div class="bp-kpi">
+        <div class="bp-kpi-lbl">Sovereign Risk Rating</div>
+        <div class="bp-kpi-val" style="color:${c.sovereignRisk==='CRITICAL'?'var(--rc)':c.sovereignRisk==='HIGH'?'var(--rh)':c.sovereignRisk==='MODERATE'?'var(--amber)':'var(--pos)'}">${c.sovereignRisk}</div>
+        <div class="bp-kpi-desc">Climactix Sovereign Intelligence Index</div>
+      </div>
+    </div>
+
+    <div class="bp-grid-3">
+      <div class="bp-card">
+        <div class="bp-card-hd">Physical Risk Profile</div>
+        ${riskItems.map(ri=>`<div class="bp-bar-wrap">
+          <div class="bp-bar-label"><span class="bp-bar-name">${ri.name}</span><span class="bp-bar-pct" style="color:${ri.val>=80?'var(--rc)':ri.val>=60?'var(--rh)':'var(--rm)'}">${ri.val}</span></div>
+          <div class="bp-bar-track"><div class="bp-bar-fill" style="width:${ri.val}%;background:${ri.val>=80?'var(--rc)':ri.val>=60?'var(--rh)':ri.val>=40?'var(--rm)':'var(--rl)'}"></div></div>
+        </div>`).join('')}
+      </div>
+
+      <div class="bp-card">
+        <div class="bp-card-hd">Economic Intelligence</div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">GDP (2024)</span><span class="bp-risk-val">$${(c.gdp/1000).toFixed(1)}T</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">GDP at Risk</span><span class="bp-risk-val" style="color:var(--rh)">$${r.gdpDollar.toFixed(0)}B</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">Adaptation Cost</span><span class="bp-risk-val" style="color:var(--amber)">$${((c.adaptCost[S.scenario]||c.adaptCost['2.0'])*0.6).toFixed(0)}B</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">Stranded Exposure</span><span class="bp-risk-val" style="color:var(--neg)">$${((c.strandedAssets[S.scenario]||c.strandedAssets['2.0'])).toFixed(0)}B</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">Migration Cost</span><span class="bp-risk-val" style="color:var(--amber)">$${(r.mig*8).toFixed(0)}B</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">Carbon Price</span><span class="bp-risk-val" style="color:var(--acc)">$${c.macro.carbonPrice}/t</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">Net Zero Target</span><span class="bp-risk-val">${c.macro.netZero}</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">Credit Rating</span><span class="bp-risk-val">${c.macro.credRating}</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">Debt / GDP</span><span class="bp-risk-val" style="color:${c.macro.debtGdp>100?'var(--rh)':'var(--tx1)'}">${c.macro.debtGdp}%</span></div>
+        <div class="bp-risk-row"><span class="bp-risk-lbl">Insurance Retreat</span><span class="bp-risk-val" style="color:${c.insuranceRetreating?'var(--rc)':'var(--pos)'}">${c.insuranceRetreating?'ACTIVE':'STABLE'}</span></div>
+      </div>
+
+      <div class="bp-card">
+        <div class="bp-card-hd">Strategic Recommendations</div>
+        ${actions.map((a,i)=>`<div class="bp-action-item">
+          <span class="bp-action-num">${i+1}</span>
+          <span class="bp-action-text">${a}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="bp-grid-2">
+      <div class="bp-card">
+        <div class="bp-card-hd">Critical Infrastructure Exposure</div>
+        ${c.criticalInfra.map((asset,i)=>{
+          const v = Math.max(25,Math.min(95, r.infraVuln - i*4 + (i%2===0?8:-4)));
+          const col = v>=70?'var(--rc)':v>=50?'var(--rh)':'var(--rm)';
+          return `<div class="bp-bar-wrap">
+            <div class="bp-bar-label"><span class="bp-bar-name">${asset}</span><span class="bp-bar-pct" style="color:${col}">Vuln: ${v}</span></div>
+            <div class="bp-bar-track"><div class="bp-bar-fill" style="width:${v}%;background:${col}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <div class="bp-card">
+        <div class="bp-card-hd">Climate Hotspot Exposure</div>
+        ${c.hotspots.map(h=>`<div class="bp-action-item">
+          <span class="bp-action-num" style="color:var(--rc)">!</span>
+          <span class="bp-action-text">${h}</span>
+        </div>`).join('')}
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--bd0)">
+          <div class="bp-card-hd" style="margin-bottom:10px">Scenario Comparison — GDP Impact</div>
+          ${['1.5','2.0','3.0','ngfs'].map(sid=>{
+            const rv = (c.gdpAtRisk[sid]||c.gdpAtRisk['2.0']) * (1+((S.year-2025)/75));
+            const col = sid==='1.5'?'var(--s15)':sid==='2.0'?'var(--s20)':sid==='3.0'?'var(--s30)':'var(--sngfs)';
+            return `<div class="bp-bar-wrap">
+              <div class="bp-bar-label"><span class="bp-bar-name">${SCENARIOS[sid].label}</span><span class="bp-bar-pct" style="color:${col}">−${rv.toFixed(1)}%</span></div>
+              <div class="bp-bar-track"><div class="bp-bar-fill" style="width:${Math.min(100,rv*3)}%;background:${col}"></div></div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:16px 0;border-top:1px solid var(--bd1);margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:9px;color:var(--tx3);font-family:var(--mono)">
+        CLIMACTIX GLOBAL INTELLIGENCE · CONFIDENTIAL · ${now} · FOR AUTHORISED RECIPIENTS ONLY
+      </div>
+      <div style="font-size:9px;color:var(--tx3);font-family:var(--mono)">
+        IPCC AR6 · NGFS PHASE IV · NASA EARTHDATA · WORLD BANK · IMF
+      </div>
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TIMELINE
+════════════════════════════════════════════════════════════════ */
+function renderTimeline() {
+  /* Year markers */
+  const start = TL_START, end = tlEnd();
+  const markers = el('tl-markers');
+  const step = S.extended ? 10 : 5;
+  let html = '';
+  for (let y=start; y<=end; y+=step) {
+    const pct = ((y-start)/(end-start))*100;
+    const major = y%25===0||y===start||y===end;
+    html += `<span class="tl-marker${major?' major':''}" style="position:absolute;left:${pct}%;transform:translateX(-50%)">${y}</span>`;
+  }
+  markers.innerHTML = html;
+  renderTimelineEvents();
+  updateTimelinePosition();
+}
+
+function renderTimelineEvents() {
+  const evts = el('tl-events');
+  if (!S.showTipping) { evts.innerHTML=''; return; }
+  const tips = TIPPING_EVENTS[S.scenario] || [];
+  const start=TL_START, end=tlEnd();
+  evts.innerHTML = tips.map(e=>{
+    if (e.year<start||e.year>end) return '';
+    const pct = ((e.year-start)/(end-start))*100;
+    return `<div class="tl-event" style="left:${pct}%" data-label="${e.label}"></div>`;
+  }).join('');
+}
+
+function updateTimelinePosition() {
+  const pct = yearPct(S.year)*100;
+  const fill  = el('tl-fill');
+  const thumb = el('tl-thumb');
+  if (fill)  fill.style.width  = pct + '%';
+  if (thumb) thumb.style.left  = pct + '%';
+  el('tl-year-val').textContent = S.year;
+  el('sb-year').textContent     = S.year;
+}
+
+function scrubTL(e) {
+  const rail = el('tl-rail');
+  const rect = rail.getBoundingClientRect();
+  const pct  = Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));
+  S.year = pctYear(pct);
+  updateTimelinePosition();
+  updateStats();
+  renderNationKPIs();
+  renderRpPanel();
+  if (map) {
+    try { map.getSource('risk-src').setData(buildHeatGJ()); } catch(e){}
+  }
+}
+
+let playInterval = null;
+function togglePlay() {
+  S.playing = !S.playing;
+  el('pico').style.display  = S.playing ? 'none' : 'block';
+  el('paico').style.display = S.playing ? 'block' : 'none';
+  el('plbl').textContent    = S.playing ? 'Pause' : 'Play';
+
+  if (S.playing) {
+    playInterval = setInterval(()=>{
+      if (S.year >= tlEnd()) { S.year=TL_START; }
+      S.year += 1;
+      updateTimelinePosition();
+      updateStats();
+      renderNationKPIs();
+      renderRpPanel();
+      if (map) {
+        try { map.getSource('risk-src').setData(buildHeatGJ()); } catch(e) {}
+      }
+    }, 120);
+  } else {
+    clearInterval(playInterval);
+  }
+}
+
+function resetTL() {
+  if (S.playing) togglePlay();
+  S.year = TL_START;
+  updateTimelinePosition();
+  updateStats();
+  renderNationKPIs();
+  renderRpPanel();
+}
+</script>
+<!-- NASA Space Canvas Globe -->
+<script>
+/* ════════════════════════════════════════════════════════════════
+   NASA EARTH OBSERVATORY — CANVAS STAR-FIELD + GLOBE
+   Renders behind MapLibre as persistent space backdrop.
+   Shows when tiles are loading AND as atmosphere when map renders.
+════════════════════════════════════════════════════════════════ */
+function initSpaceCanvas() {
+  const canvas = document.getElementById('space-canvas');
+  if (!canvas) return;
+  const mw = document.getElementById('mw');
+  function resize() {
+    canvas.width  = mw.offsetWidth;
+    canvas.height = mw.offsetHeight;
+    drawSpace();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+}
+
+function drawSpace() {
+  const canvas = document.getElementById('space-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  /* Deep space gradient */
+  ctx.clearRect(0, 0, W, H);
+  const bg = ctx.createRadialGradient(W*0.5, H*0.5, H*0.05, W*0.5, H*0.5, H*0.85);
+  bg.addColorStop(0,   'rgba(4,10,28,1)');
+  bg.addColorStop(0.5, 'rgba(2,5,18,1)');
+  bg.addColorStop(1,   'rgba(0,0,4,1)');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  /* Stars — procedural from fixed seed */
+  const rng = (n) => { let x=Math.sin(n*12.9898+78.233)*43758.5453; return x-(x|0); };
+  const starCount = 420;
+  for (let i=0; i<starCount; i++) {
+    const x = rng(i*3.1)   * W;
+    const y = rng(i*7.4+1) * H;
+    const r = rng(i*2.8+3) * 1.2;
+    const a = 0.25 + rng(i*5.2+9) * 0.65;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(200,220,255,${a})`;
+    ctx.fill();
+  }
+
+  /* Globe circle — Earth silhouette */
+  const cx = W/2, cy = H/2;
+  const globeR = Math.min(W, H) * 0.38;
+
+  /* Outer space glow */
+  const spaceGlow = ctx.createRadialGradient(cx, cy, globeR*0.7, cx, cy, globeR*1.6);
+  spaceGlow.addColorStop(0,   'rgba(27,110,235,0.00)');
+  spaceGlow.addColorStop(0.6, 'rgba(27,110,235,0.04)');
+  spaceGlow.addColorStop(1,   'rgba(0,30,120,0.00)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, globeR*1.6, 0, Math.PI*2);
+  ctx.fillStyle = spaceGlow;
+  ctx.fill();
+
+  /* Earth base sphere */
+  const earthGrad = ctx.createRadialGradient(cx-globeR*0.28, cy-globeR*0.25, globeR*0.05, cx, cy, globeR);
+  earthGrad.addColorStop(0,   '#1A4A7A');
+  earthGrad.addColorStop(0.3, '#0E2E5C');
+  earthGrad.addColorStop(0.7, '#071828');
+  earthGrad.addColorStop(1,   '#030A14');
+  ctx.beginPath();
+  ctx.arc(cx, cy, globeR, 0, Math.PI*2);
+  ctx.fillStyle = earthGrad;
+  ctx.fill();
+
+  /* Atmosphere limb glow */
+  const limb = ctx.createRadialGradient(cx, cy, globeR*0.88, cx, cy, globeR*1.08);
+  limb.addColorStop(0,   'rgba(27,110,235,0.00)');
+  limb.addColorStop(0.5, 'rgba(56,140,255,0.22)');
+  limb.addColorStop(0.8, 'rgba(86,204,242,0.12)');
+  limb.addColorStop(1,   'rgba(0,60,200,0.00)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, globeR*1.08, 0, Math.PI*2);
+  ctx.fillStyle = limb;
+  ctx.fill();
+
+  /* Continent silhouettes — procedural patches */
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, globeR, 0, Math.PI*2);
+  ctx.clip();
+  const landParts = [
+    /* Americas */ {x:-0.35,y:-0.10,w:0.22,h:0.55,rx:0.10},
+    /* Europe */   {x:0.02, y:-0.30,w:0.15,h:0.25,rx:0.06},
+    /* Africa */   {x:0.06, y:-0.05,w:0.18,h:0.42,rx:0.08},
+    /* Asia */     {x:0.20, y:-0.38,w:0.45,h:0.40,rx:0.12},
+    /* Oceania */  {x:0.32, y:0.12, w:0.20,h:0.20,rx:0.06},
+  ];
+  landParts.forEach(p=>{
+    const lx = cx + p.x*globeR*1.9;
+    const ly = cy + p.y*globeR*1.9;
+    const lw = p.w*globeR*1.9;
+    const lh = p.h*globeR*1.9;
+    const landGrad = ctx.createRadialGradient(lx+lw*0.3, ly+lh*0.2, 0, lx+lw*0.5, ly+lh*0.5, Math.max(lw,lh));
+    landGrad.addColorStop(0, 'rgba(20,60,40,0.55)');
+    landGrad.addColorStop(1, 'rgba(8,24,18,0.20)');
+    ctx.beginPath();
+    const rx = p.rx*globeR;
+    ctx.roundRect(lx, ly, lw, lh, rx);
+    ctx.fillStyle = landGrad;
+    ctx.fill();
+  });
+  ctx.restore();
+
+  /* Latitude grid lines */
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, globeR, 0, Math.PI*2);
+  ctx.clip();
+  ctx.strokeStyle = 'rgba(27,110,235,0.06)';
+  ctx.lineWidth = 0.5;
+  for (let lat=-60; lat<=60; lat+=30) {
+    const yr = cy + (lat/90)*globeR;
+    const xr = Math.sqrt(Math.max(0, globeR*globeR-(yr-cy)*(yr-cy)));
+    ctx.beginPath();
+    ctx.ellipse(cx, yr, xr, xr*0.28, 0, 0, Math.PI*2);
+    ctx.stroke();
+  }
+  for (let lng=0; lng<180; lng+=30) {
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, globeR*Math.abs(Math.cos(lng*Math.PI/180)), globeR, 0, 0, Math.PI*2);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  /* Polar ice caps */
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, globeR, 0, Math.PI*2);
+  ctx.clip();
+  const iceGrad = ctx.createRadialGradient(cx, cy-globeR*0.8, 0, cx, cy-globeR, globeR*0.3);
+  iceGrad.addColorStop(0, 'rgba(200,230,255,0.35)');
+  iceGrad.addColorStop(1, 'rgba(180,220,255,0.00)');
+  ctx.beginPath();
+  ctx.arc(cx, cy-globeR*0.80, globeR*0.28, 0, Math.PI*2);
+  ctx.fillStyle = iceGrad;
+  ctx.fill();
+  ctx.restore();
+
+  /* Day/night terminator gradient */
+  const terminator = ctx.createLinearGradient(cx-globeR, cy, cx+globeR*0.4, cy);
+  terminator.addColorStop(0,   'rgba(0,0,0,0.40)');
+  terminator.addColorStop(0.7, 'rgba(0,0,0,0.00)');
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, globeR, 0, Math.PI*2);
+  ctx.clip();
+  ctx.fillStyle = terminator;
+  ctx.fillRect(cx-globeR, cy-globeR, globeR*1.5, globeR*2);
+  ctx.restore();
+
+  /* City lights on dark side */
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, globeR, 0, Math.PI*2);
+  ctx.clip();
+  const cityLights = [
+    {x:-0.42,y:-0.22},{x:-0.40,y:-0.18},{x:-0.30,y:-0.16},{x:-0.28,y:-0.22},
+    {x:0.06, y:-0.20},{x:0.10, y:-0.22},{x:0.12, y:-0.16},{x:0.20, y:-0.24},
+    {x:0.30, y:-0.25},{x:0.36, y:-0.18},{x:0.42, y:-0.20},{x:0.38, y:-0.12},
+    {x:0.10, y:-0.05},{x:0.14, y:0.05}, {x:0.32, y:0.15},
+  ];
+  cityLights.forEach(pt=>{
+    const lx = cx + pt.x * globeR * 1.8;
+    const ly = cy + pt.y * globeR * 1.8;
+    const r = 1.2 + Math.random()*1.8;
+    ctx.beginPath();
+    ctx.arc(lx, ly, r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,240,180,${0.15+Math.random()*0.25})`;
+    ctx.fill();
+  });
+  ctx.restore();
+}
+</script>
+
+<!-- Part 5: Boot sequence + loading steps + drag timeline -->
+<script>
+/* ════════════════════════════════════════════════════════════════
+   LOADING SEQUENCE
+════════════════════════════════════════════════════════════════ */
+const LOAD_STEPS = [
+  'Connecting to NASA EarthData...',
+  'Loading sovereign risk database...',
+  'Calibrating NGFS Phase IV pathways...',
+  'Initialising infrastructure graph...',
+  'Mounting AI intelligence layer...',
+  'Rendering globe projection...',
+  'Digital Twin ready.',
+];
+let loadStep = 0;
+function advanceLoader() {
+  const status = el('load-status');
+  if (!status) return;
+  status.textContent = LOAD_STEPS[loadStep % LOAD_STEPS.length];
+  loadStep++;
+  if (loadStep < LOAD_STEPS.length) setTimeout(advanceLoader, 380);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TIMELINE DRAG SUPPORT
+════════════════════════════════════════════════════════════════ */
+function initTimelineDrag() {
+  const rail  = el('tl-rail');
+  const thumb = el('tl-thumb');
+  if (!rail || !thumb) return;
+
+  let dragging = false;
+  function pctFromEvent(e) {
+    const rect = rail.getBoundingClientRect();
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    return Math.max(0, Math.min(1, (x-rect.left)/rect.width));
+  }
+  function onMove(e) {
+    if (!dragging) return;
+    const pct = pctFromEvent(e);
+    S.year = pctYear(pct);
+    updateTimelinePosition();
+    updateStats();
+    /* Throttle heavy updates */
+    if (S.year % 2 === 0) {
+      renderNationKPIs();
+      renderRpPanel();
+      try { map?.getSource('risk-src')?.setData(buildHeatGJ()); } catch(_){}
+    }
+  }
+  thumb.addEventListener('mousedown', e=>{ dragging=true; e.preventDefault(); });
+  rail.addEventListener('mousedown',  e=>{ dragging=true; onMove(e); });
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', ()=>{ if(dragging){ dragging=false; renderNationKPIs(); renderRpPanel(); } });
+  thumb.addEventListener('touchstart', e=>{ dragging=true; e.preventDefault(); }, {passive:false});
+  document.addEventListener('touchmove', onMove, {passive:false});
+  document.addEventListener('touchend', ()=>{ dragging=false; });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+════════════════════════════════════════════════════════════════ */
+function initKeyboard() {
+  document.addEventListener('keydown', e=>{
+    if (e.target.tagName==='INPUT') return;
+    switch(e.key) {
+      case ' ':  e.preventDefault(); togglePlay(); break;
+      case 'ArrowRight': S.year=Math.min(tlEnd(),S.year+1); updateTimelinePosition(); updateStats(); break;
+      case 'ArrowLeft':  S.year=Math.max(TL_START,S.year-1); updateTimelinePosition(); updateStats(); break;
+      case 'ArrowUp':    S.year=Math.min(tlEnd(),S.year+10); updateTimelinePosition(); updateStats(); break;
+      case 'ArrowDown':  S.year=Math.max(TL_START,S.year-10); updateTimelinePosition(); updateStats(); break;
+      case '1': setScenario('1.5'); break;
+      case '2': setScenario('2.0'); break;
+      case '3': setScenario('3.0'); break;
+      case 'b': case 'B': setMode(S.mode==='briefing'?'globe':'briefing'); break;
+      case 'a': case 'A': toggleAI(); break;
+      case 'r': case 'R': resetTL(); break;
+      case 'Escape': setMode('globe'); el('cascade-panel').classList.remove('on'); if(S.aiOpen)toggleAI(); break;
+    }
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LP BODY HEIGHT FIX (all tabs same height)
+════════════════════════════════════════════════════════════════ */
+function fixLpScroll() {
+  ['nations','scenarios','layers','infra'].forEach(t=>{
+    const b = el(`lpb-${t}`);
+    if (b) b.style.display = S.lpTab===t?'block':'none';
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   GLOBE CLICK — country identification by centroid proximity
+════════════════════════════════════════════════════════════════ */
+function initGlobeClick() {
+  /* When map is ready, clicking empty space near a sovereign centroid selects it */
+  if (!map) return;
+  map.on('click', e=>{
+    if (e.defaultPrevented) return;
+    const lng = e.lngLat.lng, lat = e.lngLat.lat;
+    let best = null, bestDist = 999;
+    Object.keys(SOVEREIGNS).forEach(iso=>{
+      const c = SOVEREIGNS[iso];
+      const dlng = c.coords[0]-lng, dlat = c.coords[1]-lat;
+      const dist = Math.sqrt(dlng*dlng + dlat*dlat);
+      if (dist<bestDist) { bestDist=dist; best=iso; }
+    });
+    if (best && bestDist < 25) selectCountry(best);
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  /* 1. Start loading animation */
+  advanceLoader();
+
+  /* 2. Render static UI panels */
+  renderNationList();
+  renderScenarioButtons();
+  renderLayerButtons();
+  updateStats();
+  renderRpPanel();
+  renderAIQueries();
+
+  /* 3. Timeline */
+  renderTimeline();
+  initTimelineDrag();
+
+  /* 4. Keyboard */
+  initKeyboard();
+
+  /* 5. Globe (async) */
+  initSpaceCanvas();
+  initMap();
+
+  /* 6. Wire globe click after map loads */
+  setTimeout(initGlobeClick, 2000);
+
+  /* 7. Default: select United States for immediate context */
+  setTimeout(()=>{
+    selectCountry('IND');  /* India as demo — highest risk / most dramatic */
+  }, 1400);
+
+  /* 8. Ticker: auto-cycle stats highlight */
+  setInterval(()=>{
+    updateStats();
+    renderNationKPIs();
+  }, 8000);
+});
+</script>
+
+</body>
+</html>
