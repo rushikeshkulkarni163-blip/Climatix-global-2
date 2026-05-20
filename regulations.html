@@ -2079,15 +2079,28 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 </div><!-- /reg-body -->
 
 <script>
+function activateTab(fw){
+  document.querySelectorAll('.reg-tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.fw-panel').forEach(function(p){p.classList.remove('active')});
+  var tab=document.querySelector('.reg-tab[data-fw="'+fw+'"]');
+  var panel=document.getElementById('fw-'+fw);
+  if(tab)tab.classList.add('active');
+  if(panel)panel.classList.add('active');
+}
+
 document.querySelectorAll('.reg-tab').forEach(function(tab){
   tab.addEventListener('click',function(){
-    document.querySelectorAll('.reg-tab').forEach(function(t){t.classList.remove('active')});
-    document.querySelectorAll('.fw-panel').forEach(function(p){p.classList.remove('active')});
-    tab.classList.add('active');
-    var panel=document.getElementById('fw-'+tab.dataset.fw);
-    if(panel){panel.classList.add('active');window.scrollTo({top:document.querySelector('.reg-tabs').offsetTop-10,behavior:'smooth'});}
+    activateTab(tab.dataset.fw);
+    history.replaceState(null,'','#'+tab.dataset.fw);
+    window.scrollTo({top:document.querySelector('.reg-tabs').offsetTop-10,behavior:'smooth'});
   });
 });
+
+(function(){
+  var hash=(location.hash||'').replace('#','');
+  var valid=['overview','tcfd','issb','csrd','brsr','sec','gri'];
+  if(hash&&valid.indexOf(hash)!==-1){activateTab(hash);}
+})();
 </script>
 </body>
 </html>
