@@ -211,6 +211,94 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 /* ── Responsive ── */
 @media(max-width:1100px){.grid-4{grid-template-columns:1fr 1fr}.grid-5{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr}.col-span-2,.col-span-3{grid-column:span 1}}
+
+/* ═══════════════════════════════════════════════════
+   3-COLUMN RISK COMMAND CENTER
+═══════════════════════════════════════════════════ */
+#mod-risk.active{
+  display:grid !important;
+  grid-template-columns:220px 1fr 260px;
+  height:calc(100vh - var(--nav-h) - var(--tab-h));
+  padding:0;overflow:hidden;gap:0;
+}
+
+/* ── Left: Entity Database ── */
+.col-entities{border-right:1px solid var(--bd0);display:flex;flex-direction:column;overflow:hidden;background:var(--bg1)}
+.ent-col-hd{padding:10px 12px 8px;border-bottom:1px solid var(--bd0);flex-shrink:0}
+.ent-col-title{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px}
+.ent-search{width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:5px 8px;color:var(--tx0);font-size:10px;font-family:var(--mono);outline:none}
+.ent-search::placeholder{color:var(--tx3)}
+.entity-list{flex:1;overflow-y:auto}
+.entity-list::-webkit-scrollbar{width:3px}
+.entity-list::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.ent-btn{display:flex;align-items:center;padding:8px 10px;border-bottom:1px solid var(--bd0);cursor:pointer;border-left:2px solid transparent;transition:background .12s;gap:7px}
+.ent-btn:hover{background:rgba(255,255,255,.03)}
+.ent-btn.active{background:rgba(255,102,0,.07);border-left-color:var(--acc)}
+.ent-info{flex:1;min-width:0}
+.ent-name{font-size:10px;font-weight:600;color:var(--tx0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ent-sector{font-size:8px;color:var(--tx3);margin-top:1px}
+.ent-score{font-family:var(--mono);font-size:12px;font-weight:700;flex-shrink:0;text-align:right}
+.ent-ticker-sm{font-size:8px;color:var(--tx3);font-family:var(--mono);text-align:right}
+.ent-col-foot{border-top:1px solid var(--bd0);padding:8px 12px;flex-shrink:0}
+.ent-stat{display:flex;justify-content:space-between;font-size:9px;color:var(--tx3);margin-bottom:3px;font-family:var(--mono)}
+
+/* ── Center ── */
+.col-center{display:flex;flex-direction:column;overflow:hidden}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--bd0);flex-shrink:0}
+.kpi-cell{padding:10px 14px;border-right:1px solid var(--bd0)}
+.kpi-cell:last-child{border-right:none}
+.kpi-cell-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:4px}
+.kpi-cell-val{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--tx0);line-height:1}
+.kpi-cell-chg{display:flex;align-items:center;gap:3px;margin-top:3px;font-size:9px;font-weight:600;font-family:var(--mono)}
+.center-body{flex:1;overflow-y:auto;padding:14px}
+.center-body::-webkit-scrollbar{width:3px}
+.center-body::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+
+/* Propagation canvas */
+.prop-wrap{position:relative;background:#050507;border:1px solid var(--bd0);border-radius:3px;height:240px;overflow:hidden;margin-bottom:14px}
+#propCanvas{display:block;position:absolute;top:0;left:0}
+.prop-overlay{position:absolute;top:10px;left:12px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.28);pointer-events:none}
+.prop-live-badge{position:absolute;top:10px;right:12px;display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;color:var(--grn);letter-spacing:.06em;pointer-events:none}
+
+/* Exposure panel */
+.exp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd0)}
+.exp-entity-name{font-size:14px;font-weight:800;color:var(--tx0);letter-spacing:-.01em}
+.exp-entity-sub{display:flex;align-items:center;gap:10px;margin-top:3px;flex-wrap:wrap}
+.exp-sub-item{font-size:9px;color:var(--tx3);font-family:var(--mono)}
+.exp-back{font-size:9px;color:var(--tx3);background:none;border:1px solid var(--bd1);border-radius:2px;padding:4px 10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);transition:color .15s,border-color .15s;flex-shrink:0}
+.exp-back:hover{color:var(--tx1);border-color:var(--bd2)}
+.exp-tab-bar{display:flex;border-bottom:1px solid var(--bd0);margin-bottom:14px}
+.exp-tab-btn{padding:7px 14px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.exp-tab-btn:hover{color:var(--tx1)}
+.exp-tab-btn.active{color:var(--tx0);border-bottom-color:var(--acc)}
+
+/* ── Right: Signals ── */
+.col-signals{border-left:1px solid var(--bd0);display:flex;flex-direction:column;overflow:hidden;background:var(--bg1)}
+.sig-hd{padding:8px 12px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd0);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sig-live-dot{width:5px;height:5px;border-radius:50%;background:var(--grn);animation:pulse 1.5s infinite}
+.signals-feed{flex:1;overflow-y:auto;min-height:0}
+.signals-feed::-webkit-scrollbar{width:3px}
+.signals-feed::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.ai-sig{padding:8px 12px;border-bottom:1px solid var(--bd0);animation:sig-in .3s ease forwards}
+@keyframes sig-in{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+.ai-sig-type{font-size:8px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:1px 5px;border-radius:1px;display:inline-block;margin-bottom:3px}
+.st-phys{background:rgba(239,68,68,.15);color:#FF3333}
+.st-trans{background:rgba(245,158,11,.15);color:#FF6600}
+.st-reg{background:rgba(59,130,246,.15);color:#3399FF}
+.st-mkt{background:rgba(16,185,129,.15);color:#00CC44}
+.st-ai{background:rgba(168,85,247,.15);color:#A855F7}
+.ai-sig-text{font-size:10px;color:var(--tx1);line-height:1.5}
+.ai-sig-time{font-size:9px;color:var(--tx3);font-family:var(--mono);margin-top:2px}
+.alerts-panel{flex-shrink:0;max-height:158px;overflow-y:auto}
+.alert-c{display:flex;align-items:flex-start;gap:8px;padding:7px 12px;border-bottom:1px solid var(--bd0)}
+.alert-c-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.alert-c-text{font-size:10px;color:var(--tx1);line-height:1.4}
+.alert-c-meta{font-size:9px;color:var(--tx3);font-family:var(--mono);margin-top:2px}
+.carbon-mkt{flex-shrink:0}
+.cmkt-row{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--bd0)}
+.cmkt-label{font-size:10px;color:var(--tx2);font-family:var(--mono)}
+.cmkt-val{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--cyan)}
+.cmkt-chg{font-size:9px;font-weight:600;font-family:var(--mono)}
 </style>
 </head>
 <body>
@@ -261,119 +349,113 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 <div id="shell">
 
 <!-- ───────────────────────────────────────────
-     MODULE 1 — RISK TERMINAL
+     MODULE 1 — RISK TERMINAL (3-COLUMN COMMAND CENTER)
 ─────────────────────────────────────────────── -->
 <div class="module active" id="mod-risk">
-  <!-- KPI Row -->
-  <div class="grid-5" style="margin-bottom:12px">
-    <div class="kpi">
-      <div class="kpi-label">Global Risk Index</div>
-      <div class="kpi-value" style="color:#FF3333">72.4</div>
-      <div class="kpi-change up">▲ +3.2 <span style="color:var(--tx3);font-weight:400">vs last qtr</span></div>
+
+  <!-- ══ LEFT: Entity Database ══ -->
+  <div class="col-entities">
+    <div class="ent-col-hd">
+      <div class="ent-col-title">Entity Database</div>
+      <input class="ent-search" id="entSearch" type="text" placeholder="Search entity…" oninput="filterEntities(this.value)" />
     </div>
-    <div class="kpi">
-      <div class="kpi-label">Physical Risk Score</div>
-      <div class="kpi-value" style="color:#F97316">68.1</div>
-      <div class="kpi-change up">▲ +1.8</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Transition Risk</div>
-      <div class="kpi-value" style="color:#FF6600">54.7</div>
-      <div class="kpi-change up">▲ +4.1</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Temp Anomaly</div>
-      <div class="kpi-value" style="color:#00D4FF">+1.48°C</div>
-      <div class="kpi-change up">▲ +0.06°C YoY</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Active Alerts</div>
-      <div class="kpi-value" style="color:#FF3333">23</div>
-      <div class="kpi-change up">▲ +5 today</div>
+    <div class="entity-list" id="entityList"><!-- built by JS --></div>
+    <div class="ent-col-foot">
+      <div class="ent-stat"><span>Total Entities</span><span style="color:var(--tx1)">8</span></div>
+      <div class="ent-stat"><span>Critical Risk</span><span style="color:#FF3333">1</span></div>
+      <div class="ent-stat"><span>High Risk</span><span style="color:#F97316">3</span></div>
+      <div class="ent-stat"><span>Avg Score</span><span style="color:#FF6600">61.6</span></div>
     </div>
   </div>
 
-  <div class="grid-2" style="margin-bottom:12px">
-    <!-- Temp Anomaly Chart -->
-    <div class="panel">
-      <div class="panel-hd">
-        <span class="panel-title">Temperature Anomaly — 1990–2025</span>
-        <span style="font-size:9px;color:var(--cyan)">NOAA · NASA GISS</span>
-      </div>
-      <div class="panel-body">
-        <div class="chart-wrap" style="height:180px"><canvas id="chartTempAnomaly"></canvas></div>
-      </div>
+  <!-- ══ CENTER: Intelligence Center ══ -->
+  <div class="col-center">
+    <div class="kpi-strip">
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Global Risk Index</div><div class="kpi-cell-val" style="color:#FF3333">72.4</div><div class="kpi-cell-chg" style="color:#FF3333">▲ +3.2 <span style="color:var(--tx3);font-weight:400">qtr</span></div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Physical Risk</div><div class="kpi-cell-val" style="color:#F97316">68.1</div><div class="kpi-cell-chg" style="color:#F97316">▲ +1.8</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Transition Risk</div><div class="kpi-cell-val" style="color:#FF6600">54.7</div><div class="kpi-cell-chg" style="color:#FF6600">▲ +4.1</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Temp Anomaly</div><div class="kpi-cell-val" style="color:#00D4FF">+1.48°</div><div class="kpi-cell-chg" style="color:#FF3333">▲ +0.06 YoY</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Active Alerts</div><div class="kpi-cell-val" style="color:#FF3333">23</div><div class="kpi-cell-chg" style="color:#FF3333">▲ +5 today</div></div>
     </div>
+    <div class="center-body">
 
-    <!-- Alerts Panel -->
-    <div class="panel">
-      <div class="panel-hd">
-        <span class="panel-title">Live Risk Alerts</span>
-        <button class="panel-action">View All</button>
+      <!-- Default: Propagation Engine + Hotspots -->
+      <div id="propView">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3)">Risk Propagation Engine</span>
+          <span style="font-size:9px;font-weight:700;color:var(--grn);letter-spacing:.06em;display:flex;align-items:center;gap:5px"><span style="width:5px;height:5px;border-radius:50%;background:var(--grn);display:inline-block;animation:pulse 1.5s infinite"></span>LIVE SIMULATION</span>
+        </div>
+        <div class="prop-wrap">
+          <canvas id="propCanvas"></canvas>
+          <div class="prop-overlay">CASCADE RISK MODEL · 7 NODES · REAL-TIME</div>
+          <div class="prop-live-badge"><span style="width:5px;height:5px;border-radius:50%;background:var(--grn);display:inline-block;animation:pulse 1.5s infinite"></span>ACTIVE</div>
+        </div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="display:block;width:14px;height:1px;background:var(--acc)"></span>Geographic Hotspots — Click an entity in the left panel for company-level exposure</div>
+        <div class="panel">
+          <div class="panel-body no-pad">
+            <table class="t-table">
+              <thead><tr><th>Zone</th><th>Primary Hazard</th><th>Risk Score</th><th>Trend</th><th>Rating</th></tr></thead>
+              <tbody>
+                <tr><td>Bangladesh Delta</td><td>Flood + Sea Level</td><td class="t-mono" style="color:#FF3333">84.2</td><td style="color:#FF3333">▲ +6.1</td><td><span class="rbadge rb-critical">CRITICAL</span></td></tr>
+                <tr><td>Persian Gulf</td><td>Extreme Heat</td><td class="t-mono" style="color:#FF3333">81.7</td><td style="color:#FF3333">▲ +4.8</td><td><span class="rbadge rb-critical">CRITICAL</span></td></tr>
+                <tr><td>Sahel Region</td><td>Water Stress</td><td class="t-mono" style="color:#F97316">76.3</td><td style="color:#FF3333">▲ +3.2</td><td><span class="rbadge rb-high">HIGH</span></td></tr>
+                <tr><td>Mekong Delta</td><td>Flood + Storm</td><td class="t-mono" style="color:#F97316">73.8</td><td style="color:#FF3333">▲ +2.9</td><td><span class="rbadge rb-high">HIGH</span></td></tr>
+                <tr><td>US West Coast</td><td>Wildfire</td><td class="t-mono" style="color:#FF6600">65.4</td><td style="color:#FF3333">▲ +5.3</td><td><span class="rbadge rb-medium">MEDIUM</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="panel-body">
-        <div class="alert-item">
-          <div class="alert-dot" style="background:#FF3333"></div>
-          <div><div class="alert-text">Extreme heat event forecast — South Asia (Q3 2025)</div><div class="alert-meta">Physical Risk · CRITICAL · 2 hrs ago</div></div>
+
+      <!-- Company Exposure Panel -->
+      <div id="exposureView" style="display:none">
+        <div class="exp-hd">
+          <div>
+            <div class="exp-entity-name" id="expName">—</div>
+            <div class="exp-entity-sub">
+              <span class="exp-sub-item" id="expTicker">—</span>
+              <span class="exp-sub-item" id="expSector">—</span>
+              <span class="exp-sub-item" id="expRegion">—</span>
+              <span id="expRiskBadge"></span>
+            </div>
+          </div>
+          <button class="exp-back" onclick="closeExposure()">← Back to Map</button>
         </div>
-        <div class="alert-item">
-          <div class="alert-dot" style="background:#F97316"></div>
-          <div><div class="alert-text">Carbon pricing revision — EU ETS floor +€18/tCO₂</div><div class="alert-meta">Transition Risk · HIGH · 5 hrs ago</div></div>
+        <div class="exp-tab-bar">
+          <button class="exp-tab-btn active" onclick="switchExpTab('physical',this)">Physical</button>
+          <button class="exp-tab-btn" onclick="switchExpTab('carbon',this)">Carbon</button>
+          <button class="exp-tab-btn" onclick="switchExpTab('stress',this)">Stress Test</button>
+          <button class="exp-tab-btn" onclick="switchExpTab('policy',this)">Policy</button>
         </div>
-        <div class="alert-item">
-          <div class="alert-dot" style="background:#FF6600"></div>
-          <div><div class="alert-text">Flood probability elevated — Bangladesh coast +32%</div><div class="alert-meta">Physical Risk · MEDIUM · 8 hrs ago</div></div>
-        </div>
-        <div class="alert-item">
-          <div class="alert-dot" style="background:#00CC44"></div>
-          <div><div class="alert-text">ISSB S2 compliance window opens — Jan 2026</div><div class="alert-meta">Regulatory · LOW · 1 day ago</div></div>
-        </div>
+        <div id="exp-physical"></div>
+        <div id="exp-carbon" style="display:none"></div>
+        <div id="exp-stress" style="display:none"></div>
+        <div id="exp-policy" style="display:none"></div>
       </div>
+
     </div>
   </div>
 
-  <div class="grid-3" style="margin-bottom:12px">
-    <!-- Sector Risk Chart -->
-    <div class="panel col-span-2">
-      <div class="panel-hd"><span class="panel-title">Sector Risk Distribution</span></div>
-      <div class="panel-body">
-        <div class="chart-wrap" style="height:180px"><canvas id="chartSectorRisk"></canvas></div>
-      </div>
+  <!-- ══ RIGHT: Signals & Alerts ══ -->
+  <div class="col-signals">
+    <div class="sig-hd"><span>AI Intelligence Layer</span><span class="sig-live-dot"></span></div>
+    <div class="signals-feed" id="signalsFeed"><!-- built by JS --></div>
+    <div class="sig-hd" style="border-top:1px solid var(--bd0)"><span>Live Risk Alerts</span></div>
+    <div class="alerts-panel">
+      <div class="alert-c"><div class="alert-c-dot" style="background:#FF3333"></div><div><div class="alert-c-text">Extreme heat forecast — South Asia Q3 2025</div><div class="alert-c-meta">PHYSICAL · CRITICAL · 2h ago</div></div></div>
+      <div class="alert-c"><div class="alert-c-dot" style="background:#F97316"></div><div><div class="alert-c-text">EU ETS floor revision +€18/tCO₂</div><div class="alert-c-meta">TRANSITION · HIGH · 5h ago</div></div></div>
+      <div class="alert-c"><div class="alert-c-dot" style="background:#FF6600"></div><div><div class="alert-c-text">Bangladesh flood probability +32%</div><div class="alert-c-meta">PHYSICAL · MEDIUM · 8h ago</div></div></div>
+      <div class="alert-c"><div class="alert-c-dot" style="background:#00CC44"></div><div><div class="alert-c-text">ISSB S2 compliance window Jan 2026</div><div class="alert-c-meta">REGULATORY · LOW · 1d ago</div></div></div>
     </div>
-
-    <!-- Physical Risk Types -->
-    <div class="panel">
-      <div class="panel-hd"><span class="panel-title">Hazard Breakdown</span></div>
-      <div class="panel-body">
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Flood Risk</span><span class="t-mono" style="color:var(--red)">74.2</span></div><div class="prog-bar"><div class="prog-fill" style="width:74%;background:#FF3333"></div></div></div>
-          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Heat Stress</span><span class="t-mono" style="color:#F97316">68.5</span></div><div class="prog-bar"><div class="prog-fill" style="width:68%;background:#F97316"></div></div></div>
-          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Water Stress</span><span class="t-mono" style="color:#FF6600">61.0</span></div><div class="prog-bar"><div class="prog-fill" style="width:61%;background:#FF6600"></div></div></div>
-          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Wildfire</span><span class="t-mono" style="color:#FF6600">52.3</span></div><div class="prog-bar"><div class="prog-fill" style="width:52%;background:#FF6600"></div></div></div>
-          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Sea Level Rise</span><span class="t-mono" style="color:#3399FF">44.1</span></div><div class="prog-bar"><div class="prog-fill" style="width:44%;background:#3399FF"></div></div></div>
-          <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Storm Intensity</span><span class="t-mono" style="color:#3399FF">38.7</span></div><div class="prog-bar"><div class="prog-fill" style="width:39%;background:#3399FF"></div></div></div>
-        </div>
-      </div>
+    <div class="sig-hd" style="border-top:1px solid var(--bd0)"><span>Carbon Markets</span><span style="font-size:9px;color:var(--tx3);font-family:var(--mono)">LIVE</span></div>
+    <div class="carbon-mkt">
+      <div class="cmkt-row"><span class="cmkt-label">EU ETS</span><span class="cmkt-val">€98.4</span><span class="cmkt-chg" style="color:#FF3333">▲ +2.1%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">UK ETS</span><span class="cmkt-val">£42.7</span><span class="cmkt-chg" style="color:#00CC44">▼ -0.8%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">CA CCA</span><span class="cmkt-val">$38.2</span><span class="cmkt-chg" style="color:#FF3333">▲ +1.4%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">VCM</span><span class="cmkt-val">$14.8</span><span class="cmkt-chg" style="color:#00CC44">▼ -3.2%</span></div>
     </div>
   </div>
 
-  <!-- Geographic Hotspots Table -->
-  <div class="panel">
-    <div class="panel-hd"><span class="panel-title">Geographic Hotspots</span><button class="panel-action">Export CSV</button></div>
-    <div class="panel-body no-pad">
-      <table class="t-table">
-        <thead><tr><th>Region</th><th>Country/Zone</th><th>Primary Hazard</th><th>Risk Score</th><th>Trend</th><th>Rating</th></tr></thead>
-        <tbody>
-          <tr><td>South Asia</td><td>Bangladesh Delta</td><td>Flood + Sea Level</td><td class="t-mono" style="color:#FF3333">84.2</td><td style="color:#FF3333">▲ +6.1</td><td><span class="rbadge rb-critical"><span class="rb-dot"></span>CRITICAL</span></td></tr>
-          <tr><td>Middle East</td><td>Persian Gulf</td><td>Extreme Heat</td><td class="t-mono" style="color:#FF3333">81.7</td><td style="color:#FF3333">▲ +4.8</td><td><span class="rbadge rb-critical"><span class="rb-dot"></span>CRITICAL</span></td></tr>
-          <tr><td>Sub-Saharan Africa</td><td>Sahel Region</td><td>Water Stress</td><td class="t-mono" style="color:#F97316">76.3</td><td style="color:#FF3333">▲ +3.2</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td></tr>
-          <tr><td>Southeast Asia</td><td>Mekong Delta</td><td>Flood + Storm</td><td class="t-mono" style="color:#F97316">73.8</td><td style="color:#FF3333">▲ +2.9</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td></tr>
-          <tr><td>North America</td><td>US West Coast</td><td>Wildfire</td><td class="t-mono" style="color:#FF6600">65.4</td><td style="color:#FF3333">▲ +5.3</td><td><span class="rbadge rb-medium"><span class="rb-dot"></span>MEDIUM</span></td></tr>
-          <tr><td>Europe</td><td>Mediterranean</td><td>Drought + Heat</td><td class="t-mono" style="color:#FF6600">62.1</td><td style="color:#FF3333">▲ +1.7</td><td><span class="rbadge rb-medium"><span class="rb-dot"></span>MEDIUM</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </div><!-- /mod-risk -->
 
 <!-- ───────────────────────────────────────────
@@ -815,6 +897,7 @@ document.querySelectorAll('.mod-tab').forEach(btn=>{
     document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));
     this.classList.add('active');
     document.getElementById('mod-'+this.dataset.mod).classList.add('active');
+    document.getElementById('shell').style.overflow=this.dataset.mod==='risk'?'hidden':'';
     initChartsForModule(this.dataset.mod);
   });
 });
@@ -900,10 +983,221 @@ function initChartsForModule(mod){
 }
 
 function initRiskCharts(){
-  const yrs=['1990','1995','2000','2005','2010','2015','2020','2025'];
-  makeChart('chartTempAnomaly',{type:'line',data:{labels:yrs,datasets:[{data:[0.32,0.38,0.42,0.48,0.62,0.76,0.98,1.48],borderColor:'#FF3333',backgroundColor:'rgba(239,68,68,0.08)',fill:true,tension:0.4,pointRadius:2,borderWidth:2}]},options:{...CHART_DEFAULTS}});
-  const sectors=['Energy','Transport','Building','Industry','Agri','Tech'];
-  makeChart('chartSectorRisk',{type:'bar',data:{labels:sectors,datasets:[{data:[82,71,58,76,64,42],backgroundColor:['#FF3333','#F97316','#FF6600','#FF3333','#00CC44','#3399FF']}]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:false}}}});
+  setTimeout(()=>initPropagationCanvas(),80);
+  initSignalsFeed();
+  buildEntityList();
+  if(!window._sigInt) window._sigInt=setInterval(rotateSignal,6000);
+}
+
+// ─── Entity Database ─────────────────────────────────
+const ENTITIES=[
+  {id:'tesla',    name:'Tesla, Inc.',         ticker:'TSLA',    sector:'Auto / EV',          region:'USA',    risk:'MEDIUM',  rc:'rb-medium',  score:58,sc:'#FF6600'},
+  {id:'shell',    name:'Shell PLC',            ticker:'SHEL',    sector:'Oil & Gas',           region:'UK',     risk:'CRITICAL',rc:'rb-critical',score:82,sc:'#FF3333'},
+  {id:'adani',    name:'Adani Group',          ticker:'ADANIENT',sector:'Energy / Infra',      region:'India',  risk:'HIGH',    rc:'rb-high',    score:71,sc:'#F97316'},
+  {id:'maersk',   name:'A.P. Møller-Mærsk',   ticker:'MAERSK',  sector:'Shipping',            region:'Denmark',risk:'HIGH',    rc:'rb-high',    score:68,sc:'#F97316'},
+  {id:'reliance', name:'Reliance Industries',  ticker:'RELIANCE',sector:'Energy / Retail',     region:'India',  risk:'HIGH',    rc:'rb-high',    score:76,sc:'#F97316'},
+  {id:'amazon',   name:'Amazon.com, Inc.',     ticker:'AMZN',    sector:'E-Commerce / Cloud',  region:'USA',    risk:'MEDIUM',  rc:'rb-medium',  score:48,sc:'#FF6600'},
+  {id:'tata',     name:'Tata Group',           ticker:'TATASTL', sector:'Conglomerate',        region:'India',  risk:'MEDIUM',  rc:'rb-medium',  score:62,sc:'#FF6600'},
+  {id:'blackrock',name:'BlackRock, Inc.',      ticker:'BLK',     sector:'Asset Management',    region:'USA',    risk:'LOW',     rc:'rb-low',     score:28,sc:'#00CC44'},
+];
+const EDATA={
+  tesla:{
+    physical:[{site:'Gigafactory Nevada',hazard:'Water Stress + Wildfire',pct:74,rc:'rb-high'},{site:'Gigafactory Texas',hazard:'Extreme Heat + Flood',pct:66,rc:'rb-high'},{site:'Fremont Assembly',hazard:'Wildfire + Drought',pct:61,rc:'rb-medium'},{site:'Shanghai Gigafactory',hazard:'Typhoon + Flood',pct:58,rc:'rb-medium'}],
+    carbon:{s1:1240,s2:8400,s3:42000,int:'22.4 tCO₂/€M',sbti:'Committed',tgt:'Net Zero 2040',eu:'$4.2M/yr'},
+    stress:{nz:[-8,-4,'-3.2%'],dt:[-18,-12,'-11.4%'],cp:[-32,-24,'-28.6%']},
+    policy:[{reg:'US IRA EV Tax Credits',impact:'POSITIVE',delta:'+$2.1B revenue',conf:'HIGH'},{reg:'EU Battery Regulation',impact:'MEDIUM',delta:'+8% compliance cost',conf:'HIGH'},{reg:'CBAM (Import Tariffs)',impact:'LOW',delta:'Minimal exposure',conf:'MEDIUM'},{reg:'SEC Climate Disclosure',impact:'NEUTRAL',delta:'Compliance required',conf:'HIGH'}]
+  },
+  shell:{
+    physical:[{site:'North Sea Platforms',hazard:'Storm + Wave Height',pct:88,rc:'rb-critical'},{site:'Gulf of Mexico',hazard:'Hurricane + Flood',pct:84,rc:'rb-critical'},{site:'Nigerian Delta',hazard:'Flood + Social Risk',pct:79,rc:'rb-high'},{site:'Qatar LNG',hazard:'Extreme Heat',pct:72,rc:'rb-high'}],
+    carbon:{s1:68200,s2:12400,s3:1040000,int:'310 tCO₂/€M',sbti:'None',tgt:'Net Zero 2050',eu:'$142M/yr'},
+    stress:{nz:[-32,-22,'-18.4%'],dt:[-44,-34,'-28.8%'],cp:[-8,-4,'-4.2%']},
+    policy:[{reg:'EU ETS Phase 4',impact:'CRITICAL',delta:'-$142M EBITDA/yr',conf:'HIGH'},{reg:'CSRD / ESRS E1',impact:'HIGH',delta:'Full disclosure req.',conf:'HIGH'},{reg:'UK North Sea Windfall Tax',impact:'HIGH',delta:'-£2.8B revenue',conf:'HIGH'},{reg:'IEA Oil Demand Peak 2030',impact:'CRITICAL',delta:'Stranded asset risk',conf:'MEDIUM'}]
+  },
+  adani:{
+    physical:[{site:'Mundra Port, Gujarat',hazard:'Cyclone + Sea Level',pct:82,rc:'rb-critical'},{site:'Carmichael Mine, QLD',hazard:'Wildfire + Flood',pct:74,rc:'rb-high'},{site:'Godda Power Plant',hazard:'Water Stress + Heat',pct:70,rc:'rb-high'},{site:'Hazira LNG Terminal',hazard:'Flood + Storm',pct:66,rc:'rb-high'}],
+    carbon:{s1:82400,s2:28000,s3:380000,int:'284 tCO₂/€M',sbti:'None',tgt:'Net Zero 2070',eu:'n/a — India'},
+    stress:{nz:[-28,-20,'-16.2%'],dt:[-36,-26,'-22.4%'],cp:[-12,-6,'-6.8%']},
+    policy:[{reg:'India PAT Scheme',impact:'MEDIUM',delta:'Efficiency targets',conf:'HIGH'},{reg:'BRSR Core (SEBI)',impact:'HIGH',delta:'Mandatory disclosure',conf:'HIGH'},{reg:'EU CBAM on Exports',impact:'MEDIUM',delta:'+€18/t on exports',conf:'MEDIUM'},{reg:'Coal Phase-Down (COP28)',impact:'CRITICAL',delta:'Asset transition risk',conf:'MEDIUM'}]
+  },
+  maersk:{
+    physical:[{site:'Port of Rotterdam',hazard:'Sea Level + Storm',pct:72,rc:'rb-high'},{site:'Straits of Malacca',hazard:'Typhoon',pct:64,rc:'rb-high'},{site:'Port of Shanghai',hazard:'Typhoon + Flood',pct:60,rc:'rb-medium'},{site:'Suez / Aden Corridor',hazard:'Extreme Heat',pct:54,rc:'rb-medium'}],
+    carbon:{s1:9400,s2:2800,s3:182000,int:'118 tCO₂/€M',sbti:'1.5°C Committed',tgt:'Net Zero 2040',eu:'$28M/yr'},
+    stress:{nz:[-14,-8,'-8.4%'],dt:[-24,-16,'-14.6%'],cp:[-18,-10,'-11.2%']},
+    policy:[{reg:'IMO 2030 GHG Strategy',impact:'CRITICAL',delta:'Fleet methanol transition',conf:'HIGH'},{reg:'EU ETS (Maritime)',impact:'HIGH',delta:'-€28M/yr',conf:'HIGH'},{reg:'FuelEU Maritime',impact:'HIGH',delta:'Fuel switch capex',conf:'HIGH'},{reg:'Carbon Border Adj.',impact:'LOW',delta:'Minor exposure',conf:'MEDIUM'}]
+  },
+  reliance:{
+    physical:[{site:'Jamnagar Complex',hazard:'Cyclone + Flood',pct:80,rc:'rb-critical'},{site:'Mumbai Offshore',hazard:'Sea Level + Storm',pct:74,rc:'rb-high'},{site:'Hazira Complex',hazard:'Water Stress + Heat',pct:68,rc:'rb-high'},{site:'KG-D6 Block',hazard:'Cyclone + Storm',pct:62,rc:'rb-medium'}],
+    carbon:{s1:54200,s2:18600,s3:420000,int:'242 tCO₂/€M',sbti:'None',tgt:'Net Zero 2035',eu:'n/a — India'},
+    stress:{nz:[-22,-16,'-14.2%'],dt:[-32,-24,'-20.6%'],cp:[-10,-4,'-6.2%']},
+    policy:[{reg:'India Green Hydrogen Mission',impact:'POSITIVE',delta:'+$4B opportunity',conf:'MEDIUM'},{reg:'BRSR Core (SEBI)',impact:'HIGH',delta:'Mandatory FY24',conf:'HIGH'},{reg:'Petrochemical Decarb.',impact:'HIGH',delta:'Capital investment req.',conf:'MEDIUM'},{reg:'India Carbon Pricing',impact:'MEDIUM',delta:'Policy uncertainty',conf:'LOW'}]
+  },
+  amazon:{
+    physical:[{site:'AWS US-East (Virginia)',hazard:'Hurricane + Flood',pct:58,rc:'rb-medium'},{site:'AWS EU-West (Ireland)',hazard:'Sea Level + Storm',pct:44,rc:'rb-medium'},{site:'Fulfillment — SE Asia',hazard:'Flood + Heat',pct:66,rc:'rb-high'},{site:'HQ Seattle, WA',hazard:'Wildfire + Heat',pct:48,rc:'rb-medium'}],
+    carbon:{s1:620,s2:12800,s3:78000,int:'12.4 tCO₂/€M',sbti:'Approved',tgt:'Net Zero 2040',eu:'$22M/yr'},
+    stress:{nz:[-6,-4,'-2.8%'],dt:[-14,-10,'-8.4%'],cp:[-22,-14,'-12.2%']},
+    policy:[{reg:'EU AI Act + Data Regs',impact:'MEDIUM',delta:'Compliance overhead',conf:'HIGH'},{reg:'SEC Climate Disclosure',impact:'HIGH',delta:'Full Scope 3 required',conf:'HIGH'},{reg:'US IRA Clean Energy',impact:'POSITIVE',delta:'-$180M/yr energy cost',conf:'HIGH'},{reg:'CSRD (EU Operations)',impact:'HIGH',delta:'EU entity reporting',conf:'HIGH'}]
+  },
+  tata:{
+    physical:[{site:'Tata Steel Jamshedpur',hazard:'Water Stress + Heat',pct:72,rc:'rb-high'},{site:'Tata Steel Port Talbot',hazard:'Sea Level + Flood',pct:66,rc:'rb-high'},{site:'TCS Global Campuses',hazard:'Flood + Heat',pct:52,rc:'rb-medium'},{site:'Tata Power Mumbai',hazard:'Cyclone + Sea Level',pct:68,rc:'rb-high'}],
+    carbon:{s1:22400,s2:8800,s3:140000,int:'88 tCO₂/€M',sbti:'Committed',tgt:'Net Zero 2045',eu:'$42M/yr'},
+    stress:{nz:[-18,-12,'-10.4%'],dt:[-28,-18,'-16.2%'],cp:[-12,-6,'-7.8%']},
+    policy:[{reg:'BRSR Core (SEBI)',impact:'HIGH',delta:'FY24 mandatory',conf:'HIGH'},{reg:'EU Steel Carbon Levy',impact:'CRITICAL',delta:'+€42M cost/yr',conf:'HIGH'},{reg:'India Green Steel Policy',impact:'POSITIVE',delta:'$2.2B green infra',conf:'MEDIUM'},{reg:'UK CBAM (Steel)',impact:'HIGH',delta:'+£28M tariff/yr',conf:'HIGH'}]
+  },
+  blackrock:{
+    physical:[{site:'NYC HQ (55 E 52nd St)',hazard:'Sea Level + Storm Surge',pct:44,rc:'rb-medium'},{site:'Portfolio Real Assets',hazard:'Multi-hazard portfolio',pct:38,rc:'rb-low'},{site:'Data Centers (Cloud)',hazard:'Flood + Heat',pct:32,rc:'rb-low'},{site:'London Office',hazard:'Flood',pct:28,rc:'rb-low'}],
+    carbon:{s1:42,s2:1800,s3:218000,int:'0.8 tCO₂/€M',sbti:'Committed',tgt:'Net Zero 2050 (portfolio)',eu:'$0.4M/yr'},
+    stress:{nz:[-4,-2,'-1.8%'],dt:[-12,-6,'-6.4%'],cp:[-22,-14,'-12.2%']},
+    policy:[{reg:'SEC Climate Disclosure Rule',impact:'HIGH',delta:'Portfolio Scope 3 req.',conf:'HIGH'},{reg:'EU SFDR (Art. 8/9)',impact:'HIGH',delta:'Fund classification',conf:'HIGH'},{reg:'ISSB S2 Adoption',impact:'HIGH',delta:'Client disclosures',conf:'HIGH'},{reg:'US ESG Fund Labeling',impact:'MEDIUM',delta:'Marketing compliance',conf:'MEDIUM'}]
+  }
+};
+
+function buildEntityList(filter=''){
+  const list=document.getElementById('entityList');if(!list)return;
+  const f=ENTITIES.filter(e=>e.name.toLowerCase().includes(filter.toLowerCase())||e.ticker.toLowerCase().includes(filter.toLowerCase())||e.sector.toLowerCase().includes(filter.toLowerCase()));
+  list.innerHTML=f.map(e=>`<div class="ent-btn" id="entBtn_${e.id}" onclick="selectEntity('${e.id}')"><div class="ent-info"><div class="ent-name">${e.name}</div><div class="ent-sector">${e.sector} · ${e.region}</div></div><div style="text-align:right;flex-shrink:0"><div class="ent-score" style="color:${e.sc}">${e.score}</div><div class="ent-ticker-sm">${e.ticker}</div></div></div>`).join('');
+}
+function filterEntities(v){buildEntityList(v)}
+
+function selectEntity(id){
+  document.querySelectorAll('.ent-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('entBtn_'+id);if(btn)btn.classList.add('active');
+  const e=ENTITIES.find(x=>x.id===id);if(!e)return;
+  document.getElementById('expName').textContent=e.name;
+  document.getElementById('expTicker').textContent=e.ticker;
+  document.getElementById('expSector').textContent=e.sector;
+  document.getElementById('expRegion').textContent=e.region;
+  document.getElementById('expRiskBadge').innerHTML=`<span class="rbadge ${e.rc}">${e.risk}</span>`;
+  renderExpPhysical(id);renderExpCarbon(id);renderExpStress(id);renderExpPolicy(id);
+  document.querySelectorAll('.exp-tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.exp-tab-btn').classList.add('active');
+  ['carbon','stress','policy'].forEach(t=>{document.getElementById('exp-'+t).style.display='none'});
+  document.getElementById('exp-physical').style.display='block';
+  document.getElementById('propView').style.display='none';
+  document.getElementById('exposureView').style.display='block';
+}
+function closeExposure(){
+  document.getElementById('exposureView').style.display='none';
+  document.getElementById('propView').style.display='block';
+  document.querySelectorAll('.ent-btn').forEach(b=>b.classList.remove('active'));
+}
+function switchExpTab(tab,btn){
+  document.querySelectorAll('.exp-tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['physical','carbon','stress','policy'].forEach(t=>{document.getElementById('exp-'+t).style.display=t===tab?'block':'none'});
+}
+
+function renderExpPhysical(id){
+  const d=EDATA[id];if(!d)return;
+  document.getElementById('exp-physical').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">Physical Asset Exposure</span><span style="font-size:9px;color:var(--tx3)">TCFD PHYSICAL RISK</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Asset / Site</th><th>Primary Hazard</th><th>Exposure</th><th>Rating</th></tr></thead><tbody>${d.physical.map(a=>`<tr><td>${a.site}</td><td style="font-size:10px;color:var(--tx2)">${a.hazard}</td><td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;background:var(--bd1);border-radius:2px;overflow:hidden"><div style="height:100%;width:${a.pct}%;background:${a.pct>75?'#FF3333':a.pct>60?'#F97316':'#FF6600'};border-radius:2px"></div></div><span class="t-mono" style="font-size:10px;color:${a.pct>75?'#FF3333':a.pct>60?'#F97316':'#FF6600'};flex-shrink:0">${a.pct}</span></div></td><td><span class="rbadge ${a.rc}">${a.rc.replace('rb-','').toUpperCase()}</span></td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function renderExpCarbon(id){
+  const d=EDATA[id];if(!d)return;const c=d.carbon;
+  document.getElementById('exp-carbon').innerHTML=`<div class="grid-4" style="margin-bottom:12px"><div class="kpi"><div class="kpi-label">Scope 1</div><div class="kpi-value" style="font-size:17px;color:#FF3333">${(c.s1/1000).toFixed(1)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">Scope 2</div><div class="kpi-value" style="font-size:17px;color:#F97316">${(c.s2/1000).toFixed(1)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">Scope 3</div><div class="kpi-value" style="font-size:17px;color:#FF6600">${(c.s3/1000).toFixed(0)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">EU ETS Cost</div><div class="kpi-value" style="font-size:17px;color:var(--cyan)">${c.eu}</div><div class="kpi-sub">annual</div></div></div><div class="panel"><div class="panel-body"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px"><div><div class="kpi-label">Carbon Intensity</div><div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--tx0);margin-top:4px">${c.int}</div></div><div><div class="kpi-label">SBTi Status</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:${c.sbti==='None'?'#FF3333':c.sbti.includes('Approved')||c.sbti.includes('Committed')?'#00CC44':'#FF6600'}">${c.sbti}</div></div><div><div class="kpi-label">Net Zero Target</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:var(--tx1)">${c.tgt}</div></div></div></div></div>`;
+}
+function renderExpStress(id){
+  const d=EDATA[id];if(!d)return;const s=d.stress;
+  const col=(v)=>v<-25?'#FF3333':v<-15?'#F97316':'#FF6600';
+  const rc=(v)=>v>-10?'rb-low':v>-20?'rb-medium':v>-30?'rb-high':'rb-critical';
+  const rl=(v)=>v>-10?'LOW':v>-20?'MEDIUM':v>-30?'HIGH':'CRITICAL';
+  document.getElementById('exp-stress').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">NGFS Scenario Stress Test</span><span style="font-size:9px;color:var(--tx3)">3 PATHWAYS</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Scenario</th><th>Revenue Impact</th><th>EBITDA Impact</th><th>Climate VaR</th><th>Rating</th></tr></thead><tbody><tr><td><span class="sc-pill sc-nz" style="cursor:default">Net Zero 2050</span></td><td class="t-mono" style="color:#00CC44">${s.nz[0]}%</td><td class="t-mono" style="color:#00CC44">${s.nz[1]}%</td><td class="t-mono" style="color:#00CC44">${s.nz[2]}</td><td><span class="rbadge ${rc(s.nz[0])}">${rl(s.nz[0])}</span></td></tr><tr><td><span class="sc-pill sc-dt" style="cursor:default">Delayed Transition</span></td><td class="t-mono" style="color:${col(s.dt[0])}">${s.dt[0]}%</td><td class="t-mono" style="color:${col(s.dt[1])}">${s.dt[1]}%</td><td class="t-mono" style="color:#F97316">${s.dt[2]}</td><td><span class="rbadge ${rc(s.dt[0])}">${rl(s.dt[0])}</span></td></tr><tr><td><span class="sc-pill sc-cp" style="cursor:default">Current Policy</span></td><td class="t-mono" style="color:#FF3333">${s.cp[0]}%</td><td class="t-mono" style="color:#FF3333">${s.cp[1]}%</td><td class="t-mono" style="color:#FF3333">${s.cp[2]}</td><td><span class="rbadge ${rc(s.cp[0])}">${rl(s.cp[0])}</span></td></tr></tbody></table></div></div>`;
+}
+function renderExpPolicy(id){
+  const d=EDATA[id];if(!d)return;
+  const cm={CRITICAL:'#FF3333',HIGH:'#F97316',MEDIUM:'#FF6600',LOW:'#3399FF',POSITIVE:'#00CC44',NEUTRAL:'#888888'};
+  document.getElementById('exp-policy').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">Policy Sensitivity Analysis</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Regulation</th><th>Impact</th><th>Financial Delta</th><th>Confidence</th></tr></thead><tbody>${d.policy.map(p=>`<tr><td>${p.reg}</td><td><span style="font-size:9px;font-weight:700;color:${cm[p.impact]||'#888'}">${p.impact}</span></td><td class="t-mono" style="font-size:10px">${p.delta}</td><td><span class="rbadge ${p.conf==='HIGH'?'rb-low':p.conf==='MEDIUM'?'rb-medium':'rb-high'}">${p.conf}</span></td></tr>`).join('')}</tbody></table></div></div>`;
+}
+
+// ─── Risk Propagation Canvas ──────────────────────────
+let _propRAF=null;
+function initPropagationCanvas(){
+  const canvas=document.getElementById('propCanvas');if(!canvas)return;
+  const wrap=canvas.parentElement;
+  const W=wrap.offsetWidth,H=wrap.offsetHeight;
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const N=[
+    {id:'climate',lbl:'CLIMATE EVENT',sub:'Trigger',x:.5,y:.10,c:'#FF3333',r:30},
+    {id:'phys',   lbl:'PHYSICAL ASSETS',sub:'Direct',x:.2,y:.38,c:'#F97316',r:25},
+    {id:'ops',    lbl:'OPERATIONS',sub:'Indirect',x:.5,y:.38,c:'#FF6600',r:25},
+    {id:'supply', lbl:'SUPPLY CHAIN',sub:'Tier 1–3',x:.8,y:.38,c:'#FF6600',r:25},
+    {id:'rev',    lbl:'REVENUE',sub:'Financial',x:.33,y:.68,c:'#F97316',r:22},
+    {id:'mkt',    lbl:'MARKET RISK',sub:'Systemic',x:.67,y:.68,c:'#FF3333',r:22},
+    {id:'policy', lbl:'POLICY RESPONSE',sub:'Regulatory',x:.5,y:.93,c:'#3399FF',r:20},
+  ];
+  const E=[['climate','phys'],['climate','ops'],['climate','supply'],['phys','rev'],['ops','rev'],['supply','mkt'],['ops','mkt'],['rev','policy'],['mkt','policy']];
+  const px=n=>({x:n.x*W,y:n.y*H});
+  const parts=[];
+  E.forEach(([a,b])=>{
+    const f=N.find(n=>n.id===a),t=N.find(n=>n.id===b);if(!f||!t)return;
+    for(let i=0;i<3;i++) parts.push({f,t,p:Math.random(),sp:.002+Math.random()*.003,c:f.c,sz:1.5+Math.random()*2});
+  });
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // edges
+    E.forEach(([a,b])=>{
+      const f=N.find(n=>n.id===a),t=N.find(n=>n.id===b);if(!f||!t)return;
+      const fp=px(f),tp=px(t);
+      ctx.beginPath();ctx.moveTo(fp.x,fp.y);ctx.lineTo(tp.x,tp.y);
+      ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.stroke();
+    });
+    // particles
+    parts.forEach(p=>{
+      p.p+=p.sp;if(p.p>1)p.p=0;
+      const fp=px(p.f),tp=px(p.t);
+      const x=fp.x+(tp.x-fp.x)*p.p,y=fp.y+(tp.y-fp.y)*p.p;
+      ctx.beginPath();ctx.arc(x,y,p.sz,0,Math.PI*2);
+      ctx.fillStyle=p.c+'BB';ctx.fill();
+    });
+    // nodes
+    N.forEach(n=>{
+      const {x,y}=px(n);
+      // glow
+      ctx.beginPath();ctx.arc(x,y,n.r+6,0,Math.PI*2);
+      ctx.strokeStyle=n.c+'18';ctx.lineWidth=10;ctx.stroke();
+      // fill
+      ctx.beginPath();ctx.arc(x,y,n.r,0,Math.PI*2);
+      ctx.fillStyle='#0A0A0C';ctx.fill();
+      ctx.strokeStyle=n.c+'99';ctx.lineWidth=1.5;ctx.stroke();
+      // text
+      ctx.textAlign='center';
+      ctx.fillStyle=n.c;ctx.font='700 8px "IBM Plex Mono",monospace';
+      ctx.fillText(n.lbl,x,y-2);
+      ctx.fillStyle='rgba(255,255,255,0.38)';ctx.font='400 7px "IBM Plex Mono",monospace';
+      ctx.fillText(n.sub,x,y+10);
+    });
+    _propRAF=requestAnimationFrame(draw);
+  }
+  if(_propRAF)cancelAnimationFrame(_propRAF);
+  draw();
+}
+
+// ─── AI Signals Feed ─────────────────────────────────
+const SIGNALS=[
+  {t:'PHYSICAL',   cls:'st-phys', txt:'Jet stream disruption detected — European flood risk elevated +34% for Q3 2025',        age:'just now'},
+  {t:'TRANSITION', cls:'st-trans',txt:'EU ETS Q4 auction undersubscribed — price volatility window open €94–102 range',        age:'1m ago'},
+  {t:'AI INSIGHT', cls:'st-ai',   txt:'Shell North Sea exposure correlates with +0.8°C scenario shift — stress test triggered',age:'3m ago'},
+  {t:'REGULATORY', cls:'st-reg',  txt:'ISSB IFRS S2 finalised Scope 3 guidance — portfolio allocation rules clarified',        age:'5m ago'},
+  {t:'MARKET',     cls:'st-mkt',  txt:'VCM carbon credit issuance velocity +18% — supply surplus forming in forestry credits', age:'7m ago'},
+  {t:'PHYSICAL',   cls:'st-phys', txt:'India heatwave 52.4°C wet-bulb — Adani Mundra cooling capacity stress threshold hit',  age:'11m ago'},
+  {t:'AI INSIGHT', cls:'st-ai',   txt:'Maersk IMO 2030 methanol fleet transition 38% complete — trajectory on track',          age:'14m ago'},
+  {t:'TRANSITION', cls:'st-trans',txt:'UK North Sea Windfall Tax extended to 2029 — Shell and BP exposure recalculated',       age:'18m ago'},
+  {t:'REGULATORY', cls:'st-reg',  txt:'SEC climate rule: large accelerated filers Scope 1+2 mandatory FY2026',                 age:'22m ago'},
+  {t:'MARKET',     cls:'st-mkt',  txt:'BlackRock SFDR Article 9 reclassification risk — $4.2B AUM downgrade exposure',        age:'28m ago'},
+  {t:'PHYSICAL',   cls:'st-phys', txt:'Mekong Delta flood event — 12 tracked entities flagged for Tier-1 supply disruption',  age:'35m ago'},
+  {t:'AI INSIGHT', cls:'st-ai',   txt:'Reliance Net Zero 2035 vs IEA NZE pathway: 28% gap identified across Scope 1–3',       age:'42m ago'},
+];
+let _sigIdx=8;
+function initSignalsFeed(){
+  const feed=document.getElementById('signalsFeed');if(!feed)return;
+  feed.innerHTML=SIGNALS.slice(0,8).map(s=>`<div class="ai-sig"><span class="ai-sig-type ${s.cls}">${s.t}</span><div class="ai-sig-text">${s.txt}</div><div class="ai-sig-time">${s.age}</div></div>`).join('');
+}
+function rotateSignal(){
+  const feed=document.getElementById('signalsFeed');if(!feed)return;
+  const s=SIGNALS[_sigIdx%SIGNALS.length];_sigIdx++;
+  const el=document.createElement('div');el.className='ai-sig';
+  el.innerHTML=`<span class="ai-sig-type ${s.cls}">${s.t}</span><div class="ai-sig-text">${s.txt}</div><div class="ai-sig-time">just now</div>`;
+  feed.insertBefore(el,feed.firstChild);
+  while(feed.children.length>10)feed.removeChild(feed.lastChild);
 }
 
 function initSimCharts(){
@@ -973,6 +1267,7 @@ function initFinanceCharts(){
 
 // ─── Init first module ────────────────────────────────────────
 window.addEventListener('load',()=>{
+  document.getElementById('shell').style.overflow='hidden';
   setTimeout(()=>initRiskCharts(),100);
 });
 </script>
