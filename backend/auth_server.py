@@ -85,6 +85,12 @@ def _init_db():
             expires_at REAL,
             created_at TEXT DEFAULT (datetime('now'))
         );
+        CREATE TABLE IF NOT EXISTS reset_tokens (
+            token      TEXT PRIMARY KEY,
+            email      TEXT NOT NULL,
+            expires_at REAL NOT NULL,
+            used       INTEGER DEFAULT 0
+        );
         CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
         """)
 
@@ -161,6 +167,14 @@ class LoginReq(BaseModel):
     password:           str
     remember:           bool = False
     device_fingerprint: str  = ""
+
+class ForgotReq(BaseModel):
+    email: str
+
+class ResetReq(BaseModel):
+    email:        str
+    token:        str
+    new_password: str
 
 # ── Routes ────────────────────────────────────────────────
 @app.get("/health")
@@ -247,6 +261,53 @@ def revoke_session(sid: str, cx_auth: str = Cookie(default=None)):
     with _db() as db:
         db.execute("DELETE FROM sessions WHERE id = ? AND user_id = ?", (sid, user["id"]))
     return {"ok": True}
+
+@app.post("/auth/forgot-password")
+def forgot_password(req: ForgotReq):
+    email = req.email.lower().strip()
+    with _db() as db:
+        row = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
+        if not row:
+            # Return success anyway to avoid email enumeration
+            return {"ok": True, "email": email, "reset_token": None}
+        # Clean up old tokens for this email
+        db.execute("DELETE FROM reset_tokens WHERE email = ?", (email,))
+        token = secrets.token_urlsafe(32)
+        expires_at = time.time() + 30 * 60  # 30 minutes
+        db.execute(
+            "INSERT INTO reset_tokens (token, email, expires_at) VALUES (?,?,?)",
+            (token, email, expires_at),
+        )
+    # DEV_MODE: return token directly (no email sending)
+    return {"ok": True, "email": email, "reset_token": token}
+
+@app.post("/auth/reset-password")
+def reset_password(req: ResetReq, response: Response):
+    email = req.email.lower().strip()
+    if len(req.new_password) < 8:
+        raise HTTPException(400, detail={"code": "weak-password",
+                                         "message": "Password must be at least 8 characters."})
+    with _db() as db:
+        row = db.execute(
+            "SELECT * FROM reset_tokens WHERE token = ? AND email = ? AND used = 0",
+            (req.token, email),
+        ).fetchone()
+        if not row:
+            raise HTTPException(400, detail={"code": "invalid-token",
+                                             "message": "Reset link is invalid."})
+        if row["expires_at"] < time.time():
+            db.execute("DELETE FROM reset_tokens WHERE token = ?", (req.token,))
+            raise HTTPException(400, detail={"code": "expired",
+                                             "message": "Reset link has expired. Please request a new one."})
+        # Mark token used and update password
+        db.execute("UPDATE reset_tokens SET used = 1 WHERE token = ?", (req.token,))
+        db.execute("UPDATE users SET pw_hash = ? WHERE email = ?", (_hash(req.new_password), email))
+        user_row = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+    if not user_row:
+        raise HTTPException(404, detail={"code": "not-found", "message": "Account not found."})
+    token = _make_session(user_row["id"], False)
+    _set_cookie(response, token, False)
+    return {"user": _public(dict(user_row))}
 
 if __name__ == "__main__":
     _init_db()
