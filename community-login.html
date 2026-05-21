@@ -458,6 +458,11 @@
           await verifyEmail(err.email, err.token);
           setTimeout(() => { location.href = nextUrl; }, 900);
         } catch { showAlert('siError', 'Could not verify account. Please try again.'); }
+      } else if (err.code === 'invalid-credentials') {
+        document.getElementById('siError').innerHTML =
+          `No account found, or password incorrect. ` +
+          `<a href="#" onclick="document.getElementById('caEmail').value='${email.replace(/'/g,"\\'")}';switchTab('create');return false;" style="color:#0EA5E9;font-weight:600;">Create account →</a>`;
+        document.getElementById('siError').classList.add('show');
       } else {
         showAlert('siError', err.message || 'Sign in failed. Please check your credentials.');
       }

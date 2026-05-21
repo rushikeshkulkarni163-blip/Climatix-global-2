@@ -116,9 +116,23 @@ async function _api(method, path, body) {
 
   if (!res.ok) {
     const detail = data.detail || data;
-    const code    = typeof detail === 'object' ? (detail.code    || 'error')   : 'error';
-    const message = typeof detail === 'object' ? (detail.message || 'Request failed.') : (typeof detail === 'string' ? detail : 'Request failed.');
-    throw { code, message, ...(typeof detail === 'object' ? detail : {}) };
+    let code, message;
+    if (Array.isArray(detail)) {
+      // 422 Pydantic validation error — detail is an array of field errors
+      code    = 'validation-error';
+      message = detail.map(e => e.msg || e.message).filter(Boolean).join('. ')
+                || 'Invalid input. Please check your details.';
+    } else if (detail && typeof detail === 'object') {
+      code    = detail.code    || 'error';
+      message = detail.message || detail.msg || `Request failed (${res.status}).`;
+    } else if (typeof detail === 'string') {
+      code    = 'error';
+      message = detail;
+    } else {
+      code    = 'error';
+      message = `Request failed (${res.status}). Please try again.`;
+    }
+    throw { code, message, ...(detail && typeof detail === 'object' && !Array.isArray(detail) ? detail : {}) };
   }
 
   return data;
