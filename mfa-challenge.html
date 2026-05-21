@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Two-Factor Authentication · Climactix Global</title>
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#000000;--bg1:#0F0F0F;--bg2:#1A1A1A;--bg3:#242424;
+      --bd:#2C2C2C;--bd2:#333333;
+      --tx:#FFFFFF;--tx2:#888888;--tx3:#555555;
+      --amb:#FF6600;--amb-dim:#CC5200;--amb-glow:rgba(255,102,0,0.10);
+      --grn:#00CC44;--red:#FF3333;
+      --font:'Inter',system-ui,sans-serif;
+      --mono:'IBM Plex Mono',monospace;
+    }
+    html,body{height:100%;-webkit-font-smoothing:antialiased}
+    body{
+      font-family:var(--font);background:var(--bg);color:var(--tx);
+      min-height:100vh;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;padding:24px;
+    }
+
+    /* ── Header ── */
+    .auth-top{text-align:center;margin-bottom:32px}
+    .auth-top-logo{
+      display:inline-flex;align-items:center;gap:10px;
+      text-decoration:none;margin-bottom:10px;
+    }
+    .auth-top-logo img{height:28px;width:auto;filter:brightness(0) invert(1)}
+    .auth-top-name{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--tx);letter-spacing:.08em;text-transform:uppercase}
+    .auth-top-div{width:1px;height:16px;background:var(--bd2)}
+    .auth-top-tag{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);letter-spacing:.12em;text-transform:uppercase}
+
+    /* ── Card ── */
+    .auth-card{
+      background:var(--bg1);border:1px solid var(--bd);border-radius:3px;
+      padding:48px 40px;width:100%;max-width:420px;
+    }
+
+    /* ── Step badge ── */
+    .step-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);
+      letter-spacing:.14em;text-transform:uppercase;margin-bottom:20px;
+    }
+    .step-badge::before{content:'';display:inline-block;width:20px;height:1px;background:var(--amb)}
+
+    /* ── Icon ── */
+    .mfa-icon{
+      width:52px;height:52px;border-radius:3px;
+      background:var(--amb-glow);border:1px solid rgba(255,102,0,0.20);
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;margin:0 auto 20px;
+    }
+
+    .card-title{font-size:20px;font-weight:800;color:var(--tx);letter-spacing:-.025em;margin-bottom:6px;text-align:center}
+    .card-sub{font-size:12px;color:var(--tx2);line-height:1.65;text-align:center;margin-bottom:28px}
+    .card-sub strong{color:var(--tx);font-weight:600}
+
+    /* ── Alerts ── */
+    .alert{
+      border-radius:2px;padding:9px 12px;font-size:12px;font-weight:500;
+      margin-bottom:16px;display:none;line-height:1.5;
+    }
+    .alert.error{background:rgba(255,51,51,0.08);color:#FF6666;border:1px solid rgba(255,51,51,0.20);border-left:3px solid #FF3333}
+    .alert.success{background:rgba(0,204,68,0.08);color:#33CC66;border:1px solid rgba(0,204,68,0.20);border-left:3px solid #00CC44}
+    .alert.show{display:block}
+
+    /* ── 6-digit code input ── */
+    .code-label{
+      font-family:var(--mono);font-size:10px;font-weight:700;color:var(--tx2);
+      letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;
+      display:block;text-align:center;
+    }
+    .code-boxes{
+      display:flex;gap:8px;justify-content:center;margin-bottom:24px;
+    }
+    .code-box{
+      width:48px;height:56px;text-align:center;font-family:var(--mono);
+      font-size:22px;font-weight:700;color:var(--tx);
+      background:var(--bg2);border:1px solid var(--bd);border-radius:2px;
+      outline:none;transition:border-color .15s,background .15s;
+      caret-color:var(--amb);
+    }
+    .code-box:focus{border-color:var(--amb);background:var(--bg3)}
+    .code-box.filled{border-color:var(--bd2)}
+    .code-box:nth-child(3){margin-right:4px}
+    .code-separator{
+      display:flex;align-items:center;font-family:var(--mono);
+      font-size:16px;color:var(--tx3);margin-right:4px;
+      flex-shrink:0;
+    }
+
+    /* ── Buttons ── */
+    .btn-primary{
+      width:100%;padding:11px 20px;background:var(--amb);color:#000;border:none;
+      border-radius:2px;font-family:var(--mono);font-size:11px;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+      transition:background .15s;
+    }
+    .btn-primary:hover:not(:disabled){background:var(--amb-dim)}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+
+    .spinner{
+      display:inline-block;width:12px;height:12px;
+      border:2px solid rgba(0,0,0,0.3);border-top-color:#000;
+      border-radius:50%;animation:spin .65s linear infinite;
+      vertical-align:middle;margin-right:6px;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── Footer links ── */
+    .card-footer{margin-top:24px;padding-top:20px;border-top:1px solid var(--bd);text-align:center}
+    .card-footer a{
+      font-family:var(--mono);font-size:10px;color:var(--tx3);
+      text-decoration:none;letter-spacing:.06em;transition:color .15s;
+    }
+    .card-footer a:hover{color:var(--tx2)}
+    .card-footer-row{display:flex;justify-content:center;gap:24px}
+
+    /* ── Timer ── */
+    .totp-hint{
+      font-family:var(--mono);font-size:10px;color:var(--tx3);
+      letter-spacing:.04em;text-align:center;margin-bottom:20px;
+    }
+    .totp-hint span{color:var(--amb)}
+
+    /* ── Trust ── */
+    .trust-row{
+      display:flex;justify-content:center;align-items:center;gap:20px;
+      margin-top:20px;flex-wrap:wrap;
+    }
+    .trust-item{
+      display:flex;align-items:center;gap:5px;
+      font-family:var(--mono);font-size:9px;color:var(--tx3);
+      letter-spacing:.06em;text-transform:uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logo -->
+  <div class="auth-top">
+    <a href="index.html" class="auth-top-logo">
+      <img src="Climatix_logo.png" alt="Climactix Global" />
+      <span class="auth-top-name">Climactix</span>
+      <span class="auth-top-div"></span>
+      <span class="auth-top-tag">Intelligence OS</span>
+    </a>
+  </div>
+
+  <!-- MFA Card -->
+  <div class="auth-card">
+    <div class="step-badge">Step 2 of 2</div>
+
+    <div class="mfa-icon">🔐</div>
+
+    <h1 class="card-title">Authenticator code</h1>
+    <p class="card-sub" id="emailSub">
+      Open your authenticator app and enter the 6-digit code for<br>
+      <strong id="emailDisplay"></strong>
+    </p>
+
+    <div class="alert error"   id="errorAlert"></div>
+    <div class="alert success" id="successAlert"></div>
+
+    <label class="code-label" for="d0">Verification code</label>
+
+    <div class="code-boxes" id="codeBoxes">
+      <input class="code-box" id="d0" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" />
+      <input class="code-box" id="d1" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="code-box" id="d2" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <span class="code-separator">·</span>
+      <input class="code-box" id="d3" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="code-box" id="d4" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+      <input class="code-box" id="d5" maxlength="1" inputmode="numeric" pattern="[0-9]" />
+    </div>
+
+    <div class="totp-hint">
+      Code rotates every <span id="timerDisplay">30</span>s — use the current code showing in your app
+    </div>
+
+    <button class="btn-primary" id="submitBtn" disabled>Verify Identity</button>
+
+    <div class="card-footer">
+      <div class="card-footer-row">
+        <a href="login.html">← Back to sign in</a>
+        <a href="mailto:security@climactixglobal.com">Need help?</a>
+      </div>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item">🔒 End-to-end encrypted</div>
+      <div class="trust-item">✓ TOTP RFC 6238</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { completeMfaSignIn, getSession } from './auth.js';
+
+    // Redirect if already signed in
+    if (getSession()) {
+      location.href = 'assessment.html';
+    }
+
+    const params  = new URLSearchParams(location.search);
+    const token   = params.get('token')   || '';
+    const email   = params.get('email')   || '';
+    const remember = params.get('remember') === '1';
+
+    if (!token) {
+      location.href = 'login.html';
+    }
+
+    // Show email in subtitle
+    if (email) {
+      const el = document.getElementById('emailDisplay');
+      if (el) el.textContent = email;
+    }
+
+    // ── TOTP 30-second countdown timer ──────────────────────────────────
+    function updateTimer() {
+      const secs = 30 - (Math.floor(Date.now() / 1000) % 30);
+      const el = document.getElementById('timerDisplay');
+      if (el) el.textContent = secs;
+    }
+    updateTimer();
+    setInterval(updateTimer, 1000);
+
+    // ── Code box logic ───────────────────────────────────────────────────
+    const boxes = Array.from({length: 6}, (_, i) => document.getElementById(`d${i}`));
+    const submitBtn = document.getElementById('submitBtn');
+
+    function getCode() { return boxes.map(b => b.value).join(''); }
+    function checkReady() {
+      const ready = getCode().length === 6;
+      submitBtn.disabled = !ready;
+    }
+
+    function clearAlerts() {
+      ['errorAlert','successAlert'].forEach(id => {
+        document.getElementById(id).classList.remove('show');
+      });
+    }
+    function showAlert(id, msg) {
+      clearAlerts();
+      document.getElementById(id).innerHTML = msg;
+      document.getElementById(id).classList.add('show');
+    }
+
+    function setLoading(on) {
+      submitBtn.disabled = on;
+      submitBtn.innerHTML = on
+        ? '<span class="spinner"></span>Verifying…'
+        : 'Verify Identity';
+    }
+
+    boxes.forEach((box, idx) => {
+      // Auto-advance on digit entry
+      box.addEventListener('input', e => {
+        const val = e.target.value.replace(/\D/g, '');
+        box.value = val.slice(-1);
+
+        if (val && idx < 5) boxes[idx + 1].focus();
+        boxes.forEach(b => b.classList.toggle('filled', b.value !== ''));
+        checkReady();
+
+        // Auto-submit when all 6 filled
+        if (getCode().length === 6) {
+          setTimeout(() => submitBtn.click(), 120);
+        }
+      });
+
+      // Backspace moves to previous box
+      box.addEventListener('keydown', e => {
+        if (e.key === 'Backspace' && !box.value && idx > 0) {
+          boxes[idx - 1].focus();
+          boxes[idx - 1].value = '';
+          boxes[idx - 1].classList.remove('filled');
+          checkReady();
+        }
+        // Allow paste to fill all boxes
+        if (e.key === 'Enter' && getCode().length === 6) {
+          submitBtn.click();
+        }
+      });
+
+      // Handle paste across all boxes
+      box.addEventListener('paste', e => {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData)
+          .getData('text').replace(/\D/g, '').slice(0, 6);
+        pasted.split('').forEach((ch, i) => {
+          if (boxes[i]) {
+            boxes[i].value = ch;
+            boxes[i].classList.add('filled');
+          }
+        });
+        const next = Math.min(pasted.length, 5);
+        boxes[next].focus();
+        checkReady();
+        if (pasted.length === 6) setTimeout(() => submitBtn.click(), 120);
+      });
+    });
+
+    // Focus first box on load
+    boxes[0].focus();
+
+    // ── Submit ─────────────────────────────────────────────────────────────
+    submitBtn.addEventListener('click', async () => {
+      const code = getCode();
+      if (code.length !== 6) return;
+
+      clearAlerts();
+      setLoading(true);
+
+      try {
+        const user = await completeMfaSignIn(token, code);
+        if (user) {
+          showAlert('successAlert', '✓ Identity verified. Redirecting to your workspace…');
+          setTimeout(() => {
+            const redirect = params.get('redirect') || 'assessment.html';
+            location.href = redirect;
+          }, 900);
+        }
+      } catch (err) {
+        setLoading(false);
+
+        if (err.code === 'mfa-token-expired') {
+          showAlert('errorAlert',
+            'Your MFA session expired. <a href="login.html" style="color:var(--amb)">Sign in again →</a>');
+        } else if (err.code === 'mfa-locked') {
+          showAlert('errorAlert',
+            'Too many incorrect attempts. <a href="login.html" style="color:var(--amb)">Sign in again →</a>');
+        } else if (err.code === 'invalid-totp') {
+          showAlert('errorAlert', 'Incorrect code. Check your authenticator app and try again.');
+          // Clear and refocus
+          boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
+          boxes[0].focus();
+          checkReady();
+        } else {
+          showAlert('errorAlert', err.message || 'Verification failed. Please try again.');
+          boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
+          boxes[0].focus();
+          checkReady();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

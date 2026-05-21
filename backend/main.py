@@ -36,6 +36,10 @@ from services.ai_engine import generate_all_narratives
 from services.scorer import calculate_scores
 from services.greenwashing_scanner import scan_for_greenwashing, extract_data, validate_claims, extract_claims
 from services.esg_framework_intelligence import run_intelligence_analysis, FRAMEWORK_REGISTRY, UNIFIED_ESG_MODEL, CROSS_FRAMEWORK_MAP
+from routers.auth import router as auth_router
+from routers.mfa import router as mfa_router
+from routers.api_keys import router as api_keys_router
+import database as db
 
 # ── Template directory ─────────────────────────────────────────────────────────
 _TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -48,15 +52,26 @@ app = FastAPI(
     version="2.0.0",
 )
 
-cors_origins = os.getenv("CORS_ORIGINS", "*").split(",")
+# ── CORS ──────────────────────────────────────────────────────────────────────
+# Credentials (cookies) require explicit origins — cannot use wildcard.
+# Allow any localhost:PORT for dev; production origins set via CORS_ORIGINS env.
+_env_origins = os.getenv("CORS_ORIGINS", "").strip()
+_explicit_origins = [o.strip() for o in _env_origins.split(",") if o.strip()] if _env_origins else []
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins,
+    allow_origins=_explicit_origins or ["http://localhost:3000", "http://localhost:8080", "http://localhost:5500", "http://127.0.0.1:5500"],
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Set-Cookie"],
 )
+
+# ── Auth + MFA + API key routers ──────────────────────────────────────────────
+app.include_router(auth_router)
+app.include_router(mfa_router)
+app.include_router(api_keys_router)
 
 # ── In-memory cache (last successful generation) ──────────────────────────────
 _cache: dict = {}
@@ -97,12 +112,23 @@ _VALID_LAYERS = list(LAYER_META.keys())
 
 
 @app.on_event("startup")
-async def _warm_climate_cache():
-    """Pre-generate synthetic climate data on startup so first request is instant."""
+async def _startup():
+    """Initialize DB pool + auth schema, then warm the climate cache."""
     import asyncio, concurrent.futures
+    # DB pool + schema migration (idempotent — safe to run on every startup)
+    try:
+        await db.init_pool()
+    except Exception as exc:
+        print(f"[WARN] DB init failed (auth features unavailable): {exc}")
+    # Climate cache warm-up
     loop = asyncio.get_event_loop()
     with concurrent.futures.ThreadPoolExecutor() as pool:
         await loop.run_in_executor(pool, _refresh_climate)
+
+
+@app.on_event("shutdown")
+async def _shutdown():
+    await db.close_pool()
 
 
 @app.get("/api/climate-data")

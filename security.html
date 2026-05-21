@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security Settings · Climactix Global</title>
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#000000;--bg1:#0F0F0F;--bg2:#1A1A1A;--bg3:#242424;--bg4:#2E2E2E;
+      --bd:#2C2C2C;--bd2:#333333;
+      --tx:#FFFFFF;--tx2:#888888;--tx3:#555555;
+      --amb:#FF6600;--amb-dim:#CC5200;--amb-glow:rgba(255,102,0,0.10);
+      --grn:#00CC44;--red:#FF3333;--cyan:#0099CC;
+      --font:'Inter',system-ui,sans-serif;
+      --mono:'IBM Plex Mono',monospace;
+    }
+    html,body{height:100%;-webkit-font-smoothing:antialiased}
+    body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh;display:grid;grid-template-columns:240px 1fr}
+
+    /* ── TOP NAV ── */
+    .topnav{
+      grid-column:1/-1;height:48px;background:var(--bg1);
+      border-bottom:1px solid var(--bd);
+      display:flex;align-items:center;padding:0 24px;gap:16px;
+      position:sticky;top:0;z-index:100;
+    }
+    .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;margin-right:auto}
+    .nav-brand img{height:22px;width:auto;filter:brightness(0) invert(1)}
+    .nav-brand-name{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--tx);letter-spacing:.08em;text-transform:uppercase}
+    .nav-brand-div{width:1px;height:14px;background:var(--bd2)}
+    .nav-brand-tag{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);letter-spacing:.10em;text-transform:uppercase}
+    .nav-link{
+      font-family:var(--mono);font-size:10px;font-weight:600;color:var(--tx3);
+      text-decoration:none;letter-spacing:.06em;text-transform:uppercase;
+      transition:color .15s;
+    }
+    .nav-link:hover{color:var(--tx2)}
+    .nav-user{
+      display:flex;align-items:center;gap:8px;
+      font-family:var(--mono);font-size:10px;color:var(--tx2);
+    }
+    .nav-user-dot{width:7px;height:7px;border-radius:50%;background:var(--grn)}
+
+    /* ── SIDEBAR ── */
+    .sidebar{
+      background:var(--bg1);border-right:1px solid var(--bd);
+      padding:24px 0;position:sticky;top:48px;height:calc(100vh - 48px);
+      overflow-y:auto;
+    }
+    .sidebar-section-label{
+      font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx3);
+      letter-spacing:.12em;text-transform:uppercase;padding:0 20px 8px;
+    }
+    .sidebar-link{
+      display:flex;align-items:center;gap:10px;padding:9px 20px;
+      font-size:12px;font-weight:500;color:var(--tx2);text-decoration:none;
+      transition:background .12s,color .12s;border-left:2px solid transparent;cursor:pointer;
+    }
+    .sidebar-link:hover{background:var(--bg2);color:var(--tx)}
+    .sidebar-link.active{color:var(--amb);border-left-color:var(--amb);background:var(--amb-glow)}
+    .sidebar-link-icon{font-size:14px;width:16px;text-align:center;flex-shrink:0}
+    .sidebar-divider{height:1px;background:var(--bd);margin:16px 20px}
+
+    /* ── MAIN ── */
+    .main{padding:32px 36px;max-width:860px}
+
+    /* ── Page header ── */
+    .page-header{margin-bottom:32px}
+    .page-eyebrow{
+      font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);
+      letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .page-eyebrow::before{content:'';display:inline-block;width:16px;height:1px;background:var(--amb)}
+    .page-title{font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.025em;margin-bottom:4px}
+    .page-sub{font-size:12px;color:var(--tx2);line-height:1.6}
+
+    /* ── Sections ── */
+    .section{margin-bottom:36px}
+    .section-header{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bd);
+    }
+    .section-title-block{}
+    .section-title{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:2px}
+    .section-desc{font-size:11px;color:var(--tx3)}
+
+    /* ── Panels ── */
+    .panel{
+      background:var(--bg1);border:1px solid var(--bd);border-radius:3px;
+      padding:20px 24px;margin-bottom:12px;
+    }
+    .panel-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .panel-label{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:2px}
+    .panel-desc{font-size:11px;color:var(--tx3);line-height:1.5}
+
+    /* ── Badges ── */
+    .badge{
+      font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 8px;
+      border-radius:2px;letter-spacing:.06em;text-transform:uppercase;
+    }
+    .badge-green{background:rgba(0,204,68,0.12);color:#33CC66;border:1px solid rgba(0,204,68,0.20)}
+    .badge-red{background:rgba(255,51,51,0.12);color:#FF6666;border:1px solid rgba(255,51,51,0.20)}
+    .badge-amber{background:rgba(255,102,0,0.12);color:var(--amb);border:1px solid rgba(255,102,0,0.20)}
+    .badge-gray{background:var(--bg2);color:var(--tx2);border:1px solid var(--bd)}
+
+    /* ── Alerts ── */
+    .alert{
+      border-radius:2px;padding:9px 12px;font-size:12px;font-weight:500;
+      margin-bottom:16px;display:none;line-height:1.5;
+    }
+    .alert.error{background:rgba(255,51,51,0.08);color:#FF6666;border:1px solid rgba(255,51,51,0.20);border-left:3px solid #FF3333}
+    .alert.success{background:rgba(0,204,68,0.08);color:#33CC66;border:1px solid rgba(0,204,68,0.20);border-left:3px solid #00CC44}
+    .alert.warning{background:rgba(255,102,0,0.08);color:#FF8833;border:1px solid rgba(255,102,0,0.20);border-left:3px solid #FF6600}
+    .alert.show{display:block}
+
+    /* ── Buttons ── */
+    .btn{
+      padding:7px 14px;border-radius:2px;font-family:var(--mono);font-size:10px;
+      font-weight:700;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;
+      border:1px solid transparent;transition:background .15s,border-color .15s,color .15s;
+      white-space:nowrap;
+    }
+    .btn-primary{background:var(--amb);color:#000;border-color:var(--amb)}
+    .btn-primary:hover:not(:disabled){background:var(--amb-dim);border-color:var(--amb-dim)}
+    .btn-outline{background:transparent;color:var(--tx2);border-color:var(--bd2)}
+    .btn-outline:hover:not(:disabled){background:var(--bg2);color:var(--tx);border-color:var(--bd2)}
+    .btn-danger{background:transparent;color:#FF6666;border-color:rgba(255,51,51,0.30)}
+    .btn-danger:hover:not(:disabled){background:rgba(255,51,51,0.08);color:#FF3333}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+
+    /* ── Fields ── */
+    .field{margin-bottom:14px}
+    .field label{
+      display:block;font-family:var(--mono);font-size:10px;font-weight:700;
+      color:var(--tx2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;
+    }
+    .field input{
+      width:100%;padding:8px 12px;border:1px solid var(--bd);border-radius:2px;
+      font-size:13px;font-family:var(--font);color:var(--tx);background:var(--bg2);
+      outline:none;transition:border-color .15s,background .15s;
+    }
+    .field input::placeholder{color:var(--tx3)}
+    .field input:focus{border-color:var(--amb);background:var(--bg3)}
+
+    /* ── QR Card ── */
+    .qr-container{text-align:center;padding:24px}
+    .qr-container img{
+      width:160px;height:160px;border-radius:3px;
+      border:2px solid var(--bd);background:#fff;padding:4px;margin-bottom:12px;
+    }
+    .qr-secret{
+      font-family:var(--mono);font-size:11px;font-weight:600;color:var(--tx2);
+      background:var(--bg3);border:1px solid var(--bd);border-radius:2px;
+      padding:6px 12px;letter-spacing:.08em;word-break:break-all;margin-bottom:6px;
+    }
+    .qr-secret-label{font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase}
+
+    /* ── 6-digit verify boxes ── */
+    .code-boxes{display:flex;gap:6px;justify-content:center;margin:16px 0}
+    .code-box{
+      width:40px;height:48px;text-align:center;font-family:var(--mono);
+      font-size:18px;font-weight:700;color:var(--tx);background:var(--bg2);
+      border:1px solid var(--bd);border-radius:2px;outline:none;
+      transition:border-color .15s,background .15s;caret-color:var(--amb);
+    }
+    .code-box:focus{border-color:var(--amb);background:var(--bg3)}
+    .code-separator{display:flex;align-items:center;font-size:14px;color:var(--tx3)}
+
+    /* ── Sessions list ── */
+    .session-row{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+      padding:14px 0;border-bottom:1px solid var(--bd);
+    }
+    .session-row:last-child{border-bottom:none}
+    .session-meta{}
+    .session-device{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:3px}
+    .session-detail{font-family:var(--mono);font-size:10px;color:var(--tx3);letter-spacing:.03em;line-height:1.7}
+    .session-current{margin-left:8px}
+
+    /* ── API Keys table ── */
+    .keys-table{width:100%;border-collapse:collapse}
+    .keys-table th{
+      font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx3);
+      letter-spacing:.10em;text-transform:uppercase;padding:8px 12px;
+      border-bottom:1px solid var(--bd2);text-align:left;
+    }
+    .keys-table td{
+      font-size:12px;color:var(--tx2);padding:10px 12px;
+      border-bottom:1px solid var(--bd);vertical-align:middle;
+    }
+    .keys-table tr:last-child td{border-bottom:none}
+    .keys-table tr:hover td{background:var(--bg2)}
+    .key-name{font-weight:600;color:var(--tx)}
+    .key-prefix{font-family:var(--mono);font-size:10px;color:var(--tx3);letter-spacing:.04em}
+    .key-perm{
+      font-family:var(--mono);font-size:9px;color:var(--tx3);
+      background:var(--bg3);border:1px solid var(--bd);padding:2px 6px;
+      border-radius:2px;display:inline-block;margin:1px;
+    }
+    .empty-state{
+      text-align:center;padding:32px;color:var(--tx3);
+      font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+    }
+
+    /* ── Key reveal ── */
+    .key-reveal{
+      display:none;background:var(--bg3);border:1px solid rgba(255,102,0,0.30);
+      border-radius:2px;padding:12px 16px;margin-top:12px;
+    }
+    .key-reveal.show{display:block}
+    .key-reveal-label{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);letter-spacing:.10em;text-transform:uppercase;margin-bottom:6px}
+    .key-reveal-value{
+      font-family:var(--mono);font-size:12px;color:var(--tx);
+      word-break:break-all;letter-spacing:.04em;margin-bottom:8px;
+    }
+    .key-reveal-warn{font-size:11px;color:#FF8833}
+
+    /* ── Create key form ── */
+    .key-form{display:none;background:var(--bg2);border:1px solid var(--bd);border-radius:3px;padding:20px;margin-top:12px}
+    .key-form.show{display:block}
+    .perm-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .perm-check{display:flex;align-items:center;gap:6px;cursor:pointer}
+    .perm-check input{accent-color:var(--amb);cursor:pointer;width:14px;height:14px}
+    .perm-check-label{font-family:var(--mono);font-size:10px;color:var(--tx2);letter-spacing:.04em}
+
+    /* ── Spinner ── */
+    .spinner{
+      display:inline-block;width:11px;height:11px;
+      border:2px solid rgba(255,255,255,0.15);border-top-color:var(--tx);
+      border-radius:50%;animation:spin .65s linear infinite;vertical-align:middle;margin-right:6px;
+    }
+    .spinner.dark{border:2px solid rgba(0,0,0,0.2);border-top-color:#000}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── Modal overlay ── */
+    .modal{
+      display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);
+      z-index:999;align-items:center;justify-content:center;
+    }
+    .modal.show{display:flex}
+    .modal-card{
+      background:var(--bg1);border:1px solid var(--bd);border-radius:3px;
+      padding:32px 36px;width:100%;max-width:400px;
+    }
+    .modal-title{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:6px}
+    .modal-sub{font-size:12px;color:var(--tx2);margin-bottom:20px;line-height:1.6}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+    @media(max-width:768px){
+      body{grid-template-columns:1fr}
+      .sidebar{display:none}
+      .main{padding:20px}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <a href="assessment.html" class="nav-brand">
+      <img src="Climatix_logo.png" alt="Climactix" />
+      <span class="nav-brand-name">Climactix</span>
+      <span class="nav-brand-div"></span>
+      <span class="nav-brand-tag">Intelligence OS</span>
+    </a>
+    <a href="assessment.html" class="nav-link">Dashboard</a>
+    <a href="terminal.html" class="nav-link">Terminal</a>
+    <div class="nav-user">
+      <span class="nav-user-dot"></span>
+      <span id="navEmail">Loading…</span>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Account</div>
+    <div class="sidebar-link" onclick="scrollTo('mfa')">
+      <span class="sidebar-link-icon">🔐</span> Two-Factor Auth
+    </div>
+    <div class="sidebar-link" onclick="scrollTo('sessions')">
+      <span class="sidebar-link-icon">💻</span> Active Sessions
+    </div>
+    <div class="sidebar-link" onclick="scrollTo('apikeys')">
+      <span class="sidebar-link-icon">🔑</span> API Keys
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Platform</div>
+    <a href="assessment.html" class="sidebar-link">
+      <span class="sidebar-link-icon">📊</span> ESG Dashboard
+    </a>
+    <a href="terminal.html" class="sidebar-link">
+      <span class="sidebar-link-icon">⚡</span> Terminal
+    </a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-link" id="signOutBtn" style="color:var(--tx3)">
+      <span class="sidebar-link-icon">↩</span> Sign out
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <div class="page-header">
+      <div class="page-eyebrow">Account Security</div>
+      <h1 class="page-title">Security settings</h1>
+      <p class="page-sub">Manage two-factor authentication, active sessions, and API access keys for your workspace.</p>
+    </div>
+
+    <!-- ── SECTION: MFA ── -->
+    <section class="section" id="mfa">
+      <div class="section-header">
+        <div class="section-title-block">
+          <div class="section-title">Two-factor authentication</div>
+          <div class="section-desc">Require a one-time code from your authenticator app on every sign-in.</div>
+        </div>
+        <span id="mfaBadge" class="badge badge-gray">Loading</span>
+      </div>
+
+      <div id="mfaSection">
+        <!-- Filled dynamically -->
+      </div>
+    </section>
+
+    <!-- ── SECTION: Sessions ── -->
+    <section class="section" id="sessions">
+      <div class="section-header">
+        <div class="section-title-block">
+          <div class="section-title">Active sessions</div>
+          <div class="section-desc">Devices and browsers signed into your account. Revoke any session you don't recognise.</div>
+        </div>
+        <button class="btn btn-outline" onclick="loadSessions()">Refresh</button>
+      </div>
+      <div id="sessionsSection">
+        <div class="empty-state"><span class="spinner"></span> Loading sessions…</div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: API Keys ── -->
+    <section class="section" id="apikeys">
+      <div class="section-header">
+        <div class="section-title-block">
+          <div class="section-title">API keys</div>
+          <div class="section-desc">Programmatic access tokens for the Climactix REST API. Max 10 active keys.</div>
+        </div>
+        <button class="btn btn-primary" id="newKeyBtn" onclick="showKeyForm()">+ New key</button>
+      </div>
+
+      <!-- Create key form (hidden by default) -->
+      <div class="key-form" id="keyForm">
+        <div class="alert error"   id="keyFormError"></div>
+        <div class="field">
+          <label for="keyName">Key name</label>
+          <input type="text" id="keyName" placeholder="e.g. Production dashboard" maxlength="64" />
+        </div>
+        <div class="field">
+          <label>Permissions</label>
+          <div class="perm-grid" id="permGrid">
+            <!-- filled by JS -->
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn btn-primary" id="createKeyBtn" onclick="createKey()">Create key</button>
+          <button class="btn btn-outline" onclick="hideKeyForm()">Cancel</button>
+        </div>
+
+        <!-- Key reveal (shown once after creation) -->
+        <div class="key-reveal" id="keyReveal">
+          <div class="key-reveal-label">Your new API key — copy it now</div>
+          <div class="key-reveal-value" id="keyRevealValue"></div>
+          <div class="key-reveal-warn">⚠ This key will not be shown again. Store it securely in a secrets manager.</div>
+          <div style="margin-top:10px">
+            <button class="btn btn-outline" onclick="copyKey()">Copy key</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="keysSection">
+        <div class="empty-state"><span class="spinner"></span> Loading keys…</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── MODAL: Disable MFA ── -->
+  <div class="modal" id="disableMfaModal">
+    <div class="modal-card">
+      <div class="modal-title">Disable two-factor authentication</div>
+      <div class="modal-sub">Enter your current authenticator code and account password to disable MFA. This reduces your account security.</div>
+      <div class="alert error" id="disableError"></div>
+      <div class="field">
+        <label>Authenticator code</label>
+        <div class="code-boxes" id="disableCodeBoxes">
+          <input class="code-box" id="dd0" maxlength="1" inputmode="numeric" />
+          <input class="code-box" id="dd1" maxlength="1" inputmode="numeric" />
+          <input class="code-box" id="dd2" maxlength="1" inputmode="numeric" />
+          <span class="code-separator">·</span>
+          <input class="code-box" id="dd3" maxlength="1" inputmode="numeric" />
+          <input class="code-box" id="dd4" maxlength="1" inputmode="numeric" />
+          <input class="code-box" id="dd5" maxlength="1" inputmode="numeric" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="disablePassword">Account password</label>
+        <input type="password" id="disablePassword" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeDisableMfaModal()">Cancel</button>
+        <button class="btn btn-danger" id="confirmDisableBtn" onclick="confirmDisableMfa()">Disable MFA</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      getSession, syncSession, signOut,
+      getMfaStatus, setupMfa, enableMfa, disableMfa,
+      listSessions, revokeSession,
+      listApiKeys, createApiKey, revokeApiKey,
+    } from './auth.js';
+
+    // ── Auth guard ──────────────────────────────────────────────────────────
+    const session = getSession();
+    if (!session) { location.href = 'login.html'; }
+
+    // Show email in nav
+    document.getElementById('navEmail').textContent = session?.email || '';
+
+    // Sign out
+    document.getElementById('signOutBtn').addEventListener('click', async () => {
+      await signOut();
+      location.href = 'login.html';
+    });
+
+    // Scroll helper
+    window.scrollTo = (id) => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // ── Sidebar active state ─────────────────────────────────────────────────
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+          const link = document.querySelector(`.sidebar-link[onclick="scrollTo('${e.target.id}')"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.5 });
+    ['mfa','sessions','apikeys'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // ── MFA SECTION ─────────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════════
+
+    let _mfaEnabled = false;
+    let _pendingSecret = null;
+
+    async function loadMfaStatus() {
+      try {
+        const { mfa_enabled } = await getMfaStatus();
+        _mfaEnabled = mfa_enabled;
+        renderMfaSection(mfa_enabled);
+        const badge = document.getElementById('mfaBadge');
+        badge.className = mfa_enabled ? 'badge badge-green' : 'badge badge-red';
+        badge.textContent = mfa_enabled ? 'Enabled' : 'Disabled';
+      } catch {
+        document.getElementById('mfaSection').innerHTML =
+          '<div class="alert error show">Could not load MFA status. Please refresh.</div>';
+      }
+    }
+
+    function renderMfaSection(enabled) {
+      const el = document.getElementById('mfaSection');
+      if (enabled) {
+        el.innerHTML = `
+          <div class="panel">
+            <div class="panel-row">
+              <div>
+                <div class="panel-label">Authenticator app active</div>
+                <div class="panel-desc">Your account requires a TOTP code from your authenticator app at every sign-in.</div>
+              </div>
+              <button class="btn btn-danger" onclick="openDisableMfaModal()">Disable MFA</button>
+            </div>
+          </div>`;
+      } else {
+        el.innerHTML = `
+          <div class="panel">
+            <div class="panel-row">
+              <div>
+                <div class="panel-label">Authenticator app not configured</div>
+                <div class="panel-desc">Protect your account with a one-time code from Google Authenticator, Authy, or any TOTP app.</div>
+              </div>
+              <button class="btn btn-primary" id="setupMfaBtn" onclick="startMfaSetup()">Set up MFA</button>
+            </div>
+          </div>
+          <div id="mfaSetupFlow"></div>`;
+      }
+    }
+
+    window.startMfaSetup = async function() {
+      document.getElementById('setupMfaBtn').disabled = true;
+      document.getElementById('setupMfaBtn').innerHTML = '<span class="spinner dark"></span>Loading…';
+      try {
+        const data = await setupMfa();
+        _pendingSecret = data.secret;
+        renderQrFlow(data);
+      } catch (e) {
+        document.getElementById('mfaSetupFlow').innerHTML =
+          `<div class="alert error show">${e.message || 'Failed to start MFA setup.'}</div>`;
+        document.getElementById('setupMfaBtn').disabled = false;
+        document.getElementById('setupMfaBtn').textContent = 'Set up MFA';
+      }
+    };
+
+    function renderQrFlow(data) {
+      document.getElementById('mfaSetupFlow').innerHTML = `
+        <div class="panel" style="margin-top:12px">
+          <div style="margin-bottom:16px">
+            <div class="panel-label" style="margin-bottom:4px">Scan with your authenticator app</div>
+            <div class="panel-desc">Use Google Authenticator, Authy, 1Password, or any TOTP-compatible app.</div>
+          </div>
+          <div class="qr-container">
+            <img src="${data.qr_code}" alt="MFA QR code" />
+            <div class="qr-secret-label">Manual entry key</div>
+            <div class="qr-secret">${data.manual_entry_key}</div>
+            <div class="panel-desc" style="font-size:10px">Issuer: ${data.issuer}</div>
+          </div>
+          <div style="border-top:1px solid var(--bd);padding-top:16px;margin-top:4px">
+            <div class="panel-label" style="margin-bottom:4px;font-size:12px">Enter the 6-digit code to confirm setup</div>
+            <div class="code-boxes" id="setupCodeBoxes">
+              <input class="code-box" id="s0" maxlength="1" inputmode="numeric" />
+              <input class="code-box" id="s1" maxlength="1" inputmode="numeric" />
+              <input class="code-box" id="s2" maxlength="1" inputmode="numeric" />
+              <span class="code-separator">·</span>
+              <input class="code-box" id="s3" maxlength="1" inputmode="numeric" />
+              <input class="code-box" id="s4" maxlength="1" inputmode="numeric" />
+              <input class="code-box" id="s5" maxlength="1" inputmode="numeric" />
+            </div>
+            <div class="alert error" id="setupError"></div>
+            <button class="btn btn-primary" id="enableMfaBtn" onclick="doEnableMfa()" disabled>Activate MFA</button>
+            <button class="btn btn-outline" onclick="loadMfaStatus()" style="margin-left:8px">Cancel</button>
+          </div>
+        </div>`;
+
+      initCodeBoxes(['s0','s1','s2','s3','s4','s5'], 'enableMfaBtn', null, () => {
+        document.getElementById('enableMfaBtn').click();
+      });
+      document.getElementById('s0').focus();
+    }
+
+    window.doEnableMfa = async function() {
+      const code = ['s0','s1','s2','s3','s4','s5'].map(id => document.getElementById(id)?.value || '').join('');
+      if (code.length !== 6 || !_pendingSecret) return;
+      const btn = document.getElementById('enableMfaBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner dark"></span>Activating…';
+      const errEl = document.getElementById('setupError');
+      errEl.classList.remove('show');
+      try {
+        await enableMfa(_pendingSecret, code);
+        _pendingSecret = null;
+        await loadMfaStatus();
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Activate MFA';
+        errEl.innerHTML = e.message || 'Invalid code. Try again.';
+        errEl.classList.add('show');
+        ['s0','s1','s2','s3','s4','s5'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) { el.value = ''; }
+        });
+        document.getElementById('s0')?.focus();
+      }
+    };
+
+    // ── Disable MFA modal ────────────────────────────────────────────────────
+    window.openDisableMfaModal = function() {
+      document.getElementById('disableMfaModal').classList.add('show');
+      document.getElementById('disableError').classList.remove('show');
+      ['dd0','dd1','dd2','dd3','dd4','dd5'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('disablePassword').value = '';
+      initCodeBoxes(['dd0','dd1','dd2','dd3','dd4','dd5'], 'confirmDisableBtn', null, null);
+      document.getElementById('dd0').focus();
+    };
+
+    window.closeDisableMfaModal = function() {
+      document.getElementById('disableMfaModal').classList.remove('show');
+    };
+
+    window.confirmDisableMfa = async function() {
+      const code = ['dd0','dd1','dd2','dd3','dd4','dd5'].map(id => document.getElementById(id)?.value || '').join('');
+      const password = document.getElementById('disablePassword').value;
+      if (code.length !== 6 || !password) return;
+
+      const btn = document.getElementById('confirmDisableBtn');
+      const errEl = document.getElementById('disableError');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Disabling…';
+      errEl.classList.remove('show');
+
+      try {
+        await disableMfa(code, password);
+        closeDisableMfaModal();
+        await loadMfaStatus();
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Disable MFA';
+        errEl.innerHTML = e.message || 'Failed to disable MFA.';
+        errEl.classList.add('show');
+      }
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // ── SESSIONS SECTION ─────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════════
+
+    window.loadSessions = async function() {
+      const el = document.getElementById('sessionsSection');
+      el.innerHTML = '<div class="empty-state"><span class="spinner"></span> Loading…</div>';
+      try {
+        const { sessions } = await listSessions();
+        if (!sessions || sessions.length === 0) {
+          el.innerHTML = '<div class="empty-state">No active sessions found.</div>';
+          return;
+        }
+        el.innerHTML = `<div class="panel" style="padding:0 24px">` +
+          sessions.map(s => renderSession(s)).join('') +
+          `</div>`;
+      } catch (e) {
+        el.innerHTML = `<div class="alert error show">${e.message || 'Failed to load sessions.'}</div>`;
+      }
+    };
+
+    function renderSession(s) {
+      const isCurrentHtml = s.is_current
+        ? `<span class="badge badge-green session-current">Current</span>`
+        : '';
+      const ua = s.user_agent || 'Unknown device';
+      const shortUA = ua.length > 60 ? ua.slice(0, 58) + '…' : ua;
+      const ip     = s.ip_address || '—';
+      const geo    = [s.city, s.country].filter(Boolean).join(', ') || '';
+      const ts     = s.last_active_at ? new Date(s.last_active_at).toLocaleString() : 'Unknown';
+      const revokeBtn = s.is_current
+        ? `<button class="btn btn-outline" disabled title="Cannot revoke current session">Current</button>`
+        : `<button class="btn btn-danger" onclick="doRevokeSession('${s.id}', this)">Revoke</button>`;
+
+      return `<div class="session-row">
+        <div class="session-meta">
+          <div class="session-device">${shortUA}${isCurrentHtml}</div>
+          <div class="session-detail">
+            IP ${ip}${geo ? ' · ' + geo : ''}<br>
+            Last active ${ts}
+          </div>
+        </div>
+        ${revokeBtn}
+      </div>`;
+    }
+
+    window.doRevokeSession = async function(sessionId, btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Revoking…';
+      try {
+        await revokeSession(sessionId);
+        await loadSessions();
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Revoke';
+        alert(e.message || 'Failed to revoke session.');
+      }
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // ── API KEYS SECTION ─────────────────────────────────────────════════
+    // ═══════════════════════════════════════════════════════════════════════
+
+    const PERMISSIONS = [
+      'terminal.read','assessment.read','assessment.write',
+      'reports.read','reports.export',
+      'regulatory.read','simulation.read','community.read',
+    ];
+
+    // Populate permissions grid
+    const permGrid = document.getElementById('permGrid');
+    if (permGrid) {
+      PERMISSIONS.forEach(p => {
+        const label = document.createElement('label');
+        label.className = 'perm-check';
+        label.innerHTML = `<input type="checkbox" value="${p}" class="perm-checkbox" /><span class="perm-check-label">${p}</span>`;
+        permGrid.appendChild(label);
+      });
+    }
+
+    window.loadApiKeys = async function() {
+      const el = document.getElementById('keysSection');
+      el.innerHTML = '<div class="empty-state"><span class="spinner"></span> Loading…</div>';
+      try {
+        const { keys } = await listApiKeys();
+        if (!keys || keys.length === 0) {
+          el.innerHTML = '<div class="empty-state">No API keys yet. Create one to get programmatic access.</div>';
+          return;
+        }
+        el.innerHTML = `
+          <table class="keys-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Prefix</th>
+                <th>Permissions</th>
+                <th>Last used</th>
+                <th>Created</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${keys.map(k => renderKey(k)).join('')}
+            </tbody>
+          </table>`;
+      } catch (e) {
+        el.innerHTML = `<div class="alert error show">${e.message || 'Failed to load API keys.'}</div>`;
+      }
+    };
+
+    function renderKey(k) {
+      const perms = (k.permissions || []).map(p => `<span class="key-perm">${p}</span>`).join(' ') || '<span class="panel-desc">none</span>';
+      const lastUsed = k.last_used_at ? new Date(k.last_used_at).toLocaleDateString() : 'Never';
+      const created  = new Date(k.created_at).toLocaleDateString();
+      return `<tr>
+        <td><span class="key-name">${escapeHtml(k.name)}</span></td>
+        <td><span class="key-prefix">${escapeHtml(k.prefix)}</span></td>
+        <td>${perms}</td>
+        <td>${lastUsed}</td>
+        <td>${created}</td>
+        <td><button class="btn btn-danger" onclick="doRevokeKey('${k.id}', this)">Revoke</button></td>
+      </tr>`;
+    }
+
+    window.doRevokeKey = async function(keyId, btn) {
+      if (!confirm('Revoke this API key? Any application using it will stop working immediately.')) return;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Revoking…';
+      try {
+        await revokeApiKey(keyId);
+        await loadApiKeys();
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Revoke';
+        alert(e.message || 'Failed to revoke key.');
+      }
+    };
+
+    window.showKeyForm = function() {
+      document.getElementById('keyForm').classList.add('show');
+      document.getElementById('keyReveal').classList.remove('show');
+      document.getElementById('keyFormError').classList.remove('show');
+      document.getElementById('keyName').value = '';
+      document.querySelectorAll('.perm-checkbox').forEach(cb => cb.checked = false);
+      document.getElementById('newKeyBtn').style.display = 'none';
+    };
+
+    window.hideKeyForm = function() {
+      document.getElementById('keyForm').classList.remove('show');
+      document.getElementById('newKeyBtn').style.display = '';
+      loadApiKeys();
+    };
+
+    window.createKey = async function() {
+      const name = document.getElementById('keyName').value.trim();
+      const perms = Array.from(document.querySelectorAll('.perm-checkbox:checked')).map(cb => cb.value);
+      const errEl = document.getElementById('keyFormError');
+      const btn   = document.getElementById('createKeyBtn');
+
+      if (!name) {
+        errEl.innerHTML = 'Key name is required.';
+        errEl.classList.add('show');
+        return;
+      }
+      errEl.classList.remove('show');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner dark"></span>Creating…';
+
+      try {
+        const result = await createApiKey(name, perms);
+        btn.disabled = false;
+        btn.textContent = 'Create key';
+        // Show the key once
+        document.getElementById('keyRevealValue').textContent = result.key;
+        document.getElementById('keyReveal').classList.add('show');
+        document.getElementById('keyName').disabled = true;
+        document.querySelectorAll('.perm-checkbox').forEach(cb => cb.disabled = true);
+        btn.disabled = true;
+        // Reload key list in background
+        loadApiKeys();
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Create key';
+        errEl.innerHTML = e.message || 'Failed to create API key.';
+        errEl.classList.add('show');
+      }
+    };
+
+    window._newKey = null;
+    window.copyKey = function() {
+      const val = document.getElementById('keyRevealValue').textContent;
+      navigator.clipboard?.writeText(val);
+      const btn = event.target;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy key', 2000);
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // ── SHARED UTILITY: code box initializer ─────────────────────────────
+    // ═══════════════════════════════════════════════════════════════════════
+
+    function initCodeBoxes(ids, submitBtnId, clearIds, onComplete) {
+      const boxes = ids.map(id => document.getElementById(id));
+      const btn   = submitBtnId ? document.getElementById(submitBtnId) : null;
+
+      function checkReady() {
+        const code = boxes.map(b => b?.value || '').join('');
+        if (btn) btn.disabled = code.length !== 6;
+      }
+
+      boxes.forEach((box, idx) => {
+        if (!box) return;
+        box.addEventListener('input', e => {
+          box.value = e.target.value.replace(/\D/g, '').slice(-1);
+          if (box.value && idx < boxes.length - 1) boxes[idx + 1].focus();
+          checkReady();
+          if (boxes.map(b => b?.value || '').join('').length === 6 && onComplete) {
+            setTimeout(onComplete, 120);
+          }
+        });
+        box.addEventListener('keydown', e => {
+          if (e.key === 'Backspace' && !box.value && idx > 0) {
+            boxes[idx - 1].focus();
+            boxes[idx - 1].value = '';
+            checkReady();
+          }
+        });
+        box.addEventListener('paste', e => {
+          e.preventDefault();
+          const pasted = (e.clipboardData || window.clipboardData)
+            .getData('text').replace(/\D/g, '').slice(0, 6);
+          pasted.split('').forEach((ch, i) => { if (boxes[i]) boxes[i].value = ch; });
+          boxes[Math.min(pasted.length, boxes.length - 1)].focus();
+          checkReady();
+          if (pasted.length === 6 && onComplete) setTimeout(onComplete, 120);
+        });
+      });
+
+      checkReady();
+    }
+
+    // ── Escape HTML ─────────────────────────────────────────────────────────
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ── Init ────────────────────────────────────────────────────────────────
+    loadMfaStatus();
+    loadSessions();
+    loadApiKeys();
+
+    // Expose to global for onclick attributes
+    window.loadSessions = loadSessions;
+    window.loadApiKeys  = loadApiKeys;
+  </script>
+</body>
+</html>
