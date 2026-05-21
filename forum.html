@@ -6,63 +6,32 @@
   <title>Forum · Climactix Community</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css" />
   <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --primary: #1473E6;
-      --primary-mid: #0E5FCC;
-      --primary-tint: rgba(20,115,230,0.09);
-      --primary-pale: rgba(20,115,230,0.09);
-      --accent: #1473E6;
-      --accent-fg: #FFFFFF;
-      --white: #080909;
-      --off-white: #000000;
-      --grey-light: #0D0D12;
-      --grey-mid: rgba(255,255,255,0.07);
-      --text:         #FFFFFF;
-      --text-2: #8A9BB5;
-      --text-muted: #4A5A72;
-      --text-faint: #101018;
-      --mono:         'IBM Plex Mono',var(--mono);
-      --green: #23CF7A;
-      --red: #FF4B4B;
-      --cyan: #4AABFF;
-      --shadow-sm:    none;
-      --shadow-md:    none;
-      --radius:       3px;
-      --radius-sm:    2px;
-      --nav-h:        44px;
-      --transition:   0.12s ease;
+      /* Canonical tokens from site.css — local aliases only */
+      --primary:      var(--accent);
+      --primary-mid:  var(--accent-dim);
+      --primary-tint: var(--accent-glow);
+      --primary-pale: var(--accent-glow);
+      --white:        var(--surface);
+      --off-white:    var(--bg);
+      --grey-light:   var(--surface-2);
+      --grey-mid:     var(--border);
+      --radius:       var(--r);
+      --radius-sm:    var(--r-sm);
     }
     [data-theme="light"] {
-      --white:        #FFFFFF;
-      --off-white:    #F5F5F5;
-      --grey-light:   #EBEBEB;
-      --grey-mid:     #E0E0E0;
-      --text:         #000000;
-      --text-2:       #333333;
-      --text-muted: #4A5A72;
-      --text-faint:   #888888;
-      --primary-tint: rgba(20,115,230,0.09);
+      --white:        var(--surface);
+      --off-white:    var(--bg);
+      --grey-light:   var(--surface-2);
+      --grey-mid:     var(--border);
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; background: var(--off-white); color: var(--text); -webkit-font-smoothing: antialiased; }
-
-    /* ── NASA Space Body ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.13) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 230px 230px, 140px 140px, 85px 85px;
-      background-position: 12px 20px, 65px 45px, 30px 100px;
-      pointer-events: none; z-index: 0; opacity: 0.32;
-    }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
 
     a { color: inherit; text-decoration: none; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; }
@@ -367,32 +336,15 @@
     @media (max-width: 1024px) { .cx-forum-layout { grid-template-columns: 220px 1fr; } .cx-right-sidebar { display:none; } }
     @media (max-width: 700px) { .cx-forum-layout { grid-template-columns: 1fr; } .cx-left-sidebar { display:none; } }
   
-    /* ── NASA Typography & Theme Overrides ── */
-    body {
-      background-image:
-        radial-gradient(ellipse 120% 50% at 50% 0%, rgba(8,10,20,0.8) 0%, transparent 65%);
-    }
+    /* ── Typography normalisation ── */
     .cx-nav-logo-text,
     [class*="brand-text"], [class*="logo-text"] {
-      font-family: 'Barlow', sans-serif !important;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+      font-family: var(--mono) !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.06em !important;
+      text-transform: uppercase !important;
     }
-    h1, h2, h3,
-    [class*="-title"], [class*="-heading"],
-    [class*="hero-title"], [class*="hero-h"],
-    [class*="score-big"], [class*="score-giant"],
-    [class*="stat-val"], [class*="hero-stat"],
-    [class*="rank-big"], [class*="-score-val"],
-    [class*="cx-lb-"], [class*="score-num"],
-    [class*="-eyebrow"], [class*="pl-heading"] {
-      font-family: 'Barlow', 'Inter', sans-serif !important;
-    }
-    .cx-nav { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-    .cx-nav { border-bottom: 1px solid rgba(20,115,230,0.15) !important; }
-    .cx-nav-link.active { color: #1473E6 !important; }
-    .cx-nav-link.active::after { background: #1473E6 !important; }
 
   </style>
 </head>

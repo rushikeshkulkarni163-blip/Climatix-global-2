@@ -1,23 +1,15 @@
 /**
- * site.css — Climactix Global · Cross-page consistency layer
+ * site.css — Climactix Global · Cross-page consistency layer v3.0
  *
+ * Institutional Arctic Blue design system.
  * Applied to EVERY page. Enforces:
- *   · Design tokens (overrides any stale per-page variables)
- *   · Body / typography baseline
- *   · Scrollbar → Bloomberg terminal style
- *   · Text selection highlight
- *   · Link colours
- *   · Hover behaviour (no lift transforms)
- *   · Nav normalisation (.cx-nav)
- *   · Button normalisation
- *   · Card / panel normalisation
+ *   · Design tokens — single source of truth
+ *   · Body / typography baseline (Inter + IBM Plex Mono only)
+ *   · Scrollbar — thin graphite terminal style
+ *   · No transform hovers, no backdrop-filter, no box-shadow on cards
+ *   · Nav, button, card, table, input, badge normalisation
  *   · IBM Plex Mono on all numeric/data elements
- *   · Page-section backgrounds
- *   · Utility bar (if present)
- *   · Footer (if present)
- *
- * Load AFTER any page-level <link rel="stylesheet"> but BEFORE
- * page-level <style> blocks — so page overrides still win where needed.
+ *   · Font-family kill rule: Barlow and Space Grotesk → Inter
  */
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -40,23 +32,24 @@
   /* Borders */
   --border:         #2C2C2C;
   --border-strong:  #333333;
-  --border-accent:  rgba(255,102,0,0.30);
+  --border-accent:  rgba(14,165,233,0.25);
 
-  /* Primary accent — Bloomberg Amber */
-  --amber:       #FF6600;
-  --amber-dim:   #CC5200;
-  --amber-glow:  rgba(255,102,0,0.10);
-  --amber-fg:    #000000;
+  /* Primary accent — Institutional Arctic Blue */
+  --accent:       #0EA5E9;
+  --accent-dim:   #0284C7;
+  --accent-glow:  rgba(14,165,233,0.10);
+  --accent-fg:    #FFFFFF;
 
-  /* Aliases used across older pages */
-  --accent:      #FF6600;
-  --accent-dim:  #CC5200;
-  --accent-fg:   #000000;
-  --primary:     #FF6600;
+  /* Backward-compat aliases — all redirect to arctic blue */
+  --amber:        #0EA5E9;
+  --amber-dim:    #0284C7;
+  --amber-glow:   rgba(14,165,233,0.10);
+  --amber-fg:     #FFFFFF;
+  --primary:      #0EA5E9;
 
   /* Data accents */
-  --cyan:        #0099CC;
-  --cyan-glow:   rgba(0,153,204,0.10);
+  --cyan:        #0EA5E9;   /* arctic blue — primary data highlight */
+  --cyan-glow:   rgba(14,165,233,0.10);
   --green:       #00CC44;
   --green-glow:  rgba(0,204,68,0.10);
   --red:         #FF3333;
@@ -72,8 +65,13 @@
 
   /* Status */
   --danger:   #FF3333;
-  --warning:  #FF6600;
+  --warning:  #F59E0B;   /* true amber — warnings only */
   --success:  #00CC44;
+
+  /* Rank colors (true metallic — not accent) */
+  --gold:    #F5C518;
+  --silver:  #888888;
+  --bronze:  #B87333;
 
   /* Typography */
   --font: 'Inter', 'IBM Plex Sans', -apple-system, 'Helvetica Neue', system-ui, sans-serif;
@@ -147,8 +145,8 @@ body {
 /* ═══════════════════════════════════════════════════════════════════
    4. TEXT SELECTION
 ═══════════════════════════════════════════════════════════════════ */
-::selection      { background: rgba(255,102,0,0.25); color: var(--text); }
-::-moz-selection { background: rgba(255,102,0,0.25); color: var(--text); }
+::selection      { background: rgba(14,165,233,0.25); color: var(--text); }
+::-moz-selection { background: rgba(14,165,233,0.25); color: var(--text); }
 
 /* ═══════════════════════════════════════════════════════════════════
    5. LINKS
@@ -425,7 +423,7 @@ a:hover { color: var(--text); }
   white-space: nowrap;
   transition: background var(--t);
 }
-.hdr-cta:hover { background: #CC5200; }
+.hdr-cta:hover { background: var(--accent-dim); }
 
 /* ═══════════════════════════════════════════════════════════════════
    8. TYPOGRAPHY — headings, data values, labels
@@ -677,4 +675,40 @@ footer,
   :root { --page-px: 16px; }
   .cx-nav-links, .nav-links { display: none; }
   h1 { font-size: clamp(22px, 6vw, 30px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   19. FONT NORMALISATION — kill rogue fonts system-wide
+   Barlow, Barlow Condensed, Space Grotesk are not in the design system.
+   Any element still referencing them falls back to Inter via this rule.
+   Pages should also remove these from their Google Fonts @import.
+═══════════════════════════════════════════════════════════════════ */
+*[style*="Barlow"],
+*[style*="Space Grotesk"] {
+  font-family: var(--font) !important;
+}
+
+/* ── Nav active state: arctic blue underline ── */
+.cx-nav-link.active,
+.nav-links a.active,
+.nav-link.active {
+  color: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+/* ── Suppress any leftover body gradients / particle canvases ── */
+#space-canvas,
+.space-bg,
+.star-field,
+.nebula,
+.particle-canvas { display: none !important; }
+
+/* ── Kill backdrop-filter on all nav variants ── */
+.cx-nav,
+.cx-nav *,
+.nav,
+.site-header,
+.nav-dropdown-menu {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
