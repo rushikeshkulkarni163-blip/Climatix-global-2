@@ -358,6 +358,43 @@
 
   const nextUrl = new URLSearchParams(location.search).get('next') || 'community.html';
 
+  // ── Offline / demo fallback when backend is unavailable ──
+  const LOCAL_USERS_KEY = 'cx_local_users_v1';
+  const SESSION_KEY = 'cx_session_v2';
+
+  function _localUsers() {
+    try { return JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '[]'); } catch { return []; }
+  }
+
+  function _cacheSession(user, remember) {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      uid: user.id, fullName: user.full_name, email: user.email,
+      companyName: user.company_name || '', role: user.role || 'user',
+      tier: user.tier || 'free', verified: true,
+      expires: remember ? Date.now() + 30 * 24 * 60 * 60 * 1000 : null,
+    }));
+  }
+
+  function localSignUp({ fullName, email, companyName, password }) {
+    const users = _localUsers();
+    if (users.find(u => u.email === email.toLowerCase()))
+      throw { code: 'email-in-use' };
+    const user = {
+      id: 'local_' + Date.now(), full_name: fullName,
+      email: email.toLowerCase(), company_name: companyName || '',
+      role: 'user', tier: 'free', pw: btoa(password),
+    };
+    users.push(user);
+    localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
+    return user;
+  }
+
+  function localSignIn({ email, password }) {
+    const user = _localUsers().find(u => u.email === email.toLowerCase() && u.pw === btoa(password));
+    if (!user) throw { code: 'invalid-credentials', message: 'Invalid email or password.' };
+    return user;
+  }
+
   window.switchTab = function(tab) {
     document.getElementById('panelSignIn').classList.toggle('active', tab === 'signin');
     document.getElementById('panelCreate').classList.toggle('active', tab === 'create');
@@ -401,6 +438,19 @@
       showAlert('siSuccess', 'Signed in — taking you to the community…');
       setTimeout(() => { location.href = nextUrl; }, 900);
     } catch (err) {
+      if (err.code === 'network-error') {
+        try {
+          const user = localSignIn({ email, password });
+          _cacheSession(user, remember);
+          showAlert('siSuccess', 'Signed in — taking you to the community…');
+          setTimeout(() => { location.href = nextUrl; }, 900);
+          return;
+        } catch (localErr) {
+          btn.disabled = false; btn.textContent = 'Sign In';
+          showAlert('siError', localErr.message || 'Invalid email or password.');
+          return;
+        }
+      }
       btn.disabled = false; btn.textContent = 'Sign In';
       if (err.code === 'not-verified') {
         showAlert('siError', 'Email not verified. Creating your community access now…');
@@ -433,10 +483,29 @@
       showAlert('caSuccess', `Welcome, ${fullName.split(' ')[0]}! Taking you to the community…`);
       setTimeout(() => { location.href = nextUrl; }, 1100);
     } catch (err) {
+      if (err.code === 'network-error') {
+        try {
+          const user = localSignUp({ fullName, email, companyName, password });
+          _cacheSession(user, false);
+          showAlert('caSuccess', `Welcome, ${fullName.split(' ')[0]}! Taking you to the community…`);
+          setTimeout(() => { location.href = nextUrl; }, 1100);
+          return;
+        } catch (localErr) {
+          btn.disabled = false; btn.textContent = 'Create Account & Join';
+          if (localErr.code === 'email-in-use') {
+            document.getElementById('caError').innerHTML =
+              'An account with this email exists. <a href="#" onclick="switchTab(\'signin\'); return false;" style="color:#0EA5E9;font-weight:600;">Sign in instead →</a>';
+            document.getElementById('caError').classList.add('show');
+          } else {
+            showAlert('caError', localErr.message || 'Could not create account.');
+          }
+          return;
+        }
+      }
       btn.disabled = false; btn.textContent = 'Create Account & Join';
       if (err.code === 'email-in-use') {
         document.getElementById('caError').innerHTML =
-          'An account with this email exists. <a href="#" onclick="switchTab(\'signin\'); return false;" style="color:#FF6600;font-weight:600;">Sign in instead →</a>';
+          'An account with this email exists. <a href="#" onclick="switchTab(\'signin\'); return false;" style="color:#0EA5E9;font-weight:600;">Sign in instead →</a>';
         document.getElementById('caError').classList.add('show');
       } else {
         showAlert('caError', err.message || 'Could not create account. Please try again.');
