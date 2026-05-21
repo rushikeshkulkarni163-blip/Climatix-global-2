@@ -439,7 +439,7 @@ export function initCommunity() {
 
 // ── Auth ───────────────────────────────────────────────────────────────────
 export function getCurrentSession() {
-  return load('cx_session', null);
+  return load('cx_session_v2', null);
 }
 
 export function requireAuth(redirectTo = 'community-login.html') {
