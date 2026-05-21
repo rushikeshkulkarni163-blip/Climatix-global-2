@@ -1,0 +1,55 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Climactix AI Core v1 — Local Development Stack
+#
+# Services:
+#   qdrant        — vector store for ESG/climate embeddings
+#   climactix_ai  — FastAPI server (LangGraph + OpenAI)
+#
+# Start: docker compose up -d
+# Stop:  docker compose down
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    container_name: climactix_qdrant
+    ports:
+      - "6333:6333"   # REST API
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      QDRANT__TELEMETRY_DISABLED: "true"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:6333/readyz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  climactix_ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: climactix_ai_core
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    env_file:
+      - .env
+    environment:
+      QDRANT_URL: http://qdrant:6333
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  qdrant_data:
+    name: climactix_qdrant_data
