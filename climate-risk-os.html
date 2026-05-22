@@ -1,0 +1,2908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Institutional Climate Risk OS — Climactix Global</title>
+  <meta name="description" content="Institutional-grade climate risk operating system. 200+ questions mapped to TCFD, IFRS S2, CSRD, NGFS, SBTi, GRI, EU Taxonomy, and 30+ global frameworks." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="site.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   CLIMACTIX — INSTITUTIONAL CLIMATE RISK OPERATING SYSTEM
+   Bloomberg Terminal · BlackRock Aladdin · Moody's Climate · MSCI Grade
+   200+ Questions · 30+ Frameworks · Multi-Pillar Scoring · AI Contradiction
+═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --iro-accent:   var(--accent, #0EA5E9);
+  --iro-amber:    #FF6600;
+  --iro-green:    #00CC44;
+  --iro-red:      #FF3333;
+  --iro-gold:     #FFB800;
+  --iro-bg:       var(--bg, #000000);
+  --iro-s1:       var(--surface, #0F0F0F);
+  --iro-s2:       var(--surface-2, #1A1A1A);
+  --iro-s3:       var(--surface-3, #242424);
+  --iro-b:        var(--border, #2C2C2C);
+  --iro-bs:       var(--border-strong, #333333);
+  --iro-t1:       var(--text, #FFFFFF);
+  --iro-t2:       var(--text-2, #888888);
+  --iro-tm:       var(--text-muted, #555555);
+  --iro-mono:     'IBM Plex Mono', monospace;
+  --iro-sans:     'Inter', sans-serif;
+  --iro-tr:       0.12s ease;
+  --iro-nav-h:    44px;
+  --iro-prog-h:   38px;
+  --iro-sidebar-w: 260px;
+  --iro-rail-w:   200px;
+}
+
+[data-theme="light"] {
+  --iro-bg:   #FFFFFF;
+  --iro-s1:   #FFFFFF;
+  --iro-s2:   #F0F0F0;
+  --iro-s3:   #E4E4E4;
+  --iro-b:    #D0D0D0;
+  --iro-bs:   #BBBBBB;
+  --iro-t1:   #000000;
+  --iro-t2:   #333333;
+  --iro-tm:   #666666;
+}
+
+/* ── RESET / BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+.iro-screen { display: none; }
+.iro-screen.active { display: block; }
+.iro-hidden { display: none !important; }
+
+/* ── PROGRESS BAR (sticky below nav) ── */
+.iro-progress-wrap {
+  position: sticky;
+  top: var(--iro-nav-h);
+  z-index: 190;
+  background: var(--iro-bg);
+  border-bottom: 1px solid var(--iro-b);
+}
+.iro-progress-track {
+  height: 2px;
+  background: var(--iro-s2);
+}
+.iro-progress-fill {
+  height: 100%;
+  background: var(--iro-accent);
+  transition: width 0.35s ease;
+  width: 0%;
+}
+.iro-progress-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 40px;
+  font-family: var(--iro-mono);
+  font-size: 10px;
+  color: var(--iro-t2);
+  letter-spacing: 0.04em;
+}
+.iro-progress-label { font-weight: 500; }
+.iro-progress-chip {
+  background: rgba(14,165,233,0.08);
+  color: var(--iro-accent);
+  border: 1px solid rgba(14,165,233,0.18);
+  padding: 2px 8px;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════
+   WELCOME SCREEN
+═══════════════════════════════════════════════ */
+.iro-welcome-shell {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+.iro-welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14,165,233,0.06);
+  color: var(--iro-accent);
+  border: 1px solid rgba(14,165,233,0.2);
+  padding: 4px 14px;
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.iro-welcome-badge .live-dot {
+  width: 5px; height: 5px;
+  background: var(--iro-accent);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+.iro-welcome-h1 {
+  font-size: clamp(26px, 3.5vw, 38px);
+  font-weight: 800;
+  color: var(--iro-t1);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  margin-bottom: 8px;
+}
+.iro-welcome-h1 span { color: var(--iro-accent); }
+.iro-welcome-sub {
+  font-size: 13px;
+  color: var(--iro-t2);
+  line-height: 1.7;
+  max-width: 640px;
+  margin-bottom: 36px;
+}
+
+.iro-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border: 1px solid var(--iro-b);
+  margin-bottom: 32px;
+}
+.iro-stat {
+  background: var(--iro-s1);
+  border-right: 1px solid var(--iro-b);
+  padding: 18px 16px;
+  text-align: center;
+}
+.iro-stat:last-child { border-right: none; }
+.iro-stat-val {
+  font-family: var(--iro-mono);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--iro-accent);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.iro-stat-lbl {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  color: var(--iro-tm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.iro-fw-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 36px;
+}
+.iro-fw-chip {
+  background: var(--iro-s2);
+  border: 1px solid var(--iro-b);
+  color: var(--iro-t2);
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+}
+.iro-fw-chip.hi { background: rgba(14,165,233,0.06); color: var(--iro-accent); border-color: rgba(14,165,233,0.2); }
+
+.iro-welcome-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--iro-accent);
+  color: #000;
+  font-family: var(--iro-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  padding: 14px 32px;
+  cursor: pointer;
+  transition: all var(--iro-tr);
+}
+.iro-welcome-cta:hover { background: var(--accent-dim, #0284C7); }
+
+.iro-welcome-note {
+  margin-top: 16px;
+  font-size: 11px;
+  color: var(--iro-tm);
+  font-family: var(--iro-mono);
+  letter-spacing: 0.02em;
+}
+
+.iro-compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.iro-compare-card {
+  background: var(--iro-s1);
+  border: 1px solid var(--iro-b);
+  padding: 20px 24px;
+}
+.iro-compare-title {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--iro-tm);
+  margin-bottom: 12px;
+}
+.iro-compare-list { list-style: none; }
+.iro-compare-list li {
+  font-size: 12px;
+  color: var(--iro-t2);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--iro-b);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.iro-compare-list li:last-child { border-bottom: none; }
+.iro-compare-list li .mark {
+  font-family: var(--iro-mono);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 16px;
+}
+.iro-compare-list li .mark.g { color: var(--iro-green); }
+.iro-compare-list li .mark.r { color: var(--iro-red); }
+
+/* ═══════════════════════════════════════════════
+   ENTITY PROFILE FORM
+═══════════════════════════════════════════════ */
+.iro-entity-shell {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+.iro-entity-card {
+  background: var(--iro-s1);
+  border: 1px solid var(--iro-b);
+  border-left: 3px solid var(--iro-accent);
+  padding: 32px;
+}
+.iro-entity-card h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--iro-t1);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.iro-entity-card p {
+  font-size: 12px;
+  color: var(--iro-t2);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+.iro-form-section-label {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--iro-tm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--iro-b);
+  margin-bottom: 16px;
+  margin-top: 24px;
+}
+.iro-form-section-label:first-of-type { margin-top: 0; }
+.iro-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.iro-form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.iro-field { display: flex; flex-direction: column; gap: 5px; }
+.iro-field.full { grid-column: 1 / -1; }
+.iro-field label {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--iro-tm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.iro-field input,
+.iro-field select,
+.iro-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--iro-s2);
+  border: 1px solid var(--iro-b);
+  color: var(--iro-t1);
+  font-size: 12px;
+  font-family: var(--iro-sans);
+  transition: border-color var(--iro-tr);
+  border-radius: 0;
+}
+.iro-field input:focus,
+.iro-field select:focus,
+.iro-field textarea:focus {
+  outline: none;
+  border-color: var(--iro-accent);
+}
+.iro-field select option { background: var(--iro-s2); }
+.iro-field textarea { resize: vertical; min-height: 72px; }
+
+.iro-entity-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--iro-b);
+}
+.iro-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--iro-accent);
+  color: #000;
+  font-family: var(--iro-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  padding: 11px 24px;
+  cursor: pointer;
+  transition: all var(--iro-tr);
+}
+.iro-btn-primary:hover { opacity: 0.85; }
+.iro-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--iro-t2);
+  font-family: var(--iro-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--iro-b);
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: all var(--iro-tr);
+}
+.iro-btn-ghost:hover { border-color: var(--iro-accent); color: var(--iro-accent); }
+
+/* ═══════════════════════════════════════════════
+   ASSESSMENT 3-PANEL LAYOUT
+═══════════════════════════════════════════════ */
+.iro-assess-layout {
+  display: grid;
+  grid-template-columns: var(--iro-sidebar-w) 1fr var(--iro-rail-w);
+  min-height: calc(100vh - var(--iro-nav-h) - var(--iro-prog-h));
+  align-items: start;
+}
+
+/* ── LEFT SIDEBAR ── */
+.iro-sidebar {
+  position: sticky;
+  top: calc(var(--iro-nav-h) + var(--iro-prog-h));
+  height: calc(100vh - var(--iro-nav-h) - var(--iro-prog-h));
+  overflow-y: auto;
+  background: var(--iro-s1);
+  border-right: 1px solid var(--iro-b);
+  padding: 0;
+}
+.iro-sidebar::-webkit-scrollbar { width: 3px; }
+.iro-sidebar::-webkit-scrollbar-thumb { background: var(--iro-b); }
+.iro-sidebar-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--iro-b);
+  background: var(--iro-s1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.iro-sidebar-label {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--iro-tm);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.iro-sidebar-progress-text {
+  font-family: var(--iro-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--iro-accent);
+}
+.iro-sidebar-track {
+  height: 3px;
+  background: var(--iro-s3);
+  margin-top: 6px;
+}
+.iro-sidebar-fill {
+  height: 100%;
+  background: var(--iro-accent);
+  transition: width 0.3s ease;
+}
+.iro-sec-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--iro-b);
+  transition: background var(--iro-tr);
+  position: relative;
+}
+.iro-sec-nav-item:hover { background: var(--iro-s2); }
+.iro-sec-nav-item.active {
+  background: rgba(14,165,233,0.06);
+  border-left: 2px solid var(--iro-accent);
+}
+.iro-sec-nav-item.active .iro-sec-nav-num { color: var(--iro-accent); border-color: var(--iro-accent); }
+.iro-sec-nav-item.done .iro-sec-nav-num {
+  background: var(--iro-accent);
+  color: #000;
+  border-color: var(--iro-accent);
+}
+.iro-sec-nav-num {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--iro-tm);
+  border: 1px solid var(--iro-b);
+  background: var(--iro-s2);
+}
+.iro-sec-nav-info { flex: 1; min-width: 0; }
+.iro-sec-nav-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--iro-t1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.iro-sec-nav-item.active .iro-sec-nav-title { color: var(--iro-accent); }
+.iro-sec-nav-meta {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  color: var(--iro-tm);
+  margin-top: 1px;
+}
+.iro-sec-nav-score {
+  font-family: var(--iro-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--iro-tm);
+  flex-shrink: 0;
+}
+.iro-sec-nav-score.scored { color: var(--iro-accent); }
+
+/* ── MAIN PANEL ── */
+.iro-main {
+  padding: 0;
+  min-height: 600px;
+}
+.iro-section-header {
+  padding: 24px 32px 20px;
+  border-bottom: 1px solid var(--iro-b);
+  background: var(--iro-s1);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.iro-section-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: rgba(14,165,233,0.08);
+  border: 1px solid rgba(14,165,233,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.iro-section-meta { flex: 1; }
+.iro-section-eyebrow {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--iro-accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.iro-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--iro-t1);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.iro-section-desc {
+  font-size: 12px;
+  color: var(--iro-t2);
+  line-height: 1.55;
+}
+.iro-section-stats {
+  display: flex;
+  gap: 0;
+  flex-shrink: 0;
+}
+.iro-section-stat {
+  text-align: center;
+  padding: 8px 14px;
+  border-left: 1px solid var(--iro-b);
+}
+.iro-section-stat-val {
+  font-family: var(--iro-mono);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--iro-accent);
+  letter-spacing: -0.03em;
+}
+.iro-section-stat-lbl {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  color: var(--iro-tm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* ── QUESTIONS ── */
+.iro-questions-wrap {
+  padding: 8px 32px 32px;
+}
+
+.iro-question {
+  border-bottom: 1px solid var(--iro-b);
+  padding: 18px 0;
+  transition: background var(--iro-tr);
+}
+.iro-question:last-child { border-bottom: none; }
+
+.iro-q-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.iro-q-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--iro-tm);
+  border: 1px solid var(--iro-b);
+  background: var(--iro-s2);
+  margin-top: 1px;
+  flex-shrink: 0;
+  transition: all var(--iro-tr);
+}
+.iro-q-num.answered { background: var(--iro-accent); color: #000; border-color: var(--iro-accent); }
+
+.iro-q-badges {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.iro-sev-badge {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+}
+.iro-sev-badge.CRITICAL { background: rgba(255,51,51,0.12); color: #FF3333; border: 1px solid rgba(255,51,51,0.25); }
+.iro-sev-badge.HIGH     { background: rgba(255,102,0,0.12);  color: #FF6600; border: 1px solid rgba(255,102,0,0.25); }
+.iro-sev-badge.MEDIUM   { background: rgba(255,184,0,0.10);  color: #FFB800; border: 1px solid rgba(255,184,0,0.2); }
+.iro-sev-badge.LOW      { background: rgba(0,204,68,0.10);   color: #00CC44; border: 1px solid rgba(0,204,68,0.2); }
+
+.iro-mat-badge {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--iro-tm);
+  padding: 2px 5px;
+  border: 1px solid var(--iro-b);
+  background: var(--iro-s2);
+}
+.iro-mat-badge.HIGH { color: var(--iro-accent); border-color: rgba(14,165,233,0.2); background: rgba(14,165,233,0.06); }
+
+.iro-fw-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.iro-fw-tag {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--iro-tm);
+  padding: 1px 5px;
+  border: 1px solid var(--iro-b);
+  background: var(--iro-s2);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.iro-q-body { flex: 1; }
+.iro-q-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--iro-t1);
+  line-height: 1.55;
+  margin-bottom: 3px;
+}
+.iro-q-context {
+  font-size: 11px;
+  color: var(--iro-tm);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── ANSWER BUTTONS ── */
+.iro-answer-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding-left: 36px;
+}
+.iro-ans-btn {
+  flex: 1;
+  min-width: 90px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--iro-b);
+  background: var(--iro-s2);
+  color: var(--iro-tm);
+  text-align: center;
+  transition: all var(--iro-tr);
+  white-space: nowrap;
+}
+.iro-ans-btn:hover { border-color: var(--iro-bs); color: var(--iro-t2); background: var(--iro-s3); }
+/* Selection states */
+.iro-ans-btn.sel-IMPLEMENTED  { background: rgba(0,204,68,0.10);   border-color: rgba(0,204,68,0.35);   color: #00CC44; }
+.iro-ans-btn.sel-PROGRESSING  { background: rgba(14,165,233,0.10); border-color: rgba(14,165,233,0.35); color: var(--iro-accent); }
+.iro-ans-btn.sel-PLANNED      { background: rgba(255,184,0,0.10);  border-color: rgba(255,184,0,0.35);  color: #FFB800; }
+.iro-ans-btn.sel-NOT_ADDRESSED{ background: rgba(255,51,51,0.10);  border-color: rgba(255,51,51,0.35);  color: #FF3333; }
+.iro-ans-btn.sel-NA           { background: var(--iro-s2); border-color: var(--iro-bs); color: var(--iro-t2); }
+
+/* Section navigation buttons */
+.iro-section-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  border-top: 1px solid var(--iro-b);
+  background: var(--iro-s1);
+  position: sticky;
+  bottom: 0;
+}
+
+/* ── RIGHT SCORE RAIL ── */
+.iro-score-rail {
+  position: sticky;
+  top: calc(var(--iro-nav-h) + var(--iro-prog-h));
+  height: calc(100vh - var(--iro-nav-h) - var(--iro-prog-h));
+  overflow-y: auto;
+  background: var(--iro-s1);
+  border-left: 1px solid var(--iro-b);
+  padding: 0;
+}
+.iro-score-rail::-webkit-scrollbar { width: 3px; }
+.iro-score-rail::-webkit-scrollbar-thumb { background: var(--iro-b); }
+.iro-rail-section {
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid var(--iro-b);
+}
+.iro-rail-label {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--iro-tm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.iro-rail-composite {
+  text-align: center;
+  padding: 14px 0;
+}
+.iro-rail-composite-val {
+  font-family: var(--iro-mono);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--iro-accent);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.iro-rail-composite-sub {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  color: var(--iro-tm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 4px;
+}
+.iro-rail-rating {
+  display: inline-block;
+  font-family: var(--iro-mono);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 3px 10px;
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+
+.iro-pillar-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 7px;
+}
+.iro-pillar-name {
+  font-size: 9px;
+  color: var(--iro-t2);
+  width: 70px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+.iro-pillar-track {
+  flex: 1;
+  height: 4px;
+  background: var(--iro-s3);
+}
+.iro-pillar-fill {
+  height: 100%;
+  background: var(--iro-accent);
+  transition: width 0.3s ease;
+  min-width: 2px;
+}
+.iro-pillar-pct {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--iro-t2);
+  width: 26px;
+  text-align: right;
+}
+
+.iro-gw-gauge {
+  text-align: center;
+  padding: 12px 0 8px;
+}
+.iro-gw-val {
+  font-family: var(--iro-mono);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.iro-gw-val.low  { color: var(--iro-green); }
+.iro-gw-val.med  { color: var(--iro-gold); }
+.iro-gw-val.high { color: var(--iro-red); }
+.iro-gw-sub {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  color: var(--iro-tm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.iro-flag-list { display: flex; flex-direction: column; gap: 4px; }
+.iro-flag-item {
+  font-size: 10px;
+  color: var(--iro-red);
+  font-family: var(--iro-mono);
+  padding: 4px 6px;
+  background: rgba(255,51,51,0.06);
+  border-left: 2px solid var(--iro-red);
+  line-height: 1.4;
+}
+.iro-flag-item.warn {
+  color: var(--iro-gold);
+  background: rgba(255,184,0,0.06);
+  border-left-color: var(--iro-gold);
+}
+.iro-no-flags {
+  font-size: 10px;
+  color: var(--iro-green);
+  font-family: var(--iro-mono);
+  padding: 4px 6px;
+  background: rgba(0,204,68,0.06);
+  border-left: 2px solid var(--iro-green);
+}
+
+/* ═══════════════════════════════════════════════
+   FINAL REPORT SCREEN
+═══════════════════════════════════════════════ */
+#iro-report {
+  padding-bottom: 80px;
+}
+.iro-report-hero {
+  background: var(--iro-s1);
+  border-bottom: 1px solid var(--iro-b);
+  padding: 40px 48px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+.iro-report-eyebrow {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--iro-accent);
+  margin-bottom: 8px;
+}
+.iro-report-entity {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--iro-t1);
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+}
+.iro-report-sector {
+  font-size: 13px;
+  color: var(--iro-t2);
+  margin-bottom: 20px;
+}
+.iro-rating-block {
+  text-align: center;
+  padding: 20px 32px;
+  background: var(--iro-s2);
+  border: 1px solid var(--iro-b);
+}
+.iro-rating-label {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--iro-tm);
+  margin-bottom: 8px;
+}
+.iro-rating-grade {
+  font-family: var(--iro-mono);
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.iro-rating-desc {
+  font-size: 11px;
+  color: var(--iro-t2);
+  margin-top: 6px;
+  font-weight: 500;
+}
+.iro-rating-score {
+  font-family: var(--iro-mono);
+  font-size: 11px;
+  color: var(--iro-tm);
+  margin-top: 4px;
+}
+
+/* Rating colors */
+.iro-rating-AAA  { color: #00CC44; }
+.iro-rating-AA   { color: #22DD55; }
+.iro-rating-A    { color: #66DD88; }
+.iro-rating-BBB  { color: var(--iro-accent); }
+.iro-rating-BB   { color: #FFB800; }
+.iro-rating-B    { color: #FF6600; }
+.iro-rating-CCC  { color: #FF4400; }
+.iro-rating-D    { color: #FF3333; }
+
+.iro-report-meta-row {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--iro-b);
+}
+.iro-report-meta-cell {
+  flex: 1;
+  padding: 14px 20px;
+  border-right: 1px solid var(--iro-b);
+  text-align: center;
+}
+.iro-report-meta-cell:last-child { border-right: none; }
+.iro-rmc-val {
+  font-family: var(--iro-mono);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--iro-t1);
+  letter-spacing: -0.02em;
+}
+.iro-rmc-lbl {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  color: var(--iro-tm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+
+.iro-report-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 24px;
+}
+.iro-report-left { min-width: 0; }
+.iro-report-right { min-width: 0; }
+
+.iro-card {
+  background: var(--iro-s1);
+  border: 1px solid var(--iro-b);
+  margin-bottom: 20px;
+}
+.iro-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--iro-b);
+}
+.iro-card-title {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--iro-t2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.iro-card-body { padding: 16px 20px; }
+
+/* Radar chart */
+.iro-radar-wrap {
+  position: relative;
+  height: 300px;
+}
+
+/* Pillar score table */
+.iro-pillar-table { width: 100%; border-collapse: collapse; }
+.iro-pillar-table th {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--iro-tm);
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--iro-b);
+}
+.iro-pillar-table td {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--iro-t1);
+  border-bottom: 1px solid var(--iro-b);
+}
+.iro-pillar-table tr:last-child td { border-bottom: none; }
+.iro-pillar-table tr:hover td { background: var(--iro-s2); }
+.iro-score-bar-cell { width: 120px; }
+.iro-tbl-bar-wrap { height: 6px; background: var(--iro-s3); }
+.iro-tbl-bar-fill { height: 100%; transition: width 0.3s ease; }
+.iro-score-cell {
+  font-family: var(--iro-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+  width: 50px;
+}
+.iro-grade-cell {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  width: 40px;
+  text-align: center;
+}
+
+/* Greenwashing gauge */
+.iro-gw-panel {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.iro-gw-circle {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.iro-gw-pct {
+  font-family: var(--iro-mono);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.iro-gw-risk-label {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.iro-gw-desc {
+  font-size: 12px;
+  color: var(--iro-t2);
+  line-height: 1.6;
+}
+
+/* Flags/contradiction panel */
+.iro-flag-table { width: 100%; border-collapse: collapse; }
+.iro-flag-table tr { border-bottom: 1px solid var(--iro-b); }
+.iro-flag-table tr:last-child { border-bottom: none; }
+.iro-flag-table td { padding: 9px 12px; font-size: 11px; color: var(--iro-t2); vertical-align: top; }
+.iro-flag-sev { font-family: var(--iro-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 5px; white-space: nowrap; }
+.iro-flag-sev.CRITICAL { background: rgba(255,51,51,0.12); color: #FF3333; }
+.iro-flag-sev.HIGH     { background: rgba(255,102,0,0.12);  color: #FF6600; }
+.iro-flag-sev.MEDIUM   { background: rgba(255,184,0,0.10);  color: #FFB800; }
+
+/* Recommendations */
+.iro-reco-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--iro-b);
+}
+.iro-reco-item:last-child { border-bottom: none; }
+.iro-reco-priority {
+  flex-shrink: 0;
+  width: 8px;
+  align-self: stretch;
+  min-height: 40px;
+}
+.iro-reco-priority.P1 { background: var(--iro-red); }
+.iro-reco-priority.P2 { background: var(--iro-amber); }
+.iro-reco-priority.P3 { background: var(--iro-gold); }
+.iro-reco-body {}
+.iro-reco-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--iro-t1);
+  margin-bottom: 3px;
+  line-height: 1.4;
+}
+.iro-reco-desc { font-size: 11px; color: var(--iro-t2); line-height: 1.5; margin-bottom: 6px; }
+.iro-reco-fw { display: flex; flex-wrap: wrap; gap: 4px; }
+.iro-reco-fw-tag {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--iro-tm);
+  padding: 1px 5px;
+  border: 1px solid var(--iro-b);
+  background: var(--iro-s2);
+}
+
+/* Framework matrix */
+.iro-fw-matrix { width: 100%; border-collapse: collapse; }
+.iro-fw-matrix th {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--iro-tm);
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--iro-b);
+  text-align: left;
+}
+.iro-fw-matrix td {
+  padding: 7px 10px;
+  font-size: 11px;
+  border-bottom: 1px solid var(--iro-b);
+  vertical-align: middle;
+}
+.iro-fw-matrix tr:last-child td { border-bottom: none; }
+.iro-fw-matrix tr:hover td { background: var(--iro-s2); }
+.iro-fw-bar { height: 4px; background: var(--iro-s3); width: 80px; display: inline-block; vertical-align: middle; }
+.iro-fw-bar-fill { height: 100%; }
+.iro-fw-status {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.iro-fw-status.ready   { background: rgba(0,204,68,0.10);  color: #00CC44; }
+.iro-fw-status.partial { background: rgba(255,184,0,0.10); color: #FFB800; }
+.iro-fw-status.gap     { background: rgba(255,51,51,0.10); color: #FF3333; }
+
+/* Report action bar */
+.iro-report-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 20px 40px;
+  border-top: 1px solid var(--iro-b);
+  background: var(--iro-s1);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .iro-assess-layout {
+    grid-template-columns: var(--iro-sidebar-w) 1fr;
+  }
+  .iro-score-rail { display: none; }
+  .iro-report-body { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .iro-assess-layout { grid-template-columns: 1fr; }
+  .iro-sidebar { display: none; }
+  .iro-stat-grid { grid-template-columns: repeat(3, 1fr); }
+  .iro-compare-grid { grid-template-columns: 1fr; }
+  .iro-section-header { flex-direction: column; gap: 12px; }
+  .iro-questions-wrap { padding: 8px 16px 32px; }
+  .iro-answer-row { padding-left: 0; }
+  .iro-section-nav-bar { padding: 12px 16px; }
+  .iro-report-hero { grid-template-columns: 1fr; }
+  .iro-report-body { padding: 16px; }
+}
+
+/* Print */
+@media print {
+  .site-header, .iro-progress-wrap, .iro-report-actions,
+  #iro-welcome, #iro-entity, #iro-assess { display: none !important; }
+  #iro-report { display: block !important; }
+  body { background: #fff; color: #000; }
+}
+  </style>
+</head>
+<body>
+
+  <!-- ════════════ SITE HEADER ════════════ -->
+  <header class="site-header">
+    <a href="index.html" class="header-brand">
+      <div class="cx-logo-mark">
+        <img src="Climatix_logo.png" alt="Climactix Global" class="cx-logo-img" />
+      </div>
+      <div class="header-wordmark">
+        Climactix Global
+        <span>Institutional Risk OS</span>
+      </div>
+    </a>
+    <nav class="header-nav">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="simulation.html" class="nav-link">Simulation</a>
+      <a href="assessment.html" class="nav-link">Assessment</a>
+      <a href="climate-risk-os.html" class="nav-link active">Risk OS</a>
+      <a href="climactix-ai.html" class="nav-link nav-cta">AI Engine</a>
+    </nav>
+    <div class="live-status">
+      <div class="live-dot"></div>
+      <span>TCFD · IFRS S2 · NGFS</span>
+    </div>
+    <button id="themeToggleBtn" title="Toggle theme"
+      style="width:26px;height:26px;border:1px solid #2C2C2C;border-radius:2px;background:none;cursor:pointer;color:#888;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:8px;">○</button>
+    <button id="signOutBtn" title="Sign out"
+      style="margin-left:8px;padding:5px 12px;background:transparent;border:1px solid rgba(14,165,233,.2);border-radius:2px;font-size:11px;font-weight:700;color:var(--iro-accent);cursor:pointer;font-family:'IBM Plex Mono',monospace;letter-spacing:.05em;text-transform:uppercase;transition:.15s">Sign Out</button>
+  </header>
+
+  <!-- ════════════ PROGRESS BAR ════════════ -->
+  <div class="iro-progress-wrap">
+    <div class="iro-progress-track">
+      <div class="iro-progress-fill" id="iProgressFill"></div>
+    </div>
+    <div class="iro-progress-meta">
+      <span class="iro-progress-label" id="iProgressLabel">Climate Risk Operating System — Ready</span>
+      <span class="iro-progress-chip" id="iProgressChip">INITIALIZING</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN 1: WELCOME
+  ════════════════════════════════════════════ -->
+  <div id="iro-welcome" class="iro-screen active">
+    <div class="iro-welcome-shell">
+
+      <div class="iro-welcome-badge">
+        <div class="live-dot"></div>
+        Climate Risk Intelligence OS · v3.0 Institutional
+      </div>
+
+      <h1 class="iro-welcome-h1">
+        Climate Risk<br>
+        <span>Operating System</span>
+      </h1>
+      <p class="iro-welcome-sub">
+        Institutional-grade climate risk assessment designed for banks, sovereign funds, PE/VC, governments, insurance, and large enterprises.
+        Maps 200+ deep analytical questions across 30+ global frameworks including TCFD, IFRS&nbsp;S2, NGFS, SBTi, CSRD, EU&nbsp;Taxonomy, PCAF, and Basel&nbsp;III climate guidance.
+      </p>
+
+      <!-- Stats -->
+      <div class="iro-stat-grid">
+        <div class="iro-stat">
+          <div class="iro-stat-val">200+</div>
+          <div class="iro-stat-lbl">Questions</div>
+        </div>
+        <div class="iro-stat">
+          <div class="iro-stat-val">21</div>
+          <div class="iro-stat-lbl">Risk Sections</div>
+        </div>
+        <div class="iro-stat">
+          <div class="iro-stat-val">30+</div>
+          <div class="iro-stat-lbl">Frameworks</div>
+        </div>
+        <div class="iro-stat">
+          <div class="iro-stat-val">8</div>
+          <div class="iro-stat-lbl">Risk Pillars</div>
+        </div>
+        <div class="iro-stat">
+          <div class="iro-stat-val">AAA–D</div>
+          <div class="iro-stat-lbl">Risk Rating</div>
+        </div>
+      </div>
+
+      <!-- Comparison -->
+      <div class="iro-compare-grid">
+        <div class="iro-compare-card">
+          <div class="iro-compare-title">This system delivers</div>
+          <ul class="iro-compare-list">
+            <li><span class="mark g">✓</span> Nonlinear weighted risk scoring (Exposure × Vulnerability × Materiality)</li>
+            <li><span class="mark g">✓</span> AI contradiction engine — detects governance theatre &amp; disclosure gaps</li>
+            <li><span class="mark g">✓</span> Greenwashing probability score with institutional-grade logic</li>
+            <li><span class="mark g">✓</span> Physical + transition + carbon + supply chain pillar analysis</li>
+            <li><span class="mark g">✓</span> Climate Risk Rating (AAA → D scale, credit-agency methodology)</li>
+            <li><span class="mark g">✓</span> Per-question mapping to 30+ frameworks simultaneously</li>
+          </ul>
+        </div>
+        <div class="iro-compare-card">
+          <div class="iro-compare-title">Designed to go beyond</div>
+          <ul class="iro-compare-list">
+            <li><span class="mark r">↑</span> MSCI ESG — disclosure scoring only</li>
+            <li><span class="mark r">↑</span> Sustainalytics — risk exposure, not resilience</li>
+            <li><span class="mark r">↑</span> CDP questionnaire — self-reported, not contradiction-tested</li>
+            <li><span class="mark r">↑</span> TCFD tools — qualitative framework, not scored</li>
+            <li><span class="mark r">↑</span> Bloomberg ESG — data aggregation, not intelligence</li>
+            <li><span class="mark r">↑</span> S&amp;P / Moody's Climate — sector-average, not entity-specific</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Framework chips -->
+      <div class="iro-fw-grid">
+        <span class="iro-fw-chip hi">TCFD</span>
+        <span class="iro-fw-chip hi">IFRS S2</span>
+        <span class="iro-fw-chip hi">NGFS</span>
+        <span class="iro-fw-chip hi">SBTi</span>
+        <span class="iro-fw-chip hi">CSRD</span>
+        <span class="iro-fw-chip hi">EU Taxonomy</span>
+        <span class="iro-fw-chip">PCAF</span>
+        <span class="iro-fw-chip">GRI 305</span>
+        <span class="iro-fw-chip">TNFD</span>
+        <span class="iro-fw-chip">TPT</span>
+        <span class="iro-fw-chip">SFDR</span>
+        <span class="iro-fw-chip">GHG Protocol</span>
+        <span class="iro-fw-chip">ECB Climate</span>
+        <span class="iro-fw-chip">Basel III</span>
+        <span class="iro-fw-chip">BRSR</span>
+        <span class="iro-fw-chip">SEC Climate</span>
+        <span class="iro-fw-chip">ESRS</span>
+        <span class="iro-fw-chip">IPCC AR6</span>
+        <span class="iro-fw-chip">CMIP6</span>
+        <span class="iro-fw-chip">WRI Aqueduct</span>
+        <span class="iro-fw-chip">ICVCM</span>
+        <span class="iro-fw-chip">VCMI</span>
+        <span class="iro-fw-chip">NZBA</span>
+        <span class="iro-fw-chip">ICMA</span>
+        <span class="iro-fw-chip">SBTN</span>
+        <span class="iro-fw-chip">UNGC</span>
+        <span class="iro-fw-chip">PRI</span>
+        <span class="iro-fw-chip">CDP</span>
+        <span class="iro-fw-chip">ISO 14064</span>
+        <span class="iro-fw-chip">PACTA</span>
+      </div>
+
+      <button class="iro-welcome-cta" onclick="showEntityForm()">
+        Begin Institutional Assessment →
+      </button>
+      <div class="iro-welcome-note">
+        Estimated time: 45–90 minutes · Progress auto-saved · Board &amp; investor-grade output
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN 2: ENTITY PROFILE
+  ════════════════════════════════════════════ -->
+  <div id="iro-entity" class="iro-screen">
+    <div class="iro-entity-shell">
+      <div class="iro-entity-card">
+        <h2>Entity Intelligence Profile</h2>
+        <p>Institutional context is used to calibrate risk weights, sector-specific modules, and framework applicability. All fields inform the scoring engine — complete accuracy improves analytical precision.</p>
+
+        <div class="iro-form-section-label">Entity Identity</div>
+        <div class="iro-form-grid">
+          <div class="iro-field">
+            <label>Legal Entity Name *</label>
+            <input type="text" id="fEntityName" placeholder="e.g. Apex Capital Group Ltd" />
+          </div>
+          <div class="iro-field">
+            <label>Stock / Bond Ticker (if listed)</label>
+            <input type="text" id="fTicker" placeholder="e.g. APEX.NSE" />
+          </div>
+          <div class="iro-field">
+            <label>Primary Sector *</label>
+            <select id="fSector">
+              <option value="">— Select sector —</option>
+              <option>Banking &amp; Financial Services</option>
+              <option>Insurance</option>
+              <option>Asset Management / PE / VC</option>
+              <option>Sovereign / Government / DFI</option>
+              <option>Energy (Oil &amp; Gas)</option>
+              <option>Renewable Energy</option>
+              <option>Mining &amp; Metals</option>
+              <option>Chemicals &amp; Materials</option>
+              <option>Manufacturing &amp; Industrials</option>
+              <option>Real Estate &amp; Infrastructure</option>
+              <option>Agriculture &amp; Food</option>
+              <option>Transport &amp; Logistics</option>
+              <option>Aviation &amp; Shipping</option>
+              <option>Technology &amp; Data Centers</option>
+              <option>Retail &amp; Consumer</option>
+              <option>Healthcare &amp; Pharmaceuticals</option>
+              <option>Construction &amp; Engineering</option>
+              <option>Utilities (Water, Waste, Grid)</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>Entity Type *</label>
+            <select id="fEntityType">
+              <option value="">— Select —</option>
+              <option>Publicly Listed Corporation</option>
+              <option>Private Company</option>
+              <option>Bank / Financial Institution</option>
+              <option>Sovereign Fund / Government Body</option>
+              <option>PE / VC Fund</option>
+              <option>Insurance / Re-insurance Company</option>
+              <option>Infrastructure Fund</option>
+              <option>NGO / Development Finance</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="iro-form-section-label">Operational Footprint</div>
+        <div class="iro-form-grid three">
+          <div class="iro-field">
+            <label>Primary Headquarters</label>
+            <input type="text" id="fHQ" placeholder="e.g. Mumbai, India" />
+          </div>
+          <div class="iro-field">
+            <label>Number of Countries Operating</label>
+            <select id="fCountries">
+              <option value="1">1 (Domestic only)</option>
+              <option value="2">2–5</option>
+              <option value="3">6–20</option>
+              <option value="4">21–50</option>
+              <option value="5">50+</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>Assessment Year</label>
+            <select id="fYear">
+              <option value="2025">FY 2024–25</option>
+              <option value="2026" selected>FY 2025–26</option>
+              <option value="2027">FY 2026–27</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>Total Revenue / AUM (approx.)</label>
+            <select id="fRevenue">
+              <option value="">— Select —</option>
+              <option>Under $10M</option>
+              <option>$10M – $100M</option>
+              <option>$100M – $1B</option>
+              <option>$1B – $10B</option>
+              <option>$10B – $100B</option>
+              <option>Over $100B</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>Number of Employees</label>
+            <select id="fEmployees">
+              <option value="">— Select —</option>
+              <option>Under 250</option>
+              <option>250 – 1,000</option>
+              <option>1,000 – 5,000</option>
+              <option>5,000 – 25,000</option>
+              <option>25,000 – 100,000</option>
+              <option>Over 100,000</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>Regulatory Jurisdiction(s)</label>
+            <input type="text" id="fJurisdiction" placeholder="e.g. EU, India, USA" />
+          </div>
+        </div>
+
+        <div class="iro-form-section-label">Climate Baseline</div>
+        <div class="iro-form-grid">
+          <div class="iro-field">
+            <label>Has the entity published a TCFD/IFRS S2 report?</label>
+            <select id="fTcfd">
+              <option value="">— Select —</option>
+              <option value="yes_full">Yes — Full TCFD/IFRS S2 disclosure</option>
+              <option value="yes_partial">Yes — Partial / voluntary TCFD disclosure</option>
+              <option value="no_plan">No — but planning to publish within 12 months</option>
+              <option value="no">No disclosure published</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>SBTi Status</label>
+            <select id="fSbti">
+              <option value="">— Select —</option>
+              <option value="approved">SBTi-approved near-term &amp; long-term targets</option>
+              <option value="committed">Committed (in validation)</option>
+              <option value="interest">Expressed interest only</option>
+              <option value="none">No SBTi engagement</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>Primary assurance level on ESG data</label>
+            <select id="fAssurance">
+              <option value="">— Select —</option>
+              <option value="reasonable">Reasonable assurance (ISAE 3000 / ISSA 5000)</option>
+              <option value="limited">Limited assurance</option>
+              <option value="internal">Internal review only</option>
+              <option value="none">No third-party assurance</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>Net Zero Commitment Year</label>
+            <select id="fNetZero">
+              <option value="">— Not committed / Not disclosed —</option>
+              <option value="2030">2030</option>
+              <option value="2035">2035</option>
+              <option value="2040">2040</option>
+              <option value="2045">2045</option>
+              <option value="2050">2050</option>
+              <option value="after2050">After 2050</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="iro-form-section-label">Assessment Scope</div>
+        <div class="iro-form-grid">
+          <div class="iro-field full">
+            <label>Brief description of primary climate risk concerns (optional)</label>
+            <textarea id="fRiskContext" placeholder="e.g. Our manufacturing sites in Southeast Asia face significant flood risk. We have a transition plan under development but limited Scope 3 data..."></textarea>
+          </div>
+        </div>
+
+        <div class="iro-entity-actions">
+          <button class="iro-btn-primary" onclick="startAssessment()">
+            Launch Assessment →
+          </button>
+          <button class="iro-btn-ghost" onclick="showWelcome()">← Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN 3: ASSESSMENT (3-PANEL)
+  ════════════════════════════════════════════ -->
+  <div id="iro-assess" class="iro-screen">
+    <div class="iro-assess-layout">
+
+      <!-- LEFT: Section Nav Sidebar -->
+      <aside class="iro-sidebar" id="iroSidebar">
+        <div class="iro-sidebar-header">
+          <div class="iro-sidebar-label">Assessment Progress</div>
+          <div class="iro-sidebar-progress-text" id="sidebarProgressText">0 / 21 sections</div>
+          <div class="iro-sidebar-track">
+            <div class="iro-sidebar-fill" id="sidebarFill" style="width:0%"></div>
+          </div>
+        </div>
+        <!-- Section nav items injected by JS -->
+        <div id="sidebarNav"></div>
+      </aside>
+
+      <!-- CENTER: Questions Panel -->
+      <main class="iro-main" id="iroMain">
+        <!-- Section content injected by JS -->
+        <div id="sectionContent"></div>
+
+        <!-- Nav bar (prev/next) -->
+        <div class="iro-section-nav-bar" id="sectionNavBar">
+          <button class="iro-btn-ghost" id="btnPrevSection" onclick="prevSection()">← Previous</button>
+          <span style="font-family:var(--iro-mono);font-size:10px;color:var(--iro-tm)" id="sectionNavLabel">Section 1 of 21</span>
+          <button class="iro-btn-primary" id="btnNextSection" onclick="nextSection()">Next →</button>
+        </div>
+      </main>
+
+      <!-- RIGHT: Live Score Rail -->
+      <aside class="iro-score-rail" id="iroRail">
+        <div class="iro-rail-section">
+          <div class="iro-rail-label">Composite Score</div>
+          <div class="iro-rail-composite">
+            <div class="iro-rail-composite-val" id="railComposite">—</div>
+            <div class="iro-rail-composite-sub">/ 100</div>
+            <div id="railRating" class="iro-rail-rating"></div>
+          </div>
+        </div>
+
+        <div class="iro-rail-section">
+          <div class="iro-rail-label">Pillar Scores</div>
+          <div id="railPillars"></div>
+        </div>
+
+        <div class="iro-rail-section">
+          <div class="iro-rail-label">Greenwashing Risk</div>
+          <div class="iro-gw-gauge">
+            <div class="iro-gw-val low" id="railGwVal">—</div>
+            <div class="iro-gw-sub" id="railGwSub">Probability</div>
+          </div>
+        </div>
+
+        <div class="iro-rail-section">
+          <div class="iro-rail-label">Contradiction Flags</div>
+          <div class="iro-flag-list" id="railFlags">
+            <div class="iro-no-flags">No flags detected</div>
+          </div>
+        </div>
+      </aside>
+
+    </div><!-- /.iro-assess-layout -->
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN 4: FINAL REPORT
+  ════════════════════════════════════════════ -->
+  <div id="iro-report" class="iro-screen">
+    <!-- Report content injected by JS -->
+    <div id="reportContent"></div>
+    <div class="iro-report-actions">
+      <button class="iro-btn-primary" onclick="window.print()">Print / Export PDF</button>
+      <button class="iro-btn-ghost" onclick="sendToAI()">Send to AI Engine →</button>
+      <button class="iro-btn-ghost" onclick="retakeAssessment()">← Retake Assessment</button>
+    </div>
+  </div>
+
+  <!-- ════ SCRIPT PLACEHOLDER — filled in next steps ════ -->
+    <script id="iroScript">
+/* ═══════════════════════════════════════════════════════════════════════
+   CLIMACTIX — INSTITUTIONAL CLIMATE RISK OPERATING SYSTEM
+   203 Questions · 21 Sections · 8 Pillars · AAA–D Rating · GW Detection
+═══════════════════════════════════════════════════════════════════════ */
+
+/* ── STATE ── */
+const STATE = { entity:{}, answers:{}, currentSection:0, radarChart:null };
+try { const s=localStorage.getItem('iro_answers'); if(s) STATE.answers=JSON.parse(s); } catch(e){}
+try { const e=localStorage.getItem('iro_entity'); if(e) STATE.entity=JSON.parse(e); } catch(e){}
+
+/* ── SECTIONS ── */
+const SECTIONS = [
+  {id:'S01',num:1, title:'Corporate Identity & Entity Mapping',      icon:'🏢', desc:'Organizational boundary, sector classification, asset base, and contractual climate exposure.'},
+  {id:'S02',num:2, title:'Governance & Board Climate Oversight',      icon:'⚖️', desc:'Board accountability, climate competency, ERM integration, and oversight governance structures.'},
+  {id:'S03',num:3, title:'Climate Strategy & Transition Planning',    icon:'🗺️', desc:'Transition plans, net-zero commitments, business model resilience, and capex Paris alignment.'},
+  {id:'S04',num:4, title:'Financial Materiality & Climate Accounting',icon:'💹', desc:'Quantified P&L exposure, climate in financial statements, carbon pricing, and stranded assets.'},
+  {id:'S05',num:5, title:'Physical Climate Risk Exposure',            icon:'🌊', desc:'Asset-level flood, heat, drought, and sea-level risk using CMIP6/NGFS scenario data.'},
+  {id:'S06',num:6, title:'Transition Risk Exposure',                  icon:'⚡', desc:'Carbon pricing impact, technology disruption, demand destruction, and policy shock scenarios.'},
+  {id:'S07',num:7, title:'Carbon & Emissions Intelligence',           icon:'🌡️', desc:'Scope 1/2/3 accuracy, SBTi pathway, offset integrity, and financed emissions (PCAF).'},
+  {id:'S08',num:8, title:'Supply Chain & Value Chain Fragility',      icon:'🔗', desc:'Supplier climate risk, Scope 3 data collection, critical input exposure, and logistics vulnerability.'},
+  {id:'S09',num:9, title:'Energy Systems & Resource Dependency',      icon:'⚙️', desc:'Renewable mix, grid resilience, energy price exposure, and fossil fuel lock-in.'},
+  {id:'S10',num:10,title:'Water Security & Biodiversity',             icon:'💧', desc:'Water stress, TNFD footprint, deforestation, and ecosystem service dependencies.'},
+  {id:'S11',num:11,title:'Climate Scenario Stress Testing',           icon:'📊', desc:'NGFS scenario methodology, quantitative outputs, climate VaR, and reverse stress tests.'},
+  {id:'S12',num:12,title:'Asset Vulnerability & Infrastructure Risk', icon:'🏗️', desc:'Physical asset register with climate overlay, coastal exposure, heat stress, and retrofit plans.'},
+  {id:'S13',num:13,title:'Insurance & Capital Protection',            icon:'🛡️', desc:'Coverage adequacy, protection gaps, reinsurance access, and emergency liquidity facilities.'},
+  {id:'S14',num:14,title:'Regulatory & Policy Exposure',              icon:'📜', desc:'Mandatory disclosure compliance, EU Taxonomy, carbon pricing regimes, and CBAM exposure.'},
+  {id:'S15',num:15,title:'Greenwashing & Disclosure Integrity',       icon:'🔍', desc:'Cross-report consistency, offset integrity, historical target record, and regulatory clean status.'},
+  {id:'S16',num:16,title:'Adaptation & Resilience Capacity',          icon:'🌱', desc:'Formal adaptation plan, physical investments, crisis response, and nature-based adaptation.'},
+  {id:'S17',num:17,title:'Climate Innovation & Technology Readiness', icon:'🔬', desc:'Clean tech R&D investment, technology portfolio, carbon removal, and climate data analytics.'},
+  {id:'S18',num:18,title:'Workforce & Human Capital Resilience',      icon:'👥', desc:'Green skills gap, reskilling programs, just transition planning, and heat stress protocols.'},
+  {id:'S19',num:19,title:'Capital Allocation Readiness',              icon:'💰', desc:'Climate-adjusted hurdle rates, green finance issuance, M&A climate due diligence, and shadow carbon price.'},
+  {id:'S20',num:20,title:'Climate Creditworthiness',                  icon:'📈', desc:'Counterparty climate credit scoring, PD modeling, concentration limits, and green asset ratio.'},
+  {id:'S21',num:21,title:'ESG Data Governance & Auditability',        icon:'🗄️', desc:'Data governance frameworks, third-party assurance, audit trails, and data control standards.'}
+];
+
+/* ── PILLARS ── */
+const PILLARS = [
+  {id:'governance',  label:'Governance',      weight:12, color:'#0EA5E9', sections:['S01','S02']},
+  {id:'strategy',    label:'Strategy',        weight:12, color:'#3399FF', sections:['S03','S11','S17']},
+  {id:'financial',   label:'Financial',       weight:14, color:'#FFB800', sections:['S04','S13','S19','S20']},
+  {id:'physical',    label:'Physical Risk',   weight:12, color:'#FF6600', sections:['S05','S10','S12']},
+  {id:'transition',  label:'Transition Risk', weight:12, color:'#FF4400', sections:['S06','S14']},
+  {id:'carbon',      label:'Carbon',          weight:14, color:'#00CC44', sections:['S07','S09']},
+  {id:'supply_chain',label:'Supply Chain',    weight: 8, color:'#9966FF', sections:['S08']},
+  {id:'disclosure',  label:'Disclosure',      weight:16, color:'#FF3333', sections:['S15','S16','S18','S21']}
+];
+
+/* ── QUESTION DATABASE (203 questions) ── */
+const QUESTIONS = [
+/* ══════ S01: CORPORATE IDENTITY ══════ */
+{id:'S01-Q01',sec:'S01',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','GHG Protocol','IFRS S2','GRI 2'],
+ text:'What organizational boundary methodology is used for this climate assessment (operational control, financial control, or equity share)?',
+ ctx:'Institutional standard: documented, consistent boundary with rationale; any deviation from financial consolidation boundary must be disclosed.'},
+{id:'S01-Q02',sec:'S01',sev:'CRITICAL',mat:'HIGH',pil:'governance',w:3,
+ fw:['EU Taxonomy','SASB','TCFD','SFDR'],
+ text:'What percentage of total revenue is generated from activities classified as climate-sensitive or carbon-intensive under TCFD, EU Taxonomy, or SASB standards?',
+ ctx:'Regulators expect quantified revenue at risk disclosure. >30% threshold triggers enhanced TCFD/IFRS S2 scrutiny.'},
+{id:'S01-Q03',sec:'S01',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','CSRD','SEC','NGFS','BRSR'],
+ text:'Has the entity mapped its aggregate revenue exposure to jurisdictions with mandatory climate disclosure or live carbon pricing regimes?',
+ ctx:'Key jurisdictions: EU (CSRD, EU ETS), USA (SEC), India (BRSR, SEBI), UK (TCFD mandatory), Australia (ASRS). Quantify P&L sensitivity to regulatory escalation.'},
+{id:'S01-Q04',sec:'S01',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','IFRS S2','CSRD ESRS E1','NGFS'],
+ text:'Has the entity produced a geo-coded asset register enabling overlay of physical climate risk data (flood zones, heat stress, coastal exposure) at asset level?',
+ ctx:'TCFD/IFRS S2 require asset-level physical risk assessment. Without coordinates, scenario analysis is generic — insufficient for institutional-grade disclosure.'},
+{id:'S01-Q05',sec:'S01',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','NGFS','PCAF','ECB'],
+ text:'Does the entity hold financial instruments (loans, bonds, equity, derivatives) where climate risk creates direct counterparty default or collateral impairment risk?',
+ ctx:'For banks/asset managers: PCAF financed emissions methodology applies. For corporates: counterparty climate exposure in receivables and hedging instruments.'},
+{id:'S01-Q06',sec:'S01',sev:'HIGH',mat:'MEDIUM',pil:'supply_chain',w:2,
+ fw:['TCFD','CSRD ESRS E1','GRI 308'],
+ text:'Has the entity mapped supplier concentration in regions rated HIGH or CRITICAL physical climate risk under IPCC AR6 scenarios by 2040?',
+ ctx:'Single-supplier dependencies in climate-vulnerable regions (Bangladesh, Vietnam, Philippines, Sub-Saharan Africa) create material supply chain fragility.'},
+{id:'S01-Q07',sec:'S01',sev:'CRITICAL',mat:'HIGH',pil:'transition',w:3,
+ fw:['SBTi','TCFD','IFRS S2','EU Taxonomy'],
+ text:'Does the entity have long-term contracts (>5 years) for fossil fuel supply, high-carbon services, or infrastructure that create carbon lock-in inconsistent with 2030 SBTi targets?',
+ ctx:'Carbon lock-in through contracted obligations is a critical stranded-cost risk. Identify remaining contract years, volume commitments, and exit clause provisions.'},
+{id:'S01-Q08',sec:'S01',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','IFRS S2','NGFS','PCAF'],
+ text:'Has the entity quantified the percentage of total assets classified as climate-sensitive (at material physical or transition risk) per TCFD/IFRS S2 materiality thresholds?',
+ ctx:'Benchmark: >15% of assets flagged as climate-sensitive triggers enhanced disclosure. Institutional investors use this to price climate risk premium.'},
+{id:'S01-Q09',sec:'S01',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['TCFD','CSRD','SEC'],
+ text:'Has the entity formally assessed its exposure to climate litigation in jurisdictions with active enforcement history (Netherlands, USA, UK, Australia, France, Germany)?',
+ ctx:'Attribution science advances have shifted climate litigation from fringe to mainstream credit risk. Board must sign off on litigation exposure assessment.'},
+
+/* ══════ S02: GOVERNANCE ══════ */
+{id:'S02-Q01',sec:'S02',sev:'CRITICAL',mat:'HIGH',pil:'governance',w:3,
+ fw:['TCFD','IFRS S2','ESRS','SEC','CSRD'],
+ text:'Is there a named board member or committee with documented, formal responsibility for climate risk oversight — with explicit mandate in committee charter or terms of reference?',
+ ctx:'TCFD Recommended Disclosure A(1). IFRS S2.7. Named accountability is non-negotiable for institutional-grade governance. "Board oversees ESG broadly" is insufficient.'},
+{id:'S02-Q02',sec:'S02',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','IFRS S2','CSRD','SEC'],
+ text:'Do one or more board members hold verifiable climate finance, climate science, or ESG risk credentials (CFA ESG, TCFD expertise, climate PhD, or documented climate advisory track record)?',
+ ctx:'Investor stewardship codes (LGIM, Vanguard, BlackRock) screen for board climate competency. Absence is a voting-against trigger in ESG proxy season.'},
+{id:'S02-Q03',sec:'S02',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','IFRS S2','CSRD','GRI 2','SBTi'],
+ text:'Are executive compensation packages directly and quantifiably linked to climate KPIs — emissions reduction, transition plan milestones, or climate risk metrics — with disclosed weighting?',
+ ctx:'Tokenistic linkage (<5% of bonus tied to climate) is flagged by proxy advisors as insufficient. Best practice: 20–30% of LTI linked to verified climate outcomes.'},
+{id:'S02-Q04',sec:'S02',sev:'CRITICAL',mat:'HIGH',pil:'governance',w:3,
+ fw:['TCFD','IFRS S2','ESRS','NGFS','ECB'],
+ text:'Is climate risk formally integrated into the enterprise risk management framework as a standalone risk category with defined risk appetite, tolerance limits, and regular board reporting cadence?',
+ ctx:'TCFD Recommended Disclosure A(2). ECB supervisory expectations require climate integrated into ICAAP-equivalent processes. Siloed "ESG risk" without financial calibration is rejected.'},
+{id:'S02-Q05',sec:'S02',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','NGFS','ECB','ICAAP'],
+ text:'Has the board formally approved a climate risk appetite statement with quantitative thresholds for acceptable physical risk exposure and transition risk exposure?',
+ ctx:'Risk appetite must specify: maximum tolerable physical asset loss as % of capital, maximum stranded asset exposure, maximum carbon price sensitivity to EBITDA.'},
+{id:'S02-Q06',sec:'S02',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','IFRS S2','NGFS','ECB'],
+ text:'Does the board formally review and approve climate scenario analysis outputs — including quantified financial impacts — at least annually, with evidence of board-level challenge?',
+ ctx:'Board minutes must document scenario findings discussed, challenged, and acted upon. "Received and noted" is insufficient; board must evidence analytical engagement.'},
+{id:'S02-Q07',sec:'S02',sev:'HIGH',mat:'MEDIUM',pil:'governance',w:2,
+ fw:['TCFD','CSRD','ECB'],
+ text:'Are there documented escalation protocols specifying conditions under which material climate risk events (regulatory changes, physical incidents, transition shocks) are escalated to board level?',
+ ctx:'Trigger thresholds must be quantified: e.g. regulatory carbon price increase >20%, facility flood event >$10M loss, supplier climate-related disruption >5 days.'},
+{id:'S02-Q08',sec:'S02',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','IFRS S2','CSRD','SEC'],
+ text:'Is there a documented legal sign-off chain for climate disclosures, identifying who is personally accountable for the accuracy of TCFD/IFRS S2/CSRD reported data?',
+ ctx:'Following SEC climate rule and CSRD enforcement trends, personal liability for climate disclosure accuracy is now a board-level risk. Sign-off chain documentation is critical.'},
+{id:'S02-Q09',sec:'S02',sev:'HIGH',mat:'MEDIUM',pil:'governance',w:2,
+ fw:['TCFD','CSRD','ECB','NGFS'],
+ text:'Is there an independent function — internal audit, risk committee, or external reviewer — that formally challenges climate risk assessments and disclosure processes?',
+ ctx:'Independence from the sustainability function is essential. Climate risk should face the same challenge scrutiny as financial risk, with findings reported directly to audit committee.'},
+{id:'S02-Q10',sec:'S02',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','IFRS S2','EU Taxonomy'],
+ text:'Is climate risk formally assessed in M&A due diligence and capital allocation committee decisions, with documented climate-adjusted financial modeling?',
+ ctx:'Post-acquisition climate liability is an emerging credit risk. Acquirers who skip climate DD on high-carbon targets face material balance sheet surprises within 24 months.'},
+{id:'S02-Q11',sec:'S02',sev:'MEDIUM',mat:'MEDIUM',pil:'governance',w:1,
+ fw:['TCFD','SBTi','CSRD'],
+ text:'Does the entity engage external climate advisors, independent scientists, or NGO experts to formally challenge internal climate risk assessments and validate transition plans?',
+ ctx:'External challenge provides credibility and defends against greenwashing allegations. Science-based external validation is viewed favorably by institutional investors and regulators.'},
+{id:'S02-Q12',sec:'S02',sev:'LOW',mat:'LOW',pil:'governance',w:1,
+ fw:['TCFD','UNGC','CSRD'],
+ text:'Does the entity engage regulators and policymakers on climate risk frameworks, contributing to net-zero policy design and transition finance standards?',
+ ctx:'Policy engagement signals institutional seriousness. Contribution to IFRS S2 consultations, NGFS working groups, or national climate policy forums is positive indicator.'},
+{id:'S02-Q13',sec:'S02',sev:'HIGH',mat:'HIGH',pil:'governance',w:2,
+ fw:['TCFD','IFRS S2','CSRD'],
+ text:'Is there a formally documented climate risk committee charter with defined scope, meeting cadence, decision rights, and reporting lines to the full board?',
+ ctx:'Committee charter must distinguish between sustainability committee (ESG reporting) and risk committee (material climate financial risk). Conflation is a governance weakness.'},
+{id:'S02-Q14',sec:'S02',sev:'MEDIUM',mat:'MEDIUM',pil:'governance',w:1,
+ fw:['TCFD','CSRD','GRI 2'],
+ text:'Has the board conducted a formal self-assessment of its collective climate literacy, identifying gaps and commissioning targeted development programs?',
+ ctx:'Climate literacy self-assessment is now expected in CSRD governance disclosures. Boards that have never tested collective competency face credibility questions from institutional investors.'},
+
+/* ══════ S03: CLIMATE STRATEGY ══════ */
+{id:'S03-Q01',sec:'S03',sev:'CRITICAL',mat:'HIGH',pil:'strategy',w:3,
+ fw:['TPT','TCFD','IFRS S2','CSRD','SBTi'],
+ text:'Does the entity have a published, board-approved transition plan meeting TPT Disclosure Framework requirements — including financial modeling, interim milestones, and capital allocation plan?',
+ ctx:'TPT framework (UK, now global): disclosure, implementation, and governance. CSRD ESRS E1 requires equivalent. Plans without financial modeling are widely regarded as non-compliant.'},
+{id:'S03-Q02',sec:'S03',sev:'CRITICAL',mat:'HIGH',pil:'strategy',w:3,
+ fw:['SBTi','TCFD','IFRS S2','CSRD','TPT'],
+ text:'Does the entity have a net zero commitment with specific, verifiable interim milestones (2025/2030/2035/2040/2045) and quantified absolute emissions budgets for each checkpoint?',
+ ctx:'SBTi requires near-term (2030) and long-term (NZE year) targets both approved. Commitments without interim milestones are not credible and subject to greenwashing challenge.'},
+{id:'S03-Q03',sec:'S03',sev:'CRITICAL',mat:'HIGH',pil:'strategy',w:3,
+ fw:['TCFD','NGFS','IFRS S2','CSRD ESRS E1'],
+ text:'Has the entity quantified the financial impact on its core business model under an orderly 1.5°C transition scenario AND under a 4°C physical risk scenario, with results disclosed in financial filings?',
+ ctx:'IFRS S2.22: quantitative scenario analysis required where reasonably practicable. Qualitative-only analysis is increasingly rejected by institutional investors and auditors.'},
+{id:'S03-Q04',sec:'S03',sev:'CRITICAL',mat:'HIGH',pil:'strategy',w:3,
+ fw:['TCFD','NGFS','IFRS S2','EU Taxonomy'],
+ text:'Has the entity identified assets at material stranding risk under any NGFS scenario before 2040 and produced a credible, time-bound divestment or repurposing plan?',
+ ctx:'Stranded asset disclosure is IFRS S2 material. Unrecognized stranded risk on balance sheet is a key red flag for institutional investors and credit analysts.'},
+{id:'S03-Q05',sec:'S03',sev:'CRITICAL',mat:'HIGH',pil:'strategy',w:3,
+ fw:['SBTi','TCFD','TPT','IFRS S2','CSRD'],
+ text:'Has the entity analyzed its current and committed capex pipeline against a 1.5°C carbon budget, identifying the volume of carbon lock-in beyond 2030 created by approved projects?',
+ ctx:'Carbon lock-in analysis is a TPT requirement. Committed capex that creates emissions inconsistent with SBTi near-term targets represents a material contradiction in transition planning.'},
+{id:'S03-Q06',sec:'S03',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['SBTi','PACTA','TCFD','NGFS','TPT'],
+ text:'Has the entity completed a Paris Alignment assessment covering its full asset base or loan book, using a recognized methodology (PACTA, SBTi SDA, or equivalent tool)?',
+ ctx:'Portfolio Alignment Temperature (PAT) is now standard investor due diligence. Entities without a Paris alignment score face increasing difficulty accessing sustainability-linked finance.'},
+{id:'S03-Q07',sec:'S03',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','IFRS S2','CSRD','TPT'],
+ text:'Is climate strategy formally integrated into the corporate strategic planning cycle — informing board-level strategic decisions — rather than existing as a standalone sustainability plan?',
+ ctx:'Strategic integration means climate scenarios appear in board papers alongside financial scenarios, and climate-adjusted projections are included in investor presentations.'},
+{id:'S03-Q08',sec:'S03',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','TPT','EU Taxonomy'],
+ text:'Does the entity have a technology transition roadmap with identified capital requirements, TRL assessments for critical technologies, and defined timeline milestones through 2040?',
+ ctx:'Technology readiness assessment prevents transition plans based on unproven technology. Investors scrutinize roadmaps for dependence on technologies at TRL <6 without backup plans.'},
+{id:'S03-Q09',sec:'S03',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['EU Taxonomy','ICMA','SFDR','CSRD','TPT'],
+ text:'Does the entity have an active green or sustainable finance strategy — green bonds, SLBs, sustainability-linked loans — with use-of-proceeds frameworks aligned to EU Taxonomy or ICMA principles?',
+ ctx:'Access to green capital markets at reduced cost requires credible frameworks. SLBs with weak KPIs face investor challenge and potential reputational risk on failure to achieve targets.'},
+{id:'S03-Q10',sec:'S03',sev:'MEDIUM',mat:'MEDIUM',pil:'strategy',w:1,
+ fw:['TPT','CSRD ESRS S1','GRI 401','ILO','UNGC'],
+ text:'Does the entity have a documented just transition plan addressing workforce redeployment, community impacts, and supply chain social implications of its net-zero strategy?',
+ ctx:'TPT requires just transition disclosure. Entities closing carbon-intensive facilities without just transition plans face increasing regulatory and reputational pressure.'},
+{id:'S03-Q11',sec:'S03',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','UNGC','SBTi','CDP'],
+ text:'Are the entity\'s policy advocacy positions — direct or through trade associations — fully consistent with its stated net-zero commitments and SBTi targets, with no contradictory lobbying?',
+ ctx:'InfluenceMap tracks corporate lobbying vs. stated climate positions. Misalignment is a major red flag for institutional investors and triggers VCMI integrity challenge.'},
+{id:'S03-Q12',sec:'S03',sev:'MEDIUM',mat:'MEDIUM',pil:'strategy',w:1,
+ fw:['TCFD','IFRS S2','CSRD'],
+ text:'Is the climate strategy formally reviewed and updated at least annually to reflect IPCC AR6 updates, new NGFS scenario releases, and evolving regulatory requirements?',
+ ctx:'Static climate strategies rapidly become non-compliant. Annual review should be board-approved with documented changelog showing how new scientific evidence changed strategic assumptions.'},
+{id:'S03-Q13',sec:'S03',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','NGFS','IFRS S2','SBTi'],
+ text:'Has the entity modeled and disclosed the specific revenue and margin impact of a 1.5°C transition scenario on its top-3 products or business lines through 2030 and 2040?',
+ ctx:'Revenue-level granularity in climate scenario analysis distinguishes institutional-grade disclosure from generic corporate reporting. Investors need business-line specificity for capital allocation.'},
+
+/* ══════ S04: FINANCIAL MATERIALITY ══════ */
+{id:'S04-Q01',sec:'S04',sev:'CRITICAL',mat:'HIGH',pil:'financial',w:3,
+ fw:['TCFD','IFRS S2','CSRD','SEC'],
+ text:'Has the entity completed a quantified climate risk financial materiality assessment with monetized impact estimates (P&L, balance sheet, cash flow) under multiple scenarios for short, medium, and long-term horizons?',
+ ctx:'IFRS S2 requires monetized impact. "Climate risk is material but unquantifiable" is no longer accepted. Minimum: P&L sensitivity at $50, $100, $200/tCO2e carbon prices.'},
+{id:'S04-Q02',sec:'S04',sev:'CRITICAL',mat:'HIGH',pil:'financial',w:3,
+ fw:['IFRS S2','IASB','TCFD','SEC','CSRD'],
+ text:'Is climate risk explicitly reflected and disclosed in financial statements — including going concern assessments, asset impairment tests, and provision calculations?',
+ ctx:'IASB confirmed climate is relevant to existing IFRS standards. Auditors are now required to challenge boards on climate in going concern. Absence is an audit qualification risk.'},
+{id:'S04-Q03',sec:'S04',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','SBTi','IFRS S2','TPT'],
+ text:'Does the entity apply an internal carbon price to all major capital allocation decisions, calibrated to a credible future carbon price pathway and regularly updated?',
+ ctx:'Best practice: shadow carbon price rising from $65/tCO2e (2025) to $200+/tCO2e (2050). Used in investment IRR calculations; projects failing above $150/tCO2e are escalated.'},
+{id:'S04-Q04',sec:'S04',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['IFRS S2','IASB','TCFD'],
+ text:'Has the entity recognized or provisioned for stranded asset risk on its balance sheet for assets with material climate-related impairment risk before end of their useful life?',
+ ctx:'IFRS IAS 36 impairment testing must incorporate climate scenarios. Assets in high-carbon sectors with useful lives extending beyond 2035 face scrutiny from auditors and regulators.'},
+{id:'S04-Q05',sec:'S04',sev:'CRITICAL',mat:'HIGH',pil:'transition',w:3,
+ fw:['TCFD','IFRS S2','EU Taxonomy','SBTi'],
+ text:'Has the entity quantified what percentage of current revenue comes from activities facing material demand destruction under a 1.5°C scenario within the next 10 years?',
+ ctx:'Revenue-at-risk metric is central to IFRS S2 materiality assessment. Threshold: >20% of revenue at risk = material. Institutional investors price this risk at significant discount.'},
+{id:'S04-Q06',sec:'S04',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','IFRS S2','NGFS'],
+ text:'Does the entity\'s insurance portfolio adequately cover quantified physical climate risks, and has a protection gap analysis comparing insured value to modeled risk been completed?',
+ ctx:'Insurance coverage gaps are growing as insurers withdraw from high-risk zones. Uninsured climate exposure above 5% of asset value is a credit-relevant risk disclosure.'},
+{id:'S04-Q07',sec:'S04',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','NGFS','PCAF','ECB'],
+ text:'Has the entity assessed the impact of climate risk on its cost of capital, including potential credit rating downgrade risk, green premium benefits, and brown discount implications?',
+ ctx:'Climate-differentiated cost of capital is now measurable. S&P, Moody\'s, and Fitch all incorporate climate risk into rating methodologies. Quantify the spread impact.'},
+{id:'S04-Q08',sec:'S04',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['EU Taxonomy','TCFD','SBTi','TPT','SFDR'],
+ text:'What percentage of annual capex is directed toward activities aligned with a 1.5°C scenario or classified as green or enabling under EU Taxonomy, and is this ratio improving year-on-year?',
+ ctx:'EU Taxonomy CapEx KPI is mandatory for large EU companies. Investors use green capex ratio to assess transition credibility. <10% green capex in a high-carbon sector is a concern.'},
+{id:'S04-Q09',sec:'S04',sev:'MEDIUM',mat:'HIGH',pil:'financial',w:2,
+ fw:['ICMA','LMA','EU Green Bond Standard'],
+ text:'Do any existing debt facilities or credit agreements contain climate-linked covenants, KPI ratchets, or sustainability pricing mechanisms tied to verifiable climate metrics?',
+ ctx:'SLBs and SLLs with robust KPIs provide market credibility and cost-of-capital benefits. Entities without sustainability pricing in debt miss an opportunity and signal weak commitment.'},
+{id:'S04-Q10',sec:'S04',sev:'MEDIUM',mat:'HIGH',pil:'financial',w:1,
+ fw:['IFRS S2','IASB','CSRD'],
+ text:'Has the entity assessed potential deferred tax liabilities arising from anticipated climate regulation such as carbon pricing, mandatory efficiency standards, or EU Taxonomy misalignment?',
+ ctx:'Carbon price escalation creates deferred tax risk for carbon-intensive assets. Tax advisors and auditors are now screening for climate-linked tax provisions in large accounts.'},
+
+/* ══════ S05: PHYSICAL CLIMATE RISK ══════ */
+{id:'S05-Q01',sec:'S05',sev:'CRITICAL',mat:'HIGH',pil:'physical',w:3,
+ fw:['TCFD','IFRS S2','NGFS','CSRD ESRS E1','IPCC'],
+ text:'Has the entity completed an asset-level physical climate risk assessment using CMIP6 climate model data for all material assets, covering both 2030 and 2050 horizons under SSP2-4.5 and SSP5-8.5?',
+ ctx:'NGFS OECE Scenario Analysis Guide mandates asset-level physical risk quantification. Portfolio-level averages are insufficient for TCFD/IFRS S2. Asset-specific coordinates required.'},
+{id:'S05-Q02',sec:'S05',sev:'CRITICAL',mat:'HIGH',pil:'physical',w:3,
+ fw:['TCFD','NGFS','IFRS S2','WRI Aqueduct'],
+ text:'Has the entity identified all assets exposed to high or extreme acute physical risk events (1-in-50-year flood, Category 4+ cyclone, extreme wildfire) and quantified the total financial exposure?',
+ ctx:'Acute risk quantification minimum: replacement cost of exposed assets, maximum business interruption cost per event, insurance coverage vs. exposure gap.'},
+{id:'S05-Q03',sec:'S05',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IFRS S2','IPCC','CMIP6','SSP'],
+ text:'Has the entity assessed chronic physical risks — temperature increase impacts on operations, precipitation change effects, and sea-level rise for coastal assets — modeled through 2050?',
+ ctx:'Chronic risks are often underweighted vs. acute events but drive larger long-term value destruction. WBGT analysis for workforce, drought risk for water-intensive operations.'},
+{id:'S05-Q04',sec:'S05',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IPCC','IFRS S2'],
+ text:'What percentage of revenue is generated in geographies rated HIGH or EXTREME physical climate risk under NGFS or IPCC AR6 RCP 8.5 scenario by 2040?',
+ ctx:'Revenue geography overlay with climate risk scores is a standard institutional investor screen. >30% revenue from extreme-risk geographies triggers enhanced due diligence.'},
+{id:'S05-Q05',sec:'S05',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','CSRD ESRS E1'],
+ text:'Does the entity depend on third-party critical infrastructure (ports, power grids, roads, water supply) in high physical climate risk zones, and has a dependency assessment been completed?',
+ ctx:'Infrastructure cascade failure is an underestimated physical risk. A single climate-disrupted port or substation can halt operations. Map and quantify all critical infrastructure dependencies.'},
+{id:'S05-Q06',sec:'S05',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['CDP Water','WRI Aqueduct','TNFD','GRI 303','IFRS S2'],
+ text:'Has the entity assessed water stress exposure at each facility using WRI Aqueduct 4.0 or equivalent, with financial impact quantified for water scarcity scenarios at 2030 and 2050?',
+ ctx:'WRI Aqueduct Baseline Water Stress score >3 = High Risk. Financial impact minimum: water rationing cost, process efficiency loss, compliance cost, and production curtailment value.'},
+{id:'S05-Q07',sec:'S05',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity modeled business interruption scenarios for key facilities from physical climate events, with quantified maximum tolerable downtime and documented financial impact?',
+ ctx:'BI scenarios should cover at minimum: 5-day, 30-day, and 90-day disruption from flood/storm/heat. Maximum tolerable interruption linked to customer contracts and credit covenants.'},
+{id:'S05-Q08',sec:'S05',sev:'HIGH',mat:'HIGH',pil:'supply_chain',w:2,
+ fw:['TCFD','CSRD ESRS E1','GRI 308'],
+ text:'Has the entity assessed physical climate risk in its critical supply chain and logistics network, including supplier facility exposure and transport route vulnerability?',
+ ctx:'Supply chain physical risk extends the entity\'s own physical exposure by 3–5x in many sectors. CDP Supply Chain module maps supplier facility risks.'},
+{id:'S05-Q09',sec:'S05',sev:'MEDIUM',mat:'MEDIUM',pil:'physical',w:1,
+ fw:['TNFD','CSRD ESRS E4','TCFD','CBD'],
+ text:'Has the entity assessed how physical climate change amplifies biodiversity and ecosystem service loss at operating locations, creating additional operational risk?',
+ ctx:'Climate-biodiversity nexus: coral bleaching threatens coastal protection, forest die-off increases flood risk, wetland loss eliminates water filtration. Compounding risk is underreported.'},
+{id:'S05-Q10',sec:'S05',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','IFRS S2','NGFS','IASB'],
+ text:'Has the entity engaged specialist climate risk assessors to produce climate-adjusted valuations for high-risk properties and infrastructure assets, reflecting physical risk price adjustments?',
+ ctx:'Climate-adjusted property valuations are moving from best practice to standard requirement. JLL, Cushman & Wakefield, and specialized firms provide IPCC-aligned property risk models.'},
+{id:'S05-Q11',sec:'S05',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity analyzed cascade failure risk — where a single physical climate event disrupts multiple interconnected assets or systems simultaneously — and modeled worst-case financial exposure?',
+ ctx:'2011 Thailand floods created $46B in losses across global supply chains far from the flood zone. Cascade modeling requires network analysis beyond single-asset risk assessment.'},
+
+/* ══════ S06: TRANSITION RISK ══════ */
+{id:'S06-Q01',sec:'S06',sev:'CRITICAL',mat:'HIGH',pil:'transition',w:3,
+ fw:['TCFD','NGFS','IFRS S2','EU ETS','SBTi'],
+ text:'Has the entity modeled the direct P&L impact of a carbon price trajectory reaching $130/tCO2e by 2030 and $250/tCO2e by 2050 (IEA NZE pathway), with EBITDA sensitivity disclosed?',
+ ctx:'IEA NZE pathway carbon price: $130 by 2030, $250 by 2050. NGFS NZ2050: higher. Entities with >5% EBITDA at risk at $130/tCO2e face material transition risk requiring urgent disclosure.'},
+{id:'S06-Q02',sec:'S06',sev:'CRITICAL',mat:'HIGH',pil:'transition',w:3,
+ fw:['TCFD','NGFS','IFRS S2','SBTi'],
+ text:'Has the entity assessed technology disruption risk — the risk that core products or services become obsolete within 10 years due to low-carbon substitution — and quantified the revenue at risk?',
+ ctx:'Classic examples: ICE vehicles vs. EVs, coal power vs. renewables, cement vs. low-carbon alternatives. Revenue-at-risk must be quantified against specific substitution timeline assumptions.'},
+{id:'S06-Q03',sec:'S06',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['TCFD','NGFS','SBTi','IFRS S2'],
+ text:'Has the entity quantified potential demand destruction in its market segments from behavioral shifts, low-carbon substitutes, or regulatory demand-side policies under a 1.5°C scenario?',
+ ctx:'Demand destruction analysis requires sector-specific pathway modeling. NGFS current policies vs. net zero divergence quantifies policy-driven market contraction.'},
+{id:'S06-Q04',sec:'S06',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['TCFD','CSRD','SEC','SFDR'],
+ text:'Has the entity conducted a formal climate litigation exposure assessment covering attribution claims, greenwashing allegations, fiduciary breach claims, and regulatory enforcement risk?',
+ ctx:'Climate litigation reached 2,180+ cases globally (2023). Exposure hotspots: fossil fuel majors, cement, aviation, automotive, financial institutions making net-zero claims.'},
+{id:'S06-Q05',sec:'S06',sev:'CRITICAL',mat:'HIGH',pil:'transition',w:3,
+ fw:['SBTi','TCFD','TPT','EU Taxonomy'],
+ text:'Is there a formal capital allocation screening process preventing new commitments from locking in emissions inconsistent with SBTi near-term (2030) targets?',
+ ctx:'Carbon lock-in screening: every new capex item above a materiality threshold ($1M or 0.5% of capex budget) must be assessed against 1.5°C carbon budget before approval.'},
+{id:'S06-Q06',sec:'S06',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['EU CBAM','TCFD','CSRD','EU ETS'],
+ text:'Has the entity quantified its exposure to the EU Carbon Border Adjustment Mechanism (CBAM) for imports of steel, cement, aluminium, fertilizers, hydrogen, and electricity?',
+ ctx:'CBAM applies from 2026 at full cost. Embedded carbon in CBAM-covered products must be calculated per EU CBAM Regulation requirements. Creates quantified import cost liability.'},
+{id:'S06-Q07',sec:'S06',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['TCFD','NGFS','SBTi'],
+ text:'Has the entity modeled its competitive market position under a scenario where transition accelerates beyond current policy assumptions (e.g., carbon price tripling by 2027 from unexpected policy action)?',
+ ctx:'Disorderly transition scenarios (NGFS "Divergent Net Zero") are designed to stress-test businesses that are positioned for a gradual transition but face sudden acceleration.'},
+{id:'S06-Q08',sec:'S06',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['TCFD','NGFS','IFRS S2','EU Taxonomy'],
+ text:'Has the entity quantified the book value of assets at risk of stranding under the NGFS Net Zero 2050 scenario, expressed as a percentage of total asset value?',
+ ctx:'Stranded asset disclosure threshold: >10% of total assets at stranding risk under NZ2050 is material. Institutional investors exclude or discount entities with unaddressed stranded risk.'},
+{id:'S06-Q09',sec:'S06',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['TCFD','NGFS','IFRS S2','CSRD'],
+ text:'Has the entity modeled the operational cost impact of major policy scenarios including carbon price increases, fossil fuel subsidy removal, mandatory energy efficiency standards, and green building codes?',
+ ctx:'Policy scenario modeling must cover at minimum: $150/tCO2e carbon price, 25% fossil fuel subsidy removal, EU energy efficiency Directive requirements, and sectoral phase-out timelines.'},
+{id:'S06-Q10',sec:'S06',sev:'HIGH',mat:'MEDIUM',pil:'supply_chain',w:2,
+ fw:['TCFD','CSRD ESRS E1','SBTi','GRI 308'],
+ text:'Has the entity assessed transition risk in its critical supply chain — specifically, suppliers\' carbon pricing exposure and ability to survive an accelerated low-carbon transition?',
+ ctx:'Supplier transition risk creates concentration risk. A key supplier going bankrupt due to carbon costs or losing market share to green competitors creates supply chain fragility.'},
+
+/* ══════ S07: CARBON & EMISSIONS ══════ */
+{id:'S07-Q01',sec:'S07',sev:'CRITICAL',mat:'HIGH',pil:'carbon',w:3,
+ fw:['GHG Protocol','ISO 14064','TCFD','IFRS S2','CSRD','GRI 305','SBTi'],
+ text:'Does the entity maintain a complete Scope 1 GHG inventory covering ALL direct emission sources — stationary combustion, mobile combustion, process emissions, and fugitive emissions — with third-party verification?',
+ ctx:'GHG Protocol Corporate Standard completeness requirement. Partial Scope 1 inventories (omitting process or fugitive emissions) systematically understate exposure. Verification level matters.'},
+{id:'S07-Q02',sec:'S07',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['GHG Protocol','TCFD','IFRS S2','GRI 305','SBTi','CSRD'],
+ text:'Does the entity report Scope 2 emissions using BOTH location-based and market-based methods, with renewable energy procurement documented through RECs/GOs/PPAs meeting GHG Protocol T-RECs quality criteria?',
+ ctx:'Market-based Scope 2 is only valid if renewable energy certificates meet GHG Protocol Scope 2 Quality Criteria: no double counting, retired in same period, same grid, vintage ≤1yr.'},
+{id:'S07-Q03',sec:'S07',sev:'CRITICAL',mat:'HIGH',pil:'carbon',w:3,
+ fw:['GHG Protocol','SBTi','TCFD','IFRS S2','CSRD','PCAF','CDP'],
+ text:'Has the entity completed a Scope 3 materiality assessment identifying all relevant GHG Protocol categories out of 15, with quantified estimates for the top-5 material categories?',
+ ctx:'SBTi FLAG and Corporate standards both require Scope 3 materiality: category threshold >40% of Scope 1+2+3 total = mandatory target-setting. Category 11 (use of sold products) most often material.'},
+{id:'S07-Q04',sec:'S07',sev:'CRITICAL',mat:'HIGH',pil:'carbon',w:3,
+ fw:['PCAF','TCFD','NZBA','SBTi FI','IFRS S2','NGFS'],
+ text:'For financial institutions: Has the entity calculated financed emissions for its full loan and investment portfolio using PCAF methodology, with temperature alignment score computed?',
+ ctx:'PCAF Standard covers loans, listed equity, bonds, project finance, real estate, sovereign debt. Portfolio temperature alignment (>2.5°C typical current) vs. 1.5°C target gap must be quantified.'},
+{id:'S07-Q05',sec:'S07',sev:'CRITICAL',mat:'HIGH',pil:'carbon',w:3,
+ fw:['SBTi','TCFD','IFRS S2','CSRD','GRI 305'],
+ text:'Is the entity\'s absolute Scope 1+2+3 emissions trajectory demonstrably aligned with its SBTi-approved science-based targets — through actual reduction, not primarily offset purchasing?',
+ ctx:'SBTi VCMI: no more than 10% of near-term targets can be met through offsets. If absolute emissions are flat or rising while net-zero claims persist, this is the primary greenwashing indicator.'},
+{id:'S07-Q06',sec:'S07',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['VCMI','ICVCM','Gold Standard','VCS','SBTi','TCFD'],
+ text:'Are all carbon offsets purchased compliant with ICVCM Core Carbon Principles — with verified additionality, permanence, no double counting, and minimum vintage requirements?',
+ ctx:'ICVCM CCPs (2023) are the new institutional standard for offset integrity. Avoidance-only offsets, old vintages (>5yr), and non-additional credits are rejected by VCMI Claims Code.'},
+{id:'S07-Q07',sec:'S07',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['GHG Protocol','TCFD','SBTi','VCMI'],
+ text:'If the entity makes "avoided emissions" claims, are these calculated using a credible sector-specific counterfactual methodology, with independent verification and public methodology disclosure?',
+ ctx:'Avoided emissions claims are among the most scrutinized and disputed in climate accounting. GHG Protocol mitigation goal standard is the only widely accepted methodology.'},
+{id:'S07-Q08',sec:'S07',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['GHG Protocol','GRI 305','CSRD','TCFD','IFRS S2'],
+ text:'Does the entity separately measure, report, and set reduction targets for methane (CH4), nitrous oxide (N2O), and high-GWP F-gases where these are material beyond aggregated CO2-equivalent totals?',
+ ctx:'Methane\'s 20-yr GWP of 82.5x CO2 makes disaggregated reporting essential for agriculture, oil/gas, and chemical sectors. Aggregated CO2e reporting masks methane intensity risk.'},
+{id:'S07-Q09',sec:'S07',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['GHG Protocol','SBTi','TCFD','GRI 305','CSRD'],
+ text:'Does the entity report both absolute emissions AND intensity-normalized metrics, with clear evidence that absolute emissions are declining — not merely intensity improvements masking absolute growth?',
+ ctx:'Decoupling check: if revenue grows 20% and emissions intensity falls 10%, absolute emissions still rise 8%. SBTi requires absolute reductions, not intensity targets for most sectors.'},
+{id:'S07-Q10',sec:'S07',sev:'HIGH',mat:'MEDIUM',pil:'carbon',w:2,
+ fw:['GHG Protocol','TCFD','IFRS S2','GRI 305'],
+ text:'Is the organizational boundary for GHG accounting consistent with the financial consolidation boundary, with any deviations formally documented and rationale disclosed?',
+ ctx:'Boundary mismatches are a known manipulation risk — excluding high-emission subsidiaries from GHG reporting while consolidating their revenue. Auditors and investors now cross-check boundaries.'},
+{id:'S07-Q11',sec:'S07',sev:'MEDIUM',mat:'HIGH',pil:'carbon',w:2,
+ fw:['GHG Protocol','ISO 14067','TCFD','SBTi','CSRD'],
+ text:'Has the entity completed lifecycle carbon assessments for its top-5 products or services, disclosing embedded carbon content and enabling customer Scope 3 Category 1 calculations?',
+ ctx:'Product-level LCAs are increasingly required by industrial customers conducting their own Scope 3 accounting. ISO 14067:2018 is the standard. B2B sectors face increasing buyer pressure.'},
+{id:'S07-Q12',sec:'S07',sev:'MEDIUM',mat:'MEDIUM',pil:'carbon',w:1,
+ fw:['GHG Protocol','TNFD','CSRD ESRS E4','VCMI'],
+ text:'Does the entity own or manage land-based carbon sinks (forests, wetlands, agricultural soils) formally measured and included in net emissions accounting with verified permanence and no double counting?',
+ ctx:'NbS carbon accounting must comply with GHG Protocol Land Sector and Removals Guidance. Unverified natural carbon claims are the highest-risk greenwashing category in 2024–2025.'},
+{id:'S07-Q13',sec:'S07',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['TCFD','SBTi','NGFS','IFRS S2','TPT'],
+ text:'Is the internal carbon price used for capital allocation formally calibrated to a recognized future carbon price pathway (World Bank HLPCP, NGFS, IEA), with public disclosure of the methodology?',
+ ctx:'IEA NZE pathway: $130/tCO2e by 2030 in advanced economies. NGFS NZ2050 even higher. An internal price below $65/tCO2e in 2025 is increasingly regarded as inadequate for transition planning.'},
+{id:'S07-Q14',sec:'S07',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['TCFD','SBTi','EU Taxonomy','TPT'],
+ text:'What percentage of annual capital expenditure is specifically directed toward verified emissions reduction projects, and is this proportion consistent with the pace of reduction required to meet SBTi near-term targets?',
+ ctx:'Decarbonization capex adequacy check: target a minimum 1.5°C-consistent annual emissions reduction rate (typically 4–7% p.a. for most sectors) and back-calculate required investment.'},
+{id:'S07-Q15',sec:'S07',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['SBTi','GHG Protocol','VCMI','TCFD'],
+ text:'Are the entity\'s publicly stated emission reduction commitments (net-zero, carbon neutral) backed by internal data that is consistent with and reflects the same reduction rate shown in externally verified reports?',
+ ctx:'Internal vs. external consistency check is a primary auditor test under CSRD and IFRS S2. Discrepancies between board presentations and verified reports trigger material misstatement risk.'},
+{id:'S07-Q16',sec:'S07',sev:'CRITICAL',mat:'HIGH',pil:'carbon',w:3,
+ fw:['SBTi','TPT','TCFD','IFRS S2','CSRD'],
+ text:'Are absolute Scope 1+2 emissions demonstrably locked in to decline at a rate consistent with the entity\'s near-term SBTi target through 2030, with specific reduction measures identified and budgeted?',
+ ctx:'Near-term lock-in analysis: map each year from 2025 to 2030 with specific reduction measures (renewable energy, efficiency, fuel switching) and their verified emission reduction contributions.'},
+
+/* ══════ S08: SUPPLY CHAIN ══════ */
+{id:'S08-Q01',sec:'S08',sev:'HIGH',mat:'HIGH',pil:'supply_chain',w:2,
+ fw:['TCFD','CSRD ESRS E1','GRI 308','SBTi','CDP Supply Chain'],
+ text:'Has the entity completed a climate risk assessment covering all Tier 1 suppliers and at least 50% of Tier 2 suppliers by spend value, covering both physical and transition risk?',
+ ctx:'CDP Supply Chain module covers supplier-level physical and transition risk. SBTi requires engagement with suppliers representing 67% of Scope 3 Category 1 emissions.'},
+{id:'S08-Q02',sec:'S08',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['GHG Protocol','CDP Supply Chain','CSRD','SBTi','GRI 308'],
+ text:'Does the entity collect verified Scope 1 and 2 emissions data from suppliers representing at least 67% of its Scope 3 Category 1 (purchased goods and services) emissions?',
+ ctx:'Supplier emissions data quality is the primary bottleneck in Scope 3 accuracy. Spend-based estimation is inadequate for SBTi near-term target compliance. Supplier engagement essential.'},
+{id:'S08-Q03',sec:'S08',sev:'HIGH',mat:'HIGH',pil:'supply_chain',w:2,
+ fw:['TCFD','NGFS','CSRD ESRS E1'],
+ text:'Does the entity have single-source supplier dependencies for critical inputs in regions rated HIGH or EXTREME physical climate risk (flood, drought, heat) under 2040 scenarios?',
+ ctx:'Single-source concentration in climate-vulnerable regions is a critical supply chain fragility. Map: input material → sole supplier → facility location → IPCC AR6 physical risk rating.'},
+{id:'S08-Q04',sec:'S08',sev:'HIGH',mat:'MEDIUM',pil:'supply_chain',w:2,
+ fw:['SBTi','TCFD','CDP Supply Chain','GRI 308','CSRD ESRS G1'],
+ text:'Does the entity enforce climate-linked procurement standards across its supplier base — with minimum requirements for climate assessments, emissions targets, or certification — backed by contractual consequences?',
+ ctx:'Procurement standards without enforcement mechanisms have no climate impact. Evidence of contract terminations or non-renewal due to climate non-compliance is the credibility test.'},
+{id:'S08-Q05',sec:'S08',sev:'HIGH',mat:'HIGH',pil:'supply_chain',w:2,
+ fw:['TCFD','NGFS','ISO 22301','IFRS S2'],
+ text:'Has the entity modeled supply chain disruption scenarios from physical climate events, with quantified maximum tolerable downtime, recovery time objectives, and alternative sourcing strategies?',
+ ctx:'Supply chain BCP for climate events: model 5-day, 30-day, 90-day disruption impacts per critical input. Calculate revenue loss, cost of alternative sourcing, and customer contract breach risk.'},
+{id:'S08-Q06',sec:'S08',sev:'HIGH',mat:'HIGH',pil:'supply_chain',w:2,
+ fw:['TCFD','EU CRM Act','NGFS','CSRD'],
+ text:'Has the entity assessed climate-related supply risk for critical raw materials — including rare earths, agricultural inputs, water-intensive chemicals — under scenarios where climate stress disrupts production regions?',
+ ctx:'EU Critical Raw Materials Act identifies 34 strategic materials. Climate disruption of production regions (lithium in South America water-stressed zones, cobalt in DRC flood zones) creates severe exposure.'},
+{id:'S08-Q07',sec:'S08',sev:'HIGH',mat:'HIGH',pil:'supply_chain',w:2,
+ fw:['TNFD','EU Deforestation Regulation','CSRD ESRS E4','GRI 304'],
+ text:'Has the entity completed a supply chain deforestation risk assessment aligned with EUDR requirements, with traceable sourcing for high-risk commodities (soy, palm oil, cattle, timber, cocoa, coffee, rubber)?',
+ ctx:'EU Deforestation Regulation (Dec 2025 enforcement): operators must provide geolocation data proving commodity sourcing from non-deforested land. Non-compliance = product market ban in EU.'},
+{id:'S08-Q08',sec:'S08',sev:'MEDIUM',mat:'MEDIUM',pil:'supply_chain',w:1,
+ fw:['TCFD','SBTi','CDP Supply Chain','CSRD'],
+ text:'Do supplier contracts for the top 50 suppliers by spend contain specific, enforceable climate requirements — emissions targets, assessment obligations, or certification standards?',
+ ctx:'Contractual climate requirements are increasingly standard in automotive, retail, and technology sectors. Without enforceable terms, supplier engagement claims lack credibility.'},
+{id:'S08-Q09',sec:'S08',sev:'HIGH',mat:'HIGH',pil:'supply_chain',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity assessed climate vulnerability of its logistics network — ports, road routes, rail links, air corridors — and modeled cost and time impacts from climate-related disruption?',
+ ctx:'Logistics climate risk: port flooding (sea level + storm surge), road temperature buckling, rail heat-related speed restrictions, air cargo disruption from temperature extremes.'},
+{id:'S08-Q10',sec:'S08',sev:'MEDIUM',mat:'MEDIUM',pil:'supply_chain',w:1,
+ fw:['TCFD','NGFS'],
+ text:'Has the entity shifted from a pure just-in-time inventory model to a climate-resilience-informed inventory strategy for critical inputs, with documented buffer stock rationale?',
+ ctx:'Post-COVID supply chain disruptions accelerated inventory resilience strategies. Climate scenarios suggest similar disruption patterns. Buffer stock cost vs. disruption value is a manageable calculation.'},
+
+/* ══════ S09: ENERGY SYSTEMS ══════ */
+{id:'S09-Q01',sec:'S09',sev:'HIGH',mat:'HIGH',pil:'carbon',w:2,
+ fw:['RE100','SBTi','EU Taxonomy','GRI 302','CSRD','BRSR'],
+ text:'What is the current renewable energy share in total electricity consumption, and is the entity on track to achieve 100% renewable electricity by 2030 (RE100 standard)?',
+ ctx:'RE100 is the institutional investor benchmark for electricity. <50% renewable share in 2025 for a company with a 2030 commitment signals insufficient pace of progress.'},
+{id:'S09-Q02',sec:'S09',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity assessed dependency on grid electricity in jurisdictions where energy systems face HIGH climate risk — drought-stressed hydro, heat-stressed thermal plants, storm-vulnerable networks?',
+ ctx:'Energy system climate risk: Brazilian drought (hydro), California heat wave (grid reliability), Pakistani floods (power infrastructure). Grid outage from climate events is an acute physical risk.'},
+{id:'S09-Q03',sec:'S09',sev:'MEDIUM',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','ISO 50001'],
+ text:'Does the entity have on-site backup energy generation — battery storage, distributed solar, emergency backup — sufficient to maintain critical operations for a minimum 72-hour grid outage?',
+ ctx:'72-hour self-sufficiency is an emerging minimum standard for critical operations. Data centers, hospitals, manufacturing and financial processing require quantified resilience specification.'},
+{id:'S09-Q04',sec:'S09',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity modeled P&L sensitivity to energy price scenarios including carbon pricing on energy inputs, and implemented hedging strategies for material energy price exposures?',
+ ctx:'Energy price hedging strategy: forward contracts for power, gas price sensitivity analysis at $50/$100/$200/MWh, and renewable PPA as structural price hedge against carbon costs.'},
+{id:'S09-Q05',sec:'S09',sev:'MEDIUM',mat:'MEDIUM',pil:'carbon',w:1,
+ fw:['ISO 50001','GRI 302','EU EED','SBTi','BRSR'],
+ text:'Does the entity have a documented energy efficiency investment program with verified savings tracked against ISO 50001 or equivalent, with intensity improvement targets aligned to SBTi requirements?',
+ ctx:'ISO 50001 EnMS provides the management system foundation. Energy efficiency programs typically deliver 10–25% Scope 1+2 reduction at positive NPV — lowest-hanging decarbonization opportunity.'},
+{id:'S09-Q06',sec:'S09',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['SBTi','TCFD','TPT','EU Taxonomy'],
+ text:'Has the entity mapped remaining contract terms for all fossil fuel supply agreements and identified energy capex creating carbon lock-in beyond 2035?',
+ ctx:'Energy lock-in mapping: natural gas supply contracts, coal supply agreements, oil offtake terms, fossil fuel boiler/furnace capex. Any >2035 lock-in creates SBTi target conflict.'},
+{id:'S09-Q07',sec:'S09',sev:'MEDIUM',mat:'MEDIUM',pil:'carbon',w:1,
+ fw:['RE100','EU Taxonomy','SBTi','GRI 302'],
+ text:'Does the entity hold Power Purchase Agreements or equivalent clean energy contracts securing renewable energy supply through 2040, diversified across technologies and geographies?',
+ ctx:'PPA diversification reduces technology concentration risk and geographic curtailment risk. Long-term PPAs provide price certainty against carbon cost escalation and lock in green credentials.'},
+{id:'S09-Q08',sec:'S09',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity assessed operational vulnerability of critical process utilities — cooling water, process steam, compressed air — to temperature extremes, drought conditions, and energy supply disruption?',
+ ctx:'Process utility failure from climate stress can halt manufacturing entirely. WBGT thresholds for cooling tower performance, drought-related water intake restrictions, and heat-stressed compressors.'},
+
+/* ══════ S10: WATER & BIODIVERSITY ══════ */
+{id:'S10-Q01',sec:'S10',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['CDP Water','WRI Aqueduct','TNFD','GRI 303','IFRS S2','CSRD ESRS E3'],
+ text:'Has the entity mapped water withdrawal at facility level against WRI Aqueduct 4.0 water stress scores, with financial exposure from water scarcity scenarios quantified at 2030 and 2050?',
+ ctx:'WRI Aqueduct Baseline Water Stress >3 (High) covers 4B people. Facility-level mapping identifies specific operational vulnerability. Financial impact: water rationing cost + production loss.'},
+{id:'S10-Q02',sec:'S10',sev:'MEDIUM',mat:'MEDIUM',pil:'physical',w:1,
+ fw:['CDP Water','GRI 303','EU Taxonomy','BRSR','CSRD'],
+ text:'What is the entity\'s water recycling rate across operations, and are there facility-level water recycling intensity improvement targets scaled to local water scarcity risk?',
+ ctx:'Recycling targets in water-stressed regions should be significantly more ambitious than in water-abundant regions. Zero Liquid Discharge (ZLD) is best practice in extreme stress zones.'},
+{id:'S10-Q03',sec:'S10',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TNFD','CSRD ESRS E4','CBD','SBTN','GRI 304'],
+ text:'Has the entity completed a biodiversity footprint assessment using the TNFD LEAP approach — covering Locate, Evaluate, Assess, Prepare — for all direct operations and critical supply chain?',
+ ctx:'TNFD LEAP is the institutional standard for nature-related risk disclosure. CSRD ESRS E4 requires equivalent analysis. Financial sector faces specific guidance from central banks on nature-related risk.'},
+{id:'S10-Q04',sec:'S10',sev:'HIGH',mat:'HIGH',pil:'supply_chain',w:2,
+ fw:['TNFD','EU Deforestation Regulation','CSRD ESRS E4','GRI 304'],
+ text:'Has the entity traced and verified supply chain sourcing for high-risk commodities (palm oil, soy, cattle, timber, cocoa, coffee, rubber), confirming zero deforestation and land conversion?',
+ ctx:'EU Deforestation Regulation requires geolocation-level traceability. TNFD requires disclosure of land-use change risk in value chain. Non-traceability = market access risk in EU from Dec 2025.'},
+{id:'S10-Q05',sec:'S10',sev:'HIGH',mat:'MEDIUM',pil:'physical',w:1,
+ fw:['TNFD','CSRD ESRS E4','SBTN','CBD'],
+ text:'Has the entity assessed its dependencies on ecosystem services — pollination, water regulation, soil health, coastal protection, climate regulation — using TNFD ENCORE or equivalent?',
+ ctx:'ENCORE tool maps industry-ecosystem service dependencies. Sectors with high ecosystem service dependency (agriculture, food, forestry, water utilities) face compounding biodiversity + climate risk.'},
+{id:'S10-Q06',sec:'S10',sev:'MEDIUM',mat:'MEDIUM',pil:'physical',w:1,
+ fw:['TNFD','SBTN','VCMI','CSRD ESRS E4'],
+ text:'Does the entity invest in credible nature-based solutions with verified additionality, permanence, and compliance with SBTN and VCMI methodology?',
+ ctx:'NbS investment must comply with SBTN No Net Loss/Net Positive targets for nature. VCMI IPLC safeguards required. Voluntary forest protection without additionality verification is not credible.'},
+{id:'S10-Q07',sec:'S10',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TNFD','CSRD ESRS E4','CBD','IFC PS6','Equator Principles'],
+ text:'Has the entity mapped all operations and supply chain activities within UNESCO World Heritage Sites, Ramsar wetlands, KBA-designated critical habitats, or equivalent protected area zones?',
+ ctx:'IFC Performance Standard 6 prohibits operations in critical habitats without mitigation hierarchy compliance. Equator Principles Principle 6 requires equivalent biodiversity risk assessment.'},
+{id:'S10-Q08',sec:'S10',sev:'MEDIUM',mat:'MEDIUM',pil:'physical',w:1,
+ fw:['TNFD','IPCC','CSRD ESRS E4','TCFD'],
+ text:'Has the entity assessed compound risk from climate change amplifying biodiversity loss at operating locations — coral bleaching, forest die-off, wetland loss, fishery collapse — and quantified operational impact?',
+ ctx:'Climate-biodiversity nexus creates compounding operational risk. Fishery collapse in warming oceans affects seafood sectors; forest die-off reduces water retention affecting manufacturing catchments.'},
+
+/* ══════ S11: SCENARIO STRESS TESTING ══════ */
+{id:'S11-Q01',sec:'S11',sev:'CRITICAL',mat:'HIGH',pil:'strategy',w:3,
+ fw:['NGFS','TCFD','IFRS S2','CSRD','IPCC','ECB'],
+ text:'Does the entity\'s scenario analysis use the full NGFS scenario set (v4.0+) covering all four quadrants — orderly transition, disorderly transition, hot house world, and below 2°C — with documented methodology?',
+ ctx:'NGFS OECE Guide requires all four scenario quadrants. Single-scenario analysis misses transition-physical risk combinations. ECB and PRA supervisory expectations now require full NGFS coverage.'},
+{id:'S11-Q02',sec:'S11',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','IFRS S2','NGFS','ECB'],
+ text:'Are the entity\'s scenario analysis outputs quantitative — P&L impact in monetary terms, asset value changes, NPV adjustments — rather than only qualitative narrative descriptions?',
+ ctx:'IFRS S2.22: quantitative outputs required where reasonably practicable. ECB climate stress tests use quantitative outputs. Qualitative-only analysis is rejected in regulatory submissions.'},
+{id:'S11-Q03',sec:'S11',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','IFRS S2','NGFS','CSRD'],
+ text:'Does the scenario analysis explicitly cover all three TCFD/IFRS S2 time horizons — short-term (<3 years), medium-term (3–10 years), and long-term (>10 years) — with defined trigger events for each horizon?',
+ ctx:'Short-term triggers: regulatory announcements, extreme weather events. Medium-term: technology transitions, carbon price inflection. Long-term: physical climate change, stranded asset crystallization.'},
+{id:'S11-Q04',sec:'S11',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','NGFS','UNEP FI','IFRS S2','MSCI'],
+ text:'Has the entity calculated a Climate Value-at-Risk (Climate VaR) metric for its portfolio or asset base, using a recognized methodology such as MSCI CVaR or UNEP FI portfolio carbon footprinting?',
+ ctx:'Climate VaR quantifies the maximum climate-related financial loss at a given confidence level over a given horizon. Increasingly used by institutional investors to set portfolio limits.'},
+{id:'S11-Q05',sec:'S11',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','NGFS','ECB','IFRS S2','IEA'],
+ text:'Has the entity conducted a carbon price stress test modeling the financial impact at $150, $250, and $500/tCO2e, with EBITDA, asset value, and credit metric impacts quantified at each price point?',
+ ctx:'Three-point carbon price stress test is ECB supervisory standard. $500/tCO2e is not implausible by 2040 under NGFS NZ2050. Entities whose business model fails at $250/tCO2e face existential transition risk.'},
+{id:'S11-Q06',sec:'S11',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','NGFS','IFRS S2','ECB'],
+ text:'Has the entity identified the specific carbon price or physical risk shock level at which its core business model becomes unprofitable, and disclosed this break-even threshold?',
+ ctx:'Break-even analysis is the most investor-relevant output of scenario analysis. "At what carbon price does our core product become uncompetitive?" must be answered with specificity.'},
+{id:'S11-Q07',sec:'S11',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','IFRS S2','CSRD','TPT'],
+ text:'Are climate scenario analysis outputs formally integrated into the corporate strategic planning cycle, with documented board decisions that were influenced by scenario findings in the prior 12 months?',
+ ctx:'Integration test: show a board decision (capex approval, asset disposal, market entry/exit) that was materially influenced by climate scenario findings. Without this, scenario analysis is a reporting exercise only.'},
+{id:'S11-Q08',sec:'S11',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','ECB','NGFS','PRA','ICAAP'],
+ text:'Has the entity conducted reverse stress testing — identifying specific climate events or policy shocks that would threaten organizational viability — with contingency plans documented?',
+ ctx:'Reverse stress testing asks: what scenario would make us unviable? ECB and PRA guidance requires reverse stress testing for banks with climate-sensitive portfolios. Contingency triggers must be pre-defined.'},
+{id:'S11-Q09',sec:'S11',sev:'MEDIUM',mat:'MEDIUM',pil:'strategy',w:1,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Is the scenario analysis methodology updated at least annually to incorporate IPCC AR6 working group updates, NGFS scenario version releases, and evolving regulatory scenario guidance?',
+ ctx:'NGFS released v4 in 2023 with significantly upgraded physical risk modelling. Entities using outdated scenario versions risk underestimating physical risk and providing misleading disclosures.'},
+{id:'S11-Q10',sec:'S11',sev:'MEDIUM',mat:'MEDIUM',pil:'strategy',w:1,
+ fw:['TCFD','IFRS S2','CSRD'],
+ text:'Have the entity\'s climate scenario analysis methodology and outputs been independently validated by a recognized third party — climate consultancy, academic institution, or specialist rating agency?',
+ ctx:'Third-party validation of scenario methodology builds credibility. Moody\'s Analytics, Oliver Wyman, Climate Analytics, and academic climate labs provide recognized validation services.'},
+
+/* ══════ S12: ASSET VULNERABILITY ══════ */
+{id:'S12-Q01',sec:'S12',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','IFRS S2','NGFS','CSRD'],
+ text:'Does the entity maintain a physical asset register with individual climate risk scores (flood, heat, water stress, storm surge) updated at least annually with asset-level risk ratings?',
+ ctx:'Asset register with climate overlay is the data foundation for TCFD physical risk disclosure. Without it, scenario analysis remains generic. Asset coordinates + climate model = asset-level risk.'},
+{id:'S12-Q02',sec:'S12',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IFRS S2','IPCC','CMIP6'],
+ text:'What percentage of total fixed asset book value is located in areas facing 1-in-100-year flood risk or within projected 2-meter sea level rise zones by 2050 under SSP2-4.5?',
+ ctx:'Institutional threshold: >15% of fixed assets in flood/sea level risk zones = material physical risk disclosure. JLL Climate Risk Index and Four Twenty Seven provide asset-level flood risk scores.'},
+{id:'S12-Q03',sec:'S12',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IPCC','IFRS S2','ILO'],
+ text:'Has the entity assessed the productivity loss and adaptation capex required from chronic temperature increase — using WBGT thresholds — at manufacturing and operational sites through 2040?',
+ ctx:'WBGT >28°C degrades labor productivity. IPCC projects large areas of South/Southeast Asia, Sub-Saharan Africa, Middle East exceeding safe working thresholds by 2035–2040 under RCP 4.5.'},
+{id:'S12-Q04',sec:'S12',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','IFRS S2','CSRD','TPT'],
+ text:'Does the entity have a costed, time-bound climate adaptation retrofit plan for assets in high-risk zones — with board approval and integration into the capital allocation plan?',
+ ctx:'Adaptation retrofit capex needs: flood barriers, cooling systems, elevated electrical infrastructure, structural reinforcement. Without a funded plan, high-risk assets represent unmanaged balance sheet exposure.'},
+{id:'S12-Q05',sec:'S12',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'For assets facing existential physical risk — uninsurable locations, below sea-level rise projections — has the entity completed relocation feasibility analysis with timeline and cost estimates?',
+ ctx:'Some assets will become uninsurable within 10–20 years in extreme risk zones (certain Pacific islands, Mumbai coastal areas, Florida Keys). Proactive relocation planning protects asset value.'},
+{id:'S12-Q06',sec:'S12',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['IFRS S2','IASB','TCFD'],
+ text:'Has the entity adjusted asset depreciation schedules and useful life estimates to reflect accelerated obsolescence risk from climate regulation, stranding, or physical climate change?',
+ ctx:'IASB confirmed that climate scenarios are relevant to IAS 16 useful life estimates and IAS 36 impairment testing. Assets with regulatory risk before end of economic life require accelerated depreciation.'},
+{id:'S12-Q07',sec:'S12',sev:'HIGH',mat:'HIGH',pil:'physical',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity mapped interdependencies between its physical assets and external critical infrastructure systems, and modeled cascade failure scenarios from single climate events?',
+ ctx:'2011 Thailand floods: semiconductor manufacturers lost production because water treatment facilities (external infrastructure) failed. Cascade mapping requires network dependency analysis beyond owned assets.'},
+{id:'S12-Q08',sec:'S12',sev:'MEDIUM',mat:'MEDIUM',pil:'physical',w:1,
+ fw:['TCFD','NGFS','ISO 14001'],
+ text:'Does the entity deploy real-time monitoring and early warning systems for climate-related threats at critical assets — flood sensors, temperature alerts, storm tracking, and drought indicators?',
+ ctx:'Real-time climate monitoring enables proactive response. Early warning reduces disruption through pre-positioning of resources, supply chain rerouting, and emergency protocol activation.'},
+
+/* ══════ S13: INSURANCE & CAPITAL ══════ */
+{id:'S13-Q01',sec:'S13',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','IFRS S2','NGFS'],
+ text:'Has the entity conducted a formal insurance adequacy assessment comparing insured value to quantified physical climate risk exposure across all assets, identifying coverage gaps?',
+ ctx:'Insurance adequacy gap analysis: total physical climate risk exposure (modeled) minus total insured replacement value = uninsured climate risk. Must be disclosed as contingent liability.'},
+{id:'S13-Q02',sec:'S13',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity quantified its climate protection gap — uninsured physical climate exposure as percentage of total modeled risk — with a documented plan to reduce this gap?',
+ ctx:'Swiss Re estimates global climate protection gap at 70%+ in emerging markets. Entities in high-risk zones should aim to insure ≥80% of modeled climate exposure or provision for the gap.'},
+{id:'S13-Q03',sec:'S13',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Is the entity monitoring reinsurance market accessibility for climate-exposed assets, tracking premium trends, and assessing the risk of specific assets becoming uninsurable within 10 years?',
+ ctx:'Insurers are withdrawing from Florida, California, and Australia. First-party insurance withdrawal signals the market\'s physical risk assessment — potentially more accurate than internal models.'},
+{id:'S13-Q04',sec:'S13',sev:'MEDIUM',mat:'MEDIUM',pil:'financial',w:1,
+ fw:['TCFD','NGFS'],
+ text:'Does the entity utilize parametric or index-based insurance instruments for climate risks where traditional indemnity insurance is unavailable, cost-prohibitive, or insufficiently rapid in payout?',
+ ctx:'Parametric insurance pays on objective triggers (flood height, wind speed, rainfall level). Faster payouts provide liquidity for business continuity. Growing market for climate parametric.'},
+{id:'S13-Q05',sec:'S13',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','IFRS S2',"Moody's",'S&P','NGFS'],
+ text:'Has the entity engaged proactively with credit rating agencies on climate risk implications for its credit profile, incorporating rating agency climate risk frameworks into its risk management processes?',
+ ctx:'Moody\'s Climate Solutions, S&P ESG Scores, and Fitch ESG Relevance Scores all incorporate climate risk. Proactive engagement demonstrates climate management maturity and can defend against negative rating actions.'},
+{id:'S13-Q06',sec:'S13',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','NGFS','ICAAP'],
+ text:'Does the entity have a committed emergency liquidity facility specifically sized for response to a major climate event — such as a revolving credit facility triggered by climate emergency declaration?',
+ ctx:'Climate event liquidity need: up to 3–6 months of operating costs for major disruption. Facility should be committed (not just available) and climate-trigger terms clearly defined in facility agreement.'},
+
+/* ══════ S14: REGULATORY & POLICY ══════ */
+{id:'S14-Q01',sec:'S14',sev:'CRITICAL',mat:'HIGH',pil:'transition',w:3,
+ fw:['CSRD','IFRS S2','SEC','BRSR','TCFD','FCA','ASIC'],
+ text:'Is the entity currently compliant with all applicable mandatory climate disclosure requirements (CSRD, IFRS S2, SEC Climate, BRSR/SEBI, ASIC, FCA TCFD mandatory), and is there a forward compliance roadmap for forthcoming mandates?',
+ ctx:'Non-compliance with mandatory disclosure triggers regulatory penalties and reputational damage. CSRD penalties: up to 10M EUR or 5% of net turnover. SEC penalties for material omissions.'},
+{id:'S14-Q02',sec:'S14',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['EU Taxonomy','SFDR','CSRD','TCFD'],
+ text:'Has the entity completed a formal EU Taxonomy alignment assessment — distinguishing eligible from aligned activities — with Do No Significant Harm (DNSH) criteria assessed for all eligible activities?',
+ ctx:'EU Taxonomy DNSH is frequently the barrier between eligible (qualifies) and aligned (compliant). Technical screening criteria must be met for each environmental objective. Board must review alignment rationale.'},
+{id:'S14-Q03',sec:'S14',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['EU ETS','TCFD','NGFS','CSRD'],
+ text:'Has the entity mapped its exposure to all existing and proposed carbon pricing regimes globally — ETS, carbon taxes, crediting mechanisms — with P&L impact modeled under $65, $130, and $250/tCO2e price points?',
+ ctx:'Carbon pricing coverage is growing: EU ETS, UK ETS, RGGI, California Cap-and-Trade, China ETS, CBAM, India PAT scheme. Multi-jurisdictional exposure requires consolidated carbon cost mapping.'},
+{id:'S14-Q04',sec:'S14',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['SFDR','EU Taxonomy','CSRD','TCFD'],
+ text:'For entities subject to SFDR: has the entity computed all 18 mandatory Principal Adverse Impact (PAI) indicators with verified data and established forward-looking reduction targets for material indicators?',
+ ctx:'SFDR PAI Statement is mandatory for Article 8 and Article 9 funds. Indicator 1 (GHG emissions) and Indicator 2 (carbon footprint) require portfolio-level Scope 1+2+3 financed emissions data.'},
+{id:'S14-Q05',sec:'S14',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['TCFD','CSRD','SEC','IFRS S2'],
+ text:'Has the entity conducted a formal climate litigation risk assessment covering attribution claims, greenwashing allegations, fiduciary duty breaches, and regulatory enforcement — with legal opinion obtained?',
+ ctx:'Climate Attribution Science v. Corporates (Milieudefensie vs. Shell; ClientEarth vs. Shell Directors) establishes precedent. Entities without formal litigation exposure assessment face increasing director liability.'},
+{id:'S14-Q06',sec:'S14',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['EU CBAM','GHG Protocol','TCFD','CSRD'],
+ text:'Has the entity implemented systems to calculate embedded carbon in CBAM-covered goods imported into the EU, and modeled total CBAM certificate cost liability under EU ETS price scenarios?',
+ ctx:'CBAM full implementation from 2026 charges for embedded carbon in: steel, cement, aluminium, fertilizers, hydrogen, electricity. Systems must calculate actual embedded carbon, not CBAM default values.'},
+{id:'S14-Q07',sec:'S14',sev:'MEDIUM',mat:'HIGH',pil:'transition',w:1,
+ fw:['EU Taxonomy','US IRA','TPT'],
+ text:'Has the entity conducted a comprehensive assessment of available green incentives — IRA tax credits, REPowerEU grants, green infrastructure subsidies, transition finance instruments — relevant to its transition plan?',
+ ctx:'IRA provides $369B in clean energy incentives. REPowerEU offers EUR 300B in clean energy investment. Entities not optimizing available incentives are paying a higher-than-necessary transition cost.'},
+{id:'S14-Q08',sec:'S14',sev:'HIGH',mat:'HIGH',pil:'transition',w:2,
+ fw:['BRSR','RBI','SEBI','TCFD','NGFS'],
+ text:'For entities operating in emerging markets: has a forward-looking assessment of evolving climate disclosure and carbon pricing regulations — India BRSR, China CCER, Indonesia, Brazil NDC — been completed?',
+ ctx:'India BRSR Core became mandatory for top 150 listed companies in FY24. China\'s national ETS expanding to cement, steel, chemicals. Entities operating in these markets face regulatory acceleration.'},
+
+/* ══════ S15: GREENWASHING & DISCLOSURE INTEGRITY ══════ */
+{id:'S15-Q01',sec:'S15',sev:'CRITICAL',mat:'HIGH',pil:'disclosure',w:3,
+ fw:['TCFD','IFRS S2','CSRD','SEC','VCMI'],
+ text:'Has an independent review verified consistency between climate-related claims across sustainability reports, annual reports, investor presentations, regulatory filings, and marketing materials?',
+ ctx:'Cross-document consistency is the primary test of disclosure integrity. Contradictions between investor day slides ("carbon neutral by 2030") and annual report data (rising absolute emissions) are classic greenwashing evidence.'},
+{id:'S15-Q02',sec:'S15',sev:'CRITICAL',mat:'HIGH',pil:'disclosure',w:3,
+ fw:['SBTi','TCFD','VCMI','IFRS S2','CDP'],
+ text:'Are the entity\'s absolute Scope 1+2 emissions actually declining year-on-year at a rate consistent with its stated net-zero commitment — without dependence on offsets for near-term target compliance?',
+ ctx:'The single most important greenwashing indicator. If absolute emissions are flat or rising while net-zero language is used in public communications, this is a material contradiction.'},
+{id:'S15-Q03',sec:'S15',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['ICVCM','VCMI','Gold Standard','VCS','SBTi'],
+ text:'If net-zero or carbon neutrality claims rely on carbon offsets, are all offsets verified under ICVCM Core Carbon Principles — with demonstrated additionality, permanence, safeguards, and no double counting?',
+ ctx:'ICVCM Core Carbon Principles (2023) set the new market standard. Pre-2016 vintage offsets, avoided deforestation without additionality, and retired-but-questionable credits are high litigation risk.'},
+{id:'S15-Q04',sec:'S15',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['SBTi','TCFD','IFRS S2','CDP','VCMI'],
+ text:'Has the entity met or exceeded all previously stated climate targets — 2020 and 2025 checkpoints — and if targets were missed, is there transparent public disclosure of the reason with a revised trajectory?',
+ ctx:'Target achievement history is the empirical test of transition credibility. Repeated target setting and missing without transparent explanation is the definition of institutional greenwashing.'},
+{id:'S15-Q05',sec:'S15',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TCFD','UNGC','CDP','SBTi','VCMI'],
+ text:'Are the entity\'s policy consultation responses, trade association positions, and government engagement activities fully consistent with its stated net-zero commitments — with no contradictory lobbying activities documented?',
+ ctx:'InfluenceMap and DeSmog track corporate lobbying vs. climate claims. Membership in trade associations that lobby against climate policy while claiming net-zero commitment = VCMI integrity failure.'},
+{id:'S15-Q06',sec:'S15',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['GHG Protocol','SBTi','TCFD','IFRS S2','CSRD'],
+ text:'Is the entity disclosing Scope 3 emissions for ALL material categories — including Category 11 (use of sold products) and Category 15 (financed emissions) — rather than selectively excluding high-emission categories?',
+ ctx:'Selective Scope 3 omission: automotive companies excluding Category 11, banks excluding financed emissions, fossil fuel companies excluding Category 3. Omission of the largest Scope 3 categories is a primary greenwashing signal.'},
+{id:'S15-Q07',sec:'S15',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['VCMI','ISO 14021','FTC Green Guides','CSRD','EU Green Claims Directive'],
+ text:'Are all climate-related marketing claims — "carbon neutral," "net zero," "100% green," "climate positive" — substantiated by publicly accessible, independently verified methodology disclosures?',
+ ctx:'EU Green Claims Directive (2024): unsubstantiated environmental claims are unfair commercial practices with penalties. ISO 14021 Type II environmental claims require substantiation. Burden of proof lies with the claimant.'},
+{id:'S15-Q08',sec:'S15',sev:'HIGH',mat:'MEDIUM',pil:'disclosure',w:2,
+ fw:['TCFD','UNGC','GRI 2','CSRD'],
+ text:'Has the entity formally assessed and responded transparently to climate-related allegations from NGOs, investigative journalists, or scientific bodies regarding greenwashing or inadequate climate action?',
+ ctx:'Transparency in responding to civil society challenges demonstrates confidence in disclosures. Defensive, non-substantive responses to greenwashing allegations typically amplify reputational damage.'},
+{id:'S15-Q09',sec:'S15',sev:'CRITICAL',mat:'HIGH',pil:'disclosure',w:3,
+ fw:['SEC','CSRD','FCA','ASIC','EU Green Claims Directive'],
+ text:'Has the entity maintained a clean record with respect to climate disclosure regulatory investigations, with no active enforcement actions or material settlements related to climate misrepresentation?',
+ ctx:'NOTE: IMPLEMENTED = clean regulatory record. NOT ADDRESSED = active enforcement or material settlement exists. Regulatory action on climate disclosure is now credit-relevant and board liability territory.'},
+{id:'S15-Q10',sec:'S15',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['IAASB ISSA 5000','ISAE 3000','TCFD','IFRS S2','CSRD'],
+ text:'Are climate disclosures subject to at least limited assurance from an accredited third party with climate-specific competence, with a roadmap to reasonable assurance by 2026?',
+ ctx:'CSRD requires limited assurance initially, reasonable assurance from 2028. IAASB ISSA 5000 is the new international sustainability assurance standard. "Internal review only" does not constitute assurance.'},
+
+/* ══════ S16: ADAPTATION & RESILIENCE ══════ */
+{id:'S16-Q01',sec:'S16',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TCFD','IFRS S2','CSRD ESRS E1','NGFS','TPT'],
+ text:'Does the entity have a formal, board-approved climate adaptation plan with specific adaptation investments, timelines, and budget allocations — integrated into financial planning and capital allocation?',
+ ctx:'Adaptation plans must be distinguished from mitigation plans. Adaptation addresses managing unavoidable physical climate impacts on operations. IFRS S2 requires adaptation strategy disclosure.'},
+{id:'S16-Q02',sec:'S16',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TCFD','NGFS','EU Taxonomy','IFRS S2'],
+ text:'Has the entity made quantified physical adaptation investments — flood barriers, cooling systems, elevated infrastructure, water recycling — at high-risk facilities, with investment tracked against risk mitigation outcomes?',
+ ctx:'Adaptation investment effectiveness: quantify risk reduction per dollar invested. Flood barrier investment vs. avoided business interruption. Cooling system vs. avoided labor productivity loss.'},
+{id:'S16-Q03',sec:'S16',sev:'HIGH',mat:'MEDIUM',pil:'disclosure',w:2,
+ fw:['TCFD','ISO 22301','NGFS'],
+ text:'Does the entity have crisis response plans specifically designed and tested for climate events — floods, heat waves, wildfires, extreme storms — with documented tabletop exercises and recovery time objectives?',
+ ctx:'Climate-specific BCP differs from general BCP: flood evacuation routes change seasonally, heat stress thresholds trigger operational modifications, wildfire smoke affects indoor air quality.'},
+{id:'S16-Q04',sec:'S16',sev:'MEDIUM',mat:'MEDIUM',pil:'disclosure',w:1,
+ fw:['TCFD','UNGC','CSRD ESRS S3','GRI 413'],
+ text:'Does the entity invest in community-level climate resilience in high-exposure operating regions — flood defense, water infrastructure, climate-resilient housing — aligned with Just Transition principles?',
+ ctx:'Community resilience reduces entity operating risk (infrastructure failures, workforce disruption, social license to operate) while demonstrating responsible corporate climate adaptation.'},
+{id:'S16-Q05',sec:'S16',sev:'MEDIUM',mat:'MEDIUM',pil:'disclosure',w:1,
+ fw:['TCFD','IFRS S2','CSRD'],
+ text:'Does the entity measure and report ROI on climate adaptation investments — quantifying avoided losses, business continuity value, insurance savings, and operational efficiency improvements?',
+ ctx:'Adaptation ROI demonstrates financial materiality of climate action. Typical adaptation ROI ratios: 2:1 to 10:1 for flood protection, 3:1 to 8:1 for cooling infrastructure in high-heat regions.'},
+{id:'S16-Q06',sec:'S16',sev:'MEDIUM',mat:'LOW',pil:'disclosure',w:1,
+ fw:['TNFD','TCFD','CSRD ESRS E4','CBD'],
+ text:'Does the entity integrate nature-based adaptation solutions — wetland restoration, mangroves, green corridors, soil carbon — into its adaptation strategy with quantified risk reduction benefits?',
+ ctx:'NbS adaptation: mangroves reduce storm surge by 70%; wetlands absorb flood water equivalent to reservoirs; urban trees reduce heat island effect by 3–5°C. Cost-effective vs. grey infrastructure.'},
+{id:'S16-Q07',sec:'S16',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TCFD','NGFS','IFRS S2'],
+ text:'Has the entity assessed how its core products and services must be adapted for climate-changed market conditions — heat-tolerant agriculture, climate-resilient infrastructure designs, drought-tolerant crops?',
+ ctx:'Product adaptation is a competitive advantage in climate-stressed markets. Agricultural entities need climate-adapted seed portfolios; infrastructure companies need climate-resilient design standards.'},
+{id:'S16-Q08',sec:'S16',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['ILO','CSRD ESRS S1','GRI 403','BRSR'],
+ text:'Does the entity have occupational health and safety protocols specifically addressing climate-related hazards — extreme heat work restrictions, flood evacuation, air quality from wildfires, vector-borne disease exposure?',
+ ctx:'ILO guidance on heat stress: WBGT >28°C requires work-rest protocols. BRSR P5 requires safe workplace disclosures. Climate-related OHS incidents are becoming more frequent and legally actionable.'},
+
+/* ══════ S17: CLIMATE INNOVATION ══════ */
+{id:'S17-Q01',sec:'S17',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','EU Taxonomy','TPT','SBTi'],
+ text:'What is the entity\'s annual R&D investment in climate technologies as a percentage of revenue, and is this consistent with the investment required to achieve stated technology transition milestones?',
+ ctx:'IEA NZE: clean energy R&D investment must triple globally by 2030. Sector-specific benchmarks: automotive >8% revenue on EV R&D; cement >3% on low-carbon process R&D; utilities >5% on grid/storage.'},
+{id:'S17-Q02',sec:'S17',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['TCFD','TPT','EU Taxonomy','SBTi'],
+ text:'Does the entity hold a portfolio of strategic investments or partnerships in low-carbon technologies critical to its transition plan, with TRL assessments confirming commercial viability by stated dates?',
+ ctx:'Technology TRL gate: for technologies expected to contribute to 2030 targets, minimum TRL 7 (demonstration scale) required. Technologies at TRL <6 cannot credibly be counted in near-term plans.'},
+{id:'S17-Q03',sec:'S17',sev:'HIGH',mat:'HIGH',pil:'strategy',w:2,
+ fw:['SBTi','TCFD','TPT','IPCC','VCMI'],
+ text:'For hard-to-abate residual emissions: does the entity have a credible carbon removal strategy — BECCS, DACCS, biochar, enhanced weathering — with identified partners, cost projections, and scaling plan?',
+ ctx:'SBTi Corporate Net-Zero Standard: residual emissions (max 10% of base year) must be removed by certified carbon removal, not offset. DACCS currently costs $300–1000/tCO2. Scale plan must be credible.'},
+{id:'S17-Q04',sec:'S17',sev:'MEDIUM',mat:'MEDIUM',pil:'strategy',w:1,
+ fw:['TCFD','IFRS S2','NGFS'],
+ text:'Does the entity have institutional capacity for real-time climate data analytics — integrating satellite data, physical risk models, and financial data — into operational and investment decision-making?',
+ ctx:'Climate data infrastructure: CMIP6 model access, climate API integrations, scenario analysis platforms, physical risk overlay on asset management systems. Data capability differentiates advanced from laggard practitioners.'},
+{id:'S17-Q05',sec:'S17',sev:'MEDIUM',mat:'LOW',pil:'strategy',w:1,
+ fw:['TCFD','NGFS'],
+ text:'Does the entity utilize digital twin or physical climate simulation technology to model asset-level climate risk and optimize adaptation investment decisions?',
+ ctx:'Digital twin models allow asset-specific climate stress testing without physical infrastructure. Leading practitioners use digital twins to optimize flood barrier investment, cooling system design, and relocation decisions.'},
+{id:'S17-Q06',sec:'S17',sev:'MEDIUM',mat:'MEDIUM',pil:'strategy',w:1,
+ fw:['TCFD','TPT','EU Taxonomy'],
+ text:'Does the entity hold intellectual property or patents in low-carbon technologies that create competitive advantage in a net-zero economy, and is this portfolio being actively developed and commercialized?',
+ ctx:'Clean tech IP creates long-term value in a net-zero economy. Patent analysis (solar, wind, battery, CCUS, green hydrogen) provides leading indicator of technology transition readiness.'},
+
+/* ══════ S18: WORKFORCE RESILIENCE ══════ */
+{id:'S18-Q01',sec:'S18',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TPT','CSRD ESRS S1','GRI 404','BRSR','ILO'],
+ text:'Has the entity conducted a formal green skills gap analysis assessing competencies required for the low-carbon transition — engineering, data science, climate risk, policy expertise — and quantified shortfalls?',
+ ctx:'TPT requires just transition planning including skills analysis. World Economic Forum estimates 1B workers need reskilling by 2030. Green skills gap directly constrains transition execution speed.'},
+{id:'S18-Q02',sec:'S18',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TPT','CSRD ESRS S1','GRI 404','BRSR'],
+ text:'Does the entity have a quantified reskilling and upskilling investment program for workers in high-transition-risk roles — coal miners, ICE mechanics, fossil fuel engineers — with outcome tracking?',
+ ctx:'Reskilling investment adequacy: compare cost of reskilling vs. redundancy cost + reputational damage + regulatory risk from just transition non-compliance. Reskilling is typically lower cost.'},
+{id:'S18-Q03',sec:'S18',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TPT','ILO','CSRD ESRS S1','UNGC','GRI 401'],
+ text:'Does the entity have a just transition plan for workers affected by climate-driven asset closures or business model changes — covering redeployment pathways, redundancy support, and community investment?',
+ ctx:'TPT just transition disclosure: employment impact quantified, redeployment programs funded, community investment committed. Trade union consultation is best practice and increasingly a regulatory expectation.'},
+{id:'S18-Q04',sec:'S18',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['ILO','CSRD ESRS S1','GRI 403','BRSR'],
+ text:'Has the entity assessed the proportion of its workforce in regions with extreme physical climate risk exposure — heat stress, flooding, wildfire — and implemented climate-specific health and safety protocols?',
+ ctx:'ILO estimates 2.4B workers already exposed to excess heat. WBGT thresholds for safe work: light activity 31°C, moderate 28°C, heavy 26°C. Entity must quantify workforce climate health risk and protocols.'},
+{id:'S18-Q05',sec:'S18',sev:'MEDIUM',mat:'MEDIUM',pil:'disclosure',w:1,
+ fw:['TCFD','CSRD ESRS S1','GRI 404'],
+ text:'Do senior executives participate in structured climate risk and sustainability training programs, with climate literacy formally assessed as part of executive performance reviews?',
+ ctx:'Executive climate literacy determines quality of climate risk governance. Board that cannot distinguish between physical and transition risk cannot adequately oversee climate strategy.'},
+{id:'S18-Q06',sec:'S18',sev:'MEDIUM',mat:'LOW',pil:'disclosure',w:1,
+ fw:['TCFD','CSRD ESRS S1','TPT'],
+ text:'Is climate risk competency a stated criterion in executive recruitment, succession planning, and key hire specifications for roles with material climate governance responsibilities?',
+ ctx:'Future-proofing governance: climate-competent successor pipeline ensures continuity of institutional climate risk capability regardless of individual board member tenure.'},
+
+/* ══════ S19: CAPITAL ALLOCATION ══════ */
+{id:'S19-Q01',sec:'S19',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','SBTi','IFRS S2','TPT','EU Taxonomy'],
+ text:'Does the entity apply climate-adjusted hurdle rates — incorporating a carbon price pathway and transition risk premium — to all capital allocation decisions above a defined materiality threshold?',
+ ctx:'Climate-adjusted IRR: add shadow carbon cost to operating cost projections. Projects that are NPV-positive at current carbon price but NPV-negative at $130/tCO2e are investment risks.'},
+{id:'S19-Q02',sec:'S19',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['ICMA','LMA','EU Green Bond Standard','EU Taxonomy','SFDR'],
+ text:'Has the entity issued green bonds, social bonds, sustainability-linked bonds, or SLLs under recognized frameworks — ICMA, LMA, EU GBS — with KPIs representing material climate ambition?',
+ ctx:'SLB KPI integrity: target must be material (Scope 1+2+3), ambitious (above current trajectory), and verified. Weak KPIs (Scope 1 only for a bank, intensity vs. absolute) invite investor challenge.'},
+{id:'S19-Q03',sec:'S19',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','IFRS S2','SBTi','TPT'],
+ text:'Does the entity\'s M&A due diligence process include a formal climate risk assessment covering physical risk exposure, transition risk, carbon liabilities, Paris alignment, and potential stranded assets of target entities?',
+ ctx:'Post-acquisition climate liability: acquiring a coal-adjacent business without climate DD creates immediate balance sheet stranded risk. Climate DD is now standard in PE and strategic corporate M&A.'},
+{id:'S19-Q04',sec:'S19',sev:'CRITICAL',mat:'HIGH',pil:'financial',w:3,
+ fw:['SBTi','TCFD','TPT','EU Taxonomy'],
+ text:'Has the entity screened 100% of its committed and planned capex pipeline against a 1.5°C carbon budget, with formal documentation that no approved projects create carbon lock-in inconsistent with SBTi near-term targets?',
+ ctx:'Capex pipeline Paris alignment screening is a TPT core requirement. Every project above materiality threshold must have a carbon budget assessment. Board approval required for any exceptions.'},
+{id:'S19-Q05',sec:'S19',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','SBTi','TPT','EU Taxonomy','SFDR'],
+ text:'Does the entity have a time-bound, board-approved divestment strategy for assets structurally misaligned with a 1.5°C pathway — with named assets, realistic timelines, and planned reinvestment?',
+ ctx:'Divestment without reinvestment plan is incomplete transition strategy. Capital recycling from carbon-intensive assets into low-carbon infrastructure is the institutional investor expectation.'},
+{id:'S19-Q06',sec:'S19',sev:'MEDIUM',mat:'HIGH',pil:'financial',w:1,
+ fw:['ICMA','EU Green Bond Standard','EU Taxonomy'],
+ text:'Is there a dedicated governance structure — green bond committee, sustainable finance committee — with documented criteria for qualifying climate-aligned use of proceeds?',
+ ctx:'Green finance governance: committee must include climate expertise, use documented eligibility criteria, meet regularly, and produce an annual allocation and impact report.'},
+{id:'S19-Q07',sec:'S19',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','NGFS','IEA','SBTi','IFRS S2'],
+ text:'Is a shadow carbon price rising from a minimum $65/tCO2e (2025) to $130+/tCO2e (2030) applied in all major investment return calculations and project NPV assessments?',
+ ctx:'IEA Net Zero pathway carbon price: $130 by 2030 in advanced economies. World Bank HLPCP: $50–100 by 2030. Any shadow price below $65/tCO2e in 2025 underweights transition risk in investment decisions.'},
+{id:'S19-Q08',sec:'S19',sev:'MEDIUM',mat:'MEDIUM',pil:'financial',w:1,
+ fw:['TCFD','IFRS S2','PRI','CDP','UNGC'],
+ text:'Does the entity proactively disclose its climate capital allocation strategy to investors through earnings calls, investor days, and ESG roadshows — with specific quantified commitments and milestones?',
+ ctx:'Investor-grade climate capital disclosure: green capex as % of total, shadow carbon price used, SBTi-aligned investment share, climate-linked finance outstanding. Vague ESG statements are insufficient.'},
+
+/* ══════ S20: CLIMATE CREDITWORTHINESS ══════ */
+{id:'S20-Q01',sec:'S20',sev:'CRITICAL',mat:'HIGH',pil:'financial',w:3,
+ fw:['NGFS','ECB','PCAF','TCFD','Basel III','PRA'],
+ text:'For financial institutions: does the entity integrate climate risk (physical and transition) into counterparty credit assessments, with a quantified climate risk score affecting pricing decisions and exposure limits?',
+ ctx:'ECB Supervisory Expectation 7: banks must integrate climate risk into credit risk assessments by 2025. Climate-adjusted credit scoring models must be validated and backtested.'},
+{id:'S20-Q02',sec:'S20',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['NGFS','ECB','Basel III','TCFD','ICAAP'],
+ text:'For financial institutions: has the entity integrated climate transition and physical risk factors into forward-looking Probability of Default (PD) and Loss Given Default (LGD) models?',
+ ctx:'ECB: banks must demonstrate climate integration in ICAAP-level PD/LGD models. Climate satellite model approach (add climate risk factor to existing credit models) is the current standard.'},
+{id:'S20-Q03',sec:'S20',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['NGFS','ECB','PRA','TCFD','NZBA'],
+ text:'For financial institutions: are there board-approved concentration limits for climate-sensitive sector exposures — fossil fuel, high-carbon industrials, coastal real estate — as a percentage of total lending?',
+ ctx:'NZBA Net-Zero Banking Alliance: members commit to portfolio alignment with 1.5°C. Sector-level exposure limits prevent concentration of transition and physical risk beyond risk appetite.'},
+{id:'S20-Q04',sec:'S20',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['TCFD','IFRS S2',"Moody's",'S&P','NGFS'],
+ text:'Has the entity proactively shared climate stress test results with credit rating agencies, and has climate risk been formally cited as a material factor in the entity\'s most recent credit rating rationale?',
+ ctx:'Rating agencies are increasingly incorporating climate risk. S&P ESG Relevance Scores, Moody\'s Climate Risk Score, and Fitch ESG Relevance Scores must be actively engaged and challenged where incorrect.'},
+{id:'S20-Q05',sec:'S20',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['ICMA','LMA','EU Green Bond Standard'],
+ text:'Is the entity in full compliance with all climate KPIs and covenants in outstanding SLBs and SLLs — with no KPI waivers, resets, or restructurings — and is performance confirmed by independent verification?',
+ ctx:'SLB covenant breach: failure to meet KPI triggers coupon step-up (typically 25bps). Beyond cost, it signals failure to achieve stated climate targets and triggers institutional investor scrutiny.'},
+{id:'S20-Q06',sec:'S20',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['NGFS','ECB','ICAAP','TCFD','Basel III'],
+ text:'Has the entity stress-tested its liquidity position under climate event scenarios — insurance payout delays, regulatory penalty triggering, asset write-downs, credit facility withdrawal — with sufficient liquidity buffers demonstrated?',
+ ctx:'Climate liquidity stress test: model simultaneous occurrence of physical event + regulatory action + counterparty defaults. Liquidity coverage ratio must hold under climate stress scenario.'},
+{id:'S20-Q07',sec:'S20',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['ECB','NGFS','Basel III','PRA','TCFD'],
+ text:'For financial institutions: are climate-related physical risk haircuts applied to property and infrastructure collateral valuations in flood zones, wildfire corridors, and areas facing sea-level rise?',
+ ctx:'ECB guidance: collateral values must reflect physical climate risk. Flood-zone properties without adequate protection may warrant 10–25% haircut. Coastal properties face accelerating discount.'},
+{id:'S20-Q08',sec:'S20',sev:'HIGH',mat:'HIGH',pil:'financial',w:2,
+ fw:['EU Taxonomy','EBA','SFDR','NGFS','NZBA'],
+ text:'For financial institutions: is the entity\'s Green Asset Ratio (GAR) and taxonomy-aligned lending share improving year-on-year, with a credible trajectory toward portfolio decarbonization commitments?',
+ ctx:'EBA Green Asset Ratio (from 2024): mandatory disclosure for banks. GAR = taxonomy-aligned assets / total covered assets. Declining GAR or GAR below sector peers signals deteriorating climate credentials.'},
+
+/* ══════ S21: ESG DATA GOVERNANCE ══════ */
+{id:'S21-Q01',sec:'S21',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TCFD','IFRS S2','CSRD','GRI 2'],
+ text:'Does the entity have a formal ESG data governance framework — with defined data ownership, quality controls, validation procedures, and senior management accountability — equivalent in rigor to financial data governance?',
+ ctx:'ESG data governance maturity gap: most entities apply higher standards to financial data than ESG data. IFRS S2 and CSRD require equivalence. Board sign-off on ESG data requires boardroom-grade controls.'},
+{id:'S21-Q02',sec:'S21',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['IAASB ISSA 5000','ISAE 3000','TCFD','IFRS S2','CSRD','GRI 2'],
+ text:'Are climate disclosures — emissions data, financial impact estimates, adaptation investments — subject to at least limited assurance from an IAASB-accredited third party with demonstrated climate competence?',
+ ctx:'CSRD requires limited assurance from FY2024 for large companies, reasonable assurance from FY2028. IAASB ISSA 5000 (effective 2026) is the new global sustainability assurance standard.'},
+{id:'S21-Q03',sec:'S21',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['TCFD','IFRS S2','CSRD','GRI 2','ISO 14064'],
+ text:'Is there a complete, auditable data lineage for all reported climate metrics — from primary data source through calculation methodology to disclosed figure — enabling traceability by external auditors?',
+ ctx:'Data lineage is the auditability foundation. Without it, third-party assurance providers cannot issue opinions and regulators cannot verify disclosures. Specific requirement under CSRD ESRS 1.'},
+{id:'S21-Q04',sec:'S21',sev:'MEDIUM',mat:'MEDIUM',pil:'disclosure',w:1,
+ fw:['TCFD','IFRS S2','CSRD','GRI 2'],
+ text:'Does the entity use a dedicated ESG data management platform — not spreadsheets — with version control, role-based access controls, and direct integration with financial reporting systems?',
+ ctx:'Spreadsheet-based ESG data management is incompatible with CSRD reasonable assurance requirements. Purpose-built platforms (Workiva, Sphera, Watershed, Persefoni) provide required audit trails.'},
+{id:'S21-Q05',sec:'S21',sev:'HIGH',mat:'HIGH',pil:'disclosure',w:2,
+ fw:['IFRS S2','CSRD','SEC','GRI 2'],
+ text:'Are ESG data controls — authorization, completeness, accuracy, cutoff — aligned with the same standard as financial reporting controls, documented in the entity\'s internal control framework?',
+ ctx:'SEC climate rule (final): material climate disclosures subject to same liability standard as financial disclosures. PCAOB and IAASB expect ESG internal controls to be assessed for effectiveness.'},
+{id:'S21-Q06',sec:'S21',sev:'MEDIUM',mat:'MEDIUM',pil:'disclosure',w:1,
+ fw:['TCFD','IFRS S2','GRI 302','GRI 305'],
+ text:'For material climate KPIs — GHG emissions, energy consumption, water withdrawal — does the entity collect and review data monthly or quarterly, enabling proactive in-year performance management?',
+ ctx:'Annual-only data collection prevents in-year course correction. Monthly emissions tracking enables identification of deviations from reduction trajectory before year-end reporting forces disclosure of failure.'}
+]; /* ── END QUESTIONS ── */
+  </script>
+
+  <script>
+/* ═══════════════════════════════════════════════════════════════════
+   CLIMACTIX — IRO ENGINE: Scoring · Rendering · Navigation · Report
+═══════════════════════════════════════════════════════════════════ */
+
+function getAnswerValue(val) {
+  if (val === 'IMPLEMENTED')   return 100;
+  if (val === 'PROGRESSING')   return 60;
+  if (val === 'PLANNED')       return 30;
+  if (val === 'NOT_ADDRESSED') return 0;
+  return null;
+}
+function getSevWeight(sev) {
+  if (sev === 'CRITICAL') return 3;
+  if (sev === 'HIGH')     return 2;
+  if (sev === 'MEDIUM')   return 1.5;
+  return 1;
+}
+function getMatMult(mat) {
+  if (mat === 'HIGH') return 1.2;
+  if (mat === 'LOW')  return 0.8;
+  return 1.0;
+}
+function calcPillarScores() {
+  const scores = {};
+  PILLARS.forEach(p => {
+    const qs = QUESTIONS.filter(q => q.pil === p.id);
+    let totalW = 0, weightedSum = 0;
+    qs.forEach(q => {
+      const val = getAnswerValue(STATE.answers[q.id]);
+      if (val === null) return;
+      const w = getSevWeight(q.sev) * getMatMult(q.mat) * (q.w || 1);
+      totalW += w; weightedSum += val * w;
+    });
+    scores[p.id] = totalW > 0 ? Math.round(weightedSum / totalW) : 0;
+  });
+  return scores;
+}
+function calcComposite() {
+  const ps = calcPillarScores();
+  let total = 0;
+  PILLARS.forEach(p => { total += (ps[p.id] || 0) * (p.weight / 100); });
+  return Math.round(total);
+}
+function getClimateRating(score) {
+  if (score >= 85) return { grade:'AAA', desc:'Climate Leader',         color:'#00CC44' };
+  if (score >= 75) return { grade:'AA',  desc:'Strong Resilience',      color:'#22DD55' };
+  if (score >= 65) return { grade:'A',   desc:'Adequate Resilience',    color:'#66DD88' };
+  if (score >= 55) return { grade:'BBB', desc:'Moderate Risk',          color:'#0EA5E9' };
+  if (score >= 40) return { grade:'BB',  desc:'Elevated Risk',          color:'#FFB800' };
+  if (score >= 25) return { grade:'B',   desc:'High Risk',              color:'#FF6600' };
+  if (score >= 10) return { grade:'CCC', desc:'Critical Risk',          color:'#FF4400' };
+  return              { grade:'D',   desc:'Default-Level Risk',      color:'#FF3333' };
+}
+function calcGreenwashing() {
+  const ps = calcPillarScores();
+  let gw = 0;
+  const disc=ps.disclosure||0, carb=ps.carbon||0, gov=ps.governance||0;
+  const phys=ps.physical||0, trans=ps.transition||0, strat=ps.strategy||0, fin=ps.financial||0;
+  const a = STATE.answers;
+  if (disc > 60 && carb < 40)  gw += 35;
+  else if (disc > 50 && carb < 30) gw += 25;
+  if (gov > 65 && (phys < 30 || trans < 30)) gw += 25;
+  if (strat > 60 && fin < 35) gw += 20;
+  if (a['S07-Q05']==='NOT_ADDRESSED'||a['S07-Q05']==='PLANNED') gw += 10;
+  if (a['S15-Q01']==='NOT_ADDRESSED') gw += 10;
+  if (a['S15-Q03']==='NOT_ADDRESSED'||a['S15-Q03']==='PLANNED') gw += 8;
+  return Math.min(100, Math.max(0, Math.round(gw)));
+}
+function detectContradictions() {
+  const ps = calcPillarScores();
+  const a  = STATE.answers;
+  const flags = [];
+  if ((a['S02-Q01']==='IMPLEMENTED'||a['S02-Q01']==='PROGRESSING') && a['S04-Q01']==='NOT_ADDRESSED')
+    flags.push({sev:'HIGH', text:'Board climate oversight claimed but financial materiality assessment absent (TCFD A1/B2 conflict)'});
+  if ((a['S03-Q02']==='IMPLEMENTED'||a['S03-Q02']==='PROGRESSING') && (a['S07-Q01']==='NOT_ADDRESSED'||!a['S07-Q01']))
+    flags.push({sev:'CRITICAL', text:'Net-zero commitment declared without Scope 1/2/3 baseline measurement — disclosure integrity risk (SBTi/IFRS S2)'});
+  if (a['S03-Q01']==='IMPLEMENTED' && (a['S11-Q01']==='NOT_ADDRESSED'||!a['S11-Q01']))
+    flags.push({sev:'HIGH', text:'TCFD transition plan published but climate scenario analysis absent — TCFD Pillar C gap'});
+  if ((ps.supply_chain||0) > 50 && (a['S07-Q04']==='NOT_ADDRESSED'||!a['S07-Q04']))
+    flags.push({sev:'MEDIUM', text:'Supply chain resilience claimed but Scope 3 Category 1 supplier emissions not measured'});
+  if (a['S16-Q01']==='IMPLEMENTED' && (a['S01-Q04']==='NOT_ADDRESSED'||!a['S01-Q04']))
+    flags.push({sev:'HIGH', text:'Adaptation plan published but no geo-coded asset register — plan cannot be substantiated (TCFD/IFRS S2)'});
+  if (a['S21-Q02']==='IMPLEMENTED' && (a['S21-Q01']==='NOT_ADDRESSED'||!a['S21-Q01']))
+    flags.push({sev:'CRITICAL', text:'Third-party ESG assurance claimed without formal data governance framework — audit integrity risk'});
+  if ((a['S03-Q03']==='IMPLEMENTED'||a['S03-Q03']==='PROGRESSING') && (a['S04-Q06']==='NOT_ADDRESSED'||!a['S04-Q06']))
+    flags.push({sev:'MEDIUM', text:'Capex Paris-alignment strategy stated but no internal carbon price applied to investment decisions'});
+  return flags;
+}
+
+/* ── SCREEN NAV ── */
+function setProgress(pct, label, chip) {
+  const fill=document.getElementById('iProgressFill');
+  const lbl=document.getElementById('iProgressLabel');
+  const chp=document.getElementById('iProgressChip');
+  if (fill) fill.style.width = pct + '%';
+  if (lbl)  lbl.textContent  = label;
+  if (chp)  chp.textContent  = chip;
+}
+function showScreen(id) {
+  document.querySelectorAll('.iro-screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) { el.classList.add('active'); window.scrollTo(0,0); }
+}
+function showWelcome() {
+  showScreen('iro-welcome');
+  setProgress(0, 'Climate Risk Operating System — Ready', 'INITIALIZING');
+}
+function showEntityForm() {
+  showScreen('iro-entity');
+  setProgress(5, 'Entity Intelligence Profile — Enter institution details', 'ENTITY SETUP');
+  if (STATE.entity.name) { const el=document.getElementById('fEntityName'); if(el) el.value=STATE.entity.name; }
+}
+function startAssessment() {
+  const name   = (document.getElementById('fEntityName')?.value||'').trim();
+  const sector = document.getElementById('fSector')?.value||'';
+  if (!name)   { alert('Entity name is required.'); return; }
+  if (!sector) { alert('Please select a sector.'); return; }
+  STATE.entity = {
+    name, ticker:(document.getElementById('fTicker')?.value||'').trim(), sector,
+    entityType: document.getElementById('fEntityType')?.value||'',
+    hq:(document.getElementById('fHQ')?.value||'').trim(),
+    countries:document.getElementById('fCountries')?.value||'',
+    year:document.getElementById('fYear')?.value||'2026',
+    revenue:document.getElementById('fRevenue')?.value||'',
+    employees:document.getElementById('fEmployees')?.value||'',
+    jurisdiction:(document.getElementById('fJurisdiction')?.value||'').trim(),
+    tcfd:document.getElementById('fTcfd')?.value||'',
+    sbti:document.getElementById('fSbti')?.value||'',
+    assurance:document.getElementById('fAssurance')?.value||'',
+    netZero:document.getElementById('fNetZero')?.value||'',
+    riskContext:(document.getElementById('fRiskContext')?.value||'').trim()
+  };
+  try { localStorage.setItem('iro_entity', JSON.stringify(STATE.entity)); } catch(e){}
+  showScreen('iro-assess');
+  STATE.currentSection = 0;
+  renderSidebar();
+  goToSection(0);
+}
+
+/* ── SECTION NAV ── */
+function goToSection(idx) {
+  if (idx < 0 || idx >= SECTIONS.length) return;
+  STATE.currentSection = idx;
+  renderSidebar();
+  renderSection(idx);
+  updateRail();
+  const answered = Object.keys(STATE.answers).length;
+  const pct = Math.min(95, Math.round((answered/QUESTIONS.length)*85)+10);
+  const sec = SECTIONS[idx];
+  setProgress(pct, `Section ${idx+1} of ${SECTIONS.length} — ${sec.title}`, `S${String(idx+1).padStart(2,'0')}`);
+  const lbl=document.getElementById('sectionNavLabel');
+  if (lbl) lbl.textContent=`Section ${idx+1} of ${SECTIONS.length}`;
+  const prev=document.getElementById('btnPrevSection');
+  const next=document.getElementById('btnNextSection');
+  if (prev) prev.style.visibility = idx===0?'hidden':'visible';
+  if (next) next.textContent = idx===SECTIONS.length-1?'Complete Assessment →':'Next →';
+}
+function prevSection() { if (STATE.currentSection>0) goToSection(STATE.currentSection-1); }
+function nextSection() {
+  if (STATE.currentSection < SECTIONS.length-1) { goToSection(STATE.currentSection+1); }
+  else { renderReport(); showScreen('iro-report'); setProgress(100,'Assessment Complete — Institutional Climate Risk Report Generated','COMPLETE'); }
+}
+
+/* ── RENDERING ── */
+function renderSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  if (!nav) return;
+  const completedCount = SECTIONS.filter(s => {
+    const qs = QUESTIONS.filter(q=>q.sec===s.id);
+    return qs.length>0 && qs.every(q=>STATE.answers[q.id]);
+  }).length;
+  const pt=document.getElementById('sidebarProgressText');
+  const sf=document.getElementById('sidebarFill');
+  if (pt) pt.textContent=`${completedCount} / ${SECTIONS.length} sections`;
+  if (sf) sf.style.width=`${(completedCount/SECTIONS.length)*100}%`;
+  nav.innerHTML = SECTIONS.map((s,i) => {
+    const qs=QUESTIONS.filter(q=>q.sec===s.id);
+    const ans=qs.filter(q=>STATE.answers[q.id]).length;
+    const isActive=i===STATE.currentSection;
+    const isComplete=ans===qs.length&&qs.length>0;
+    let dot=`<span style="color:#555;font-size:9px;flex-shrink:0">○</span>`;
+    if(isComplete) dot=`<span style="color:#00CC44;font-size:9px;flex-shrink:0">✓</span>`;
+    else if(ans>0) dot=`<span style="color:#FFB800;font-size:9px;flex-shrink:0">◑</span>`;
+    return `<div onclick="goToSection(${i})" style="display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;border-bottom:1px solid var(--iro-b);transition:.12s ease;${isActive?'background:rgba(14,165,233,.08);border-left:2px solid var(--iro-accent);':''}">
+      <span style="font-family:var(--iro-mono);font-size:9px;color:var(--iro-tm);flex-shrink:0;width:20px">${String(i+1).padStart(2,'0')}</span>
+      <span style="font-size:11px;font-weight:500;color:${isActive?'var(--iro-t1)':'var(--iro-t2)'};flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.title}</span>
+      ${dot}
+    </div>`;
+  }).join('');
+}
+function renderSection(idx) {
+  const sec=SECTIONS[idx];
+  const qs=QUESTIONS.filter(q=>q.sec===sec.id);
+  const content=document.getElementById('sectionContent');
+  if (!content) return;
+  const answeredInSec=qs.filter(q=>STATE.answers[q.id]).length;
+  content.innerHTML = `
+    <div class="iro-section-header">
+      <div>
+        <div class="iro-section-eyebrow">Section ${sec.num} of ${SECTIONS.length} &nbsp;·&nbsp; ${sec.id}</div>
+        <h2 class="iro-section-title">${sec.icon} ${sec.title}</h2>
+        <p class="iro-section-desc">${sec.desc}</p>
+      </div>
+      <div class="iro-section-meta">
+        <span>${qs.length} questions</span>
+        <span style="color:${answeredInSec===qs.length?'#00CC44':'var(--iro-t2)'}">${answeredInSec} answered</span>
+      </div>
+    </div>
+    <div class="iro-questions-wrap">${qs.map((q,i)=>renderQuestion(q,i+1)).join('')}</div>`;
+}
+function renderQuestion(q, num) {
+  const ans = STATE.answers[q.id];
+  const options=[
+    {val:'IMPLEMENTED',   label:'Implemented'},
+    {val:'PROGRESSING',   label:'Progressing'},
+    {val:'PLANNED',       label:'Planned'},
+    {val:'NOT_ADDRESSED', label:'Not Addressed'},
+    {val:'NA',            label:'Not Applicable'}
+  ];
+  const fwTags=(q.fw||[]).map(f=>`<span class="iro-fw-tag">${f}</span>`).join('');
+  const btnHTML=options.map(o=>`<button class="iro-ans-btn${ans===o.val?' sel-'+o.val:''}" onclick="answer('${q.id}','${o.val}',this)">${o.label}</button>`).join('');
+  return `<div class="iro-question${ans?' answered':''}" id="q-${q.id}">
+    <div class="iro-q-row">
+      <div class="iro-q-num${ans?' answered':''}">${String(num).padStart(2,'0')}</div>
+      <div class="iro-q-body">
+        <div class="iro-q-badges"><span class="iro-sev-badge ${q.sev}">${q.sev}</span><span class="iro-mat-badge ${q.mat}">${q.mat} MAT</span>${fwTags}</div>
+        <div class="iro-q-text">${q.text}</div>
+        ${q.ctx?`<div class="iro-q-context">${q.ctx}</div>`:''}
+      </div>
+    </div>
+    <div class="iro-answer-row">${btnHTML}</div>
+  </div>`;
+}
+function answer(qId, val, btn) {
+  STATE.answers[qId] = val;
+  try { localStorage.setItem('iro_answers', JSON.stringify(STATE.answers)); } catch(e){}
+  const qEl=document.getElementById('q-'+qId);
+  if (qEl) {
+    qEl.classList.add('answered');
+    const numEl=qEl.querySelector('.iro-q-num'); if(numEl) numEl.classList.add('answered');
+    qEl.querySelectorAll('.iro-ans-btn').forEach(b=>{ b.className='iro-ans-btn'+(b===btn?' sel-'+val:''); });
+  }
+  updateRail(); renderSidebar();
+}
+function updateRail() {
+  const ps=calcPillarScores(), composite=calcComposite(), rating=getClimateRating(composite);
+  const gw=calcGreenwashing(), flags=detectContradictions();
+  const rcv=document.getElementById('railComposite');
+  if (rcv) rcv.textContent=composite||'—';
+  const rr=document.getElementById('railRating');
+  if (rr) { rr.className=`iro-rail-rating iro-rating-${rating.grade}`; rr.textContent=composite>0?rating.grade:'—'; rr.style.color=rating.color; }
+  const rp=document.getElementById('railPillars');
+  if (rp) rp.innerHTML=PILLARS.map(p=>`
+    <div class="iro-pillar-row">
+      <span class="iro-pillar-name">${p.label}</span>
+      <div class="iro-pillar-track"><div class="iro-pillar-fill" style="width:${ps[p.id]||0}%;background:${p.color}"></div></div>
+      <span class="iro-pillar-pct">${ps[p.id]||0}</span>
+    </div>`).join('');
+  const gwv=document.getElementById('railGwVal');
+  if (gwv) { gwv.className=`iro-gw-val ${gw<30?'low':gw<60?'med':'high'}`; gwv.textContent=composite>0?gw+'%':'—'; }
+  const gwSub=document.getElementById('railGwSub');
+  if (gwSub&&composite>0) gwSub.textContent=gw<30?'Low probability':gw<60?'Moderate risk':'High risk';
+  const rf=document.getElementById('railFlags');
+  if (rf) rf.innerHTML=flags.length===0
+    ?'<div class="iro-no-flags">No flags detected</div>'
+    :flags.map(f=>`<div class="iro-flag-item${f.sev==='MEDIUM'?' warn':''}">[${f.sev}] ${f.text}</div>`).join('');
+}
+
+/* ── REPORT ── */
+function buildRecommendations(ps) {
+  const recos=[];
+  if((ps.governance||0)<50) recos.push({priority:'P1',title:'Establish formal board climate governance',desc:'Appoint a named board member with explicit climate mandate. Integrate climate as standalone risk category in ERM with documented risk appetite and quarterly board reporting.',fw:['TCFD','IFRS S2','CSRD']});
+  if((ps.carbon||0)<45) recos.push({priority:'P1',title:'Deploy institutional-grade GHG measurement program',desc:'Implement verified Scope 1/2/3 measurement with third-party limited assurance. Align emission reduction trajectory to SBTi 1.5°C pathway within 24 months.',fw:['GHG Protocol','SBTi','IFRS S2','CSRD ESRS E1']});
+  if((ps.disclosure||0)<50) recos.push({priority:'P1',title:'Publish TCFD/IFRS S2-aligned climate disclosure',desc:'Initiate annual TCFD-aligned report across all four pillars. Engage IAASB-accredited assurance provider for limited assurance on material climate metrics.',fw:['TCFD','IFRS S2','CSRD','SEC']});
+  if((ps.physical||0)<45) recos.push({priority:'P2',title:'Conduct asset-level physical climate risk assessment',desc:'Build geo-coded asset register. Apply CMIP6/NGFS scenario overlay to quantify flood, heat, and drought exposure to 2040 and 2060 horizons.',fw:['TCFD','NGFS','IPCC AR6','CMIP6']});
+  if((ps.transition||0)<45) recos.push({priority:'P2',title:'Develop Paris-aligned transition risk scenario analysis',desc:'Run NGFS orderly, disorderly, and hot house world scenarios. Quantify financial P&L, capex, and revenue impacts for each pathway.',fw:['NGFS','TCFD','IFRS S2','TPT']});
+  if((ps.financial||0)<45) recos.push({priority:'P2',title:'Integrate climate into financial planning and capital allocation',desc:'Adopt internal carbon price. Apply climate-adjusted discount rates to all material capex. Disclose climate in financial statements per IFRS S2.',fw:['IFRS S2','TCFD','EU Taxonomy','PCAF']});
+  if((ps.supply_chain||0)<40) recos.push({priority:'P3',title:'Map and quantify supply chain climate vulnerability',desc:'Conduct tier-1 supplier climate risk assessment. Launch Scope 3 Category 1 data collection. Identify single-source dependencies in high physical risk regions.',fw:['CSRD ESRS E1','GRI 308','SBTi FLAG']});
+  if((ps.strategy||0)<45) recos.push({priority:'P3',title:'Formalise climate-resilient business strategy',desc:'Document a 1.5°C-aligned transition plan with milestones, capex commitments, and revenue diversification roadmap aligned to TPT disclosure framework.',fw:['TPT','SBTi','IFRS S2','TCFD']});
+  return recos.slice(0,6);
+}
+function buildFrameworkMatrix() {
+  return ['TCFD','IFRS S2','CSRD','SBTi','GHG Protocol','EU Taxonomy','NGFS','TNFD','PCAF','GRI 305','SEC','SFDR'].map(fw=>{
+    const relQs=QUESTIONS.filter(q=>(q.fw||[]).includes(fw));
+    const answered=relQs.filter(q=>STATE.answers[q.id]);
+    const avgScore=answered.length>0?Math.round(answered.reduce((s,q)=>s+(getAnswerValue(STATE.answers[q.id])||0),0)/answered.length):0;
+    const coverage=relQs.length>0?Math.round((answered.length/relQs.length)*100):0;
+    const status=avgScore>=60?'ready':avgScore>=30?'partial':'gap';
+    return {fw,coverage,avgScore,status,label:avgScore>=60?'Ready':avgScore>=30?'Partial':'Gap',total:relQs.length};
+  });
+}
+function renderReport() {
+  const ps=calcPillarScores(), composite=calcComposite(), rating=getClimateRating(composite);
+  const gw=calcGreenwashing(), flags=detectContradictions(), recos=buildRecommendations(ps), fwMatrix=buildFrameworkMatrix();
+  const entity=STATE.entity, answered=Object.keys(STATE.answers).length;
+  const date=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const gwColor=gw<30?'#00CC44':gw<60?'#FFB800':'#FF3333';
+  const gwBg=gw<30?'rgba(0,204,68,0.10)':gw<60?'rgba(255,184,0,0.10)':'rgba(255,51,51,0.10)';
+  const gwLabel=gw<30?'Low Risk':gw<60?'Moderate Risk':'High Risk';
+
+  const pillarRows=PILLARS.map(p=>{
+    const score=ps[p.id]||0, r=getClimateRating(score);
+    return `<tr><td style="font-weight:600;color:${p.color}">${p.label}</td>
+      <td style="font-family:var(--iro-mono);font-size:10px;color:var(--iro-tm)">${p.weight}%</td>
+      <td class="iro-score-bar-cell"><div class="iro-tbl-bar-wrap"><div class="iro-tbl-bar-fill" style="width:${score}%;background:${p.color}"></div></div></td>
+      <td class="iro-score-cell" style="color:${p.color}">${score}</td>
+      <td class="iro-grade-cell" style="color:${r.color}">${r.grade}</td></tr>`;
+  }).join('');
+
+  const flagRows=flags.length===0
+    ?`<tr><td colspan="2" style="color:#00CC44;font-family:var(--iro-mono);font-size:11px;padding:12px">✓ No material contradictions detected</td></tr>`
+    :flags.map(f=>`<tr><td style="width:1px;white-space:nowrap"><span class="iro-flag-sev ${f.sev}">${f.sev}</span></td><td>${f.text}</td></tr>`).join('');
+
+  const recoHTML=recos.map(r=>`<div class="iro-reco-item"><div class="iro-reco-priority ${r.priority}"></div><div class="iro-reco-body"><div class="iro-reco-title">${r.title}</div><div class="iro-reco-desc">${r.desc}</div><div class="iro-reco-fw">${r.fw.map(f=>`<span class="iro-reco-fw-tag">${f}</span>`).join('')}</div></div></div>`).join('');
+
+  const fwRows=fwMatrix.map(fw=>`<tr>
+    <td style="font-weight:600;font-family:var(--iro-mono);font-size:11px">${fw.fw}</td>
+    <td style="color:var(--iro-tm);font-size:11px">${fw.total}</td>
+    <td><div class="iro-fw-bar"><div class="iro-fw-bar-fill" style="width:${fw.coverage}%;background:var(--iro-accent)"></div></div></td>
+    <td style="font-family:var(--iro-mono);font-size:10px;color:var(--iro-t2)">${fw.coverage}%</td>
+    <td><span class="iro-fw-status ${fw.status}">${fw.label}</span></td></tr>`).join('');
+
+  const entityMeta=[['Entity',entity.name],['Sector',entity.sector],['Type',entity.entityType],['HQ',entity.hq],['Revenue',entity.revenue],['Employees',entity.employees],['Fiscal Year',entity.year?'FY '+entity.year:null],['Net Zero',entity.netZero?(entity.netZero==='after2050'?'After 2050':entity.netZero):'Not committed']].filter(([,v])=>v).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--iro-b)"><span style="font-family:var(--iro-mono);font-size:10px;color:var(--iro-tm)">${k}</span><span style="font-size:11px;font-weight:500;color:var(--iro-t1);text-align:right;max-width:60%">${v}</span></div>`).join('');
+
+  document.getElementById('reportContent').innerHTML=`
+    <div class="iro-report-hero">
+      <div>
+        <div class="iro-report-eyebrow">Climactix Global · Institutional Climate Risk OS · v3.0 · ${date}</div>
+        <div class="iro-report-entity">${entity.name||'Unnamed Entity'}</div>
+        <div class="iro-report-sector">${[entity.sector,entity.entityType,entity.hq].filter(Boolean).join(' · ')}</div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px">
+          ${entity.tcfd?`<span style="font-family:var(--iro-mono);font-size:10px;color:var(--iro-t2)">TCFD: <strong style="color:var(--iro-t1)">${entity.tcfd.replace(/_/g,' ').toUpperCase()}</strong></span>`:''}
+          ${entity.sbti?`<span style="font-family:var(--iro-mono);font-size:10px;color:var(--iro-t2)">SBTi: <strong style="color:var(--iro-t1)">${entity.sbti.toUpperCase()}</strong></span>`:''}
+          ${entity.assurance?`<span style="font-family:var(--iro-mono);font-size:10px;color:var(--iro-t2)">Assurance: <strong style="color:var(--iro-t1)">${entity.assurance.toUpperCase()}</strong></span>`:''}
+          ${entity.netZero?`<span style="font-family:var(--iro-mono);font-size:10px;color:var(--iro-t2)">Net Zero: <strong style="color:var(--iro-t1)">${entity.netZero==='after2050'?'After 2050':entity.netZero}</strong></span>`:''}
+        </div>
+      </div>
+      <div class="iro-rating-block">
+        <div class="iro-rating-label">Climate Risk Rating</div>
+        <div class="iro-rating-grade" style="color:${rating.color}">${rating.grade}</div>
+        <div class="iro-rating-desc">${rating.desc}</div>
+        <div class="iro-rating-score">Composite Score: ${composite}/100</div>
+      </div>
+    </div>
+    <div class="iro-report-meta-row">
+      <div class="iro-report-meta-cell"><div class="iro-rmc-val">${composite}</div><div class="iro-rmc-lbl">Composite Score</div></div>
+      <div class="iro-report-meta-cell"><div class="iro-rmc-val" style="color:${rating.color}">${rating.grade}</div><div class="iro-rmc-lbl">Risk Rating</div></div>
+      <div class="iro-report-meta-cell"><div class="iro-rmc-val" style="color:${gwColor}">${gw}%</div><div class="iro-rmc-lbl">Greenwashing Risk</div></div>
+      <div class="iro-report-meta-cell"><div class="iro-rmc-val">${flags.length}</div><div class="iro-rmc-lbl">Contradictions</div></div>
+      <div class="iro-report-meta-cell"><div class="iro-rmc-val">${answered}</div><div class="iro-rmc-lbl">Qs Answered</div></div>
+      <div class="iro-report-meta-cell"><div class="iro-rmc-val" style="font-size:12px">${date}</div><div class="iro-rmc-lbl">Assessment Date</div></div>
+    </div>
+    <div class="iro-report-body">
+      <div class="iro-report-left">
+        <div class="iro-card"><div class="iro-card-header"><span class="iro-card-title">Climate Risk Radar — 8 Pillar Analysis</span></div><div class="iro-card-body"><div class="iro-radar-wrap"><canvas id="iroRadarChart"></canvas></div></div></div>
+        <div class="iro-card"><div class="iro-card-header"><span class="iro-card-title">Pillar Score Breakdown</span></div><div class="iro-card-body" style="padding:0"><table class="iro-pillar-table"><thead><tr><th>Pillar</th><th>Weight</th><th>Score</th><th>Pts</th><th>Rating</th></tr></thead><tbody>${pillarRows}</tbody></table></div></div>
+        <div class="iro-card"><div class="iro-card-header"><span class="iro-card-title">AI Contradiction Engine — ${flags.length} Flag${flags.length!==1?'s':''} Detected</span></div><div class="iro-card-body" style="padding:0"><table class="iro-flag-table"><tbody>${flagRows}</tbody></table></div></div>
+        <div class="iro-card"><div class="iro-card-header"><span class="iro-card-title">Priority Recommendations</span></div><div class="iro-card-body">${recoHTML||'<p style="color:var(--iro-tm);font-size:12px">Complete the assessment to generate targeted recommendations.</p>'}</div></div>
+      </div>
+      <div class="iro-report-right">
+        <div class="iro-card"><div class="iro-card-header"><span class="iro-card-title">Greenwashing Probability</span></div><div class="iro-gw-panel"><div class="iro-gw-circle" style="background:${gwBg};border:2px solid ${gwColor}"><div class="iro-gw-pct" style="color:${gwColor}">${gw}%</div><div class="iro-gw-risk-label" style="color:${gwColor}">${gwLabel.split(' ')[0]}</div></div><div class="iro-gw-desc">${gw<30?'Disclosure claims are broadly consistent with reported performance. Low cross-pillar contradiction signals.':gw<60?'Moderate inconsistencies detected between stated commitments and measured outcomes. Review flagged pillars.':'High risk: material gaps between stated commitments and verifiable performance. Regulatory and reputational exposure elevated.'}</div></div></div>
+        <div class="iro-card"><div class="iro-card-header"><span class="iro-card-title">Framework Readiness Matrix</span></div><div class="iro-card-body" style="padding:0"><table class="iro-fw-matrix"><thead><tr><th>Framework</th><th>Qs</th><th>Coverage</th><th>%</th><th>Status</th></tr></thead><tbody>${fwRows}</tbody></table></div></div>
+        <div class="iro-card"><div class="iro-card-header"><span class="iro-card-title">Entity Profile</span></div><div class="iro-card-body">${entityMeta}</div></div>
+      </div>
+    </div>`;
+  requestAnimationFrame(()=>buildRadarChart(ps));
+}
+function buildRadarChart(ps) {
+  if (STATE.radarChart) { STATE.radarChart.destroy(); STATE.radarChart=null; }
+  const canvas=document.getElementById('iroRadarChart');
+  if (!canvas||typeof Chart==='undefined') return;
+  STATE.radarChart=new Chart(canvas,{
+    type:'radar',
+    data:{labels:PILLARS.map(p=>p.label),datasets:[{label:STATE.entity.name||'Entity',data:PILLARS.map(p=>ps[p.id]||0),backgroundColor:'rgba(14,165,233,0.10)',borderColor:'#0EA5E9',borderWidth:2,pointBackgroundColor:'#0EA5E9',pointRadius:4,pointHoverRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1A1A1A',borderColor:'#2C2C2C',borderWidth:1,titleColor:'#0EA5E9',bodyColor:'#888',titleFont:{family:"'IBM Plex Mono',monospace",size:10},bodyFont:{family:"'IBM Plex Mono',monospace",size:10}}},scales:{r:{min:0,max:100,ticks:{stepSize:25,color:'#555',backdropColor:'transparent',font:{family:"'IBM Plex Mono',monospace",size:9}},grid:{color:'#1F1F1F'},angleLines:{color:'#1F1F1F'},pointLabels:{color:'#888',font:{family:"'IBM Plex Mono',monospace",size:9}}}}}
+  });
+}
+
+/* ── UTILITY ── */
+function sendToAI() {
+  const ps=calcPillarScores(), composite=calcComposite(), rating=getClimateRating(composite), gw=calcGreenwashing();
+  window.location.href='climactix-ai.html?context='+encodeURIComponent(`Climate Risk OS | Entity: ${STATE.entity.name||'Unknown'} | Rating: ${rating.grade} (${composite}/100) | GW: ${gw}% | Pillars: ${PILLARS.map(p=>p.label+'='+(ps[p.id]||0)).join(', ')}`);
+}
+function retakeAssessment() {
+  if(!confirm('Return to the assessment? Your answers are preserved.')) return;
+  showScreen('iro-assess'); goToSection(STATE.currentSection);
+  setProgress(10,'Retaking Assessment','IN PROGRESS');
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const themeBtn=document.getElementById('themeToggleBtn');
+  if (themeBtn) {
+    const applyTheme=t=>{ document.documentElement.setAttribute('data-theme',t); localStorage.setItem('cx-theme',t); themeBtn.textContent=t==='light'?'◐':'○'; };
+    applyTheme(localStorage.getItem('cx-theme')||'dark');
+    themeBtn.addEventListener('click',()=>applyTheme(document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'));
+  }
+  const signOutBtn=document.getElementById('signOutBtn');
+  if (signOutBtn) signOutBtn.addEventListener('click',()=>{ import('./auth.js?v=3').then(m=>{if(m.signOut)m.signOut();else location.href='login.html';}).catch(()=>{location.href='login.html';}); });
+  showWelcome();
+});
+  </script>
+
+  <!-- Auth Guard -->
+  <script type="module">
+    import { getSession } from './auth.js?v=3';
+    const session = getSession();
+    if (!session || !session.verified) {
+      location.href = 'login.html?redirect=climate-risk-os.html';
+    }
+  </script>
+
+</body>
+</html>
