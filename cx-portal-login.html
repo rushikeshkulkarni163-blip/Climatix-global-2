@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Climactix Global — Internal Analyst System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000000;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;
+  --border:#2C2C2C;--border-strong:#333333;
+  --amber:#FF6600;--amber-dim:#CC5200;--cyan:#0099CC;--green:#00CC44;--red:#FF3333;
+  --text:#FFFFFF;--text-2:#888888;--text-muted:#555555;--t:0.12s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px}
+.mono{font-family:'IBM Plex Mono',monospace}
+
+/* ── Top bar */
+.topbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--bg)}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.brand-logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;letter-spacing:0.05em}
+.internal-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);padding:2px 7px;border:1px solid rgba(255,51,51,0.3);background:rgba(255,51,51,0.06)}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase}
+.topbar-time{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber)}
+
+/* ── Alert banner */
+.alert-banner{background:rgba(255,51,51,0.04);border-bottom:1px solid rgba(255,51,51,0.15);padding:6px 24px;display:flex;align-items:center;gap:12px}
+.alert-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:var(--red);color:#000;padding:2px 6px}
+.alert-text{font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,51,51,0.7)}
+
+/* ── Layout */
+.page{display:grid;grid-template-columns:1fr 440px 1fr;min-height:calc(100vh - 80px);align-items:center}
+
+/* ── Side panels */
+.side-panel{padding:40px 32px;align-self:stretch;display:flex;flex-direction:column;justify-content:center}
+.side-panel.left{border-right:1px solid var(--border)}
+.side-panel.right{border-left:1px solid var(--border)}
+
+.panel-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:14px}
+.panel-title{font-size:20px;font-weight:800;letter-spacing:-0.025em;margin-bottom:10px}
+.panel-body{font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:20px}
+
+.access-level-grid{display:flex;flex-direction:column;gap:6px}
+.access-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface);border:1px solid var(--border);border-radius:2px}
+.access-dot{width:6px;height:6px;border-radius:1px;flex-shrink:0}
+.access-label{font-size:11px;font-weight:600;flex:1}
+.access-clearance{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
+
+.stat-row{display:flex;gap:16px;flex-wrap:wrap}
+.stat-item{background:var(--surface);border:1px solid var(--border);padding:10px 14px;flex:1;min-width:80px}
+.stat-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:var(--amber)}
+.stat-label{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* ── Auth panel */
+.auth-panel{padding:40px 36px;border-left:1px solid var(--border);border-right:1px solid var(--border);min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center}
+
+.auth-brand{margin-bottom:28px}
+.auth-brand-logo{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px}
+.auth-brand-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);padding:3px 8px;border:1px solid rgba(255,51,51,0.3);background:rgba(255,51,51,0.04);display:inline-flex;margin-bottom:12px}
+.auth-brand-desc{font-size:12px;color:var(--text-2)}
+
+.step-indicators{display:flex;align-items:center;gap:6px;margin-bottom:20px}
+.s-dot{width:6px;height:6px;border-radius:1px;background:var(--border-strong)}
+.s-dot.active{background:var(--red)}
+.s-dot.done{background:var(--green)}
+.s-dot-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.08em}
+
+.auth-title{font-size:18px;font-weight:800;letter-spacing:-0.025em;margin-bottom:6px}
+.auth-sub{font-size:12px;color:var(--text-2);margin-bottom:20px}
+
+/* Demo banner */
+.demo-box{background:rgba(255,51,51,0.04);border:1px solid rgba(255,51,51,0.15);padding:10px 12px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px}
+.demo-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);flex-shrink:0;margin-top:1px}
+.demo-text{font-size:11px;color:var(--text-2)}
+.demo-text b{color:var(--text)}
+.demo-fill{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--red);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+
+/* Form */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.form-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:9px 12px;font-size:13px;color:var(--text);font-family:'Inter',system-ui;outline:none;transition:border-color var(--t)}
+.form-input:focus{border-color:var(--red)}
+.form-input::placeholder{color:var(--text-muted)}
+.form-error{font-size:11px;color:var(--red);margin-top:4px;display:none}
+.form-error.visible{display:block}
+
+/* OTP */
+.otp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:4px 0 12px}
+.otp-input{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;padding:10px 4px;background:var(--surface);border:1px solid var(--border);border-radius:2px;color:var(--red);outline:none;transition:border-color var(--t)}
+.otp-input:focus{border-color:var(--red);background:var(--surface-2)}
+
+/* Analyst preview card */
+.analyst-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--red);padding:10px 12px;margin-bottom:14px;display:none}
+.analyst-card.visible{display:block}
+.analyst-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:2px}
+.analyst-name{font-size:12px;font-weight:700;margin-bottom:1px}
+.analyst-role{font-size:11px;color:var(--text-2)}
+
+/* Buttons */
+.btn-primary{width:100%;background:var(--red);color:#000;border:none;border-radius:2px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:background var(--t)}
+.btn-primary:hover{background:#CC0000}
+.btn-outline{width:100%;background:none;border:1px solid var(--border-strong);color:var(--text-2);border-radius:2px;padding:9px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all var(--t);margin-top:6px}
+.btn-outline:hover{border-color:var(--red);color:var(--red)}
+
+/* Status */
+.status-msg{padding:8px 12px;border-radius:2px;font-size:11px;display:none;margin-bottom:12px}
+.status-msg.visible{display:block}
+.status-msg.success{background:rgba(0,204,68,0.06);border:1px solid rgba(0,204,68,0.2);color:var(--green)}
+.status-msg.error{background:rgba(255,51,51,0.06);border:1px solid rgba(255,51,51,0.2);color:var(--red)}
+.status-msg.info{background:rgba(0,153,204,0.06);border:1px solid rgba(0,153,204,0.2);color:var(--cyan)}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0}
+.div-line{flex:1;height:1px;background:var(--border)}
+.div-text{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+
+/* Steps */
+.step{display:none}
+.step.active{display:block;animation:fi 0.16s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* Footer */
+.page-footer{border-top:1px solid var(--border);padding:0 24px;height:36px;display:flex;align-items:center;justify-content:space-between}
+.footer-links{display:flex;gap:16px}
+.footer-link{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);text-decoration:none}
+.footer-link:hover{color:var(--red)}
+.footer-cert{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+
+@media(max-width:900px){.page{grid-template-columns:1fr}.side-panel{display:none}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <span class="brand-logo mono">CLIMACTIX GLOBAL</span>
+    <span class="internal-badge mono">INTERNAL SYSTEM</span>
+  </div>
+  <div class="topbar-right">
+    <span class="topbar-meta mono">Restricted Access &nbsp;|&nbsp; Authorized Personnel Only</span>
+    <span class="topbar-time mono" id="topbar-time">--:-- UTC</span>
+  </div>
+</header>
+
+<div class="alert-banner">
+  <span class="alert-tag mono">Classified</span>
+  <span class="alert-text mono">CLIMACTIX GLOBAL INTERNAL INTELLIGENCE SYSTEM — This system is for authorized Climactix employees only. All access is logged, monitored, and audited. Unauthorized access is prohibited.</span>
+</div>
+
+<div class="page">
+
+  <!-- Left panel -->
+  <div class="side-panel left">
+    <div class="panel-eyebrow mono">Internal Access Roles</div>
+    <h2 class="panel-title">Climactix Intelligence Analyst System</h2>
+    <p class="panel-body">This portal is exclusively for Climactix Global employees — climate analysts, ESG reviewers, financial risk analysts, and compliance teams. Company representatives must use the Enterprise Portal.</p>
+    <div class="access-level-grid">
+      <div class="access-item"><div class="access-dot" style="background:#FF3333"></div><span class="access-label">Super Admin</span><span class="access-clearance mono">CL-10</span></div>
+      <div class="access-item"><div class="access-dot" style="background:#FF6600"></div><span class="access-label">Climate Analyst</span><span class="access-clearance mono">CL-7</span></div>
+      <div class="access-item"><div class="access-dot" style="background:#0099CC"></div><span class="access-label">ESG Reviewer</span><span class="access-clearance mono">CL-6</span></div>
+      <div class="access-item"><div class="access-dot" style="background:#FFB800"></div><span class="access-label">Financial Risk Analyst</span><span class="access-clearance mono">CL-7</span></div>
+      <div class="access-item"><div class="access-dot" style="background:#9966FF"></div><span class="access-label">Sector Specialist</span><span class="access-clearance mono">CL-6</span></div>
+      <div class="access-item"><div class="access-dot" style="background:#888888"></div><span class="access-label">Compliance Team</span><span class="access-clearance mono">CL-5</span></div>
+    </div>
+  </div>
+
+  <!-- Auth panel -->
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <div class="auth-brand-logo mono">CLIMACTIX GLOBAL</div>
+      <div><span class="auth-brand-sub mono">Internal Intelligence Portal</span></div>
+      <div class="auth-brand-desc">Climate Risk Intelligence Operating System — Analyst Access</div>
+    </div>
+
+    <div class="step-indicators">
+      <div class="s-dot active" id="sd-1"></div>
+      <div class="s-dot" id="sd-2"></div>
+      <div class="s-dot" id="sd-3"></div>
+      <span class="s-dot-label mono" id="sd-label">Identity Verification</span>
+    </div>
+
+    <div class="demo-box">
+      <span class="demo-tag mono">Demo</span>
+      <div class="demo-text">
+        Demo access: <b>analyst@climactix.global</b> / <b>demo123</b><br>
+        <span class="demo-fill" onclick="fillDemo()">Auto-fill credentials</span>
+      </div>
+    </div>
+
+    <div class="status-msg" id="status-msg"></div>
+    <h2 class="auth-title" id="auth-title">Internal System Access</h2>
+    <p class="auth-sub" id="auth-sub">Enter your Climactix Global employee email address</p>
+
+    <!-- Step 1: Email -->
+    <div class="step active" id="step-1">
+      <div class="form-group">
+        <label class="form-label mono">Analyst Email Address</label>
+        <input type="email" id="email-inp" class="form-input" placeholder="analyst@climactix.global" oninput="checkEmailPreview()">
+        <div class="form-error" id="err-email">Enter a valid @climactix.global or authorized email</div>
+      </div>
+      <div class="analyst-card" id="analyst-preview">
+        <div class="analyst-id mono" id="ap-id">CX-ANL-000101</div>
+        <div class="analyst-name" id="ap-name">Alexandra Chen</div>
+        <div class="analyst-role" id="ap-role">Climate Analyst · Climate Intelligence</div>
+      </div>
+      <button class="btn-primary mono" onclick="goStep2()">Continue to Authentication</button>
+      <div class="divider"><div class="div-line"></div><div class="div-text mono">Restricted system</div><div class="div-line"></div></div>
+      <a href="enterprise-login.html" style="display:block;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:8px;border:1px solid var(--border);transition:all 0.12s" onmouseover="this.style.borderColor='var(--amber)';this.style.color='var(--amber)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">Company Enterprise Portal →</a>
+    </div>
+
+    <!-- Step 2: Password -->
+    <div class="step" id="step-2">
+      <div class="form-group">
+        <label class="form-label mono">Secure Password</label>
+        <input type="password" id="pwd-inp" class="form-input" placeholder="Enter analyst password">
+        <div class="form-error" id="err-pwd">Incorrect password</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label mono">Access Justification (optional)</label>
+        <input type="text" id="access-reason" class="form-input" placeholder="e.g. Scheduled review — Q1 2026 batch">
+      </div>
+      <button class="btn-primary mono" onclick="submitPwd()">Verify Identity</button>
+      <button class="btn-outline mono" onclick="goStep(1)">Back</button>
+    </div>
+
+    <!-- Step 3: OTP -->
+    <div class="step" id="step-3">
+      <p style="font-size:12px;color:var(--text-2);margin-bottom:16px">Security code sent to <span id="otp-email-disp" style="color:var(--red);font-family:'IBM Plex Mono',monospace;font-size:11px"></span></p>
+      <div class="otp-grid" id="otp-grid">
+        <input type="text" class="otp-input mono" maxlength="1" data-idx="0">
+        <input type="text" class="otp-input mono" maxlength="1" data-idx="1">
+        <input type="text" class="otp-input mono" maxlength="1" data-idx="2">
+        <input type="text" class="otp-input mono" maxlength="1" data-idx="3">
+        <input type="text" class="otp-input mono" maxlength="1" data-idx="4">
+        <input type="text" class="otp-input mono" maxlength="1" data-idx="5">
+      </div>
+      <p style="font-size:10px;color:var(--text-muted);margin-bottom:12px" id="otp-hint"></p>
+      <button class="btn-primary mono" onclick="verifyOTP()">Access Internal System</button>
+      <button class="btn-outline mono" onclick="resendOTP()">Resend Code</button>
+      <button class="btn-outline mono" onclick="goStep(2)">Back</button>
+    </div>
+  </div>
+
+  <!-- Right panel: Platform stats -->
+  <div class="side-panel right">
+    <div class="panel-eyebrow mono">Platform Intelligence Status</div>
+    <h3 class="panel-title" style="font-size:18px">Internal System Overview</h3>
+    <p class="panel-body">Real-time platform operational data — available post-login.</p>
+    <div class="stat-row" style="margin-bottom:16px">
+      <div class="stat-item" id="stat-companies"><div class="stat-val mono" id="sv-companies">—</div><div class="stat-label">Companies</div></div>
+      <div class="stat-item" id="stat-asmts"><div class="stat-val mono" id="sv-asmts">—</div><div class="stat-label">Assessments</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-item"><div class="stat-val mono" id="sv-pending">—</div><div class="stat-label">Pending Review</div></div>
+      <div class="stat-item"><div class="stat-val mono" id="sv-analysts">—</div><div class="stat-label">Analysts</div></div>
+    </div>
+    <div style="margin-top:20px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--red);padding:12px 14px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:6px">Access Notice</div>
+      <div style="font-size:11px;color:var(--text-2);line-height:1.5">All analyst activity in this system is logged and audited. Review actions, score overrides, and report approvals are permanently recorded with analyst identity and timestamp.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  <div class="footer-links">
+    <a href="enterprise-login.html" class="footer-link mono">Company Portal</a>
+    <a href="index.html" class="footer-link mono">Platform Home</a>
+    <a href="#" class="footer-link mono">Security Policy</a>
+  </div>
+  <span class="footer-cert mono">Climactix Global Internal System &nbsp;·&nbsp; SOC2-Ready &nbsp;·&nbsp; All access logged &nbsp;·&nbsp; &copy; 2026</span>
+</footer>
+
+<script src="enterprise.js"></script>
+<script src="cx-internal.js"></script>
+<script>
+(function(){
+  'use strict';
+  const I = window.CX_INTERNAL;
+  const E = window.ENTERPRISE;
+  let _email='', _analyst=null, _otp='';
+
+  // Clock
+  setInterval(()=>{const n=new Date();document.getElementById('topbar-time').textContent=`${String(n.getUTCHours()).padStart(2,'0')}:${String(n.getUTCMinutes()).padStart(2,'0')}:${String(n.getUTCSeconds()).padStart(2,'0')} UTC`;},1000);
+
+  // Platform stats
+  function loadStats(){
+    if(E){
+      document.getElementById('sv-companies').textContent = E.listCompanies().length;
+      const asms=E.listCompanies().reduce((s,c)=>s+E.getCompanyAssessments(c.id).length,0);
+      document.getElementById('sv-asmts').textContent = asms;
+    }
+    const pending=I.listReviews({status:'pending'}).length;
+    document.getElementById('sv-pending').textContent = pending;
+    const analysts=JSON.parse(localStorage.getItem(I.CXI.ANALYSTS)||'[]').length;
+    document.getElementById('sv-analysts').textContent = analysts;
+  }
+  loadStats();
+
+  window.fillDemo=function(){ document.getElementById('email-inp').value='analyst@climactix.global'; checkEmailPreview(); };
+
+  window.checkEmailPreview=function(){
+    const email=document.getElementById('email-inp').value.trim().toLowerCase();
+    const card=document.getElementById('analyst-preview');
+    const analyst=I.getAnalystByEmail(email);
+    if(analyst){
+      document.getElementById('ap-id').textContent=analyst.id;
+      document.getElementById('ap-name').textContent=analyst.name;
+      document.getElementById('ap-role').textContent=`${(I.INTERNAL_ROLES[analyst.role]||{}).label||analyst.role} · ${analyst.department}`;
+      card.classList.add('visible');
+    } else card.classList.remove('visible');
+  };
+
+  function goStep(n){
+    document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+    document.getElementById(`step-${n}`).classList.add('active');
+    for(let i=1;i<=3;i++){const d=document.getElementById(`sd-${i}`);d.className=i<n?'s-dot done':i===n?'s-dot active':'s-dot';}
+    const labels=['Identity Verification','Secure Authentication','OTP Verification'];
+    const titles=['Internal System Access','Enter Your Password','Verify Your Identity'];
+    const subs=['Enter your Climactix Global employee email address','Enter your analyst account password','Enter the 6-digit security code'];
+    document.getElementById('sd-label').textContent=labels[n-1];
+    document.getElementById('auth-title').textContent=titles[n-1];
+    document.getElementById('auth-sub').textContent=subs[n-1];
+  }
+  window.goStep=goStep;
+
+  function showStatus(type,msg){const el=document.getElementById('status-msg');el.className=`status-msg visible ${type}`;el.textContent=msg;}
+  function hideStatus(){document.getElementById('status-msg').className='status-msg';}
+
+  window.goStep2=function(){
+    const email=document.getElementById('email-inp').value.trim().toLowerCase();
+    document.getElementById('err-email').classList.remove('visible');
+    if(!email||!email.includes('@')){document.getElementById('err-email').classList.add('visible');return;}
+    const analyst=I.getAnalystByEmail(email);
+    if(!analyst){showStatus('error','No analyst account found. Internal access requires a registered Climactix employee account.');return;}
+    _email=email; _analyst=analyst; hideStatus(); goStep(2);
+  };
+
+  window.submitPwd=function(){
+    const pwd=document.getElementById('pwd-inp').value;
+    const errEl=document.getElementById('err-pwd');
+    if(!pwd){errEl.classList.add('visible');return;}
+    const result=I.authenticateAnalyst(_email,pwd);
+    if(result.error){errEl.textContent=result.error;errEl.classList.add('visible');return;}
+    errEl.classList.remove('visible');
+    _analyst=result;
+    _otp=E?E.generateOTP():String(Math.floor(100000+Math.random()*900000));
+    document.getElementById('otp-email-disp').textContent=_email;
+    document.getElementById('otp-hint').textContent=`Code valid 5 min — check ${_email}`;
+    showStatus('info',`[DEMO] Internal security code: ${_otp}`);
+    goStep(3);
+  };
+
+  // OTP handling
+  document.querySelectorAll('.otp-input').forEach((inp,idx)=>{
+    inp.addEventListener('input',function(){this.value=this.value.replace(/\D/,'').slice(0,1);if(this.value&&idx<5)document.querySelectorAll('.otp-input')[idx+1].focus();});
+    inp.addEventListener('keydown',function(e){if(e.key==='Backspace'&&!this.value&&idx>0)document.querySelectorAll('.otp-input')[idx-1].focus();});
+    inp.addEventListener('paste',function(e){const d=(e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');if(d.length===6){document.querySelectorAll('.otp-input').forEach((el,i)=>{el.value=d[i]||'';});e.preventDefault();}});
+  });
+
+  window.verifyOTP=function(){
+    const entered=Array.from(document.querySelectorAll('.otp-input')).map(i=>i.value).join('');
+    if(entered.length<6){showStatus('error','Enter the complete 6-digit code.');return;}
+    if(entered===_otp){
+      showStatus('success','Authentication confirmed. Initialising analyst session...');
+      I.createAnalystSession(_analyst.id,_analyst.role);
+      setTimeout(()=>window.location.href='cx-portal-dashboard.html',800);
+    } else {
+      showStatus('error','Incorrect code. All access attempts are logged.');
+      document.querySelectorAll('.otp-input').forEach(i=>{i.value='';});
+      document.querySelectorAll('.otp-input')[0].focus();
+    }
+  };
+
+  window.resendOTP=function(){_otp=E?E.generateOTP():String(Math.floor(100000+Math.random()*900000));showStatus('info',`[DEMO] New code: ${_otp}`);};
+
+  // Existing session
+  const existing=I.getAnalystSession();
+  if(existing){const banner=document.querySelector('.demo-box');if(banner)banner.innerHTML='<span class="demo-tag mono">Session</span><div class="demo-text">Active analyst session detected. <span class="demo-fill" onclick="window.location.href=\'cx-portal-dashboard.html\'">Return to dashboard</span></div>';}
+})();
+</script>
+</body>
+</html>

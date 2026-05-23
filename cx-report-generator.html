@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Climactix — Institutional Report Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000000;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--border:#2C2C2C;--border-strong:#3A3A3A;--amber:#FF6600;--cyan:#0099CC;--green:#00CC44;--red:#FF3333;--blue:#3399FF;--purple:#9966FF;--yellow:#FFB800;--text:#FFFFFF;--text-2:#888888;--text-muted:#555555;--t:0.12s ease}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:12px;line-height:1.5;min-height:100vh}
+.mono{font-family:'IBM Plex Mono',monospace}
+/* Nav */
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.05em}
+.nav-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--amber);padding:2px 6px;border:1px solid rgba(255,102,0,0.3);background:rgba(255,102,0,0.06)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all var(--t);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.nav-btn.amber{border-color:rgba(255,102,0,0.3);color:var(--amber)}
+.nav-btn.amber:hover{background:rgba(255,102,0,0.06)}
+.analyst-badge{display:flex;align-items:center;gap:6px;padding:3px 8px;background:rgba(255,51,51,0.04);border:1px solid rgba(255,51,51,0.15);border-radius:2px}
+.analyst-badge-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--red)}
+.analyst-badge-name{font-size:10px;color:var(--text-2)}
+/* Ticker */
+.ticker{height:30px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden}
+.ticker-tag{background:var(--amber);color:#000;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0 10px;height:100%;display:flex;align-items:center;flex-shrink:0}
+.ticker-items{display:flex;align-items:center;overflow:hidden}
+.ticker-item{display:flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0}
+.tk{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
+.tv{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
+/* Workspace */
+.workspace{display:grid;grid-template-columns:220px 1fr}
+/* Sidebar */
+.sidebar{border-right:1px solid var(--border);position:sticky;top:74px;height:calc(100vh - 74px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--surface-3)}
+.sb-report-meta{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.sb-meta-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.sb-report-id{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber);margin-bottom:2px}
+.sb-company-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.sb-rating-display{display:flex;align-items:center;gap:8px;margin-top:6px;padding:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:2px}
+.sb-rating-num{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:700;letter-spacing:-0.03em}
+.sb-rating-grade{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700}
+.sb-nav-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);padding:8px 14px 4px}
+.sb-nav-link{display:flex;align-items:center;gap:6px;padding:6px 14px;font-size:10px;color:var(--text-2);text-decoration:none;cursor:pointer;transition:all var(--t);border-left:2px solid transparent}
+.sb-nav-link:hover{color:var(--text);background:var(--surface-2)}
+.sb-nav-link.active{color:var(--amber);border-left-color:var(--amber);background:rgba(255,102,0,0.04)}
+.sb-section-num{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);flex-shrink:0;width:16px}
+/* Main */
+.main{overflow-x:hidden}
+/* Cover page */
+.cover-page{padding:32px;border-bottom:2px solid var(--border-strong);background:linear-gradient(180deg,rgba(255,102,0,0.04) 0%,transparent 100%)}
+.cover-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--amber);margin-bottom:16px}
+.cover-title{font-size:24px;font-weight:900;letter-spacing:-0.03em;margin-bottom:4px}
+.cover-subtitle{font-size:14px;font-weight:400;color:var(--text-2);margin-bottom:24px}
+.cover-grid{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start}
+.cover-entity{display:flex;flex-direction:column;gap:8px}
+.cover-cx-id{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--amber);letter-spacing:0.06em}
+.cover-company{font-size:20px;font-weight:800;letter-spacing:-0.02em}
+.cover-meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:4px}
+.cover-meta-item{font-size:10px;color:var(--text-2)}
+.cover-meta-item strong{color:var(--text);font-weight:600}
+.cover-rating-box{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:16px 20px;text-align:center;min-width:140px}
+.cover-rating-num{font-family:'IBM Plex Mono',monospace;font-size:36px;font-weight:700;letter-spacing:-0.04em;line-height:1}
+.cover-rating-grade{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;margin-top:4px;letter-spacing:0.04em}
+.cover-rating-desc{font-size:10px;color:var(--text-2);margin-top:4px}
+.cover-footer{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.cover-footer-left{font-size:10px;color:var(--text-muted)}
+.cover-generated{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+/* Report sections */
+.report-section{border-bottom:1px solid var(--border);scroll-margin-top:74px}
+.report-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:74px;z-index:10}
+.rs-num{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);margin-right:10px;flex-shrink:0}
+.rs-title{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text)}
+.rs-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+.report-body{padding:20px 24px}
+/* Data grids */
+.data-grid{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:16px}
+.data-grid-2{grid-template-columns:1fr 1fr}
+.data-grid-3{grid-template-columns:1fr 1fr 1fr}
+.data-grid-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.dg-cell{background:var(--bg);padding:12px 14px}
+.dg-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.dg-val{font-size:13px;font-weight:700;color:var(--text)}
+.dg-val.mono{font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:-0.02em}
+.dg-val.large{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;letter-spacing:-0.03em}
+.dg-sub{font-size:10px;color:var(--text-2);margin-top:3px}
+/* C-Layer report grid */
+.clayer-report{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:16px}
+.clr-cell{background:var(--bg);padding:12px 14px}
+.clr-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2px}
+.clr-long{font-size:10px;color:var(--text-2);margin-bottom:6px}
+.clr-score{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-0.03em}
+.clr-weight{font-size:9px;color:var(--text-muted);margin-top:2px}
+.clr-status{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em;margin-top:4px}
+.clr-bar{height:3px;background:var(--border);margin-top:6px;border-radius:1px}
+.clr-bar-fill{height:100%;border-radius:1px;transition:width 0.4s ease}
+/* Framework compliance table */
+.fw-report-table{width:100%;border-collapse:collapse}
+.fw-report-table thead th{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface)}
+.fw-report-table tbody tr{border-bottom:1px solid var(--border)}
+.fw-report-table tbody tr:hover{background:var(--surface-2)}
+.fw-report-table td{padding:8px 12px;font-size:11px}
+.fw-bar{width:80px;height:4px;background:var(--border);border-radius:2px;display:inline-block;vertical-align:middle;margin-right:6px}
+.fw-bar-fill{height:100%;border-radius:2px}
+/* Recommendation lists */
+.rec-list{list-style:none;padding:0}
+.rec-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.rec-item:last-child{border-bottom:none}
+.rec-bullet{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.rec-text{font-size:11px;line-height:1.6}
+/* Key findings */
+.findings-list{padding:0;list-style:none}
+.finding-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.finding-item:last-child{border-bottom:none}
+.finding-arrow{color:var(--amber);font-size:10px;flex-shrink:0;margin-top:2px;font-family:'IBM Plex Mono',monospace}
+.finding-text{font-size:11px;line-height:1.5}
+/* Risk indicator */
+.risk-indicator{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.06em;border:1px solid}
+/* Greenwashing probability bar */
+.gw-bar-container{margin:12px 0}
+.gw-bar-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
+.gw-bar-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
+.gw-bar-labels{display:flex;justify-content:space-between;margin-top:4px}
+.gw-bar-label{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+/* Score comparison bar */
+.score-bar{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)}
+.score-bar:last-child{border-bottom:none}
+.score-bar-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-2);width:80px;flex-shrink:0}
+.score-bar-track{flex:1;height:4px;background:var(--border);border-radius:2px}
+.score-bar-fill{height:100%;border-radius:2px;transition:width 0.4s ease}
+.score-bar-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;width:30px;text-align:right;flex-shrink:0}
+/* Chips */
+.chip{display:inline-flex;padding:2px 7px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap}
+.chip-green{background:rgba(0,204,68,0.08);border:1px solid rgba(0,204,68,0.25);color:var(--green)}
+.chip-amber{background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.25);color:var(--amber)}
+.chip-red{background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.25);color:var(--red)}
+.chip-cyan{background:rgba(0,153,204,0.08);border:1px solid rgba(0,153,204,0.25);color:var(--cyan)}
+/* Divider */
+.report-divider{height:1px;background:var(--border);margin:16px 0}
+/* Inline metrics */
+.inline-metrics{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.inline-metric{display:flex;flex-direction:column;gap:2px}
+.im-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+.im-val{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700}
+/* Status row */
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.status-row:last-child{border-bottom:none}
+.sr-label{font-size:11px;color:var(--text-2)}
+.sr-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700}
+/* Confidence meter */
+.confidence-meter{margin:12px 0}
+.cm-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.cm-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red),var(--amber),var(--green));clip-path:inset(0 0 0 0);transition:clip-path 0.4s ease}
+/* Print styles */
+@media print {
+  .nav,.ticker,.sidebar,.print-hide{display:none!important}
+  .workspace{display:block}
+  .main{display:block;width:100%}
+  body{background:#fff;color:#000;font-size:10pt}
+  :root{--bg:#fff;--surface:#f9f9f9;--text:#000;--text-2:#444;--text-muted:#888;--border:#ddd;--border-strong:#ccc}
+  .cover-page{background:none;padding:20pt}
+  .report-section-hdr{position:static;background:var(--surface);page-break-inside:avoid}
+  .report-section{page-break-inside:avoid}
+  .report-body{padding:12pt 20pt}
+}
+/* Empty state */
+.empty-state{padding:40px 20px;text-align:center;color:var(--text-muted);font-size:11px}
+/* Company selector */
+.company-card{border:1px solid var(--border);border-radius:2px;padding:12px 14px;cursor:pointer;transition:all var(--t);margin-bottom:6px}
+.company-card:hover{border-color:rgba(255,102,0,0.3);background:rgba(255,102,0,0.03)}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-left">
+    <span class="nav-logo mono">CLIMACTIX GLOBAL</span>
+    <span class="nav-badge mono">REPORT ENGINE</span>
+  </div>
+  <div class="nav-right">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)" id="nav-time">--:-- UTC</span>
+    <div class="analyst-badge">
+      <span class="analyst-badge-id mono" id="nav-analyst-id">—</span>
+      <span class="analyst-badge-name" id="nav-analyst-name">—</span>
+    </div>
+    <a href="cx-portal-dashboard.html" class="nav-btn mono">Dashboard</a>
+    <a href="cx-review-workspace.html" class="nav-btn mono" id="nav-review-link">Review Queue</a>
+    <button class="nav-btn amber mono print-hide" onclick="window.print()">&#128424; Print Report</button>
+    <button class="nav-btn mono print-hide" onclick="doSignOut()">Sign Out</button>
+  </div>
+</header>
+<div class="ticker">
+  <div class="ticker-tag mono">REPORT</div>
+  <div class="ticker-items">
+    <div class="ticker-item"><span class="tk mono">Report ID</span><span class="tv mono" id="t-report-id">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Entity</span><span class="tv mono" id="t-entity">—</span></div>
+    <div class="ticker-item"><span class="tk mono">CX ID</span><span class="tv mono" id="t-cx-id">—</span></div>
+    <div class="ticker-item"><span class="tk mono">C-Score</span><span class="tv mono" id="t-score">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Rating</span><span class="tv mono" id="t-rating">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Generated</span><span class="tv mono" id="t-generated">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Version</span><span class="tv mono">1.0 · AI-GENERATED</span></div>
+  </div>
+</div>
+<div class="workspace">
+  <nav class="sidebar print-hide">
+    <div class="sb-report-meta">
+      <div class="sb-meta-label mono">Report</div>
+      <div class="sb-report-id mono" id="sb-report-id">—</div>
+      <div class="sb-company-name" id="sb-company-name">—</div>
+      <div class="sb-rating-display" id="sb-rating-display">
+        <div>
+          <div class="sb-rating-num mono" id="sb-rating-num" style="color:var(--amber)">—</div>
+          <div style="font-size:9px;color:var(--text-muted)">C-SCORE</div>
+        </div>
+        <div>
+          <div class="sb-rating-grade mono" id="sb-rating-grade" style="color:var(--amber)">—</div>
+          <div style="font-size:9px;color:var(--text-muted)">RATING</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:6px 0">
+      <div class="sb-nav-label mono">Sections</div>
+      <div id="sb-section-links"></div>
+      <div class="sb-nav-label mono" style="margin-top:4px">Actions</div>
+      <div class="sb-nav-link" onclick="window.print()" style="cursor:pointer">&#128424; Print / Export</div>
+      <div class="sb-nav-link" onclick="saveReport()" style="cursor:pointer">&#128190; Save Report</div>
+      <a class="sb-nav-link" href="cx-review-workspace.html" id="sb-review-link">&#9654; Review Workspace</a>
+      <a class="sb-nav-link" href="cx-portal-dashboard.html">&#9632; Dashboard</a>
+    </div>
+  </nav>
+  <div class="main" id="main-content">
+    <div class="empty-state" id="loading-state">Loading report data...</div>
+  </div>
+</div>
+<script src="enterprise.js"></script>
+<script src="cx-internal.js"></script>
+<script>
+(function(){
+  'use strict';
+  const I = window.CX_INTERNAL;
+  const E = window.ENTERPRISE;
+
+  // ── Auth guard
+  const session = I.getAnalystSession();
+  if(!session){ window.location.href = 'cx-portal-login.html'; return; }
+
+  const analysts = JSON.parse(localStorage.getItem(I.CXI.ANALYSTS)||'[]');
+  const analyst = analysts.find(a=>a.id===session.analystId) || {id:session.analystId, name:'Analyst'};
+
+  // ── Clock
+  function updateClock(){ const n=new Date(); document.getElementById('nav-time').textContent=`${String(n.getUTCHours()).padStart(2,'0')}:${String(n.getUTCMinutes()).padStart(2,'0')} UTC`; }
+  updateClock(); setInterval(updateClock, 60000);
+
+  document.getElementById('nav-analyst-id').textContent = analyst.id;
+  document.getElementById('nav-analyst-name').textContent = analyst.name;
+
+  // ── Load params
+  const params = new URLSearchParams(window.location.search);
+  let company = null, assessment = null, aiAnalysis = null, report = null;
+
+  function tryLoad() {
+    const companyId = params.get('company');
+    const reportId  = params.get('report');
+    if(reportId) {
+      report = I.getReport(reportId);
+      if(report) {
+        company = E.getCompany(report.companyId);
+        assessment = E.getAssessment(report.assessmentId);
+        aiAnalysis = report._aiAnalysis || null;
+        return true;
+      }
+    }
+    if(companyId) {
+      company = E.getCompany(companyId);
+      if(!company) return false;
+      const asmts = E.getCompanyAssessments(companyId);
+      assessment = asmts.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0];
+      if(!assessment) return false;
+      aiAnalysis = I.runAIAssessment(assessment, company);
+      report = I.generateInstitutionalReport(assessment, company, aiAnalysis);
+      report._aiAnalysis = aiAnalysis;
+      return true;
+    }
+    return false;
+  }
+
+  if(!tryLoad()) {
+    document.getElementById('main-content').innerHTML = buildCompanySelector();
+    document.getElementById('loading-state') && (document.getElementById('loading-state').remove());
+    return;
+  }
+
+  buildPage();
+
+  // ── Save report
+  window.saveReport = function() {
+    I.saveReport(report);
+    showToast('Report saved', 'green');
+  };
+
+  // ── Build page
+  function buildPage() {
+    const rating = I.getClimateRating(report.cover.overallScore);
+
+    // Ticker
+    document.getElementById('t-report-id').textContent  = report.reportId;
+    document.getElementById('t-entity').textContent     = company.name;
+    document.getElementById('t-cx-id').textContent      = company.id;
+    document.getElementById('t-score').textContent      = report.cover.overallScore || '—';
+    document.getElementById('t-rating').textContent     = report.cover.overallScore ? rating.grade : 'N/R';
+    document.getElementById('t-generated').textContent  = new Date(report.generatedAt).toLocaleDateString();
+
+    // Sidebar
+    document.getElementById('sb-report-id').textContent   = report.reportId;
+    document.getElementById('sb-company-name').textContent = company.name;
+    document.getElementById('sb-rating-num').textContent   = report.cover.overallScore || '—';
+    document.getElementById('sb-rating-num').style.color   = rating.color;
+    document.getElementById('sb-rating-grade').textContent = report.cover.overallScore ? rating.grade : '—';
+    document.getElementById('sb-rating-grade').style.color = rating.color;
+    document.getElementById('nav-review-link').href = `cx-review-workspace.html?company=${company.id}`;
+    document.getElementById('sb-review-link').href  = `cx-review-workspace.html?company=${company.id}`;
+
+    // Build sections
+    const sections = buildSections();
+    document.getElementById('sb-section-links').innerHTML = sections.map((s,i)=>`<div class="sb-nav-link" onclick="scrollTo('rs-${s.id}')" style="cursor:pointer"><span class="sb-section-num">${String(i).padStart(2,'0')}</span>${s.shortTitle}</div>`).join('');
+
+    let html = buildCoverPage(rating);
+    sections.forEach((s,i) => { html += buildSection(i, s); });
+    document.getElementById('main-content').innerHTML = html;
+  }
+
+  // ── Cover page
+  function buildCoverPage(rating) {
+    const cv = report.cover;
+    const ind = E.INDUSTRIES[company.industryKey] || {};
+    return `<div class="cover-page">
+      <div class="cover-label mono">Climactix Global — Institutional Climate Intelligence Report</div>
+      <div class="cover-title">${cv.reportTitle}</div>
+      <div class="cover-subtitle">${cv.assessmentType} · ${cv.assessmentYear}</div>
+      <div class="cover-grid">
+        <div class="cover-entity">
+          <div class="cover-cx-id mono">${cv.entityId}</div>
+          <div class="cover-company">${cv.companyName}</div>
+          <div class="cover-meta-row">
+            <div class="cover-meta-item"><strong>Industry:</strong> ${cv.industry||'—'}</div>
+            <div class="cover-meta-item"><strong>Country:</strong> ${cv.country||'—'}</div>
+            <div class="cover-meta-item"><strong>Assessment Year:</strong> ${cv.assessmentYear||'—'}</div>
+            <div class="cover-meta-item"><strong>Risk Tier:</strong> ${company.riskTier||'—'}</div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <span class="chip chip-amber mono">${ind.riskTier||'Risk Profile'}</span>
+            ${ind.code?`<span class="chip chip-cyan mono">${ind.code}</span>`:''}
+            <span class="chip chip-green mono">AI-Generated v1.0</span>
+          </div>
+        </div>
+        <div class="cover-rating-box">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">C-SCORE</div>
+          <div class="cover-rating-num mono" style="color:${cv.overallScore?rating.color:'var(--text-muted)'}">${cv.overallScore||'N/A'}</div>
+          <div class="cover-rating-grade mono" style="color:${cv.overallScore?rating.color:'var(--text-muted)'}">${cv.overallScore?rating.grade:'Unrated'}</div>
+          <div class="cover-rating-desc">${cv.ratingDesc||rating.desc||'—'}</div>
+        </div>
+      </div>
+      <div class="cover-footer">
+        <div class="cover-footer-left">
+          <div>Climactix Global Intelligence Platform — Confidential</div>
+          <div style="margin-top:2px;color:var(--text-muted)">Report ID: ${report.reportId} · Version ${report.version}</div>
+        </div>
+        <div class="cover-generated mono">Generated ${new Date(report.generatedAt).toLocaleString()}</div>
+      </div>
+    </div>`;
+  }
+
+  // ── All 17 section builders
+  const C_LAYERS = [
+    {id:'c_core',   label:'C-CORE',   long:'Governance & Strategy',   weight:10,color:'#0099CC'},
+    {id:'c_fin',    label:'C-FIN',    long:'Financial Materiality',   weight:20,color:'#FFB800'},
+    {id:'c_risk_p', label:'C-RISK/P', long:'Physical Risk Exposure',  weight:15,color:'#FF6600'},
+    {id:'c_risk_t', label:'C-RISK/T', long:'Transition Risk Exposure',weight:15,color:'#FF4400'},
+    {id:'c_capital',label:'C-CAPITAL',long:'Carbon & Capital',        weight:10,color:'#3399FF'},
+    {id:'c_supply', label:'C-SUPPLY', long:'Supply Chain Fragility',  weight:10,color:'#9966FF'},
+    {id:'c_adapt',  label:'C-ADAPT',  long:'Adaptation & Resilience', weight:10,color:'#00CC44'},
+    {id:'c_truth',  label:'C-TRUTH',  long:'Disclosure Integrity',    weight:10,color:'#FF3333'}
+  ];
+
+  function buildSections() {
+    const s = report.sections;
+    return [
+      {id:'exec',    shortTitle:'Executive Summary',       fn:()=>renderExecSummary(s.executiveSummary)},
+      {id:'rating',  shortTitle:'Institutional Rating',    fn:()=>renderRating(s.institutionalRating)},
+      {id:'fin',     shortTitle:'Financial Exposure',      fn:()=>renderFinancial(s.financialExposure)},
+      {id:'phys',    shortTitle:'Physical Risk',           fn:()=>renderPhysicalRisk(s.physicalRisk)},
+      {id:'trans',   shortTitle:'Transition Risk',         fn:()=>renderTransitionRisk(s.transitionRisk)},
+      {id:'carbon',  shortTitle:'Carbon Liability',        fn:()=>renderCarbon(s.carbonLiability)},
+      {id:'gov',     shortTitle:'Governance Assessment',   fn:()=>renderGovernance(s.governanceAssessment)},
+      {id:'supply',  shortTitle:'Supply Chain',            fn:()=>renderSupplyChain(s.supplyChain)},
+      {id:'adapt',   shortTitle:'Adaptation',              fn:()=>renderAdaptation(s.adaptation)},
+      {id:'gw',      shortTitle:'Greenwashing Analysis',   fn:()=>renderGreenwashing(s.greenwashingAnalysis)},
+      {id:'credit',  shortTitle:'Climate Creditworthiness',fn:()=>renderCreditworthiness(s.climateCreditworthiness)},
+      {id:'capital', shortTitle:'Capital Allocation',      fn:()=>renderCapitalAllocation(s.capitalAllocationReadiness)},
+      {id:'var',     shortTitle:'Climate VaR',             fn:()=>renderClimateVaR(s.climateVaR)},
+      {id:'fw',      shortTitle:'Framework Compliance',    fn:()=>renderFrameworkCompliance(s.frameworkCompliance)},
+      {id:'recs',    shortTitle:'Recommendations',         fn:()=>renderRecommendations(s.recommendations)},
+      {id:'evidence',shortTitle:'Evidence Reliability',    fn:()=>renderEvidence(s.evidenceReliability)},
+      {id:'conf',    shortTitle:'Confidence & Methodology',fn:()=>renderConfidence()}
+    ];
+  }
+
+  function buildSection(idx, s) {
+    return `<div class="report-section" id="rs-${s.id}">
+      <div class="report-section-hdr">
+        <div style="display:flex;align-items:center">
+          <span class="rs-num">${String(idx+1).padStart(2,'0')}</span>
+          <span class="rs-title">${s.shortTitle}</span>
+        </div>
+        <span class="rs-meta">${report.reportId} · ${report.cover.entityId}</span>
+      </div>
+      <div class="report-body">${s.fn()}</div>
+    </div>`;
+  }
+
+  // Section renderers
+  function renderExecSummary(d) {
+    if(!d) return noData();
+    const rating = I.getClimateRating(report.cover.overallScore);
+    return `<div style="max-width:800px">
+      <div style="font-size:13px;line-height:1.8;color:var(--text-2);margin-bottom:16px">${d.content}</div>
+      <div class="report-divider"></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Key Findings</div>
+      <ul class="findings-list">
+        ${(d.keyFindings||[]).map(f=>`<li class="finding-item"><span class="finding-arrow">&#9656;</span><span class="finding-text">${f}</span></li>`).join('')}
+      </ul>
+      <div class="report-divider"></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <span class="chip" style="background:${rating.color}20;border:1px solid ${rating.color}40;color:${rating.color}">Rating: ${rating.grade}</span>
+        <span class="chip chip-amber">Risk: ${d.riskClassification||'Elevated'}</span>
+        <span class="chip chip-cyan">Confidence: ${d.confidenceScore||'—'}%</span>
+      </div>
+    </div>`;
+  }
+
+  function renderRating(d) {
+    if(!d) return noData();
+    const rating = I.getClimateRating(d.score);
+    return `<div style="display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;margin-bottom:20px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:20px 24px;text-align:center;border-top:3px solid ${rating.color}">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Final Rating</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:40px;font-weight:700;letter-spacing:-0.04em;color:${rating.color};line-height:1">${d.grade||rating.grade}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:700;letter-spacing:-0.03em;color:${rating.color};margin-top:4px">${d.score||'—'}<span style="font-size:14px;color:var(--text-muted)">/100</span></div>
+        <div style="font-size:10px;color:var(--text-2);margin-top:6px">${d.description||rating.desc}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--text-2);line-height:1.7;margin-bottom:12px">${d.rationale}</div>
+        <div style="font-size:10px;color:var(--text-2);padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:2px">${d.benchmarkComparison}</div>
+      </div>
+    </div>
+    <div class="clayer-report">
+      ${(d.clayerScores||[]).map(cl=>{
+        const cDef = C_LAYERS.find(c=>c.id===cl.id);
+        const color = cDef?.color||'var(--amber)';
+        return `<div class="clr-cell">
+          <div class="clr-label mono" style="color:${color}">${cl.label}</div>
+          <div class="clr-long">${cl.long}</div>
+          <div class="clr-score mono" style="color:${cl.score?color:'var(--text-muted)'}">${cl.score!=null?cl.score:'—'}</div>
+          <div class="clr-weight">Wt: ${cl.weight}%</div>
+          <div class="clr-status mono" style="color:${cl.score>=70?'var(--green)':cl.score>=50?'var(--amber)':'var(--red)'}">${cl.status||'—'}</div>
+          <div class="clr-bar"><div class="clr-bar-fill" style="width:${cl.score||0}%;background:${color}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  function renderFinancial(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Total Climate Exposure', d.totalExposure, null, 'var(--amber)')}
+      ${dgCell('Climate VaR Index', d.climateVaR, null, 'var(--red)')}
+      ${dgCell('Financial Integration', d.financialIntegration, null, scoreColor(d.financialIntegration))}
+    </div>
+    <div class="data-grid data-grid-2">
+      ${dgCell('Carbon Pricing Exposure', d.carbonPricingExposure)}
+      ${dgCell('Internal Carbon Price', d.internalCarbonPrice)}
+    </div>
+    ${d.keyRisks&&d.keyRisks.length?`<div style="margin-top:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:8px">Key Financial Risks</div>
+      ${d.keyRisks.map(r=>`<div class="finding-item"><span style="color:var(--red);font-family:'IBM Plex Mono',monospace;font-size:10px">&#9888;</span><span class="finding-text">${r}</span></div>`).join('')}
+    </div>`:''}`;
+  }
+
+  function renderPhysicalRisk(d) {
+    if(!d) return noData();
+    const col = d.materiality==='High'?'var(--red)':'var(--amber)';
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Physical Risk Score', d.score, null, d.score?(100-d.score<35?'var(--green)':100-d.score<55?'var(--amber)':'var(--red)'):'var(--text-muted)')}
+      ${dgCell('Risk Status', d.status, null, d.status==='Critical'?'var(--red)':d.status==='High'?'var(--amber)':'var(--green)')}
+      ${dgCell('Materiality', d.materiality, null, col)}
+    </div>
+    <div class="data-grid data-grid-2">
+      ${dgCell('Financial Impact', d.financialImpact)}
+      ${dgCell('Assessment Tool', d.assessmentTool)}
+    </div>
+    ${d.industrySpecificRisks&&d.industrySpecificRisks.length?`<div style="margin-top:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Industry-Specific Physical Risks</div>
+      ${d.industrySpecificRisks.map(r=>`<div class="rec-item"><div class="rec-bullet" style="background:var(--amber)"></div><div class="rec-text">${r}</div></div>`).join('')}
+    </div>`:''}`;
+  }
+
+  function renderTransitionRisk(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Transition Risk Score', d.score, null, d.score?(d.score>=60?'var(--green)':d.score>=40?'var(--amber)':'var(--red)'):'var(--text-muted)')}
+      ${dgCell('Risk Status', d.status, null, d.status==='Critical'?'var(--red)':d.status==='High'?'var(--amber)':'var(--green)')}
+      ${dgCell('Stranded Asset Risk', d.stranded_asset_risk, null, d.stranded_asset_risk==='High'?'var(--red)':d.stranded_asset_risk==='Moderate'?'var(--amber)':'var(--green)')}
+    </div>
+    <div class="data-grid data-grid-2">
+      ${dgCell('Regulatory Exposure', d.regulatoryExposure)}
+      ${dgCell('Carbon Pricing', d.carbonPricingExposure)}
+    </div>
+    ${d.financialImpact?`<div style="margin-top:8px">${dg2('Financial Impact', d.financialImpact)}</div>`:''}`;
+  }
+
+  function renderCarbon(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-4">
+      ${dgCell('Scope 1', d.scope1, 'Direct emissions', '#3399FF')}
+      ${dgCell('Scope 2', d.scope2, 'Energy indirect', '#0099CC')}
+      ${dgCell('Scope 3', d.scope3, 'Value chain', '#9966FF')}
+      ${dgCell('Total S1+S2', d.totalGHG, null, 'var(--amber)')}
+    </div>
+    <div class="data-grid data-grid-3">
+      ${dgCell('Assurance Level', d.assuranceLevel)}
+      ${dgCell('Net-Zero Status', d.netZeroTarget, null, d.netZeroTarget==='Committed'?'var(--green)':'var(--red)')}
+      ${dgCell('Target Alignment', d.targetAlignment)}
+    </div>`;
+  }
+
+  function renderGovernance(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Governance Score', d.score, null, d.score?(d.score>=70?'var(--green)':d.score>=50?'var(--cyan)':'var(--red)'):'var(--text-muted)')}
+      ${dgCell('Status', d.status, null, scoreColor(d.status))}
+      ${dgCell('Governance Quality', d.governanceQuality, null, d.governanceQuality==='Institutional grade'?'var(--green)':'var(--amber)')}
+    </div>
+    ${[
+      {label:'Board Oversight', val:d.boardOversight},
+      {label:'Reporting Frequency', val:d.reportingFrequency},
+      {label:'ERM Integration', val:d.ermIntegration}
+    ].map(r=>`<div class="status-row"><span class="sr-label">${r.label}</span><span class="sr-val mono" style="color:${r.val&&r.val.toLowerCase().includes('not')&&!r.val.toLowerCase().includes('not integrated')===false?'var(--red)':'var(--green)'}">${r.val||'—'}</span></div>`).join('')}`;
+  }
+
+  function renderSupplyChain(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-2">
+      ${dgCell('Supply Chain Score', d.score, null, d.score?(d.score>=60?'var(--green)':d.score>=40?'var(--amber)':'var(--red)'):'var(--text-muted)')}
+      ${dgCell('Fragility Level', d.status, null, d.status==='Critical'?'var(--red)':d.status==='High'?'var(--amber)':'var(--green)')}
+    </div>
+    ${[
+      {label:'Scope 3 Coverage', val:d.scope3Coverage},
+      {label:'Supplier Requirements', val:d.supplierRequirements},
+      {label:'Fragility Assessment', val:d.fragility}
+    ].map(r=>`<div class="status-row"><span class="sr-label">${r.label}</span><span class="sr-val mono" style="max-width:320px;text-align:right;white-space:normal;font-size:9px;color:var(--text-2)">${r.val||'—'}</span></div>`).join('')}`;
+  }
+
+  function renderAdaptation(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Adaptation Score', d.score, null, d.score?(d.score>=70?'var(--green)':d.score>=50?'var(--amber)':'var(--red)'):'var(--text-muted)')}
+      ${dgCell('Status', d.status, null, scoreColor(d.status))}
+      ${dgCell('Maturity Level', d.adaptationMaturity, null, d.adaptationMaturity==='Advanced'?'var(--green)':'var(--amber)')}
+    </div>
+    ${[
+      {label:'Net-Zero Strategy', val:d.netZeroStrategy},
+      {label:'Emission Reduction', val:d.emissionReduction}
+    ].map(r=>`<div class="status-row"><span class="sr-label">${r.label}</span><span class="sr-val mono" style="color:var(--text-2)">${r.val||'—'}</span></div>`).join('')}`;
+  }
+
+  function renderGreenwashing(d) {
+    if(!d) return noData();
+    const gwColor = d.probability>=50?'var(--red)':d.probability>=25?'var(--amber)':'var(--green)';
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('GW Probability', d.probability!=null?d.probability+'%':'—', null, gwColor)}
+      ${dgCell('Risk Level', d.level||'—', null, gwColor)}
+      ${dgCell('Disclosure Integrity', d.disclosureIntegrity!=null?d.disclosureIntegrity+'/100':'—', null, d.disclosureIntegrity>=60?'var(--green)':d.disclosureIntegrity>=40?'var(--amber)':'var(--red)')}
+    </div>
+    <div class="gw-bar-container">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted)">Greenwashing Probability</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:${gwColor}">${d.probability!=null?d.probability+'%':'—'}</span>
+      </div>
+      <div class="gw-bar-track"><div class="gw-bar-fill" style="width:${d.probability||0}%;background:${gwColor}"></div></div>
+      <div class="gw-bar-labels"><span class="gw-bar-label">Low Risk</span><span class="gw-bar-label">Moderate</span><span class="gw-bar-label">High Risk</span></div>
+    </div>
+    ${d.flags&&d.flags.length?`<div style="margin-top:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:8px">Greenwashing Risk Signals</div>
+      ${d.flags.map(f=>`<div class="rec-item"><div class="rec-bullet" style="background:var(--red)"></div><div class="rec-text">${f}</div></div>`).join('')}
+    </div>`:'<div style="color:var(--green);font-size:10px;margin-top:8px">No greenwashing signals detected.</div>'}
+    ${d.contradictions&&d.contradictions.length?`<div style="margin-top:16px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);margin-bottom:8px">Internal Contradictions (${d.contradictions.length})</div>
+      ${d.contradictions.map(c=>`<div style="background:var(--surface-2);border:1px solid ${c.severity==='high'?'rgba(255,51,51,0.2)':'rgba(255,102,0,0.2)'};border-radius:2px;padding:10px 12px;margin-bottom:6px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${c.severity==='high'?'var(--red)':'var(--amber)'};margin-bottom:4px">&#9888; ${c.severity} — ${c.type?.replace(/_/g,' ')}</div>
+        <div style="font-size:10px;color:var(--text-2)">${c.description}</div>
+      </div>`).join('')}
+    </div>`:''}`;
+  }
+
+  function renderCreditworthiness(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Climate Rating', d.rating, null, I.getClimateRating(d.score).color)}
+      ${dgCell('Investment Grade', d.investmentGrade?'Yes — Eligible':'No — Below Grade', null, d.investmentGrade?'var(--green)':'var(--red)')}
+      ${dgCell('Cost of Capital Adj.', d.cofc, null, 'var(--amber)')}
+    </div>
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:12px 14px;margin-top:8px">
+      <div style="font-size:11px;color:var(--text-2);line-height:1.6">${d.creditImplication}</div>
+    </div>
+    <div style="margin-top:12px">
+      ${dg2('Basel III Pillar 2', d.basel3Pillar2)}
+    </div>`;
+  }
+
+  function renderCapitalAllocation(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Readiness Score', d.score!=null?d.score+'/100':'—', null, d.score?(d.score>=70?'var(--green)':d.score>=50?'var(--amber)':'var(--red)'):'var(--text-muted)')}
+      ${dgCell('Readiness Level', d.readinessLevel, null, d.readinessLevel==='Investment ready'?'var(--green)':'var(--amber)')}
+      ${dgCell('Internal Carbon Price', d.internalCarbonPrice)}
+    </div>
+    ${[
+      {label:'EU Taxonomy Alignment', val:d.euTaxonomyAlignment},
+      {label:'Green Finance Eligibility', val:d.greenFinanceEligibility}
+    ].map(r=>`<div class="status-row"><span class="sr-label">${r.label}</span><span class="sr-val" style="font-size:10px;font-weight:600;color:var(--text-2);max-width:340px;text-align:right">${r.val||'—'}</span></div>`).join('')}`;
+  }
+
+  function renderClimateVaR(d) {
+    if(!d) return noData();
+    const varColor = d.score>60?'var(--red)':d.score>35?'var(--amber)':'var(--green)';
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Climate VaR Index', d.score!=null?d.score+'/100':'—', null, varColor)}
+      ${dgCell('Physical VaR', d.physicalVaR)}
+      ${dgCell('Transition VaR', d.transitionVaR)}
+    </div>
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:12px 14px;margin-top:8px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Methodology</div>
+      <div style="font-size:10px;color:var(--text-2)">${d.methodology}</div>
+    </div>
+    <div style="margin-top:12px">
+      ${dg2('Total VaR Composite', d.totalVaR)}
+    </div>`;
+  }
+
+  function renderFrameworkCompliance(d) {
+    if(!d||!d.mappings) return noData();
+    return `<table class="fw-report-table">
+      <thead><tr><th>Framework</th><th>Label</th><th>Coverage</th><th>Coverage %</th><th>Jurisdiction / Type</th><th>Status</th></tr></thead>
+      <tbody>${d.mappings.map(fw=>{
+        const statusColor = fw.coverage>=70?'var(--green)':fw.coverage>=40?'var(--cyan)':'var(--red)';
+        return `<tr>
+          <td><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700">${fw.code}</span></td>
+          <td style="font-size:10px;color:var(--text-2)">${fw.label}</td>
+          <td><div class="fw-bar"><div class="fw-bar-fill" style="width:${fw.coverage}%;background:${statusColor}"></div></div></td>
+          <td><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:${statusColor}">${fw.coverage}%</span></td>
+          <td style="font-size:9px;color:var(--text-2)">${fw.mandatory&&fw.mandatory.length?fw.mandatory.join(', '):fw.type}</td>
+          <td><span class="chip" style="background:${statusColor}20;border:1px solid ${statusColor}40;color:${statusColor}">${fw.status}</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }
+
+  function renderRecommendations(d) {
+    if(!d) return noData();
+    const groups = [
+      {key:'immediate',  label:'Immediate Actions (0–3 months)', color:'var(--red)'},
+      {key:'shortTerm',  label:'Short-Term (3–12 months)',        color:'var(--amber)'},
+      {key:'longTerm',   label:'Long-Term (12–36 months)',         color:'var(--cyan)'}
+    ];
+    return groups.map(g=>{
+      const items = d[g.key] || [];
+      return `<div style="margin-bottom:20px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${g.color};margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)">${g.label}</div>
+        ${items.length?`<ul class="rec-list">${items.map(r=>`<li class="rec-item"><div class="rec-bullet" style="background:${g.color}"></div><div class="rec-text">${r}</div></li>`).join('')}</ul>`:'<div style="font-size:10px;color:var(--text-muted)">No recommendations in this category.</div>'}
+      </div>`;
+    }).join('');
+  }
+
+  function renderEvidence(d) {
+    if(!d) return noData();
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Documents Uploaded', d.documentsUploaded, null, d.documentsUploaded>2?'var(--green)':d.documentsUploaded>0?'var(--amber)':'var(--red)')}
+      ${dgCell('Verification Level', d.verificationLevel, null, d.verificationLevel==='High'?'var(--green)':d.verificationLevel==='Medium'?'var(--amber)':'var(--red)')}
+      ${dgCell('Overall Reliability', d.overallReliability, null, d.overallReliability==='Adequate'?'var(--green)':'var(--red)')}
+    </div>
+    ${[
+      {label:'GHG Verification', val:d.ghgVerification},
+      {label:'TCFD Evidence', val:d.tcfdEvidence}
+    ].map(r=>`<div class="status-row"><span class="sr-label">${r.label}</span><span class="sr-val mono" style="color:var(--text-2)">${r.val||'—'}</span></div>`).join('')}`;
+  }
+
+  function renderConfidence() {
+    const conf = aiAnalysis?.confidenceScore || 0;
+    const confColor = conf>=70?'var(--green)':conf>=40?'var(--amber)':'var(--red)';
+    return `<div class="data-grid data-grid-3">
+      ${dgCell('Confidence Score', conf+'%', 'Based on questions answered', confColor)}
+      ${dgCell('AI Version', 'Climactix AI v1.0')}
+      ${dgCell('Report Generated', new Date(report.generatedAt).toLocaleString())}
+    </div>
+    <div class="confidence-meter" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted)">Overall Confidence</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:${confColor}">${conf}%</span>
+      </div>
+      <div class="cm-track"><div class="cm-fill" style="clip-path:inset(0 ${100-conf}% 0 0)"></div></div>
+    </div>
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:12px 14px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Methodology</div>
+      <div style="font-size:11px;color:var(--text-2);line-height:1.7">This report was generated by the Climactix AI Engine v1.0 using the proprietary C-LAYER 8-dimensional institutional scoring framework. C-SCORE range: 10–100 (Climactix Scale). Nonlinear scoring with cross-validated weighting across Governance (10%), Financial Materiality (20%), Physical Risk (15%), Transition Risk (15%), Carbon &amp; Capital (10%), Supply Chain (10%), Adaptation (10%), and Disclosure Integrity (10%). Greenwashing probability computed using 4-signal cross-validation. Climate VaR modelled as Exposure × Vulnerability × Financial Materiality × Industry Risk Multiplier × Confidence.</div>
+    </div>
+    <div style="margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)">Disclaimer: This report is generated for institutional climate intelligence purposes only. It does not constitute financial advice, regulatory guidance, or a legal opinion. Scores and ratings are based on self-reported company data and AI analysis. All figures should be independently verified before use in investment or credit decisions.</div>`;
+  }
+
+  // ── Cell builders
+  function dgCell(label, val, sub, color) {
+    return `<div class="dg-cell"><div class="dg-label mono">${label}</div><div class="dg-val mono" style="color:${color||'var(--text)'}">${val||'—'}</div>${sub?`<div class="dg-sub">${sub}</div>`:''}</div>`;
+  }
+  function dg2(label, val) {
+    return `<div class="data-grid data-grid-2"><div class="dg-cell"><div class="dg-label mono">${label}</div><div class="dg-val" style="font-size:11px">${val||'—'}</div></div></div>`;
+  }
+  function noData() { return '<div style="font-size:11px;color:var(--text-muted);padding:8px 0">No data available for this section.</div>'; }
+  function scoreColor(status) {
+    if(!status) return 'var(--text-muted)';
+    const l = status.toLowerCase();
+    if(l.includes('strong')||l.includes('advanced')||l.includes('institutional')) return 'var(--green)';
+    if(l.includes('adequate')||l.includes('operational')||l.includes('developing')) return 'var(--cyan)';
+    if(l.includes('basic')) return 'var(--amber)';
+    return 'var(--red)';
+  }
+
+  // ── Scroll helper
+  window.scrollTo = function(id) {
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  };
+
+  // ── Company selector fallback
+  function buildCompanySelector() {
+    const companies = E.listCompanies();
+    if(!companies.length) return `<div class="empty-state">No companies registered. Complete onboarding to generate reports.</div>`;
+    return `<div style="padding:20px 24px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">Select Entity for Report Generation</div>
+      ${companies.map(c=>{
+        const asmts = E.getCompanyAssessments(c.id);
+        const lastAsmt = asmts.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0];
+        const rating = I.getClimateRating(c.currentScore);
+        return `<div class="company-card" onclick="window.location.href='cx-report-generator.html?company=${c.id}'">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)">${c.id}</div>
+              <div style="font-size:13px;font-weight:700;margin-top:2px">${c.name}</div>
+              <div style="font-size:10px;color:var(--text-2);margin-top:2px">${c.industryLabel||c.industryKey} &middot; ${c.country} &middot; ${asmts.length} assessment${asmts.length!==1?'s':''}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:${c.currentScore?rating.color:'var(--text-muted)'}">${c.currentScore||'—'}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:${c.currentScore?rating.color:'var(--text-muted)'}">${c.currentScore?rating.grade:'Unrated'}</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  // ── Sign out
+  window.doSignOut = function() { I.destroyAnalystSession(); window.location.href = 'cx-portal-login.html'; };
+
+  // ── Toast
+  function showToast(msg, type='') {
+    let t = document.getElementById('rg-toast');
+    if(!t){ t=document.createElement('div'); t.id='rg-toast'; t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface-3);border:1px solid var(--border-strong);padding:8px 16px;font-family:IBM Plex Mono,monospace;font-size:10px;font-weight:700;color:var(--text);border-radius:2px;z-index:9999;opacity:0;transition:opacity 0.2s ease;pointer-events:none'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.style.opacity = '1';
+    if(type==='green') t.style.color = 'var(--green)';
+    setTimeout(()=>{ t.style.opacity='0'; }, 2500);
+  }
+
+})();
+</script>
+</body>
+</html>

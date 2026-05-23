@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Climactix Internal — Analyst Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000000;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;--border:#2C2C2C;--border-strong:#333333;--amber:#FF6600;--cyan:#0099CC;--green:#00CC44;--red:#FF3333;--blue:#3399FF;--text:#FFFFFF;--text-2:#888888;--text-muted:#555555;--t:0.12s ease}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:12px;line-height:1.5;min-height:100vh}
+.mono{font-family:'IBM Plex Mono',monospace}
+/* Nav */
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.05em}
+.nav-internal{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);padding:2px 6px;border:1px solid rgba(255,51,51,0.3);background:rgba(255,51,51,0.06)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all var(--t);text-decoration:none;display:inline-flex;align-items:center}
+.nav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.nav-btn.active{background:rgba(255,51,51,0.08);border-color:rgba(255,51,51,0.3);color:var(--red)}
+.analyst-badge{display:flex;align-items:center;gap:6px;padding:3px 8px;background:rgba(255,51,51,0.04);border:1px solid rgba(255,51,51,0.15);border-radius:2px}
+.analyst-badge-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--red);letter-spacing:0.06em}
+.analyst-badge-name{font-size:10px;color:var(--text-2)}
+/* Ticker */
+.ticker{height:30px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center}
+.ticker-tag{background:var(--red);color:#000;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0 10px;height:100%;display:flex;align-items:center;flex-shrink:0}
+.ticker-items{display:flex;align-items:center}
+.ticker-item{display:flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid var(--border);white-space:nowrap}
+.tk{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
+.tv{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
+.tv.red{color:var(--red)}.tv.green{color:var(--green)}.tv.cyan{color:var(--cyan)}
+/* Workspace */
+.workspace{display:grid;grid-template-columns:220px 1fr 280px;min-height:calc(100vh - 74px)}
+/* Sidebar */
+.sidebar{border-right:1px solid var(--border);position:sticky;top:74px;height:calc(100vh - 74px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--surface-3)}
+.sb-analyst{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.sb-analyst-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--red);letter-spacing:0.06em;margin-bottom:2px}
+.sb-analyst-name{font-size:12px;font-weight:700;margin-bottom:1px}
+.sb-analyst-role{font-size:10px;color:var(--text-2)}
+.sb-stats{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border)}
+.sb-stat{padding:10px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.sb-stat:nth-child(even){border-right:none}
+.sb-stat:nth-child(3),.sb-stat:nth-child(4){border-bottom:none}
+.sb-stat-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;letter-spacing:-0.03em}
+.sb-stat-label{font-size:9px;color:var(--text-muted);margin-top:2px}
+.sb-nav{padding:6px 0}
+.sb-nav-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);padding:8px 14px 4px}
+.sb-nav-link{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:11px;font-weight:500;color:var(--text-2);text-decoration:none;cursor:pointer;transition:all var(--t);border-left:2px solid transparent}
+.sb-nav-link:hover{color:var(--text);background:var(--surface-2)}
+.sb-nav-link.active{color:var(--red);border-left-color:var(--red);background:rgba(255,51,51,0.04)}
+.sb-nav-badge{margin-left:auto;background:var(--red);color:#000;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;padding:1px 5px;border-radius:2px}
+/* Main */
+.main{overflow-x:hidden}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+.sec-hdr-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+.sec-hdr-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+/* KPI strip */
+.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--border)}
+.kpi-cell{padding:12px;border-right:1px solid var(--border)}
+.kpi-cell:last-child{border-right:none}
+.kpi-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.kpi-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-0.03em;color:var(--amber);line-height:1}
+.kpi-sub{font-size:10px;color:var(--text-2);margin-top:3px}
+/* Review queue table */
+.data-table{width:100%;border-collapse:collapse}
+.data-table thead th{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface);white-space:nowrap}
+.data-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t);cursor:pointer}
+.data-table tbody tr:hover{background:var(--surface-2)}
+.data-table td{padding:8px 12px;font-size:11px}
+.cell-mono{font-family:'IBM Plex Mono',monospace;font-size:10px}
+.score-cell{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700}
+.chip{display:inline-flex;padding:2px 7px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap}
+.chip-pending{background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);color:var(--amber)}
+.chip-review{background:rgba(0,153,204,0.08);border:1px solid rgba(0,153,204,0.2);color:var(--cyan)}
+.chip-approved{background:rgba(0,204,68,0.08);border:1px solid rgba(0,204,68,0.2);color:var(--green)}
+.chip-rejected{background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);color:var(--red)}
+.chip-clarification{background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);color:var(--red)}
+/* Company risk heatmap */
+.heatmap-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+.heatmap-cell{padding:8px;font-size:10px;display:flex;flex-direction:column;gap:2px;cursor:pointer;transition:filter var(--t)}
+.heatmap-cell:hover{filter:brightness(1.3)}
+.hm-company{font-size:9px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm-score{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700}
+.hm-rating{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em}
+/* Distribution bars */
+.dist-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.dist-row:last-child{border-bottom:none}
+.dist-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;width:48px;color:var(--text-2)}
+.dist-bar{flex:1;height:3px;background:var(--border)}
+.dist-fill{height:100%;transition:width 0.4s ease}
+.dist-count{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber);width:24px;text-align:right}
+/* Right panel */
+.right-panel{border-left:1px solid var(--border);position:sticky;top:74px;height:calc(100vh - 74px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent}
+.right-panel::-webkit-scrollbar{width:3px}
+.intel-section{border-bottom:1px solid var(--border)}
+.intel-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface)}
+.intel-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+.intel-body{padding:8px 14px}
+.activity-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.activity-text{font-size:10px;color:var(--text-2);flex:1;line-height:1.4}
+.activity-time{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);flex-shrink:0}
+/* Content sections */
+.content-section{border-bottom:1px solid var(--border)}
+.content-pad{padding:14px 16px}
+@media(max-width:1100px){.workspace{grid-template-columns:220px 1fr}.right-panel{display:none}.kpi-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.workspace{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-left">
+    <span class="nav-logo mono">CLIMACTIX GLOBAL</span>
+    <span class="nav-internal mono">ANALYST PORTAL</span>
+  </div>
+  <div class="nav-right">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)" id="nav-time-display">--:-- UTC</span>
+    <div class="analyst-badge">
+      <span class="analyst-badge-id mono" id="nav-analyst-id">—</span>
+      <span class="analyst-badge-name" id="nav-analyst-name">—</span>
+    </div>
+    <a href="cx-review-workspace.html" class="nav-btn active mono">Review Queue</a>
+    <a href="cx-report-generator.html" class="nav-btn mono">Report Engine</a>
+    <button class="nav-btn mono" onclick="doSignOut()">Sign Out</button>
+  </div>
+</header>
+<div class="ticker">
+  <div class="ticker-tag mono">INTERNAL</div>
+  <div class="ticker-items" id="ticker-items">
+    <div class="ticker-item"><span class="tk mono">PENDING</span><span class="tv red mono" id="t-pending">—</span></div>
+    <div class="ticker-item"><span class="tk mono">IN REVIEW</span><span class="tv cyan mono" id="t-review">—</span></div>
+    <div class="ticker-item"><span class="tk mono">APPROVED</span><span class="tv green mono" id="t-approved">—</span></div>
+    <div class="ticker-item"><span class="tk mono">COMPANIES</span><span class="tv mono" id="t-companies">—</span></div>
+    <div class="ticker-item"><span class="tk mono">AVG C-SCORE</span><span class="tv mono" id="t-avg-score">—</span></div>
+    <div class="ticker-item"><span class="tk mono">ANALYSTS</span><span class="tv mono" id="t-analysts">—</span></div>
+    <div class="ticker-item"><span class="tk mono">ANALYST</span><span class="tv mono" id="t-analyst-id">—</span></div>
+  </div>
+</div>
+<div class="workspace">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sb-analyst">
+      <div class="sb-analyst-id mono" id="sb-id">—</div>
+      <div class="sb-analyst-name" id="sb-name">—</div>
+      <div class="sb-analyst-role" id="sb-role">—</div>
+    </div>
+    <div class="sb-stats">
+      <div class="sb-stat"><div class="sb-stat-val mono" id="sb-pending" style="color:var(--red)">0</div><div class="sb-stat-label">Pending</div></div>
+      <div class="sb-stat"><div class="sb-stat-val mono" id="sb-approved" style="color:var(--green)">0</div><div class="sb-stat-label">Approved</div></div>
+      <div class="sb-stat"><div class="sb-stat-val mono" id="sb-companies">0</div><div class="sb-stat-label">Companies</div></div>
+      <div class="sb-stat"><div class="sb-stat-val mono" id="sb-asmts">0</div><div class="sb-stat-label">Assessments</div></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-nav-label mono">Intelligence</div>
+      <a class="sb-nav-link active" href="cx-portal-dashboard.html">&#9632; Command Center</a>
+      <a class="sb-nav-link" href="cx-review-workspace.html">&#9654; Review Queue <span class="sb-nav-badge mono" id="sb-queue-badge">0</span></a>
+      <a class="sb-nav-link" href="cx-report-generator.html">&#9676; Report Engine</a>
+      <div class="sb-nav-label mono" style="margin-top:4px">Company Access</div>
+      <a class="sb-nav-link" href="enterprise-dashboard.html" target="_blank">&#9711; Company Portal</a>
+      <a class="sb-nav-link" href="enterprise-assessment.html" target="_blank">&#9654; Live Assessment</a>
+      <div class="sb-nav-label mono" style="margin-top:4px">Platform</div>
+      <a class="sb-nav-link" href="leaderboard.html">&#9651; Leaderboard</a>
+      <a class="sb-nav-link" href="dashboard.html">&#9639; ESG Dashboard</a>
+      <a class="sb-nav-link" onclick="doSignOut()" style="cursor:pointer">&#8592; Sign Out</a>
+    </div>
+  </nav>
+  <!-- Main -->
+  <div class="main">
+    <div class="section-hdr">
+      <span class="sec-hdr-title mono">Analyst Command Center</span>
+      <span class="sec-hdr-meta mono" id="main-analyst-label">—</span>
+    </div>
+    <!-- KPI strip -->
+    <div class="kpi-strip">
+      <div class="kpi-cell"><div class="kpi-label mono">Pending Review</div><div class="kpi-val mono red" id="kpi-pending" style="color:var(--red)">0</div><div class="kpi-sub">Awaiting assignment</div></div>
+      <div class="kpi-cell"><div class="kpi-label mono">In Review</div><div class="kpi-val mono cyan" id="kpi-inreview" style="color:var(--cyan)">0</div><div class="kpi-sub">Active reviews</div></div>
+      <div class="kpi-cell"><div class="kpi-label mono">Approved</div><div class="kpi-val mono" id="kpi-approved" style="color:var(--green)">0</div><div class="kpi-sub">Reports published</div></div>
+      <div class="kpi-cell"><div class="kpi-label mono">Total Companies</div><div class="kpi-val mono" id="kpi-companies">0</div><div class="kpi-sub">Active entities</div></div>
+      <div class="kpi-cell"><div class="kpi-label mono">Avg C-SCORE</div><div class="kpi-val mono" id="kpi-avg">—</div><div class="kpi-sub">Platform average</div></div>
+      <div class="kpi-cell"><div class="kpi-label mono">Clarification</div><div class="kpi-val mono" id="kpi-clarif" style="color:var(--amber)">0</div><div class="kpi-sub">Awaiting response</div></div>
+    </div>
+    <!-- Review queue -->
+    <div class="section-hdr">
+      <span class="sec-hdr-title mono">Assessment Review Queue</span>
+      <a href="cx-review-workspace.html" style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);text-decoration:none">Open Review Terminal →</a>
+    </div>
+    <div class="content-section"><div id="review-queue-table"></div></div>
+    <!-- Company risk heatmap -->
+    <div class="section-hdr">
+      <span class="sec-hdr-title mono">Company Climate Risk Heatmap</span>
+      <span class="sec-hdr-meta mono">By C-SCORE (live ratings)</span>
+    </div>
+    <div class="content-pad content-section" id="risk-heatmap"></div>
+    <!-- Rating distribution -->
+    <div class="section-hdr">
+      <span class="sec-hdr-title mono">Rating Distribution</span>
+      <span class="sec-hdr-meta mono">Platform-wide C-SCORE bands</span>
+    </div>
+    <div class="content-pad content-section" id="rating-dist"></div>
+    <!-- Industry coverage -->
+    <div class="section-hdr">
+      <span class="sec-hdr-title mono">Industry Coverage</span>
+      <span class="sec-hdr-meta mono">Assessments by sector</span>
+    </div>
+    <div class="content-section"><div id="industry-coverage-table"></div></div>
+    <!-- Analyst roster -->
+    <div class="section-hdr">
+      <span class="sec-hdr-title mono">Analyst Roster</span>
+      <span class="sec-hdr-meta mono">Internal team</span>
+    </div>
+    <div class="content-section"><div id="analyst-table"></div></div>
+  </div>
+  <!-- Right panel -->
+  <div class="right-panel">
+    <div class="intel-section">
+      <div class="intel-hdr"><span class="intel-label mono">Platform Intelligence</span></div>
+      <div class="intel-body" id="intel-summary"></div>
+    </div>
+    <div class="intel-section">
+      <div class="intel-hdr"><span class="intel-label mono">Recent Activity</span></div>
+      <div class="intel-body" id="activity-feed"></div>
+    </div>
+    <div class="intel-section">
+      <div class="intel-hdr"><span class="intel-label mono">Framework Coverage</span></div>
+      <div id="fw-coverage"></div>
+    </div>
+    <div class="intel-section">
+      <div class="intel-hdr"><span class="intel-label mono">Risk Tier Distribution</span></div>
+      <div class="intel-body" id="risk-tier-dist"></div>
+    </div>
+  </div>
+</div>
+<script src="enterprise.js"></script>
+<script src="cx-internal.js"></script>
+<script>
+(function(){
+  'use strict';
+  const I=window.CX_INTERNAL, E=window.ENTERPRISE;
+  const session=I.getAnalystSession();
+  if(!session){window.location.href='cx-portal-login.html';return;}
+  const analysts=JSON.parse(localStorage.getItem(I.CXI.ANALYSTS)||'[]');
+  const analyst=analysts.find(a=>a.id===session.analystId)||{id:session.analystId,name:'Analyst',role:'climate_analyst',department:'Climate Intelligence'};
+
+  // Clock
+  setInterval(()=>{const n=new Date();document.getElementById('nav-time-display').textContent=`${String(n.getUTCHours()).padStart(2,'0')}:${String(n.getUTCMinutes()).padStart(2,'0')} UTC`;},60000);
+  const now=new Date();document.getElementById('nav-time-display').textContent=`${String(now.getUTCHours()).padStart(2,'0')}:${String(now.getUTCMinutes()).padStart(2,'0')} UTC`;
+
+  // Analyst info
+  document.getElementById('nav-analyst-id').textContent=analyst.id;
+  document.getElementById('nav-analyst-name').textContent=analyst.name;
+  document.getElementById('sb-id').textContent=analyst.id;
+  document.getElementById('sb-name').textContent=analyst.name;
+  document.getElementById('sb-role').textContent=`${(I.INTERNAL_ROLES[analyst.role]||{}).label||analyst.role} · ${analyst.department||''}`;
+  document.getElementById('main-analyst-label').textContent=`${analyst.id} · ${analyst.name}`;
+  document.getElementById('t-analyst-id').textContent=analyst.id;
+
+  // Data aggregation
+  const companies=E.listCompanies();
+  const allAsmts=companies.reduce((s,c)=>[...s,...E.getCompanyAssessments(c.id)],[]);
+  const reviews=I.listReviews();
+  const pending=reviews.filter(r=>r.status==='pending');
+  const inReview=reviews.filter(r=>r.status==='in_review');
+  const approved=reviews.filter(r=>r.status==='approved');
+  const clarif=reviews.filter(r=>r.status==='clarification_requested');
+  const scoredAsmts=allAsmts.filter(a=>a.overallScore);
+  const avgScore=scoredAsmts.length?Math.round(scoredAsmts.reduce((s,a)=>s+a.overallScore,0)/scoredAsmts.length):null;
+
+  // KPI strip
+  document.getElementById('kpi-pending').textContent=pending.length;
+  document.getElementById('kpi-inreview').textContent=inReview.length;
+  document.getElementById('kpi-approved').textContent=approved.length;
+  document.getElementById('kpi-companies').textContent=companies.length;
+  document.getElementById('kpi-avg').textContent=avgScore||'—';
+  document.getElementById('kpi-clarif').textContent=clarif.length;
+  // Ticker
+  document.getElementById('t-pending').textContent=pending.length;
+  document.getElementById('t-review').textContent=inReview.length;
+  document.getElementById('t-approved').textContent=approved.length;
+  document.getElementById('t-companies').textContent=companies.length;
+  document.getElementById('t-avg-score').textContent=avgScore||'—';
+  document.getElementById('t-analysts').textContent=analysts.length;
+  // Sidebar stats
+  document.getElementById('sb-pending').textContent=pending.length;
+  document.getElementById('sb-approved').textContent=approved.length;
+  document.getElementById('sb-companies').textContent=companies.length;
+  document.getElementById('sb-asmts').textContent=allAsmts.length;
+  document.getElementById('sb-queue-badge').textContent=pending.length+inReview.length;
+
+  // Review queue table
+  function buildReviewQueue(){
+    const el=document.getElementById('review-queue-table');
+    if(reviews.length===0){el.innerHTML='<div style="padding:20px 16px;font-size:11px;color:var(--text-muted);text-align:center">No assessments in review queue. Companies must submit assessments first.</div>';return;}
+    const statusChip=(s)=>{const m={pending:'chip-pending',in_review:'chip-review',approved:'chip-approved',rejected:'chip-rejected',clarification_requested:'chip-clarification'};return `<span class="chip ${m[s]||'chip-pending'} mono">${s.replace(/_/g,' ')}</span>`;};
+    const ratingColor=(r)=>({AAA:'#00CC44','AA-C':'#22DD55','A-C':'#66EE88','BBB-C':'#0099CC','BB-C':'#FFB800','B-C':'#FF6600','CCC-C':'#FF3333'}[r]||'#888');
+    el.innerHTML=`<table class="data-table">
+      <thead><tr><th>Review ID</th><th>Company</th><th>Industry</th><th>Status</th><th>C-SCORE</th><th>Rating</th><th>Submitted</th><th>Action</th></tr></thead>
+      <tbody>${reviews.slice().reverse().map(r=>{
+        const asm=E.getAssessment(r.assessmentId);
+        const co=E.getCompany(r.companyId);
+        const score=asm?.overallScore;
+        const rating=I.getClimateRating(score);
+        return `<tr onclick="openReview('${r.id}')">
+          <td class="cell-mono">${r.id}</td>
+          <td style="font-weight:600">${co?co.name:'—'}</td>
+          <td style="font-size:10px;color:var(--text-2)">${co?(E.INDUSTRIES[co.industryKey]||{}).code||co.industryKey:'—'}</td>
+          <td>${statusChip(r.status)}</td>
+          <td class="score-cell mono" style="color:${score?rating.color:'var(--text-muted)'}">${score||'—'}</td>
+          <td><span class="chip" style="background:${score?rating.color+'20':'transparent'};border:1px solid ${score?rating.color+'50':'var(--border)'};color:${score?rating.color:'var(--text-muted)'}">${score?rating.grade:'N/R'}</span></td>
+          <td class="cell-mono" style="color:var(--text-muted)">${asm?new Date(asm.submittedAt||asm.createdAt).toLocaleDateString():'—'}</td>
+          <td><button class="chip chip-review mono" onclick="event.stopPropagation();openReview('${r.id}')" style="cursor:pointer;border-color:rgba(0,153,204,0.3)">Review</button></td>
+        </tr>`;
+      }).join('')}</tbody></table>`;
+  }
+  buildReviewQueue();
+
+  // Risk heatmap
+  function buildHeatmap(){
+    const el=document.getElementById('risk-heatmap');
+    if(companies.length===0){el.innerHTML='<p style="font-size:11px;color:var(--text-muted)">No companies registered.</p>';return;}
+    const colorForScore=(s)=>!s?'var(--surface-2)':s>=80?'rgba(0,204,68,0.15)':s>=65?'rgba(0,153,204,0.15)':s>=50?'rgba(255,102,0,0.12)':s>=35?'rgba(255,102,0,0.2)':'rgba(255,51,51,0.2)';
+    const borderForScore=(s)=>!s?'var(--border)':s>=80?'rgba(0,204,68,0.3)':s>=65?'rgba(0,153,204,0.3)':s>=50?'rgba(255,102,0,0.25)':s>=35?'rgba(255,102,0,0.35)':'rgba(255,51,51,0.3)';
+    const rating=I.getClimateRating;
+    el.innerHTML=`<div class="heatmap-grid">${companies.map(c=>{
+      const s=c.currentScore;
+      const r=rating(s);
+      return `<div class="heatmap-cell" style="background:${colorForScore(s)};border:1px solid ${borderForScore(s)}" onclick="window.location.href='cx-review-workspace.html?company=${c.id}'">
+        <div class="hm-company" style="color:var(--text-2)">${c.name}</div>
+        <div class="hm-score mono" style="color:${r.color}">${s||'—'}</div>
+        <div class="hm-rating mono" style="color:${r.color}">${s?r.grade:'Unrated'}</div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+  buildHeatmap();
+
+  // Rating distribution
+  function buildRatingDist(){
+    const el=document.getElementById('rating-dist');
+    const bands=[
+      {grade:'AAA-C',min:90,color:'#00CC44'},{grade:'AA-C',min:80,color:'#22DD55'},{grade:'A-C',min:70,color:'#66EE88'},
+      {grade:'BBB-C',min:60,color:'#0099CC'},{grade:'BB-C',min:50,color:'#FFB800'},{grade:'B-C',min:35,color:'#FF6600'},{grade:'CCC-C',min:0,color:'#FF3333'}
+    ];
+    const scored=scoredAsmts;
+    el.innerHTML=bands.map(b=>{
+      const nextMin=bands[bands.indexOf(b)-1]?.min||101;
+      const count=scored.filter(a=>a.overallScore>=b.min&&a.overallScore<nextMin).length;
+      const pct=scored.length?Math.round((count/scored.length)*100):0;
+      return `<div class="dist-row">
+        <span class="dist-label mono" style="color:${b.color}">${b.grade}</span>
+        <div class="dist-bar"><div class="dist-fill" style="width:${pct}%;background:${b.color}"></div></div>
+        <span class="dist-count mono">${count}</span>
+      </div>`;
+    }).join('');
+  }
+  buildRatingDist();
+
+  // Industry coverage
+  function buildIndustryCoverage(){
+    const el=document.getElementById('industry-coverage-table');
+    const bySector={};
+    companies.forEach(c=>{bySector[c.industryLabel]=bySector[c.industryLabel]||{label:c.industryLabel,code:c.industryCode,count:0,scored:0,avgScore:0,totalScore:0};bySector[c.industryLabel].count++;if(c.currentScore){bySector[c.industryLabel].scored++;bySector[c.industryLabel].totalScore+=c.currentScore;}});
+    Object.values(bySector).forEach(s=>{s.avgScore=s.scored?Math.round(s.totalScore/s.scored):null;});
+    const sectors=Object.values(bySector).sort((a,b)=>b.count-a.count);
+    if(!sectors.length){el.innerHTML='<div style="padding:16px;font-size:11px;color:var(--text-muted)">No companies registered yet.</div>';return;}
+    el.innerHTML=`<table class="data-table"><thead><tr><th>Industry</th><th>Code</th><th>Companies</th><th>Scored</th><th>Avg Score</th><th>Avg Rating</th></tr></thead>
+    <tbody>${sectors.map(s=>{const r=I.getClimateRating(s.avgScore);return `<tr>
+      <td style="font-weight:600">${s.label}</td>
+      <td class="cell-mono">${s.code||'—'}</td>
+      <td class="cell-mono">${s.count}</td>
+      <td class="cell-mono">${s.scored}</td>
+      <td class="score-cell mono" style="color:${s.avgScore?r.color:'var(--text-muted)'}">${s.avgScore||'—'}</td>
+      <td><span class="chip" style="background:${s.avgScore?r.color+'20':'transparent'};border:1px solid ${s.avgScore?r.color+'40':'var(--border)'};color:${s.avgScore?r.color:'var(--text-muted)'}">${s.avgScore?r.grade:'Unrated'}</span></td>
+    </tr>`}).join('')}</tbody></table>`;
+  }
+  buildIndustryCoverage();
+
+  // Analyst roster
+  function buildAnalystRoster(){
+    const el=document.getElementById('analyst-table');
+    if(!analysts.length){el.innerHTML='<div style="padding:16px;font-size:11px;color:var(--text-muted)">No analysts registered.</div>';return;}
+    el.innerHTML=`<table class="data-table"><thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Department</th><th>Status</th><th>Last Login</th></tr></thead>
+    <tbody>${analysts.map(a=>{const r=I.INTERNAL_ROLES[a.role]||{};return `<tr>
+      <td class="cell-mono" style="color:var(--red)">${a.id}</td>
+      <td style="font-weight:600">${a.name}</td>
+      <td><span class="chip" style="background:${r.badge||'#555'}20;border:1px solid ${r.badge||'#555'}40;color:${r.badge||'#888'}">${r.label||a.role}</span></td>
+      <td style="color:var(--text-2)">${a.department||'—'}</td>
+      <td><span class="chip chip-approved mono">${a.status}</span></td>
+      <td class="cell-mono" style="color:var(--text-muted)">${a.lastLogin?new Date(a.lastLogin).toLocaleDateString():'Never'}</td>
+    </tr>`}).join('')}</tbody></table>`;
+  }
+  buildAnalystRoster();
+
+  // Right panel
+  document.getElementById('intel-summary').innerHTML=[
+    {label:'Coverage',val:`${companies.length} entities, ${allAsmts.length} assessments`,color:'var(--amber)'},
+    {label:'Avg C-Score',val:avgScore?`${avgScore}/100`:'No scored assessments',color:avgScore?(avgScore>=60?'var(--green)':'var(--amber)'):'var(--text-muted)'},
+    {label:'Review Backlog',val:`${pending.length} pending, ${inReview.length} in review`,color:pending.length>3?'var(--red)':'var(--text-2)'},
+    {label:'GW Risk',val:'Monitor C-TRUTH scores for greenwashing signals',color:'var(--text-2)'}
+  ].map(i=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span style="font-size:10px;color:var(--text-muted)">${i.label}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:${i.color}">${i.val}</span></div>`).join('');
+
+  const auditLog=I.listReviews().slice().reverse().slice(0,8).map(r=>{
+    const co=E.getCompany(r.companyId);
+    return {text:`Review ${r.id} — ${co?co.name:'Company'} (${r.status.replace(/_/g,' ')})`,time:new Date(r.updatedAt).toLocaleDateString(),color:r.status==='approved'?'var(--green)':r.status==='pending'?'var(--amber)':'var(--cyan)'};
+  });
+  document.getElementById('activity-feed').innerHTML=auditLog.length?auditLog.map(a=>`<div class="activity-item"><div class="activity-dot" style="background:${a.color}"></div><div class="activity-text">${a.text}</div><div class="activity-time mono">${a.time}</div></div>`).join(''):'<p style="font-size:10px;color:var(--text-muted)">No recent activity.</p>';
+
+  const fwStats=I.FRAMEWORKS.slice(0,8);
+  document.getElementById('fw-coverage').innerHTML=fwStats.map(fw=>`<div class="dist-row"><span class="dist-label mono" style="color:var(--cyan);font-size:8px">${fw.code}</span><div class="dist-bar"><div class="dist-fill" style="width:${20+Math.random()*60}%;background:var(--cyan)"></div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)">${fw.mandatory.length?fw.mandatory[0]:fw.type}</span></div>`).join('');
+
+  const riskTiers={'Critical Transition Exposure':0,'High Transition Exposure':0,'High Physical & Transition Risk':0,'Elevated Physical Exposure':0,'Moderate Physical & Transition Risk':0,'Moderate Transition Exposure':0};
+  companies.forEach(c=>{if(riskTiers[c.riskTier]!==undefined)riskTiers[c.riskTier]++;});
+  document.getElementById('risk-tier-dist').innerHTML=Object.entries(riskTiers).filter(([,v])=>v>0).map(([k,v])=>`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text-2);flex:1">${k}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)">${v}</span></div>`).join('')||'<p style="font-size:10px;color:var(--text-muted)">No data.</p>';
+
+  window.openReview=function(reviewId){window.location.href=`cx-review-workspace.html?review=${reviewId}`;};
+  window.doSignOut=function(){I.destroyAnalystSession();window.location.href='cx-portal-login.html';};
+})();
+</script>
+</body>
+</html>

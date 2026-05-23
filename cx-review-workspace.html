@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Climactix Internal — Review Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000000;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;--border:#2C2C2C;--border-strong:#3A3A3A;--amber:#FF6600;--cyan:#0099CC;--green:#00CC44;--red:#FF3333;--blue:#3399FF;--purple:#9966FF;--yellow:#FFB800;--text:#FFFFFF;--text-2:#888888;--text-muted:#555555;--t:0.12s ease}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:12px;line-height:1.5;min-height:100vh}
+.mono{font-family:'IBM Plex Mono',monospace}
+/* Nav */
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.05em}
+.nav-internal{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);padding:2px 6px;border:1px solid rgba(255,51,51,0.3);background:rgba(255,51,51,0.06)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all var(--t);text-decoration:none;display:inline-flex;align-items:center}
+.nav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.nav-btn.active{background:rgba(255,51,51,0.08);border-color:rgba(255,51,51,0.3);color:var(--red)}
+.analyst-badge{display:flex;align-items:center;gap:6px;padding:3px 8px;background:rgba(255,51,51,0.04);border:1px solid rgba(255,51,51,0.15);border-radius:2px}
+.analyst-badge-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--red);letter-spacing:0.06em}
+.analyst-badge-name{font-size:10px;color:var(--text-2)}
+/* Ticker */
+.ticker{height:30px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden}
+.ticker-tag{background:var(--red);color:#000;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0 10px;height:100%;display:flex;align-items:center;flex-shrink:0}
+.ticker-items{display:flex;align-items:center;overflow:hidden}
+.ticker-item{display:flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0}
+.tk{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
+.tv{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
+.tv.red{color:var(--red)}.tv.green{color:var(--green)}.tv.cyan{color:var(--cyan)}
+/* Workspace */
+.workspace{display:grid;grid-template-columns:220px 1fr 288px;min-height:calc(100vh - 74px)}
+/* Sidebar */
+.sidebar{border-right:1px solid var(--border);position:sticky;top:74px;height:calc(100vh - 74px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--surface-3)}
+.sb-analyst{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.sb-analyst-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--red);letter-spacing:0.06em;margin-bottom:2px}
+.sb-analyst-name{font-size:12px;font-weight:700;margin-bottom:1px}
+.sb-analyst-role{font-size:10px;color:var(--text-2)}
+.sb-review-card{padding:12px 14px;border-bottom:1px solid var(--border);background:rgba(255,51,51,0.02)}
+.sb-review-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.sb-review-id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px}
+.sb-review-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)}
+.sb-review-row:last-child{border-bottom:none}
+.sb-rr-label{font-size:9px;color:var(--text-muted)}
+.sb-rr-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-2)}
+.sb-nav{padding:6px 0}
+.sb-nav-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);padding:8px 14px 4px}
+.sb-nav-link{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:11px;font-weight:500;color:var(--text-2);text-decoration:none;cursor:pointer;transition:all var(--t);border-left:2px solid transparent}
+.sb-nav-link:hover{color:var(--text);background:var(--surface-2)}
+.sb-nav-link.active{color:var(--red);border-left-color:var(--red);background:rgba(255,51,51,0.04)}
+/* Main */
+.main{overflow-x:hidden}
+/* Company header */
+.co-header{border-bottom:1px solid var(--border);background:var(--surface)}
+.co-identity{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.co-id{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--red);letter-spacing:0.06em}
+.co-name{font-size:16px;font-weight:800;letter-spacing:-0.02em;margin-top:2px}
+.co-meta{font-size:10px;color:var(--text-2);margin-top:2px}
+.co-score-block{text-align:right}
+.co-score-num{font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:700;letter-spacing:-0.04em;line-height:1}
+.co-score-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-top:2px}
+.co-rating{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;letter-spacing:0.05em;margin-top:3px}
+.co-chips{display:flex;align-items:center;gap:6px;padding:8px 16px;flex-wrap:wrap}
+/* Assessment meta bar */
+.asm-bar{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border);background:var(--bg)}
+.asm-cell{padding:10px 14px;border-right:1px solid var(--border)}
+.asm-cell:last-child{border-right:none}
+.asm-cell-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.asm-cell-val{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--text)}
+/* Tabs */
+.tab-bar{display:flex;align-items:center;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto}
+.tab-btn{padding:10px 16px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--t);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--red);border-bottom-color:var(--red)}
+.tab-content{display:none}.tab-content.active{display:block}
+/* C-LAYER Grid */
+.clayer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.clayer-cell{padding:12px 14px;background:var(--bg)}
+.clayer-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px}
+.clayer-long{font-size:10px;color:var(--text-2);margin-bottom:6px}
+.clayer-score{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.clayer-weight{font-size:9px;color:var(--text-muted);margin-top:2px}
+.clayer-bar{height:2px;background:var(--border);margin-top:6px;border-radius:1px}
+.clayer-bar-fill{height:100%;border-radius:1px;transition:width 0.4s ease}
+/* Question review list */
+.q-section-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);border-top:1px solid var(--border);position:sticky;top:0;z-index:10}
+.q-section-name{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+.q-section-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px}
+.q-card{border-bottom:1px solid var(--border);padding:14px 16px}
+.q-card:hover{background:rgba(255,255,255,0.01)}
+.q-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.q-card-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);flex-shrink:0}
+.q-card-label{font-size:11px;font-weight:600;line-height:1.4;flex:1}
+.q-card-clayer{font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;flex-shrink:0}
+.answer-block{background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:8px 12px;margin-bottom:8px}
+.answer-block-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.answer-value{font-size:11px;font-weight:600;line-height:1.5}
+.answer-value.text-long{font-size:10px;line-height:1.6;color:var(--text-2)}
+.maturity-chip{display:inline-flex;padding:2px 7px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em;margin-top:4px}
+.annotation-area{margin-top:8px}
+.annotation-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.annotation-textarea{width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:10px;padding:6px 8px;resize:vertical;min-height:48px;transition:border-color var(--t);border-radius:1px}
+.annotation-textarea:focus{outline:none;border-color:rgba(255,102,0,0.4)}
+.annotation-actions{display:flex;align-items:center;gap:6px;margin-top:5px}
+.anno-btn{background:none;border:1px solid var(--border);padding:3px 8px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-radius:2px;transition:all var(--t)}
+.anno-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.anno-btn.flag{border-color:rgba(255,51,51,0.3);color:var(--red)}
+.anno-btn.approved{border-color:rgba(0,204,68,0.3);color:var(--green)}
+.saved-annotations{margin-top:6px}
+.saved-anno{background:rgba(255,102,0,0.04);border:1px solid rgba(255,102,0,0.15);border-radius:2px;padding:6px 8px;margin-bottom:4px}
+.saved-anno.flag{background:rgba(255,51,51,0.04);border-color:rgba(255,51,51,0.15)}
+.saved-anno.approved{background:rgba(0,204,68,0.04);border-color:rgba(0,204,68,0.15)}
+.saved-anno-header{display:flex;justify-content:space-between;margin-bottom:3px}
+.saved-anno-type{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em}
+.saved-anno-time{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.saved-anno-text{font-size:10px;color:var(--text-2)}
+/* AI Analysis tab */
+.ai-section{border-bottom:1px solid var(--border);padding:14px 16px}
+.ai-section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.ai-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:12px}
+.ai-kpi-cell{background:var(--bg);padding:10px 12px}
+.ai-kpi-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.ai-kpi-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-0.03em}
+.contradiction-item{background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:8px 12px;margin-bottom:6px}
+.contradiction-item.high{border-color:rgba(255,51,51,0.25);background:rgba(255,51,51,0.03)}
+.contradiction-item.medium{border-color:rgba(255,102,0,0.25);background:rgba(255,102,0,0.03)}
+.contradiction-sev{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:3px}
+.contradiction-desc{font-size:10px;color:var(--text-2);line-height:1.5}
+.gw-flag-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+.gw-flag-item:last-child{border-bottom:none}
+.gw-flag-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;background:var(--red)}
+.gw-flag-text{font-size:10px;color:var(--text-2)}
+/* Framework map tab */
+.fw-table{width:100%;border-collapse:collapse}
+.fw-table thead th{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface)}
+.fw-table tbody tr{border-bottom:1px solid var(--border)}
+.fw-table tbody tr:hover{background:var(--surface-2)}
+.fw-table td{padding:8px 12px;font-size:11px}
+.fw-bar{width:80px;height:4px;background:var(--border);border-radius:2px;display:inline-block;vertical-align:middle;margin-right:6px}
+.fw-bar-fill{height:100%;border-radius:2px}
+/* Evidence tab */
+.evidence-item{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border)}
+.evidence-item:hover{background:var(--surface)}
+.evidence-info{display:flex;align-items:center;gap:10px}
+.evidence-icon{width:28px;height:28px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--cyan);border-radius:2px;font-family:'IBM Plex Mono',monospace;flex-shrink:0}
+.evidence-name{font-size:11px;font-weight:600}
+.evidence-meta{font-size:9px;color:var(--text-muted);margin-top:1px}
+/* Chips */
+.chip{display:inline-flex;padding:2px 7px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap}
+.chip-pending{background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);color:var(--amber)}
+.chip-review{background:rgba(0,153,204,0.08);border:1px solid rgba(0,153,204,0.2);color:var(--cyan)}
+.chip-approved{background:rgba(0,204,68,0.08);border:1px solid rgba(0,204,68,0.2);color:var(--green)}
+.chip-rejected{background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);color:var(--red)}
+.chip-clarif{background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);color:var(--red)}
+.chip-risk-critical{background:rgba(255,51,51,0.1);border:1px solid rgba(255,51,51,0.25);color:var(--red)}
+.chip-risk-high{background:rgba(255,102,0,0.1);border:1px solid rgba(255,102,0,0.25);color:var(--amber)}
+.chip-risk-moderate{background:rgba(255,184,0,0.1);border:1px solid rgba(255,184,0,0.25);color:var(--yellow)}
+.chip-risk-managed{background:rgba(0,204,68,0.1);border:1px solid rgba(0,204,68,0.25);color:var(--green)}
+/* Right panel */
+.right-panel{border-left:1px solid var(--border);position:sticky;top:74px;height:calc(100vh - 74px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent}
+.right-panel::-webkit-scrollbar{width:3px}.right-panel::-webkit-scrollbar-thumb{background:var(--surface-3)}
+.rp-section{border-bottom:1px solid var(--border)}
+.rp-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--surface)}
+.rp-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+.rp-body{padding:12px 14px}
+/* Review action buttons */
+.action-btn{display:block;width:100%;padding:9px 14px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--border);background:none;color:var(--text);cursor:pointer;transition:all var(--t);border-radius:2px;margin-bottom:6px;text-align:left}
+.action-btn:hover{background:var(--surface-2)}
+.action-btn.approve{border-color:rgba(0,204,68,0.3);color:var(--green)}
+.action-btn.approve:hover{background:rgba(0,204,68,0.06)}
+.action-btn.clarify{border-color:rgba(255,184,0,0.3);color:var(--yellow)}
+.action-btn.clarify:hover{background:rgba(255,184,0,0.04)}
+.action-btn.reject{border-color:rgba(255,51,51,0.3);color:var(--red)}
+.action-btn.reject:hover{background:rgba(255,51,51,0.06)}
+.action-btn.assign{border-color:rgba(0,153,204,0.3);color:var(--cyan)}
+.action-btn.assign:hover{background:rgba(0,153,204,0.04)}
+.action-btn.override{border-color:rgba(255,102,0,0.3);color:var(--amber)}
+.action-btn.override:hover{background:rgba(255,102,0,0.04)}
+.rp-textarea{width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-size:10px;padding:6px 8px;resize:vertical;min-height:64px;transition:border-color var(--t);border-radius:1px;margin-top:6px}
+.rp-textarea:focus{outline:none;border-color:rgba(255,102,0,0.4)}
+.rp-input{width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:6px 8px;transition:border-color var(--t);border-radius:1px;margin-top:4px}
+.rp-input:focus{outline:none;border-color:rgba(255,102,0,0.4)}
+.rp-field-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-top:8px;display:block}
+/* Section approval grid */
+.section-approval-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.sag-cell{background:var(--bg);padding:7px 10px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.sag-cell:hover{background:var(--surface-2)}
+.sag-check{width:14px;height:14px;border:1px solid var(--border);background:var(--surface-2);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;transition:all var(--t)}
+.sag-check.checked{background:rgba(0,204,68,0.15);border-color:rgba(0,204,68,0.4);color:var(--green)}
+.sag-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-2)}
+.sag-score{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;margin-left:auto}
+/* Status display */
+.status-display{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.status-label{font-size:10px;color:var(--text-muted)}
+/* Override form */
+.override-form{display:none}
+.override-form.visible{display:block}
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface-3);border:1px solid var(--border-strong);padding:8px 16px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--text);border-radius:2px;z-index:9999;opacity:0;transition:opacity 0.2s ease;pointer-events:none}
+.toast.show{opacity:1}
+.toast.green{border-color:rgba(0,204,68,0.4);color:var(--green)}
+.toast.red{border-color:rgba(255,51,51,0.4);color:var(--red)}
+/* Content pad */
+.content-pad{padding:14px 16px}
+/* Empty state */
+.empty-state{padding:40px 20px;text-align:center;color:var(--text-muted);font-size:11px}
+/* Responsive */
+@media(max-width:1200px){.workspace{grid-template-columns:220px 1fr}.right-panel{display:none}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast">Saved</div>
+<header class="nav">
+  <div class="nav-left">
+    <span class="nav-logo mono">CLIMACTIX GLOBAL</span>
+    <span class="nav-internal mono">REVIEW WORKSPACE</span>
+  </div>
+  <div class="nav-right">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)" id="nav-time">--:-- UTC</span>
+    <div class="analyst-badge">
+      <span class="analyst-badge-id mono" id="nav-analyst-id">—</span>
+      <span class="analyst-badge-name" id="nav-analyst-name">—</span>
+    </div>
+    <a href="cx-portal-dashboard.html" class="nav-btn mono">Dashboard</a>
+    <a href="cx-report-generator.html" class="nav-btn mono" id="nav-report-link">Report Engine</a>
+    <button class="nav-btn mono" onclick="doSignOut()">Sign Out</button>
+  </div>
+</header>
+<div class="ticker">
+  <div class="ticker-tag mono">REVIEW</div>
+  <div class="ticker-items">
+    <div class="ticker-item"><span class="tk mono">Review ID</span><span class="tv red mono" id="t-review-id">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Company</span><span class="tv mono" id="t-company">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Industry</span><span class="tv mono" id="t-industry">—</span></div>
+    <div class="ticker-item"><span class="tk mono">C-Score</span><span class="tv mono" id="t-score">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Rating</span><span class="tv mono" id="t-rating">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Status</span><span class="tv cyan mono" id="t-status">—</span></div>
+    <div class="ticker-item"><span class="tk mono">Due</span><span class="tv mono" id="t-due">—</span></div>
+  </div>
+</div>
+<div class="workspace">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sb-analyst">
+      <div class="sb-analyst-id mono" id="sb-id">—</div>
+      <div class="sb-analyst-name" id="sb-name">—</div>
+      <div class="sb-analyst-role" id="sb-role">—</div>
+    </div>
+    <div class="sb-review-card" id="sb-review-card">
+      <div class="sb-review-label mono">Current Review</div>
+      <div class="sb-review-id mono" id="sb-review-id">—</div>
+      <div id="sb-review-rows"></div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-nav-label mono">Workspace</div>
+      <a class="sb-nav-link" href="cx-portal-dashboard.html">&#9632; Command Center</a>
+      <a class="sb-nav-link active">&#9654; Review Workspace</a>
+      <a class="sb-nav-link" href="cx-report-generator.html" id="sb-report-link">&#9676; Generate Report</a>
+      <div class="sb-nav-label mono" style="margin-top:4px">Sections</div>
+      <div id="sb-section-nav"></div>
+      <div class="sb-nav-label mono" style="margin-top:4px">Platform</div>
+      <a class="sb-nav-link" onclick="doSignOut()" style="cursor:pointer">&#8592; Sign Out</a>
+    </div>
+  </nav>
+  <!-- Main -->
+  <div class="main" id="main-content">
+    <div class="empty-state" id="loading-state">Loading review data...</div>
+  </div>
+  <!-- Right panel -->
+  <div class="right-panel" id="right-panel">
+    <div class="status-display">
+      <span class="status-label">Review Status</span>
+      <span id="rp-status-chip">—</span>
+    </div>
+    <div class="rp-section">
+      <div class="rp-hdr"><span class="rp-label mono">Review Actions</span></div>
+      <div class="rp-body">
+        <button class="action-btn assign mono" onclick="assignToMe()">&#9654; Assign to Me</button>
+        <span class="rp-field-label">Action comment / justification</span>
+        <textarea class="rp-textarea" id="rp-comment" placeholder="Add your comments, findings, or justification for this action..."></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+          <button class="action-btn approve mono" onclick="doApprove()">&#10003; Approve</button>
+          <button class="action-btn reject mono" onclick="doReject()">&#10007; Reject</button>
+        </div>
+        <button class="action-btn clarify mono" style="margin-top:0" onclick="doClarify()">&#63; Request Clarification</button>
+        <button class="action-btn mono" onclick="doStartReview()">&#9654; Set to In Review</button>
+      </div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-hdr"><span class="rp-label mono">C-Layer Section Approvals</span></div>
+      <div class="section-approval-grid" id="section-approval-grid"></div>
+      <div style="padding:8px 14px;border-top:1px solid var(--border)">
+        <button class="action-btn mono" style="margin-bottom:0" onclick="saveSectionApprovals()">Save Approvals</button>
+      </div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-hdr"><span class="rp-label mono">Score Override</span></div>
+      <div class="rp-body">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">Current score: <span class="mono" id="rp-current-score" style="color:var(--amber)">—</span></div>
+        <button class="action-btn override mono" onclick="toggleOverrideForm()">&#9650; Propose Score Override</button>
+        <div class="override-form" id="override-form">
+          <span class="rp-field-label">New C-Score (10–100)</span>
+          <input type="number" class="rp-input" id="override-score" min="10" max="100" placeholder="Enter new score">
+          <span class="rp-field-label">Override justification (required)</span>
+          <textarea class="rp-textarea" id="override-justification" placeholder="Provide detailed justification for score override. Must reference specific evidence..."></textarea>
+          <button class="action-btn override mono" style="margin-top:8px" onclick="submitOverride()">Submit for Approval</button>
+        </div>
+      </div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-hdr"><span class="rp-label mono">Greenwashing Signals</span></div>
+      <div class="rp-body" id="rp-gw-signals"></div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-hdr"><span class="rp-label mono">AI Intelligence</span></div>
+      <div class="rp-body" id="rp-ai-quick"></div>
+    </div>
+  </div>
+</div>
+<script src="enterprise.js"></script>
+<script src="cx-internal.js"></script>
+<script>
+(function(){
+  'use strict';
+  const I = window.CX_INTERNAL;
+  const E = window.ENTERPRISE;
+
+  // ── Auth guard
+  const session = I.getAnalystSession();
+  if(!session){ window.location.href = 'cx-portal-login.html'; return; }
+
+  const analysts = JSON.parse(localStorage.getItem(I.CXI.ANALYSTS)||'[]');
+  const analyst = analysts.find(a=>a.id===session.analystId) || {id:session.analystId, name:'Analyst', role:'climate_analyst', department:'Climate Intelligence'};
+
+  // ── Clock
+  function updateClock(){ const n=new Date(); document.getElementById('nav-time').textContent=`${String(n.getUTCHours()).padStart(2,'0')}:${String(n.getUTCMinutes()).padStart(2,'0')} UTC`; }
+  updateClock(); setInterval(updateClock, 60000);
+
+  // ── Analyst identity
+  document.getElementById('nav-analyst-id').textContent = analyst.id;
+  document.getElementById('nav-analyst-name').textContent = analyst.name;
+  document.getElementById('sb-id').textContent = analyst.id;
+  document.getElementById('sb-name').textContent = analyst.name;
+  document.getElementById('sb-role').textContent = `${(I.INTERNAL_ROLES[analyst.role]||{}).label||analyst.role}`;
+
+  // ── Load params
+  const params = new URLSearchParams(window.location.search);
+  let review = null, assessment = null, company = null, aiAnalysis = null;
+
+  function loadFromReviewId(rid) {
+    review = I.getReview(rid);
+    if(!review) return false;
+    assessment = E.getAssessment(review.assessmentId);
+    company = E.getCompany(review.companyId);
+    return !!(assessment && company);
+  }
+
+  function loadFromCompanyId(cid) {
+    company = E.getCompany(cid);
+    if(!company) return false;
+    const asmts = E.getCompanyAssessments(cid);
+    assessment = asmts.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0];
+    if(!assessment) return false;
+    // Find or create review for this assessment
+    review = I.getReviewByAssessment(assessment.id) || I.createReview(assessment.id, cid, null);
+    return true;
+  }
+
+  let loaded = false;
+  if(params.get('review')) loaded = loadFromReviewId(params.get('review'));
+  else if(params.get('company')) loaded = loadFromCompanyId(params.get('company'));
+
+  if(!loaded) {
+    // No specific review — show queue selector
+    document.getElementById('main-content').innerHTML = buildNoReviewState();
+    return;
+  }
+
+  // ── Run AI analysis
+  aiAnalysis = I.runAIAssessment(assessment, company);
+
+  // ── Build everything
+  buildPage();
+
+  // ── Questions data
+  const CORE_Q = E.CORE_QUESTIONS || [];
+  const IND_Q  = (E.INDUSTRY_QUESTIONS && company) ? (E.INDUSTRY_QUESTIONS[company.industryKey] || []) : [];
+  const ALL_Q  = [...CORE_Q, ...IND_Q];
+
+  function buildPage() {
+    buildTicker();
+    buildSidebar();
+    buildMain();
+    buildRightPanel();
+  }
+
+  function buildTicker() {
+    const rating = I.getClimateRating(assessment.overallScore);
+    document.getElementById('t-review-id').textContent   = review.id;
+    document.getElementById('t-company').textContent     = company.name;
+    document.getElementById('t-industry').textContent    = (E.INDUSTRIES[company.industryKey]||{}).code || company.industryKey;
+    document.getElementById('t-score').textContent       = assessment.overallScore || '—';
+    document.getElementById('t-rating').textContent      = assessment.overallScore ? rating.grade : 'N/R';
+    document.getElementById('t-status').textContent      = review.status.replace(/_/g,' ');
+    document.getElementById('t-due').textContent         = review.dueDate ? new Date(review.dueDate).toLocaleDateString() : '—';
+    // Report link
+    document.getElementById('nav-report-link').href = `cx-report-generator.html?company=${company.id}`;
+    document.getElementById('sb-report-link').href  = `cx-report-generator.html?company=${company.id}`;
+  }
+
+  function buildSidebar() {
+    document.getElementById('sb-review-id').textContent = review.id;
+    const ind = E.INDUSTRIES[company.industryKey] || {};
+    const rows = [
+      {label:'Company', val:company.name},
+      {label:'CX ID', val:company.id},
+      {label:'Industry', val:ind.code||company.industryKey},
+      {label:'Status', val:review.status.replace(/_/g,' ')},
+      {label:'Priority', val:review.priority||'normal'},
+      {label:'Due', val:review.dueDate?new Date(review.dueDate).toLocaleDateString():'—'}
+    ];
+    document.getElementById('sb-review-rows').innerHTML = rows.map(r=>`<div class="sb-review-row"><span class="sb-rr-label">${r.label}</span><span class="sb-rr-val mono">${r.val}</span></div>`).join('');
+
+    // Section nav
+    const sections = [...new Set(ALL_Q.map(q=>q.section))];
+    document.getElementById('sb-section-nav').innerHTML = sections.map(s=>`<div class="sb-nav-link" onclick="scrollToSection('${s.replace(/[^a-zA-Z0-9]/g,'_')}')">&#9654; ${s}</div>`).join('');
+  }
+
+  const C_LAYERS = [
+    {id:'c_core',    label:'C-CORE',    long:'Governance & Strategy',    weight:10, color:'#0099CC'},
+    {id:'c_fin',     label:'C-FIN',     long:'Financial Materiality',    weight:20, color:'#FFB800'},
+    {id:'c_risk_p',  label:'C-RISK/P',  long:'Physical Risk Exposure',   weight:15, color:'#FF6600'},
+    {id:'c_risk_t',  label:'C-RISK/T',  long:'Transition Risk Exposure', weight:15, color:'#FF4400'},
+    {id:'c_capital', label:'C-CAPITAL', long:'Carbon & Capital',         weight:10, color:'#3399FF'},
+    {id:'c_supply',  label:'C-SUPPLY',  long:'Supply Chain Fragility',   weight:10, color:'#9966FF'},
+    {id:'c_adapt',   label:'C-ADAPT',   long:'Adaptation & Resilience',  weight:10, color:'#00CC44'},
+    {id:'c_truth',   label:'C-TRUTH',   long:'Disclosure Integrity',     weight:10, color:'#FF3333'}
+  ];
+
+  function buildMain() {
+    const scores = assessment.scores || {};
+    const rating = I.getClimateRating(assessment.overallScore);
+    const ind = E.INDUSTRIES[company.industryKey] || {};
+
+    let html = '';
+
+    // ── Company header
+    html += `<div class="co-header">
+      <div class="co-identity">
+        <div>
+          <div class="co-id mono">${company.id}</div>
+          <div class="co-name">${company.name}</div>
+          <div class="co-meta">${ind.label||company.industryKey} &middot; ${company.country} &middot; Rep: ${company.primaryRepId||'—'}</div>
+        </div>
+        <div class="co-score-block">
+          <div class="co-score-num mono" style="color:${assessment.overallScore?rating.color:'var(--text-muted)'}">${assessment.overallScore||'—'}</div>
+          <div class="co-score-label mono">C-SCORE</div>
+          <div class="co-rating mono" style="color:${assessment.overallScore?rating.color:'var(--text-muted)'}">${assessment.overallScore?rating.grade:'Not Rated'}</div>
+        </div>
+      </div>
+      <div class="co-chips">
+        ${chipStatus(review.status)}
+        <span class="chip" style="background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);color:var(--amber)">${ind.riskTier||'Risk Tier Unknown'}</span>
+        ${company.regulatoryJurisdiction?`<span class="chip" style="background:rgba(0,153,204,0.08);border:1px solid rgba(0,153,204,0.2);color:var(--cyan)">${company.regulatoryJurisdiction}</span>`:''}
+        ${aiAnalysis?.greenwashingAnalysis?.level==='High'?`<span class="chip chip-rejected">GW RISK: HIGH</span>`:''}
+        ${aiAnalysis?.contradictions?.length?`<span class="chip chip-pending">${aiAnalysis.contradictions.length} Contradiction${aiAnalysis.contradictions.length!==1?'s':''}</span>`:''}
+      </div>
+    </div>`;
+
+    // ── Assessment meta bar
+    html += `<div class="asm-bar">
+      <div class="asm-cell"><div class="asm-cell-label mono">Assessment ID</div><div class="asm-cell-val mono" style="color:var(--text-2)">${assessment.id}</div></div>
+      <div class="asm-cell"><div class="asm-cell-label mono">Year</div><div class="asm-cell-val mono">${assessment.year||'—'}</div></div>
+      <div class="asm-cell"><div class="asm-cell-label mono">Submitted</div><div class="asm-cell-val mono">${assessment.submittedAt?new Date(assessment.submittedAt).toLocaleDateString():'—'}</div></div>
+      <div class="asm-cell"><div class="asm-cell-label mono">Questions</div><div class="asm-cell-val mono">${Object.keys(assessment.answers||{}).length} answered</div></div>
+      <div class="asm-cell"><div class="asm-cell-label mono">Evidence</div><div class="asm-cell-val mono">${(assessment.evidence||[]).length} documents</div></div>
+    </div>`;
+
+    // ── Tabs
+    html += `<div class="tab-bar">
+      <button class="tab-btn active mono" onclick="switchTab('overview',this)">Overview</button>
+      <button class="tab-btn mono" onclick="switchTab('questions',this)">Questions &amp; Annotations</button>
+      <button class="tab-btn mono" onclick="switchTab('evidence',this)">Evidence</button>
+      <button class="tab-btn mono" onclick="switchTab('ai',this)">AI Analysis</button>
+      <button class="tab-btn mono" onclick="switchTab('framework',this)">Framework Map</button>
+    </div>`;
+
+    // ── Tab: Overview
+    html += `<div class="tab-content active" id="tab-overview">`;
+    // C-LAYER Grid
+    html += `<div class="clayer-grid">`;
+    C_LAYERS.forEach(cl=>{
+      const s = scores[cl.id];
+      const pct = s || 0;
+      html += `<div class="clayer-cell">
+        <div class="clayer-label mono" style="color:${cl.color}">${cl.label}</div>
+        <div class="clayer-long">${cl.long}</div>
+        <div class="clayer-score mono" style="color:${s?cl.color:'var(--text-muted)'}">${s||'—'}</div>
+        <div class="clayer-weight">Weight: ${cl.weight}%</div>
+        <div class="clayer-bar"><div class="clayer-bar-fill" style="width:${pct}%;background:${cl.color}"></div></div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    // AI summary strip
+    if(aiAnalysis) {
+      const gw = aiAnalysis.greenwashingAnalysis || {};
+      html += `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border)">
+        ${[
+          {label:'Climate VaR', val:aiAnalysis.climateVaR?`${aiAnalysis.climateVaR}/100`:'—', color:aiAnalysis.climateVaR>50?'var(--red)':'var(--amber)'},
+          {label:'GW Probability', val:gw.probability!=null?`${gw.probability}%`:'—', color:gw.probability>50?'var(--red)':gw.probability>25?'var(--amber)':'var(--green)'},
+          {label:'Contradictions', val:aiAnalysis.contradictions?.length||0, color:aiAnalysis.contradictions?.length>0?'var(--red)':'var(--green)'},
+          {label:'Confidence', val:aiAnalysis.confidenceScore?`${aiAnalysis.confidenceScore}%`:'—', color:'var(--cyan)'}
+        ].map(k=>`<div style="background:var(--bg);padding:10px 14px"><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">${k.label}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-0.03em;color:${k.color}">${k.val}</div></div>`).join('')}
+      </div>`;
+    }
+
+    // Comments history
+    if(review.comments && review.comments.length) {
+      html += `<div style="border-bottom:1px solid var(--border);padding:14px 16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Review History</div>`;
+      review.comments.forEach(c=>{
+        const typeColor = c.type==='approval'?'var(--green)':c.type==='rejection'?'var(--red)':'var(--amber)';
+        html += `<div style="background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:8px 12px;margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${typeColor}">${c.type.replace(/_/g,' ')}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)">${new Date(c.at).toLocaleString()}</span>
+          </div>
+          <div style="font-size:10px;color:var(--text-2)">${c.text||'No comment'}</div>
+          <div style="font-size:9px;color:var(--text-muted);margin-top:3px">by ${c.by}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    // Override request
+    if(review.overrideRequest) {
+      const ov = review.overrideRequest;
+      html += `<div style="border-bottom:1px solid var(--border);padding:14px 16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);margin-bottom:8px">&#9650; Score Override Request</div>
+        <div style="background:rgba(255,102,0,0.04);border:1px solid rgba(255,102,0,0.2);border-radius:2px;padding:10px 12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">
+            <div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-bottom:2px">Current Score</div><div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--text-2)">${assessment.overallScore||'—'}</div></div>
+            <div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-bottom:2px">Proposed Score</div><div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--amber)">${ov.newScore}</div></div>
+          </div>
+          <div style="font-size:10px;color:var(--text-2);margin-bottom:4px">${ov.justification}</div>
+          <div style="display:flex;justify-content:space-between"><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)">Requested by ${ov.requestedBy}</span><span class="chip chip-pending mono">${ov.status.replace(/_/g,' ')}</span></div>
+        </div>
+      </div>`;
+    }
+
+    html += `</div>`; // end tab-overview
+
+    // ── Tab: Questions
+    html += `<div class="tab-content" id="tab-questions">`;
+    const sections = [...new Set(ALL_Q.map(q=>q.section))];
+    sections.forEach(sectionName => {
+      const qs = ALL_Q.filter(q=>q.section===sectionName);
+      const sectionId = sectionName.replace(/[^a-zA-Z0-9]/g,'_');
+      const cl = qs[0] ? C_LAYERS.find(c=>c.id===qs[0].clayer) : null;
+      const answeredInSection = qs.filter(q=>assessment.answers?.[q.id]!=null).length;
+      html += `<div id="section_${sectionId}">
+        <div class="q-section-hdr">
+          <span class="q-section-name mono">${sectionName}</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            ${cl?`<span class="q-section-badge mono" style="background:${cl.color}20;border:1px solid ${cl.color}40;color:${cl.color}">${cl.label}</span>`:''}
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)">${answeredInSection}/${qs.length} answered</span>
+          </div>
+        </div>`;
+      qs.forEach(q=>{
+        const ans = assessment.answers?.[q.id];
+        const annots = (review.annotations||{})[q.id] || [];
+        const clLayer = C_LAYERS.find(c=>c.id===q.clayer);
+        html += `<div class="q-card" id="qcard_${q.id}">
+          <div class="q-card-header">
+            <span class="q-card-id mono">${q.id}</span>
+            <span class="q-card-label">${q.label}</span>
+            ${clLayer?`<span class="q-card-clayer mono" style="background:${clLayer.color}20;border:1px solid ${clLayer.color}40;color:${clLayer.color}">${clLayer.label}</span>`:''}
+          </div>
+          ${q.sublabel?`<div style="font-size:10px;color:var(--text-muted);margin-bottom:8px;font-style:italic">${q.sublabel}</div>`:''}
+          <div class="answer-block">
+            <div class="answer-block-label mono">Company Response</div>
+            ${ans!=null ? `<div class="answer-value ${typeof ans==='string'&&ans.length>80?'text-long':''}">${formatAnswer(q, ans)}</div>${getMaturityChip(q, ans)}` : `<div style="font-size:10px;color:var(--text-muted);font-style:italic">Not answered</div>`}
+          </div>
+          <div class="annotation-area">
+            <div class="annotation-label mono">Analyst Annotations</div>
+            ${annots.map(a=>buildSavedAnnotation(a)).join('')}
+            <textarea class="annotation-textarea" id="anno_${q.id}" placeholder="Add annotation, concern, or observation for this question..."></textarea>
+            <div class="annotation-actions">
+              <button class="anno-btn mono" onclick="saveAnnotation('${q.id}','note')">+ Note</button>
+              <button class="anno-btn flag mono" onclick="saveAnnotation('${q.id}','flag')">&#9873; Flag Issue</button>
+              <button class="anno-btn approved mono" onclick="saveAnnotation('${q.id}','verified')">&#10003; Verified</button>
+            </div>
+          </div>
+        </div>`;
+      });
+      html += `</div>`; // end section
+    });
+
+    if(ALL_Q.length === 0) {
+      html += `<div class="empty-state">No questions found. Assessment may use a different question format.</div>`;
+    }
+    html += `</div>`; // end tab-questions
+
+    // ── Tab: Evidence
+    html += `<div class="tab-content" id="tab-evidence">`;
+    const evidence = assessment.evidence || [];
+    if(evidence.length === 0) {
+      html += `<div class="empty-state"><div style="font-size:24px;margin-bottom:8px">&#128196;</div><div>No evidence documents uploaded by company</div><div style="margin-top:6px;font-size:10px">Company can upload evidence in the assessment portal</div></div>`;
+    } else {
+      evidence.forEach(ev=>{
+        const ext = (ev.name||'').split('.').pop().toUpperCase().slice(0,3);
+        html += `<div class="evidence-item">
+          <div class="evidence-info">
+            <div class="evidence-icon mono">${ext||'DOC'}</div>
+            <div>
+              <div class="evidence-name">${ev.name||'Untitled document'}</div>
+              <div class="evidence-meta">${ev.questionId||'—'} &middot; ${ev.size?Math.round(ev.size/1024)+'KB':'—'} &middot; ${ev.uploadedAt?new Date(ev.uploadedAt).toLocaleDateString():'—'}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="chip chip-review mono">View</span>
+          </div>
+        </div>`;
+      });
+    }
+    html += `</div>`; // end tab-evidence
+
+    // ── Tab: AI Analysis
+    html += `<div class="tab-content" id="tab-ai">`;
+    if(aiAnalysis) {
+      const gw = aiAnalysis.greenwashingAnalysis || {};
+      html += `<div class="ai-section">
+        <div class="ai-section-title mono">Greenwashing Probability Analysis</div>
+        <div class="ai-kpi-row">
+          <div class="ai-kpi-cell"><div class="ai-kpi-label mono">GW Probability</div><div class="ai-kpi-val mono" style="color:${gw.probability>50?'var(--red)':gw.probability>25?'var(--amber)':'var(--green)'}">${gw.probability!=null?gw.probability+'%':'—'}</div></div>
+          <div class="ai-kpi-cell"><div class="ai-kpi-label mono">Risk Level</div><div class="ai-kpi-val mono" style="font-size:14px;padding-top:4px;color:${gw.level==='High'?'var(--red)':gw.level==='Moderate'?'var(--amber)':'var(--green)'}">${gw.level||'—'}</div></div>
+          <div class="ai-kpi-cell"><div class="ai-kpi-label mono">C-TRUTH Score</div><div class="ai-kpi-val mono" style="color:${(aiAnalysis.disclosureQuality||0)<40?'var(--red)':'var(--amber)'}">${aiAnalysis.disclosureQuality||'—'}</div></div>
+        </div>
+        ${gw.flags && gw.flags.length ? `<div style="margin-top:8px">${gw.flags.map(f=>`<div class="gw-flag-item"><div class="gw-flag-dot"></div><div class="gw-flag-text">${f}</div></div>`).join('')}</div>` : '<div style="font-size:10px;color:var(--green)">No greenwashing signals detected</div>'}
+      </div>`;
+
+      html += `<div class="ai-section">
+        <div class="ai-section-title mono">Climate VaR Assessment</div>
+        <div class="ai-kpi-row">
+          <div class="ai-kpi-cell"><div class="ai-kpi-label mono">Climate VaR</div><div class="ai-kpi-val mono" style="color:${aiAnalysis.climateVaR>60?'var(--red)':aiAnalysis.climateVaR>35?'var(--amber)':'var(--green)'}">${aiAnalysis.climateVaR!=null?`${aiAnalysis.climateVaR}/100`:'—'}</div></div>
+          <div class="ai-kpi-cell"><div class="ai-kpi-label mono">Physical Risk</div><div class="ai-kpi-val mono" style="color:var(--amber)">${aiAnalysis.physicalExposure!=null?aiAnalysis.physicalExposure:'—'}</div></div>
+          <div class="ai-kpi-cell"><div class="ai-kpi-label mono">Transition Risk</div><div class="ai-kpi-val mono" style="color:var(--amber)">${aiAnalysis.transitionVulnerability!=null?aiAnalysis.transitionVulnerability:'—'}</div></div>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--text-muted)">Methodology: Nonlinear institutional — Exposure × Vulnerability × Financial Materiality × Probability × Confidence</div>
+        <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="chip chip-pending mono">Industry: ${aiAnalysis.industryBenchmark||'—'}</span>
+          <span class="chip chip-review mono">Risk: ${aiAnalysis.riskClassification||'—'}</span>
+          <span class="chip chip-approved mono">Confidence: ${aiAnalysis.confidenceScore||0}%</span>
+        </div>
+      </div>`;
+
+      html += `<div class="ai-section">
+        <div class="ai-section-title mono">Internal Contradictions Detected</div>`;
+      if(!aiAnalysis.contradictions || aiAnalysis.contradictions.length === 0) {
+        html += `<div style="font-size:10px;color:var(--green);padding:4px 0">No internal contradictions detected in this assessment.</div>`;
+      } else {
+        aiAnalysis.contradictions.forEach(c=>{
+          html += `<div class="contradiction-item ${c.severity}">
+            <div class="contradiction-sev" style="color:${c.severity==='high'?'var(--red)':'var(--amber)'}">&#9888; ${c.severity} severity — ${c.type.replace(/_/g,' ')}</div>
+            <div class="contradiction-desc">${c.description}</div>
+          </div>`;
+        });
+      }
+      html += `</div>`;
+
+      html += `<div class="ai-section">
+        <div class="ai-section-title mono">Section Strength Profile</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);margin-bottom:6px">Strong Sections</div>
+            ${aiAnalysis.strongSections && aiAnalysis.strongSections.length ? aiAnalysis.strongSections.map(s=>`<div style="font-size:10px;color:var(--text-2);padding:3px 0;border-bottom:1px solid var(--border)">${s}</div>`).join('') : '<div style="font-size:10px;color:var(--text-muted)">None above threshold</div>'}
+          </div>
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:6px">Weak Sections</div>
+            ${aiAnalysis.weakSections && aiAnalysis.weakSections.length ? aiAnalysis.weakSections.map(s=>`<div style="font-size:10px;color:var(--text-2);padding:3px 0;border-bottom:1px solid var(--border)">${s}</div>`).join('') : '<div style="font-size:10px;color:var(--text-muted)">None below threshold</div>'}
+          </div>
+        </div>
+      </div>`;
+
+      if(aiAnalysis.totalGHG || aiAnalysis.financialExposure) {
+        html += `<div class="ai-section">
+          <div class="ai-section-title mono">Quantitative Data Points</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border)">
+            ${aiAnalysis.totalGHG?`<div style="background:var(--bg);padding:10px 12px"><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-bottom:2px">Total GHG (S1+S2)</div><div style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--amber)">${aiAnalysis.totalGHG.toLocaleString()} tCO₂e</div></div>`:''}
+            ${aiAnalysis.financialExposure?`<div style="background:var(--bg);padding:10px 12px"><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-bottom:2px">Climate Exposure</div><div style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--amber)">USD ${aiAnalysis.financialExposure}M</div></div>`:''}
+          </div>
+        </div>`;
+      }
+    } else {
+      html += `<div class="empty-state">AI analysis could not be generated. Assessment may be incomplete.</div>`;
+    }
+    html += `</div>`; // end tab-ai
+
+    // ── Tab: Framework Map
+    html += `<div class="tab-content" id="tab-framework">`;
+    const fwMap = I.mapAssessmentToFrameworks(assessment);
+    html += `<table class="fw-table">
+      <thead><tr><th>Framework</th><th>Coverage</th><th>Coverage %</th><th>Questions Mapped</th><th>Jurisdiction</th><th>Status</th></tr></thead>
+      <tbody>`;
+    I.FRAMEWORKS.forEach(fw=>{
+      const d = fwMap[fw.code] || {covered:[],coverage:0};
+      const statusColor = d.coverage>=70?'var(--green)':d.coverage>=40?'var(--cyan)':'var(--red)';
+      const statusLabel = d.coverage>=70?'Aligned':d.coverage>=40?'Partial':'Insufficient';
+      html += `<tr>
+        <td><div style="font-weight:700">${fw.code}</div><div style="font-size:9px;color:var(--text-muted)">${fw.label}</div></td>
+        <td><div class="fw-bar"><div class="fw-bar-fill" style="width:${d.coverage}%;background:${statusColor}"></div></div></td>
+        <td><span class="mono" style="color:${statusColor};font-size:12px;font-weight:700">${d.coverage}%</span></td>
+        <td class="mono" style="color:var(--text-2)">${d.covered.length}</td>
+        <td style="font-size:9px;color:var(--text-2)">${fw.mandatory.join(', ')||fw.type}</td>
+        <td><span class="chip" style="background:${statusColor}20;border:1px solid ${statusColor}40;color:${statusColor}">${statusLabel}</span></td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+    html += `</div>`; // end tab-framework
+
+    document.getElementById('main-content').innerHTML = html;
+  }
+
+  function buildRightPanel() {
+    const scores = assessment.scores || {};
+    const rating = I.getClimateRating(assessment.overallScore);
+
+    // Status chip
+    document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
+    document.getElementById('rp-current-score').textContent = assessment.overallScore || '—';
+
+    // Section approval grid
+    const approvals = review.sectionApprovals || {};
+    document.getElementById('section-approval-grid').innerHTML = C_LAYERS.map(cl=>{
+      const s = scores[cl.id];
+      const checked = approvals[cl.id] === true;
+      const chkCls = checked ? 'sag-check checked' : 'sag-check';
+      const chkMark = checked ? '&#10003;' : '';
+      return `<div class="sag-cell" onclick="toggleSectionApproval('${cl.id}')">
+        <div class="${chkCls}" id="sag_${cl.id}">${chkMark}</div>
+        <span class="sag-label mono" style="color:${cl.color}">${cl.label}</span>
+        <span class="sag-score mono" style="color:${s?cl.color:'var(--text-muted)'}">${s||'—'}</span>
+      </div>`;
+    }).join('');
+
+    // Greenwashing signals
+    const gw = aiAnalysis?.greenwashingAnalysis || {};
+    const gwHtml = gw.flags && gw.flags.length
+      ? gw.flags.map(f=>`<div class="gw-flag-item"><div class="gw-flag-dot"></div><div class="gw-flag-text">${f}</div></div>`).join('')
+      : `<div style="font-size:10px;color:var(--green)">No greenwashing signals detected.</div>`;
+    document.getElementById('rp-gw-signals').innerHTML = gwHtml;
+
+    // AI quick summary
+    document.getElementById('rp-ai-quick').innerHTML = [
+      {label:'Overall Risk', val:aiAnalysis?.riskClassification||'—', color:aiAnalysis?.riskClassification==='Critical'?'var(--red)':aiAnalysis?.riskClassification==='Elevated'?'var(--amber)':'var(--green)'},
+      {label:'Confidence', val:aiAnalysis?.confidenceScore!=null?`${aiAnalysis.confidenceScore}%`:'—', color:'var(--cyan)'},
+      {label:'GW Risk', val:gw.level||'—', color:gw.level==='High'?'var(--red)':gw.level==='Moderate'?'var(--amber)':'var(--green)'},
+      {label:'Climate VaR', val:aiAnalysis?.climateVaR!=null?`${aiAnalysis.climateVaR}/100`:'—', color:'var(--amber)'},
+      {label:'Rating', val:assessment.overallScore?rating.grade:'Unrated', color:assessment.overallScore?rating.color:'var(--text-muted)'}
+    ].map(i=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span style="font-size:10px;color:var(--text-muted)">${i.label}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:${i.color}">${i.val}</span></div>`).join('');
+  }
+
+  // ── Helper renderers
+  function formatAnswer(q, ans) {
+    if(ans === null || ans === undefined) return '—';
+    if(q.type === 'yesno') return ans === 'YES' || ans === true ? '&#10003; YES' : '&#10007; NO';
+    if(q.type === 'upload') return ans === 'uploaded' ? '&#128196; Document uploaded' : 'Not uploaded';
+    if(typeof ans === 'number') return `${ans.toLocaleString()}${q.unit?' '+q.unit:''}`;
+    return String(ans);
+  }
+
+  function getMaturityChip(q, ans) {
+    if(q.type !== 'text' || !ans || typeof ans !== 'string') return '';
+    const wc = ans.trim().split(/\s+/).length;
+    const hasQuant = /\d[\d,.]*\s*(%|tCO2e|MW|GWh|USD|EUR|GBP|m³|GJ|kWh)/i.test(ans);
+    const hasFw = /TCFD|IFRS|GRI|SASB|CDP|SBTi|CSRD|BRSR/i.test(ans);
+    const hasTime = /20[2-5]\d|Q[1-4]\s*20[2-5]\d/i.test(ans);
+    let score = 0;
+    if(wc > 150) score += 20;
+    if(wc > 50) score += 10;
+    if(hasQuant) score += 20;
+    if(hasFw) score += 15;
+    if(hasTime) score += 15;
+    const level = score >= 55 ? 'Institutional Grade' : score >= 35 ? 'Operational' : score >= 15 ? 'Basic' : 'Pre-disclosure';
+    const color = score >= 55 ? 'var(--green)' : score >= 35 ? 'var(--cyan)' : score >= 15 ? 'var(--amber)' : 'var(--red)';
+    return `<span class="maturity-chip mono" style="background:${color}20;border:1px solid ${color}40;color:${color}">${level}</span>`;
+  }
+
+  function buildSavedAnnotation(a) {
+    const typeColor = a.type==='flag'?'var(--red)':a.type==='verified'?'var(--green)':'var(--amber)';
+    return `<div class="saved-anno ${a.type}">
+      <div class="saved-anno-header">
+        <span class="saved-anno-type mono" style="color:${typeColor}">${a.type.toUpperCase()}</span>
+        <span class="saved-anno-time mono">${new Date(a.timestamp).toLocaleDateString()}</span>
+      </div>
+      <div class="saved-anno-text">${a.text}</div>
+    </div>`;
+  }
+
+  function chipStatus(s) {
+    const m = {pending:'chip-pending',in_review:'chip-review',approved:'chip-approved',rejected:'chip-rejected',clarification_requested:'chip-clarif'};
+    return `<span class="chip ${m[s]||'chip-pending'} mono">${(s||'pending').replace(/_/g,' ')}</span>`;
+  }
+
+  function buildNoReviewState() {
+    const reviews = I.listReviews();
+    return `<div style="padding:20px 16px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">Select a Review</div>
+      ${reviews.length === 0 ? '<div class="empty-state">No reviews in queue. Companies must submit assessments first.</div>' : `
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>${['Review ID','Company','Status','Score','Rating','Action'].map(h=>`<th style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface)">${h}</th>`).join('')}</tr></thead>
+        <tbody>${reviews.map(r=>{
+          const co = E.getCompany(r.companyId);
+          const as = E.getAssessment(r.assessmentId);
+          const rt = I.getClimateRating(as?.overallScore);
+          return `<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="window.location.href='cx-review-workspace.html?review=${r.id}'">
+            <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red)">${r.id}</td>
+            <td style="padding:8px 12px;font-size:11px;font-weight:600">${co?co.name:'—'}</td>
+            <td style="padding:8px 12px">${chipStatus(r.status)}</td>
+            <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${as?.overallScore?rt.color:'var(--text-muted)'}">${as?.overallScore||'—'}</td>
+            <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:${as?.overallScore?rt.color:'var(--text-muted)'}">${as?.overallScore?rt.grade:'N/R'}</td>
+            <td style="padding:8px 12px"><button class="chip chip-review mono">Open</button></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`}
+    </div>`;
+  }
+
+  // ── Tab switching
+  window.switchTab = function(tab, btn) {
+    document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+    if(btn) btn.classList.add('active');
+  };
+
+  // ── Scroll to section
+  window.scrollToSection = function(sectionId) {
+    const el = document.getElementById('section_'+sectionId);
+    if(!el) return;
+    switchTab('questions', document.querySelectorAll('.tab-btn')[1]);
+    setTimeout(()=>{el.scrollIntoView({behavior:'smooth',block:'start'});}, 50);
+  };
+
+  // ── Section approval toggle
+  const localApprovals = {...(review.sectionApprovals||{})};
+  window.toggleSectionApproval = function(clId) {
+    localApprovals[clId] = !localApprovals[clId];
+    const el = document.getElementById('sag_'+clId);
+    if(el) { el.className = 'sag-check'+(localApprovals[clId]?' checked':''); el.innerHTML = localApprovals[clId]?'&#10003;':''; }
+  };
+  window.saveSectionApprovals = function() {
+    I.updateReview(review.id, {sectionApprovals: localApprovals});
+    review.sectionApprovals = localApprovals;
+    showToast('Section approvals saved', 'green');
+  };
+
+  // ── Annotation save
+  window.saveAnnotation = function(qId, type) {
+    const textarea = document.getElementById('anno_'+qId);
+    const text = (textarea?.value||'').trim();
+    if(!text) { showToast('Enter annotation text first', 'red'); return; }
+    I.addAnnotation(review.id, qId, type, text, analyst.id);
+    review = I.getReview(review.id);
+    // Re-render saved annotations
+    const container = document.getElementById('qcard_'+qId);
+    if(container) {
+      const annotArea = container.querySelector('.annotation-area');
+      const annots = (review.annotations||{})[qId] || [];
+      const savedEl = annotArea.querySelector('.saved-annotations');
+      const annotsHtml = annots.map(a=>buildSavedAnnotation(a)).join('');
+      if(savedEl) { savedEl.innerHTML = annotsHtml; }
+      else {
+        const ta = annotArea.querySelector('.annotation-textarea');
+        const div = document.createElement('div');
+        div.className = 'saved-annotations';
+        div.innerHTML = annotsHtml;
+        annotArea.insertBefore(div, ta);
+      }
+    }
+    if(textarea) textarea.value = '';
+    showToast('Annotation saved', 'green');
+  };
+
+  // ── Override form toggle
+  window.toggleOverrideForm = function() {
+    const form = document.getElementById('override-form');
+    form.classList.toggle('visible');
+  };
+  window.submitOverride = function() {
+    const newScore = parseInt(document.getElementById('override-score')?.value);
+    const justification = document.getElementById('override-justification')?.value?.trim();
+    if(!newScore || newScore < 10 || newScore > 100) { showToast('Enter valid score (10–100)', 'red'); return; }
+    if(!justification || justification.length < 30) { showToast('Justification must be at least 30 characters', 'red'); return; }
+    I.submitScoreOverride(review.id, newScore, justification, analyst.id);
+    review = I.getReview(review.id);
+    showToast('Score override submitted for approval', 'green');
+    document.getElementById('override-form').classList.remove('visible');
+  };
+
+  // ── Review actions
+  window.assignToMe = function() {
+    I.updateReview(review.id, {assignedTo: analyst.id, status: review.status==='pending'?'in_review':review.status});
+    review = I.getReview(review.id);
+    document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
+    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
+    showToast('Assigned to you', 'green');
+  };
+  window.doStartReview = function() {
+    I.updateReview(review.id, {status:'in_review', assignedTo: review.assignedTo||analyst.id});
+    review = I.getReview(review.id);
+    document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
+    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
+    showToast('Review started', 'green');
+  };
+  window.doApprove = function() {
+    const comment = document.getElementById('rp-comment')?.value?.trim() || 'Approved by analyst';
+    I.approveAssessment(review.id, analyst.id, comment);
+    review = I.getReview(review.id);
+    document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
+    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
+    showToast('Assessment approved', 'green');
+  };
+  window.doReject = function() {
+    const comment = document.getElementById('rp-comment')?.value?.trim();
+    if(!comment) { showToast('Add rejection justification first', 'red'); return; }
+    I.updateReview(review.id, {status:'rejected',comments:[...(review.comments||[]),{type:'rejection',text:comment,by:analyst.id,at:new Date().toISOString()}]});
+    review = I.getReview(review.id);
+    document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
+    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
+    showToast('Assessment rejected', 'red');
+  };
+  window.doClarify = function() {
+    const comment = document.getElementById('rp-comment')?.value?.trim();
+    if(!comment) { showToast('Describe what clarification is needed', 'red'); return; }
+    I.requestClarification(review.id, analyst.id, comment);
+    review = I.getReview(review.id);
+    document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
+    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
+    showToast('Clarification request sent', 'green');
+  };
+
+  // ── Sign out
+  window.doSignOut = function() { I.destroyAnalystSession(); window.location.href = 'cx-portal-login.html'; };
+
+  // ── Toast
+  function showToast(msg, type='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show'+(type?' '+type:'');
+    setTimeout(()=>t.classList.remove('show'), 2500);
+  }
+
+})();
+</script>
+</body>
+</html>

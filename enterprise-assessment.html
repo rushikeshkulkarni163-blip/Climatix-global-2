@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Climactix Enterprise — Industry-Adaptive Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000000;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;
+  --border:#2C2C2C;--border-strong:#333333;
+  --amber:#FF6600;--amber-dim:#CC5200;--cyan:#0099CC;--green:#00CC44;--red:#FF3333;--blue:#3399FF;
+  --text:#FFFFFF;--text-2:#888888;--text-muted:#555555;
+  --t:0.12s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter','IBM Plex Sans',system-ui,sans-serif;font-size:12px;line-height:1.5;min-height:100vh}
+.mono{font-family:'IBM Plex Mono','Courier New',monospace}
+
+/* ── Nav */
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.05em}
+.nav-sep{color:var(--border-strong)}
+.nav-ctx{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all var(--t);text-decoration:none;display:inline-flex;align-items:center}
+.nav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.nav-btn.save{background:rgba(255,102,0,0.08);border-color:rgba(255,102,0,0.3);color:var(--amber)}
+.save-indicator{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);transition:color var(--t)}
+.save-indicator.saved{color:var(--green)}
+
+/* ── Progress bar */
+.progress-bar-wrap{height:2px;background:var(--border);position:relative}
+.progress-bar-fill{height:100%;background:var(--amber);transition:width 0.4s ease}
+
+/* ── 3-column workspace */
+.workspace{display:grid;grid-template-columns:240px 1fr 300px;height:calc(100vh - 46px);overflow:hidden}
+
+/* ── Section nav (left) */
+.section-nav{border-right:1px solid var(--border);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent;display:flex;flex-direction:column}
+.section-nav::-webkit-scrollbar{width:3px}
+.section-nav::-webkit-scrollbar-thumb{background:var(--surface-3)}
+
+.section-nav-header{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.nav-company{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber);letter-spacing:0.06em;margin-bottom:2px}
+.nav-assessment-type{font-size:11px;font-weight:600;line-height:1.3}
+.nav-industry-badge{display:inline-flex;padding:2px 6px;background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-top:6px}
+
+.section-category{padding:8px 14px 4px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)}
+
+.section-nav-item{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;transition:all var(--t);border-left:2px solid transparent;position:relative}
+.section-nav-item:hover{background:var(--surface-2)}
+.section-nav-item.active{background:rgba(255,102,0,0.04);border-left-color:var(--amber)}
+.section-nav-item.complete{border-left-color:var(--green)}
+.sni-indicator{width:10px;height:10px;border-radius:1px;border:1px solid var(--border-strong);flex-shrink:0;transition:all var(--t)}
+.section-nav-item.active .sni-indicator,.section-nav-item.complete .sni-indicator{border-color:transparent}
+.section-nav-item.active .sni-indicator{background:var(--amber)}
+.section-nav-item.complete .sni-indicator{background:var(--green)}
+.sni-info{flex:1}
+.sni-label{font-size:11px;font-weight:500;color:var(--text-2);transition:color var(--t);line-height:1.3}
+.section-nav-item.active .sni-label{color:var(--amber)}
+.section-nav-item.complete .sni-label{color:var(--text)}
+.sni-clayer{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em}
+.sni-count{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);flex-shrink:0}
+.sni-industry-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:rgba(0,153,204,0.1);border:1px solid rgba(0,153,204,0.2);color:var(--cyan);padding:1px 4px;border-radius:1px;flex-shrink:0}
+
+/* ── Main assessment panel */
+.assessment-panel{overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent;display:flex;flex-direction:column}
+.assessment-panel::-webkit-scrollbar{width:3px}
+.assessment-panel::-webkit-scrollbar-thumb{background:var(--surface-3)}
+
+.panel-header{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
+.panel-section-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:4px}
+.panel-section-title{font-size:16px;font-weight:800;letter-spacing:-0.025em;margin-bottom:4px}
+.panel-section-meta{font-size:11px;color:var(--text-2)}
+.panel-section-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.section-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 7px;border-radius:2px}
+
+.questions-list{padding:16px 20px;flex:1}
+
+/* ── Question card */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:14px;margin-bottom:12px;transition:border-color var(--t)}
+.q-card:hover{border-color:var(--border-strong)}
+.q-card.answered{border-left:2px solid var(--green)}
+.q-card.critical{position:relative}
+.q-card.critical::before{content:'CRITICAL';position:absolute;top:-1px;right:-1px;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.1em;background:rgba(255,102,0,0.12);border:1px solid rgba(255,102,0,0.3);color:var(--amber);padding:2px 6px;border-radius:0 2px 0 2px}
+.q-card-header{margin-bottom:10px}
+.q-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:4px}
+.q-label{font-size:12px;font-weight:600;line-height:1.5;margin-bottom:4px}
+.q-sublabel{font-size:11px;color:var(--text-2);line-height:1.4}
+.q-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.q-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+
+/* ── Input types */
+
+/* YES/NO */
+.yesno-group{display:flex;gap:6px;margin-top:4px}
+.yesno-btn{padding:6px 20px;border:1px solid var(--border-strong);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all var(--t);background:transparent;color:var(--text-2)}
+.yesno-btn:hover{border-color:var(--text-2);color:var(--text)}
+.yesno-btn.selected-yes{background:rgba(0,204,68,0.1);border-color:var(--green);color:var(--green)}
+.yesno-btn.selected-no{background:rgba(255,51,51,0.1);border-color:var(--red);color:var(--red)}
+.yesno-btn.selected-na{background:rgba(85,85,85,0.15);border-color:var(--border-strong);color:var(--text-muted)}
+
+/* Select5 */
+.select5-group{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.s5-btn{padding:5px 10px;border:1px solid var(--border);border-radius:2px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all var(--t);background:transparent;color:var(--text-2);white-space:nowrap}
+.s5-btn:hover{border-color:var(--border-strong);color:var(--text)}
+.s5-btn.selected{background:rgba(255,102,0,0.1);border-color:var(--amber);color:var(--amber)}
+
+/* Dropdown */
+.q-select{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-size:12px;color:var(--text);outline:none;transition:border-color var(--t);margin-top:4px;appearance:none;font-family:'Inter',system-ui}
+.q-select:focus{border-color:var(--amber)}
+.q-select option{background:var(--surface-3)}
+
+/* Number input */
+.num-row{display:flex;gap:8px;align-items:center;margin-top:4px}
+.q-number{flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--amber);outline:none;transition:border-color var(--t)}
+.q-number:focus{border-color:var(--amber)}
+.q-number::placeholder{color:var(--text-muted)}
+.unit-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);background:var(--surface-3);border:1px solid var(--border);padding:4px 8px;border-radius:2px;flex-shrink:0}
+.num-benchmark{font-size:10px;color:var(--text-muted);margin-top:4px}
+
+/* Text / Writing */
+.q-textarea{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:10px;font-size:12px;color:var(--text);font-family:'Inter',system-ui;line-height:1.6;outline:none;resize:vertical;min-height:120px;transition:border-color var(--t);margin-top:4px}
+.q-textarea:focus{border-color:var(--amber)}
+.q-textarea::placeholder{color:var(--text-muted)}
+.text-meta-row{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.word-count{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+.word-count.good{color:var(--green)}
+.word-count.warn{color:var(--amber)}
+.ai-analysis-box{background:rgba(0,153,204,0.04);border:1px solid rgba(0,153,204,0.15);padding:8px 10px;margin-top:6px;display:none}
+.ai-analysis-box.visible{display:block}
+.ai-box-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.ai-maturity{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--cyan)}
+.ai-score{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--amber)}
+.ai-indicators{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.ai-ind-chip{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 5px;background:rgba(0,153,204,0.08);border:1px solid rgba(0,153,204,0.2);color:var(--cyan);border-radius:2px}
+
+/* File upload */
+.upload-zone{border:1px dashed var(--border-strong);border-radius:2px;padding:20px;text-align:center;cursor:pointer;transition:all var(--t);margin-top:4px;position:relative}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--amber);background:rgba(255,102,0,0.03)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:var(--border-strong);margin-bottom:6px}
+.upload-label{font-size:11px;color:var(--text-2)}
+.upload-hint{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-top:3px}
+.upload-file-list{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.upload-file-item{display:flex;align-items:center;gap:8px;background:rgba(0,204,68,0.04);border:1px solid rgba(0,204,68,0.15);padding:4px 8px;border-radius:2px}
+.upload-file-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--green);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.upload-file-remove{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);cursor:pointer;flex-shrink:0}
+.upload-file-remove:hover{color:var(--red)}
+
+/* ── Score rail (right) */
+.score-rail{border-left:1px solid var(--border);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent;display:flex;flex-direction:column}
+.score-rail::-webkit-scrollbar{width:3px}
+.score-rail::-webkit-scrollbar-thumb{background:var(--surface-3)}
+
+.score-rail-header{padding:12px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
+.score-rail-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.overall-score{text-align:center;padding:10px 0}
+.os-val{font-family:'IBM Plex Mono',monospace;font-size:40px;font-weight:700;letter-spacing:-0.04em;line-height:1;transition:color 0.3s ease}
+.os-grade{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;letter-spacing:0.02em;margin-top:4px;transition:color 0.3s ease}
+.os-desc{font-size:10px;color:var(--text-2);margin-top:3px}
+
+.rail-section{border-bottom:1px solid var(--border)}
+.rail-section-hdr{padding:8px 14px;background:var(--surface);font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+
+.clayer-rail-item{padding:8px 14px;border-bottom:1px solid var(--border);transition:background var(--t)}
+.clayer-rail-item:hover{background:var(--surface-2)}
+.clayer-rail-item:last-child{border-bottom:none}
+.cr-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.cr-name{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em}
+.cr-score{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;transition:color 0.3s ease}
+.cr-bar{height:2px;background:var(--border);margin-bottom:3px}
+.cr-bar-fill{height:100%;transition:width 0.4s ease}
+.cr-meta{display:flex;justify-content:space-between}
+.cr-long{font-size:10px;color:var(--text-muted)}
+.cr-weight{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+
+.progress-summary{padding:10px 14px;border-bottom:1px solid var(--border)}
+.ps-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.ps-label{font-size:10px;color:var(--text-2)}
+.ps-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
+
+/* AI analysis panel */
+.ai-panel{padding:10px 14px}
+.ai-panel-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.ai-insight{background:rgba(0,153,204,0.04);border:1px solid rgba(0,153,204,0.12);padding:8px 10px;margin-bottom:6px;border-radius:2px}
+.ai-insight:last-child{margin-bottom:0}
+.ai-insight-text{font-size:10px;color:var(--text-2);line-height:1.5}
+.ai-insight-score{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
+
+/* Submit section */
+.submit-section{padding:14px;border-top:1px solid var(--border);margin-top:auto}
+.submit-btn{width:100%;background:var(--amber);color:#000;border:none;border-radius:2px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:background var(--t)}
+.submit-btn:hover{background:var(--amber-dim)}
+.submit-btn:disabled{background:var(--surface-3);color:var(--text-muted);cursor:not-allowed}
+.save-draft-btn{width:100%;background:none;border:1px solid var(--border-strong);color:var(--text-2);border-radius:2px;padding:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all var(--t);margin-top:6px}
+.save-draft-btn:hover{border-color:var(--amber);color:var(--amber)}
+
+/* ── Responsive */
+@media(max-width:1100px){.workspace{grid-template-columns:220px 1fr}.score-rail{display:none}}
+@media(max-width:700px){.workspace{grid-template-columns:1fr}.section-nav{display:none}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-left">
+    <span class="nav-logo mono">CLIMACTIX</span>
+    <span class="nav-sep">/</span>
+    <span class="nav-ctx mono" id="nav-assessment-label">Enterprise Assessment</span>
+  </div>
+  <div class="nav-right">
+    <span class="save-indicator mono" id="save-indicator">Auto-save on</span>
+    <button class="nav-btn save mono" onclick="saveDraft()">Save Draft</button>
+    <a href="enterprise-dashboard.html" class="nav-btn mono">Dashboard</a>
+  </div>
+</header>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="top-progress-fill" style="width:0%"></div></div>
+
+<div class="workspace">
+
+  <!-- Section nav -->
+  <div class="section-nav" id="section-nav">
+    <div class="section-nav-header">
+      <div class="nav-company mono" id="sn-company">—</div>
+      <div class="nav-assessment-type" id="sn-type">Loading assessment...</div>
+      <div class="nav-industry-badge mono" id="sn-industry">—</div>
+    </div>
+    <div id="section-nav-items"><!-- Injected by JS --></div>
+  </div>
+
+  <!-- Main assessment panel -->
+  <div class="assessment-panel" id="assessment-panel">
+    <div class="panel-header" id="panel-header">
+      <div class="panel-section-eyebrow mono" id="ph-eyebrow">C-CORE · Governance</div>
+      <div class="panel-section-title" id="ph-title">Loading...</div>
+      <div class="panel-section-meta" id="ph-meta"></div>
+      <div class="panel-section-tags" id="ph-tags"></div>
+    </div>
+    <div class="questions-list" id="questions-list">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- Score rail -->
+  <div class="score-rail">
+    <div class="score-rail-header">
+      <div class="score-rail-label mono">C-Score — Live</div>
+      <div class="overall-score">
+        <div class="os-val mono" id="sr-score">—</div>
+        <div class="os-grade mono" id="sr-grade" style="color:var(--text-muted)">—</div>
+        <div class="os-desc" id="sr-desc">Complete assessment</div>
+      </div>
+    </div>
+
+    <div class="progress-summary">
+      <div class="ps-row"><span class="ps-label">Answered</span><span class="ps-val mono" id="sr-answered">0 / 0</span></div>
+      <div class="ps-row"><span class="ps-label">Critical items</span><span class="ps-val mono" id="sr-critical">0 / 0</span></div>
+      <div class="ps-row"><span class="ps-label">Evidence files</span><span class="ps-val mono" id="sr-evidence">0</span></div>
+      <div class="ps-row"><span class="ps-label">Completion</span><span class="ps-val mono" id="sr-pct">0%</span></div>
+    </div>
+
+    <div class="rail-section">
+      <div class="rail-section-hdr mono">C-LAYER Breakdown</div>
+      <div id="clayer-breakdown"><!-- Injected by JS --></div>
+    </div>
+
+    <div class="rail-section">
+      <div class="rail-section-hdr mono">AI Intelligence</div>
+      <div class="ai-panel" id="ai-panel-content">
+        <div style="font-size:11px;color:var(--text-muted)">Complete sections to unlock AI intelligence analysis.</div>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button class="submit-btn mono" id="submit-btn" onclick="submitAssessment()">Submit Assessment</button>
+      <button class="save-draft-btn mono" onclick="saveDraft()">Save Draft &amp; Continue Later</button>
+      <p style="font-size:10px;color:var(--text-muted);margin-top:8px;text-align:center">All answers auto-saved. Submit when complete.</p>
+    </div>
+  </div>
+
+</div><!-- /workspace -->
+
+<script src="enterprise.js"></script>
+<script>
+(function(){
+  'use strict';
+  const E = window.ENTERPRISE;
+
+  // ── Auth guard
+  const session = E.getSession();
+  if (!session) { window.location.href = 'enterprise-login.html'; return; }
+  const company = E.getCompany(session.companyId);
+  const rep = session.repId ? E.getRepresentative(session.repId) : null;
+  if (!company) { window.location.href = 'enterprise-dashboard.html'; return; }
+
+  // ── C-LAYER definitions
+  const C_LAYERS = [
+    {id:'c_core',   label:'C-CORE',    long:'Governance & Strategy',       weight:10, color:'#0099CC'},
+    {id:'c_fin',    label:'C-FIN',     long:'Financial Materiality',       weight:20, color:'#FFB800'},
+    {id:'c_risk_p', label:'C-RISK/P',  long:'Physical Risk Exposure',      weight:15, color:'#FF6600'},
+    {id:'c_risk_t', label:'C-RISK/T',  long:'Transition Risk Exposure',    weight:15, color:'#FF4400'},
+    {id:'c_capital',label:'C-CAPITAL', long:'Carbon & Capital',            weight:10, color:'#3399FF'},
+    {id:'c_supply', label:'C-SUPPLY',  long:'Supply Chain Fragility',      weight:10, color:'#9966FF'},
+    {id:'c_adapt',  label:'C-ADAPT',   long:'Adaptation & Resilience',     weight:10, color:'#00CC44'},
+    {id:'c_truth',  label:'C-TRUTH',   long:'Disclosure Integrity',        weight:10, color:'#FF3333'}
+  ];
+
+  // ── Load questions: CORE + industry-specific
+  const coreQs = E.CORE_QUESTIONS || [];
+  const industryQs = (E.INDUSTRY_QUESTIONS || {})[company.industryKey] || [];
+  const ALL_QUESTIONS = [...coreQs, ...industryQs];
+  const industry = E.INDUSTRIES[company.industryKey] || {};
+
+  // ── Section grouping
+  function groupBySections(questions){
+    const sectionMap = {};
+    questions.forEach(q => {
+      const sec = q.section || 'General';
+      if (!sectionMap[sec]) {
+        sectionMap[sec] = { name:sec, clayer:q.clayer, questions:[], isIndustry:false };
+      }
+      sectionMap[sec].questions.push(q);
+      if (!sectionMap[sec].isIndustry && q.id && (q.id.startsWith(industry.code) || q.id.length === 8)) {
+        sectionMap[sec].isIndustry = true;
+      }
+    });
+    return Object.values(sectionMap);
+  }
+
+  const SECTIONS = groupBySections(ALL_QUESTIONS);
+  let currentSectionIdx = 0;
+
+  // ── Assessment storage
+  const ASM_KEY = `cx_ent_asm_${company.id}_draft`;
+  let STATE = { answers: {}, uploads: {} };
+  try { const saved = localStorage.getItem(ASM_KEY); if(saved) STATE = JSON.parse(saved); } catch(e){}
+
+  function saveState(){
+    localStorage.setItem(ASM_KEY, JSON.stringify(STATE));
+    const el = document.getElementById('save-indicator');
+    el.textContent = 'Saved ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    el.className = 'save-indicator saved mono';
+    setTimeout(() => { el.textContent = 'Auto-save on'; el.className = 'save-indicator mono'; }, 2000);
+  }
+
+  // ── AI text analyzer
+  function analyzeText(text){
+    if (!text || text.trim().length < 20) return {score:0, maturity:'No response', indicators:[], words:0};
+    const words = text.trim().split(/\s+/).length;
+    let score = 0; const indicators = [];
+    if (words >= 400) { score+=30; indicators.push('Comprehensive detail'); }
+    else if (words >= 200) { score+=20; indicators.push('Adequate detail'); }
+    else if (words >= 50) { score+=10; indicators.push('Basic coverage'); }
+    else score += 5;
+    if (/\d[\d,.]*\s*(%|tCO2e|tCO₂e|MW|GWh|MWh|USD|EUR|GBP|M\b|\bB\b|m³|L\/|GJ|kWh)/i.test(text)) { score+=20; indicators.push('Quantified data'); }
+    const frameworks = ['TCFD','SFDR','ISSB','CSRD','GHG Protocol','SBTi','PCAF','NGFS','CDP','CBAM','EU ETS','CORSIA','IMO'];
+    const fwMatches = frameworks.filter(f => new RegExp(f,'i').test(text)).length;
+    if (fwMatches >= 3) { score+=20; indicators.push('Multi-framework'); }
+    else if (fwMatches >= 1) { score+=10; indicators.push('Framework referenced'); }
+    if (/20[2-5]\d|Q[1-4]\s*20[2-5]\d/i.test(text)) { score+=15; indicators.push('Timeline specified'); }
+    if (/board|executive|ceo|cfo|chief|committee|council|officer/i.test(text)) { score+=10; indicators.push('Accountable governance'); }
+    const vague = ['we aim','we hope','we intend','working towards','plan to','considering','exploring','looking at','various','multiple','several factors'];
+    const vagueCount = vague.filter(v => text.toLowerCase().includes(v)).length;
+    if (vagueCount >= 2) { score = Math.max(0, score - 15); indicators.push('Vague language detected'); }
+    score = Math.min(100, Math.max(0, score));
+    const maturity = score>=75?'Institutional Grade':score>=55?'Operational Integration':score>=35?'Basic Reporting':'Pre-disclosure';
+    return {score, maturity, indicators, words};
+  }
+
+  // ── Scoring
+  function getAnswerValue(q){
+    const raw = STATE.answers[q.id];
+    if (raw === undefined || raw === null || raw === '') return null;
+    const type = q.type || 'yesno';
+    if (type === 'yesno') return raw === 'YES' ? 100 : raw === 'NO' ? 0 : null;
+    if (type === 'dropdown') { const opt = (q.opts||[]).find(o=>o.label===raw); return opt ? opt.score : null; }
+    if (type === 'number') { const n = parseFloat(String(raw).replace(/,/g,'')); return isNaN(n) ? null : (q.unit==='%' ? Math.min(100,Math.max(0,n)) : n>0?75:5); }
+    if (type === 'text') return analyzeText(raw).score;
+    if (type === 'upload') return STATE.uploads[q.id]?.length ? 80 : null;
+    if (type === 'select5') { const m={'IMPLEMENTED':100,'PROGRESSING':60,'PLANNED':30,'NOT_ADDRESSED':0}; return m[raw]??null; }
+    return null;
+  }
+
+  function toClimactixScale(raw){ return Math.max(10, Math.min(100, Math.round(10 + (raw/100)*90))); }
+
+  function computeScores(){
+    const layerRaws = {}; const layerCounts = {}; const layerAnswered = {};
+    C_LAYERS.forEach(cl => { layerRaws[cl.id]=0; layerCounts[cl.id]=0; layerAnswered[cl.id]=0; });
+    ALL_QUESTIONS.forEach(q => {
+      const cl = q.clayer || 'c_core';
+      if (!layerCounts[cl]) return;
+      layerCounts[cl]++;
+      const v = getAnswerValue(q);
+      if (v !== null) { layerRaws[cl] += v; layerAnswered[cl]++; }
+    });
+    const layerScores = {};
+    C_LAYERS.forEach(cl => {
+      if (layerAnswered[cl.id] === 0) { layerScores[cl.id] = null; return; }
+      const avg = layerRaws[cl.id] / layerAnswered[cl.id];
+      layerScores[cl.id] = toClimactixScale(avg);
+    });
+    const totalWeight = C_LAYERS.reduce((s,cl) => layerScores[cl.id]!==null ? s+cl.weight : s, 0);
+    let weighted = 0;
+    if (totalWeight > 0) {
+      C_LAYERS.forEach(cl => { if (layerScores[cl.id]!==null) weighted += layerScores[cl.id] * (cl.weight/100); });
+      weighted = Math.round(weighted * (100/totalWeight));
+    }
+    const answered = ALL_QUESTIONS.filter(q => getAnswerValue(q) !== null).length;
+    const total = ALL_QUESTIONS.length;
+    const critTotal = ALL_QUESTIONS.filter(q=>q.critical).length;
+    const critAnswered = ALL_QUESTIONS.filter(q=>q.critical && getAnswerValue(q)!==null).length;
+    const evidenceCount = Object.values(STATE.uploads).reduce((s,a)=>s+(a||[]).length,0);
+    return { layerScores, overall: totalWeight>0?toClimactixScale(weighted):null, answered, total, critTotal, critAnswered, evidenceCount };
+  }
+
+  function getClimateRating(s){
+    if(!s) return {grade:'—',desc:'No score yet',color:'var(--text-muted)'};
+    if(s>=90) return {grade:'AAA-C',desc:'Climate Intelligence Leader',color:'#00CC44'};
+    if(s>=80) return {grade:'AA-C',desc:'Advanced Climate Resilience',color:'#22DD55'};
+    if(s>=70) return {grade:'A-C',desc:'Strong Climate Readiness',color:'#66EE88'};
+    if(s>=60) return {grade:'BBB-C',desc:'Moderate Climate Risk',color:'#0099CC'};
+    if(s>=50) return {grade:'BB-C',desc:'Elevated Climate Risk',color:'#FFB800'};
+    if(s>=35) return {grade:'B-C',desc:'High Climate Risk',color:'#FF6600'};
+    return {grade:'CCC-C',desc:'Critical Climate Risk',color:'#FF3333'};
+  }
+
+  // ── Build section nav
+  function buildSectionNav(){
+    const container = document.getElementById('section-nav-items');
+    document.getElementById('sn-company').textContent = company.id;
+    document.getElementById('sn-type').textContent = industry.assessmentType || 'Climate Assessment';
+    document.getElementById('sn-industry').textContent = industry.code || company.industryKey;
+
+    let lastCategory = '';
+    let html = '';
+    SECTIONS.forEach((sec, idx) => {
+      const cl = C_LAYERS.find(c=>c.id===sec.clayer);
+      const answered = sec.questions.filter(q => getAnswerValue(q) !== null).length;
+      const isCore = coreQs.some(q => q.section === sec.name);
+      const category = cl ? cl.long : 'General';
+      if (category !== lastCategory) {
+        html += `<div class="section-category mono">${isCore ? 'Core Framework' : industry.label || 'Industry'}</div>`;
+        lastCategory = category;
+      }
+      const isComplete = answered === sec.questions.length && sec.questions.length > 0;
+      const isActive = idx === currentSectionIdx;
+      html += `<div class="section-nav-item${isActive?' active':''}${isComplete?' complete':''}" data-idx="${idx}" onclick="gotoSection(${idx})">
+        <div class="sni-indicator"></div>
+        <div class="sni-info">
+          <div class="sni-label">${sec.name}</div>
+          <div class="sni-clayer" style="color:${cl?cl.color:'#555'}">${cl?cl.label:''}</div>
+        </div>
+        <span class="sni-count mono">${answered}/${sec.questions.length}</span>
+        ${!isCore?`<span class="sni-industry-tag mono">${industry.code||'IND'}</span>`:''}
+      </div>`;
+    });
+    container.innerHTML = html;
+  }
+
+  // ── Render question by type
+  function renderQuestion(q, idx){
+    const val = STATE.answers[q.id];
+    const cl = C_LAYERS.find(c=>c.id===q.clayer);
+    const isAnswered = getAnswerValue(q) !== null;
+    let inputHtml = '';
+
+    if (q.type === 'yesno'){
+      inputHtml = `<div class="yesno-group">
+        <button class="yesno-btn${val==='YES'?' selected-yes':''}" onclick="setAnswer('${q.id}','YES',this.closest('.q-card'))">YES</button>
+        <button class="yesno-btn${val==='NO'?' selected-no':''}" onclick="setAnswer('${q.id}','NO',this.closest('.q-card'))">NO</button>
+        <button class="yesno-btn${val==='NA'?' selected-na':''}" onclick="setAnswer('${q.id}','NA',this.closest('.q-card'))">N/A</button>
+      </div>`;
+    } else if (q.type === 'select5'){
+      const opts = ['IMPLEMENTED','PROGRESSING','PLANNED','NOT_ADDRESSED'];
+      const labels = ['Implemented','Progressing','Planned','Not Addressed'];
+      inputHtml = `<div class="select5-group">${opts.map((o,i)=>`<button class="s5-btn${val===o?' selected':''}" onclick="setAnswer('${q.id}','${o}',this.closest('.q-card'))">${labels[i]}</button>`).join('')}</div>`;
+    } else if (q.type === 'dropdown'){
+      inputHtml = `<select class="q-select" onchange="setAnswer('${q.id}',this.value,this.closest('.q-card'))">
+        <option value="">— Select —</option>
+        ${(q.opts||[]).map(o=>`<option${val===o.label?' selected':''}>${o.label}</option>`).join('')}
+      </select>`;
+    } else if (q.type === 'number'){
+      inputHtml = `<div class="num-row">
+        <input type="number" class="q-number mono" placeholder="Enter value" value="${val||''}" oninput="setAnswer('${q.id}',this.value,this.closest('.q-card'))" data-qid="${q.id}">
+        <span class="unit-badge mono">${q.unit||'—'}</span>
+      </div>
+      ${q.benchmark?`<div class="num-benchmark">Benchmark: ${q.benchmark}</div>`:''}`;
+    } else if (q.type === 'text'){
+      const analysis = val ? analyzeText(val) : null;
+      const minW = q.minWords || 100;
+      const wc = analysis ? analysis.words : 0;
+      const wcClass = wc >= minW ? 'good' : wc >= minW*0.5 ? 'warn' : '';
+      inputHtml = `<textarea class="q-textarea" placeholder="Provide a detailed, substantive response with specific data, timelines, and accountability structures. Minimum ${minW} words.
+Include relevant metrics, frameworks, and named governance mechanisms." rows="6" oninput="handleTextInput(this,'${q.id}')" data-qid="${q.id}">${val||''}</textarea>
+      <div class="text-meta-row">
+        <span class="word-count ${wcClass} mono" id="wc-${q.id}">${wc} / ${minW} words min</span>
+        ${analysis&&analysis.score>0?`<span class="mono" style="font-size:9px;color:var(--amber)">AI: ${analysis.maturity} (${analysis.score}/100)</span>`:''}
+      </div>
+      <div class="ai-analysis-box${analysis&&analysis.score>0?' visible':''}" id="ai-box-${q.id}">
+        <div class="ai-box-label mono">AI Disclosure Analysis</div>
+        <div style="display:flex;gap:12px;align-items:baseline;margin-bottom:4px">
+          <span class="ai-score mono">${analysis?analysis.score:0}/100</span>
+          <span class="ai-maturity mono">${analysis?analysis.maturity:''}</span>
+        </div>
+        <div class="ai-indicators">${analysis?(analysis.indicators||[]).map(i=>`<span class="ai-ind-chip mono">${i}</span>`).join(''):''}
+        </div>
+      </div>`;
+    } else if (q.type === 'upload'){
+      const files = STATE.uploads[q.id] || [];
+      inputHtml = `<div class="upload-zone" id="uz-${q.id}">
+        <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.txt" onchange="handleUpload(event,'${q.id}')">
+        <div class="upload-icon mono">&#8593;</div>
+        <div class="upload-label">Drag & drop or click to upload</div>
+        <div class="upload-hint">PDF, DOC, XLS, CSV supported</div>
+      </div>
+      <div class="upload-file-list" id="ufl-${q.id}">${files.map(f=>`<div class="upload-file-item"><span class="upload-file-name mono">${f}</span><span class="upload-file-remove" onclick="removeUpload('${q.id}','${f}')">✕</span></div>`).join('')}</div>`;
+    }
+
+    return `<div class="q-card${isAnswered?' answered':''}${q.critical?' critical':''}" id="qcard-${q.id}" data-qid="${q.id}">
+      <div class="q-card-header">
+        <div class="q-id mono">${q.id}</div>
+        <div class="q-label">${q.label}</div>
+        ${q.sublabel?`<div class="q-sublabel">${q.sublabel}</div>`:''}
+        <div class="q-tags">
+          ${cl?`<span class="q-tag" style="background:${cl.color}15;border:1px solid ${cl.color}30;color:${cl.color}">${cl.label}</span>`:''}
+          <span class="q-tag" style="background:rgba(85,85,85,0.1);border:1px solid var(--border);color:var(--text-muted)">${(q.type||'—').toUpperCase()}</span>
+          ${q.critical?`<span class="q-tag" style="background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);color:var(--amber)">Critical</span>`:''}
+        </div>
+      </div>
+      ${inputHtml}
+    </div>`;
+  }
+
+  // ── Render section
+  function renderSection(idx){
+    const sec = SECTIONS[idx];
+    if (!sec) return;
+    const cl = C_LAYERS.find(c=>c.id===sec.clayer);
+    const isCore = coreQs.some(q => q.section === sec.name);
+    document.getElementById('ph-eyebrow').textContent = `${cl?cl.label:'—'} · ${cl?cl.long:''}`;
+    document.getElementById('ph-eyebrow').style.color = cl ? cl.color : '#888';
+    document.getElementById('ph-title').textContent = sec.name;
+    document.getElementById('ph-meta').textContent = `${sec.questions.length} questions · ${isCore ? 'Core C-LAYER framework' : (industry.label||'Industry-specific') + ' module'}`;
+    document.getElementById('ph-tags').innerHTML = [
+      cl?`<span class="section-tag" style="background:${cl.color}12;border:1px solid ${cl.color}30;color:${cl.color}">${cl.label}</span>`:'',
+      `<span class="section-tag" style="background:rgba(85,85,85,0.08);border:1px solid var(--border);color:var(--text-muted)">${cl?cl.weight:0}% weight</span>`,
+      isCore?'':(`<span class="section-tag" style="background:rgba(0,153,204,0.08);border:1px solid rgba(0,153,204,0.2);color:var(--cyan)">${industry.code||'IND'} Module</span>`)
+    ].filter(Boolean).join('');
+
+    document.getElementById('questions-list').innerHTML = sec.questions.map((q,i) => renderQuestion(q,i)).join('');
+    document.getElementById('assessment-panel').scrollTo({top:0,behavior:'smooth'});
+  }
+
+  // ── Navigation
+  window.gotoSection = function(idx){
+    currentSectionIdx = idx;
+    renderSection(idx);
+    buildSectionNav();
+    updateScoreRail();
+  };
+
+  // ── Answer handlers
+  window.setAnswer = function(qId, val, card){
+    STATE.answers[qId] = val;
+    if (card) { card.classList.toggle('answered', getAnswerValue({id:qId,type:ALL_QUESTIONS.find(q=>q.id===qId)?.type||'yesno'}) !== null); }
+    updateScoreRail();
+    buildSectionNav();
+    saveState();
+    updateProgressBar();
+  };
+
+  let textDebounce = {};
+  window.handleTextInput = function(el, qId){
+    const val = el.value;
+    STATE.answers[qId] = val;
+    const q = ALL_QUESTIONS.find(q=>q.id===qId);
+    const minW = q?.minWords||100;
+    const analysis = analyzeText(val);
+    const wcEl = document.getElementById(`wc-${qId}`);
+    if (wcEl) {
+      wcEl.textContent = `${analysis.words} / ${minW} words min`;
+      wcEl.className = `word-count ${analysis.words>=minW?'good':analysis.words>=minW*0.5?'warn':''} mono`;
+    }
+    clearTimeout(textDebounce[qId]);
+    textDebounce[qId] = setTimeout(() => {
+      const box = document.getElementById(`ai-box-${qId}`);
+      if (box && analysis.score > 0) {
+        box.innerHTML = `<div class="ai-box-label mono">AI Disclosure Analysis</div>
+          <div style="display:flex;gap:12px;align-items:baseline;margin-bottom:4px">
+            <span class="ai-score mono">${analysis.score}/100</span>
+            <span class="ai-maturity mono">${analysis.maturity}</span>
+          </div>
+          <div class="ai-indicators">${analysis.indicators.map(i=>`<span class="ai-ind-chip mono">${i}</span>`).join('')}</div>`;
+        box.classList.add('visible');
+      }
+      updateScoreRail();
+      buildSectionNav();
+      saveState();
+      updateProgressBar();
+    }, 600);
+  };
+
+  window.handleUpload = function(event, qId){
+    const files = Array.from(event.target.files).map(f=>f.name);
+    STATE.uploads[qId] = files;
+    STATE.answers[qId] = files.length > 0 ? 'uploaded' : '';
+    const listEl = document.getElementById(`ufl-${qId}`);
+    if (listEl) listEl.innerHTML = files.map(f=>`<div class="upload-file-item"><span class="upload-file-name mono">${f}</span><span class="upload-file-remove" onclick="removeUpload('${qId}','${f}')">✕</span></div>`).join('');
+    const card = document.getElementById(`qcard-${qId}`);
+    if (card) card.classList.toggle('answered', files.length > 0);
+    updateScoreRail();
+    saveState();
+  };
+
+  window.removeUpload = function(qId, fname){
+    STATE.uploads[qId] = (STATE.uploads[qId]||[]).filter(f=>f!==fname);
+    STATE.answers[qId] = STATE.uploads[qId].length > 0 ? 'uploaded' : '';
+    const listEl = document.getElementById(`ufl-${qId}`);
+    if (listEl) listEl.innerHTML = (STATE.uploads[qId]||[]).map(f=>`<div class="upload-file-item"><span class="upload-file-name mono">${f}</span><span class="upload-file-remove" onclick="removeUpload('${qId}','${f}')">✕</span></div>`).join('');
+    updateScoreRail();
+    saveState();
+  };
+
+  // ── Score rail update
+  function updateScoreRail(){
+    const scores = computeScores();
+    const rating = getClimateRating(scores.overall);
+    const sv = document.getElementById('sr-score');
+    const sg = document.getElementById('sr-grade');
+    const sd = document.getElementById('sr-desc');
+    if (sv) { sv.textContent = scores.overall || '—'; sv.style.color = scores.overall ? rating.color : 'var(--text-muted)'; }
+    if (sg) { sg.textContent = rating.grade; sg.style.color = rating.color; }
+    if (sd) { sd.textContent = rating.desc; }
+    const saEl = document.getElementById('sr-answered');
+    const scEl = document.getElementById('sr-critical');
+    const seEl = document.getElementById('sr-evidence');
+    const spEl = document.getElementById('sr-pct');
+    if (saEl) saEl.textContent = `${scores.answered} / ${scores.total}`;
+    if (scEl) scEl.textContent = `${scores.critAnswered} / ${scores.critTotal}`;
+    if (seEl) seEl.textContent = scores.evidenceCount;
+    if (spEl) spEl.textContent = scores.total > 0 ? `${Math.round((scores.answered/scores.total)*100)}%` : '0%';
+    // C-LAYER breakdown
+    const bd = document.getElementById('clayer-breakdown');
+    if (bd) {
+      bd.innerHTML = C_LAYERS.map(cl => {
+        const s = scores.layerScores[cl.id];
+        const pct = s ? ((s-10)/90)*100 : 0;
+        const barColor = s ? (s>=70?cl.color:s>=50?'#FFB800':'#FF3333') : 'var(--border)';
+        return `<div class="clayer-rail-item">
+          <div class="cr-header">
+            <span class="cr-name mono" style="color:${cl.color}">${cl.label}</span>
+            <span class="cr-score mono" style="color:${s?barColor:'var(--text-muted)'}">${s||'—'}</span>
+          </div>
+          <div class="cr-bar"><div class="cr-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+          <div class="cr-meta">
+            <span class="cr-long">${cl.long}</span>
+            <span class="cr-weight mono">${cl.weight}%</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    // AI panel
+    if (scores.answered > 3) {
+      const ap = document.getElementById('ai-panel-content');
+      if (ap) {
+        const insights = [];
+        C_LAYERS.forEach(cl=>{
+          const s=scores.layerScores[cl.id];
+          if(!s)return;
+          if(s<40) insights.push({text:`${cl.label} score (${s}) is critically low — ${cl.long} requires immediate attention`,score:s});
+          else if(s<55) insights.push({text:`${cl.label} score (${s}) below benchmark — strengthening ${cl.long} will improve overall rating`,score:s});
+        });
+        if(insights.length===0 && scores.overall) insights.push({text:`Overall C-SCORE of ${scores.overall} places you in the ${rating.grade} category. Continue completing remaining sections to refine.`,score:scores.overall});
+        if(scores.critAnswered < scores.critTotal) insights.push({text:`${scores.critTotal - scores.critAnswered} critical questions unanswered — these have high impact on your final rating`,score:0});
+        ap.innerHTML = `<div class="ai-panel-label mono">Live Analysis</div>`+insights.slice(0,3).map(i=>`<div class="ai-insight"><div class="ai-insight-text">${i.text}</div></div>`).join('') || '<div style="font-size:11px;color:var(--text-muted)">Complete more sections for AI insights.</div>';
+      }
+    }
+  }
+
+  function updateProgressBar(){
+    const scores = computeScores();
+    const pct = scores.total > 0 ? (scores.answered/scores.total)*100 : 0;
+    const el = document.getElementById('top-progress-fill');
+    if (el) el.style.width = pct + '%';
+  }
+
+  // ── Save draft
+  window.saveDraft = function(){
+    saveState();
+    // Also persist to enterprise assessment system
+    const existing = E.getCompanyAssessments(company.id).find(a=>a.status==='in_progress');
+    if (existing) {
+      E.updateAssessment(existing.id, { answers: STATE.answers, status:'in_progress' });
+    } else {
+      E.createAssessment({ companyId:company.id, repId:rep?rep.id:null, industryKey:company.industryKey });
+    }
+  };
+
+  // ── Submit assessment
+  window.submitAssessment = function(){
+    const scores = computeScores();
+    if (scores.answered < Math.ceil(scores.total * 0.3)) {
+      alert('Please answer at least 30% of questions before submitting.'); return;
+    }
+    const proceed = confirm(`Submit assessment?\n\nC-SCORE: ${scores.overall||'Calculating...'}\nRating: ${getClimateRating(scores.overall).grade}\nAnswered: ${scores.answered}/${scores.total} questions\n\nThis will generate your institutional Climactix rating.`);
+    if (!proceed) return;
+    const rating = getClimateRating(scores.overall);
+    const existing = E.getCompanyAssessments(company.id).find(a=>a.status==='in_progress');
+    const asmId = existing ? existing.id : null;
+    if (asmId) {
+      E.updateAssessment(asmId, {
+        answers:STATE.answers, scores:scores.layerScores, overallScore:scores.overall,
+        rating:rating.grade, status:'submitted', submittedAt:new Date().toISOString()
+      });
+    } else {
+      const asm = E.createAssessment({companyId:company.id,repId:rep?rep.id:null,industryKey:company.industryKey});
+      E.updateAssessment(asm.id, {
+        answers:STATE.answers,scores:scores.layerScores,overallScore:scores.overall,
+        rating:rating.grade,status:'submitted',submittedAt:new Date().toISOString()
+      });
+    }
+    E.updateCompany(company.id, {currentScore:scores.overall, currentRating:rating.grade});
+    localStorage.removeItem(ASM_KEY);
+    alert(`Assessment submitted!\n\nCX Entity: ${company.id}\nC-SCORE: ${scores.overall}\nRating: ${rating.grade} — ${rating.desc}\n\nRedirecting to company dashboard...`);
+    window.location.href = 'enterprise-dashboard.html';
+  };
+
+  document.getElementById('nav-assessment-label').textContent = `${company.id} · ${industry.assessmentType||'Assessment'}`;
+
+  // ── Init
+  buildSectionNav();
+  renderSection(0);
+  updateScoreRail();
+  updateProgressBar();
+  // Auto-save every 30s
+  setInterval(saveState, 30000);
+})();
+</script>
+</body>
+</html>

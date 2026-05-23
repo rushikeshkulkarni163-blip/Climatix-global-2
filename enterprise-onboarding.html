@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Climactix Enterprise — Company Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#000000; --surface:#0F0F0F; --surface-2:#1A1A1A; --surface-3:#242424; --surface-4:#2E2E2E;
+  --border:#2C2C2C; --border-strong:#333333;
+  --amber:#FF6600; --amber-dim:#CC5200;
+  --cyan:#0099CC; --green:#00CC44; --red:#FF3333; --blue:#3399FF;
+  --text:#FFFFFF; --text-2:#888888; --text-muted:#555555;
+  --t:0.12s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter','IBM Plex Sans',system-ui,sans-serif;font-size:13px;line-height:1.5;min-height:100vh}
+.mono{font-family:'IBM Plex Mono','Courier New',monospace}
+
+/* ── Nav */
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;letter-spacing:0.05em}
+.nav-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--amber);padding:2px 6px;border:1px solid rgba(255,102,0,0.3);background:rgba(255,102,0,0.06)}
+.nav-right{display:flex;gap:16px;align-items:center}
+.nav-link{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color var(--t)}
+.nav-link:hover{color:var(--amber)}
+
+/* ── Stepper bar */
+.stepper{display:flex;align-items:center;justify-content:center;padding:20px 24px;border-bottom:1px solid var(--border);background:var(--surface);gap:0}
+.stepper-item{display:flex;align-items:center;gap:0}
+.step-num{width:28px;height:28px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;background:var(--surface-2);border:1px solid var(--border);color:var(--text-muted);flex-shrink:0;transition:all var(--t)}
+.step-num.active{background:var(--amber);color:#000;border-color:var(--amber)}
+.step-num.done{background:rgba(0,204,68,0.12);color:var(--green);border-color:rgba(0,204,68,0.3)}
+.step-info{margin-left:8px;margin-right:0}
+.step-title{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);white-space:nowrap}
+.step-title.active{color:var(--amber)}
+.step-title.done{color:var(--green)}
+.stepper-sep{width:40px;height:1px;background:var(--border);margin:0 12px;flex-shrink:0}
+
+/* ── Main layout */
+.main{display:grid;grid-template-columns:1fr 580px 1fr;min-height:calc(100vh - 120px);gap:0}
+.context-panel{padding:32px 28px;border-right:1px solid var(--border)}
+.form-zone{padding:32px 40px;border-right:1px solid var(--border)}
+.preview-panel{padding:32px 28px}
+
+/* ── Context panel */
+.ctx-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+.ctx-title{font-size:18px;font-weight:800;letter-spacing:-0.025em;margin-bottom:10px}
+.ctx-body{font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:20px}
+.ctx-items{display:flex;flex-direction:column;gap:6px}
+.ctx-item{display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--text-2)}
+.ctx-bullet{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber);flex-shrink:0;margin-top:1px}
+
+/* ── Form zone */
+.step-page{display:none}
+.step-page.active{display:block;animation:fadein 0.18s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.form-title{font-size:18px;font-weight:800;letter-spacing:-0.025em;margin-bottom:4px}
+.form-subtitle{font-size:12px;color:var(--text-2);margin-bottom:24px}
+
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.form-label .req{color:var(--amber)}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:9px 12px;font-size:13px;color:var(--text);font-family:'Inter',system-ui,sans-serif;outline:none;transition:border-color var(--t);appearance:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--amber)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text-muted)}
+.form-select option{background:var(--surface-2);color:var(--text)}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.5}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:4px}
+.form-error{font-size:11px;color:var(--red);margin-top:4px;display:none}
+.form-error.visible{display:block}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ── Industry card selector */
+.industry-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.ind-card{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:10px 12px;cursor:pointer;transition:all var(--t);position:relative}
+.ind-card:hover{border-color:var(--border-strong);background:var(--surface-2)}
+.ind-card.selected{border-color:var(--amber);background:rgba(255,102,0,0.06);border-left:3px solid var(--amber)}
+.ind-card-code{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px}
+.ind-card.selected .ind-card-code{color:var(--amber)}
+.ind-card-label{font-size:11px;font-weight:600;line-height:1.3}
+.ind-card-risk{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* ── Role selector */
+.role-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:4px}
+.role-item{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:10px 12px;cursor:pointer;transition:all var(--t)}
+.role-item:hover{border-color:var(--border-strong);background:var(--surface-2)}
+.role-item.selected{border-color:var(--amber);background:rgba(255,102,0,0.04);border-left:3px solid var(--amber)}
+.role-dot{width:8px;height:8px;border-radius:1px;flex-shrink:0;margin-top:3px}
+.role-item-info{flex:1}
+.role-item-label{font-size:12px;font-weight:700;margin-bottom:2px}
+.role-item-desc{font-size:11px;color:var(--text-2)}
+
+/* ── Buttons */
+.btn-row{display:flex;gap:10px;margin-top:24px}
+.btn-primary{flex:1;background:var(--amber);color:#000;border:none;border-radius:2px;padding:10px 20px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:background var(--t)}
+.btn-primary:hover{background:var(--amber-dim)}
+.btn-outline{background:none;border:1px solid var(--border-strong);color:var(--text-2);border-radius:2px;padding:9px 18px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all var(--t)}
+.btn-outline:hover{border-color:var(--amber);color:var(--amber)}
+
+/* ── Preview panel */
+.preview-panel .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px}
+
+/* ── CX Entity ID display */
+.cx-id-display{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--amber);padding:16px;margin-bottom:16px}
+.cx-id-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.cx-id-value{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:var(--amber);letter-spacing:0.04em;word-break:break-all}
+.cx-id-sublabel{font-size:11px;color:var(--text-2);margin-top:4px}
+
+/* ── Profile preview card */
+.profile-card{background:var(--surface);border:1px solid var(--border);padding:14px;margin-bottom:12px}
+.profile-card-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.profile-card-row:last-child{border-bottom:none}
+.profile-key{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
+.profile-value{font-size:11px;font-weight:600;text-align:right;max-width:60%}
+.profile-value.amber{color:var(--amber)}
+.profile-value.green{color:var(--green)}
+
+/* ── Risk preview */
+.risk-preview{background:var(--surface);border:1px solid var(--border);padding:14px;margin-bottom:12px}
+.risk-tier-display{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:4px 8px;border-radius:2px;display:inline-flex;margin-bottom:8px}
+.risk-item{font-size:11px;color:var(--text-2);padding:3px 0;display:flex;gap:6px;align-items:flex-start}
+.risk-bullet{color:var(--amber);flex-shrink:0;margin-top:1px}
+
+/* ── Industry obligations */
+.obligation-box{background:rgba(0,153,204,0.06);border:1px solid rgba(0,153,204,0.2);padding:10px 12px;margin-bottom:12px}
+.obligation-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.obligation-text{font-size:11px;color:var(--text-2);line-height:1.5}
+
+/* ── Success state */
+.success-banner{background:rgba(0,204,68,0.06);border:1px solid rgba(0,204,68,0.2);padding:16px;margin-bottom:16px;text-align:center}
+.success-icon{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:700;color:var(--green);margin-bottom:8px}
+.success-title{font-size:16px;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px}
+.success-body{font-size:12px;color:var(--text-2)}
+
+/* ── Responsive */
+@media(max-width:1000px){
+  .main{grid-template-columns:1fr;border:none}
+  .context-panel,.preview-panel{display:none}
+  .form-zone{border:none;padding:20px}
+  .stepper-item .step-info{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="nav-logo mono">CLIMACTIX</span>
+    <span class="nav-badge mono">ENTERPRISE ONBOARDING</span>
+  </div>
+  <div class="nav-right">
+    <a href="enterprise-login.html" class="nav-link mono">Sign In</a>
+    <a href="index.html" class="nav-link mono">Platform Home</a>
+  </div>
+</nav>
+
+<!-- Stepper -->
+<div class="stepper" id="stepper">
+  <div class="stepper-item">
+    <div class="step-num active mono" id="snum-1">01</div>
+    <div class="step-info"><div class="step-title active mono" id="stitle-1">Company Identity</div></div>
+  </div>
+  <div class="stepper-sep"></div>
+  <div class="stepper-item">
+    <div class="step-num mono" id="snum-2">02</div>
+    <div class="step-info"><div class="step-title mono" id="stitle-2">Industry Classification</div></div>
+  </div>
+  <div class="stepper-sep"></div>
+  <div class="stepper-item">
+    <div class="step-num mono" id="snum-3">03</div>
+    <div class="step-info"><div class="step-title mono" id="stitle-3">Entity ID Generation</div></div>
+  </div>
+  <div class="stepper-sep"></div>
+  <div class="stepper-item">
+    <div class="step-num mono" id="snum-4">04</div>
+    <div class="step-info"><div class="step-title mono" id="stitle-4">Representative Setup</div></div>
+  </div>
+  <div class="stepper-sep"></div>
+  <div class="stepper-item">
+    <div class="step-num mono" id="snum-5">05</div>
+    <div class="step-info"><div class="step-title mono" id="stitle-5">Access & Activation</div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Context panel (left) -->
+  <div class="context-panel" id="ctx-panel">
+    <div class="ctx-eyebrow mono" id="ctx-eye">Company Registration</div>
+    <h2 class="ctx-title" id="ctx-title">Establish Your Institutional Profile</h2>
+    <p class="ctx-body" id="ctx-body">Every company joining the Climactix Enterprise platform receives a unique institutional identity — enabling regulatory-grade traceability, investor reporting, and multi-year climate assessment history.</p>
+    <div class="ctx-items" id="ctx-items">
+      <div class="ctx-item"><span class="ctx-bullet mono">&rsaquo;</span>Legal entity name and corporate details</div>
+      <div class="ctx-item"><span class="ctx-bullet mono">&rsaquo;</span>Geographic and operational footprint</div>
+      <div class="ctx-item"><span class="ctx-bullet mono">&rsaquo;</span>Sector and sub-sector classification</div>
+      <div class="ctx-item"><span class="ctx-bullet mono">&rsaquo;</span>Employee count and revenue band</div>
+      <div class="ctx-item"><span class="ctx-bullet mono">&rsaquo;</span>Primary regulatory jurisdiction</div>
+    </div>
+  </div>
+
+  <!-- Form zone -->
+  <div class="form-zone">
+
+    <!-- Step 1: Company details -->
+    <div class="step-page active" id="sp-1">
+      <h2 class="form-title">Company Identity</h2>
+      <p class="form-subtitle">Provide core corporate details for institutional classification and CX Entity ID generation</p>
+
+      <div class="form-group">
+        <label class="form-label mono" for="co-name">Company Name <span class="req">*</span></label>
+        <input type="text" id="co-name" class="form-input" placeholder="e.g. ABC Logistics Pvt Ltd">
+        <div class="form-error" id="err-co-name">Company name is required</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label mono" for="co-legal">Legal / Registered Entity Name</label>
+        <input type="text" id="co-legal" class="form-input" placeholder="Full legal name as registered">
+        <div class="form-hint">As it appears on incorporation documents. Leave blank to use company name.</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label mono" for="co-country">Country of Headquarters <span class="req">*</span></label>
+          <select id="co-country" class="form-select">
+            <option value="">— Select country —</option>
+            <option>India</option><option>United States</option><option>United Kingdom</option>
+            <option>Singapore</option><option>UAE</option><option>Australia</option>
+            <option>Germany</option><option>France</option><option>Japan</option>
+            <option>Brazil</option><option>South Africa</option><option>Canada</option>
+            <option>China</option><option>Indonesia</option><option>Malaysia</option>
+            <option>Netherlands</option><option>Switzerland</option><option>Sweden</option>
+            <option>Saudi Arabia</option><option>Nigeria</option><option>Kenya</option>
+            <option>Global / Multinational</option>
+          </select>
+          <div class="form-error" id="err-co-country">Country is required</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label mono" for="co-employees">Employees</label>
+          <select id="co-employees" class="form-select">
+            <option value="">— Select band —</option>
+            <option>&lt;50</option><option>50–200</option><option>200–500</option>
+            <option>500–1000</option><option>1000–5000</option><option>5000–20000</option>
+            <option>20000+</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label mono" for="co-rev">Annual Revenue</label>
+          <input type="number" id="co-rev" class="form-input" placeholder="e.g. 50">
+        </div>
+        <div class="form-group">
+          <label class="form-label mono" for="co-rev-unit">Revenue Unit</label>
+          <select id="co-rev-unit" class="form-select">
+            <option>USD M</option><option>USD B</option><option>EUR M</option><option>EUR B</option>
+            <option>GBP M</option><option>INR Cr</option><option>JPY B</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" onclick="toStep(2)">Continue to Industry Classification</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Industry classification -->
+    <div class="step-page" id="sp-2">
+      <h2 class="form-title">Industry Classification</h2>
+      <p class="form-subtitle">Select the primary industry that best represents your company's principal operations and climate risk profile</p>
+
+      <div class="form-label mono" style="margin-bottom:10px">Primary Industry <span style="color:var(--amber)">*</span></div>
+      <div class="industry-grid" id="ind-grid">
+        <!-- Injected by JS -->
+      </div>
+      <div class="form-error" id="err-industry" style="margin-bottom:12px">Please select an industry</div>
+
+      <div class="form-group" style="margin-top:16px">
+        <label class="form-label mono" for="co-sector">Sub-sector / Specialisation</label>
+        <select id="co-sector" class="form-select">
+          <option value="">— Select industry first —</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-outline" onclick="toStep(1)">Back</button>
+        <button class="btn-primary" onclick="toStep(3)">Generate Entity Profile</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Entity ID generation -->
+    <div class="step-page" id="sp-3">
+      <h2 class="form-title">Climactix Entity Profile</h2>
+      <p class="form-subtitle">Your company's unique institutional identity has been generated. Review and confirm before proceeding.</p>
+
+      <div style="background:var(--surface);border:1px solid var(--border);padding:20px;margin-bottom:20px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">CLIMACTIX ENTITY PROFILE</div>
+        <div class="cx-id-label mono">Climactix Entity ID</div>
+        <div class="cx-id-value mono" id="generated-company-id">CX-IND-LOG-000848</div>
+        <div class="cx-id-sublabel" id="generated-id-sub">Generated · Climactix Enterprise v1.0</div>
+      </div>
+
+      <div id="company-profile-preview">
+        <!-- Injected by JS -->
+      </div>
+
+      <div style="background:rgba(0,204,68,0.04);border:1px solid rgba(0,204,68,0.15);padding:12px;margin-bottom:16px;font-size:11px;color:var(--text-2)">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.1em;display:block;margin-bottom:4px">Confirmed</span>
+        This entity profile has been generated and registered in the Climactix institutional database. Your CX Entity ID is permanent and audit-traceable.
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-outline" onclick="toStep(2)">Back</button>
+        <button class="btn-primary" onclick="toStep(4)">Set Up Representative Identity</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Representative identity -->
+    <div class="step-page" id="sp-4">
+      <h2 class="form-title">Representative Identity</h2>
+      <p class="form-subtitle">Register the primary representative who will manage assessments for this entity. Each representative receives a unique CX-REP ID.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label mono" for="rep-first">First Name <span class="req">*</span></label>
+          <input type="text" id="rep-first" class="form-input" placeholder="First name">
+          <div class="form-error" id="err-rep-first">First name is required</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label mono" for="rep-last">Last Name <span class="req">*</span></label>
+          <input type="text" id="rep-last" class="form-input" placeholder="Last name">
+          <div class="form-error" id="err-rep-last">Last name is required</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label mono" for="rep-email">Corporate Email Address <span class="req">*</span></label>
+        <input type="email" id="rep-email" class="form-input" placeholder="representative@company.com">
+        <div class="form-error" id="err-rep-email">Valid email address is required</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label mono" for="rep-designation">Designation / Title</label>
+          <input type="text" id="rep-designation" class="form-input" placeholder="e.g. Head of Sustainability">
+        </div>
+        <div class="form-group">
+          <label class="form-label mono" for="rep-dept">Department</label>
+          <input type="text" id="rep-dept" class="form-input" placeholder="e.g. ESG & Climate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label mono" for="rep-pwd">Create Secure Password <span class="req">*</span></label>
+        <input type="password" id="rep-pwd" class="form-input" placeholder="Minimum 8 characters">
+        <div class="form-hint">This password will be used for future platform access</div>
+        <div class="form-error" id="err-rep-pwd">Password must be at least 8 characters</div>
+      </div>
+
+      <div class="form-group" style="margin-top:20px">
+        <div class="form-label mono" style="margin-bottom:10px">Platform Role <span class="req">*</span></div>
+        <div class="role-grid" id="role-selector">
+          <!-- Injected by JS -->
+        </div>
+        <div class="form-error" id="err-rep-role">Please select a role</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-outline" onclick="toStep(3)">Back</button>
+        <button class="btn-primary" onclick="toStep(5)">Generate Representative ID</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Access activation -->
+    <div class="step-page" id="sp-5">
+      <div class="success-banner">
+        <div class="success-icon mono">&#10003;</div>
+        <h2 class="success-title">Enterprise Account Activated</h2>
+        <p class="success-body">Your company profile, entity ID, and representative identity have been registered in the Climactix institutional system.</p>
+      </div>
+
+      <div id="activation-summary">
+        <!-- Injected by JS -->
+      </div>
+
+      <div style="background:rgba(255,102,0,0.04);border:1px solid rgba(255,102,0,0.2);padding:12px;margin-bottom:20px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Access Instructions</div>
+        <div style="font-size:11px;color:var(--text-2);line-height:1.6">
+          Your Climactix Enterprise credentials have been activated. Use your email and password to sign in to the enterprise portal. Your Climactix Entity ID and Representative ID are permanent identifiers for regulatory and investor reporting.
+        </div>
+      </div>
+
+      <div class="btn-row" style="flex-direction:column;gap:8px">
+        <button class="btn-primary" onclick="launchDashboard()">Launch Company Intelligence Dashboard</button>
+        <button class="btn-outline" onclick="window.location.href='enterprise-login.html'">Sign In Separately</button>
+      </div>
+    </div>
+
+  </div><!-- /form-zone -->
+
+  <!-- Preview panel (right) -->
+  <div class="preview-panel" id="preview-panel">
+    <div class="eyebrow mono" style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px">Live Preview</div>
+    <div id="live-preview-content">
+      <div style="font-size:11px;color:var(--text-muted);line-height:1.6">Complete the form to see your institutional profile preview.</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script src="enterprise.js"></script>
+<script>
+(function(){
+  'use strict';
+  const E = window.ENTERPRISE;
+  let _step = 1;
+  let _companyData = {};
+  let _repData = {};
+  let _createdCompany = null;
+  let _createdRep = null;
+  let _selectedIndustry = null;
+  let _selectedRole = null;
+
+  // ── Stepper rendering
+  function updateStepper(n){
+    for(let i=1;i<=5;i++){
+      const num=document.getElementById(`snum-${i}`);
+      const title=document.getElementById(`stitle-${i}`);
+      if(i<n){num.className='step-num done mono';title.className='step-title done mono';}
+      else if(i===n){num.className='step-num active mono';title.className='step-title active mono';}
+      else{num.className='step-num mono';title.className='step-title mono';}
+    }
+  }
+
+  // ── Context panel updates per step
+  const CTX = {
+    1:{eye:'Company Registration',title:'Establish Your Institutional Profile',body:'Every company on the Climactix platform receives a permanent institutional identity — enabling audit-grade traceability, investor reporting, and multi-year assessment history.',items:['Legal entity name and corporate details','Geographic and operational footprint','Sector and sub-sector classification','Employee count and revenue band','Primary regulatory jurisdiction']},
+    2:{eye:'Industry Classification',title:'Industry-Adaptive Intelligence',body:'Your industry classification determines which questionnaire modules, risk scenarios, and regulatory frameworks apply to your assessment. Classification is permanent.',items:['Sector-specific C-LAYER question modules','Industry-appropriate risk benchmarks','Regulatory obligation mapping','Climate exposure profile generation','Assessment type determination']},
+    3:{eye:'Entity Profile Generation',title:'Your Climactix Entity ID',body:'The Climactix Entity ID is a globally unique institutional identifier — used in all investor reports, regulatory submissions, and platform intelligence. It cannot be changed.',items:['Format: CX-[Country]-[Industry]-[Serial]','Permanent — survives company name changes','Used in investor portal disclosures','Linked to all historical assessments','Regulatory-grade audit trail attached']},
+    4:{eye:'Representative Identity',title:'Unique Representative ID System',body:'Every representative from a company receives a unique CX-REP identifier with role-based access permissions. All assessment activity is attributed to this identity.',items:['Format: CX-REP-[Country]-[Serial]','Role-based permission system (RBAC)','Activity logged against CX-REP ID','Can be delegated to team members','Supports multi-representative accounts']},
+    5:{eye:'Account Activation',title:'Platform Access Ready',body:'Your enterprise account is fully activated. You can now begin your industry-adaptive climate risk assessment, access the company intelligence dashboard, and invite additional team members.',items:['Company dashboard now accessible','Industry-adaptive assessment ready','Invitation links can be sent to team','Investor portal access configurable','Regulatory export ready on completion']}
+  };
+
+  function updateCtx(n){
+    const c=CTX[n];
+    document.getElementById('ctx-eye').textContent=c.eye;
+    document.getElementById('ctx-title').textContent=c.title;
+    document.getElementById('ctx-body').textContent=c.body;
+    const el=document.getElementById('ctx-items');
+    el.innerHTML=c.items.map(it=>`<div class="ctx-item"><span class="ctx-bullet mono">&rsaquo;</span>${it}</div>`).join('');
+  }
+
+  // ── Build industry grid
+  function buildIndustryGrid(){
+    const grid=document.getElementById('ind-grid');
+    grid.innerHTML='';
+    Object.entries(E.INDUSTRIES).forEach(([key,ind])=>{
+      const card=document.createElement('div');
+      card.className='ind-card';
+      card.dataset.key=key;
+      card.innerHTML=`<div class="ind-card-code mono">${ind.code}</div><div class="ind-card-label">${ind.label}</div><div class="ind-card-risk" style="color:${ind.riskColor}">${ind.riskTier}</div>`;
+      card.addEventListener('click',()=>selectIndustry(key,card));
+      grid.appendChild(card);
+    });
+  }
+
+  function selectIndustry(key,card){
+    document.querySelectorAll('.ind-card').forEach(c=>c.classList.remove('selected'));
+    card.classList.add('selected');
+    _selectedIndustry=key;
+    // Populate sector dropdown
+    const ind=E.INDUSTRIES[key];
+    const sel=document.getElementById('co-sector');
+    sel.innerHTML=`<option value="">— Select sub-sector —</option>`+ind.sectors.map(s=>`<option>${s}</option>`).join('');
+    updatePreview();
+  }
+
+  // ── Build role selector
+  function buildRoleSelector(){
+    const showRoles=['company_admin','sustainability_officer','risk_officer','finance_officer','board_reviewer'];
+    const container=document.getElementById('role-selector');
+    container.innerHTML='';
+    showRoles.forEach(key=>{
+      const r=E.ROLES[key];
+      const item=document.createElement('div');
+      item.className='role-item';
+      item.dataset.role=key;
+      item.innerHTML=`<div class="role-dot" style="background:${r.badge}"></div><div class="role-item-info"><div class="role-item-label">${r.label}</div><div class="role-item-desc">${r.description}</div></div>`;
+      item.addEventListener('click',()=>{
+        document.querySelectorAll('.role-item').forEach(i=>i.classList.remove('selected'));
+        item.classList.add('selected');
+        _selectedRole=key;
+      });
+      container.appendChild(item);
+    });
+    // Default selection
+    const defaultItem=container.querySelector('[data-role="sustainability_officer"]');
+    if(defaultItem){defaultItem.classList.add('selected');_selectedRole='sustainability_officer';}
+  }
+
+  // ── Live preview update
+  function updatePreview(){
+    const name=document.getElementById('co-name').value.trim();
+    const country=document.getElementById('co-country').value;
+    const indKey=_selectedIndustry;
+    const ind=indKey?E.INDUSTRIES[indKey]:null;
+    const cc=country?(E.COUNTRY_CODES[country]||'GLB'):'???';
+    const icode=ind?ind.code:'???';
+    const previewId=`CX-${cc}-${icode}-XXXXXX`;
+    let html='';
+    if(name||indKey){
+      html+=`<div class="cx-id-display"><div class="cx-id-label mono">Preview — Climactix Entity ID</div><div class="cx-id-value mono" style="font-size:14px;color:var(--text-muted)">${previewId}</div></div>`;
+      if(name) html+=`<div class="profile-card"><div class="profile-card-row"><span class="profile-key mono">Entity</span><span class="profile-value">${name}</span></div>`;
+      if(country) html+=`<div class="profile-card-row"><span class="profile-key mono">Country</span><span class="profile-value">${country}</span></div>`;
+      if(ind) html+=`<div class="profile-card-row"><span class="profile-key mono">Industry</span><span class="profile-value">${ind.label}</span></div><div class="profile-card-row"><span class="profile-key mono">Risk Tier</span><span class="profile-value" style="color:${ind.riskColor}">${ind.riskTier}</span></div><div class="profile-card-row"><span class="profile-key mono">Assessment</span><span class="profile-value">${ind.assessmentType}</span></div>`;
+      if(name) html+=`</div>`;
+      if(ind) html+=`<div class="obligation-box"><div class="obligation-label mono">Regulatory Obligations</div><div class="obligation-text">${ind.regulatoryObligation}</div></div>`;
+      if(ind) html+=`<div class="risk-preview"><div class="risk-tier-display" style="background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);color:var(--amber)">${ind.riskTier}</div>${ind.keyRisks.map(r=>`<div class="risk-item"><span class="risk-bullet">›</span>${r}</div>`).join('')}</div>`;
+    } else {
+      html='<div style="font-size:11px;color:var(--text-muted);line-height:1.6">Complete the form to see your institutional profile preview.</div>';
+    }
+    document.getElementById('live-preview-content').innerHTML=html;
+  }
+
+  // ── Validation helpers
+  function required(id,errId,label){
+    const val=document.getElementById(id).value.trim();
+    if(!val){document.getElementById(errId).classList.add('visible');return false;}
+    document.getElementById(errId).classList.remove('visible');return true;
+  }
+
+  // ── Step navigation
+  window.toStep=function(n){
+    // Validate before advance
+    if(n>_step){
+      if(_step===1){
+        let ok=required('co-name','err-co-name')&required('co-country','err-co-country');
+        if(!ok)return;
+        _companyData={
+          name:document.getElementById('co-name').value.trim(),
+          legalName:document.getElementById('co-legal').value.trim()||null,
+          country:document.getElementById('co-country').value,
+          employeeCount:document.getElementById('co-employees').value||null,
+          revenue:document.getElementById('co-rev').value||null,
+          revenueUnit:document.getElementById('co-rev-unit').value
+        };
+      }
+      if(_step===2){
+        if(!_selectedIndustry){document.getElementById('err-industry').classList.add('visible');return;}
+        document.getElementById('err-industry').classList.remove('visible');
+        _companyData.industryKey=_selectedIndustry;
+        _companyData.sector=document.getElementById('co-sector').value||null;
+        // Create company entity
+        if(!_createdCompany){
+          _createdCompany=E.createCompany(_companyData);
+          document.getElementById('generated-company-id').textContent=_createdCompany.id;
+          document.getElementById('generated-id-sub').textContent=`Generated ${new Date().toLocaleDateString()} · ${_createdCompany.assessmentType}`;
+          buildCompanyProfilePreview();
+        }
+      }
+      if(_step===4){
+        const fn=document.getElementById('rep-first').value.trim();
+        const ln=document.getElementById('rep-last').value.trim();
+        const email=document.getElementById('rep-email').value.trim();
+        const pwd=document.getElementById('rep-pwd').value;
+        let ok=true;
+        if(!fn){document.getElementById('err-rep-first').classList.add('visible');ok=false;}else document.getElementById('err-rep-first').classList.remove('visible');
+        if(!ln){document.getElementById('err-rep-last').classList.add('visible');ok=false;}else document.getElementById('err-rep-last').classList.remove('visible');
+        if(!email||!email.includes('@')){document.getElementById('err-rep-email').classList.add('visible');ok=false;}else document.getElementById('err-rep-email').classList.remove('visible');
+        if(pwd.length<8){document.getElementById('err-rep-pwd').classList.add('visible');ok=false;}else document.getElementById('err-rep-pwd').classList.remove('visible');
+        if(!_selectedRole){document.getElementById('err-rep-role').classList.add('visible');ok=false;}else document.getElementById('err-rep-role').classList.remove('visible');
+        if(!ok)return;
+        _repData={name:`${fn} ${ln}`,email,designation:document.getElementById('rep-designation').value.trim(),department:document.getElementById('rep-dept').value.trim(),password:pwd,role:_selectedRole};
+        // Create user + rep
+        if(!_createdRep){
+          const user=E.createUser({email:_repData.email,password:_repData.password,name:_repData.name});
+          if(user.error){alert(user.error);return;}
+          _createdRep=E.createRepresentative({userId:user.id,companyId:_createdCompany.id,name:_repData.name,email:_repData.email,designation:_repData.designation,department:_repData.department,role:_repData.role,approvalAuthority:(_repData.role==='company_admin'||_repData.role==='sustainability_officer')});
+          // Update user with company/rep links
+          const users=JSON.parse(localStorage.getItem(E.EX.USERS)||'[]');
+          const ui=users.findIndex(u=>u.id===user.id);
+          if(ui>=0){users[ui].repId=_createdRep.id;users[ui].companyId=_createdCompany.id;users[ui].role=_repData.role;localStorage.setItem(E.EX.USERS,JSON.stringify(users));}
+          buildActivationSummary(user);
+        }
+      }
+    }
+    _step=n;
+    document.querySelectorAll('.step-page').forEach(s=>s.classList.remove('active'));
+    document.getElementById(`sp-${n}`).classList.add('active');
+    updateStepper(n);
+    updateCtx(n);
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  function buildCompanyProfilePreview(){
+    if(!_createdCompany)return;
+    const c=_createdCompany;
+    const ind=E.INDUSTRIES[c.industryKey]||{};
+    const html=`
+      <div class="profile-card">
+        <div class="profile-card-row"><span class="profile-key mono">Entity Name</span><span class="profile-value">${c.name}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">CX Entity ID</span><span class="profile-value amber">${c.id}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Industry</span><span class="profile-value">${c.industryLabel}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Sector</span><span class="profile-value">${c.sector||'—'}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Country</span><span class="profile-value">${c.country}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Risk Tier</span><span class="profile-value" style="color:${c.riskColor}">${c.riskTier}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Assessment Type</span><span class="profile-value" style="font-size:10px">${c.assessmentType}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Registered</span><span class="profile-value">${new Date().toLocaleDateString()}</span></div>
+      </div>
+      <div class="obligation-box"><div class="obligation-label mono">Regulatory Intelligence</div><div class="obligation-text">${c.regulatoryObligation}</div></div>
+      <div class="risk-preview">
+        <div class="risk-tier-display" style="background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);color:var(--amber)">${c.riskTier}</div>
+        ${ind.keyRisks?ind.keyRisks.map(r=>`<div class="risk-item"><span class="risk-bullet">›</span>${r}</div>`).join(''):''}
+      </div>`;
+    document.getElementById('company-profile-preview').innerHTML=html;
+  }
+
+  function buildActivationSummary(user){
+    const c=_createdCompany;
+    const r=_createdRep;
+    const role=E.ROLES[r.role]||{};
+    document.getElementById('activation-summary').innerHTML=`
+      <div class="cx-id-display" style="margin-bottom:12px">
+        <div class="cx-id-label mono">Climactix Entity ID</div>
+        <div class="cx-id-value mono">${c.id}</div>
+        <div class="cx-id-sublabel">${c.name} · ${c.industryLabel}</div>
+      </div>
+      <div class="cx-id-display" style="border-left-color:var(--cyan);margin-bottom:16px">
+        <div class="cx-id-label mono">Climactix Representative ID</div>
+        <div class="cx-id-value mono" style="color:var(--cyan)">${r.id}</div>
+        <div class="cx-id-sublabel">${r.name} · ${role.label||r.role}</div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-card-row"><span class="profile-key mono">Company</span><span class="profile-value">${c.name}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Industry</span><span class="profile-value">${c.industryLabel}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Risk Tier</span><span class="profile-value" style="color:${c.riskColor}">${c.riskTier}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Representative</span><span class="profile-value">${r.name}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Role</span><span class="profile-value">${role.label||r.role}</span></div>
+        <div class="profile-card-row"><span class="profile-key mono">Email</span><span class="profile-value" style="font-size:10px">${r.email}</span></div>
+      </div>`;
+  }
+
+  window.launchDashboard=function(){
+    if(!_createdCompany||!_createdRep)return;
+    // Get user
+    const users=JSON.parse(localStorage.getItem(E.EX.USERS)||'[]');
+    const user=users.find(u=>u.repId===_createdRep.id);
+    if(user){E.createSession(user.id,_createdRep.id,_createdCompany.id,_repData.role);}
+    window.location.href='enterprise-dashboard.html';
+  };
+
+  // ── Live input listeners
+  ['co-name','co-country'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',updatePreview);
+    document.getElementById(id).addEventListener('change',updatePreview);
+  });
+
+  // ── Init
+  buildIndustryGrid();
+  buildRoleSelector();
+  updateStepper(1);
+  updateCtx(1);
+})();
+</script>
+</body>
+</html>
