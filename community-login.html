@@ -279,6 +279,12 @@
         <div class="alert error"   id="siError"></div>
         <div class="alert success" id="siSuccess"></div>
 
+        <div style="background:rgba(99,220,175,0.06);border:1px solid rgba(99,220,175,0.18);border-radius:6px;padding:9px 12px;margin-bottom:14px;font-size:11.5px;color:#8a94a8;line-height:1.6;">
+          <strong style="color:#63dcaf;">Demo:</strong> demo@climactix.com / demo123
+          &nbsp;·&nbsp;
+          <span onclick="document.getElementById('siEmail').value='demo@climactix.com';document.getElementById('siPassword').value='demo123';" style="color:#63dcaf;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;">Auto-fill →</span>
+        </div>
+
         <form id="signInForm" novalidate>
           <div class="field">
             <label for="siEmail">Email address</label>
@@ -445,7 +451,7 @@
       showAlert('siSuccess', 'Signed in — taking you to the community…');
       setTimeout(() => { location.href = nextUrl; }, 900);
     } catch (err) {
-      if (err.code === 'network-error') {
+      if (err.code === 'network-error' || err.code === 'invalid-credentials') {
         try {
           const user = localSignIn({ email, password });
           _cacheSession(user, remember);
@@ -454,7 +460,14 @@
           return;
         } catch (localErr) {
           btn.disabled = false; btn.textContent = 'Sign In';
-          showAlert('siError', localErr.message || 'Invalid email or password.');
+          if (localErr.code === 'invalid-credentials') {
+            document.getElementById('siError').innerHTML =
+              `No account found, or password incorrect. ` +
+              `<a href="#" onclick="document.getElementById('caEmail').value='${email.replace(/'/g,"\\'")}';switchTab('create');return false;" style="color:#0EA5E9;font-weight:600;">Create account →</a>`;
+            document.getElementById('siError').classList.add('show');
+          } else {
+            showAlert('siError', localErr.message || 'Invalid email or password.');
+          }
           return;
         }
       }

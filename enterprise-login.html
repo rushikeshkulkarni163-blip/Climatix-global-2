@@ -196,8 +196,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
     <div class="demo-banner">
       <span class="demo-banner-label mono">Demo</span>
       <div class="demo-banner-text">
-        Try the platform with pre-loaded institutional data. <b>ABC Logistics Pvt Ltd</b> — <b>CX-IND-LOG-000847</b><br>
-        <span class="demo-fill" onclick="fillDemo()">Click to auto-fill demo credentials</span>
+        Demo: <b>demo@climactix.com</b> / <b>demo123</b> — ABC Logistics Pvt Ltd (OTP shown on screen)<br>
+        <span class="demo-fill" onclick="fillDemo()">Auto-fill &amp; advance →</span>
       </div>
     </div>
 
@@ -338,6 +338,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
   window.fillDemo = function(){
     document.getElementById('email-input').value = 'demo@climactix.com';
     document.getElementById('email-input').dispatchEvent(new Event('input'));
+    // Auto-advance to password step after preview shows
+    setTimeout(()=>{
+      checkEmail();
+      setTimeout(()=>{
+        const pwdInp = document.getElementById('pwd-input');
+        if (pwdInp) { pwdInp.value = 'demo123'; pwdInp.focus(); }
+      }, 300);
+    }, 400);
   };
 
   // Email input — company lookup preview

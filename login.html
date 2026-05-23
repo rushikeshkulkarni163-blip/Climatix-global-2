@@ -243,6 +243,12 @@
       <div class="alert success" id="successAlert"></div>
       <div class="alert warning" id="warningAlert"></div>
 
+      <div style="background:rgba(99,220,175,0.06);border:1px solid rgba(99,220,175,0.18);border-radius:6px;padding:10px 13px;margin-bottom:18px;font-size:12px;color:#8a94a8;line-height:1.6;">
+        <strong style="color:#63dcaf;">Demo access:</strong> admin@climactix.com / demo123
+        &nbsp;·&nbsp;
+        <span onclick="document.getElementById('email').value='admin@climactix.com';document.getElementById('password').value='demo123';" style="color:#63dcaf;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;">Auto-fill →</span>
+      </div>
+
       <form id="loginForm" novalidate>
         <div class="field">
           <label for="email">Work email address</label>
@@ -320,6 +326,8 @@
       } catch (err) {
         if (err.code === 'not-verified') {
           showAlert('warningAlert', `Email not verified. <a href="verify-email.html?email=${encodeURIComponent(err.email)}&token=${err.token}" style="color:var(--amb);font-weight:600;">Verify now →</a>`);
+        } else if (err.code === 'invalid-credentials') {
+          showAlert('errorAlert', `No account found, or password is incorrect. <a href="signup.html" style="color:var(--amb);font-weight:600;">Create account →</a>`);
         } else {
           showAlert('errorAlert', err.message || 'Sign in failed. Please try again.');
         }

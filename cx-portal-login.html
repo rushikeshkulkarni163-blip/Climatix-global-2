@@ -185,8 +185,8 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'I
     <div class="demo-box">
       <span class="demo-tag mono">Demo</span>
       <div class="demo-text">
-        Demo access: <b>analyst@climactix.global</b> / <b>demo123</b><br>
-        <span class="demo-fill" onclick="fillDemo()">Auto-fill credentials</span>
+        Demo access: <b>analyst@climactix.global</b> / <b>demo123</b> (OTP shown on screen)<br>
+        <span class="demo-fill" onclick="fillDemo()">Auto-fill &amp; advance →</span>
       </div>
     </div>
 
@@ -300,7 +300,18 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'I
   }
   loadStats();
 
-  window.fillDemo=function(){ document.getElementById('email-inp').value='analyst@climactix.global'; checkEmailPreview(); };
+  window.fillDemo=function(){
+    document.getElementById('email-inp').value='analyst@climactix.global';
+    checkEmailPreview();
+    // Auto-advance to password step
+    setTimeout(()=>{
+      goStep2();
+      setTimeout(()=>{
+        const pwdInp=document.getElementById('pwd-inp');
+        if(pwdInp){ pwdInp.value='demo123'; pwdInp.focus(); }
+      },200);
+    },300);
+  };
 
   window.checkEmailPreview=function(){
     const email=document.getElementById('email-inp').value.trim().toLowerCase();

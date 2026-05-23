@@ -7,8 +7,8 @@
 //   → Works in production, on any device, anywhere
 //
 //   LOCAL MODE  (when firebase-config.js still has YOUR_* placeholders)
-//   → Falls back to the local FastAPI auth server (localhost:8000)
-//   → Development only
+//   → Uses localStorage directly — works offline, no server needed
+//   → Demo accounts pre-seeded automatically
 //
 // To enable Firebase:
 //   1. console.firebase.google.com → new project → web app → copy config
@@ -190,105 +190,101 @@ function _fbMapErr(e) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// LOCAL BACKEND MODE  (localhost:8000 fallback)
+// LOCAL STORAGE MODE  (no Firebase config → works fully offline, no server needed)
 // ─────────────────────────────────────────────────────────────────────────────
-const _API = 'http://localhost:8000';
 
-async function _api(method, path, body) {
-  const headers = { 'Content-Type': 'application/json' };
-  const opts = { method, credentials: 'include', headers };
-  if (body !== undefined) opts.body = JSON.stringify(body);
+// Stub for secondary API calls (MFA, sessions, API keys) — not supported in local mode
+async function _api() {
+  throw { code: 'not-supported', message: 'This feature requires a configured backend or Firebase.' };
+}
 
-  let res;
-  try {
-    res = await fetch(`${_API}${path}`, opts);
-  } catch {
-    throw { code: 'network-error', message: 'Cannot reach the Climactix server. Is it running on port 8000?' };
-  }
+const _LOCAL_USERS_KEY = 'cx_local_users_v1';
 
-  let data = {};
-  try { data = await res.json(); } catch { /* empty body */ }
+function _getLocalUsers() {
+  try { return JSON.parse(localStorage.getItem(_LOCAL_USERS_KEY) || '[]'); } catch { return []; }
+}
+function _saveLocalUsers(users) {
+  localStorage.setItem(_LOCAL_USERS_KEY, JSON.stringify(users));
+}
 
-  if (!res.ok) {
-    const detail = data.detail || data;
-    let code, message;
-    if (Array.isArray(detail)) {
-      code    = 'validation-error';
-      message = detail.map(e => e.msg || e.message).filter(Boolean).join('. ') || `Request failed (${res.status}).`;
-    } else if (detail && typeof detail === 'object') {
-      code    = detail.code    || 'error';
-      message = detail.message || detail.msg || `Request failed (${res.status}).`;
-    } else if (typeof detail === 'string') {
-      code = 'error'; message = detail;
-    } else {
-      code = 'error'; message = `Request failed (${res.status}).`;
+// Pre-seed demo accounts so the platform works immediately on first open
+function _ensureDemoUsers() {
+  const users = _getLocalUsers();
+  const seeds = [
+    { id:'demo_admin',   full_name:'Demo Admin',    email:'admin@climactix.com',  company_name:'Climactix Global',  role:'admin', tier:'pro',  pw:btoa('demo123') },
+    { id:'demo_user',    full_name:'Demo User',      email:'demo@climactix.com',   company_name:'Acme Corp',         role:'user',  tier:'free', pw:btoa('demo123') },
+    { id:'demo_analyst', full_name:'Demo Analyst',   email:'analyst@climactix.com',company_name:'Climactix Global',  role:'analyst',tier:'pro', pw:btoa('demo123') },
+  ];
+  let changed = false;
+  for (const seed of seeds) {
+    if (!users.find(u => u.email === seed.email)) {
+      users.push(seed);
+      changed = true;
     }
-    throw { code, message, ...(detail && typeof detail === 'object' && !Array.isArray(detail) ? detail : {}) };
   }
-  return data;
+  if (changed) _saveLocalUsers(users);
 }
 
 async function _localSignUp({ fullName, email, companyName, password }) {
-  const data = await _api('POST', '/auth/register', {
-    full_name: fullName, email, company_name: companyName || '', password,
-  });
-  return { verifyToken: data.verify_token || null, userId: data.user_id || null, email: email.toLowerCase() };
+  _ensureDemoUsers();
+  const users = _getLocalUsers();
+  if (users.find(u => u.email === email.toLowerCase()))
+    throw { code: 'email-in-use', message: 'An account with this email already exists.' };
+  const user = {
+    id: 'local_' + Date.now(),
+    full_name: fullName,
+    email: email.toLowerCase(),
+    company_name: companyName || '',
+    role: 'user', tier: 'free',
+    pw: btoa(password),
+  };
+  users.push(user);
+  _saveLocalUsers(users);
+  return { verifyToken: null, userId: user.id, email: user.email };
 }
 
-async function _localVerifyEmail(email, token) {
-  const data = await _api('POST', '/auth/verify-email', { email, token });
-  _cache(data.user, false);
-  return data.user;
+async function _localVerifyEmail(email, _token) {
+  _ensureDemoUsers();
+  const user = _getLocalUsers().find(u => u.email === email.toLowerCase());
+  if (!user) throw { code: 'not-found', message: 'Account not found.' };
+  _cache(user, false);
+  return user;
 }
 
 async function _localSignIn({ email, password, remember }) {
-  const fingerprint = await _fingerprint();
-  const data = await _api('POST', '/auth/login', {
-    email, password, remember: !!remember, device_fingerprint: fingerprint,
-  });
-  if (data.mfa_required) {
-    const p = new URLSearchParams({ token: data.mfa_token, email: data.email || email, remember: remember ? '1' : '0' });
-    window.location.href = `mfa-challenge.html?${p}`;
-    return null;
-  }
-  _cache(data.user, remember);
-  return data.user;
+  _ensureDemoUsers();
+  const user = _getLocalUsers().find(
+    u => u.email === email.toLowerCase() && u.pw === btoa(password)
+  );
+  if (!user) throw { code: 'invalid-credentials', message: 'Invalid email or password.' };
+  _cache(user, remember);
+  return user;
 }
 
 async function _localSignOut() {
   clearSession();
-  try { await _api('POST', '/auth/logout', {}); } catch { /* best-effort */ }
 }
 
 async function _localForgotPassword(email) {
-  const data = await _api('POST', '/auth/forgot-password', { email });
-  return { token: data.reset_token || null, email: (data.email || email).toLowerCase() };
+  _ensureDemoUsers();
+  const user = _getLocalUsers().find(u => u.email === email.toLowerCase());
+  if (!user) throw { code: 'not-found', message: 'No account found with this email.' };
+  return { token: 'local_reset_' + Date.now(), email: email.toLowerCase() };
 }
 
-async function _localResetPassword(email, token, newPassword) {
-  const data = await _api('POST', '/auth/reset-password', { email, token, new_password: newPassword });
-  _cache(data.user, false);
-  return data.user;
+async function _localResetPassword(email, _token, newPassword) {
+  _ensureDemoUsers();
+  const users = _getLocalUsers();
+  const i = users.findIndex(u => u.email === email.toLowerCase());
+  if (i < 0) throw { code: 'not-found', message: 'Account not found.' };
+  users[i].pw = btoa(newPassword);
+  _saveLocalUsers(users);
+  _cache(users[i], false);
+  return users[i];
 }
 
 async function _localSyncSession() {
-  try {
-    const user = await _api('GET', '/auth/me');
-    _cache(user, !!(getSession()?.expires));
-    return user;
-  } catch {
-    clearSession();
-    return null;
-  }
-}
-
-async function _fingerprint() {
-  try {
-    const parts = [navigator.userAgent, navigator.language,
-      `${screen.width}x${screen.height}`, new Date().getTimezoneOffset()];
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(parts.join('|')));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,32);
-  } catch { return 'unknown'; }
+  return getSession();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -302,17 +298,12 @@ export async function forgotPassword(email)             { return _USE_FIREBASE ?
 export async function resetPassword(e, t, p)            { return _USE_FIREBASE ? _fbResetPassword(e, t, p)           : _localResetPassword(e, t, p); }
 export async function syncSession()                     { return _USE_FIREBASE ? _fbSyncSession()                    : _localSyncSession(); }
 
-// ── Backend-only stubs (no-op in Firebase mode) ───────────────────────────────
-export async function completeMfaSignIn(token, code)  {
-  if (_USE_FIREBASE) throw { code: 'not-supported', message: 'MFA not configured.' };
-  const { default: _m } = await import('./auth.js'); // self-import not needed; call local directly
-  const data = await _api('POST', '/mfa/verify', { mfa_token: token, code });
-  const remember = new URLSearchParams(location.search).get('remember') === '1';
-  _cache(data.user, remember);
-  return data.user;
+// ── Backend-only stubs (not available in local/Firebase mode) ────────────────
+export async function completeMfaSignIn(_token, _code) {
+  throw { code: 'not-supported', message: 'MFA not configured.' };
 }
-export async function getMfaStatus()            { if (_USE_FIREBASE) return { enabled: false }; return _api('GET',  '/mfa/status'); }
-export async function setupMfa()                { if (_USE_FIREBASE) throw { code: 'not-supported', message: 'MFA not configured.' }; return _api('POST', '/mfa/setup', {}); }
+export async function getMfaStatus()            { return { enabled: false }; }
+export async function setupMfa()                { throw { code: 'not-supported', message: 'MFA not configured.' }; }
 export async function enableMfa(secret, code)   { if (_USE_FIREBASE) throw { code: 'not-supported', message: 'MFA not configured.' }; return _api('POST', '/mfa/enable', { secret, code }); }
 export async function disableMfa(code, pw)      { if (_USE_FIREBASE) throw { code: 'not-supported', message: 'MFA not configured.' }; return _api('POST', '/mfa/disable', { code, password: pw }); }
 export async function listSessions()            { if (_USE_FIREBASE) return [];              return _api('GET',    '/auth/sessions'); }
