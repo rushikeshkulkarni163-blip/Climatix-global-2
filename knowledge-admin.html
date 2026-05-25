@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Knowledge Base — Climactix AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg0:#030508;--bg1:#070B12;--bg2:#0C1420;--bg3:#101923;--bg4:#151F2E;
+  --bd1:rgba(255,255,255,0.08);--bd2:rgba(255,255,255,0.13);--bd3:rgba(255,255,255,0.22);
+  --tx0:#F0F4F8;--tx1:rgba(240,244,248,0.55);--tx2:rgba(240,244,248,0.32);
+  --acc:#3A8FA8;--acc2:rgba(58,143,168,0.1);
+  --pos:#1A6E44;--neg:#C9372C;--warn:#C26000;
+  --font:'Inter',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg0);color:var(--tx0);-webkit-font-smoothing:antialiased;font-size:13px;line-height:1.5;min-height:100vh;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg1)}::-webkit-scrollbar-thumb{background:var(--bd2)}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;height:48px;background:var(--bg1);border-bottom:1px solid var(--bd1);display:flex;align-items:center;padding:0 24px;gap:16px;}
+.nav-brand{font-size:10px;font-weight:800;letter-spacing:.14em;color:var(--acc);text-transform:uppercase;text-decoration:none;}
+.nav-sep{width:1px;height:14px;background:var(--bd1);}
+.nav-title{font-size:11px;font-weight:600;color:var(--tx1);}
+.nav-back{margin-left:auto;font-size:10px;color:var(--tx2);text-decoration:none;letter-spacing:.06em;padding:4px 10px;border:1px solid var(--bd1);border-radius:2px;transition:color .16s,border-color .16s;}
+.nav-back:hover{color:var(--tx0);border-color:var(--bd3);}
+
+/* LAYOUT */
+.page{max-width:1100px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 400px;gap:32px;align-items:start;}
+
+/* PANELS */
+.panel{background:var(--bg1);border:1px solid var(--bd1);border-radius:4px;overflow:hidden;}
+.panel-hdr{padding:14px 20px;border-bottom:1px solid var(--bd1);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx1);}
+.panel-badge{font-family:var(--mono);font-size:10px;color:var(--acc);background:var(--acc2);padding:2px 8px;border-radius:2px;}
+.panel-body{padding:20px;}
+
+/* ENTRY CARD */
+.entry{border:1px solid var(--bd1);border-radius:3px;margin-bottom:10px;overflow:hidden;transition:border-color .16s;}
+.entry:hover{border-color:var(--bd2);}
+.entry-hdr{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--bg2);}
+.entry-hdr:hover{background:var(--bg3);}
+.cat-badge{font-size:9px;font-weight:700;letter-spacing:.07em;padding:2px 7px;border-radius:2px;white-space:nowrap;text-transform:uppercase;}
+.entry-title{font-size:12px;font-weight:600;color:var(--tx0);flex:1;min-width:0;}
+.entry-del{font-size:10px;color:var(--tx2);background:none;border:1px solid transparent;border-radius:2px;cursor:pointer;padding:3px 8px;transition:all .16s;flex-shrink:0;}
+.entry-del:hover{color:var(--neg);border-color:var(--neg);}
+.entry-body{padding:12px 14px;border-top:1px solid var(--bd1);display:none;}
+.entry-body.open{display:block;}
+.entry-content{font-size:11px;color:var(--tx1);line-height:1.7;white-space:pre-wrap;}
+.entry-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+.tag{font-size:9px;font-family:var(--mono);color:var(--acc);background:var(--acc2);padding:2px 6px;border-radius:2px;}
+.entry-meta{font-size:9px;font-family:var(--mono);color:var(--tx2);margin-top:8px;}
+
+/* FORM */
+label{display:block;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);margin-bottom:5px;}
+input,textarea,select{width:100%;background:var(--bg2);border:1px solid var(--bd1);color:var(--tx0);font-family:var(--font);font-size:12px;padding:9px 12px;border-radius:3px;outline:none;transition:border-color .16s;resize:vertical;}
+input:focus,textarea:focus,select:focus{border-color:var(--acc);}
+textarea{min-height:120px;line-height:1.6;}
+.field{margin-bottom:14px;}
+.btn{width:100%;padding:10px;background:var(--acc);color:#fff;border:none;border-radius:3px;font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:opacity .16s;}
+.btn:hover{opacity:.85;}
+.btn:disabled{opacity:.3;cursor:not-allowed;}
+.btn-outline{background:none;border:1px solid var(--bd2);color:var(--tx1);margin-bottom:0;}
+.btn-outline:hover{border-color:var(--bd3);color:var(--tx0);opacity:1;}
+.btn-danger{background:var(--neg);margin-top:8px;}
+
+/* SEARCH TEST */
+.search-results{margin-top:16px;}
+.sr-item{border:1px solid var(--bd1);border-radius:3px;padding:10px 12px;margin-bottom:8px;background:var(--bg2);}
+.sr-score{font-family:var(--mono);font-size:10px;color:var(--acc);}
+.sr-title{font-size:12px;font-weight:600;margin:4px 0 2px;}
+.sr-cat{font-size:10px;color:var(--tx2);}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--bd2);color:var(--tx0);font-size:11px;padding:8px 18px;border-radius:3px;z-index:9999;display:none;font-weight:600;}
+
+/* STATS ROW */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.stat{background:var(--bg2);border:1px solid var(--bd1);border-radius:3px;padding:12px 14px;text-align:center;}
+.stat-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--acc);}
+.stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);margin-top:3px;}
+
+/* CATEGORY COLORS */
+.cat-esg{background:rgba(26,110,68,0.15);color:#4ADE80;}
+.cat-climate{background:rgba(58,143,168,0.15);color:var(--acc);}
+.cat-regulatory{background:rgba(194,96,0,0.15);color:#F59E0B;}
+.cat-governance{background:rgba(99,102,241,0.15);color:#A5B4FC;}
+.cat-default{background:var(--acc2);color:var(--acc);}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:var(--tx2);font-size:12px;}
+.empty-icon{font-size:28px;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">Climactix</a>
+  <div class="nav-sep"></div>
+  <span class="nav-title">Knowledge Base — AI Training</span>
+  <a class="nav-back" href="climactix-ai.html">← AI Engine</a>
+</nav>
+
+<div class="page">
+
+  <!-- LEFT: Knowledge entries list -->
+  <div>
+    <div class="stats" id="statsRow">
+      <div class="stat"><div class="stat-val" id="statTotal">—</div><div class="stat-lbl">Total Rules</div></div>
+      <div class="stat"><div class="stat-val" id="statCats">—</div><div class="stat-lbl">Categories</div></div>
+      <div class="stat"><div class="stat-val" id="statIndexed">—</div><div class="stat-lbl">Indexed</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-title">Knowledge Entries</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn btn-outline" style="width:auto;padding:4px 12px;font-size:10px;" onclick="rebuildIndex()">Rebuild Index</button>
+          <span class="panel-badge" id="entryCount">0 rules</span>
+        </div>
+      </div>
+      <div class="panel-body" style="padding:14px;">
+        <div id="entriesList"><div class="empty"><div class="empty-icon">📚</div>Loading knowledge base…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Add entry + test search -->
+  <div style="display:flex;flex-direction:column;gap:20px;">
+
+    <!-- Add form -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-title">Add Knowledge Entry</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Rule Title</label>
+          <input type="text" id="fTitle" placeholder="e.g. Net-Zero Claim Validation Standard"/>
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="fCategory">
+            <option value="ESG Scoring">ESG Scoring</option>
+            <option value="Greenwashing Detection">Greenwashing Detection</option>
+            <option value="Climate Risk">Climate Risk</option>
+            <option value="Regulatory">Regulatory</option>
+            <option value="Governance">Governance</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tags (comma-separated)</label>
+          <input type="text" id="fTags" placeholder="net-zero, TCFD, verification, ISSB"/>
+        </div>
+        <div class="field">
+          <label>Rule Content</label>
+          <textarea id="fContent" placeholder="Write the rule, benchmark, threshold, or domain knowledge here. Be specific and quantitative. The AI will apply this rule whenever it's relevant to the analysis…" style="min-height:160px;"></textarea>
+        </div>
+        <button class="btn" onclick="addEntry()" id="addBtn">Add to Knowledge Base</button>
+      </div>
+    </div>
+
+    <!-- Search test -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-title">Test Retrieval</span>
+        <span style="font-size:9px;color:var(--tx2);">Preview what AI retrieves</span>
+      </div>
+      <div class="panel-body">
+        <div class="field" style="margin-bottom:10px;">
+          <label>Search Query</label>
+          <input type="text" id="searchQ" placeholder="e.g. net-zero carbon neutral claim verification"/>
+        </div>
+        <button class="btn btn-outline" onclick="testSearch()" style="width:100%;margin-bottom:0;">Test Retrieval →</button>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'http://localhost:8000/api/knowledge';
+
+function showToast(msg, ms=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', ms);
+}
+
+function catClass(cat) {
+  if (!cat) return 'cat-default';
+  const c = cat.toLowerCase();
+  if (c.includes('esg') || c.includes('scor')) return 'cat-esg';
+  if (c.includes('climate') || c.includes('risk')) return 'cat-climate';
+  if (c.includes('regulat') || c.includes('framework')) return 'cat-regulatory';
+  if (c.includes('govern')) return 'cat-governance';
+  if (c.includes('greenwash')) return 'cat-climate';
+  return 'cat-default';
+}
+
+function renderEntries(entries) {
+  const list = document.getElementById('entriesList');
+  document.getElementById('entryCount').textContent = `${entries.length} rule${entries.length !== 1 ? 's' : ''}`;
+  document.getElementById('statTotal').textContent = entries.length;
+  const cats = new Set(entries.map(e => e.category).filter(Boolean));
+  document.getElementById('statCats').textContent = cats.size;
+  document.getElementById('statIndexed').textContent = entries.length;
+
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📚</div>No knowledge entries yet.<br>Add your first rule on the right.</div>';
+    return;
+  }
+
+  list.innerHTML = entries.map((e, i) => `
+    <div class="entry" id="entry-${e.id}">
+      <div class="entry-hdr" onclick="toggleEntry('${e.id}')">
+        <span class="cat-badge ${catClass(e.category)}">${e.category || 'General'}</span>
+        <span class="entry-title">${e.title}</span>
+        <button class="entry-del" onclick="event.stopPropagation();deleteEntry('${e.id}')">Delete</button>
+      </div>
+      <div class="entry-body" id="body-${e.id}">
+        <div class="entry-content">${e.content}</div>
+        ${e.tags && e.tags.length ? `<div class="entry-tags">${e.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+        <div class="entry-meta">ID: ${e.id}${e.created_at ? ' · Added ' + new Date(e.created_at * 1000).toLocaleDateString() : ''}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleEntry(id) {
+  const body = document.getElementById(`body-${id}`);
+  body.classList.toggle('open');
+}
+
+async function loadEntries() {
+  try {
+    const r = await fetch(`${API}/list`);
+    if (!r.ok) throw new Error(r.statusText);
+    const d = await r.json();
+    renderEntries(d.entries || []);
+  } catch (e) {
+    document.getElementById('entriesList').innerHTML =
+      `<div class="empty"><div class="empty-icon">⚠</div>Cannot reach backend.<br>Make sure the server is running on port 8000.</div>`;
+  }
+}
+
+async function addEntry() {
+  const title = document.getElementById('fTitle').value.trim();
+  const category = document.getElementById('fCategory').value;
+  const content = document.getElementById('fContent').value.trim();
+  const tagsRaw = document.getElementById('fTags').value.trim();
+  const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+  if (!title || !content) { showToast('Title and content are required'); return; }
+
+  const btn = document.getElementById('addBtn');
+  btn.disabled = true;
+  btn.textContent = 'Embedding…';
+
+  try {
+    const r = await fetch(`${API}/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, category, content, tags }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || r.statusText);
+    showToast(`Rule added (${d.id})`);
+    document.getElementById('fTitle').value = '';
+    document.getElementById('fContent').value = '';
+    document.getElementById('fTags').value = '';
+    await loadEntries();
+  } catch (e) {
+    showToast(`Error: ${e.message}`, 4000);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Add to Knowledge Base';
+  }
+}
+
+async function deleteEntry(id) {
+  if (!confirm('Delete this knowledge entry? The AI will no longer use it.')) return;
+  try {
+    const r = await fetch(`${API}/${id}`, { method: 'DELETE' });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || r.statusText);
+    showToast('Entry deleted');
+    await loadEntries();
+  } catch (e) {
+    showToast(`Error: ${e.message}`, 4000);
+  }
+}
+
+async function rebuildIndex() {
+  showToast('Rebuilding vector index…', 3000);
+  try {
+    const r = await fetch(`${API}/rebuild-index`, { method: 'POST' });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail);
+    showToast('Index rebuilt successfully');
+  } catch (e) {
+    showToast(`Error: ${e.message}`, 4000);
+  }
+}
+
+async function testSearch() {
+  const q = document.getElementById('searchQ').value.trim();
+  if (!q) { showToast('Enter a search query'); return; }
+  const out = document.getElementById('searchResults');
+  out.innerHTML = '<p style="font-size:11px;color:var(--tx2);margin-top:10px;">Searching…</p>';
+  try {
+    const r = await fetch(`${API}/search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: q, top_k: 5 }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail);
+    if (!d.results.length) {
+      out.innerHTML = '<p style="font-size:11px;color:var(--tx2);margin-top:10px;">No results found.</p>';
+      return;
+    }
+    out.innerHTML = d.results.map(r => `
+      <div class="sr-item">
+        <div class="sr-score">Similarity: ${(r.similarity * 100).toFixed(1)}%</div>
+        <div class="sr-title">${r.title}</div>
+        <div class="sr-cat">${r.category}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    out.innerHTML = `<p style="font-size:11px;color:var(--neg);margin-top:10px;">${e.message}</p>`;
+  }
+}
+
+document.getElementById('searchQ').addEventListener('keydown', e => {
+  if (e.key === 'Enter') testSearch();
+});
+
+loadEntries();
+</script>
+</body>
+</html>

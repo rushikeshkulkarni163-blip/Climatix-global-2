@@ -10,6 +10,7 @@ import os
 from typing import Generator, Optional
 
 from openai import OpenAI
+from services.knowledge_base import retrieve, format_context
 
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
@@ -119,10 +120,22 @@ def stream_brief(payload: dict) -> Generator[str, None, None]:
     client = _get_client()
     prompt = build_prompt(payload)
 
+    # Retrieve relevant proprietary rules
+    try:
+        scenario = payload.get("scenario_name", "")
+        sectors = payload.get("portfolio_summary", {}).get("sectors", [])
+        query = f"climate risk {scenario} physical transition supply chain {' '.join(sectors)}"
+        kb_entries = retrieve(query, top_k=5)
+        kb_context = format_context(kb_entries)
+    except Exception:
+        kb_context = ""
+
+    system = SYSTEM_PROMPT + ("\n\n" + kb_context if kb_context else "")
+
     stream = client.chat.completions.create(
         model=MODEL,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system},
             {"role": "user",   "content": prompt},
         ],
         stream=True,

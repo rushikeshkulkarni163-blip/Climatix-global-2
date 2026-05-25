@@ -18,6 +18,7 @@ import re
 from typing import Optional
 
 from openai import OpenAI
+from services.knowledge_base import retrieve, format_context
 
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
@@ -270,13 +271,22 @@ Do NOT wrap in markdown. Do NOT add any text before or after the JSON.
 
 IMPORTANT: Select SDGs based on the ACTUAL data. Adjust SDG numbers, names, icons, and scores to reflect genuine alignment. Fill esg_structured KPIs from the actual metrics found in the data. Risk flags must be grounded in real gaps or exposures in the data, not generic statements."""
 
+    # Retrieve relevant proprietary rules from the knowledge base
+    try:
+        kb_entries = retrieve(f"ESG analysis {company_name} {esg_text[:500]}", top_k=5)
+        kb_context = format_context(kb_entries)
+    except Exception:
+        kb_context = ""
+
+    system = SYSTEM_PROMPT + ("\n\n" + kb_context if kb_context else "")
+
     client = _get_client()
     response = client.chat.completions.create(
         model=MODEL,
         max_tokens=7000,
         temperature=0.3,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system},
             {"role": "user",   "content": prompt},
         ],
     )

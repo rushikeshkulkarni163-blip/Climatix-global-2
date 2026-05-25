@@ -15,6 +15,7 @@ import re
 from typing import Optional
 
 from openai import OpenAI
+from services.knowledge_base import retrieve, format_context
 
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
@@ -90,12 +91,20 @@ def extract_claims(text: str) -> list:
     client = _get_client()
     truncated = text[:9000]
 
+    try:
+        kb_entries = retrieve(f"greenwashing claims ESG sustainability {truncated[:300]}", top_k=4)
+        kb_ctx = format_context(kb_entries)
+    except Exception:
+        kb_ctx = ""
+
+    claim_system = _CLAIM_SYSTEM + ("\n\n" + kb_ctx if kb_ctx else "")
+
     msg = client.chat.completions.create(
         model=MODEL,
         max_tokens=2500,
         temperature=0.2,
         messages=[
-            {"role": "system", "content": _CLAIM_SYSTEM},
+            {"role": "system", "content": claim_system},
             {"role": "user", "content": _CLAIM_USER_TMPL.format(text=truncated)},
         ],
     )
@@ -579,12 +588,20 @@ def generate_recommendations(flags: list, claims: list, data: dict) -> list:
         },
     }
 
+    try:
+        kb_entries = retrieve("greenwashing remediation ESG disclosure framework recommendations", top_k=4)
+        kb_ctx = format_context(kb_entries)
+    except Exception:
+        kb_ctx = ""
+
+    reco_system = _RECO_SYSTEM + ("\n\n" + kb_ctx if kb_ctx else "")
+
     msg = client.chat.completions.create(
         model=MODEL,
         max_tokens=1800,
         temperature=0.3,
         messages=[
-            {"role": "system", "content": _RECO_SYSTEM},
+            {"role": "system", "content": reco_system},
             {"role": "user", "content": _RECO_USER_TMPL.format(context=json.dumps(context, indent=2))},
         ],
     )
