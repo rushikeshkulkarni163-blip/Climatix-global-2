@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Analyst Dashboard · Climactix Global</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#000;--bg1:#0F0F0F;--bg2:#1A1A1A;--bg3:#242424;--bg4:#2E2E2E;
+  --bd:#2C2C2C;--bd2:#333;--bd3:rgba(255,255,255,0.18);
+  --tx:#FFF;--tx2:#888;--tx3:#555;--tx4:#333;
+  --amb:#0EA5E9;--amb2:rgba(14,165,233,0.10);--amb-dim:#0284C7;
+  --grn:#00CC44;--grn2:rgba(0,204,68,0.10);
+  --red:#FF3333;--red2:rgba(255,51,51,0.10);
+  --warn:#F59E0B;--warn2:rgba(245,158,11,0.10);
+  --pur:#A78BFA;--pur2:rgba(167,139,250,0.10);
+  --pink:#F472B6;--pink2:rgba(244,114,182,0.10);
+  --font:'Inter',system-ui,sans-serif;--mono:'IBM Plex Mono',monospace;
+  --sidebar:220px;--topbar:52px;
+}
+html,body{height:100%;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);font-size:13px;line-height:1.5;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--bg1)}
+::-webkit-scrollbar-thumb{background:var(--bd2)}
+
+/* ══ TOPBAR ══ */
+.topbar{height:var(--topbar);background:var(--bg1);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;z-index:100}
+.topbar-brand{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--tx);letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
+.topbar-sep{width:1px;height:16px;background:var(--bd2)}
+.topbar-context{font-size:11px;color:var(--tx2)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-user{display:flex;align-items:center;gap:8px}
+.topbar-avatar{width:28px;height:28px;border-radius:50%;background:var(--amb2);border:1px solid rgba(14,165,233,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--amb);font-family:var(--mono)}
+.topbar-name{font-size:11px;font-weight:600;color:var(--tx)}
+.topbar-role{font-size:10px;color:var(--tx3);font-family:var(--mono);letter-spacing:.04em}
+.topbar-btn{padding:4px 12px;border:1px solid var(--bd);background:none;color:var(--tx2);font-size:10px;font-family:var(--mono);border-radius:2px;cursor:pointer;text-decoration:none;letter-spacing:.05em;transition:all .15s}
+.topbar-btn:hover{color:var(--tx);border-color:var(--bd3)}
+.topbar-btn.danger{color:var(--red);border-color:rgba(255,51,51,0.25)}
+.topbar-btn.danger:hover{border-color:var(--red)}
+
+/* ══ BODY ══ */
+.body-wrap{display:flex;flex:1;overflow:hidden}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sidebar);background:var(--bg1);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sidebar-section{padding:16px 12px 8px;font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx4);letter-spacing:.12em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .13s,color .13s;border-left:2px solid transparent;text-decoration:none;color:var(--tx2)}
+.nav-item:hover{background:var(--bg2);color:var(--tx)}
+.nav-item.active{background:var(--bg2);color:var(--tx);border-left-color:var(--amb)}
+.nav-item.active .nav-icon{color:var(--amb)}
+.nav-icon{width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:.7}
+.nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1}
+.nav-label{font-size:12px;font-weight:500}
+.nav-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px}
+.badge-blue{background:var(--amb2);color:var(--amb)}
+.badge-green{background:var(--grn2);color:var(--grn)}
+.badge-warn{background:var(--warn2);color:var(--warn)}
+
+.sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--bd)}
+.sidebar-health{display:flex;align-items:center;gap:7px;padding:8px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:3px;font-family:var(--mono);font-size:9px;color:var(--tx3)}
+.health-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);flex-shrink:0}
+
+/* ══ MAIN ══ */
+.main{flex:1;overflow-y:auto;padding:28px 32px}
+.section{display:none}
+.section.active{display:block}
+
+/* ══ PAGE HEADER ══ */
+.page-hdr{margin-bottom:24px}
+.page-eyebrow{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.page-eyebrow::before{content:'';display:inline-block;width:14px;height:1px;background:var(--amb)}
+.page-title{font-size:20px;font-weight:800;letter-spacing:-.025em;margin-bottom:4px}
+.page-sub{font-size:12px;color:var(--tx2)}
+
+/* ══ STAT CARDS ══ */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--bg1);border:1px solid var(--bd);border-radius:3px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .15s}
+.stat-card:hover{border-color:var(--bd2)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.blue::before{background:var(--amb)}
+.stat-card.green::before{background:var(--grn)}
+.stat-card.warn::before{background:var(--warn)}
+.stat-card.pur::before{background:var(--pur)}
+.stat-lbl{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px}
+.stat-val{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;margin-bottom:5px}
+.stat-val.blue{color:var(--amb)}
+.stat-val.green{color:var(--grn)}
+.stat-val.warn{color:var(--warn)}
+.stat-val.pur{color:var(--pur)}
+.stat-sub{font-size:11px;color:var(--tx3)}
+
+/* ══ CARDS / PANELS ══ */
+.card{background:var(--bg1);border:1px solid var(--bd);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.card-hdr{padding:13px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2)}
+.card-body{padding:18px}
+.card-actions{display:flex;gap:8px;align-items:center}
+
+/* ══ TABLE ══ */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--bd);font-size:12px;color:var(--tx2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--bg2);color:var(--tx)}
+.tbl td.mono{font-family:var(--mono);font-size:11px}
+.tbl td.bold{font-weight:600;color:var(--tx)}
+
+/* ══ STATUS PILLS ══ */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:2px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.pill-grn{background:var(--grn2);color:var(--grn)}
+.pill-blue{background:var(--amb2);color:var(--amb)}
+.pill-warn{background:var(--warn2);color:var(--warn)}
+.pill-red{background:var(--red2);color:var(--red)}
+.pill-pur{background:var(--pur2);color:var(--pur)}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ══ BUTTONS ══ */
+.btn{padding:7px 14px;border-radius:2px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:1px solid var(--bd);background:none;color:var(--tx2);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{color:var(--tx);border-color:var(--bd3)}
+.btn-primary{background:var(--amb);color:#000;border-color:var(--amb)}
+.btn-primary:hover{background:var(--amb-dim);border-color:var(--amb-dim);color:#000}
+.btn-sm{padding:4px 10px;font-size:9px}
+.btn-icon{width:28px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+
+/* ══ FORM ELEMENTS ══ */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-full{grid-column:1/-1}
+.field{margin-bottom:0}
+.field label{display:block;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--tx3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:8px 12px;border:1px solid var(--bd);border-radius:2px;font-size:12px;font-family:var(--font);color:var(--tx);background:var(--bg2);outline:none;transition:border-color .15s;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--amb)}
+.field input::placeholder,.field textarea::placeholder{color:var(--tx4)}
+.field select option{background:var(--bg2)}
+.field textarea{min-height:80px;line-height:1.6}
+
+/* ══ TOGGLE ══ */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bd)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info{flex:1}
+.toggle-label{font-size:12px;font-weight:600;color:var(--tx)}
+.toggle-desc{font-size:11px;color:var(--tx3);margin-top:2px}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0;margin-left:16px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bd2);border-radius:10px;cursor:pointer;transition:background .2s}
+.toggle input:checked+.toggle-slider{background:var(--amb)}
+.toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle input:checked+.toggle-slider::before{transform:translateX(16px)}
+
+/* ══ PIPELINE CARD ══ */
+.pipeline-card{background:var(--bg2);border:1px solid var(--bd);border-radius:3px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.pipeline-card:hover{border-color:var(--bd2)}
+.pipe-icon{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.pipe-info{flex:1;min-width:0}
+.pipe-name{font-size:12px;font-weight:700;color:var(--tx)}
+.pipe-meta{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:2px}
+.pipe-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ══ CONNECTION CARD ══ */
+.conn-card{background:var(--bg2);border:1px solid var(--bd);border-radius:3px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.conn-card:hover{border-color:var(--bd2)}
+.conn-icon{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.conn-info{flex:1;min-width:0}
+.conn-name{font-size:12px;font-weight:700;color:var(--tx)}
+.conn-meta{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:2px}
+
+/* ══ ACTIVITY ══ */
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.activity-item:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.act-msg{font-size:12px;color:var(--tx2);line-height:1.5}
+.act-msg strong{color:var(--tx);font-weight:600}
+.act-time{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:2px}
+
+/* ══ SCORE RING ══ */
+.score-ring{display:flex;align-items:center;gap:20px;padding:16px;background:var(--bg2);border:1px solid var(--bd);border-radius:3px;margin-bottom:12px}
+.ring-chart{width:64px;height:64px;position:relative;flex-shrink:0}
+.ring-chart svg{transform:rotate(-90deg)}
+.ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;font-weight:700}
+.ring-info{}
+.ring-label{font-size:11px;font-weight:700;color:var(--tx)}
+.ring-tier{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:2px}
+
+/* ══ MODAL ══ */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg1);border:1px solid var(--bd2);border-radius:4px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:13px;font-weight:700;letter-spacing:.04em}
+.modal-close{background:none;border:none;color:var(--tx2);cursor:pointer;font-size:18px;line-height:1;padding:0}
+.modal-close:hover{color:var(--tx)}
+.modal-body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px}
+
+/* ══ TOAST ══ */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--bd2);color:var(--tx);font-size:11px;padding:9px 16px;border-radius:3px;z-index:9999;display:none;font-weight:600;letter-spacing:.02em;max-width:320px}
+
+/* ══ TABS ══ */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:20px}
+.tab{padding:8px 16px;font-size:11px;font-weight:600;color:var(--tx3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;letter-spacing:.03em}
+.tab.active{color:var(--amb);border-bottom-color:var(--amb)}
+.tab:hover{color:var(--tx)}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ══ GRID LAYOUTS ══ */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
+
+.empty-state{text-align:center;padding:48px 20px;color:var(--tx3)}
+.empty-state .icon{font-size:32px;margin-bottom:10px}
+
+/* ══ ERI TIER COLORS ══ */
+.tier-1{color:#00CC44}.tier-2{color:#0EA5E9}.tier-3{color:#F59E0B}.tier-4{color:#F97316}.tier-5{color:#FF3333}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <a class="topbar-brand" href="/">Climactix</a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-context">ESG Analyst Workspace</span>
+  <div class="topbar-right">
+    <div class="topbar-user">
+      <div class="topbar-avatar" id="avatarInitial">A</div>
+      <div>
+        <div class="topbar-name" id="topbarName">Analyst</div>
+        <div class="topbar-role" id="topbarRole">ESG Analyst</div>
+      </div>
+    </div>
+    <a class="topbar-btn danger" href="/analyst/logout">Sign Out</a>
+  </div>
+</header>
+
+<!-- ══ BODY ══ -->
+<div class="body-wrap">
+
+  <!-- ══ SIDEBAR ══ -->
+  <nav class="sidebar">
+    <div class="sidebar-section">Main</div>
+    <a class="nav-item active" onclick="showSection('overview',this)">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="5" rx="1"/></svg></span>
+      <span class="nav-label">Overview</span>
+    </a>
+    <a class="nav-item" onclick="showSection('reports',this)">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 1h6l3 3v9H3z" stroke-linejoin="round"/><line x1="5" y1="6" x2="9" y2="6"/><line x1="5" y1="8.5" x2="9" y2="8.5"/><line x1="5" y1="4" x2="7" y2="4"/></svg></span>
+      <span class="nav-label">Reports</span>
+      <span class="nav-badge badge-blue" id="reportCount">0</span>
+    </a>
+    <a class="nav-item" onclick="showSection('assessments',this)">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="5.5"/><polyline points="4.5,7 6.5,9 9.5,5"/></svg></span>
+      <span class="nav-label">Assessments</span>
+      <span class="nav-badge badge-green" id="assessCount">0</span>
+    </a>
+    <div class="sidebar-section">Configuration</div>
+    <a class="nav-item" onclick="showSection('pipelines',this)">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="1" y1="7" x2="13" y2="7"/><circle cx="4" cy="7" r="2"/><circle cx="10" cy="7" r="2"/></svg></span>
+      <span class="nav-label">Pipelines</span>
+    </a>
+    <a class="nav-item" onclick="showSection('connections',this)">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 9l4-4"/><circle cx="3.5" cy="10.5" r="1.5"/><circle cx="10.5" cy="3.5" r="1.5"/></svg></span>
+      <span class="nav-label">Connections</span>
+    </a>
+    <div class="sidebar-section">Account</div>
+    <a class="nav-item" onclick="showSection('profile',this)">
+      <span class="nav-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="4.5" r="2.5"/><path d="M1.5 12.5c0-3.038 2.462-5.5 5.5-5.5s5.5 2.462 5.5 5.5"/></svg></span>
+      <span class="nav-label">Profile</span>
+    </a>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-health">
+        <span>Climactix Global</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══ MAIN CONTENT ══ -->
+  <main class="main">
+
+    <!-- ══════════ OVERVIEW ══════════ -->
+    <section class="section active" id="sec-overview">
+      <div class="page-hdr">
+        <div class="page-eyebrow">Dashboard</div>
+        <h1 class="page-title">Welcome back, <span id="welcomeName">Analyst</span></h1>
+        <p class="page-sub">Your ESG intelligence workspace — reports, assessments, and pipeline health at a glance.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card blue">
+          <div class="stat-lbl">Total Reports</div>
+          <div class="stat-val blue" id="ovReports">—</div>
+          <div class="stat-sub">Generated this session</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-lbl">Assessments</div>
+          <div class="stat-val green" id="ovAssess">—</div>
+          <div class="stat-sub">ERI scored</div>
+        </div>
+        <div class="stat-card warn">
+          <div class="stat-lbl">Active Pipelines</div>
+          <div class="stat-val warn" id="ovPipes">—</div>
+          <div class="stat-sub">Scheduled + manual</div>
+        </div>
+        <div class="stat-card pur">
+          <div class="stat-lbl">Connections</div>
+          <div class="stat-val pur" id="ovConns">—</div>
+          <div class="stat-sub">API integrations</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-title">Recent Activity</span>
+          </div>
+          <div class="card-body" id="activityFeed" style="padding:12px 18px">
+            <div class="activity-item"><div class="act-dot" style="background:var(--amb)"></div><div><div class="act-msg"><strong>ESG Report</strong> generated for Acme Corp — ERI 78/100</div><div class="act-time">Just now</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--grn)"></div><div><div class="act-msg"><strong>Assessment</strong> completed — Tier 2 (Advanced Reporter)</div><div class="act-time">2 min ago</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--warn)"></div><div><div class="act-msg"><strong>Knowledge base</strong> updated — 10 rules indexed</div><div class="act-time">5 min ago</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--pur)"></div><div><div class="act-msg"><strong>Pipeline</strong> "ESG Ingestion" completed successfully</div><div class="act-time">12 min ago</div></div></div>
+            <div class="activity-item"><div class="act-dot" style="background:var(--tx3)"></div><div><div class="act-msg"><strong>Connection</strong> OpenAI GPT-4o — ping 142ms</div><div class="act-time">18 min ago</div></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-title">ERI Score Distribution</span>
+          </div>
+          <div class="card-body">
+            <div class="score-ring">
+              <div class="ring-chart">
+                <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="#1A1A1A" stroke-width="8"/><circle cx="32" cy="32" r="26" fill="none" stroke="#0EA5E9" stroke-width="8" stroke-dasharray="163" stroke-dashoffset="41" stroke-linecap="round"/></svg>
+                <div class="ring-val" style="color:var(--amb)">75</div>
+              </div>
+              <div class="ring-info">
+                <div class="ring-label">Portfolio Average ERI</div>
+                <div class="ring-tier">Tier 2 — Advanced Reporter</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px">
+              <div style="text-align:center;padding:8px 4px;background:var(--bg2);border:1px solid var(--bd);border-radius:2px"><div style="font-family:var(--mono);font-size:14px;font-weight:700;color:#00CC44">2</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Tier 1</div></div>
+              <div style="text-align:center;padding:8px 4px;background:var(--bg2);border:1px solid var(--bd);border-radius:2px"><div style="font-family:var(--mono);font-size:14px;font-weight:700;color:#0EA5E9">5</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Tier 2</div></div>
+              <div style="text-align:center;padding:8px 4px;background:var(--bg2);border:1px solid var(--bd);border-radius:2px"><div style="font-family:var(--mono);font-size:14px;font-weight:700;color:#F59E0B">3</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Tier 3</div></div>
+              <div style="text-align:center;padding:8px 4px;background:var(--bg2);border:1px solid var(--bd);border-radius:2px"><div style="font-family:var(--mono);font-size:14px;font-weight:700;color:#F97316">1</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Tier 4</div></div>
+              <div style="text-align:center;padding:8px 4px;background:var(--bg2);border:1px solid var(--bd);border-radius:2px"><div style="font-family:var(--mono);font-size:14px;font-weight:700;color:#FF3333">0</div><div style="font-size:9px;color:var(--tx3);margin-top:2px">Tier 5</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">Quick Actions</span>
+        </div>
+        <div class="card-body" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="showSection('reports',document.querySelector('[onclick*=reports]'))">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1h5l2 2v8H2z"/><line x1="4" y1="5" x2="7.5" y2="5"/><line x1="4" y1="7" x2="7.5" y2="7"/></svg>
+            View Reports
+          </button>
+          <button class="btn" onclick="showSection('assessments',document.querySelector('[onclick*=assessments]'))">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="5.5" cy="5.5" r="4.5"/><polyline points="3.5,5.5 5,7 7.5,4"/></svg>
+            Assessments
+          </button>
+          <button class="btn" onclick="showSection('pipelines',document.querySelector('[onclick*=pipelines]'))">+ Add Pipeline</button>
+          <button class="btn" onclick="showSection('connections',document.querySelector('[onclick*=connections]'))">Manage Connections</button>
+          <a class="btn" href="/admin/knowledge" target="_blank">Knowledge Base ↗</a>
+          <a class="btn" href="/docs" target="_blank">API Docs ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ REPORTS ══════════ -->
+    <section class="section" id="sec-reports">
+      <div class="page-hdr">
+        <div class="page-eyebrow">Report Library</div>
+        <h1 class="page-title">ESG Reports</h1>
+        <p class="page-sub">All generated reports — institutional, assessment, greenwashing, and simulation briefs.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">Generated Reports</span>
+          <div class="card-actions">
+            <input type="text" id="reportFilter" placeholder="Filter reports…" style="padding:4px 10px;font-size:11px;border:1px solid var(--bd);background:var(--bg2);color:var(--tx);border-radius:2px;outline:none;width:180px" oninput="filterReports(this.value)"/>
+            <button class="btn btn-sm btn-primary" onclick="openNewReportModal()">+ New Report</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Type</th>
+                <th>ERI / Score</th>
+                <th>Framework</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ ASSESSMENTS ══════════ -->
+    <section class="section" id="sec-assessments">
+      <div class="page-hdr">
+        <div class="page-eyebrow">ERI Assessment</div>
+        <h1 class="page-title">Assessment Details</h1>
+        <p class="page-sub">ERI scores, tier classifications, and framework readiness for all assessed companies.</p>
+      </div>
+
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card green"><div class="stat-lbl">Avg ERI Score</div><div class="stat-val green">74.2</div><div class="stat-sub">Across all companies</div></div>
+        <div class="stat-card blue"><div class="stat-lbl">Framework Coverage</div><div class="stat-val blue">68%</div><div class="stat-sub">GRI + TCFD + ISSB</div></div>
+        <div class="stat-card warn"><div class="stat-lbl">Disclosure Gaps</div><div class="stat-val warn">12</div><div class="stat-sub">Across portfolio</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <span class="card-title">Assessment Records</span>
+          <div class="card-actions">
+            <button class="btn btn-sm btn-primary" onclick="window.open('../../assessment.html','_blank')">+ New Assessment ↗</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Industry</th>
+                <th>ERI Score</th>
+                <th>Tier</th>
+                <th>E Score</th>
+                <th>S Score</th>
+                <th>G Score</th>
+                <th>Date</th>
+                <th>Report</th>
+              </tr>
+            </thead>
+            <tbody id="assessTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-hdr"><span class="card-title">Framework Readiness Breakdown</span></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+            <div style="padding:14px;background:var(--bg2);border:1px solid var(--bd);border-radius:3px">
+              <div style="font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px">GRI Standards</div>
+              <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--grn)">72%</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:4px">9/15 requirements met avg</div>
+              <div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:10px"><div style="height:4px;background:var(--grn);border-radius:2px;width:72%"></div></div>
+            </div>
+            <div style="padding:14px;background:var(--bg2);border:1px solid var(--bd);border-radius:3px">
+              <div style="font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px">TCFD</div>
+              <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--amb)">61%</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:4px">Scenario analysis gap</div>
+              <div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:10px"><div style="height:4px;background:var(--amb);border-radius:2px;width:61%"></div></div>
+            </div>
+            <div style="padding:14px;background:var(--bg2);border:1px solid var(--bd);border-radius:3px">
+              <div style="font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px">ISSB S1/S2</div>
+              <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--warn)">54%</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:4px">Scope 3 gap critical</div>
+              <div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:10px"><div style="height:4px;background:var(--warn);border-radius:2px;width:54%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ PIPELINES ══════════ -->
+    <section class="section" id="sec-pipelines">
+      <div class="page-hdr">
+        <div class="page-eyebrow">Data Infrastructure</div>
+        <h1 class="page-title">Pipelines</h1>
+        <p class="page-sub">Configure data ingestion, transformation, and scheduling pipelines for ESG data flows.</p>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-hdr">
+              <span class="card-title">Active Pipelines</span>
+              <button class="btn btn-sm btn-primary" onclick="openPipelineModal()">+ Add Pipeline</button>
+            </div>
+            <div class="card-body" id="pipelinesList"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">Add New Pipeline</span></div>
+          <div class="card-body">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="field"><label>Pipeline Name</label><input type="text" id="pipeName" placeholder="e.g. ESG Report Ingestion"/></div>
+              <div class="field"><label>Source Type</label>
+                <select id="pipeSource">
+                  <option value="file_upload">File Upload (PDF/DOCX/XLSX)</option>
+                  <option value="api_pull">API Pull (REST endpoint)</option>
+                  <option value="webhook">Webhook (incoming)</option>
+                  <option value="scheduled_fetch">Scheduled Fetch (URL)</option>
+                  <option value="database">Database Query</option>
+                </select>
+              </div>
+              <div class="field"><label>Destination</label>
+                <select id="pipeDest">
+                  <option value="esg_engine">ESG Narrative Engine</option>
+                  <option value="greenwashing">Greenwashing Scanner</option>
+                  <option value="assessment">Assessment Engine</option>
+                  <option value="knowledge_base">Knowledge Base</option>
+                  <option value="simulation">Risk Simulation</option>
+                </select>
+              </div>
+              <div class="field"><label>Schedule</label>
+                <select id="pipeSchedule">
+                  <option value="manual">Manual trigger</option>
+                  <option value="hourly">Every hour</option>
+                  <option value="daily">Daily at 08:00 UTC</option>
+                  <option value="weekly">Weekly Monday 09:00</option>
+                  <option value="monthly">Monthly 1st</option>
+                </select>
+              </div>
+              <div class="field"><label>Notes (optional)</label><input type="text" id="pipeNotes" placeholder="e.g. Feeds quarterly ESG reports from S3"/></div>
+              <button class="btn btn-primary" onclick="addPipeline()">Save Pipeline</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ CONNECTIONS ══════════ -->
+    <section class="section" id="sec-connections">
+      <div class="page-hdr">
+        <div class="page-eyebrow">Integrations</div>
+        <h1 class="page-title">Connections</h1>
+        <p class="page-sub">Manage API keys and integrations powering the Climactix intelligence platform.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hdr">
+            <span class="card-title">Active Connections</span>
+            <button class="btn btn-sm btn-primary" onclick="openConnModal()">+ Add Connection</button>
+          </div>
+          <div class="card-body" id="connectionsList"></div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-hdr"><span class="card-title">Connection Health</span></div>
+            <div class="card-body">
+              <button class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:12px" onclick="pingAllConnections()">
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="1,5.5 4,2.5 7,5.5 10,2.5"/></svg>
+                Ping All Connections
+              </button>
+              <div id="pingResults"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hdr"><span class="card-title">Add New Connection</span></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+              <div class="field"><label>Service Name</label><input type="text" id="connName" placeholder="e.g. OpenAI GPT-4o"/></div>
+              <div class="field"><label>Type</label>
+                <select id="connType">
+                  <option value="openai">OpenAI API</option>
+                  <option value="climate_api">Climate Data API</option>
+                  <option value="esg_data">ESG Data Provider</option>
+                  <option value="database">PostgreSQL Database</option>
+                  <option value="storage">Cloud Storage (S3/GCS)</option>
+                  <option value="webhook">Webhook endpoint</option>
+                  <option value="custom">Custom REST API</option>
+                </select>
+              </div>
+              <div class="field"><label>Endpoint / Key Prefix</label><input type="text" id="connEndpoint" placeholder="https://api.example.com or sk-proj-…"/></div>
+              <div class="field"><label>Status Note</label><input type="text" id="connNote" placeholder="e.g. Production key · 10M token limit"/></div>
+              <button class="btn btn-primary" onclick="addConnection()">Save Connection</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ PROFILE ══════════ -->
+    <section class="section" id="sec-profile">
+      <div class="page-hdr">
+        <div class="page-eyebrow">Account</div>
+        <h1 class="page-title">My Profile</h1>
+        <p class="page-sub">Manage your analyst account, preferences, and notification settings.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">Personal Information</span></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px">
+              <div id="profileAvatar" style="width:56px;height:56px;border-radius:50%;background:var(--amb2);border:2px solid rgba(14,165,233,0.3);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:var(--amb);font-family:var(--mono)">A</div>
+              <div>
+                <div id="profileNameDisplay" style="font-size:16px;font-weight:700">Loading…</div>
+                <div id="profileRoleDisplay" style="font-size:11px;color:var(--tx2);margin-top:2px;font-family:var(--mono)"></div>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="field"><label>First Name</label><input type="text" id="pFirstName" placeholder="Jane"/></div>
+              <div class="field"><label>Last Name</label><input type="text" id="pLastName" placeholder="Smith"/></div>
+            </div>
+            <div class="field"><label>Work Email</label><input type="email" id="pEmail" placeholder="analyst@company.com"/></div>
+            <div class="field"><label>Organisation</label><input type="text" id="pOrg" placeholder="e.g. Acme Capital"/></div>
+            <div class="field"><label>Role / Title</label>
+              <select id="pRole">
+                <option>ESG Analyst</option>
+                <option>Senior ESG Analyst</option>
+                <option>ESG Manager</option>
+                <option>Chief Sustainability Officer</option>
+                <option>Portfolio Manager</option>
+                <option>Risk Analyst</option>
+                <option>Compliance Officer</option>
+                <option>Sustainability Consultant</option>
+              </select>
+            </div>
+            <div class="field"><label>LinkedIn / Bio URL</label><input type="text" id="pLinkedIn" placeholder="https://linkedin.com/in/…"/></div>
+            <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-hdr"><span class="card-title">Preferences</span></div>
+            <div class="card-body">
+              <div class="toggle-row">
+                <div class="toggle-info"><div class="toggle-label">Email report notifications</div><div class="toggle-desc">Get notified when a report finishes generating</div></div>
+                <label class="toggle"><input type="checkbox" id="notifReports" checked/><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info"><div class="toggle-label">Pipeline failure alerts</div><div class="toggle-desc">Immediate alert on pipeline errors</div></div>
+                <label class="toggle"><input type="checkbox" id="notifPipes" checked/><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info"><div class="toggle-label">Greenwashing scan alerts</div><div class="toggle-desc">Alert on High-risk greenwashing detections</div></div>
+                <label class="toggle"><input type="checkbox" id="notifGW"/><span class="toggle-slider"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info"><div class="toggle-label">Weekly digest</div><div class="toggle-desc">Monday summary of ESG activity</div></div>
+                <label class="toggle"><input type="checkbox" id="notifDigest" checked/><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hdr"><span class="card-title">Workspace</span></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+              <div class="field"><label>Default Report Format</label>
+                <select id="prefFormat">
+                  <option>PDF (Premium)</option>
+                  <option>DOCX</option>
+                  <option>Streaming (SSE)</option>
+                </select>
+              </div>
+              <div class="field"><label>Default ESG Framework</label>
+                <select id="prefFW">
+                  <option>GRI + TCFD + ISSB (All)</option>
+                  <option>GRI Only</option>
+                  <option>TCFD Only</option>
+                  <option>ISSB S1/S2</option>
+                  <option>CSRD/ESRS</option>
+                </select>
+              </div>
+              <div class="field"><label>Currency</label>
+                <select id="prefCurrency">
+                  <option>USD ($)</option>
+                  <option>EUR (€)</option>
+                  <option>GBP (£)</option>
+                  <option>INR (₹)</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" onclick="savePrefs()">Save Preferences</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ══ NEW REPORT MODAL ══ -->
+<div class="modal-bg" id="reportModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title">Generate New Report</span>
+      <button class="modal-close" onclick="closeModal('reportModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Company Name</label><input type="text" id="mCompany" placeholder="e.g. Acme Corp"/></div>
+      <div class="field"><label>Report Type</label>
+        <select id="mType">
+          <option value="esg_narrative">ESG Narrative (9 modules)</option>
+          <option value="assessment">Assessment Report (streaming)</option>
+          <option value="greenwashing">Greenwashing Scan</option>
+          <option value="simulation">Simulation Intelligence Brief</option>
+        </select>
+      </div>
+      <div class="field"><label>Industry</label>
+        <select id="mIndustry">
+          <option>Energy</option><option>Banking & Finance</option><option>Manufacturing</option>
+          <option>Technology</option><option>Mining</option><option>Real Estate</option>
+          <option>Oil & Gas</option><option>Logistics</option><option>Agriculture</option>
+        </select>
+      </div>
+      <div class="field"><label>Notes</label><textarea id="mNotes" placeholder="Optional context or instructions…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('reportModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="createReport()">Generate Report</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══ STATE ══
+const STORAGE_KEY = 'cx_analyst_profile';
+const REPORTS_KEY = 'cx_analyst_reports';
+const PIPELINES_KEY = 'cx_analyst_pipelines';
+const CONNECTIONS_KEY = 'cx_analyst_connections';
+
+function getProfile(){return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');}
+function saveProfileData(p){localStorage.setItem(STORAGE_KEY,JSON.stringify(p));}
+function getReports(){return JSON.parse(localStorage.getItem(REPORTS_KEY)||'[]');}
+function saveReports(r){localStorage.setItem(REPORTS_KEY,JSON.stringify(r));}
+function getPipelines(){return JSON.parse(localStorage.getItem(PIPELINES_KEY)||'[]');}
+function savePipelines(p){localStorage.setItem(PIPELINES_KEY,JSON.stringify(p));}
+function getConnections(){return JSON.parse(localStorage.getItem(CONNECTIONS_KEY)||'[]');}
+function saveConnections(c){localStorage.setItem(CONNECTIONS_KEY,JSON.stringify(c));}
+
+// ══ INIT ══
+function init(){
+  const p=getProfile();
+  const name=p.firstName?(p.firstName+(p.lastName?' '+p.lastName:'')):'Analyst';
+  document.getElementById('welcomeName').textContent=name;
+  document.getElementById('topbarName').textContent=name;
+  document.getElementById('topbarRole').textContent=p.role||'ESG Analyst';
+  document.getElementById('avatarInitial').textContent=(p.firstName||'A')[0].toUpperCase();
+  document.getElementById('profileAvatar').textContent=(p.firstName||'A')[0].toUpperCase();
+  document.getElementById('profileNameDisplay').textContent=name;
+  document.getElementById('profileRoleDisplay').textContent=p.role||'ESG Analyst';
+  if(p.firstName)document.getElementById('pFirstName').value=p.firstName;
+  if(p.lastName)document.getElementById('pLastName').value=p.lastName;
+  if(p.email)document.getElementById('pEmail').value=p.email;
+  if(p.org)document.getElementById('pOrg').value=p.org;
+  if(p.role)document.getElementById('pRole').value=p.role;
+  if(p.linkedin)document.getElementById('pLinkedIn').value=p.linkedin;
+  updateStats();
+  renderReports();
+  renderAssessments();
+  renderPipelines();
+  renderConnections();
+}
+
+function updateStats(){
+  const r=getReports(),p=getPipelines(),c=getConnections();
+  const a=getAssessments();
+  document.getElementById('ovReports').textContent=r.length;
+  document.getElementById('ovAssess').textContent=a.length;
+  document.getElementById('ovPipes').textContent=p.filter(x=>x.status==='active').length||p.length;
+  document.getElementById('ovConns').textContent=c.length;
+  document.getElementById('reportCount').textContent=r.length;
+  document.getElementById('assessCount').textContent=a.length;
+}
+
+// ══ SECTION NAV ══
+function showSection(id, el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+}
+
+// ══ TOAST ══
+function toast(msg,ms=2500){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(()=>t.style.display='none',ms);
+}
+
+// ══ REPORTS ══
+function getAssessments(){return JSON.parse(localStorage.getItem('cx_analyst_assessments')||'[]');}
+
+const DEMO_REPORTS=[
+  {id:'r001',company:'Acme Corporation',type:'ESG Narrative',eri:78,framework:'GRI+TCFD+ISSB',status:'complete',date:'2026-05-25',industry:'Manufacturing'},
+  {id:'r002',company:'GreenTech Ltd',type:'Assessment',eri:91,framework:'ISSB S1/S2',status:'complete',date:'2026-05-24',industry:'Technology'},
+  {id:'r003',company:'Delta Energy',type:'Greenwashing Scan',eri:55,framework:'GRI',status:'complete',date:'2026-05-23',industry:'Energy'},
+  {id:'r004',company:'Pacific Ports',type:'Simulation Brief',eri:62,framework:'TCFD+NGFS',status:'complete',date:'2026-05-22',industry:'Logistics'},
+  {id:'r005',company:'Cerrado AgriCo',type:'ESG Narrative',eri:48,framework:'GRI+CSRD',status:'processing',date:'2026-05-26',industry:'Agriculture'},
+];
+
+const DEMO_ASSESSMENTS=[
+  {id:'a001',company:'Acme Corporation',industry:'Manufacturing',eri:78,tier:'Tier 2',e:75,s:80,g:79,date:'2026-05-25'},
+  {id:'a002',company:'GreenTech Ltd',industry:'Technology',eri:91,tier:'Tier 1',e:95,s:88,g:90,date:'2026-05-24'},
+  {id:'a003',company:'Delta Energy',industry:'Energy',eri:55,tier:'Tier 3',e:52,s:60,g:54,date:'2026-05-23'},
+  {id:'a004',company:'Pacific Ports',industry:'Logistics',eri:62,tier:'Tier 3',e:58,s:66,g:63,date:'2026-05-22'},
+  {id:'a005',company:'Frankfurt HQ',industry:'Finance',eri:84,tier:'Tier 2',e:80,s:88,g:85,date:'2026-05-20'},
+];
+
+function getStoredReports(){
+  const stored=getReports();
+  return stored.length?stored:DEMO_REPORTS;
+}
+
+function getStoredAssessments(){
+  const stored=getAssessments();
+  return stored.length?stored:DEMO_ASSESSMENTS;
+}
+
+function renderReports(filter=''){
+  const reports=getStoredReports().filter(r=>
+    !filter||r.company.toLowerCase().includes(filter.toLowerCase())||r.type.toLowerCase().includes(filter.toLowerCase())
+  );
+  const tbody=document.getElementById('reportsTableBody');
+  if(!reports.length){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--tx3)">No reports yet. Generate your first report above.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=reports.map(r=>`
+    <tr>
+      <td class="bold">${r.company}</td>
+      <td class="mono">${r.type}</td>
+      <td class="mono" style="color:var(--amb)">${r.eri}/100</td>
+      <td class="mono">${r.framework}</td>
+      <td><span class="pill ${r.status==='complete'?'pill-grn':r.status==='processing'?'pill-blue':'pill-warn'}">${r.status}</span></td>
+      <td class="mono">${r.date}</td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-sm" onclick="viewReport('${r.id}')">View</button>
+          <button class="btn btn-sm" onclick="downloadReport('${r.id}')">↓ PDF</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterReports(v){renderReports(v);}
+
+function renderAssessments(){
+  const assessments=getStoredAssessments();
+  const tbody=document.getElementById('assessTableBody');
+  tbody.innerHTML=assessments.map(a=>`
+    <tr>
+      <td class="bold">${a.company}</td>
+      <td>${a.industry}</td>
+      <td class="mono" style="color:var(--amb);font-weight:700">${a.eri}/100</td>
+      <td><span class="pill ${a.tier==='Tier 1'?'pill-grn':a.tier==='Tier 2'?'pill-blue':a.tier==='Tier 3'?'pill-warn':'pill-red'}">${a.tier}</span></td>
+      <td class="mono" style="color:#4ADE80">${a.e}</td>
+      <td class="mono" style="color:var(--amb)">${a.s}</td>
+      <td class="mono" style="color:var(--pur)">${a.g}</td>
+      <td class="mono">${a.date}</td>
+      <td><button class="btn btn-sm btn-primary" onclick="toast('Opening assessment report…')">Report</button></td>
+    </tr>
+  `).join('');
+}
+
+// ══ PIPELINES ══
+const DEFAULT_PIPES=[
+  {id:'p001',name:'ESG Report Ingestion',source:'file_upload',dest:'esg_engine',schedule:'manual',status:'active',notes:'PDF/DOCX uploads via web UI'},
+  {id:'p002',name:'Climate Data Feed',source:'scheduled_fetch',dest:'simulation',schedule:'daily',status:'active',notes:'NOAA + Copernicus data pull'},
+  {id:'p003',name:'Greenwashing Monitor',source:'api_pull',dest:'greenwashing',schedule:'weekly',status:'active',notes:'Automated ESG report scan'},
+];
+
+function renderPipelines(){
+  const pipes=getPipelines().concat(DEFAULT_PIPES.filter(d=>!getPipelines().find(p=>p.id===d.id)));
+  const el=document.getElementById('pipelinesList');
+  const srcIcons={file_upload:'📄',api_pull:'🔗',webhook:'⚡',scheduled_fetch:'⏰',database:'🗄'};
+  const destColors={esg_engine:'var(--amb)',greenwashing:'var(--warn)',assessment:'var(--grn)',knowledge_base:'var(--pur)',simulation:'var(--pink)'};
+  el.innerHTML=pipes.map(p=>`
+    <div class="pipeline-card">
+      <div class="pipe-icon" style="background:var(--bg3);border:1px solid var(--bd)">${srcIcons[p.source]||'⚙'}</div>
+      <div class="pipe-info">
+        <div class="pipe-name">${p.name}</div>
+        <div class="pipe-meta">${p.source.replace('_',' ')} → <span style="color:${destColors[p.dest]||'var(--tx2)'}">${p.dest.replace('_',' ')}</span> · ${p.schedule}</div>
+      </div>
+      <span class="pill pill-grn">${p.status}</span>
+      <div class="pipe-actions">
+        <button class="btn btn-sm" onclick="runPipeline('${p.id}','${p.name}')">▶ Run</button>
+        <button class="btn btn-sm" onclick="deletePipeline('${p.id}')">×</button>
+      </div>
+    </div>
+  `).join('')||'<div class="empty-state"><div class="icon">⚡</div>No pipelines yet</div>';
+}
+
+function addPipeline(){
+  const name=document.getElementById('pipeName').value.trim();
+  if(!name){toast('Pipeline name required');return;}
+  const p={id:'p'+Date.now(),name,source:document.getElementById('pipeSource').value,dest:document.getElementById('pipeDest').value,schedule:document.getElementById('pipeSchedule').value,status:'active',notes:document.getElementById('pipeNotes').value};
+  const pipes=getPipelines();pipes.push(p);savePipelines(pipes);
+  renderPipelines();updateStats();
+  document.getElementById('pipeName').value='';document.getElementById('pipeNotes').value='';
+  toast('Pipeline saved');
+}
+
+function deletePipeline(id){
+  const pipes=getPipelines().filter(p=>p.id!==id);savePipelines(pipes);renderPipelines();toast('Pipeline removed');
+}
+
+function runPipeline(id,name){toast(`Running pipeline: ${name}…`,3000);}
+
+// ══ CONNECTIONS ══
+const DEFAULT_CONNS=[
+  {id:'c001',name:'OpenAI GPT-4o',type:'openai',endpoint:'sk-proj-***',note:'Primary AI engine · ESG analysis + narratives',status:'connected'},
+  {id:'c002',name:'Climate Data API',type:'climate_api',endpoint:'https://api.climatedata.io',note:'Temperature, CO₂, sea level grids',status:'connected'},
+  {id:'c003',name:'PostgreSQL (local)',type:'database',endpoint:'localhost:5432/climactix',note:'Auth + user data · connection pool',status:'degraded'},
+];
+
+const connIcons={openai:'🤖',climate_api:'🌍',esg_data:'📊',database:'🗄',storage:'☁',webhook:'⚡',custom:'🔗'};
+
+function renderConnections(){
+  const conns=getConnections().concat(DEFAULT_CONNS.filter(d=>!getConnections().find(c=>c.id===d.id)));
+  const el=document.getElementById('connectionsList');
+  el.innerHTML=conns.map(c=>`
+    <div class="conn-card">
+      <div class="conn-icon" style="background:var(--bg3);border:1px solid var(--bd)">${connIcons[c.type]||'🔗'}</div>
+      <div class="conn-info">
+        <div class="conn-name">${c.name}</div>
+        <div class="conn-meta">${c.note||c.endpoint}</div>
+      </div>
+      <span class="pill ${c.status==='connected'?'pill-grn':c.status==='degraded'?'pill-warn':'pill-red'}">${c.status}</span>
+      <button class="btn btn-sm btn-icon" onclick="deleteConnection('${c.id}')" title="Remove">×</button>
+    </div>
+  `).join('')||'<div class="empty-state"><div class="icon">🔗</div>No connections yet</div>';
+}
+
+function addConnection(){
+  const name=document.getElementById('connName').value.trim();
+  if(!name){toast('Connection name required');return;}
+  const c={id:'c'+Date.now(),name,type:document.getElementById('connType').value,endpoint:document.getElementById('connEndpoint').value,note:document.getElementById('connNote').value,status:'connected'};
+  const conns=getConnections();conns.push(c);saveConnections(conns);
+  renderConnections();updateStats();
+  document.getElementById('connName').value='';document.getElementById('connEndpoint').value='';document.getElementById('connNote').value='';
+  toast('Connection saved');
+}
+
+function deleteConnection(id){
+  const conns=getConnections().filter(c=>c.id!==id);saveConnections(conns);renderConnections();toast('Connection removed');
+}
+
+async function pingAllConnections(){
+  const el=document.getElementById('pingResults');
+  el.innerHTML='<p style="font-size:11px;color:var(--tx2)">Checking connections…</p>';
+  const conns=getConnections();
+  if(!conns.length){el.innerHTML='<p style="font-size:11px;color:var(--tx3)">No connections configured.</p>';return;}
+  el.innerHTML=conns.map(c=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--bd);border-radius:2px;margin-bottom:6px">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--grn);flex-shrink:0;display:block"></span>
+      <span style="font-size:11px;color:var(--tx2)">${c.name||c.type}</span>
+      <span style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--grn)">active</span>
+    </div>`).join('');
+}
+
+// ══ PROFILE ══
+function saveProfile(){
+  const p={
+    firstName:document.getElementById('pFirstName').value.trim(),
+    lastName:document.getElementById('pLastName').value.trim(),
+    email:document.getElementById('pEmail').value.trim(),
+    org:document.getElementById('pOrg').value.trim(),
+    role:document.getElementById('pRole').value,
+    linkedin:document.getElementById('pLinkedIn').value.trim(),
+  };
+  saveProfileData(p);
+  const name=p.firstName+(p.lastName?' '+p.lastName:'');
+  document.getElementById('welcomeName').textContent=name||'Analyst';
+  document.getElementById('topbarName').textContent=name||'Analyst';
+  document.getElementById('topbarRole').textContent=p.role;
+  document.getElementById('avatarInitial').textContent=(p.firstName||'A')[0].toUpperCase();
+  document.getElementById('profileAvatar').textContent=(p.firstName||'A')[0].toUpperCase();
+  document.getElementById('profileNameDisplay').textContent=name||'Analyst';
+  document.getElementById('profileRoleDisplay').textContent=p.role;
+  toast('Profile saved');
+}
+
+function savePrefs(){toast('Preferences saved');}
+
+// ══ MODAL ══
+function openNewReportModal(){document.getElementById('reportModal').classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function createReport(){
+  const company=document.getElementById('mCompany').value.trim();
+  if(!company){toast('Company name required');return;}
+  const report={id:'r'+Date.now(),company,type:document.getElementById('mType').options[document.getElementById('mType').selectedIndex].text,eri:Math.floor(Math.random()*40+50),framework:'GRI+TCFD+ISSB',status:'complete',date:new Date().toISOString().split('T')[0],industry:document.getElementById('mIndustry').value};
+  const reports=getReports();reports.unshift(report);saveReports(reports);
+  renderReports();updateStats();
+  closeModal('reportModal');
+  toast(`Report created for ${company}`);
+}
+
+function viewReport(id){toast('Opening report viewer…',2000);}
+function downloadReport(id){toast('Preparing PDF download…',2000);}
+function openPipelineModal(){}
+function openConnModal(){}
+
+init();
+</script>
+</body>
+</html>

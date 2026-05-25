@@ -18,15 +18,19 @@ Start:
   uvicorn main:app --reload --port 8000
 """
 
+import hashlib
+import hmac
 import io
 import json
 import os
+import time
 from typing import Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response, JSONResponse, StreamingResponse
+from fastapi.responses import Response, JSONResponse, StreamingResponse, HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 load_dotenv()
@@ -46,6 +50,72 @@ import database as db
 
 # ── Template directory ─────────────────────────────────────────────────────────
 _TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "templates")
+_templates = Jinja2Templates(directory=_TEMPLATES_DIR)
+
+# ── Admin session helpers ──────────────────────────────────────────────────────
+_ADMIN_COOKIE = "cx_admin_session"
+_SESSION_TTL  = 8 * 3600  # 8 hours
+
+
+def _admin_secret() -> str:
+    return os.getenv("ADMIN_SECRET", "cx_admin_hmac_secret_change_in_production")
+
+
+def _make_token() -> str:
+    """Sign a timestamp with HMAC-SHA256 → opaque session token."""
+    ts  = str(int(time.time()))
+    sig = hmac.new(_admin_secret().encode(), ts.encode(), hashlib.sha256).hexdigest()
+    return f"{ts}.{sig}"
+
+
+def _verify_token(token: str) -> bool:
+    """Return True if token is valid and not expired."""
+    try:
+        ts_str, sig = token.split(".", 1)
+        ts = int(ts_str)
+        expected = hmac.new(_admin_secret().encode(), ts_str.encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(sig, expected):
+            return False
+        return (int(time.time()) - ts) < _SESSION_TTL
+    except Exception:
+        return False
+
+
+def _is_admin(request: Request) -> bool:
+    token = request.cookies.get(_ADMIN_COOKIE, "")
+    return _verify_token(token)
+
+
+# ── Analyst session helpers ───────────────────────────────────────────────────
+_ANALYST_COOKIE = "cx_analyst_session"
+
+
+def _analyst_secret() -> str:
+    return os.getenv("ANALYST_SECRET", "cx_analyst_hmac_secret_change_in_production")
+
+
+def _make_analyst_token() -> str:
+    ts  = str(int(time.time()))
+    sig = hmac.new(_analyst_secret().encode(), ts.encode(), hashlib.sha256).hexdigest()
+    return f"{ts}.{sig}"
+
+
+def _verify_analyst_token(token: str) -> bool:
+    try:
+        ts_str, sig = token.split(".", 1)
+        ts = int(ts_str)
+        expected = hmac.new(_analyst_secret().encode(), ts_str.encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(sig, expected):
+            return False
+        return (int(time.time()) - ts) < _SESSION_TTL
+    except Exception:
+        return False
+
+
+def _is_analyst(request: Request) -> bool:
+    token = request.cookies.get(_ANALYST_COOKIE, "")
+    return _verify_analyst_token(token)
+
 
 # ── App init ──────────────────────────────────────────────────────────────────
 
@@ -118,6 +188,126 @@ class SimulationBriefRequest(BaseModel):
     year: Optional[int] = 2035
     portfolio_summary: Optional[dict] = {}
     assets: Optional[list] = []
+
+
+# ── Admin Auth ────────────────────────────────────────────────────────────────
+
+@app.get("/admin/login")
+def admin_login_page(request: Request, next: str = "/admin/knowledge", error: str = ""):
+    """Render the admin login page."""
+    if _is_admin(request):
+        return RedirectResponse(url=next, status_code=302)
+    return _templates.TemplateResponse(
+        "admin_login.html",
+        {"request": request, "next": next, "error": error},
+    )
+
+
+@app.post("/admin/login")
+def admin_login(
+    request: Request,
+    password: str = Form(...),
+    next: str = Form(default="/admin/knowledge"),
+):
+    """Validate admin password and issue a session cookie."""
+    admin_pw = os.getenv("ADMIN_PASSWORD", "")
+    if not admin_pw or not hmac.compare_digest(password, admin_pw):
+        return _templates.TemplateResponse(
+            "admin_login.html",
+            {"request": request, "next": next, "error": "Incorrect password. Please try again."},
+            status_code=401,
+        )
+    token    = _make_token()
+    response = RedirectResponse(url=next, status_code=302)
+    response.set_cookie(
+        _ADMIN_COOKIE,
+        token,
+        max_age=_SESSION_TTL,
+        httponly=True,
+        samesite="lax",
+    )
+    return response
+
+
+@app.get("/admin/logout")
+def admin_logout():
+    """Clear the admin session cookie and redirect to login."""
+    response = RedirectResponse(url="/admin/login", status_code=302)
+    response.delete_cookie(_ADMIN_COOKIE)
+    return response
+
+
+# ── Knowledge Base Admin UI ────────────────────────────────────────────────────
+
+@app.get("/admin/knowledge")
+def knowledge_admin(request: Request):
+    """Serve the Knowledge Base management UI — requires admin session."""
+    if not _is_admin(request):
+        return RedirectResponse(url="/admin/login?next=/admin/knowledge", status_code=302)
+    template_path = os.path.join(_TEMPLATES_DIR, "knowledge_admin.html")
+    with open(template_path, "r") as f:
+        return HTMLResponse(content=f.read())
+
+
+# ── Analyst Auth + Dashboard ──────────────────────────────────────────────────
+
+@app.get("/analyst/login")
+def analyst_login_page(request: Request, next: str = "/analyst/dashboard", error: str = ""):
+    """Render the ESG analyst login page."""
+    if _is_analyst(request):
+        return RedirectResponse(url=next, status_code=302)
+    return _templates.TemplateResponse(
+        "analyst_login.html",
+        {"request": request, "next": next, "error": error},
+    )
+
+
+@app.post("/analyst/login")
+def analyst_login(
+    request: Request,
+    email: str = Form(...),
+    password: str = Form(...),
+    next: str = Form(default="/analyst/dashboard"),
+):
+    """Validate analyst credentials and issue a session cookie."""
+    analyst_email = os.getenv("ANALYST_EMAIL", "")
+    analyst_pw    = os.getenv("ANALYST_PASSWORD", "")
+    email_ok    = analyst_email and hmac.compare_digest(email.strip().lower(), analyst_email.strip().lower())
+    password_ok = analyst_pw    and hmac.compare_digest(password, analyst_pw)
+    if not (email_ok and password_ok):
+        return _templates.TemplateResponse(
+            "analyst_login.html",
+            {"request": request, "next": next, "error": "Invalid email or password. Please try again."},
+            status_code=401,
+        )
+    token    = _make_analyst_token()
+    response = RedirectResponse(url=next, status_code=302)
+    response.set_cookie(
+        _ANALYST_COOKIE,
+        token,
+        max_age=_SESSION_TTL,
+        httponly=True,
+        samesite="lax",
+    )
+    return response
+
+
+@app.get("/analyst/logout")
+def analyst_logout():
+    """Clear the analyst session cookie and redirect to login."""
+    response = RedirectResponse(url="/analyst/login", status_code=302)
+    response.delete_cookie(_ANALYST_COOKIE)
+    return response
+
+
+@app.get("/analyst/dashboard")
+def analyst_dashboard(request: Request):
+    """Serve the ESG analyst dashboard — requires analyst session."""
+    if not _is_analyst(request):
+        return RedirectResponse(url="/analyst/login?next=/analyst/dashboard", status_code=302)
+    template_path = os.path.join(_TEMPLATES_DIR, "analyst_dashboard.html")
+    with open(template_path, "r") as f:
+        return HTMLResponse(content=f.read())
 
 
 # ── Health ─────────────────────────────────────────────────────────────────────

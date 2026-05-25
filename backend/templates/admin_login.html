@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Access · Climactix Global</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#000000;--bg1:#0F0F0F;--bg2:#1A1A1A;--bg3:#242424;
+      --bd:#2C2C2C;--bd2:#333333;
+      --tx:#FFFFFF;--tx2:#888888;--tx3:#555555;
+      --amb:#0EA5E9;--amb-dim:#0284C7;--amb-glow:rgba(14,165,233,0.10);
+      --red:#FF3333;--grn:#00CC44;
+      --font:'Inter',system-ui,sans-serif;
+      --mono:'IBM Plex Mono',monospace;
+    }
+    html,body{height:100%;-webkit-font-smoothing:antialiased}
+    body{font-family:var(--font);background:var(--bg);color:var(--tx);display:grid;grid-template-columns:420px 1fr;min-height:100vh}
+
+    /* ── LEFT PANEL ── */
+    .panel-left{
+      background:var(--bg1);border-right:1px solid var(--bd);
+      display:flex;flex-direction:column;padding:32px 36px;
+      position:relative;overflow:hidden;
+    }
+    .panel-left::before{
+      content:'';position:absolute;inset:0;
+      background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);
+      background-size:40px 40px;opacity:0.22;pointer-events:none;
+    }
+    .pl-brand{display:flex;align-items:center;gap:10px;margin-bottom:48px;position:relative;z-index:1}
+    .pl-brand-name{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--tx);letter-spacing:.08em;text-transform:uppercase}
+    .pl-brand-div{width:1px;height:16px;background:var(--bd2)}
+    .pl-brand-tag{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);letter-spacing:.12em;text-transform:uppercase}
+
+    .pl-content{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1}
+    .pl-eyebrow{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+    .pl-eyebrow::before{content:'';display:inline-block;width:20px;height:1px;background:var(--amb)}
+    .pl-heading{font-size:22px;font-weight:800;color:var(--tx);line-height:1.25;letter-spacing:-.025em;margin-bottom:12px}
+    .pl-sub{font-size:12px;color:var(--tx2);line-height:1.65;margin-bottom:28px}
+
+    .pl-features{display:flex;flex-direction:column;gap:8px;margin-bottom:32px}
+    .pl-feat{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:var(--bg);border:1px solid var(--bd);border-radius:3px;transition:border-color .15s}
+    .pl-feat:hover{border-color:var(--bd2)}
+    .pl-feat-icon{width:26px;height:26px;border-radius:2px;background:var(--amb-glow);border:1px solid rgba(14,165,233,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+    .pl-feat-title{font-size:11px;font-weight:700;color:var(--tx);margin-bottom:2px;line-height:1.3}
+    .pl-feat-desc{font-size:11px;color:var(--tx3);line-height:1.5}
+
+    .pl-status{display:flex;align-items:center;gap:8px;padding:10px 13px;background:var(--bg);border:1px solid var(--bd);border-radius:3px;margin-bottom:28px}
+    .pl-status-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);flex-shrink:0}
+    .pl-status-text{font-family:var(--mono);font-size:10px;color:var(--tx2);letter-spacing:.04em}
+    .pl-status-val{font-family:var(--mono);font-size:10px;color:var(--grn);font-weight:700;margin-left:auto}
+
+    .pl-footer{position:relative;z-index:1;padding-top:20px;border-top:1px solid var(--bd);display:flex;gap:16px;flex-wrap:wrap;margin-top:24px}
+    .pl-footer a{font-size:11px;color:var(--tx3);text-decoration:none;transition:color .15s}
+    .pl-footer a:hover{color:var(--tx2)}
+
+    /* ── RIGHT PANEL ── */
+    .panel-right{background:var(--bg);display:flex;align-items:center;justify-content:center;padding:60px 48px;min-height:100vh}
+    .form-wrap{width:100%;max-width:380px}
+
+    .auth-eyebrow{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amb);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+    .auth-eyebrow::before{content:'';display:inline-block;width:16px;height:1px;background:var(--amb)}
+    .auth-title{font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-.025em;margin-bottom:6px}
+    .auth-sub{font-size:12px;color:var(--tx2);line-height:1.55;margin-bottom:28px}
+
+    .alert{border-radius:2px;padding:9px 12px;font-size:12px;font-weight:500;margin-bottom:16px;display:none;line-height:1.5}
+    .alert.error{background:rgba(255,51,51,0.08);color:#FF6666;border:1px solid rgba(255,51,51,0.20);border-left:3px solid #FF3333}
+    .alert.show{display:block}
+
+    .field{margin-bottom:18px}
+    .field label{display:block;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+    .field input{width:100%;padding:10px 13px;border:1px solid var(--bd);border-radius:2px;font-size:13px;font-family:var(--font);color:var(--tx);background:var(--bg1);outline:none;transition:border-color .15s,background .15s;line-height:1.5}
+    .field input::placeholder{color:var(--tx3)}
+    .field input:focus{border-color:var(--amb);background:var(--bg2)}
+
+    .pw-wrap{position:relative}
+    .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx3);font-size:12px;font-family:var(--mono);padding:0;transition:color .15s;letter-spacing:.03em}
+    .pw-toggle:hover{color:var(--tx2)}
+
+    .btn-primary{width:100%;padding:10px 20px;background:var(--amb);color:#000;border:none;border-radius:2px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:4px}
+    .btn-primary:hover:not(:disabled){background:var(--amb-dim)}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+
+    .spinner{display:inline-block;width:11px;height:11px;border:2px solid rgba(0,0,0,0.25);border-top-color:#000;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .trust-bar{display:flex;align-items:center;gap:16px;margin-top:24px;padding-top:20px;border-top:1px solid var(--bd);flex-wrap:wrap}
+    .trust-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase}
+
+    .back-link{display:flex;align-items:center;gap:6px;margin-top:20px;font-family:var(--mono);font-size:10px;color:var(--tx3);text-decoration:none;letter-spacing:.05em;transition:color .15s;width:fit-content}
+    .back-link:hover{color:var(--tx2)}
+
+    @media(max-width:860px){
+      body{grid-template-columns:1fr}
+      .panel-left{display:none}
+      .panel-right{padding:40px 24px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<aside class="panel-left">
+  <div class="pl-brand">
+    <div class="pl-brand-name">Climactix</div>
+    <div class="pl-brand-div"></div>
+    <div class="pl-brand-tag">Admin Console</div>
+  </div>
+
+  <div class="pl-content">
+    <div class="pl-eyebrow">Restricted Access</div>
+    <h1 class="pl-heading">Knowledge Base<br>Management Console</h1>
+    <p class="pl-sub">Manage the proprietary rules and benchmarks that ground every AI analysis across Climactix. Changes take effect immediately on the next request.</p>
+
+    <div class="pl-features">
+      <div class="pl-feat">
+        <div class="pl-feat-icon">🧠</div>
+        <div>
+          <div class="pl-feat-title">RAG Knowledge Base</div>
+          <div class="pl-feat-desc">Add, edit, and delete ESG rules embedded into every AI response via FAISS vector search.</div>
+        </div>
+      </div>
+      <div class="pl-feat">
+        <div class="pl-feat-icon">🔍</div>
+        <div>
+          <div class="pl-feat-title">Retrieval Testing</div>
+          <div class="pl-feat-desc">Preview exactly which rules are retrieved for any query before they reach GPT-4o.</div>
+        </div>
+      </div>
+      <div class="pl-feat">
+        <div class="pl-feat-icon">⚡</div>
+        <div>
+          <div class="pl-feat-title">Live Index Rebuild</div>
+          <div class="pl-feat-desc">Re-embed all rules into the FAISS vector index with one click — no server restart needed.</div>
+        </div>
+      </div>
+      <div class="pl-feat">
+        <div class="pl-feat-icon">📥</div>
+        <div>
+          <div class="pl-feat-title">Bulk JSON Import</div>
+          <div class="pl-feat-desc">Upload a JSON file to import multiple knowledge entries at once.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pl-footer">
+    <a href="/">← Site home</a>
+    <a href="/docs" target="_blank">API Docs ↗</a>
+    <a href="/health">Health</a>
+  </div>
+</aside>
+
+<!-- RIGHT FORM PANEL -->
+<main class="panel-right">
+  <div class="form-wrap">
+
+    <div class="auth-eyebrow">Admin Access</div>
+    <h2 class="auth-title">Sign in to Admin</h2>
+    <p class="auth-sub">Enter your admin password to access the Knowledge Base management console.</p>
+
+    <div class="alert error" id="errorAlert"></div>
+
+    <form id="loginForm" method="POST" action="/admin/login" novalidate>
+      <input type="hidden" name="next" value="{{ next }}"/>
+
+      <div class="field">
+        <label for="password">Admin Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="password" name="password" placeholder="••••••••••••" autocomplete="current-password" required autofocus/>
+          <button type="button" class="pw-toggle" id="pwToggle" onclick="togglePw()">show</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="submitBtn">
+        Access Admin Panel
+      </button>
+    </form>
+
+    {% if error %}
+    <script>
+      document.getElementById('errorAlert').textContent = '{{ error }}';
+      document.getElementById('errorAlert').classList.add('show');
+    </script>
+    {% endif %}
+
+    <div class="trust-bar">
+      <div class="trust-item">🔒 Session cookie</div>
+      <div class="trust-item">✓ HMAC signed</div>
+      <div class="trust-item">✓ 8h expiry</div>
+    </div>
+
+    <a class="back-link" href="/">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="6,2 3,5 6,8"/></svg>
+      Back to Climactix
+    </a>
+
+  </div>
+</main>
+
+<script>
+function togglePw() {
+  const inp = document.getElementById('password');
+  const btn = document.getElementById('pwToggle');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'hide'; }
+  else { inp.type = 'password'; btn.textContent = 'show'; }
+}
+
+document.getElementById('loginForm').addEventListener('submit', function() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Authenticating…';
+});
+
+</script>
+</body>
+</html>

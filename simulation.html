@@ -4737,11 +4737,7 @@ function renderStats(){
       <span class="sb-lbl">Intel Layers</span>
       <span class="sb-val info">${Object.values(S.intel).filter(v=>v).length} active</span>
     </div>`:''}
-    <div class="sb-item" style="margin-left:auto">
-      <span class="api-dot ${S.liveMode?'live':'static'}"></span>
-      <span class="sb-lbl">${S.liveMode?'LIVE API':'STATIC MODE'}</span>
-    </div>
-    <div class="sb-year"><span class="sb-year-lbl">Year</span><span class="sb-year-val">${S.year}</span></div>`;
+    <div class="sb-year" style="margin-left:auto"><span class="sb-year-lbl">Year</span><span class="sb-year-val">${S.year}</span></div>`;
 }
 
 /* ─── SCENARIO BUTTONS ─── */
@@ -4924,7 +4920,7 @@ function buildStaticMacro(country){
         </div>`).join('')}
     </div>
     <div style="margin-top:6px;font-size:7px;color:var(--tx3);letter-spacing:.1em">
-      SOURCE: WORLD BANK 2022/23 · IMF · CLIMATE WATCH${S.liveMode?' + LIVE WB API':''}
+      SOURCE: WORLD BANK 2022/23 · IMF · CLIMATE WATCH
     </div>`;
 }
 
@@ -5172,7 +5168,6 @@ function drawPanel(a){
       <div class="rp-sec">
         <div class="rp-sec-title" style="display:flex;align-items:center;justify-content:space-between">
           Scenario Comparison — ${S.year}
-          ${S.liveMode?`<span class="api-dot live" style="margin:0"></span><span style="font-size:7px;color:var(--pos);letter-spacing:.06em">LIVE</span>`:'<span style="font-size:7px;color:var(--tx3)">STATIC</span>'}
         </div>
         <div class="cmp-grid" id="cmp-grid">
           ${buildStaticCompare(a)}
@@ -5185,7 +5180,7 @@ function drawPanel(a){
       <div class="rp-sec">
         <div class="rp-sec-title" style="display:flex;align-items:center;justify-content:space-between">
           <span>${a.country} — Macro Indicators</span>
-          <span class="src-badge">${S.liveMode?'WB API':'EMBEDDED'}</span>
+          <span class="src-badge">World Bank</span>
         </div>
         <div id="macro-slot">
           ${buildStaticMacro(a.country)}
@@ -5250,8 +5245,8 @@ function buildSignalsPane(a){
   return`
     <!-- LIVE SIGNALS -->
     <div class="rp-sec">
-      <div class="rp-sec-title" style="display:flex;align-items:center;gap:6px">
-        <span class="api-dot live"></span>Live Intelligence Signals
+      <div class="rp-sec-title">
+        Intelligence Signals
       </div>
       ${signals.length?signals.map(s=>`
         <div class="signal-item">
@@ -5572,7 +5567,7 @@ function buildNarrativePane(a){
 
   <div class="rp-sec" style="padding:8px 14px 4px">
     <div class="rp-sec-title" style="display:flex;align-items:center;justify-content:space-between">
-      Live Signal Adjustments
+      Regional Signal Intelligence
       <span style="font-size:8px;color:${sent.score>55?'#CC5200':'var(--tx3)'}">
         ${sent.label} · ${sent.score}/100
       </span>
@@ -5647,8 +5642,8 @@ function renderLiveClimateSlot(d){
   el.innerHTML=`
     <div class="live-sec">
       <div class="live-sec-title">
-        <span class="api-dot live"></span>Live Climate Data
-        <span class="src-badge">${(d.sources||['api'])[0]}</span>
+        Climate Intelligence
+        <span class="src-badge">${(d.sources||['World Bank'])[0]}</span>
       </div>
       ${[
         ['Baseline Temp',bl.temp_mean_c!=null?`${bl.temp_mean_c}°C`:'—',''],
@@ -5670,7 +5665,7 @@ function renderLiveFinSlot(d){
   el.innerHTML=`
     <div class="live-sec">
       <div class="live-sec-title">
-        <span class="api-dot live"></span>API-Calibrated Financials
+        Financial Exposure
         <span class="src-badge">NGFS P.IV</span>
       </div>
       ${[
