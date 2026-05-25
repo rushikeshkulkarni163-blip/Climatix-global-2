@@ -17,20 +17,20 @@ import os
 import re
 from typing import Optional
 
-import anthropic
+from openai import OpenAI
 
-MODEL = os.getenv("CLAUDE_MODEL", "claude-opus-4-6")
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
-_client: Optional[anthropic.Anthropic] = None
+_client: Optional[OpenAI] = None
 
 
-def _get_client() -> anthropic.Anthropic:
+def _get_client() -> OpenAI:
     global _client
     if _client is None:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise RuntimeError("ANTHROPIC_API_KEY environment variable not set.")
-        _client = anthropic.Anthropic(api_key=api_key)
+            raise RuntimeError("OPENAI_API_KEY environment variable not set.")
+        _client = OpenAI(api_key=api_key)
     return _client
 
 
@@ -271,14 +271,17 @@ Do NOT wrap in markdown. Do NOT add any text before or after the JSON.
 IMPORTANT: Select SDGs based on the ACTUAL data. Adjust SDG numbers, names, icons, and scores to reflect genuine alignment. Fill esg_structured KPIs from the actual metrics found in the data. Risk flags must be grounded in real gaps or exposures in the data, not generic statements."""
 
     client = _get_client()
-    response = client.messages.create(
+    response = client.chat.completions.create(
         model=MODEL,
         max_tokens=7000,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user",   "content": prompt},
+        ],
     )
 
-    raw = response.content[0].text.strip()
+    raw = response.choices[0].message.content.strip()
     return _parse_json(raw)
 
 

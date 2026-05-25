@@ -1502,11 +1502,39 @@ body {
       <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 1h5l2 2v7H2z" stroke-linejoin="round"/><line x1="4" y1="5" x2="7" y2="5"/><line x1="4" y1="7" x2="7" y2="7"/><line x1="4" y1="3.5" x2="6" y2="3.5"/></svg>
       Export PDF
     </button>
+    <button class="btn-pdf" onclick="generateAIBrief()" id="ai-brief-btn" style="border-color:var(--acc);color:var(--acc);" title="Generate AI intelligence brief for current portfolio">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="5" cy="5" r="3.5"/><line x1="5" y1="2" x2="5" y2="5.5"/><circle cx="5" cy="7" r=".6" fill="currentColor" stroke="none"/></svg>
+      AI Brief
+    </button>
     <a href="assessment.html" class="nav-cta">Run Analysis</a>
     <button onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--bd1);border-radius:2px;background:none;cursor:pointer;color:var(--tx1);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
   </div>
 </nav>
 <div id="toast"></div>
+
+<!-- ══════════════════ AI INTELLIGENCE BRIEF OVERLAY ══════════════════ -->
+<div id="aibriefOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:#000;overflow:hidden;display:none;flex-direction:column;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;background:#0a0a0a;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--acc);text-transform:uppercase;">Climactix AI</span>
+      <span style="width:1px;height:14px;background:rgba(255,255,255,0.1);"></span>
+      <span style="font-size:11px;font-weight:600;color:#ccc;" id="abriefTitle">Climate Risk Intelligence Brief</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div id="abriefStatus" style="display:flex;align-items:center;gap:6px;font-size:10px;color:#888;">
+        <span id="abriefDot" style="width:6px;height:6px;border-radius:50%;background:#888;"></span>
+        <span id="abriefStatusText">Initialising…</span>
+      </div>
+      <button onclick="closeAIBrief()" style="padding:4px 12px;border:1px solid rgba(255,255,255,0.12);background:none;color:#888;font-size:10px;border-radius:2px;cursor:pointer;letter-spacing:.06em;">CLOSE ✕</button>
+    </div>
+  </div>
+  <div id="abriefBody" style="flex:1;overflow-y:auto;padding:32px 48px;max-width:900px;width:100%;margin:0 auto;"></div>
+  <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 24px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;background:#0a0a0a;">
+    <button onclick="copyAIBrief()" style="padding:6px 16px;border:1px solid rgba(255,255,255,0.12);background:none;color:#888;font-size:10px;border-radius:2px;cursor:pointer;letter-spacing:.06em;">COPY</button>
+    <button onclick="printAIBrief()" style="padding:6px 16px;border:1px solid rgba(255,255,255,0.12);background:none;color:#888;font-size:10px;border-radius:2px;cursor:pointer;letter-spacing:.06em;">PRINT</button>
+    <button onclick="closeAIBrief()" style="padding:6px 16px;border:1px solid var(--acc);background:var(--acc);color:#000;font-size:10px;font-weight:700;border-radius:2px;cursor:pointer;letter-spacing:.06em;">CLOSE</button>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════ SIM ════ -->
 <div id="sim">
@@ -6651,6 +6679,171 @@ document.addEventListener('DOMContentLoaded',()=>{
   checkBackend();
   setInterval(checkBackend,30000);
 });
+
+/* ══════════════════════════════════════════════════════
+   AI INTELLIGENCE BRIEF — GPT-4o streaming panel
+════════════════════════════════════════════════════════ */
+const AI_BRIEF_API = 'http://localhost:8000/api/simulation/risk-brief';
+
+let _abriefRawText = '';
+
+function _abriefRenderMarkdown(md) {
+  return md
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^## (.+)$/gm, '<h2 style="font-size:14px;font-weight:700;color:#f0f0f0;margin:28px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.08);">$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3 style="font-size:12px;font-weight:700;color:#ccc;margin:18px 0 6px;">$1</h3>')
+    .replace(/^- (.+)$/gm, '<li style="margin:3px 0;color:#aaa;font-size:12px;line-height:1.6;">$1</li>')
+    .replace(/\n\n/g, '</p><p style="margin:0 0 14px;color:#aaa;font-size:12px;line-height:1.8;">')
+    .replace(/\n/g, '<br>');
+}
+
+async function generateAIBrief() {
+  const overlay = document.getElementById('aibriefOverlay');
+  const body = document.getElementById('abriefBody');
+  const dot = document.getElementById('abriefDot');
+  const statusText = document.getElementById('abriefStatusText');
+  const titleEl = document.getElementById('abriefTitle');
+
+  /* Collect current scenario */
+  const scn = SCN[S.scenario] || SCN['2.0'];
+  titleEl.textContent = `Intelligence Brief — ${scn.name} (${scn.temp}) · ${S.year}`;
+
+  /* Build asset payloads */
+  const assetData = S.assets.map(a => {
+    const r = calcFull ? calcFull(a, S.scenario, S.year) : calc(a, S.scenario, S.year);
+    return {
+      name: a.name,
+      sector: a.sector,
+      country: a.country,
+      risk_score: Math.round(r.total || r.lvl === 'critical' ? 85 : r.lvl === 'high' ? 65 : r.lvl === 'medium' ? 45 : 20),
+      risk_level: r.lvl || 'medium',
+      physical: Math.round(r.phys || 0),
+      transition: Math.round(r.trans || 0),
+      supply_chain: Math.round(r.sc || 0),
+      revenue_usd_m: a.rev || 0,
+      scope1_tco2e: a.s1 || 0,
+    };
+  });
+
+  /* Build portfolio summary */
+  const totalExposure = S.assets.reduce((s, a) => s + (a.rev || 0), 0);
+  const totalScope1 = S.assets.reduce((s, a) => s + (a.s1 || 0), 0);
+  const lvlCounts = { critical: 0, high: 0, medium: 0, low: 0 };
+  const riskScores = assetData.map(a => {
+    lvlCounts[a.risk_level] = (lvlCounts[a.risk_level] || 0) + 1;
+    return a.risk_score;
+  });
+  const avgRisk = riskScores.length ? Math.round(riskScores.reduce((s, v) => s + v, 0) / riskScores.length) : 0;
+  const sectors = [...new Set(S.assets.map(a => a.sector))];
+
+  const payload = {
+    scenario_name: scn.name,
+    scenario_temp: scn.temp,
+    scenario_desc: scn.desc,
+    year: S.year,
+    portfolio_summary: {
+      total_assets: S.assets.length,
+      total_exposure_usd_m: totalExposure,
+      avg_risk_score: avgRisk,
+      critical_count: lvlCounts.critical || 0,
+      high_count: lvlCounts.high || 0,
+      medium_count: lvlCounts.medium || 0,
+      low_count: lvlCounts.low || 0,
+      total_scope1_tco2e: totalScope1,
+      sectors: sectors,
+    },
+    assets: assetData,
+  };
+
+  /* Show overlay */
+  overlay.style.display = 'flex';
+  body.innerHTML = '<p style="color:#555;font-size:11px;font-family:monospace;margin:0;">Connecting to GPT-4o…</p>';
+  _abriefRawText = '';
+  dot.style.background = '#F59E0B';
+  dot.style.boxShadow = '0 0 6px #F59E0B';
+  statusText.textContent = 'Generating…';
+
+  try {
+    const resp = await fetch(AI_BRIEF_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+      body.innerHTML = `<p style="color:#EF4444;font-size:12px;">Error ${resp.status}: ${err.detail || resp.statusText}</p>`;
+      dot.style.background = '#EF4444';
+      dot.style.boxShadow = 'none';
+      statusText.textContent = 'Failed';
+      return;
+    }
+
+    body.innerHTML = '';
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const chunk = line.slice(6);
+        if (chunk === '[DONE]') {
+          dot.style.background = 'var(--acc)';
+          dot.style.boxShadow = 'none';
+          statusText.textContent = 'Complete';
+          /* Remove blinking cursor */
+          const cur = document.getElementById('abrief-cursor');
+          if (cur) cur.remove();
+          break;
+        }
+        const text = chunk.replace(/\\n/g, '\n');
+        _abriefRawText += text;
+
+        /* Re-render full accumulated text as markdown */
+        let cur = document.getElementById('abrief-cursor');
+        body.innerHTML = `<p style="margin:0 0 14px;color:#aaa;font-size:12px;line-height:1.8;">${_abriefRenderMarkdown(_abriefRawText)}</p><span id="abrief-cursor" style="display:inline-block;width:7px;height:13px;background:var(--acc);vertical-align:text-bottom;animation:ablink .9s step-end infinite;"></span>`;
+        body.scrollTop = body.scrollHeight;
+      }
+    }
+
+  } catch (err) {
+    body.innerHTML = `<p style="color:#EF4444;font-size:12px;">Connection failed: ${err.message}</p>`;
+    dot.style.background = '#EF4444';
+    dot.style.boxShadow = 'none';
+    statusText.textContent = 'Error';
+  }
+}
+
+function closeAIBrief() {
+  document.getElementById('aibriefOverlay').style.display = 'none';
+}
+
+function copyAIBrief() {
+  if (!_abriefRawText) return;
+  navigator.clipboard.writeText(_abriefRawText).then(() => showToast('Brief copied to clipboard', 2000));
+}
+
+function printAIBrief() {
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>Climactix AI Intelligence Brief</title>
+    <style>body{font-family:Arial,sans-serif;font-size:12px;line-height:1.7;max-width:800px;margin:40px auto;color:#111;}
+    h2{font-size:14px;border-bottom:1px solid #ccc;padding-bottom:4px;margin-top:24px;}
+    h3{font-size:12px;margin-top:16px;}</style></head>
+    <body><pre style="white-space:pre-wrap;font-family:Arial,sans-serif;">${_abriefRawText}</pre></body></html>`);
+  w.document.close();
+  w.print();
+}
 </script>
+<style>
+@keyframes ablink { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
 </body>
 </html>

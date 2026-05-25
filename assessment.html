@@ -1022,34 +1022,37 @@
         <div id="eriBreakdownContainer"></div>
       </div>
 
-      <!-- AI Engine Bridge CTA -->
+      <!-- AI Report CTA -->
       <div id="aiEngineCTA" style="
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-left: 3px solid var(--amber);
-        padding: 24px 28px;
-        margin-bottom: 16px;
+        background: var(--surface); border: 1px solid #2C2C2C;
+        border-left: 3px solid #0EA5E9; padding: 24px 28px; margin-bottom: 16px;
       ">
-        <div style="display:flex;align-items:flex-start;gap:16px;">
+        <div style="display:flex;align-items:flex-start;gap:20px;">
           <div style="flex:1;">
-            <div style="font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;">
-              Next Step · AI-Powered Analysis
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#0EA5E9;margin-bottom:6px;display:flex;align-items:center;gap:7px;">
+              <span style="width:5px;height:5px;border-radius:50%;background:#0EA5E9;display:inline-block;animation:airPulse 1.2s ease-in-out infinite;"></span>
+              AI Report Engine · Powered by GPT-4o
             </div>
-            <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-0.02em;">
-              Generate Your Full ESG Intelligence Report
+            <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-0.025em;">
+              Generate Full ESG Intelligence Report
             </div>
-            <div style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:16px;">
-              Your assessment answers are ready. Send them to the Climactix AI Engine to generate:
-              investor brief, E/S/G pillar breakdown, risk flags, SDG mapping, and a downloadable PDF — in under 45 seconds.
+            <div style="font-size:12px;color:#888;line-height:1.65;margin-bottom:18px;max-width:580px;">
+              Your completed assessment is ready for AI analysis. GPT-4o will generate a full institutional ESG report — Executive Summary, Environmental &amp; Social performance, Framework alignment, Material risks, and a 12-month Implementation Roadmap.
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button onclick="sendToAIEngine()" style="
-                background:var(--amber);color:#000;border:none;
-                padding:9px 20px;font-family:var(--mono);
-                font-size:11px;font-weight:800;letter-spacing:.08em;
-                cursor:pointer;text-transform:uppercase;transition:background .12s;
-              " onmouseover="this.style.background='#CC5200'" onmouseout="this.style.background='#FF6600'">→ Analyse with AI Engine</button>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <button onclick="generateAIReport()" id="generateReportBtn" style="
+                background:#0EA5E9;color:#fff;border:none;border-radius:2px;
+                padding:10px 24px;font-family:var(--mono);font-size:11px;
+                font-weight:800;letter-spacing:.08em;cursor:pointer;
+                text-transform:uppercase;transition:background .12s;
+              ">Generate Report →</button>
             </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;font-family:var(--mono);font-size:10px;color:#444;">
+            <div style="color:#0EA5E9;">✓ Executive Summary</div>
+            <div style="color:#0EA5E9;">✓ Risk &amp; Gap Analysis</div>
+            <div style="color:#0EA5E9;">✓ Framework Readiness</div>
+            <div style="color:#0EA5E9;">✓ 12-Month Roadmap</div>
           </div>
         </div>
       </div>
@@ -2228,6 +2231,111 @@
     }
   </style>
 
+  <style>
+  /* ═══════════════════════════════════════════════════════
+     AI REPORT PANEL — full-screen overlay, streaming report
+  ═══════════════════════════════════════════════════════ */
+  #aiReportOverlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 9000;
+    background: rgba(0,0,0,0.88);
+    overflow-y: auto;
+  }
+  #aiReportOverlay.open { display: flex; flex-direction: column; }
+
+  .air-header {
+    position: sticky; top: 0; z-index: 10;
+    background: #000; border-bottom: 1px solid #2C2C2C;
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 32px; height: 56px; flex-shrink: 0;
+  }
+  .air-header-badge {
+    font-family: var(--mono); font-size: 9px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: #0EA5E9; background: rgba(14,165,233,.10);
+    border: 1px solid rgba(14,165,233,.25); padding: 3px 10px;
+  }
+  .air-header-title {
+    font-size: 13px; font-weight: 700; color: #fff; letter-spacing: -0.01em;
+  }
+  .air-header-sub { font-size: 11px; color: #666; font-family: var(--mono); }
+  .air-close {
+    margin-left: auto; background: none; border: 1px solid #333;
+    color: #888; padding: 4px 14px; font-family: var(--mono);
+    font-size: 10px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase; cursor: pointer; transition: .12s ease;
+  }
+  .air-close:hover { border-color: #fff; color: #fff; }
+
+  .air-body {
+    max-width: 860px; margin: 0 auto; padding: 40px 32px 80px;
+    width: 100%;
+  }
+
+  /* Streaming status bar */
+  .air-status {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 11px; color: #555;
+    margin-bottom: 28px;
+  }
+  .air-status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #0EA5E9; flex-shrink: 0;
+    animation: airPulse 1.2s ease-in-out infinite;
+  }
+  .air-status-dot.done { background: #00CC44; animation: none; }
+  @keyframes airPulse {
+    0%,100% { opacity: 1; } 50% { opacity: .25; }
+  }
+
+  /* Report rendered content */
+  #aiReportContent {
+    font-size: 13px; color: #ccc; line-height: 1.75;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  #aiReportContent h2 {
+    font-size: 18px; font-weight: 800; color: #fff;
+    letter-spacing: -0.025em; margin: 40px 0 12px;
+    padding-bottom: 10px; border-bottom: 1px solid #2C2C2C;
+  }
+  #aiReportContent h2:first-child { margin-top: 0; }
+  #aiReportContent h3 {
+    font-size: 13px; font-weight: 700; color: #0EA5E9;
+    letter-spacing: .04em; text-transform: uppercase;
+    font-family: var(--mono); margin: 24px 0 8px;
+  }
+  #aiReportContent p {
+    margin-bottom: 14px; color: #b0b0b0;
+  }
+  #aiReportContent strong { color: #fff; font-weight: 700; }
+  #aiReportContent em { color: #888; font-style: normal; }
+
+  /* Blinking cursor while streaming */
+  .air-cursor::after {
+    content: '▋'; animation: blink .7s step-end infinite;
+    color: #0EA5E9;
+  }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+  /* Action bar at bottom of report */
+  .air-actions {
+    display: flex; gap: 10px; margin-top: 40px;
+    padding-top: 20px; border-top: 1px solid #2C2C2C;
+    flex-wrap: wrap;
+  }
+  .air-btn {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 8px 20px; cursor: pointer; transition: .12s ease;
+    border: 1px solid #333; background: none; color: #888;
+  }
+  .air-btn:hover { border-color: #0EA5E9; color: #0EA5E9; }
+  .air-btn.primary {
+    background: #0EA5E9; color: #fff; border-color: #0EA5E9;
+  }
+  .air-btn.primary:hover { background: #0284C7; border-color: #0284C7; }
+  </style>
+
   <!-- Auth Guard -->
   <script type="module">
     import { getSession } from './auth.js?v=3';
@@ -2245,6 +2353,220 @@
         });
       }
     }
+  </script>
+
+  <!-- ══ AI REPORT OVERLAY PANEL ══════════════════════════════════════════ -->
+  <div id="aiReportOverlay" role="dialog" aria-modal="true" aria-label="AI ESG Report">
+    <div class="air-header">
+      <span class="air-header-badge">GPT-4o · ESG Report</span>
+      <div>
+        <div class="air-header-title" id="airHeaderTitle">ESG Intelligence Report</div>
+        <div class="air-header-sub" id="airHeaderSub">Generating…</div>
+      </div>
+      <button class="air-close" onclick="closeAIReport()">✕ Close</button>
+    </div>
+    <div class="air-body">
+      <div class="air-status" id="airStatus">
+        <span class="air-status-dot" id="airStatusDot"></span>
+        <span id="airStatusText">Connecting to GPT-4o…</span>
+      </div>
+      <div id="aiReportContent"></div>
+      <div class="air-actions" id="airActions" style="display:none;">
+        <button class="air-btn primary" onclick="copyReport()">Copy Report</button>
+        <button class="air-btn" onclick="printAIReport()">Print / Save PDF</button>
+        <button class="air-btn" onclick="closeAIReport()" style="margin-left:auto;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /* ══ AI REPORT — GPT-4o Streaming ══════════════════════════════════════
+     Collects assessment state, POSTs to FastAPI /api/assessment/report,
+     streams SSE chunks, renders as formatted report.
+  ═══════════════════════════════════════════════════════════════════════ */
+
+  const AI_REPORT_API = 'http://localhost:8000/api/assessment/report';
+
+  function generateAIReport() {
+    if (typeof state === 'undefined' || !state.step) {
+      alert('Please complete the assessment first.'); return;
+    }
+
+    // ── collect scores (reuse existing helpers) ──────────────────────────
+    const catScores = {};
+    CATEGORIES.forEach(cat => { catScores[cat.id] = calcCategoryScore(cat.id); });
+    const fwScores = {};
+    FRAMEWORKS.forEach(fw => { fwScores[fw.id] = calcFwScore(fw.id); });
+    const eriScore  = calcERIScore(catScores);
+    const tier      = getERITier(eriScore);
+
+    const envCats = ['energy','water','waste','air','ghg','biodiversity','noise','procurement'];
+    const socCats = ['wellbeing','sustainability'];
+    const govCats = ['compliance'];
+    const avg = arr => arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0;
+
+    const envScore = avg(envCats.map(id => catScores[id]).filter(s=>s!==undefined));
+    const socScore = avg(socCats.map(id => catScores[id]).filter(s=>s!==undefined));
+    const govScore = avg(govCats.map(id => catScores[id]).filter(s=>s!==undefined));
+
+    const categoryScores = CATEGORIES.map(cat => ({
+      title: cat.title,
+      score: catScores[cat.id] || 0,
+    }));
+
+    const frameworkScores = FRAMEWORKS.map(fw => {
+      const s = fwScores[fw.id] || 0;
+      return { name: fw.name, score: s, status: s >= 70 ? 'Ready' : s >= 40 ? 'Partial' : 'Gap' };
+    });
+
+    // ── written disclosures ──────────────────────────────────────────────
+    const discLines = [];
+    Object.entries(state.answers || {}).forEach(([key, val]) => {
+      if (val && val !== 'na' && key.includes('_written') && String(val).trim().length > 10) {
+        discLines.push(`${key.replace(/_written$/,'').replace(/_/g,' ')}: ${val}`);
+      }
+    });
+
+    const payload = {
+      company_name:        state.company?.name  || 'The Company',
+      industry:            state.company?.industry || 'Unknown Industry',
+      report_year:         state.company?.year  || 'FY 2025',
+      eri_score:           eriScore,
+      tier_name:           tier.name,
+      tier_desc:           tier.desc,
+      environmental_score: envScore,
+      social_score:        socScore,
+      governance_score:    govScore,
+      category_scores:     categoryScores,
+      framework_scores:    frameworkScores,
+      key_disclosures:     discLines.slice(0, 20).join('\n'),
+    };
+
+    // ── open overlay ─────────────────────────────────────────────────────
+    const overlay = document.getElementById('aiReportOverlay');
+    const content = document.getElementById('aiReportContent');
+    const statusDot  = document.getElementById('airStatusDot');
+    const statusText = document.getElementById('airStatusText');
+    const actions    = document.getElementById('airActions');
+    const headerSub  = document.getElementById('airHeaderSub');
+    const headerTitle = document.getElementById('airHeaderTitle');
+
+    content.innerHTML = '';
+    actions.style.display = 'none';
+    statusDot.className = 'air-status-dot';
+    statusText.textContent = 'Connecting to GPT-4o…';
+    headerTitle.textContent = `${payload.company_name} — ESG Report`;
+    headerSub.textContent   = `ERI 2.0 Score: ${eriScore}/100 · ${tier.name} · ${payload.report_year}`;
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // ── stream ────────────────────────────────────────────────────────────
+    let rawText = '';
+
+    fetch(AI_REPORT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(e => { throw new Error(e.detail || `HTTP ${res.status}`); });
+      }
+      statusText.textContent = 'GPT-4o is writing your report…';
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+
+      function read() {
+        reader.read().then(({ done, value }) => {
+          if (done) { onStreamDone(); return; }
+
+          const chunk = decoder.decode(value, { stream: true });
+          // parse SSE lines: "data: <text>\n\n"
+          chunk.split('\n').forEach(line => {
+            if (!line.startsWith('data: ')) return;
+            const text = line.slice(6);
+            if (text === '[DONE]') { onStreamDone(); return; }
+            // unescape newlines
+            rawText += text.replace(/\\n/g, '\n');
+            content.innerHTML = renderMarkdown(rawText) + '<span class="air-cursor"></span>';
+            content.scrollIntoView({ block: 'end', behavior: 'smooth' });
+          });
+
+          read();
+        });
+      }
+      read();
+    })
+    .catch(err => {
+      statusDot.className = 'air-status-dot';
+      statusDot.style.background = '#FF3333';
+      statusDot.style.animation = 'none';
+      statusText.textContent = `Error: ${err.message}`;
+      content.innerHTML = `<p style="color:#FF3333;">Failed to generate report: ${err.message}<br><br>
+        Make sure the backend is running on <code>localhost:8000</code> and <code>OPENAI_API_KEY</code> is set in <code>backend/.env</code>.</p>`;
+    });
+
+    function onStreamDone() {
+      content.innerHTML = renderMarkdown(rawText);
+      statusDot.className = 'air-status-dot done';
+      statusText.textContent = 'Report complete';
+      actions.style.display = 'flex';
+    }
+  }
+
+  /* Minimal markdown → HTML renderer for ## h2, ### h3, **bold**, *em*, \n */
+  function renderMarkdown(md) {
+    return md
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .split('\n\n')
+      .map(para => {
+        para = para.trim();
+        if (!para) return '';
+        if (para.startsWith('<h')) return para;
+        return `<p>${para.replace(/\n/g, ' ')}</p>`;
+      })
+      .join('');
+  }
+
+  function closeAIReport() {
+    document.getElementById('aiReportOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function copyReport() {
+    const text = document.getElementById('aiReportContent').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = event.target;
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Report'; }, 2000);
+    });
+  }
+
+  function printAIReport() {
+    const content = document.getElementById('aiReportContent').innerHTML;
+    const win = window.open('', '_blank');
+    win.document.write(`<!DOCTYPE html><html><head>
+      <title>ESG Report — ${document.getElementById('airHeaderTitle').textContent}</title>
+      <style>
+        body { font-family: 'Inter', sans-serif; font-size: 13px; color: #111; max-width: 800px; margin: 40px auto; line-height: 1.7; }
+        h2 { font-size: 18px; font-weight: 800; border-bottom: 1px solid #ddd; padding-bottom: 8px; margin-top: 36px; }
+        h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #555; margin-top: 20px; }
+        p { margin-bottom: 12px; }
+        strong { font-weight: 700; }
+      </style>
+      </head><body>${content}</body></html>`);
+    win.document.close();
+    win.print();
+  }
+
+  // Close overlay on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAIReport();
+  });
   </script>
 
 </body>

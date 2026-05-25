@@ -26,7 +26,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response, JSONResponse
+from fastapi.responses import Response, JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 load_dotenv()
@@ -34,6 +34,8 @@ load_dotenv()
 from services.extractor import extract_text
 from services.ai_engine import generate_all_narratives
 from services.scorer import calculate_scores
+from services.assessment_report import stream_report
+from services.simulation_brief import stream_brief
 from services.greenwashing_scanner import scan_for_greenwashing, extract_data, validate_claims, extract_claims
 from services.esg_framework_intelligence import run_intelligence_analysis, FRAMEWORK_REGISTRY, UNIFIED_ESG_MODEL, CROSS_FRAMEWORK_MAP
 from routers.auth import router as auth_router
@@ -90,6 +92,30 @@ class ExportRequest(BaseModel):
     scores: dict
     company_name: Optional[str] = "The Company"
     report_year: Optional[str] = "2024"
+
+
+class AssessmentReportRequest(BaseModel):
+    company_name: Optional[str] = "The Company"
+    industry: Optional[str] = "Unknown Industry"
+    report_year: Optional[str] = "FY 2025"
+    eri_score: Optional[int] = 0
+    tier_name: Optional[str] = "Unknown"
+    tier_desc: Optional[str] = ""
+    environmental_score: Optional[int] = 0
+    social_score: Optional[int] = 0
+    governance_score: Optional[int] = 0
+    category_scores: Optional[list] = []
+    framework_scores: Optional[list] = []
+    key_disclosures: Optional[str] = ""
+
+
+class SimulationBriefRequest(BaseModel):
+    scenario_name: Optional[str] = "Delayed Transition"
+    scenario_temp: Optional[str] = "2°C"
+    scenario_desc: Optional[str] = ""
+    year: Optional[int] = 2035
+    portfolio_summary: Optional[dict] = {}
+    assets: Optional[list] = []
 
 
 # ── Health ─────────────────────────────────────────────────────────────────────
@@ -1187,3 +1213,57 @@ def _build_docx(req: ExportRequest) -> bytes:
     buf = io.BytesIO()
     doc.save(buf)
     return buf.getvalue()
+
+
+# ── OpenAI Assessment Report (streaming) ──────────────────────────────────────
+
+@app.post("/api/assessment/report")
+def assessment_report(req: AssessmentReportRequest):
+    """
+    Stream a full institutional ESG report for a completed assessment.
+    Uses OpenAI GPT-4o with Server-Sent Events so the frontend
+    can render the report in real-time as it is generated.
+    """
+    if not os.getenv("OPENAI_API_KEY"):
+        raise HTTPException(
+            status_code=503,
+            detail="OpenAI API key not configured. Set OPENAI_API_KEY in backend/.env"
+        )
+
+    payload = req.model_dump()
+
+    return StreamingResponse(
+        stream_report(payload),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+# ── Climate Risk Simulation Intelligence Brief (streaming) ────────────────────
+
+@app.post("/api/simulation/risk-brief")
+def simulation_risk_brief(req: SimulationBriefRequest):
+    """
+    Stream a GPT-4o climate risk intelligence brief for the current
+    simulation portfolio snapshot.  Uses Server-Sent Events so the frontend
+    renders the brief in real-time.
+    """
+    if not os.getenv("OPENAI_API_KEY"):
+        raise HTTPException(
+            status_code=503,
+            detail="OpenAI API key not configured. Set OPENAI_API_KEY in backend/.env"
+        )
+
+    payload = req.model_dump()
+
+    return StreamingResponse(
+        stream_brief(payload),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )

@@ -14,20 +14,20 @@ import os
 import re
 from typing import Optional
 
-import anthropic
+from openai import OpenAI
 
-MODEL = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
-_client: Optional[anthropic.Anthropic] = None
+_client: Optional[OpenAI] = None
 
 
-def _get_client() -> anthropic.Anthropic:
+def _get_client() -> OpenAI:
     global _client
     if _client is None:
-        api_key = os.getenv("ANTHROPIC_API_KEY")
+        api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            raise RuntimeError("ANTHROPIC_API_KEY environment variable not set.")
-        _client = anthropic.Anthropic(api_key=api_key)
+            raise RuntimeError("OPENAI_API_KEY environment variable not set.")
+        _client = OpenAI(api_key=api_key)
     return _client
 
 
@@ -90,14 +90,17 @@ def extract_claims(text: str) -> list:
     client = _get_client()
     truncated = text[:9000]
 
-    msg = client.messages.create(
+    msg = client.chat.completions.create(
         model=MODEL,
         max_tokens=2500,
-        system=_CLAIM_SYSTEM,
-        messages=[{"role": "user", "content": _CLAIM_USER_TMPL.format(text=truncated)}],
+        temperature=0.2,
+        messages=[
+            {"role": "system", "content": _CLAIM_SYSTEM},
+            {"role": "user", "content": _CLAIM_USER_TMPL.format(text=truncated)},
+        ],
     )
 
-    raw = msg.content[0].text
+    raw = msg.choices[0].message.content
     try:
         return _parse_json_response(raw).get("claims", [])
     except Exception:
@@ -576,17 +579,17 @@ def generate_recommendations(flags: list, claims: list, data: dict) -> list:
         },
     }
 
-    msg = client.messages.create(
+    msg = client.chat.completions.create(
         model=MODEL,
         max_tokens=1800,
-        system=_RECO_SYSTEM,
-        messages=[{
-            "role": "user",
-            "content": _RECO_USER_TMPL.format(context=json.dumps(context, indent=2)),
-        }],
+        temperature=0.3,
+        messages=[
+            {"role": "system", "content": _RECO_SYSTEM},
+            {"role": "user", "content": _RECO_USER_TMPL.format(context=json.dumps(context, indent=2))},
+        ],
     )
 
-    raw = msg.content[0].text
+    raw = msg.choices[0].message.content
     try:
         return _parse_json_response(raw).get("recommendations", [])
     except Exception:
