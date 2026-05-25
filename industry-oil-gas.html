@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Oil &amp; Gas — Transition Risk &amp; Carbon Exposure Intelligence · Climactix</title>
+  <meta name="description" content="Institutional climate risk intelligence for oil and gas sector. Stranded asset exposure, methane liability, carbon intensity mapping, and transition pathway analysis." />
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css?v=3" />
+  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000000; --surface: #0F0F0F; --surface-2: #1A1A1A; --surface-3: #242424;
+      --border: #2C2C2C; --border-strong: #333333;
+      --amber: #0EA5E9; --amber-dim: #0284C7; --amber-fg: #FFFFFF;
+    --risk: #E87722; --risk-dim: #C05200;  /* semantic risk/warning, separate from UI accent */
+      --cyan: #0099CC; --green: #00CC44; --red: #FF3333;
+      --text: #FFFFFF; --text-2: #888888; --text-muted: #555555;
+      --mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+      --font: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
+      --t: 0.12s ease; --r: 3px;
+    }
+    [data-theme="light"] { --bg: #FFFFFF; --surface: #FFFFFF; --surface-2: #EBEBEB; --surface-3: #E0E0E0; --border: #D0D0D0; --border-strong: #BBBBBB; --text: #000000; --text-2: #333333; --text-muted: #666666; }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; font-size: 13px; line-height: 1.5; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; } button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+    .cx-nav { position: sticky; top: 0; z-index: 200; height: 44px; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; }
+    .cx-nav-brand { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-right: 24px; }
+    .cx-nav-brand img { height: 22px; }
+    .cx-nav-links { display: flex; align-items: center; }
+    .cx-nav-link { font-size: 11px; font-weight: 500; color: var(--text-muted); padding: 4px 10px; border-radius: 2px; transition: var(--t); }
+    .cx-nav-link:hover { background: var(--surface-2); color: var(--text); }
+    .cx-nav-link.active { color: var(--amber); border-bottom: 2px solid var(--amber); }
+    .cx-nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .cx-nav-btn { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 14px; border-radius: 2px; border: 1px solid var(--border-strong); color: var(--text-2); transition: var(--t); }
+    .cx-nav-btn:hover { border-color: var(--amber); color: var(--amber); }
+    .cx-nav-btn.primary { background: var(--amber); color: #fff; border-color: var(--amber); }
+    /* ── NAV DROPDOWN ── */
+    .cx-nav-dropdown { position: relative; height: 100%; display: flex; align-items: center; }
+    .cx-nav-dropdown-btn { font-size: 11px; font-weight: 500; color: var(--amber); padding: 4px 10px; border-radius: 2px; background: none; border: none; cursor: pointer; transition: var(--t); display: flex; align-items: center; gap: 4px; border-bottom: 2px solid var(--amber); }
+    .cx-nav-dropdown-menu { position: absolute; top: calc(100% + 4px); left: -8px; min-width: 220px; background: #0E0E10; border: 1px solid rgba(255,255,255,0.12); padding: 6px 0; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: opacity 0.16s cubic-bezier(0.4,0,0.2,1), transform 0.16s cubic-bezier(0.4,0,0.2,1); z-index: 300; }
+    .cx-nav-dropdown:hover .cx-nav-dropdown-menu { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .cx-nav-dropdown-item { display: block; padding: 8px 16px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.12s, background 0.12s, border-left-color 0.12s; white-space: nowrap; border-left: 2px solid transparent; font-family: var(--mono); }
+    .cx-nav-dropdown-item:hover { color: var(--amber); background: rgba(14,165,233,0.06); border-left-color: var(--amber); }
+    .cx-nav-dropdown-item.current { color: var(--amber); border-left-color: var(--amber); background: rgba(14,165,233,0.04); }
+    .cx-nav-dropdown-item.hub-link { font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 4px; padding-bottom: 10px; color: rgba(255,255,255,0.8); }
+    .cx-nav-dropdown-item.hub-link:hover { color: var(--amber); }
+
+    .cx-ticker { height: 34px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; overflow: hidden; }
+    .cx-ticker-tag { background: var(--amber); color: #fff; font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; flex-shrink: 0; height: 100%; display: flex; align-items: center; }
+    .cx-ticker-track { display: flex; animation: ticker-scroll 60s linear infinite; white-space: nowrap; }
+    .cx-ticker-item { font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 0 20px; border-right: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+    .cx-ticker-item .val { color: var(--amber); font-weight: 700; } .cx-ticker-item .up { color: var(--green); } .cx-ticker-item .dn { color: var(--red); }
+    @keyframes ticker-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .cx-page { max-width: 1400px; margin: 0 auto; padding: 0 20px 60px; }
+    .cx-hero { padding: 28px 0 20px; border-bottom: 1px solid var(--border); }
+    .cx-hero-eyebrow { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .cx-live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse-dot 2s ease infinite; display: inline-block; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .cx-hero-title { font-size: 30px; font-weight: 800; color: var(--text); letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 10px; }
+    .cx-hero-sub { font-size: 13px; color: var(--text-2); max-width: 680px; line-height: 1.6; margin-bottom: 20px; }
+    .cx-hero-kpis { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+    .cx-kpi { flex: 1; padding: 14px 18px; border-right: 1px solid var(--border); background: var(--surface); }
+    .cx-kpi:last-child { border-right: none; }
+    .cx-kpi-label { font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .cx-kpi-val { font-family: var(--mono); font-size: 20px; font-weight: 700; letter-spacing: -0.03em; color: var(--amber); line-height: 1; }
+    .cx-kpi-val.red { color: var(--red); } .cx-kpi-val.green { color: var(--green); } .cx-kpi-val.cyan { color: var(--cyan); }
+    .cx-kpi-delta { font-family: var(--mono); font-size: 11px; font-weight: 700; margin-top: 4px; }
+    .cx-kpi-delta.up { color: var(--green); } .cx-kpi-delta.dn { color: var(--red); }
+    .cx-section { margin-top: 28px; }
+    .cx-section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .cx-section-eyebrow { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); }
+    .cx-section-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.015em; }
+    .cx-section-sub { font-size: 12px; color: var(--text-muted); margin-left: auto; font-family: var(--mono); }
+    .cx-grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .cx-grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+    .cx-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+    .cx-panel-accent { border-left: 3px solid var(--amber); }
+    .cx-panel-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .cx-panel-title { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+    .cx-panel-badge { font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
+    .badge-red { background: rgba(255,51,51,0.08); color: var(--red); border: 1px solid rgba(255,51,51,0.2); }
+    .badge-amber { background: rgba(232,135,34,0.08); color: var(--risk); border: 1px solid rgba(232,135,34,0.2); }
+    .badge-green { background: rgba(0,204,68,0.08); color: var(--green); border: 1px solid rgba(0,204,68,0.2); }
+    .badge-cyan { background: rgba(0,153,204,0.08); color: var(--cyan); border: 1px solid rgba(0,153,204,0.2); }
+    .cx-panel-body { padding: 16px; }
+    .cx-table { width: 100%; border-collapse: collapse; }
+    .cx-table thead th { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 8px 14px; border-bottom: 1px solid var(--border); text-align: left; }
+    .cx-table tbody tr { border-bottom: 1px solid var(--border); transition: background var(--t); }
+    .cx-table tbody tr:hover { background: var(--surface-2); }
+    .cx-table tbody tr:last-child { border-bottom: none; }
+    .cx-table tbody td { padding: 9px 14px; font-size: 12px; color: var(--text); }
+    .mono { font-family: var(--mono); color: var(--amber); } .mono-red { font-family: var(--mono); color: var(--red); } .mono-green { font-family: var(--mono); color: var(--green); } .muted { color: var(--text-muted); font-size: 11px; }
+    .cx-risk-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+    .cx-risk-row:last-child { border-bottom: none; }
+    .cx-risk-label { font-size: 12px; color: var(--text-2); min-width: 200px; }
+    .cx-risk-bar-wrap { flex: 1; height: 3px; background: var(--border); position: relative; }
+    .cx-risk-bar { height: 100%; position: absolute; left: 0; top: 0; }
+    .cx-risk-val { font-family: var(--mono); font-size: 12px; font-weight: 700; min-width: 40px; text-align: right; }
+    .cx-bench-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .cx-bench-item:last-child { border-bottom: none; }
+    .cx-bench-name { font-size: 12px; color: var(--text-2); min-width: 200px; }
+    .cx-bench-track { flex: 1; height: 4px; background: var(--border); position: relative; }
+    .cx-bench-fill { height: 100%; position: absolute; left: 0; }
+    .cx-bench-val { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--amber); min-width: 60px; text-align: right; }
+    .cx-signal-item { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
+    .cx-signal-item:last-child { border-bottom: none; }
+    .cx-signal-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .cx-signal-dot.red { background: var(--red); } .cx-signal-dot.amber { background: var(--amber); } .cx-signal-dot.yellow { background: #FFCC00; }
+    .cx-signal-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+    .cx-signal-text strong { color: var(--text); }
+    .cx-scenario-tabs { display: flex; border-bottom: 1px solid var(--border); }
+    .cx-scenario-tab { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 18px; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; transition: var(--t); }
+    .cx-scenario-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+    .cx-scenario-tab:hover:not(.active) { color: var(--text); }
+    .cx-scenario-body { padding: 16px; display: none; }
+    .cx-scenario-body.active { display: block; }
+    .cx-snapshot { background: var(--surface); border: 1px solid var(--border-strong); border-left: 3px solid var(--amber); border-radius: 3px; padding: 18px 20px; }
+    .cx-snapshot-label { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+    .cx-snapshot-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.015em; margin-bottom: 8px; }
+    .cx-snapshot-body { font-size: 12px; color: var(--text-2); line-height: 1.7; }
+    .cx-cta-section { margin-top: 40px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 3px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .cx-cta-text h3 { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 6px; }
+    .cx-cta-text p { font-size: 12px; color: var(--text-2); max-width: 500px; line-height: 1.6; }
+    .cx-cta-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .cx-btn { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 20px; border-radius: 2px; cursor: pointer; transition: var(--t); display: inline-block; }
+    .cx-btn-primary { background: var(--amber); color: #fff; border: 1px solid var(--amber); }
+    .cx-btn-primary:hover { background: var(--amber-dim); }
+    .cx-btn-outline { background: none; color: var(--text-2); border: 1px solid var(--border-strong); }
+    .cx-btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+    @media (max-width:900px) { .cx-grid-3, .cx-grid-2 { grid-template-columns: 1fr; } .cx-hero-kpis { flex-wrap: wrap; } .cx-cta-section { flex-direction: column; } }
+  </style>
+</head>
+<body>
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-brand"><img src="Climatix_logo.png" alt="Climactix" /></a>
+  <div class="cx-nav-links">
+    <a href="index.html" class="cx-nav-link">Platform</a>
+    <a href="dashboard.html" class="cx-nav-link">Intelligence</a>
+    <a href="simulation.html" class="cx-nav-link">Risk Engine</a>
+    <a href="regulations.html" class="cx-nav-link">Regulations</a>
+    <div class="cx-nav-dropdown">
+      <button class="cx-nav-dropdown-btn">
+        Industries
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cx-nav-dropdown-menu">
+          <a href="industries.html" class="cx-nav-dropdown-item hub-link">All Sectors →</a>
+          <a href="industry-energy.html" class="cx-nav-dropdown-item">Energy &amp; Utilities</a>
+          <a href="industry-banking.html" class="cx-nav-dropdown-item">Banking &amp; Financial Services</a>
+          <a href="industry-oil-gas.html" class="cx-nav-dropdown-item current">Oil &amp; Gas</a>
+          <a href="industry-real-estate.html" class="cx-nav-dropdown-item">Real Estate</a>
+          <a href="industry-manufacturing.html" class="cx-nav-dropdown-item">Manufacturing</a>
+          <a href="industry-it.html" class="cx-nav-dropdown-item">Information Technology</a>
+          <a href="industry-supply-chain.html" class="cx-nav-dropdown-item">Supply Chain &amp; Logistics</a>
+          <a href="industry-mining.html" class="cx-nav-dropdown-item">Mining &amp; Metals</a>
+      </div>
+    </div>
+  </div>
+  <div class="cx-nav-right">
+    <button class="cx-nav-btn" onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})()">Theme</button>
+    <a href="assessment.html" class="cx-nav-btn primary">Launch Assessment</a>
+  </div>
+</nav>
+
+<div class="cx-ticker">
+  <div class="cx-ticker-tag">O&amp;G Intel</div>
+  <div style="overflow:hidden;flex:1;"><div class="cx-ticker-track">
+    <div class="cx-ticker-item">Brent Crude <span class="val">$82.40/bbl</span></div>
+    <div class="cx-ticker-item">Global Stranded Asset Risk <span class="val">$1.4T</span> <span class="dn">By 2030</span></div>
+    <div class="cx-ticker-item">Methane Intensity (Global O&amp;G) <span class="val">2.3%</span> <span class="dn">IEA target: &lt;0.2%</span></div>
+    <div class="cx-ticker-item">Scope 1+2 Emissions (Sector) <span class="val">5.2 Gt CO₂e</span></div>
+    <div class="cx-ticker-item">OGCI Member Commitments <span class="val">12 majors</span></div>
+    <div class="cx-ticker-item">Carbon Liability Exposure <span class="val">$900B+</span></div>
+    <div class="cx-ticker-item">IEA: No New Fossil Fields (1.5°C) <span class="val">Post-2021</span> <span class="dn">Not complied</span></div>
+    <div class="cx-ticker-item">Brent Crude <span class="val">$82.40/bbl</span></div>
+    <div class="cx-ticker-item">Global Stranded Asset Risk <span class="val">$1.4T</span> <span class="dn">By 2030</span></div>
+  </div></div>
+</div>
+
+<div class="cx-page">
+  <div class="cx-hero">
+    <div class="cx-hero-eyebrow"><span class="cx-live-dot"></span> Sector Intelligence — Oil &amp; Gas · Updated Q1 2025</div>
+    <h1 class="cx-hero-title">Transition Risk &amp; Carbon Exposure Intelligence<br>for Oil &amp; Gas Operators</h1>
+    <p class="cx-hero-sub">Institutional-grade analytics covering methane emissions liability, stranded asset exposure, carbon intensity benchmarking, and transition pathway stress testing across upstream, midstream, and downstream operations.</p>
+    <div class="cx-hero-kpis">
+      <div class="cx-kpi"><div class="cx-kpi-label">Sector Carbon Intensity</div><div class="cx-kpi-val red">~580 gCO₂/kWh-eq</div><div class="cx-kpi-delta dn">Highest intensity among tracked sectors</div></div>
+      <div class="cx-kpi"><div class="cx-kpi-label">Stranded Asset Risk</div><div class="cx-kpi-val red">$1.4T</div><div class="cx-kpi-delta dn">▲ Proved reserves unburnable in 1.5°C pathway</div></div>
+      <div class="cx-kpi"><div class="cx-kpi-label">Methane Intensity</div><div class="cx-kpi-val">2.3%</div><div class="cx-kpi-delta dn">IEA target: &lt;0.2% — 11.5x above threshold</div></div>
+      <div class="cx-kpi"><div class="cx-kpi-label">Carbon Liability</div><div class="cx-kpi-val red">$900B+</div><div class="cx-kpi-delta dn">Implied future carbon cost on proved reserves</div></div>
+      <div class="cx-kpi"><div class="cx-kpi-label">Transition Risk Score</div><div class="cx-kpi-val red">9.2 / 10</div><div class="cx-kpi-delta dn">Highest transition risk of any sector</div></div>
+    </div>
+  </div>
+
+  <!-- RISK OVERVIEW -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">01</span>
+      <span class="cx-section-title">Climate Risk Overview</span>
+    </div>
+    <div class="cx-grid-3">
+      <div class="cx-panel cx-panel-accent">
+        <div class="cx-panel-header"><span class="cx-panel-title">Stranded Asset Risk</span><span class="cx-panel-badge badge-red">Critical</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">The IEA's Net Zero by 2050 scenario requires no new oil and gas field development beyond those already approved as of 2021. This implies that a material proportion of proved reserves held on balance sheets will never be produced, creating a systemic stranded asset liability.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">Proved Reserves at Risk</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:85%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">85</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">New Development Cap Ex Risk</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:91%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">91</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Asset Impairment Timeline</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:78%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">78</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Carbon Liability &amp; Methane</span><span class="cx-panel-badge badge-red">Critical</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Methane emissions from oil and gas operations represent a 80x more potent near-term warming agent than CO₂. Regulatory methane frameworks (EU Methane Regulation, EPA rules) impose direct financial liability, while carbon pricing creates forward-looking earnings headwinds.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">Methane Regulatory Exposure</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:88%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">88</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Carbon Pricing Impact</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:82%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">82</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Scope 3 Liability Exposure</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:95%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">95</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Transition Pathway Pressure</span><span class="cx-panel-badge badge-red">Critical</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Demand destruction through electrification, energy efficiency, and policy-driven fuel switching will compress long-run oil demand from 100 Mb/d today to 25 Mb/d by 2050 under IEA NZE. Gas faces similar compression after a transitional bridge period.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">Oil Demand Destruction Risk</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:80%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">80</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Policy Phase-Out Pressure</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:88%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">88</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Investor Exclusion Trend</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:74%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">74</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARBON LIABILITY TABLE -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">02</span>
+      <span class="cx-section-title">Carbon Liability &amp; Emissions Intensity by Operation Type</span>
+    </div>
+    <div class="cx-panel">
+      <table class="cx-table">
+        <thead><tr><th>Operation Type</th><th>Scope 1 Intensity</th><th>Methane Intensity</th><th>Scope 3 Factor</th><th>Carbon Cost Exposure</th><th>Regulatory Risk</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Upstream Oil (Conventional)</strong></td><td class="mono">18–25 kgCO₂e/boe</td><td class="mono-red">1.4–3.2%</td><td class="mono-red">85% of lifecycle</td><td class="mono-red">$8–18/boe (@€50)</td><td><span class="cx-panel-badge badge-red">High</span></td></tr>
+          <tr><td><strong>Upstream Oil (Shale/LTO)</strong></td><td class="mono">28–45 kgCO₂e/boe</td><td class="mono-red">2.1–4.8%</td><td class="mono-red">87% of lifecycle</td><td class="mono-red">$14–23/boe</td><td><span class="cx-panel-badge badge-red">Critical</span></td></tr>
+          <tr><td><strong>Natural Gas Production</strong></td><td class="mono">12–22 kgCO₂e/boe</td><td class="mono-red">High Leakage</td><td style="font-family:var(--mono);color:var(--amber)">72% of lifecycle</td><td style="font-family:var(--mono);color:var(--amber)">$6–11/boe</td><td><span class="cx-panel-badge badge-amber">High</span></td></tr>
+          <tr><td><strong>LNG / Liquefaction</strong></td><td class="mono">8–14 kgCO₂e/boe</td><td style="font-family:var(--mono);color:var(--amber)">Boil-off risk</td><td style="font-family:var(--mono);color:var(--amber)">70% of lifecycle</td><td style="font-family:var(--mono);color:var(--amber)">$4–7/boe</td><td><span class="cx-panel-badge badge-amber">High</span></td></tr>
+          <tr><td><strong>Midstream / Pipelines</strong></td><td class="mono">3–7 kgCO₂e/boe</td><td class="mono-red">Fugitive high</td><td class="muted">Indirect</td><td class="muted">$1.5–3.5/boe</td><td><span class="cx-panel-badge badge-amber">Medium</span></td></tr>
+          <tr><td><strong>Refining</strong></td><td class="mono">15–35 kgCO₂e/boe</td><td style="font-family:var(--mono);color:var(--amber)">Low–Med</td><td class="muted">Process only</td><td style="font-family:var(--mono);color:var(--amber)">$7–17/boe</td><td><span class="cx-panel-badge badge-amber">High</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SCENARIO ENGINE -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">03</span>
+      <span class="cx-section-title">Transition Scenario Analysis</span>
+    </div>
+    <div class="cx-panel">
+      <div class="cx-scenario-tabs">
+        <div class="cx-scenario-tab active" data-tab="og1p5">1.5°C Pathway</div>
+        <div class="cx-scenario-tab" data-tab="og2p0">2°C Pathway</div>
+        <div class="cx-scenario-tab" data-tab="og3p0">3°C Pathway</div>
+      </div>
+      <div class="cx-scenario-body active" id="scen-og1p5">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Demand Destruction</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Oil demand falls from ~100 Mb/d to 24 Mb/d by 2050. No new upstream development beyond approved 2021 projects. Gas experiences a bridge role through 2030 before rapid decline. OPEC+ supply discipline becomes critical for price floor maintenance.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Stranded Asset Scale</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">$1.4T in booked proved reserves across global E&amp;P companies cannot be produced in a 1.5°C pathway. Impairment charges will concentrate in high-cost producers: oil sands, deep offshore, and Arctic developments. Supermajors face $200–400B collective write-down.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Investor Implication</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Institutional exclusion lists for new fossil fuel development are expanding. Capital market access for E&amp;P companies tightens as ESG-mandated investors exit. Remaining capital concentrates in lowest-carbon, lowest-cost producers with credible methane programs.</p></div>
+        </div>
+      </div>
+      <div class="cx-scenario-body" id="scen-og2p0">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Managed Decline</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Oil demand peaks around 2030 and declines to ~50 Mb/d by 2050. Natural gas retains a larger role as coal replacement in emerging markets. New upstream investment concentrates in low-cost, low-carbon basins. Carbon capture projects unlock some long-life gas assets.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Financial Trajectory</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Stranded assets reduce to ~$600–800B — concentrated in high-cost producers. Methane regulations impose meaningful compliance cost ($12–28/boe for non-compliant operators). Carbon pricing in key markets compresses margins on unabated production.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Strategic Signal</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Diversification into natural gas, CCS infrastructure, and hydrogen positions companies for transition relevance. Portfolio high-grading toward low-breakeven assets (&lt;$30/bbl) with strong methane credentials becomes the dominant shareholder value strategy.</p></div>
+        </div>
+      </div>
+      <div class="cx-scenario-body" id="scen-og3p0">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Delayed Transition Shock</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">3°C represents a policy failure scenario — continued expansion of fossil fuels until regulatory and market forces create sudden repricing. Oil demand stays elevated near-term but faces catastrophic policy shock in the 2030s as physical climate impacts trigger emergency regulation.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Physical Risk to Operations</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Coastal infrastructure exposure to sea-level rise and storm surge. Water stress in key production basins (Permian, Middle East) increases operational cost. Supply chain disruptions from extreme weather events elevate insurance costs 3–5x current levels.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Systemic Risk</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Near-term revenue maintained but long-term liability explosion. Climate litigation risk against fossil fuel companies accelerates — multiple jurisdictions establish legal precedent for operator liability for climate damages. Sovereign wealth funds and pension capital exit accelerates.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GREENWASH + REGULATORY -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">04</span>
+      <span class="cx-section-title">Disclosure Intelligence &amp; Greenwashing Flags</span>
+    </div>
+    <div class="cx-grid-2">
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Greenwashing Risk Signals</span><span class="cx-panel-badge badge-red">7 Active Flags</span></div>
+        <div class="cx-panel-body">
+          <div class="cx-signal-item"><div class="cx-signal-dot red"></div><div class="cx-signal-text"><strong>Net-zero pledges exclude Scope 3 combustion</strong> — 90% of total lifecycle emissions are downstream Scope 3. Net-zero claims excluding these are materially misleading.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot red"></div><div class="cx-signal-text"><strong>Continued new field development post-NZE guidance</strong> — Multiple supermajors approved new upstream projects after the IEA's 2021 net-zero roadmap despite net-zero commitments.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot red"></div><div class="cx-signal-text"><strong>Methane intensity underreporting</strong> — Satellite data from GHGSat and TROPOMI consistently shows higher methane emissions than company self-reported data.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot amber"></div><div class="cx-signal-text"><strong>Carbon capture dependency</strong> — Transition plans relying on unproven CCS at scale to justify continued production expansion without near-term emissions reductions.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot amber"></div><div class="cx-signal-text"><strong>Nature-based offset reliance</strong> — Net-zero claims backed by low-quality, non-permanent nature-based offsets rather than operational emission reductions.</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Regulatory Framework Exposure</span></div>
+        <div class="cx-panel-body">
+          <div class="cx-bench-item"><div class="cx-bench-name">EU Methane Regulation</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:88%;background:var(--red);"></div></div><div class="cx-bench-val" style="color:var(--red)">Critical</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">EPA Methane Rules (US)</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:84%;background:var(--red);"></div></div><div class="cx-bench-val" style="color:var(--red)">High</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">TCFD / ISSB Disclosure</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:77%;background:var(--risk);"></div></div><div class="cx-bench-val">High</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">EU ETS Expansion (Gas)</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:70%;background:var(--risk);"></div></div><div class="cx-bench-val">High</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">IRA / Clean Energy Credits</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:55%;background:var(--cyan);"></div></div><div class="cx-bench-val" style="color:var(--cyan)">Mixed</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">Climate Litigation Exposure</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:82%;background:var(--red);"></div></div><div class="cx-bench-val" style="color:var(--red)">Growing</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTELLIGENCE SNAPSHOT -->
+  <div class="cx-section">
+    <div class="cx-section-header"><span class="cx-section-eyebrow">05</span><span class="cx-section-title">Executive Intelligence Summary</span></div>
+    <div class="cx-snapshot">
+      <div class="cx-snapshot-label">Climactix Intelligence · Oil &amp; Gas Sector Briefing</div>
+      <div class="cx-snapshot-title">The oil and gas sector faces the most existential transition risk of any industry — structural demand destruction is a certainty, only the pace remains uncertain</div>
+      <div class="cx-snapshot-body">
+        <p style="margin-bottom:10px;">The fundamental challenge for the oil and gas sector is not operational — it is structural. The sector's products are the primary driver of the climate change that policymakers are mandated to prevent. IEA, IPCC, and central bank scenario frameworks all indicate that the 1.5°C carbon budget is incompatible with material growth in fossil fuel production. The question for investors and operators is not whether demand destruction occurs, but whether it happens in an orderly managed fashion or through a disorderly policy shock.</p>
+        <p style="margin-bottom:10px;">Methane emissions represent the sector's most acute near-term regulatory risk. Methane's near-term warming potential (80x CO₂ over 20 years) makes it a priority target for climate regulators. The EU Methane Regulation and updated EPA rules will impose financial penalties on operators above threshold intensities. Satellite-based methane monitoring (GHGSat, TROPOMI, MethaneSAT) has eliminated the ability to self-report emissions below measured reality — a significant enforcement enabler for regulators.</p>
+        <p>Institutional capital allocation for the sector is experiencing a structural bifurcation. Companies with credible, low-cost, low-carbon portfolios — focused on short-cycle assets, methane abatement, and credible energy transition diversification — are attracting increasingly concentrated institutional flows. Companies continuing to allocate capital to high-cost, high-carbon development while making aspirational net-zero pledges are facing accelerating multiple compression, rising cost of capital, and exclusion from ESG-mandated investment mandates that now represent the dominant source of institutional equity capital.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cx-cta-section">
+    <div class="cx-cta-text">
+      <h3>Access Full Oil &amp; Gas Climate Intelligence</h3>
+      <p>Asset-level carbon liability mapping, methane intensity benchmarking, stranded asset simulation, and transition pathway analytics for O&amp;G operators, investors, and institutional analysts.</p>
+    </div>
+    <div class="cx-cta-actions">
+      <a href="assessment.html" class="cx-btn cx-btn-primary">Launch Risk Assessment</a>
+      <a href="greenwashing-scanner.html" class="cx-btn cx-btn-outline">ESG Risk Scanner</a>
+      <a href="dashboard.html" class="cx-btn cx-btn-outline">View Intelligence</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.cx-scenario-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var container = this.closest('.cx-panel');
+      container.querySelectorAll('.cx-scenario-tab').forEach(function(t){ t.classList.remove('active'); });
+      container.querySelectorAll('.cx-scenario-body').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      var id = 'scen-' + this.dataset.tab;
+      var body = document.getElementById(id);
+      if(body) body.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Information Technology — Digital Infrastructure &amp; Climate Intelligence · Climactix</title>
+  <meta name="description" content="Institutional climate risk analytics for the IT sector. Data center emissions, AI compute energy intensity, semiconductor supply chain, and digital carbon exposure." />
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css?v=3" />
+  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#000000; --surface:#0F0F0F; --surface-2:#1A1A1A; --surface-3:#242424; --border:#2C2C2C; --border-strong:#333333; --amber:#0EA5E9; --amber-dim:#0284C7; --amber-fg:#FFFFFF;
+    --risk: #E87722; --risk-dim: #C05200;  /* semantic risk/warning, separate from UI accent */ --cyan:#0099CC; --green:#00CC44; --red:#FF3333; --text:#FFFFFF; --text-2:#888888; --text-muted:#555555; --mono:'IBM Plex Mono','JetBrains Mono',monospace; --font:'Inter','IBM Plex Sans',system-ui,sans-serif; --sans:'Inter',system-ui,sans-serif; --t:0.12s ease; --r:3px; }
+    [data-theme="light"] { --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#EBEBEB; --border:#D0D0D0; --border-strong:#BBBBBB; --text:#000000; --text-2:#333333; --text-muted:#666666; }
+    html{scroll-behavior:smooth;} body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;font-size:13px;line-height:1.5;overflow-x:hidden;} a{color:inherit;text-decoration:none;} button{font-family:inherit;cursor:pointer;border:none;background:none;}
+    ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:3px;}
+    .cx-nav{position:sticky;top:0;z-index:200;height:44px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;}
+    .cx-nav-brand{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-right:24px;} .cx-nav-brand img{height:22px;}
+    .cx-nav-links{display:flex;align-items:center;} .cx-nav-link{font-size:11px;font-weight:500;color:var(--text-muted);padding:4px 10px;border-radius:2px;transition:var(--t);} .cx-nav-link:hover{background:var(--surface-2);color:var(--text);} .cx-nav-link.active{color:var(--amber);border-bottom:2px solid var(--amber);}
+    .cx-nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;} .cx-nav-btn{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:5px 14px;border-radius:2px;border:1px solid var(--border-strong);color:var(--text-2);transition:var(--t);} .cx-nav-btn:hover{border-color:var(--amber);color:var(--amber);} .cx-nav-btn.primary{background:var(--amber);color:#fff;border-color:var(--amber);} /* ── NAV DROPDOWN ── */ .cx-nav-dropdown{position:relative;height:100%;display:flex;align-items:center;} .cx-nav-dropdown-btn{font-size:11px;font-weight:500;color:var(--amber);padding:4px 10px;border-radius:2px;background:none;border:none;cursor:pointer;transition:var(--t);display:flex;align-items:center;gap:4px;border-bottom:2px solid var(--amber);} .cx-nav-dropdown-menu{position:absolute;top:calc(100% + 4px);left:-8px;min-width:220px;background:#0E0E10;border:1px solid rgba(255,255,255,0.12);padding:6px 0;opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity 0.16s cubic-bezier(0.4,0,0.2,1),transform 0.16s cubic-bezier(0.4,0,0.2,1);z-index:300;} .cx-nav-dropdown:hover .cx-nav-dropdown-menu{opacity:1;pointer-events:auto;transform:translateY(0);} .cx-nav-dropdown-item{display:block;padding:8px 16px;font-size:11px;font-weight:500;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.12s,background 0.12s,border-left-color 0.12s;white-space:nowrap;border-left:2px solid transparent;font-family:var(--mono);} .cx-nav-dropdown-item:hover{color:var(--amber);background:rgba(14,165,233,0.06);border-left-color:var(--amber);} .cx-nav-dropdown-item.current{color:var(--amber);border-left-color:var(--amber);background:rgba(14,165,233,0.04);} .cx-nav-dropdown-item.hub-link{font-weight:700;border-bottom:1px solid rgba(255,255,255,0.07);margin-bottom:4px;padding-bottom:10px;color:rgba(255,255,255,0.8);} .cx-nav-dropdown-item.hub-link:hover{color:var(--amber);}
+    .cx-ticker{height:34px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;}
+    .cx-ticker-tag{background:var(--amber);color:#fff;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;flex-shrink:0;height:100%;display:flex;align-items:center;}
+    .cx-ticker-track{display:flex;animation:ticker-scroll 60s linear infinite;white-space:nowrap;} .cx-ticker-item{font-family:var(--mono);font-size:11px;color:var(--text-2);padding:0 20px;border-right:1px solid var(--border);display:flex;align-items:center;gap:8px;} .cx-ticker-item .val{color:var(--amber);font-weight:700;} .cx-ticker-item .dn{color:var(--red);} .cx-ticker-item .up{color:var(--green);}
+    @keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .cx-page{max-width:1400px;margin:0 auto;padding:0 20px 60px;}
+    .cx-hero{padding:28px 0 20px;border-bottom:1px solid var(--border);}
+    .cx-hero-eyebrow{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+    .cx-live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse-dot 2s ease infinite;display:inline-block;} @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.4}}
+    .cx-hero-title{font-size:30px;font-weight:800;color:var(--text);letter-spacing:-0.04em;line-height:1.1;margin-bottom:10px;}
+    .cx-hero-sub{font-size:13px;color:var(--text-2);max-width:680px;line-height:1.6;margin-bottom:20px;}
+    .cx-hero-kpis{display:flex;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden;}
+    .cx-kpi{flex:1;padding:14px 18px;border-right:1px solid var(--border);background:var(--surface);} .cx-kpi:last-child{border-right:none;}
+    .cx-kpi-label{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
+    .cx-kpi-val{font-family:var(--mono);font-size:20px;font-weight:700;letter-spacing:-0.03em;color:var(--amber);line-height:1;} .cx-kpi-val.red{color:var(--red);} .cx-kpi-val.green{color:var(--green);}
+    .cx-kpi-delta{font-family:var(--mono);font-size:11px;font-weight:700;margin-top:4px;} .cx-kpi-delta.dn{color:var(--red);} .cx-kpi-delta.up{color:var(--green);}
+    .cx-section{margin-top:28px;} .cx-section-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px;}
+    .cx-section-eyebrow{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);}
+    .cx-section-title{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-0.015em;} .cx-section-sub{font-size:12px;color:var(--text-muted);margin-left:auto;font-family:var(--mono);}
+    .cx-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;} .cx-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+    .cx-panel{background:var(--surface);border:1px solid var(--border);border-radius:3px;} .cx-panel-accent{border-left:3px solid var(--amber);}
+    .cx-panel-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .cx-panel-title{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
+    .cx-panel-badge{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;border-radius:2px;}
+    .badge-red{background:rgba(255,51,51,0.08);color:var(--red);border:1px solid rgba(255,51,51,0.2);} .badge-amber{background:rgba(232,135,34,0.08);color:var(--risk);border:1px solid rgba(232,135,34,0.2);} .badge-green{background:rgba(0,204,68,0.08);color:var(--green);border:1px solid rgba(0,204,68,0.2);} .badge-cyan{background:rgba(0,153,204,0.08);color:var(--cyan);border:1px solid rgba(0,153,204,0.2);}
+    .cx-panel-body{padding:16px;}
+    .cx-table{width:100%;border-collapse:collapse;} .cx-table thead th{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:8px 14px;border-bottom:1px solid var(--border);text-align:left;} .cx-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t);} .cx-table tbody tr:hover{background:var(--surface-2);} .cx-table tbody tr:last-child{border-bottom:none;} .cx-table tbody td{padding:9px 14px;font-size:12px;color:var(--text);}
+    .mono{font-family:var(--mono);color:var(--amber);} .mono-red{font-family:var(--mono);color:var(--red);} .mono-green{font-family:var(--mono);color:var(--green);} .muted{color:var(--text-muted);font-size:11px;}
+    .cx-risk-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);} .cx-risk-row:last-child{border-bottom:none;} .cx-risk-label{font-size:12px;color:var(--text-2);min-width:200px;} .cx-risk-bar-wrap{flex:1;height:3px;background:var(--border);position:relative;} .cx-risk-bar{height:100%;position:absolute;left:0;top:0;} .cx-risk-val{font-family:var(--mono);font-size:12px;font-weight:700;min-width:40px;text-align:right;}
+    .cx-bench-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);} .cx-bench-item:last-child{border-bottom:none;} .cx-bench-name{font-size:12px;color:var(--text-2);min-width:200px;} .cx-bench-track{flex:1;height:4px;background:var(--border);position:relative;} .cx-bench-fill{height:100%;position:absolute;left:0;} .cx-bench-val{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--amber);min-width:60px;text-align:right;}
+    .cx-signal-item{padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;} .cx-signal-item:last-child{border-bottom:none;} .cx-signal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;} .cx-signal-dot.red{background:var(--red);} .cx-signal-dot.amber{background:var(--amber);} .cx-signal-dot.yellow{background:#FFCC00;} .cx-signal-text{font-size:12px;color:var(--text-2);line-height:1.5;} .cx-signal-text strong{color:var(--text);}
+    .cx-scenario-tabs{display:flex;border-bottom:1px solid var(--border);} .cx-scenario-tab{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:8px 18px;color:var(--text-muted);border-bottom:2px solid transparent;cursor:pointer;transition:var(--t);} .cx-scenario-tab.active{color:var(--amber);border-bottom-color:var(--amber);} .cx-scenario-tab:hover:not(.active){color:var(--text);}
+    .cx-scenario-body{padding:16px;display:none;} .cx-scenario-body.active{display:block;}
+    .cx-snapshot{background:var(--surface);border:1px solid var(--border-strong);border-left:3px solid var(--amber);border-radius:3px;padding:18px 20px;} .cx-snapshot-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;} .cx-snapshot-title{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-0.015em;margin-bottom:8px;} .cx-snapshot-body{font-size:12px;color:var(--text-2);line-height:1.7;}
+    .cx-cta-section{margin-top:40px;background:var(--surface);border:1px solid var(--border-strong);border-radius:3px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;} .cx-cta-text h3{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.025em;margin-bottom:6px;} .cx-cta-text p{font-size:12px;color:var(--text-2);max-width:500px;line-height:1.6;} .cx-cta-actions{display:flex;gap:8px;flex-shrink:0;}
+    .cx-btn{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:8px 20px;border-radius:2px;cursor:pointer;transition:var(--t);display:inline-block;} .cx-btn-primary{background:var(--amber);color:#fff;border:1px solid var(--amber);} .cx-btn-primary:hover{background:var(--amber-dim);} .cx-btn-outline{background:none;color:var(--text-2);border:1px solid var(--border-strong);} .cx-btn-outline:hover{border-color:var(--amber);color:var(--amber);}
+    @media(max-width:900px){.cx-grid-3,.cx-grid-2{grid-template-columns:1fr;}.cx-hero-kpis{flex-wrap:wrap;}.cx-cta-section{flex-direction:column;}}
+  </style>
+</head>
+<body>
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-brand"><img src="Climatix_logo.png" alt="Climactix" /></a>
+  <div class="cx-nav-links">
+    <a href="index.html" class="cx-nav-link">Platform</a>
+    <a href="dashboard.html" class="cx-nav-link">Intelligence</a>
+    <a href="simulation.html" class="cx-nav-link">Risk Engine</a>
+    <a href="regulations.html" class="cx-nav-link">Regulations</a>
+    <div class="cx-nav-dropdown">
+      <button class="cx-nav-dropdown-btn">
+        Industries
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cx-nav-dropdown-menu">
+          <a href="industries.html" class="cx-nav-dropdown-item hub-link">All Sectors →</a>
+          <a href="industry-energy.html" class="cx-nav-dropdown-item">Energy &amp; Utilities</a>
+          <a href="industry-banking.html" class="cx-nav-dropdown-item">Banking &amp; Financial Services</a>
+          <a href="industry-oil-gas.html" class="cx-nav-dropdown-item">Oil &amp; Gas</a>
+          <a href="industry-real-estate.html" class="cx-nav-dropdown-item">Real Estate</a>
+          <a href="industry-manufacturing.html" class="cx-nav-dropdown-item">Manufacturing</a>
+          <a href="industry-it.html" class="cx-nav-dropdown-item current">Information Technology</a>
+          <a href="industry-supply-chain.html" class="cx-nav-dropdown-item">Supply Chain &amp; Logistics</a>
+          <a href="industry-mining.html" class="cx-nav-dropdown-item">Mining &amp; Metals</a>
+      </div>
+    </div>
+  </div>
+  <div class="cx-nav-right">
+    <button class="cx-nav-btn" onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})()">Theme</button>
+    <a href="assessment.html" class="cx-nav-btn primary">Launch Assessment</a>
+  </div>
+</nav>
+<div class="cx-ticker">
+  <div class="cx-ticker-tag">IT Intel</div>
+  <div style="overflow:hidden;flex:1;"><div class="cx-ticker-track">
+    <div class="cx-ticker-item">Global Data Center Electricity <span class="val">460 TWh/yr</span> <span class="dn">Growing 10%/yr</span></div>
+    <div class="cx-ticker-item">AI Training Energy (GPT-4 est.) <span class="val">50 GWh</span></div>
+    <div class="cx-ticker-item">Hyperscale DC Renewable Coverage <span class="val">64%</span></div>
+    <div class="cx-ticker-item">Semiconductor Water Use (per wafer) <span class="val">~1,400 gal</span></div>
+    <div class="cx-ticker-item">Big Tech Scope 3 Ratio <span class="val">75–90%</span> <span class="dn">of total footprint</span></div>
+    <div class="cx-ticker-item">EU Energy Efficiency Act (DCs) <span class="val">2024 mandate</span></div>
+    <div class="cx-ticker-item">Global Data Center Electricity <span class="val">460 TWh/yr</span> <span class="dn">Growing 10%/yr</span></div>
+    <div class="cx-ticker-item">AI Training Energy (GPT-4 est.) <span class="val">50 GWh</span></div>
+  </div></div>
+</div>
+<div class="cx-page">
+  <div class="cx-hero">
+    <div class="cx-hero-eyebrow"><span class="cx-live-dot"></span> Sector Intelligence — Information Technology · Updated Q1 2025</div>
+    <h1 class="cx-hero-title">Digital Infrastructure &amp;<br>Climate Intelligence</h1>
+    <p class="cx-hero-sub">Institutional-grade climate risk analytics for the technology sector. Data center energy and emissions, AI compute intensity, semiconductor supply chain exposure, rare earth dependency, grid reliance risk, and digital carbon footprint analysis.</p>
+    <div class="cx-hero-kpis">
+      <div class="cx-kpi"><div class="cx-kpi-label">Data Center Energy (Global)</div><div class="cx-kpi-val">460 TWh/yr</div><div class="cx-kpi-delta dn">Growing 10% annually — AI-driven acceleration</div></div>
+      <div class="cx-kpi"><div class="cx-kpi-label">Scope 3 Share (Big Tech)</div><div class="cx-kpi-val red">75–90%</div><div class="cx-kpi-delta dn">Hardware supply chain dominates footprint</div></div>
+      <div class="cx-kpi"><div class="cx-kpi-label">RE Coverage (Hyperscale)</div><div class="cx-kpi-val green">64%</div><div class="cx-kpi-delta up">▲ Corporate PPA commitments driving growth</div></div>
+      <div class="cx-kpi"><div class="cx-kpi-label">AI Compute Growth</div><div class="cx-kpi-val red">10x by 2030</div><div class="cx-kpi-delta dn">Energy demand acceleration underestimated</div></div>
+      <div class="cx-kpi"><div class="cx-kpi-label">Sector Transition Risk</div><div class="cx-kpi-val">4.2 / 10</div><div class="cx-kpi-delta dn">Lower than average — but growing with AI footprint</div></div>
+    </div>
+  </div>
+
+  <div class="cx-section">
+    <div class="cx-section-header"><span class="cx-section-eyebrow">01</span><span class="cx-section-title">Climate Risk Overview</span></div>
+    <div class="cx-grid-3">
+      <div class="cx-panel cx-panel-accent">
+        <div class="cx-panel-header"><span class="cx-panel-title">Data Center Climate Risk</span><span class="cx-panel-badge badge-amber">High</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Data centers consume ~2% of global electricity and are the fastest-growing demand segment globally, with AI workloads driving 40%+ annual growth projections. Grid access constraints, renewable integration gaps, and heat management costs are escalating.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">Energy Growth Trajectory</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:82%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">82</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Renewable Gap Exposure</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:64%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">64</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Grid Reliability Risk</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:58%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">58</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Supply Chain Risk</span><span class="cx-panel-badge badge-red">High</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Hardware manufacturing — semiconductors, servers, devices — drives 75–90% of tech companies' total carbon footprint. Semiconductor fabs are water-intensive, concentrated in climate-vulnerable geographies (Taiwan, East Asia), and reliant on rare earth supply chains facing geopolitical and physical risk.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">Semiconductor Supply Concentration</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:88%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">88</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Rare Earth Dependency</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:76%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">76</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Water Stress (Fab Locations)</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:70%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">70</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Regulatory Pressure</span><span class="cx-panel-badge badge-amber">Medium–High</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">The EU Energy Efficiency Act mandates data center reporting from 2024. CSRD requires Scope 3 hardware emissions disclosure. SEC climate rules cover IT companies' material climate risks. Corporate Power Purchase Agreements (PPAs) are coming under scrutiny for additionality.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">EU EEA Data Center Reporting</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:76%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">76</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">CSRD Scope 3 Compliance</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:68%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">68</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">AI Energy Disclosure (emerging)</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:52%;background:#92400E;"></div></div><div class="cx-risk-val" style="color:#92400E">52</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cx-section">
+    <div class="cx-section-header"><span class="cx-section-eyebrow">02</span><span class="cx-section-title">Digital Carbon Exposure by Sub-Sector</span></div>
+    <div class="cx-panel">
+      <table class="cx-table">
+        <thead><tr><th>IT Sub-Sector</th><th>Scope 1+2 Intensity</th><th>Scope 3 Dominance</th><th>Key Risk Vector</th><th>RE Coverage</th><th>Disclosure Maturity</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Hyperscale Cloud (AWS, Azure, GCP)</strong></td><td class="mono">Medium–High</td><td class="mono-red">Hardware mfg</td><td class="mono-red">Energy growth</td><td class="mono-green">80–100% RE target</td><td class="mono-green">High</td></tr>
+          <tr><td><strong>AI / ML Platform Providers</strong></td><td class="mono-red">Rapidly growing</td><td class="mono-red">Compute hardware</td><td class="mono-red">GPU energy intensity</td><td style="font-family:var(--mono);color:var(--amber)">Partial</td><td style="font-family:var(--mono);color:var(--amber)">Low–Medium</td></tr>
+          <tr><td><strong>Semiconductor Manufacturers</strong></td><td class="mono-red">Very high (fab)</td><td class="mono-red">Chemical inputs</td><td class="mono-red">Water + energy</td><td style="font-family:var(--mono);color:var(--amber)">Growing</td><td style="font-family:var(--mono);color:var(--amber)">Medium</td></tr>
+          <tr><td><strong>Consumer Electronics (OEMs)</strong></td><td class="muted">Low direct</td><td class="mono-red">Hardware Scope 3</td><td style="font-family:var(--mono);color:var(--amber)">Supply chain</td><td class="muted">Variable</td><td style="font-family:var(--mono);color:var(--amber)">Medium</td></tr>
+          <tr><td><strong>Enterprise SaaS / Software</strong></td><td class="mono-green">Very low</td><td style="font-family:var(--mono);color:var(--amber)">Server emissions</td><td class="muted">Low overall</td><td class="muted">N/A</td><td class="mono-green">High</td></tr>
+          <tr><td><strong>Telecom / Network Infrastructure</strong></td><td class="mono">Medium</td><td style="font-family:var(--mono);color:var(--amber)">Equipment mfg</td><td style="font-family:var(--mono);color:var(--amber)">Grid dependency</td><td style="font-family:var(--mono);color:var(--amber)">Partial</td><td style="font-family:var(--mono);color:var(--amber)">Medium</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="cx-section">
+    <div class="cx-section-header"><span class="cx-section-eyebrow">03</span><span class="cx-section-title">Scenario Analysis</span></div>
+    <div class="cx-panel">
+      <div class="cx-scenario-tabs">
+        <div class="cx-scenario-tab active" data-tab="it1p5">1.5°C Pathway</div>
+        <div class="cx-scenario-tab" data-tab="it2p0">2°C Pathway</div>
+        <div class="cx-scenario-tab" data-tab="it3p0">3°C Pathway</div>
+      </div>
+      <div class="cx-scenario-body active" id="scen-it1p5">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Grid Transition Pressure</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Data center growth threatens grid decarbonization goals. Hyperscale operators face regulatory pressure to demonstrate hourly carbon-free energy matching (24/7 CFE) rather than annual renewable accounting. New data center permitting increasingly contingent on additionality demonstrations.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Hardware Supply Chain</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">CSRD forces full Scope 3 hardware emissions disclosure. Semiconductor manufacturers must demonstrate decarbonization roadmaps. Customer climate teams begin incorporating hardware carbon intensity into procurement decisions. Green silicon premium emerges.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">AI Energy Reckoning</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">AI training and inference energy consumption becomes subject to mandatory disclosure. Compute-per-carbon efficiency becomes a competitive metric. Liquid cooling, specialized hardware optimization, and model efficiency benchmarks emerge as key differentiation vectors.</p></div>
+        </div>
+      </div>
+      <div class="cx-scenario-body" id="scen-it2p0">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Managed Transition</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Corporate PPA commitments continue to drive renewable energy buildout. Annual carbon matching remains the standard rather than 24/7 CFE. Energy costs rise moderately with carbon pricing pass-through from grid operators. IT sector maintains relatively lower risk versus hard-to-abate sectors.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Supply Chain Impact</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Taiwan Strait physical risk and drought-related fab shutdowns create supply chain resilience risks for the semiconductor industry. Geopolitical concentration in East Asia for advanced chip manufacturing creates compound climate-geopolitical risk for enterprise IT planners.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Strategic Signal</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Technology companies' climate leadership positioning faces scrutiny as AI energy demand growth contradicts stated net-zero trajectories. Companies investing in efficiency and 24/7 CFE differentiate from greenwashing risk. Circular economy hardware programs gain institutional credibility.</p></div>
+        </div>
+      </div>
+      <div class="cx-scenario-body" id="scen-it3p0">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Infrastructure Stress</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Extreme heat events stress data center cooling systems — operational failure risk increases in poorly engineered facilities. Coastal data centers face flooding risk. Water stress in semiconductor fab regions causes production disruptions. Grid instability in climate-stressed regions affects cloud service reliability.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Supply Chain Shock</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Rare earth mining disruption from climate events in key producing regions (Congo, Chile, China) creates critical mineral supply shocks. Cyclones, droughts, and floods affecting mining and refining operations cascade into semiconductor production bottlenecks with 12–18 month lag effects.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Regulatory Shock</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Political backlash against tech sector energy consumption triggers emergency regulatory restrictions on data center buildout. AI development moratoria in energy-constrained jurisdictions. Companies that failed to build 24/7 clean energy portfolios face regulatory shutdown risk.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cx-section">
+    <div class="cx-section-header"><span class="cx-section-eyebrow">04</span><span class="cx-section-title">Greenwashing Risk &amp; Disclosure Intelligence</span></div>
+    <div class="cx-grid-2">
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Greenwashing Risk Signals</span><span class="cx-panel-badge badge-amber">5 Active Flags</span></div>
+        <div class="cx-panel-body">
+          <div class="cx-signal-item"><div class="cx-signal-dot red"></div><div class="cx-signal-text"><strong>Annual vs. hourly renewable matching</strong> — Annual carbon neutrality claims achieved through RECs purchased in different hours/locations than actual consumption. 24/7 CFE represents genuine additionality; annual RECs do not.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot red"></div><div class="cx-signal-text"><strong>AI energy footprint omission</strong> — AI training and inference energy consumption excluded from Scope 2 disclosures or aggregated in ways that obscure the magnitude of AI-specific energy growth.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot amber"></div><div class="cx-signal-text"><strong>Scope 3 hardware undercount</strong> — Manufacturing emissions for servers, devices, and networking equipment (dominant Scope 3 category) excluded or underestimated due to incomplete supplier data.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot amber"></div><div class="cx-signal-text"><strong>PUE gaming</strong> — Data center Power Usage Effectiveness (PUE) improvements cited as primary climate metric while absolute energy consumption grows unchecked.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot yellow"></div><div class="cx-signal-text"><strong>Software carbon intensity omission</strong> — No standardized disclosure of software application energy efficiency — a growing vector as AI applications proliferate across enterprise and consumer use.</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Sector Disclosure Maturity</span></div>
+        <div class="cx-panel-body">
+          <div class="cx-bench-item"><div class="cx-bench-name">Scope 1+2 Disclosure</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:88%;background:var(--green);"></div></div><div class="cx-bench-val" style="color:var(--green)">88%</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">Scope 3 Hardware Emissions</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:52%;background:var(--risk);"></div></div><div class="cx-bench-val">52%</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">24/7 CFE Progress Reporting</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:28%;background:var(--red);"></div></div><div class="cx-bench-val" style="color:var(--red)">28%</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">AI Energy Disclosure</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:14%;background:var(--red);"></div></div><div class="cx-bench-val" style="color:var(--red)">14%</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">TCFD Climate Risk Reporting</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:76%;background:var(--cyan);"></div></div><div class="cx-bench-val" style="color:var(--cyan)">76%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cx-section">
+    <div class="cx-section-header"><span class="cx-section-eyebrow">05</span><span class="cx-section-title">Executive Intelligence Summary</span></div>
+    <div class="cx-snapshot">
+      <div class="cx-snapshot-label">Climactix Intelligence · Information Technology Sector Briefing</div>
+      <div class="cx-snapshot-title">AI is creating a structural tension between the technology sector's climate leadership claims and its rapidly expanding energy footprint — disclosure and accountability gap is widening</div>
+      <div class="cx-snapshot-body">
+        <p style="margin-bottom:10px;">The information technology sector has historically positioned itself as a climate solutions enabler — and legitimate opportunity exists in grid optimization, climate modeling, and industrial efficiency. However, the sector's own direct and indirect energy consumption is growing at rates that materially contradict stated net-zero trajectories. The driving factor is AI: training large language models, inference at scale, and the associated data center buildout are creating energy demand growth that no existing renewable energy procurement strategy is adequately addressing.</p>
+        <p style="margin-bottom:10px;">The hardware supply chain dimension is structurally underappreciated in IT sector climate disclosures. For most technology companies, 75–90% of their total carbon footprint is embedded in the hardware they use and sell. Semiconductor manufacturing requires 1,400 gallons of ultra-pure water per wafer, concentrated in Taiwan and East Asia — geographies facing both water stress and physical climate risk. The combination of geographic concentration, water dependency, and energy intensity makes the semiconductor supply chain among the most climate-vulnerable critical infrastructure pathways in the global economy.</p>
+        <p>The greenwashing risk in the IT sector is real and growing. Annual renewable energy certificate claims that do not represent 24/7 carbon-free energy are increasingly recognized as inadequate. Regulators are beginning to require hourly matching and additionality demonstration. The companies that have invested in genuine 24/7 CFE partnerships, hardware efficiency improvements, and transparent AI energy disclosure will be positioned favorably. Those relying on legacy REC-based carbon neutrality claims face accelerating reputational and regulatory risk as AI energy growth makes those claims increasingly implausible.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cx-cta-section">
+    <div class="cx-cta-text"><h3>Access Full IT Sector Climate Intelligence</h3><p>Data center energy analytics, AI compute carbon tracking, semiconductor supply chain risk, and CSRD/TCFD disclosure support for technology operators, investors, and infrastructure buyers.</p></div>
+    <div class="cx-cta-actions">
+      <a href="assessment.html" class="cx-btn cx-btn-primary">Launch Risk Assessment</a>
+      <a href="greenwashing-scanner.html" class="cx-btn cx-btn-outline">ESG Risk Scanner</a>
+      <a href="dashboard.html" class="cx-btn cx-btn-outline">View Intelligence</a>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll('.cx-scenario-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var container = this.closest('.cx-panel');
+      container.querySelectorAll('.cx-scenario-tab').forEach(function(t){ t.classList.remove('active'); });
+      container.querySelectorAll('.cx-scenario-body').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      var body = document.getElementById('scen-' + this.dataset.tab);
+      if(body) body.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

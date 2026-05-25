@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banking &amp; Financial Services — Climate Risk Intelligence · Climactix</title>
+  <meta name="description" content="Institutional climate risk intelligence for banks and financial institutions. Financed emissions, portfolio stress testing, climate VaR, and regulatory compliance analytics." />
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css?v=3" />
+  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000000; --bg-alt: #0A0A0A;
+      --surface: #0F0F0F; --surface-2: #1A1A1A; --surface-3: #242424; --surface-4: #2E2E2E;
+      --border: #2C2C2C; --border-strong: #333333; --border-accent: rgba(14,165,233,0.25);
+      --amber: #0EA5E9; --amber-dim: #0284C7; --amber-glow: rgba(14,165,233,0.10); --amber-fg: #FFFFFF;
+    --risk: #E87722; --risk-dim: #C05200;  /* semantic risk/warning, separate from UI accent */
+      --cyan: #0099CC; --green: #00CC44; --red: #FF3333; --blue: #3399FF;
+      --text: #FFFFFF; --text-2: #888888; --text-muted: #555555;
+      --mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+      --font: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
+      --t: 0.12s ease; --r: 3px;
+    }
+    [data-theme="light"] {
+      --bg: #FFFFFF; --bg-alt: #F5F5F5;
+      --surface: #FFFFFF; --surface-2: #EBEBEB; --surface-3: #E0E0E0;
+      --border: #D0D0D0; --border-strong: #BBBBBB;
+      --text: #000000; --text-2: #333333; --text-muted: #666666;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; font-size: 13px; line-height: 1.5; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; } button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+    .cx-nav { position: sticky; top: 0; z-index: 200; height: 44px; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 0; }
+    .cx-nav-brand { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-right: 24px; }
+    .cx-nav-brand img { height: 22px; }
+    .cx-nav-links { display: flex; align-items: center; gap: 0; }
+    .cx-nav-link { font-size: 11px; font-weight: 500; color: var(--text-muted); padding: 4px 10px; border-radius: 2px; transition: var(--t); }
+    .cx-nav-link:hover { background: var(--surface-2); color: var(--text); }
+    .cx-nav-link.active { color: var(--amber); border-bottom: 2px solid var(--amber); }
+    .cx-nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .cx-nav-btn { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 14px; border-radius: 2px; border: 1px solid var(--border-strong); color: var(--text-2); transition: var(--t); }
+    .cx-nav-btn:hover { border-color: var(--amber); color: var(--amber); }
+    .cx-nav-btn.primary { background: var(--amber); color: #fff; border-color: var(--amber); }
+    .cx-nav-btn.primary:hover { background: var(--amber-dim); }
+    /* ── NAV DROPDOWN ── */
+    .cx-nav-dropdown { position: relative; height: 100%; display: flex; align-items: center; }
+    .cx-nav-dropdown-btn { font-size: 11px; font-weight: 500; color: var(--amber); padding: 4px 10px; border-radius: 2px; background: none; border: none; cursor: pointer; transition: var(--t); display: flex; align-items: center; gap: 4px; border-bottom: 2px solid var(--amber); }
+    .cx-nav-dropdown-menu { position: absolute; top: calc(100% + 4px); left: -8px; min-width: 220px; background: #0E0E10; border: 1px solid rgba(255,255,255,0.12); padding: 6px 0; opacity: 0; pointer-events: none; transform: translateY(-6px); transition: opacity 0.16s cubic-bezier(0.4,0,0.2,1), transform 0.16s cubic-bezier(0.4,0,0.2,1); z-index: 300; }
+    .cx-nav-dropdown:hover .cx-nav-dropdown-menu { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .cx-nav-dropdown-item { display: block; padding: 8px 16px; font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.12s, background 0.12s, border-left-color 0.12s; white-space: nowrap; border-left: 2px solid transparent; font-family: var(--mono); }
+    .cx-nav-dropdown-item:hover { color: var(--amber); background: rgba(14,165,233,0.06); border-left-color: var(--amber); }
+    .cx-nav-dropdown-item.current { color: var(--amber); border-left-color: var(--amber); background: rgba(14,165,233,0.04); }
+    .cx-nav-dropdown-item.hub-link { font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 4px; padding-bottom: 10px; color: rgba(255,255,255,0.8); }
+    .cx-nav-dropdown-item.hub-link:hover { color: var(--amber); }
+
+    .cx-ticker { height: 34px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; overflow: hidden; }
+    .cx-ticker-tag { background: var(--amber); color: #fff; font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; flex-shrink: 0; height: 100%; display: flex; align-items: center; }
+    .cx-ticker-track { display: flex; gap: 0; animation: ticker-scroll 55s linear infinite; white-space: nowrap; }
+    .cx-ticker-item { font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 0 20px; border-right: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+    .cx-ticker-item .val { color: var(--amber); font-weight: 700; } .cx-ticker-item .up { color: var(--green); } .cx-ticker-item .dn { color: var(--red); }
+    @keyframes ticker-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .cx-page { max-width: 1400px; margin: 0 auto; padding: 0 20px 60px; }
+    .cx-hero { padding: 28px 0 20px; border-bottom: 1px solid var(--border); }
+    .cx-hero-eyebrow { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .cx-live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse-dot 2s ease infinite; display: inline-block; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .cx-hero-title { font-size: 30px; font-weight: 800; color: var(--text); letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 10px; }
+    .cx-hero-sub { font-size: 13px; color: var(--text-2); max-width: 680px; line-height: 1.6; margin-bottom: 20px; }
+    .cx-hero-kpis { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+    .cx-kpi { flex: 1; padding: 14px 18px; border-right: 1px solid var(--border); background: var(--surface); }
+    .cx-kpi:last-child { border-right: none; }
+    .cx-kpi-label { font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .cx-kpi-val { font-family: var(--mono); font-size: 20px; font-weight: 700; letter-spacing: -0.03em; color: var(--amber); line-height: 1; }
+    .cx-kpi-val.green { color: var(--green); } .cx-kpi-val.red { color: var(--red); } .cx-kpi-val.cyan { color: var(--cyan); }
+    .cx-kpi-delta { font-family: var(--mono); font-size: 11px; font-weight: 700; margin-top: 4px; }
+    .cx-kpi-delta.up { color: var(--green); } .cx-kpi-delta.dn { color: var(--red); }
+    .cx-section { margin-top: 28px; }
+    .cx-section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .cx-section-eyebrow { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); }
+    .cx-section-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.015em; }
+    .cx-section-sub { font-size: 12px; color: var(--text-muted); margin-left: auto; font-family: var(--mono); }
+    .cx-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .cx-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .cx-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .cx-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+    .cx-panel-accent { border-left: 3px solid var(--amber); }
+    .cx-panel-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .cx-panel-title { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+    .cx-panel-badge { font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; }
+    .badge-red { background: rgba(255,51,51,0.08); color: var(--red); border: 1px solid rgba(255,51,51,0.2); }
+    .badge-amber { background: rgba(232,135,34,0.08); color: var(--risk); border: 1px solid rgba(232,135,34,0.2); }
+    .badge-green { background: rgba(0,204,68,0.08); color: var(--green); border: 1px solid rgba(0,204,68,0.2); }
+    .badge-cyan { background: rgba(0,153,204,0.08); color: var(--cyan); border: 1px solid rgba(0,153,204,0.2); }
+    .cx-panel-body { padding: 16px; }
+    .cx-table { width: 100%; border-collapse: collapse; }
+    .cx-table thead th { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 8px 14px; border-bottom: 1px solid var(--border); text-align: left; background: var(--surface); }
+    .cx-table tbody tr { border-bottom: 1px solid var(--border); transition: background var(--t); }
+    .cx-table tbody tr:hover { background: var(--surface-2); }
+    .cx-table tbody tr:last-child { border-bottom: none; }
+    .cx-table tbody td { padding: 9px 14px; font-size: 12px; color: var(--text); }
+    .mono { font-family: var(--mono); color: var(--amber); }
+    .mono-red { font-family: var(--mono); color: var(--red); }
+    .mono-green { font-family: var(--mono); color: var(--green); }
+    .mono-cyan { font-family: var(--mono); color: var(--cyan); }
+    .muted { color: var(--text-muted); font-size: 11px; }
+    .cx-risk-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+    .cx-risk-row:last-child { border-bottom: none; }
+    .cx-risk-label { font-size: 12px; color: var(--text-2); min-width: 200px; }
+    .cx-risk-bar-wrap { flex: 1; height: 3px; background: var(--border); position: relative; }
+    .cx-risk-bar { height: 100%; position: absolute; left: 0; top: 0; }
+    .cx-risk-val { font-family: var(--mono); font-size: 12px; font-weight: 700; min-width: 40px; text-align: right; }
+    .cx-bench-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .cx-bench-item:last-child { border-bottom: none; }
+    .cx-bench-name { font-size: 12px; color: var(--text-2); min-width: 200px; }
+    .cx-bench-track { flex: 1; height: 4px; background: var(--border); position: relative; }
+    .cx-bench-fill { height: 100%; position: absolute; left: 0; }
+    .cx-bench-val { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--amber); min-width: 60px; text-align: right; }
+    .cx-signal-item { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
+    .cx-signal-item:last-child { border-bottom: none; }
+    .cx-signal-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .cx-signal-dot.red { background: var(--red); } .cx-signal-dot.amber { background: var(--amber); } .cx-signal-dot.yellow { background: #FFCC00; }
+    .cx-signal-text { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+    .cx-signal-text strong { color: var(--text); }
+    .cx-scenario-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+    .cx-scenario-tab { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 18px; color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer; transition: var(--t); }
+    .cx-scenario-tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+    .cx-scenario-tab:hover:not(.active) { color: var(--text); }
+    .cx-scenario-body { padding: 16px; display: none; }
+    .cx-scenario-body.active { display: block; }
+    .cx-snapshot { background: var(--surface); border: 1px solid var(--border-strong); border-left: 3px solid var(--amber); border-radius: 3px; padding: 18px 20px; }
+    .cx-snapshot-label { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+    .cx-snapshot-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.015em; margin-bottom: 8px; }
+    .cx-snapshot-body { font-size: 12px; color: var(--text-2); line-height: 1.7; }
+    .cx-cta-section { margin-top: 40px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 3px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .cx-cta-text h3 { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 6px; }
+    .cx-cta-text p { font-size: 12px; color: var(--text-2); max-width: 500px; line-height: 1.6; }
+    .cx-cta-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .cx-btn { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 20px; border-radius: 2px; cursor: pointer; transition: var(--t); display: inline-block; }
+    .cx-btn-primary { background: var(--amber); color: #fff; border: 1px solid var(--amber); }
+    .cx-btn-primary:hover { background: var(--amber-dim); border-color: var(--amber-dim); }
+    .cx-btn-outline { background: none; color: var(--text-2); border: 1px solid var(--border-strong); }
+    .cx-btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+    @media (max-width: 900px) { .cx-grid-3, .cx-grid-4 { grid-template-columns: 1fr; } .cx-hero-kpis { flex-wrap: wrap; } .cx-cta-section { flex-direction: column; } }
+  </style>
+</head>
+<body>
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-brand"><img src="Climatix_logo.png" alt="Climactix" /></a>
+  <div class="cx-nav-links">
+    <a href="index.html" class="cx-nav-link">Platform</a>
+    <a href="dashboard.html" class="cx-nav-link">Intelligence</a>
+    <a href="simulation.html" class="cx-nav-link">Risk Engine</a>
+    <a href="regulations.html" class="cx-nav-link">Regulations</a>
+    <div class="cx-nav-dropdown">
+      <button class="cx-nav-dropdown-btn">
+        Industries
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cx-nav-dropdown-menu">
+          <a href="industries.html" class="cx-nav-dropdown-item hub-link">All Sectors →</a>
+          <a href="industry-energy.html" class="cx-nav-dropdown-item">Energy &amp; Utilities</a>
+          <a href="industry-banking.html" class="cx-nav-dropdown-item current">Banking &amp; Financial Services</a>
+          <a href="industry-oil-gas.html" class="cx-nav-dropdown-item">Oil &amp; Gas</a>
+          <a href="industry-real-estate.html" class="cx-nav-dropdown-item">Real Estate</a>
+          <a href="industry-manufacturing.html" class="cx-nav-dropdown-item">Manufacturing</a>
+          <a href="industry-it.html" class="cx-nav-dropdown-item">Information Technology</a>
+          <a href="industry-supply-chain.html" class="cx-nav-dropdown-item">Supply Chain &amp; Logistics</a>
+          <a href="industry-mining.html" class="cx-nav-dropdown-item">Mining &amp; Metals</a>
+      </div>
+    </div>
+  </div>
+  <div class="cx-nav-right">
+    <button class="cx-nav-btn" onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})()">Theme</button>
+    <a href="assessment.html" class="cx-nav-btn primary">Launch Assessment</a>
+  </div>
+</nav>
+
+<div class="cx-ticker">
+  <div class="cx-ticker-tag">Banking Intel</div>
+  <div style="overflow:hidden;flex:1;">
+    <div class="cx-ticker-track">
+      <div class="cx-ticker-item">Global Financed Emissions <span class="val">14.8 Gt CO₂</span> <span class="dn">Not declining</span></div>
+      <div class="cx-ticker-item">Banks Aligned to NZBA <span class="val">140+</span></div>
+      <div class="cx-ticker-item">Climate VaR — Top 10 Banks <span class="val">$250B</span></div>
+      <div class="cx-ticker-item">Green Bond Issuance 2024 <span class="val">$620B</span> <span class="up">+9%</span></div>
+      <div class="cx-ticker-item">Basel IV Climate Risk Integration <span class="val">2025</span></div>
+      <div class="cx-ticker-item">Carbon-Intensive Lending Exposure <span class="val">18–24%</span> <span class="dn">of assets</span></div>
+      <div class="cx-ticker-item">IFRS S2 Adoption Deadline <span class="val">FY2025</span></div>
+      <div class="cx-ticker-item">Physical Risk Portfolio Exposure <span class="val">$1.3T</span> <span class="dn">by 2050</span></div>
+      <div class="cx-ticker-item">Global Financed Emissions <span class="val">14.8 Gt CO₂</span> <span class="dn">Not declining</span></div>
+      <div class="cx-ticker-item">Banks Aligned to NZBA <span class="val">140+</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="cx-page">
+  <div class="cx-hero">
+    <div class="cx-hero-eyebrow"><span class="cx-live-dot"></span> Sector Intelligence — Banking &amp; Financial Services · Updated Q1 2025</div>
+    <h1 class="cx-hero-title">Climate Risk Intelligence<br>for Financial Institutions</h1>
+    <p class="cx-hero-sub">Institutional analytics covering financed emissions, climate stress testing, portfolio transition exposure, and regulatory compliance for banks, asset managers, and insurance companies. Structured for TCFD, IFRS S2, Basel, and NZBA alignment.</p>
+    <div class="cx-hero-kpis">
+      <div class="cx-kpi">
+        <div class="cx-kpi-label">Financed Emissions (Sector)</div>
+        <div class="cx-kpi-val">14.8 Gt CO₂</div>
+        <div class="cx-kpi-delta dn">Banking accounts for ~40% of global emissions via lending</div>
+      </div>
+      <div class="cx-kpi">
+        <div class="cx-kpi-label">Climate VaR (Portfolio)</div>
+        <div class="cx-kpi-val red">$250B</div>
+        <div class="cx-kpi-delta dn">▲ Top 10 global banks — 3°C scenario</div>
+      </div>
+      <div class="cx-kpi">
+        <div class="cx-kpi-label">Carbon-Intensive Lending</div>
+        <div class="cx-kpi-val">18–24%</div>
+        <div class="cx-kpi-delta dn">Of total loan books in fossil-exposed sectors</div>
+      </div>
+      <div class="cx-kpi">
+        <div class="cx-kpi-label">Green Finance Issued</div>
+        <div class="cx-kpi-val green">$620B</div>
+        <div class="cx-kpi-delta up">▲ Green bonds &amp; loans 2024 — record high</div>
+      </div>
+      <div class="cx-kpi">
+        <div class="cx-kpi-label">NZBA Commitments</div>
+        <div class="cx-kpi-val cyan">140+</div>
+        <div class="cx-kpi-delta up">Banks with net-zero financed emission targets</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RISK OVERVIEW -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">01</span>
+      <span class="cx-section-title">Climate Risk Overview for Financial Institutions</span>
+    </div>
+    <div class="cx-grid-3">
+      <div class="cx-panel cx-panel-accent">
+        <div class="cx-panel-header"><span class="cx-panel-title">Transition Risk in Portfolio</span><span class="cx-panel-badge badge-red">High</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Banks face second-order transition risk through lending and investment portfolios. Carbon-intensive borrowers face earnings erosion, credit deterioration, and collateral devaluation as transition policies tighten.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">Carbon-Exposed Loan Book</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:78%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">78</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Stranded Collateral Risk</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:71%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">71</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Credit Default Risk (Fossil)</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:65%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">65</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Physical Risk Exposure</span><span class="cx-panel-badge badge-amber">Medium–High</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Real estate loan portfolios in flood zones, wildfire corridors, and heat-stressed regions represent the primary physical risk channel. Mortgage collateral values are materially affected by climate hazard exposure.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">Mortgage Flood Risk</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:74%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">74</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Agricultural Loan Stress</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:62%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">62</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">Infrastructure Bond Exposure</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:55%;background:#92400E;"></div></div><div class="cx-risk-val" style="color:#92400E">55</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Regulatory Pressure</span><span class="cx-panel-badge badge-red">Critical</span></div>
+        <div class="cx-panel-body">
+          <p style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Financial regulators globally are mandating climate risk disclosure, stress testing, and capital adequacy frameworks. ECB, BoE, and Fed have all initiated climate scenario exercises with increasing enforcement consequence.</p>
+          <div class="cx-risk-row"><div class="cx-risk-label">ECB Climate Stress Test</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:88%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">88</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">IFRS S2 Compliance Gap</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:72%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">72</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">NZBA Target Credibility</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:60%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">60</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINANCED EMISSIONS -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">02</span>
+      <span class="cx-section-title">Financed Emissions Intelligence</span>
+      <span class="cx-section-sub">Scope 3 Category 15 — PCAF Methodology</span>
+    </div>
+    <div class="cx-panel">
+      <table class="cx-table">
+        <thead>
+          <tr>
+            <th>Asset Class</th>
+            <th>Financed Emissions</th>
+            <th>Attribution Factor</th>
+            <th>Data Quality</th>
+            <th>Transition Risk</th>
+            <th>PCAF Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Corporate Loans (Energy)</strong></td><td class="mono">3.4 Gt CO₂e</td><td class="mono" style="color:var(--text-2)">Proportional</td><td style="color:var(--amber);font-family:var(--mono);font-size:11px;">Score 3–4</td><td class="mono-red">Critical</td><td class="mono-red">3.8/5</td></tr>
+          <tr><td><strong>Corporate Loans (Industrials)</strong></td><td class="mono">2.1 Gt CO₂e</td><td class="mono" style="color:var(--text-2)">Proportional</td><td style="color:var(--amber);font-family:var(--mono);font-size:11px;">Score 3</td><td class="mono-red">High</td><td class="mono-red">3.2/5</td></tr>
+          <tr><td><strong>Commercial Real Estate</strong></td><td class="mono">1.8 Gt CO₂e</td><td class="mono" style="color:var(--text-2)">Floor area</td><td style="color:var(--amber);font-family:var(--mono);font-size:11px;">Score 4</td><td style="font-family:var(--mono);color:var(--amber)">Medium–High</td><td style="font-family:var(--mono);color:var(--amber)">2.9/5</td></tr>
+          <tr><td><strong>Residential Mortgages</strong></td><td class="mono">1.2 Gt CO₂e</td><td class="mono" style="color:var(--text-2)">Floor area</td><td class="mono-green">Score 2</td><td style="font-family:var(--mono);color:var(--amber)">Medium</td><td class="mono-green">2.1/5</td></tr>
+          <tr><td><strong>Project Finance</strong></td><td class="mono">0.9 Gt CO₂e</td><td class="mono" style="color:var(--text-2)">100% attribution</td><td class="mono-green">Score 1</td><td class="mono-green">Variable</td><td class="mono-green">1.5/5</td></tr>
+          <tr><td><strong>Equity Investments</strong></td><td class="mono">0.7 Gt CO₂e</td><td class="mono" style="color:var(--text-2)">Ownership share</td><td style="color:var(--amber);font-family:var(--mono);font-size:11px;">Score 3–4</td><td style="font-family:var(--mono);color:var(--amber)">High</td><td style="font-family:var(--mono);color:var(--amber)">3.1/5</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CLIMATE STRESS TEST + REGULATORY -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">03</span>
+      <span class="cx-section-title">Climate Stress Test Engine</span>
+    </div>
+    <div class="cx-grid-2">
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">ECB / BoE Stress Test Scenarios</span></div>
+        <div class="cx-panel-body">
+          <table class="cx-table">
+            <thead><tr><th>Scenario</th><th>Credit Loss Est.</th><th>Capital Impact</th><th>Horizon</th></tr></thead>
+            <tbody>
+              <tr><td>Orderly Transition (1.5°C)</td><td class="mono" style="color:var(--green)">-2.1% NPL</td><td class="mono" style="color:var(--green)">CET1 -0.4%</td><td class="muted">3–5yr</td></tr>
+              <tr><td>Delayed Transition (2°C)</td><td class="mono" style="color:var(--amber)">-3.8% NPL</td><td class="mono" style="color:var(--amber)">CET1 -1.2%</td><td class="muted">5–10yr</td></tr>
+              <tr><td>Hot House World (3°C+)</td><td class="mono-red">-7.4% NPL</td><td class="mono-red">CET1 -2.8%</td><td class="muted">10–30yr</td></tr>
+              <tr><td>Sudden Shock (Policy)</td><td class="mono-red">-5.2% NPL</td><td class="mono-red">CET1 -1.9%</td><td class="muted">1–3yr</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Regulatory Alignment Matrix</span></div>
+        <div class="cx-panel-body">
+          <div class="cx-risk-row"><div class="cx-risk-label">Basel III / IV Climate Integration</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:82%;background:var(--red);"></div></div><div class="cx-risk-val" style="color:var(--red)">High</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">IFRS S2 Disclosure Readiness</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:68%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">Med</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">TCFD Adoption (Top 50 Banks)</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:91%;background:var(--green);"></div></div><div class="cx-risk-val" style="color:var(--green)">91%</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">NZBA Target Credibility</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:54%;background:var(--risk);"></div></div><div class="cx-risk-val" style="color:var(--amber)">54%</div></div>
+          <div class="cx-risk-row"><div class="cx-risk-label">PCAF Financed Emissions Coverage</div><div class="cx-risk-bar-wrap"><div class="cx-risk-bar" style="width:62%;background:var(--cyan);"></div></div><div class="cx-risk-val" style="color:var(--cyan)">62%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENARIO ENGINE -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">04</span>
+      <span class="cx-section-title">Portfolio Climate Scenario Analysis</span>
+    </div>
+    <div class="cx-panel">
+      <div class="cx-scenario-tabs">
+        <div class="cx-scenario-tab active" data-tab="s1p5">1.5°C Pathway</div>
+        <div class="cx-scenario-tab" data-tab="s2p0">2°C Pathway</div>
+        <div class="cx-scenario-tab" data-tab="s3p0">3°C Pathway</div>
+      </div>
+      <div class="cx-scenario-body active" id="scen-s1p5">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Orderly Transition</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Banks that proactively re-align portfolios toward climate-aligned assets face lower credit losses and benefit from green finance fee income growth. Carbon-exposed loan books in energy and heavy industry reduce as borrower cash flows improve with transition tailwinds.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Capital Implications</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">CET1 impact estimated at -0.4% across orderly transition. Largest risk concentration in fossil fuel project finance and emerging market energy lending. Green bond issuance capacity and sustainability-linked loan growth offset losses.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Strategic Signal</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Banks with credible sector decarbonization pathways and NZBA-aligned lending commitments are rewarded with lower cost of capital, ESG index inclusion, and improved sovereign credit risk scoring from climate-aligned regulators.</p></div>
+        </div>
+      </div>
+      <div class="cx-scenario-body" id="scen-s2p0">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Delayed Transition</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Policy delay creates credit risk accumulation. Carbon-intensive borrowers remain viable near-term but face accelerating regulatory costs from 2028 onward. Loan book vintage mismatches become material — 10-year loans extended to fossil assets in 2024 carry significant repricing risk.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Capital Implications</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">CET1 erosion of 1.2% at 2°C — driven by combined physical risk in real estate portfolios and transition risk in corporate lending. Regional banks with concentrated property exposure in flood-risk geographies face above-average impairment.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Strategic Signal</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">Portfolio climate heatmapping becomes essential for credit risk officers. PCAF-aligned financed emissions reporting allows identification of concentration risk. Engagement strategies with top-emitting clients become fiduciary obligations under regulatory pressure.</p></div>
+        </div>
+      </div>
+      <div class="cx-scenario-body" id="scen-s3p0">
+        <div class="cx-grid-3">
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Disorderly / Hot House</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">3°C scenario creates systemic financial risk. Physical damage to collateral assets (property, infrastructure), sovereign credit deterioration in climate-vulnerable economies, and policy shock repricing combine to create simultaneous credit and market stress events.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Capital Implications</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">CET1 impact of -2.8% across the banking system under hot-house world scenario. ECB analysis indicates 10% of bank assets are significantly exposed to chronic physical risks by 2050. Emerging market bank contagion risk becomes a systemic concern.</p></div>
+          <div><div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">Strategic Signal</div><p style="font-size:12px;color:var(--text-2);line-height:1.6;">3°C pathway represents a structural threat to banking system stability. Macroprudential capital buffers for climate risk exposure are increasingly likely. Banks that have not addressed climate risk in credit underwriting face regulatory intervention and reputational destruction.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GREENWASH + BENCHMARKS -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">05</span>
+      <span class="cx-section-title">Greenwashing Risk &amp; Disclosure Intelligence</span>
+    </div>
+    <div class="cx-grid-2">
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Greenwashing Risk Signals</span><span class="cx-panel-badge badge-red">6 Active Flags</span></div>
+        <div class="cx-panel-body">
+          <div class="cx-signal-item"><div class="cx-signal-dot red"></div><div class="cx-signal-text"><strong>NZBA commitments without sector pathways</strong> — 60% of NZBA members have not published sector-specific financed emissions reduction pathways with interim milestones.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot red"></div><div class="cx-signal-text"><strong>Continued fossil fuel expansion financing</strong> — Several NZBA members continue to finance new fossil fuel exploration and extraction, contradicting stated net-zero commitments.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot amber"></div><div class="cx-signal-text"><strong>Green bond proceeds tracking gaps</strong> — Insufficient transparency on use-of-proceeds allocation and ex-post impact reporting for green bond issuances.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot amber"></div><div class="cx-signal-text"><strong>Selective Scope 3 exclusion</strong> — Financed emissions (Scope 3 Cat. 15) excluded or undercounted by majority of banking institutions in published climate reports.</div></div>
+          <div class="cx-signal-item"><div class="cx-signal-dot yellow"></div><div class="cx-signal-text"><strong>Transition plan ambiguity</strong> — Generic transition plan statements not backed by specific credit policy changes, engagement escalation protocols, or exclusion criteria.</div></div>
+        </div>
+      </div>
+      <div class="cx-panel">
+        <div class="cx-panel-header"><span class="cx-panel-title">Disclosure Maturity — Top 50 Global Banks</span></div>
+        <div class="cx-panel-body">
+          <div class="cx-bench-item"><div class="cx-bench-name">TCFD Adoption</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:91%;background:var(--green);"></div></div><div class="cx-bench-val" style="color:var(--green)">91%</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">Financed Emissions Disclosure</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:68%;background:var(--risk);"></div></div><div class="cx-bench-val">68%</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">Sector Decarbonization Targets</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:52%;background:var(--risk);"></div></div><div class="cx-bench-val">52%</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">Climate Scenario Analysis</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:84%;background:var(--cyan);"></div></div><div class="cx-bench-val" style="color:var(--cyan)">84%</div></div>
+          <div class="cx-bench-item"><div class="cx-bench-name">PCAF Data Quality Score ≥2</div><div class="cx-bench-track"><div class="cx-bench-fill" style="width:44%;background:var(--red);"></div></div><div class="cx-bench-val" style="color:var(--red)">44%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTELLIGENCE SNAPSHOT -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">06</span>
+      <span class="cx-section-title">Executive Intelligence Summary</span>
+    </div>
+    <div class="cx-snapshot">
+      <div class="cx-snapshot-label">Climactix Intelligence · Banking &amp; Financial Services Sector Briefing</div>
+      <div class="cx-snapshot-title">Financed emissions place banks at the center of the climate accountability regime — regulatory pressure is intensifying</div>
+      <div class="cx-snapshot-body">
+        <p style="margin-bottom:10px;">Financial institutions occupy a uniquely leveraged position in the climate system: through lending, investment, and underwriting, banks finance the real economy's emissions trajectory. Financed emissions — classified as Scope 3 Category 15 under the GHG Protocol — represent 40–700x a bank's direct operational footprint, making portfolio-level climate risk management the central operational challenge for the sector.</p>
+        <p style="margin-bottom:10px;">Regulatory frameworks are converging rapidly. The ECB climate stress test, the Bank of England's CBES exercise, and the Basel Committee's work on climate risk capital requirements are translating what was previously a voluntary ESG consideration into a binding prudential risk category. Banks that have not built robust climate risk measurement infrastructure face material supervisory consequences and reputational exposure from both regulators and institutional clients.</p>
+        <p>The strategic opportunity is substantial. Green bond origination, sustainability-linked loan structuring, transition finance advisory, and climate risk analytics are high-margin product lines where early institutional positioning creates durable competitive advantage. The $125T in capital required for the global net-zero transition must flow through financial intermediaries — positioning for that intermediary role is the defining strategic question for banking leadership teams in this decade.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cx-cta-section">
+    <div class="cx-cta-text">
+      <h3>Access Full Banking Sector Climate Intelligence</h3>
+      <p>Portfolio climate heatmaps, financed emissions attribution, climate stress testing, and TCFD/IFRS S2 disclosure support — structured for risk officers, sustainability teams, and institutional investors.</p>
+    </div>
+    <div class="cx-cta-actions">
+      <a href="assessment.html" class="cx-btn cx-btn-primary">Launch Risk Assessment</a>
+      <a href="greenwashing-scanner.html" class="cx-btn cx-btn-outline">ESG Risk Scanner</a>
+      <a href="dashboard.html" class="cx-btn cx-btn-outline">View Intelligence</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.cx-scenario-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var container = this.closest('.cx-panel');
+      container.querySelectorAll('.cx-scenario-tab').forEach(function(t){ t.classList.remove('active'); });
+      container.querySelectorAll('.cx-scenario-body').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      var id = 'scen-' + this.dataset.tab;
+      var body = document.getElementById(id);
+      if(body) body.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

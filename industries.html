@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Industries — Sector Climate Intelligence · Climactix</title>
+  <meta name="description" content="Institutional-grade climate intelligence for every major sector. Energy, Banking, Oil &amp; Gas, Real Estate, Manufacturing, IT, Supply Chain, and Mining — each with dedicated risk analytics." />
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css?v=3" />
+  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #000000; --bg-alt: #0A0A0A;
+      --surface: #0F0F0F; --surface-2: #1A1A1A; --surface-3: #242424;
+      --border: #2C2C2C; --border-strong: #333333;
+      --amber: #0EA5E9; --amber-dim: #0284C7; --amber-fg: #FFFFFF;
+    --risk: #E87722; --risk-dim: #C05200;  /* semantic risk/warning, separate from UI accent */
+      --cyan: #0099CC; --green: #00CC44; --red: #FF3333;
+      --text: #FFFFFF; --text-2: #888888; --text-muted: #555555;
+      --mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+      --font: 'Inter', 'IBM Plex Sans', system-ui, sans-serif;
+      --t: 0.12s ease; --r: 3px;
+    }
+    [data-theme="light"] {
+      --bg: #FFFFFF; --bg-alt: #F5F5F5;
+      --surface: #FFFFFF; --surface-2: #EBEBEB; --surface-3: #E0E0E0;
+      --border: #D0D0D0; --border-strong: #BBBBBB;
+      --text: #000000; --text-2: #333333; --text-muted: #666666;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; font-size: 13px; line-height: 1.5; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+    /* NAV */
+    .cx-nav { position: sticky; top: 0; z-index: 200; height: 44px; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; }
+    .cx-nav-brand { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-right: 24px; }
+    .cx-nav-brand img { height: 22px; }
+    .cx-nav-links { display: flex; align-items: center; }
+    .cx-nav-link { font-size: 11px; font-weight: 500; color: var(--text-muted); padding: 4px 10px; border-radius: 2px; transition: var(--t); }
+    .cx-nav-link:hover { background: var(--surface-2); color: var(--text); }
+    .cx-nav-link.active { color: var(--amber); border-bottom: 2px solid var(--amber); }
+    .cx-nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .cx-nav-btn { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 14px; border-radius: 2px; border: 1px solid var(--border-strong); color: var(--text-2); transition: var(--t); }
+    .cx-nav-btn:hover { border-color: var(--amber); color: var(--amber); }
+    .cx-nav-btn.primary { background: var(--amber); color: #fff; border-color: var(--amber); }
+    .cx-nav-btn.primary:hover { background: var(--amber-dim); }
+
+    /* TICKER */
+    .cx-ticker { height: 34px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; overflow: hidden; }
+    .cx-ticker-tag { background: var(--amber); color: #000; font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 12px; flex-shrink: 0; height: 100%; display: flex; align-items: center; }
+    .cx-ticker-track { display: flex; animation: ticker-scroll 70s linear infinite; white-space: nowrap; }
+    .cx-ticker-item { font-family: var(--mono); font-size: 11px; color: var(--text-2); padding: 0 20px; border-right: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+    .cx-ticker-item .val { color: var(--amber); font-weight: 700; }
+    .cx-ticker-item .up { color: var(--green); } .cx-ticker-item .dn { color: var(--red); }
+    @keyframes ticker-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    /* PAGE */
+    .cx-page { max-width: 1400px; margin: 0 auto; padding: 0 20px 80px; }
+
+    /* HERO */
+    .cx-hero { padding: 36px 0 28px; border-bottom: 1px solid var(--border); }
+    .cx-hero-eyebrow { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .cx-live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse-dot 2s ease infinite; display: inline-block; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .cx-hero-title { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 12px; }
+    .cx-hero-sub { font-size: 13px; color: var(--text-2); max-width: 680px; line-height: 1.6; margin-bottom: 24px; }
+    .cx-hero-stats { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; max-width: 800px; }
+    .cx-hstat { flex: 1; padding: 14px 20px; border-right: 1px solid var(--border); background: var(--surface); }
+    .cx-hstat:last-child { border-right: none; }
+    .cx-hstat-val { font-family: var(--mono); font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: var(--amber); line-height: 1; }
+    .cx-hstat-label { font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-top: 5px; }
+
+    /* SECTOR GRID */
+    .cx-sector-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 28px; }
+    .cx-sector-card { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; padding: 18px 20px; transition: border-color var(--t), background var(--t); display: flex; flex-direction: column; gap: 0; text-decoration: none; color: inherit; position: relative; overflow: hidden; }
+    .cx-sector-card:hover { background: var(--surface-2); border-color: var(--border-strong); }
+    .cx-sector-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--amber); }
+    .cx-sector-card-icon { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--amber); margin-bottom: 12px; letter-spacing: -0.02em; }
+    .cx-sector-card-name { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; margin-bottom: 6px; }
+    .cx-sector-card-sub { font-size: 11px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px; flex: 1; }
+    .cx-sector-kpis { display: flex; gap: 0; border-top: 1px solid var(--border); padding-top: 12px; margin-top: auto; }
+    .cx-sector-kpi { flex: 1; }
+    .cx-sector-kpi-val { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--text); line-height: 1; }
+    .cx-sector-kpi-val.red { color: var(--red); }
+    .cx-sector-kpi-val.green { color: var(--green); }
+    .cx-sector-kpi-val.amber { color: var(--amber); }
+    .cx-sector-kpi-val.cyan { color: var(--cyan); }
+    .cx-sector-kpi-label { font-family: var(--mono); font-size: 8px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-top: 3px; }
+    .cx-sector-risk-badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; margin-bottom: 10px; }
+    .risk-critical { background: rgba(255,51,51,0.08); color: var(--red); border: 1px solid rgba(255,51,51,0.2); }
+    .risk-high { background: rgba(232,135,34,0.08); color: var(--risk); border: 1px solid rgba(232,135,34,0.2); }
+    .risk-medium { background: rgba(0,153,204,0.08); color: var(--cyan); border: 1px solid rgba(0,153,204,0.2); }
+    .cx-sector-arrow { position: absolute; top: 18px; right: 18px; font-family: var(--mono); font-size: 14px; color: var(--text-muted); transition: color var(--t); }
+    .cx-sector-card:hover .cx-sector-arrow { color: var(--amber); }
+
+    /* SECTION */
+    .cx-section { margin-top: 36px; }
+    .cx-section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .cx-section-eyebrow { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); }
+    .cx-section-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.015em; }
+
+    /* RISK MATRIX TABLE */
+    .cx-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+    .cx-table { width: 100%; border-collapse: collapse; }
+    .cx-table thead th { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 8px 14px; border-bottom: 1px solid var(--border); text-align: left; background: var(--surface); }
+    .cx-table tbody tr { border-bottom: 1px solid var(--border); transition: background var(--t); }
+    .cx-table tbody tr:hover { background: var(--surface-2); }
+    .cx-table tbody tr:last-child { border-bottom: none; }
+    .cx-table tbody td { padding: 9px 14px; font-size: 12px; color: var(--text); }
+    .mono { font-family: var(--mono); color: var(--amber); }
+    .mono-red { font-family: var(--mono); color: var(--red); }
+    .mono-green { font-family: var(--mono); color: var(--green); }
+    .mono-cyan { font-family: var(--mono); color: var(--cyan); }
+    .muted { color: var(--text-muted); font-size: 11px; }
+
+    /* FRAMEWORK ROW */
+    .cx-fw-row { display: flex; gap: 8px; flex-wrap: wrap; padding: 16px; }
+    .cx-fw-tag { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; border: 1px solid var(--border-strong); color: var(--text-2); }
+    .cx-fw-tag.active { background: rgba(14,165,233,0.08); color: var(--amber); border-color: rgba(14,165,233,0.25); }
+
+    /* CTA */
+    .cx-cta-section { margin-top: 40px; background: var(--surface); border: 1px solid var(--border-strong); border-left: 3px solid var(--amber); border-radius: 3px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .cx-cta-text h3 { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.025em; margin-bottom: 6px; }
+    .cx-cta-text p { font-size: 12px; color: var(--text-2); max-width: 560px; line-height: 1.6; }
+    .cx-cta-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .cx-btn { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 20px; border-radius: 2px; cursor: pointer; transition: var(--t); display: inline-block; }
+    .cx-btn-primary { background: var(--amber); color: #fff; border: 1px solid var(--amber); }
+    .cx-btn-primary:hover { background: var(--amber-dim); border-color: var(--amber-dim); }
+    .cx-btn-outline { background: none; color: var(--text-2); border: 1px solid var(--border-strong); }
+    .cx-btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+    @media (max-width: 1100px) { .cx-sector-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .cx-sector-grid { grid-template-columns: 1fr; } .cx-hero-stats { flex-wrap: wrap; } .cx-cta-section { flex-direction: column; } }
+  </style>
+</head>
+<body>
+
+<nav class="cx-nav">
+  <a href="index.html" class="cx-nav-brand"><img src="Climatix_logo.png" alt="Climactix" /></a>
+  <div class="cx-nav-links">
+    <a href="index.html" class="cx-nav-link">Platform</a>
+    <a href="dashboard.html" class="cx-nav-link">Intelligence</a>
+    <a href="simulation.html" class="cx-nav-link">Risk Engine</a>
+    <a href="regulations.html" class="cx-nav-link">Regulations</a>
+    <a href="industries.html" class="cx-nav-link active">Industries</a>
+  </div>
+  <div class="cx-nav-right">
+    <button class="cx-nav-btn" onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})()">Theme</button>
+    <a href="assessment.html" class="cx-nav-btn primary">Launch Assessment</a>
+  </div>
+</nav>
+
+<div class="cx-ticker">
+  <div class="cx-ticker-tag">Global Intel</div>
+  <div style="overflow:hidden;flex:1;">
+    <div class="cx-ticker-track">
+      <div class="cx-ticker-item">Energy Sector Carbon Intensity <span class="val">428 gCO₂/kWh</span></div>
+      <div class="cx-ticker-item">Global Financed Emissions <span class="val">14.8 Gt CO₂</span></div>
+      <div class="cx-ticker-item">O&amp;G Stranded Asset Risk <span class="val">$1.4T</span></div>
+      <div class="cx-ticker-item">Real Estate Climate Exposure <span class="val">$1.3T by 2050</span></div>
+      <div class="cx-ticker-item">Industrial Emissions Share <span class="val">24% global CO₂</span></div>
+      <div class="cx-ticker-item">Data Center Energy Growth <span class="val">460 TWh / +10%/yr</span></div>
+      <div class="cx-ticker-item">IMO 2050 Net-Zero <span class="val">Shipping committed</span></div>
+      <div class="cx-ticker-item">Copper Deficit (2030) <span class="val">8 Mt/yr</span></div>
+      <div class="cx-ticker-item">Energy Sector Carbon Intensity <span class="val">428 gCO₂/kWh</span></div>
+      <div class="cx-ticker-item">Global Financed Emissions <span class="val">14.8 Gt CO₂</span></div>
+      <div class="cx-ticker-item">O&amp;G Stranded Asset Risk <span class="val">$1.4T</span></div>
+      <div class="cx-ticker-item">Real Estate Climate Exposure <span class="val">$1.3T by 2050</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="cx-page">
+
+  <!-- HERO -->
+  <div class="cx-hero">
+    <div class="cx-hero-eyebrow"><span class="cx-live-dot"></span> Sector-Specific Climate Intelligence Infrastructure · 8 Industries Covered</div>
+    <h1 class="cx-hero-title">Climate Risk Operating System<br>for Industries &amp; Capital Markets</h1>
+    <p class="cx-hero-sub">Institutional-grade climate intelligence structured for every major sector. Physical risk exposure, transition analytics, regulatory pressure mapping, carbon liability, and ESG disclosure intelligence — each sector a dedicated intelligence module.</p>
+    <div class="cx-hero-stats">
+      <div class="cx-hstat"><div class="cx-hstat-val">8</div><div class="cx-hstat-label">Sector Intelligence Modules</div></div>
+      <div class="cx-hstat"><div class="cx-hstat-val">17</div><div class="cx-hstat-label">Sections per Module</div></div>
+      <div class="cx-hstat"><div class="cx-hstat-val">3</div><div class="cx-hstat-label">Climate Scenarios</div></div>
+      <div class="cx-hstat"><div class="cx-hstat-val">7</div><div class="cx-hstat-label">Regulatory Frameworks</div></div>
+    </div>
+  </div>
+
+  <!-- SECTOR CARDS -->
+  <div style="margin-top:28px;">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">Sectors</span>
+      <span class="cx-section-title">Select a sector to access its climate intelligence module</span>
+    </div>
+  </div>
+
+  <div class="cx-sector-grid">
+
+    <!-- Energy -->
+    <a href="industry-energy.html" class="cx-sector-card">
+      <div class="cx-sector-arrow">→</div>
+      <div class="cx-sector-card-icon">01</div>
+      <div class="cx-sector-card-name">Energy &amp; Utilities</div>
+      <div class="cx-sector-risk-badge risk-critical">Transition Risk: Critical</div>
+      <div class="cx-sector-card-sub">Grid transition, renewable integration, stranded asset exposure, carbon pricing sensitivity, and grid resilience intelligence.</div>
+      <div class="cx-sector-kpis">
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">$1.4T</div>
+          <div class="cx-sector-kpi-label">Stranded Assets</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val amber">428 gCO₂</div>
+          <div class="cx-sector-kpi-label">Carbon Intensity</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val green">34.2%</div>
+          <div class="cx-sector-kpi-label">Renewable Share</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Banking -->
+    <a href="industry-banking.html" class="cx-sector-card">
+      <div class="cx-sector-arrow">→</div>
+      <div class="cx-sector-card-icon">02</div>
+      <div class="cx-sector-card-name">Banking &amp; Financial Services</div>
+      <div class="cx-sector-risk-badge risk-high">Portfolio Risk: High</div>
+      <div class="cx-sector-card-sub">Financed emissions, climate stress testing, portfolio transition exposure, climate VaR, and PCAF/NZBA alignment analytics.</div>
+      <div class="cx-sector-kpis">
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val amber">14.8 Gt</div>
+          <div class="cx-sector-kpi-label">Financed Emissions</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">$250B</div>
+          <div class="cx-sector-kpi-label">Climate VaR</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val cyan">140+</div>
+          <div class="cx-sector-kpi-label">NZBA Banks</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Oil & Gas -->
+    <a href="industry-oil-gas.html" class="cx-sector-card">
+      <div class="cx-sector-arrow">→</div>
+      <div class="cx-sector-card-icon">03</div>
+      <div class="cx-sector-card-name">Oil &amp; Gas</div>
+      <div class="cx-sector-risk-badge risk-critical">Transition Risk: Critical</div>
+      <div class="cx-sector-card-sub">Methane liability, stranded reserves, carbon intensity benchmarking, demand destruction scenarios, and regulatory transition pressure.</div>
+      <div class="cx-sector-kpis">
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">9.2/10</div>
+          <div class="cx-sector-kpi-label">Transition Risk</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">$900B+</div>
+          <div class="cx-sector-kpi-label">Carbon Liability</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val amber">2.3%</div>
+          <div class="cx-sector-kpi-label">Methane Intensity</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Real Estate -->
+    <a href="industry-real-estate.html" class="cx-sector-card">
+      <div class="cx-sector-arrow">→</div>
+      <div class="cx-sector-card-icon">04</div>
+      <div class="cx-sector-card-name">Real Estate</div>
+      <div class="cx-sector-risk-badge risk-critical">Physical Risk: Critical</div>
+      <div class="cx-sector-card-sub">Flood exposure mapping, heat stress, coastal vulnerability, building efficiency compliance, insurance cost trajectories, and brown discount analysis.</div>
+      <div class="cx-sector-kpis">
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">$14T</div>
+          <div class="cx-sector-kpi-label">Coastal Risk (1m SLR)</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">$1.7T</div>
+          <div class="cx-sector-kpi-label">Flood Exposure (US)</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val green">+15%</div>
+          <div class="cx-sector-kpi-label">Green Premium</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Manufacturing -->
+    <a href="industry-manufacturing.html" class="cx-sector-card">
+      <div class="cx-sector-arrow">→</div>
+      <div class="cx-sector-card-icon">05</div>
+      <div class="cx-sector-card-name">Manufacturing</div>
+      <div class="cx-sector-risk-badge risk-high">Regulatory Risk: High</div>
+      <div class="cx-sector-card-sub">Carbon Border Adjustment Mechanism, Scope 3 supply chain mapping, water stress exposure, industrial decarbonization pathways, and CBAM compliance analytics.</div>
+      <div class="cx-sector-kpis">
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val amber">24%</div>
+          <div class="cx-sector-kpi-label">Global CO₂ Share</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">80%</div>
+          <div class="cx-sector-kpi-label">Scope 3 Supply Chain</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">2026</div>
+          <div class="cx-sector-kpi-label">CBAM Live</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- IT -->
+    <a href="industry-it.html" class="cx-sector-card">
+      <div class="cx-sector-arrow">→</div>
+      <div class="cx-sector-card-icon">06</div>
+      <div class="cx-sector-card-name">Information Technology</div>
+      <div class="cx-sector-risk-badge risk-high">Scope 3 Risk: High</div>
+      <div class="cx-sector-card-sub">Data center energy intensity, AI compute footprint, semiconductor supply chain risk, rare earth dependency, and digital carbon disclosure analytics.</div>
+      <div class="cx-sector-kpis">
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val amber">460 TWh</div>
+          <div class="cx-sector-kpi-label">DC Energy/yr</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">75–90%</div>
+          <div class="cx-sector-kpi-label">Scope 3 Share</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val green">64%</div>
+          <div class="cx-sector-kpi-label">RE Coverage</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Supply Chain -->
+    <a href="industry-supply-chain.html" class="cx-sector-card">
+      <div class="cx-sector-arrow">→</div>
+      <div class="cx-sector-card-icon">07</div>
+      <div class="cx-sector-card-name">Supply Chain &amp; Logistics</div>
+      <div class="cx-sector-risk-badge risk-critical">Regulatory Risk: Critical</div>
+      <div class="cx-sector-card-sub">Maritime decarbonization, IMO/EU ETS compliance, port physical risk, fuel transition pathways, trade route disruption, and global logistics emissions.</div>
+      <div class="cx-sector-kpis">
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val amber">2.9%</div>
+          <div class="cx-sector-kpi-label">Global CO₂</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">28%</div>
+          <div class="cx-sector-kpi-label">CII Non-Compliant</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">128</div>
+          <div class="cx-sector-kpi-label">Ports at Risk</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Mining -->
+    <a href="industry-mining.html" class="cx-sector-card">
+      <div class="cx-sector-arrow">→</div>
+      <div class="cx-sector-card-icon">08</div>
+      <div class="cx-sector-card-name">Mining &amp; Metals</div>
+      <div class="cx-sector-risk-badge risk-critical">Physical Risk: Critical</div>
+      <div class="cx-sector-card-sub">Water dependency mapping, tailings failure risk, biodiversity exposure, critical minerals transition demand, and extraction risk intelligence.</div>
+      <div class="cx-sector-kpis">
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val green">6–8x</div>
+          <div class="cx-sector-kpi-label">Lithium Demand</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">8 Mt</div>
+          <div class="cx-sector-kpi-label">Copper Deficit</div>
+        </div>
+        <div class="cx-sector-kpi">
+          <div class="cx-sector-kpi-val red">46</div>
+          <div class="cx-sector-kpi-label">Tailings Incidents</div>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- RISK COMPARISON TABLE -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">Intelligence Matrix</span>
+      <span class="cx-section-title">Cross-Sector Climate Risk Comparison</span>
+    </div>
+    <div class="cx-panel">
+      <table class="cx-table">
+        <thead>
+          <tr>
+            <th>Sector</th>
+            <th>Transition Risk</th>
+            <th>Physical Risk</th>
+            <th>Regulatory Pressure</th>
+            <th>Disclosure Maturity</th>
+            <th>Investment Signal</th>
+            <th>Intelligence Module</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Energy &amp; Utilities</strong></td>
+            <td class="mono-red">Critical 9.4/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">High 7.2/10</td>
+            <td class="mono-red">Critical</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium–High 68%</td>
+            <td class="mono-red">Reposition now</td>
+            <td><a href="industry-energy.html" style="color:var(--amber);font-family:var(--mono);font-size:10px;">Access →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Banking &amp; Financial Services</strong></td>
+            <td style="font-family:var(--mono);color:var(--amber)">High 7.8/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium–High 6.4/10</td>
+            <td class="mono-red">Critical</td>
+            <td style="font-family:var(--mono);color:var(--amber)">High 78%</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Build climate risk infra</td>
+            <td><a href="industry-banking.html" style="color:var(--amber);font-family:var(--mono);font-size:10px;">Access →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Oil &amp; Gas</strong></td>
+            <td class="mono-red">Critical 9.2/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">High 6.8/10</td>
+            <td class="mono-red">Critical</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium 58%</td>
+            <td class="mono-red">Portfolio restructure</td>
+            <td><a href="industry-oil-gas.html" style="color:var(--amber);font-family:var(--mono);font-size:10px;">Access →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Real Estate</strong></td>
+            <td style="font-family:var(--mono);color:var(--amber)">High 7.4/10</td>
+            <td class="mono-red">Critical 8.1/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">High</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium 61%</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Asset-level risk map</td>
+            <td><a href="industry-real-estate.html" style="color:var(--amber);font-family:var(--mono);font-size:10px;">Access →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Manufacturing</strong></td>
+            <td style="font-family:var(--mono);color:var(--amber)">High 7.6/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium 5.8/10</td>
+            <td class="mono-red">Critical (CBAM)</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium 54%</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Decarbonize supply chain</td>
+            <td><a href="industry-manufacturing.html" style="color:var(--amber);font-family:var(--mono);font-size:10px;">Access →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Information Technology</strong></td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium 4.2/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium 4.8/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Emerging — High</td>
+            <td class="mono-green">High 84%</td>
+            <td style="font-family:var(--mono);color:var(--amber)">24/7 CFE + hardware Sc3</td>
+            <td><a href="industry-it.html" style="color:var(--amber);font-family:var(--mono);font-size:10px;">Access →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Supply Chain &amp; Logistics</strong></td>
+            <td class="mono-red">Critical 8.4/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">High 7.0/10</td>
+            <td class="mono-red">Critical (IMO/ETS)</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium 60%</td>
+            <td class="mono-red">Fuel transition now</td>
+            <td><a href="industry-supply-chain.html" style="color:var(--amber);font-family:var(--mono);font-size:10px;">Access →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Mining &amp; Metals</strong></td>
+            <td style="font-family:var(--mono);color:var(--amber)">High 6.8/10</td>
+            <td class="mono-red">Critical 7.8/10</td>
+            <td style="font-family:var(--mono);color:var(--amber)">High (GISTM/TNFD)</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Medium 58%</td>
+            <td style="font-family:var(--mono);color:var(--amber)">Critical minerals vs. coal exit</td>
+            <td><a href="industry-mining.html" style="color:var(--amber);font-family:var(--mono);font-size:10px;">Access →</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- REGULATORY FRAMEWORKS -->
+  <div class="cx-section">
+    <div class="cx-section-header">
+      <span class="cx-section-eyebrow">Frameworks</span>
+      <span class="cx-section-title">Regulatory Coverage Across All Sector Modules</span>
+    </div>
+    <div class="cx-panel">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);">
+        <p style="font-size:12px;color:var(--text-2);line-height:1.6;">Each sector module maps climate-financial exposure against the applicable global regulatory and disclosure frameworks. Sector-specific applicability is analyzed in each module's Regulatory Pressure section.</p>
+      </div>
+      <div class="cx-fw-row">
+        <span class="cx-fw-tag active">TCFD</span>
+        <span class="cx-fw-tag active">ISSB / IFRS S2</span>
+        <span class="cx-fw-tag active">CSRD / ESRS</span>
+        <span class="cx-fw-tag active">SEC Climate Rules</span>
+        <span class="cx-fw-tag active">EU ETS</span>
+        <span class="cx-fw-tag active">CBAM</span>
+        <span class="cx-fw-tag active">GRI Standards</span>
+        <span class="cx-fw-tag active">CDP</span>
+        <span class="cx-fw-tag active">PCAF</span>
+        <span class="cx-fw-tag active">NZBA</span>
+        <span class="cx-fw-tag active">Poseidon Principles</span>
+        <span class="cx-fw-tag active">IMO 2050</span>
+        <span class="cx-fw-tag active">GISTM (Mining)</span>
+        <span class="cx-fw-tag active">TNFD</span>
+        <span class="cx-fw-tag active">EU EPBD</span>
+        <span class="cx-fw-tag active">GRESB</span>
+        <span class="cx-fw-tag active">SBTi</span>
+        <span class="cx-fw-tag active">Basel IV Climate</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cx-cta-section">
+    <div class="cx-cta-text">
+      <h3>Sector-Specific Climate Intelligence, Institutional Grade</h3>
+      <p>Access the full Climactix intelligence infrastructure — asset-level risk mapping, regulatory alignment tools, ESG disclosure analytics, and climate scenario simulation across all 8 sectors. Built for institutional investors, corporate risk teams, and sustainability professionals.</p>
+    </div>
+    <div class="cx-cta-actions">
+      <a href="assessment.html" class="cx-btn cx-btn-primary">Start Assessment</a>
+      <a href="dashboard.html" class="cx-btn cx-btn-outline">ESG Dashboard</a>
+      <a href="community.html" class="cx-btn cx-btn-outline">Intelligence Feed</a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
