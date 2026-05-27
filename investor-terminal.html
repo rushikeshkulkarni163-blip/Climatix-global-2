@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Climactix — Investor Intelligence Terminal</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})()</script>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   CLIMACTIX — INVESTOR INTELLIGENCE TERMINAL
+   Bloomberg Terminal · BlackRock Aladdin · Moody's Analytics · MSCI Grade
+   20 companies · 6 NGFS scenarios · Portfolio Risk Engine · Market Intel
+═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:#000000; --surface:#0F0F0F; --surface-2:#1A1A1A; --surface-3:#242424; --surface-4:#2E2E2E;
+  --border:#2C2C2C; --border-strong:#333333;
+  --amber:#FF6600; --amber-dim:#CC5200; --amber-glow:rgba(255,102,0,0.08);
+  --cyan:#0099CC; --green:#00CC44; --red:#FF3333; --blue:#3399FF; --purple:#9966FF;
+  --text:#FFFFFF; --text-2:#888888; --text-muted:#555555;
+  --t:0.12s ease;
+  --nav-h:44px; --tab-h:36px;
+}
+[data-theme="light"] {
+  --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#EBEBEB; --surface-3:#E0E0E0; --surface-4:#D5D5D5;
+  --border:#D0D0D0; --border-strong:#BBBBBB; --text:#000000; --text-2:#333333; --text-muted:#666666;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:12px;line-height:1.5}
+.mono{font-family:'IBM Plex Mono',monospace}
+a{text-decoration:none;color:inherit}
+input,select,textarea,button{font-family:inherit}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--surface-3)}
+::-webkit-scrollbar{width:3px}
+
+/* ── TOP NAV */
+.nav{height:var(--nav-h);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;position:relative;z-index:200;flex-shrink:0}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em}
+.nav-sep{color:var(--border-strong);font-size:18px;line-height:1}
+.nav-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav-live{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse-green 2s infinite}
+@keyframes pulse-green{0%,100%{opacity:1}50%{opacity:0.3}}
+.nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all var(--t);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.nav-clock{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:0.04em}
+.theme-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:4px;transition:color var(--t)}
+.theme-btn:hover{color:var(--amber)}
+
+/* ── MODULE TABS */
+.module-tabs{height:var(--tab-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:stretch;padding:0;flex-shrink:0;overflow-x:auto}
+.mod-tab{display:flex;align-items:center;gap:6px;padding:0 18px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all var(--t);white-space:nowrap;flex-shrink:0}
+.mod-tab:hover{color:var(--text);background:var(--surface-2)}
+.mod-tab.active{color:var(--amber);border-bottom-color:var(--amber);background:rgba(255,102,0,0.03)}
+.mod-tab-num{font-size:8px;opacity:0.5}
+
+/* ── WORKSPACE */
+.workspace{height:calc(100vh - var(--nav-h) - var(--tab-h));display:flex;overflow:hidden}
+.module{display:none;width:100%;height:100%;overflow:hidden}
+.module.active{display:flex}
+
+/* ── SHARED PANEL CHROME */
+.panel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
+.panel:last-child{border-right:none}
+.panel-hdr{padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.panel-hdr-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)}
+.panel-hdr-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.panel-body{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent}
+
+/* ── MODULE 1: COMPANY INTELLIGENCE ── */
+#mod-company{display:none}
+#mod-company.active{display:flex}
+
+/* Search panel */
+.search-panel{width:280px;flex-shrink:0}
+.search-box-wrap{padding:8px 10px;border-bottom:1px solid var(--border);background:var(--surface)}
+.search-input{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);outline:none;transition:border-color var(--t)}
+.search-input:focus{border-color:var(--amber)}
+.search-input::placeholder{color:var(--text-muted)}
+.search-filters{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.filter-sel{background:var(--surface-3);border:1px solid var(--border);border-radius:2px;padding:3px 6px;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--text-muted);cursor:pointer;outline:none;transition:all var(--t);-webkit-appearance:none}
+.filter-sel:focus,.filter-sel:hover{border-color:var(--amber);color:var(--amber)}
+
+.company-list-item{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;transition:background var(--t);border-bottom:1px solid var(--border)}
+.company-list-item:hover{background:var(--surface-2)}
+.company-list-item.selected{background:rgba(255,102,0,0.05);border-left:2px solid var(--amber)}
+.cli-rating{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;width:28px;flex-shrink:0;text-align:center}
+.cli-info{flex:1;min-width:0}
+.cli-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.cli-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-top:1px}
+.cli-score{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;flex-shrink:0;text-align:right}
+
+/* Profile panel */
+.profile-panel{flex:1;min-width:0}
+.profile-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:11px;gap:8px}
+.profile-empty .pe-title{font-size:13px;font-weight:700;color:var(--text-2)}
+
+/* Identity header */
+.identity-header{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface)}
+.identity-row-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.identity-cx-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.06em;color:var(--amber);margin-bottom:3px}
+.identity-name{font-size:18px;font-weight:800;letter-spacing:-0.025em;line-height:1.2}
+.identity-sub{font-size:11px;color:var(--text-2);margin-top:3px}
+.identity-rating-block{text-align:right;flex-shrink:0}
+.rating-grade-display{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.rating-desc-display{font-size:10px;color:var(--text-2);margin-top:2px}
+.identity-tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 7px;border-radius:2px}
+
+/* KPI strip */
+.kpi-strip{display:grid;border-bottom:1px solid var(--border)}
+.kpi-cell{padding:10px 14px;border-right:1px solid var(--border)}
+.kpi-cell:last-child{border-right:none}
+.kpi-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.kpi-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.kpi-sub{font-size:10px;color:var(--text-2);margin-top:2px}
+
+/* Section label */
+.section-label{padding:6px 16px;background:var(--surface);border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;justify-content:space-between}
+
+/* C-LAYER grid */
+.clayer-grid{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}
+.clayer-cell{padding:10px 12px;border-right:1px solid var(--border)}
+.clayer-cell:last-child,.clayer-cell:nth-child(4){border-right:none}
+.clayer-cell:nth-child(n+5){border-top:1px solid var(--border)}
+.clayer-name{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;margin-bottom:1px}
+.clayer-long{font-size:9px;color:var(--text-muted);margin-bottom:6px}
+.clayer-score-row{display:flex;align-items:baseline;gap:3px}
+.clayer-score{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;letter-spacing:-0.02em}
+.clayer-max{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+.clayer-bar{height:2px;background:var(--border);margin-top:4px}
+.clayer-bar-fill{height:100%;transition:width 0.5s ease}
+
+/* Risk matrix */
+.risk-matrix{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border)}
+.risk-cell{padding:8px 10px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.risk-cell:nth-child(3n){border-right:none}
+.risk-cell:nth-last-child(-n+3){border-bottom:none}
+.risk-cell-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.risk-cell-val{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.risk-cell-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;padding:1px 5px;border-radius:2px;display:inline-block;margin-top:2px}
+.risk-bar{height:2px;background:var(--border);margin-top:5px}
+.risk-bar-fill{height:100%}
+
+/* Financial impact table */
+.impact-table{width:100%;border-collapse:collapse}
+.impact-table td{padding:6px 14px;font-size:11px;border-bottom:1px solid var(--border)}
+.impact-table tr:last-child td{border-bottom:none}
+.impact-table .mono-cell{font-family:'IBM Plex Mono',monospace}
+.impact-table .val-cell{font-family:'IBM Plex Mono',monospace;font-weight:700;text-align:right}
+.impact-table .label-cell{color:var(--text-2)}
+
+/* Compliance grid */
+.compliance-grid{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--border)}
+.compliance-item{padding:6px 12px;border-right:1px solid var(--border);display:flex;align-items:center;gap:6px;flex:1;min-width:80px}
+.compliance-fw{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.06em}
+.compliance-status{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:1px 5px;border-radius:2px}
+.cs-aligned{background:rgba(0,204,68,0.08);border:1px solid rgba(0,204,68,0.2);color:#00CC44}
+.cs-partial{background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);color:#FF6600}
+.cs-missing{background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);color:#FF3333}
+.cs-na{background:var(--surface-3);border:1px solid var(--border);color:var(--text-muted)}
+
+/* Risk rail */
+.risk-rail{width:260px;flex-shrink:0;border-left:1px solid var(--border)}
+.rail-rating-block{padding:16px 14px;border-bottom:1px solid var(--border);text-align:center;background:var(--surface)}
+.rail-rating-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.rail-rating-grade{font-family:'IBM Plex Mono',monospace;font-size:36px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.rail-rating-desc{font-size:10px;color:var(--text-2);margin-top:4px}
+.rail-score{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--amber);margin-top:8px}
+.rail-section{border-bottom:1px solid var(--border)}
+.rail-sec-hdr{padding:7px 12px;background:var(--surface);font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted)}
+.risk-flag-item{padding:7px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:6px;font-size:10px}
+.risk-flag-item:last-child{border-bottom:none}
+.risk-flag-dot{width:5px;height:5px;border-radius:1px;flex-shrink:0;margin-top:3px}
+.risk-flag-text{color:var(--text-2);line-height:1.45;flex:1}
+.credibility-block{padding:10px 12px;border-bottom:1px solid var(--border)}
+.credibility-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.credibility-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
+.credibility-val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700}
+.credibility-bar{height:2px;background:var(--border)}
+.credibility-bar-fill{height:100%}
+.benchmark-block{padding:8px 12px}
+.benchmark-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid var(--border)}
+.benchmark-row:last-child{border-bottom:none}
+.bm-label{font-size:10px;color:var(--text-2)}
+.bm-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700}
+.bm-delta{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;margin-left:4px}
+
+/* ── MODULE 2: PORTFOLIO RISK ENGINE ── */
+#mod-portfolio{display:none}
+#mod-portfolio.active{display:flex}
+
+.holdings-panel{width:300px;flex-shrink:0}
+.add-holding-form{padding:10px}
+.add-holding-form .ah-row{display:flex;gap:4px;margin-bottom:6px}
+.ah-input{flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:2px;padding:6px 8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text);outline:none;transition:border-color var(--t)}
+.ah-input:focus{border-color:var(--amber)}
+.ah-input::placeholder{color:var(--text-muted)}
+.ah-weight{width:64px;flex-shrink:0}
+.ah-add-btn{background:var(--amber);color:#000;border:none;border-radius:2px;padding:0 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.06em;cursor:pointer;transition:background var(--t);white-space:nowrap}
+.ah-add-btn:hover{background:var(--amber-dim)}
+.quick-add-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px}
+.quick-add-chips{display:flex;flex-wrap:wrap;gap:3px}
+.qa-chip{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;padding:2px 6px;border:1px solid var(--border);border-radius:2px;cursor:pointer;color:var(--text-muted);transition:all var(--t)}
+.qa-chip:hover{border-color:var(--amber);color:var(--amber)}
+.holdings-list-item{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--border);transition:background var(--t)}
+.holdings-list-item:hover{background:var(--surface-2)}
+.hli-name{flex:1;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hli-weight{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber);width:36px;text-align:right;flex-shrink:0}
+.hli-rating{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;width:28px;text-align:center;flex-shrink:0}
+.hli-remove{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);cursor:pointer;padding:0 3px;transition:color var(--t)}
+.hli-remove:hover{color:var(--red)}
+.portfolio-actions{padding:10px;border-top:1px solid var(--border);display:flex;gap:6px}
+.analyze-btn{flex:1;background:var(--amber);color:#000;border:none;border-radius:2px;padding:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:background var(--t)}
+.analyze-btn:hover{background:var(--amber-dim)}
+.clear-btn{background:none;border:1px solid var(--border-strong);color:var(--text-muted);border-radius:2px;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all var(--t)}
+.clear-btn:hover{border-color:var(--red);color:var(--red)}
+
+.portfolio-analysis-panel{flex:1;min-width:0}
+.portfolio-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:11px;text-align:center;gap:6px}
+.portfolio-kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}
+.portfolio-holdings-table{width:100%;border-collapse:collapse}
+.portfolio-holdings-table thead th{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:7px 12px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface)}
+.portfolio-holdings-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t)}
+.portfolio-holdings-table tbody tr:hover{background:var(--surface-2)}
+.portfolio-holdings-table tbody td{padding:7px 12px;font-size:11px}
+.sector-bar-wrap{padding:12px 16px;border-bottom:1px solid var(--border)}
+.sector-bar-item{margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.sector-bar-label{font-size:10px;color:var(--text-2);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sector-bar-track{flex:1;height:3px;background:var(--border)}
+.sector-bar-fill{height:100%;background:var(--amber)}
+.sector-bar-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);width:36px;text-align:right;flex-shrink:0}
+
+.portfolio-risk-rail{width:260px;flex-shrink:0;border-left:1px solid var(--border)}
+
+/* ── MODULE 3: SCENARIO SIMULATION ── */
+#mod-scenario{display:none}
+#mod-scenario.active{display:flex}
+
+.scenario-controls-panel{width:280px;flex-shrink:0}
+.scenario-btn-group{padding:12px}
+.scenario-btn-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.scenario-btn{display:block;width:100%;text-align:left;background:none;border:1px solid var(--border);border-radius:2px;padding:8px 10px;cursor:pointer;transition:all var(--t);margin-bottom:5px}
+.scenario-btn:hover{border-color:var(--border-strong);background:var(--surface-2)}
+.scenario-btn.selected{border-left:3px solid var(--amber);background:rgba(255,102,0,0.05)}
+.sb-name{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.04em;margin-bottom:2px}
+.sb-desc{font-size:9px;color:var(--text-muted);line-height:1.4}
+.year-selector{padding:10px 12px;border-top:1px solid var(--border)}
+.year-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.year-btns{display:flex;gap:4px}
+.year-btn{flex:1;background:none;border:1px solid var(--border);border-radius:2px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);cursor:pointer;transition:all var(--t)}
+.year-btn:hover{border-color:var(--border-strong);color:var(--text)}
+.year-btn.selected{background:rgba(255,102,0,0.08);border-color:rgba(255,102,0,0.4);color:var(--amber)}
+.entity-selector{padding:10px 12px;border-top:1px solid var(--border)}
+.ent-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.ent-btns{display:flex;gap:4px}
+.ent-btn{flex:1;background:none;border:1px solid var(--border);border-radius:2px;padding:5px 0;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);cursor:pointer;transition:all var(--t)}
+.ent-btn:hover{border-color:var(--border-strong);color:var(--text)}
+.ent-btn.selected{background:rgba(255,102,0,0.08);border-color:rgba(255,102,0,0.4);color:var(--amber)}
+.run-scenario-btn{display:block;width:calc(100% - 24px);margin:12px;background:var(--amber);color:#000;border:none;border-radius:2px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:background var(--t)}
+.run-scenario-btn:hover{background:var(--amber-dim)}
+
+.scenario-results-panel{flex:1;min-width:0}
+.scenario-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:11px;text-align:center;gap:6px}
+.scenario-header{padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface);display:flex;align-items:center;gap:12px}
+.scenario-header-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)}
+.scenario-header-name{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;letter-spacing:-0.02em}
+.scenario-header-desc{font-size:10px;color:var(--text-2)}
+.scenario-impact-strip{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}
+.impact-cell{padding:12px 14px;border-right:1px solid var(--border)}
+.impact-cell:last-child{border-right:none}
+.impact-cell-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.impact-cell-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.impact-cell-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-top:2px}
+.impact-cell-sub{font-size:10px;color:var(--text-2);margin-top:2px}
+.scenario-breakdown-table{width:100%;border-collapse:collapse}
+.scenario-breakdown-table thead th{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:7px 14px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface)}
+.scenario-breakdown-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t)}
+.scenario-breakdown-table tbody tr:hover{background:var(--surface-2)}
+.scenario-breakdown-table tbody td{padding:7px 14px;font-size:11px}
+.scenario-comparison-rail{width:260px;flex-shrink:0;border-left:1px solid var(--border)}
+.comparison-matrix{padding:10px 12px}
+.comparison-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.comparison-row:last-child{border-bottom:none}
+.cr-label{font-size:10px;color:var(--text-2)}
+.cr-baseline{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--text-muted)}
+.cr-impact{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700}
+
+/* ── MODULE 4: MARKET INTELLIGENCE ── */
+#mod-market{display:none}
+#mod-market.active{display:flex}
+
+.intel-feed-panel{flex:1;min-width:0}
+.intel-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.intel-item:hover{background:var(--surface-2)}
+.intel-item-row1{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.intel-type-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+.intel-severity-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em;padding:2px 5px;border-radius:2px}
+.intel-region{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.intel-date{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-left:auto}
+.intel-headline{font-size:12px;font-weight:700;line-height:1.4;margin-bottom:4px}
+.intel-body{font-size:11px;color:var(--text-2);line-height:1.5;margin-bottom:6px}
+.intel-tags{display:flex;gap:4px;flex-wrap:wrap}
+.intel-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.06em;padding:1px 5px;border:1px solid var(--border);border-radius:2px;color:var(--text-muted)}
+
+.market-data-rail{width:280px;flex-shrink:0;border-left:1px solid var(--border)}
+.carbon-price-item{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;transition:background var(--t)}
+.carbon-price-item:hover{background:var(--surface-2)}
+.cp-market{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.04em}
+.cp-price{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700}
+.cp-change{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-align:right}
+.cp-unit{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.key-metrics-block{padding:10px 12px;border-bottom:1px solid var(--border)}
+.km-item{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)}
+.km-item:last-child{border-bottom:none}
+.km-label{font-size:10px;color:var(--text-2)}
+.km-val{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700}
+
+/* ── SHARED DATA DISPLAY UTILITIES */
+.data-table{width:100%;border-collapse:collapse}
+.data-table thead th{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:7px 14px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface)}
+.data-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t)}
+.data-table tbody tr:hover{background:var(--surface-2)}
+.data-table tbody td{padding:7px 14px;font-size:11px}
+.mono-val{font-family:'IBM Plex Mono',monospace;font-weight:700}
+.text-amber{color:var(--amber)}
+.text-green{color:var(--green)}
+.text-red{color:var(--red)}
+.text-cyan{color:var(--cyan)}
+.text-muted{color:var(--text-muted)}
+.no-data{padding:24px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted)}
+</style>
+</head>
+<body>
+
+<!-- ── TOP NAV -->
+<nav class="nav">
+  <span class="nav-logo mono">CLIMACTIX</span>
+  <span class="nav-sep">|</span>
+  <span class="nav-title mono">INVESTOR INTELLIGENCE TERMINAL</span>
+  <div class="nav-right">
+    <span class="nav-live"><span class="live-dot"></span>LIVE</span>
+    <span class="nav-clock mono" id="nav-clock">—</span>
+    <a href="enterprise-dashboard.html" class="nav-btn mono">Enterprise</a>
+    <a href="climate-risk-os.html" class="nav-btn mono">Risk OS</a>
+    <a href="leaderboard.html" class="nav-btn mono">Leaderboard</a>
+    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">◐</button>
+  </div>
+</nav>
+
+<!-- ── MODULE TABS -->
+<div class="module-tabs">
+  <button class="mod-tab active" data-mod="company" onclick="switchModule('company')">
+    <span class="mod-tab-num mono">01</span> Company Intelligence
+  </button>
+  <button class="mod-tab" data-mod="portfolio" onclick="switchModule('portfolio')">
+    <span class="mod-tab-num mono">02</span> Portfolio Risk Engine
+  </button>
+  <button class="mod-tab" data-mod="scenario" onclick="switchModule('scenario')">
+    <span class="mod-tab-num mono">03</span> Scenario Simulation
+  </button>
+  <button class="mod-tab" data-mod="market" onclick="switchModule('market')">
+    <span class="mod-tab-num mono">04</span> Market Intelligence
+  </button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     MODULE 1 — COMPANY INTELLIGENCE TERMINAL
+════════════════════════════════════════════════════════ -->
+<div class="workspace">
+
+<div class="module active" id="mod-company">
+
+  <!-- Search panel -->
+  <div class="panel search-panel">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Entity Search</span>
+      <span class="panel-hdr-meta mono" id="search-count">20 entities</span>
+    </div>
+    <div class="search-box-wrap">
+      <input type="text" class="search-input mono" id="search-input" placeholder="Name / CX-ID / Ticker / Industry..." oninput="handleSearch(this.value)">
+      <div class="search-filters">
+        <select class="filter-sel mono" id="filter-industry" onchange="handleSearch(document.getElementById('search-input').value)">
+          <option value="all">All Industries</option>
+          <option value="energy">Energy</option>
+          <option value="oil_gas">Oil & Gas</option>
+          <option value="renewables">Renewables</option>
+          <option value="steel">Steel</option>
+          <option value="shipping">Shipping</option>
+          <option value="real_estate">Real Estate</option>
+          <option value="banking">Banking</option>
+          <option value="chemicals">Chemicals</option>
+          <option value="mining">Mining</option>
+          <option value="fmcg">FMCG</option>
+          <option value="it">IT</option>
+          <option value="infrastructure">Infrastructure</option>
+        </select>
+        <select class="filter-sel mono" id="filter-rating" onchange="handleSearch(document.getElementById('search-input').value)">
+          <option value="all">All Ratings</option>
+          <option value="AAA">AAA</option>
+          <option value="AA">AA</option>
+          <option value="A">A</option>
+          <option value="BBB">BBB</option>
+          <option value="BB">BB</option>
+          <option value="B">B</option>
+          <option value="CCC">CCC</option>
+        </select>
+      </div>
+    </div>
+    <div class="panel-body" id="company-list"></div>
+  </div>
+
+  <!-- Profile panel -->
+  <div class="panel profile-panel">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono" id="profile-panel-label">Company Intelligence</span>
+      <span class="panel-hdr-meta mono" id="profile-panel-meta"></span>
+    </div>
+    <div class="panel-body" id="company-profile">
+      <div class="profile-empty">
+        <div class="pe-title mono">SELECT AN ENTITY</div>
+        <div>Search and select a company to view full intelligence profile</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk rail -->
+  <div class="panel risk-rail" style="border-left:1px solid var(--border)">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Risk Intelligence</span>
+    </div>
+    <div class="panel-body" id="risk-rail-content">
+      <div class="no-data">Select entity to view risk profile</div>
+    </div>
+  </div>
+
+</div><!-- /mod-company -->
+
+<!-- ════════════════════════════════════════════════════════
+     MODULE 2 — PORTFOLIO RISK ENGINE
+════════════════════════════════════════════════════════ -->
+<div class="module" id="mod-portfolio">
+
+  <!-- Holdings panel -->
+  <div class="panel holdings-panel">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Portfolio Holdings</span>
+      <span class="panel-hdr-meta mono" id="holdings-count">0 entities</span>
+    </div>
+    <div class="add-holding-form">
+      <div class="quick-add-label mono">Quick add — sample portfolio</div>
+      <div class="quick-add-chips" id="quick-add-chips"></div>
+      <div class="ah-row" style="margin-top:10px">
+        <input type="text" class="ah-input mono" id="holding-search" placeholder="CX-ID or company...">
+        <input type="number" class="ah-input ah-weight mono" id="holding-weight" placeholder="Wt %" min="0" max="100">
+        <button class="ah-add-btn mono" onclick="addHolding()">ADD</button>
+      </div>
+    </div>
+    <div class="panel-body" id="holdings-list"></div>
+    <div class="portfolio-actions">
+      <button class="analyze-btn mono" onclick="analyzePortfolio()">Analyze Portfolio</button>
+      <button class="clear-btn mono" onclick="clearPortfolio()">Clear</button>
+    </div>
+  </div>
+
+  <!-- Portfolio analysis panel -->
+  <div class="panel portfolio-analysis-panel">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Portfolio Risk Analysis</span>
+      <span class="panel-hdr-meta mono" id="portfolio-panel-meta"></span>
+    </div>
+    <div class="panel-body" id="portfolio-analysis"></div>
+  </div>
+
+  <!-- Portfolio risk rail -->
+  <div class="panel portfolio-risk-rail">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Risk Concentration</span>
+    </div>
+    <div class="panel-body" id="portfolio-risk-rail"></div>
+  </div>
+
+</div><!-- /mod-portfolio -->
+
+<!-- ════════════════════════════════════════════════════════
+     MODULE 3 — SCENARIO SIMULATION TERMINAL
+════════════════════════════════════════════════════════ -->
+<div class="module" id="mod-scenario">
+
+  <!-- Controls -->
+  <div class="panel scenario-controls-panel">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Scenario Controls</span>
+    </div>
+    <div class="panel-body">
+      <div class="scenario-btn-group">
+        <div class="scenario-btn-label mono">Climate Pathway</div>
+        <button class="scenario-btn selected" data-scenario="1.5c" onclick="selectScenario('1.5c')">
+          <div class="sb-name mono" style="color:#00CC44">1.5°C — Net Zero 2050</div>
+          <div class="sb-desc">Aggressive immediate decarbonisation. Carbon $250/tCO2e by 2050.</div>
+        </button>
+        <button class="scenario-btn" data-scenario="2c" onclick="selectScenario('2c')">
+          <div class="sb-name mono" style="color:#FFB800">2°C — Below 2°C Pathway</div>
+          <div class="sb-desc">Moderate transition with market mechanisms. Carbon $130/tCO2e.</div>
+        </button>
+        <button class="scenario-btn" data-scenario="3c" onclick="selectScenario('3c')">
+          <div class="sb-name mono" style="color:#FF3333">3°C — Current Policies</div>
+          <div class="sb-desc">Weak transition. High physical damage. Catastrophic by 2070.</div>
+        </button>
+        <button class="scenario-btn" data-scenario="delayed" onclick="selectScenario('delayed')">
+          <div class="sb-name mono" style="color:#FF6600">Delayed Transition</div>
+          <div class="sb-desc">Late-action shock. Carbon compressed into 10-year window.</div>
+        </button>
+        <button class="scenario-btn" data-scenario="nz2050" onclick="selectScenario('nz2050')">
+          <div class="sb-name mono" style="color:#0099CC">Net Zero 2050 — Orderly</div>
+          <div class="sb-desc">Technology scale-up. CCS and hydrogen at scale.</div>
+        </button>
+        <button class="scenario-btn" data-scenario="carbon_shock" onclick="selectScenario('carbon_shock')">
+          <div class="sb-name mono" style="color:#9966FF">Carbon Tax Shock</div>
+          <div class="sb-desc">Sudden $150/tCO2e global carbon tax. Immediate EBITDA impact.</div>
+        </button>
+      </div>
+      <div class="year-selector">
+        <div class="year-label mono">Target Year</div>
+        <div class="year-btns">
+          <button class="year-btn mono" data-year="2030" onclick="selectYear(2030)">2030</button>
+          <button class="year-btn mono selected" data-year="2035" onclick="selectYear(2035)">2035</button>
+          <button class="year-btn mono" data-year="2040" onclick="selectYear(2040)">2040</button>
+          <button class="year-btn mono" data-year="2050" onclick="selectYear(2050)">2050</button>
+        </div>
+      </div>
+      <div class="entity-selector">
+        <div class="ent-label mono">Target Entity</div>
+        <div class="ent-btns">
+          <button class="ent-btn mono selected" data-ent="company" onclick="selectEntityType('company')">Active Company</button>
+          <button class="ent-btn mono" data-ent="portfolio" onclick="selectEntityType('portfolio')">Portfolio</button>
+        </div>
+      </div>
+      <button class="run-scenario-btn mono" onclick="runScenario()">Run Simulation</button>
+    </div>
+  </div>
+
+  <!-- Results panel -->
+  <div class="panel scenario-results-panel">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Scenario Impact Analysis</span>
+      <span class="panel-hdr-meta mono" id="scenario-panel-meta"></span>
+    </div>
+    <div class="panel-body" id="scenario-results">
+      <div class="scenario-empty-state">
+        <div style="font-size:13px;font-weight:700;color:var(--text-2)">SELECT SCENARIO AND RUN</div>
+        <div>Configure pathway, target year, and entity above</div>
+        <div style="margin-top:8px;font-size:10px;color:var(--text-muted)">NGFS-aligned scenario engine · 6 pathways · 20 entities</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison rail -->
+  <div class="panel scenario-comparison-rail">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Pathway Comparison</span>
+    </div>
+    <div class="panel-body" id="scenario-comparison">
+      <div class="no-data">Run scenario to view comparison</div>
+    </div>
+  </div>
+
+</div><!-- /mod-scenario -->
+
+<!-- ════════════════════════════════════════════════════════
+     MODULE 4 — MARKET INTELLIGENCE ENGINE
+════════════════════════════════════════════════════════ -->
+<div class="module" id="mod-market">
+
+  <!-- Intel feed -->
+  <div class="panel intel-feed-panel">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Climate Intelligence Feed</span>
+      <span class="panel-hdr-meta mono">26 May 2026 — Live</span>
+    </div>
+    <div class="panel-body" id="intel-feed"></div>
+  </div>
+
+  <!-- Market data rail -->
+  <div class="panel market-data-rail">
+    <div class="panel-hdr">
+      <span class="panel-hdr-label mono">Carbon Markets</span>
+      <span class="panel-hdr-meta mono">Live</span>
+    </div>
+    <div class="panel-body" id="market-data-rail"></div>
+  </div>
+
+</div><!-- /mod-market -->
+
+</div><!-- /workspace -->
+
+<script src="intelligence-engine.js"></script>
+<script>
+(function () {
+  'use strict';
+  const I = window.INTELLIGENCE;
+  if (!I) { document.body.innerHTML = '<div style="padding:40px;font-family:IBM Plex Mono,monospace;color:#FF6600">intelligence-engine.js not loaded.</div>'; return; }
+
+  // ── State
+  let activeCompanyId = null;
+  let activeScenario = '1.5c';
+  let activeYear = 2035;
+  let activeEntityType = 'company';
+  let portfolioHoldings = []; // [{companyId, weight}]
+  let portfolioAnalysis = null;
+
+  // ── Theme
+  window.toggleTheme = function () {
+    const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('cx-theme', t);
+  };
+
+  // ── Clock
+  function updateClock() {
+    const n = new Date();
+    const pad = x => String(x).padStart(2, '0');
+    document.getElementById('nav-clock').textContent =
+      `${pad(n.getUTCHours())}:${pad(n.getUTCMinutes())}:${pad(n.getUTCSeconds())} UTC`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── Module switching
+  window.switchModule = function (modId) {
+    document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.mod-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('mod-' + modId).classList.add('active');
+    document.querySelector(`[data-mod="${modId}"]`).classList.add('active');
+    if (modId === 'market' && !document.getElementById('intel-feed').children.length) renderMarketIntel();
+  };
+
+  // ── Utilities
+  function fmt(n) {
+    if (n === null || n === undefined) return '—';
+    const abs = Math.abs(n);
+    const sign = n < 0 ? '-' : '';
+    if (abs >= 1000000) return sign + '$' + (abs / 1000000).toFixed(1) + 'T';
+    if (abs >= 1000) return sign + '$' + (abs / 1000).toFixed(1) + 'B';
+    return sign + '$' + abs.toFixed(0) + 'M';
+  }
+  function fmtPct(n) {
+    if (n === null || n === undefined) return '—';
+    return (n > 0 ? '+' : '') + n.toFixed(1) + '%';
+  }
+  function scoreColor(s) {
+    if (!s) return 'var(--text-muted)';
+    if (s >= 75) return '#00CC44';
+    if (s >= 60) return '#0099CC';
+    if (s >= 45) return '#FFB800';
+    if (s >= 30) return '#FF6600';
+    return '#FF3333';
+  }
+  function riskColor(s) {
+    if (s >= 80) return '#FF3333';
+    if (s >= 60) return '#FF6600';
+    if (s >= 40) return '#FFB800';
+    if (s >= 20) return '#00CC44';
+    return '#0099CC';
+  }
+  function complianceClass(s) {
+    return s === 'aligned' ? 'cs-aligned' : s === 'partial' ? 'cs-partial' : s === 'n/a' ? 'cs-na' : 'cs-missing';
+  }
+
+  // ════════════════════════════════════════════════
+  // MODULE 1 — COMPANY INTELLIGENCE
+  // ════════════════════════════════════════════════
+
+  function renderCompanyList(companies) {
+    const container = document.getElementById('company-list');
+    document.getElementById('search-count').textContent = companies.length + ' entities';
+    if (!companies.length) {
+      container.innerHTML = '<div class="no-data">No entities match filters</div>';
+      return;
+    }
+    container.innerHTML = companies.map(c => {
+      const r = I.getRating(c.cScore);
+      const isSelected = c.id === activeCompanyId;
+      return `<div class="company-list-item${isSelected ? ' selected' : ''}" onclick="selectCompany('${c.id}')">
+        <span class="cli-rating mono" style="color:${r.color}">${r.grade}</span>
+        <div class="cli-info">
+          <div class="cli-name">${c.name}</div>
+          <div class="cli-meta mono">${c.industryLabel} · ${c.country}</div>
+        </div>
+        <span class="cli-score mono" style="color:${scoreColor(c.cScore)}">${c.cScore}</span>
+      </div>`;
+    }).join('');
+  }
+
+  window.handleSearch = function (q) {
+    const industryFilter = document.getElementById('filter-industry').value;
+    const ratingFilter = document.getElementById('filter-rating').value;
+    const results = I.searchCompanies(q, {
+      industry: industryFilter,
+      rating: ratingFilter
+    });
+    renderCompanyList(results);
+  };
+
+  window.selectCompany = function (id) {
+    activeCompanyId = id;
+    const c = I.getCompany(id);
+    if (!c) return;
+    // Update list selection
+    document.querySelectorAll('.company-list-item').forEach(el => el.classList.remove('selected'));
+    const listItems = document.querySelectorAll('.company-list-item');
+    listItems.forEach(el => { if (el.onclick && el.onclick.toString().includes(id)) el.classList.add('selected'); });
+    handleSearch(document.getElementById('search-input').value);
+    renderCompanyProfile(c);
+    renderRiskRail(c);
+    document.getElementById('profile-panel-label').textContent = c.name;
+    document.getElementById('profile-panel-meta').textContent = c.id;
+  };
+
+  function renderCompanyProfile(c) {
+    const r = I.getRating(c.cScore);
+    const bm = I.BENCHMARKS[c.industry] || {};
+    const html = `
+      <!-- Identity header -->
+      <div class="identity-header">
+        <div class="identity-row-top">
+          <div>
+            <div class="identity-cx-id mono">${c.id}</div>
+            <div class="identity-name">${c.name}</div>
+            <div class="identity-sub">${c.industryLabel} · ${c.country} · ${c.geography}</div>
+          </div>
+          <div class="identity-rating-block">
+            <div class="rating-grade-display mono" style="color:${r.color}">${r.grade}</div>
+            <div class="rating-desc-display">${r.desc}</div>
+          </div>
+        </div>
+        <div class="identity-tags">
+          <span class="tag" style="background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.2);color:var(--amber)">${c.industryLabel}</span>
+          <span class="tag" style="background:var(--surface-3);border:1px solid var(--border);color:var(--text-muted)">${c.country}</span>
+          ${c.sbtiAligned ? `<span class="tag" style="background:rgba(0,204,68,0.08);border:1px solid rgba(0,204,68,0.2);color:var(--green)">SBTi Aligned</span>` : ''}
+          ${c.netZeroTarget ? `<span class="tag" style="background:rgba(0,153,204,0.08);border:1px solid rgba(0,153,204,0.2);color:var(--cyan)">Net Zero ${c.netZeroTarget}</span>` : '<span class="tag" style="background:rgba(255,51,51,0.08);border:1px solid rgba(255,51,51,0.2);color:var(--red)">No Net Zero Target</span>'}
+        </div>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="kpi-strip" style="grid-template-columns:repeat(5,1fr)">
+        <div class="kpi-cell">
+          <div class="kpi-label mono">C-Score</div>
+          <div class="kpi-val mono" style="color:${scoreColor(c.cScore)}">${c.cScore}</div>
+          <div class="kpi-sub">vs industry avg ${bm.avgScore || '—'}</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-label mono">Carbon Intensity</div>
+          <div class="kpi-val mono" style="color:var(--amber);font-size:14px;margin-top:3px">${c.carbonIntensity}</div>
+          <div class="kpi-sub">tCO2e / $M revenue</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-label mono">Revenue at Risk</div>
+          <div class="kpi-val mono" style="color:var(--red);font-size:14px;margin-top:3px">${fmt(c.financialImpact.revenueAtRisk)}</div>
+          <div class="kpi-sub">Baseline estimate</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-label mono">Carbon Cost Exp.</div>
+          <div class="kpi-val mono" style="color:var(--amber);font-size:14px;margin-top:3px">${fmt(c.financialImpact.carbonCostExposure)}</div>
+          <div class="kpi-sub">Annual exposure</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-label mono">Market Cap</div>
+          <div class="kpi-val mono" style="font-size:14px;margin-top:3px">${fmt(c.marketCap)}</div>
+          <div class="kpi-sub">${(c.employees / 1000).toFixed(0)}k employees</div>
+        </div>
+      </div>
+
+      <!-- C-LAYER Intelligence -->
+      <div class="section-label">
+        <span>C-LAYER Intelligence Framework</span>
+        <span style="font-size:8px">8-dimension proprietary scoring</span>
+      </div>
+      <div class="clayer-grid">
+        ${I.C_LAYERS.map(cl => {
+          const s = c.cLayers[cl.id];
+          const pct = s ? ((s - 10) / 90) * 100 : 0;
+          const col = s ? (s >= 70 ? '#00CC44' : s >= 50 ? cl.color : '#FF3333') : 'var(--border)';
+          return `<div class="clayer-cell">
+            <div class="clayer-name mono" style="color:${cl.color}">${cl.label}</div>
+            <div class="clayer-long">${cl.long}</div>
+            <div class="clayer-score-row">
+              <span class="clayer-score mono" style="color:${s ? col : 'var(--text-muted)'}">${s || '—'}</span>
+              <span class="clayer-max mono">/100</span>
+            </div>
+            <div class="clayer-bar"><div class="clayer-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Physical Risk -->
+      <div class="section-label">
+        <span>Physical Risk Exposure</span>
+        <span style="font-size:8px;color:${riskColor(c.physicalRisk.overall)}">${I.getRiskLabel(c.physicalRisk.overall).label} — ${c.physicalRisk.overall}/100</span>
+      </div>
+      <div class="risk-matrix">
+        ${[
+          ['Flood Risk', c.physicalRisk.flood],
+          ['Heatwave Exposure', c.physicalRisk.heatwave],
+          ['Water Stress', c.physicalRisk.waterStress],
+          ['Cyclone Exposure', c.physicalRisk.cyclone],
+          ['Sea Level Rise', c.physicalRisk.seaLevelRise],
+          ['Wildfire Risk', c.physicalRisk.wildfire]
+        ].map(([label, val]) => {
+          const col = riskColor(val);
+          const rl = I.getRiskLabel(val);
+          return `<div class="risk-cell">
+            <div class="risk-cell-label mono">${label}</div>
+            <div class="risk-cell-val mono" style="color:${col}">${val}</div>
+            <span class="risk-cell-badge" style="background:${col}14;border:1px solid ${col}33;color:${col}">${rl.label}</span>
+            <div class="risk-bar"><div class="risk-bar-fill" style="width:${val}%;background:${col}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Transition Risk -->
+      <div class="section-label">
+        <span>Transition Risk Exposure</span>
+        <span style="font-size:8px;color:${riskColor(c.transitionRisk.overall)}">${I.getRiskLabel(c.transitionRisk.overall).label} — ${c.transitionRisk.overall}/100</span>
+      </div>
+      <div class="risk-matrix">
+        ${[
+          ['Carbon Tax Exposure', c.transitionRisk.carbonTaxExposure],
+          ['Fossil Dependency', c.transitionRisk.fossilDependency],
+          ['Energy Transition', c.transitionRisk.energyTransition],
+          ['Regulatory Pressure', c.transitionRisk.regulatory],
+          ['Technology Disruption', c.transitionRisk.technologyDisruption],
+          ['Stranded Assets', c.transitionRisk.strandedAssets]
+        ].map(([label, val]) => {
+          const col = riskColor(val);
+          const rl = I.getRiskLabel(val);
+          return `<div class="risk-cell">
+            <div class="risk-cell-label mono">${label}</div>
+            <div class="risk-cell-val mono" style="color:${col}">${val}</div>
+            <span class="risk-cell-badge" style="background:${col}14;border:1px solid ${col}33;color:${col}">${rl.label}</span>
+            <div class="risk-bar"><div class="risk-bar-fill" style="width:${val}%;background:${col}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Financial Impact -->
+      <div class="section-label"><span>Financial Climate Impact — Baseline Estimates</span></div>
+      <table class="impact-table">
+        ${[
+          ['Revenue at Risk', fmt(c.financialImpact.revenueAtRisk), 'var(--red)'],
+          ['EBITDA Impact', fmt(c.financialImpact.ebitdaImpact), 'var(--amber)'],
+          ['Carbon Cost Exposure', fmt(c.financialImpact.carbonCostExposure), 'var(--amber)'],
+          ['Supply Chain Disruption Loss', fmt(c.financialImpact.supplyChainLoss), 'var(--red)'],
+          ['Capex Transition Burden', fmt(c.financialImpact.capexBurden), 'var(--cyan)'],
+          ['Asset Impairment Risk', fmt(c.financialImpact.assetImpairment), 'var(--red)']
+        ].map(([label, val, col]) =>
+          `<tr><td class="label-cell">${label}</td><td class="val-cell mono-val" style="color:${col}">${val}</td></tr>`
+        ).join('')}
+      </table>
+
+      <!-- Emissions -->
+      <div class="section-label"><span>Emissions Profile — MtCO2e</span></div>
+      <table class="impact-table">
+        ${[
+          ['Scope 1 — Direct Emissions', c.scope1 + ' Mt', c.scope1 > 10 ? 'var(--red)' : c.scope1 > 1 ? 'var(--amber)' : 'var(--green)'],
+          ['Scope 2 — Indirect Energy', c.scope2 + ' Mt', 'var(--amber)'],
+          ['Scope 3 — Value Chain', c.scope3 + ' Mt', 'var(--cyan)'],
+          ['Carbon Intensity', c.carbonIntensity + ' tCO2e/$M rev', 'var(--text-2)'],
+          ['Net Zero Target Year', c.netZeroTarget || 'Not disclosed', c.netZeroTarget ? 'var(--green)' : 'var(--red)'],
+          ['Renewable Energy Target', c.renewableTarget, 'var(--cyan)']
+        ].map(([label, val, col]) =>
+          `<tr><td class="label-cell">${label}</td><td class="val-cell mono-val" style="color:${col}">${val}</td></tr>`
+        ).join('')}
+      </table>
+
+      <!-- Framework Compliance -->
+      <div class="section-label"><span>Regulatory Framework Compliance</span></div>
+      <div class="compliance-grid">
+        ${Object.entries(c.compliance).map(([fw, status]) =>
+          `<div class="compliance-item">
+            <span class="compliance-fw mono">${fw.replace('_', '-')}</span>
+            <span class="compliance-status ${complianceClass(status)} mono">${status}</span>
+          </div>`
+        ).join('')}
+      </div>
+
+      <!-- Facilities -->
+      <div class="section-label"><span>Key Facility Locations</span></div>
+      <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap">
+        ${(c.facilities || []).map(f => `<span class="tag" style="background:var(--surface-3);border:1px solid var(--border);color:var(--text-2)">${f}</span>`).join('')}
+      </div>
+    `;
+    document.getElementById('company-profile').innerHTML = html;
+  }
+
+  function renderRiskRail(c) {
+    const r = I.getRating(c.cScore);
+    const bm = I.BENCHMARKS[c.industry] || {};
+    const html = `
+      <div class="rail-rating-block">
+        <div class="rail-rating-label mono">Climactix Climate Rating</div>
+        <div class="rail-rating-grade mono" style="color:${r.color}">${r.grade}</div>
+        <div class="rail-rating-desc">${r.desc}</div>
+        <div class="rail-score mono">C-SCORE: ${c.cScore} / 100</div>
+      </div>
+      <div class="rail-section">
+        <div class="rail-sec-hdr mono">Risk Summary</div>
+        ${[
+          ['Physical Risk', c.physicalRisk.overall, riskColor(c.physicalRisk.overall)],
+          ['Transition Risk', c.transitionRisk.overall, riskColor(c.transitionRisk.overall)],
+          ['Carbon Intensity', null, null]
+        ].map(([label, val, col]) => val !== null ? `
+          <div style="padding:7px 12px;border-bottom:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="font-size:10px;color:var(--text-2)">${label}</span>
+              <span class="mono-val" style="font-size:11px;font-weight:700;color:${col}">${val}</span>
+            </div>
+            <div style="height:2px;background:var(--border)"><div style="height:100%;width:${val}%;background:${col}"></div></div>
+          </div>` : '').join('')}
+        <div style="padding:7px 12px;border-bottom:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between">
+            <span style="font-size:10px;color:var(--text-2)">Carbon Intensity</span>
+            <span class="mono-val text-amber" style="font-size:11px;font-weight:700">${c.carbonIntensity} tCO2e/$M</span>
+          </div>
+        </div>
+      </div>
+      <div class="credibility-block rail-section">
+        <div class="credibility-row">
+          <span class="credibility-label mono">Climate Credibility</span>
+          <span class="credibility-val mono" style="color:${scoreColor(c.credibilityScore)}">${c.credibilityScore}</span>
+        </div>
+        <div class="credibility-bar"><div class="credibility-bar-fill" style="width:${c.credibilityScore}%;background:${scoreColor(c.credibilityScore)}"></div></div>
+      </div>
+      ${c.greenwashingFlags.length ? `
+      <div class="rail-section">
+        <div class="rail-sec-hdr mono" style="color:var(--red)">Greenwashing Flags</div>
+        ${c.greenwashingFlags.map(f => `
+          <div class="risk-flag-item">
+            <div class="risk-flag-dot" style="background:var(--red)"></div>
+            <div class="risk-flag-text">${f}</div>
+          </div>`).join('')}
+      </div>` : ''}
+      <div class="rail-section">
+        <div class="rail-sec-hdr mono">Key Risk Exposures</div>
+        ${(c.keyRisks || []).map((risk, i) => {
+          const cols = ['#FF3333','#FF6600','#FFB800','#888888'];
+          return `<div class="risk-flag-item">
+            <div class="risk-flag-dot" style="background:${cols[Math.min(i,3)]}"></div>
+            <div class="risk-flag-text">${risk}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="rail-section">
+        <div class="rail-sec-hdr mono">Vs Industry Benchmark</div>
+        <div class="benchmark-block">
+          ${bm.avgScore ? [
+            ['C-Score', c.cScore, bm.avgScore],
+            ['Physical Risk', c.physicalRisk.overall, bm.avgPhysical],
+            ['Transition Risk', c.transitionRisk.overall, bm.avgTransition],
+            ['Carbon Intensity', c.carbonIntensity, bm.avgCarbonIntensity]
+          ].map(([label, val, avg]) => {
+            const delta = typeof val === 'number' && typeof avg === 'number' ? val - avg : null;
+            const isScore = label === 'C-Score';
+            const betterIfHigher = isScore;
+            const deltaColor = delta === null ? 'var(--text-muted)' :
+              betterIfHigher ? (delta > 0 ? '#00CC44' : '#FF3333') : (delta < 0 ? '#00CC44' : '#FF3333');
+            return `<div class="benchmark-row">
+              <span class="bm-label">${label}</span>
+              <span>
+                <span class="bm-val mono" style="color:${label === 'C-Score' ? scoreColor(val) : label.includes('Risk') ? riskColor(val) : 'var(--amber)'}">${val}</span>
+                ${delta !== null ? `<span class="bm-delta mono" style="color:${deltaColor}">${delta > 0 ? '+' : ''}${typeof delta === 'number' ? delta.toFixed(delta < 1 && delta > -1 ? 2 : 0) : delta}</span>` : ''}
+              </span>
+            </div>`;
+          }).join('') : '<div style="font-size:10px;color:var(--text-muted);padding:4px 0">No benchmark data</div>'}
+        </div>
+      </div>
+    `;
+    document.getElementById('risk-rail-content').innerHTML = html;
+  }
+
+  // ════════════════════════════════════════════════
+  // MODULE 2 — PORTFOLIO RISK ENGINE
+  // ════════════════════════════════════════════════
+
+  function renderQuickAddChips() {
+    const samples = ['CX-IND-ENE-001847','CX-IND-ITS-017322','CX-IND-BNK-009035','CX-IND-FCG-016188','CX-DNK-SHP-007662'];
+    document.getElementById('quick-add-chips').innerHTML = samples.map(id => {
+      const c = I.getCompany(id);
+      return c ? `<span class="qa-chip mono" onclick="quickAddHolding('${id}')" title="${c.name}">${c.ticker}</span>` : '';
+    }).join('');
+  }
+
+  window.quickAddHolding = function (id) {
+    const c = I.getCompany(id);
+    if (!c || portfolioHoldings.find(h => h.companyId === id)) return;
+    portfolioHoldings.push({ companyId: id, weight: 20 });
+    renderHoldingsList();
+  };
+
+  window.addHolding = function () {
+    const searchVal = document.getElementById('holding-search').value.trim();
+    const weightVal = parseFloat(document.getElementById('holding-weight').value);
+    if (!searchVal) return;
+    const results = I.searchCompanies(searchVal);
+    if (!results.length) { alert('No entity found. Try CX-ID, name, or ticker.'); return; }
+    const c = results[0];
+    if (portfolioHoldings.find(h => h.companyId === c.id)) { alert(c.name + ' already in portfolio.'); return; }
+    const weight = isNaN(weightVal) || weightVal <= 0 ? 10 : weightVal;
+    portfolioHoldings.push({ companyId: c.id, weight });
+    document.getElementById('holding-search').value = '';
+    document.getElementById('holding-weight').value = '';
+    renderHoldingsList();
+  };
+
+  function renderHoldingsList() {
+    const total = portfolioHoldings.reduce((s, h) => s + h.weight, 0);
+    document.getElementById('holdings-count').textContent = portfolioHoldings.length + ' entities';
+    const container = document.getElementById('holdings-list');
+    if (!portfolioHoldings.length) {
+      container.innerHTML = '<div class="no-data">Add entities to build portfolio</div>';
+      return;
+    }
+    container.innerHTML = portfolioHoldings.map(h => {
+      const c = I.getCompany(h.companyId);
+      if (!c) return '';
+      const r = I.getRating(c.cScore);
+      const pct = total > 0 ? ((h.weight / total) * 100).toFixed(1) : h.weight;
+      return `<div class="holdings-list-item">
+        <span class="hli-rating mono" style="color:${r.color}">${r.grade}</span>
+        <div class="hli-name" title="${c.name}">${c.name}</div>
+        <span class="hli-weight mono">${pct}%</span>
+        <span class="hli-remove" onclick="removeHolding('${h.companyId}')">✕</span>
+      </div>`;
+    }).join('');
+  }
+
+  window.removeHolding = function (id) {
+    portfolioHoldings = portfolioHoldings.filter(h => h.companyId !== id);
+    renderHoldingsList();
+  };
+
+  window.clearPortfolio = function () {
+    portfolioHoldings = [];
+    portfolioAnalysis = null;
+    renderHoldingsList();
+    document.getElementById('portfolio-analysis').innerHTML = '<div class="portfolio-empty-state"><div style="font-size:13px;font-weight:700;color:var(--text-2)">BUILD YOUR PORTFOLIO</div><div>Add entities and click Analyze Portfolio</div></div>';
+    document.getElementById('portfolio-risk-rail').innerHTML = '<div class="no-data">No portfolio analyzed</div>';
+    document.getElementById('portfolio-panel-meta').textContent = '';
+  };
+
+  window.analyzePortfolio = function () {
+    if (!portfolioHoldings.length) { alert('Add at least one entity to analyze.'); return; }
+    const total = portfolioHoldings.reduce((s, h) => s + h.weight, 0);
+    const normalized = portfolioHoldings.map(h => ({ companyId: h.companyId, weight: (h.weight / total) * 100 }));
+    portfolioAnalysis = I.calculatePortfolioRisk(normalized);
+    if (!portfolioAnalysis) return;
+    renderPortfolioAnalysis(portfolioAnalysis);
+    document.getElementById('portfolio-panel-meta').textContent = portfolioAnalysis.count + ' entities · ' + new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'}) + ' UTC';
+  };
+
+  function renderPortfolioAnalysis(pa) {
+    const r = pa.portfolioRating;
+    document.getElementById('portfolio-analysis').innerHTML = `
+      <!-- Portfolio KPI strip -->
+      <div class="portfolio-kpi-strip">
+        <div class="kpi-cell">
+          <div class="kpi-label mono">Portfolio C-Score</div>
+          <div class="kpi-val mono" style="color:${scoreColor(pa.portfolioScore)}">${pa.portfolioScore}</div>
+          <div class="kpi-sub">${r.grade} — ${r.desc}</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-label mono">Physical Risk</div>
+          <div class="kpi-val mono" style="color:${riskColor(pa.physicalRisk)}">${pa.physicalRisk}</div>
+          <div class="kpi-sub">Weighted avg exposure</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-label mono">Transition Risk</div>
+          <div class="kpi-val mono" style="color:${riskColor(pa.transitionRisk)}">${pa.transitionRisk}</div>
+          <div class="kpi-sub">Weighted avg exposure</div>
+        </div>
+        <div class="kpi-cell">
+          <div class="kpi-label mono">Revenue at Risk</div>
+          <div class="kpi-val mono text-red" style="font-size:14px;margin-top:4px">${fmt(pa.revenueAtRisk)}</div>
+          <div class="kpi-sub">Weighted baseline</div>
+        </div>
+      </div>
+
+      <!-- Sector breakdown -->
+      <div class="section-label"><span>Sector Concentration</span></div>
+      <div class="sector-bar-wrap">
+        ${Object.entries(pa.sectorBreakdown).sort((a,b) => b[1]-a[1]).map(([sector, pct]) =>
+          `<div class="sector-bar-item">
+            <div class="sector-bar-label">${sector}</div>
+            <div class="sector-bar-track"><div class="sector-bar-fill" style="width:${pct}%"></div></div>
+            <div class="sector-bar-val mono">${pct.toFixed(1)}%</div>
+          </div>`
+        ).join('')}
+      </div>
+
+      <!-- Holdings table -->
+      <div class="section-label"><span>Holdings — Risk Profile</span></div>
+      <table class="portfolio-holdings-table">
+        <thead><tr>
+          <th>Entity</th><th>Weight</th><th>Rating</th><th>C-Score</th><th>Phys.</th><th>Trans.</th><th>Rev@Risk</th>
+        </tr></thead>
+        <tbody>
+          ${pa.holdings.map(h => {
+            const c = h.company;
+            const r = I.getRating(c.cScore);
+            return `<tr>
+              <td style="font-weight:600;cursor:pointer" onclick="selectCompanyAndSwitch('${c.id}')">${c.name}</td>
+              <td class="mono-val text-amber">${(h.w * 100).toFixed(1)}%</td>
+              <td><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:${r.color}">${r.grade}</span></td>
+              <td class="mono-val" style="color:${scoreColor(c.cScore)}">${c.cScore}</td>
+              <td class="mono-val" style="color:${riskColor(c.physicalRisk.overall)}">${c.physicalRisk.overall}</td>
+              <td class="mono-val" style="color:${riskColor(c.transitionRisk.overall)}">${c.transitionRisk.overall}</td>
+              <td class="mono-val text-red">${fmt(c.financialImpact.revenueAtRisk)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+
+    document.getElementById('portfolio-risk-rail').innerHTML = `
+      <div class="rail-rating-block">
+        <div class="rail-rating-label mono">Portfolio Rating</div>
+        <div class="rail-rating-grade mono" style="color:${r.color}">${r.grade}</div>
+        <div class="rail-rating-desc">${r.desc}</div>
+        <div class="rail-score mono">C-SCORE: ${pa.portfolioScore} / 100</div>
+      </div>
+      <div class="rail-section">
+        <div class="rail-sec-hdr mono">Aggregate Metrics</div>
+        ${[
+          ['Carbon Intensity', pa.carbonIntensity + ' tCO2e/$M', 'var(--amber)'],
+          ['Scope 1 Exposure', pa.scope1Exposure + ' Mt', 'var(--red)'],
+          ['Carbon Cost Exp.', fmt(pa.carbonCostExposure), 'var(--amber)'],
+        ].map(([l, v, c]) => `<div class="compliance-item" style="border-bottom:1px solid var(--border)">
+          <span style="font-size:10px;color:var(--text-2);flex:1">${l}</span>
+          <span class="mono-val" style="color:${c}">${v}</span>
+        </div>`).join('')}
+      </div>
+      <div class="rail-section">
+        <div class="rail-sec-hdr mono">Highest Physical Risk</div>
+        ${pa.highestPhysicalRisk.map(c => `<div class="risk-flag-item">
+          <div class="risk-flag-dot" style="background:${riskColor(c.physicalRisk.overall)}"></div>
+          <div class="risk-flag-text">${c.name} — ${c.physicalRisk.overall}</div>
+        </div>`).join('')}
+      </div>
+      <div class="rail-section">
+        <div class="rail-sec-hdr mono">Highest Transition Risk</div>
+        ${pa.highestTransitionRisk.map(c => `<div class="risk-flag-item">
+          <div class="risk-flag-dot" style="background:${riskColor(c.transitionRisk.overall)}"></div>
+          <div class="risk-flag-text">${c.name} — ${c.transitionRisk.overall}</div>
+        </div>`).join('')}
+      </div>
+    `;
+  }
+
+  window.selectCompanyAndSwitch = function (id) {
+    switchModule('company');
+    setTimeout(() => selectCompany(id), 50);
+  };
+
+  // ════════════════════════════════════════════════
+  // MODULE 3 — SCENARIO SIMULATION
+  // ════════════════════════════════════════════════
+
+  window.selectScenario = function (id) {
+    activeScenario = id;
+    document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelector(`[data-scenario="${id}"]`).classList.add('selected');
+  };
+
+  window.selectYear = function (yr) {
+    activeYear = yr;
+    document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelector(`[data-year="${yr}"]`).classList.add('selected');
+  };
+
+  window.selectEntityType = function (type) {
+    activeEntityType = type;
+    document.querySelectorAll('.ent-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelector(`[data-ent="${type}"]`).classList.add('selected');
+  };
+
+  window.runScenario = function () {
+    const scenario = I.SCENARIOS[activeScenario];
+    if (!scenario) return;
+
+    if (activeEntityType === 'company') {
+      const c = activeCompanyId ? I.getCompany(activeCompanyId) : I.COMPANIES[0];
+      if (!c) { alert('Select a company in the Company Intelligence module first.'); return; }
+      const result = I.runScenario(c, activeScenario, activeYear);
+      renderScenarioResultsCompany(result, c, scenario);
+      renderScenarioComparison(c, activeYear);
+      document.getElementById('scenario-panel-meta').textContent = c.name + ' · ' + activeYear;
+    } else {
+      if (!portfolioHoldings.length) { alert('Build a portfolio in the Portfolio Risk Engine module first.'); return; }
+      const total = portfolioHoldings.reduce((s, h) => s + h.weight, 0);
+      const normalized = portfolioHoldings.map(h => ({ companyId: h.companyId, weight: (h.weight / total) * 100 }));
+      const result = I.runPortfolioScenario(normalized, activeScenario, activeYear);
+      renderScenarioResultsPortfolio(result, scenario);
+      document.getElementById('scenario-panel-meta').textContent = 'Portfolio · ' + result.portfolio.count + ' entities · ' + activeYear;
+    }
+  };
+
+  function renderScenarioResultsCompany(result, c, scenario) {
+    const rvColor = result.revenueImpactPct < 0 ? 'var(--red)' : 'var(--green)';
+    const ebColor = result.ebitdaImpactPct < 0 ? 'var(--red)' : 'var(--green)';
+    const vlColor = result.valuationImpactPct < 0 ? 'var(--red)' : 'var(--green)';
+    document.getElementById('scenario-results').innerHTML = `
+      <div class="scenario-header">
+        <div>
+          <div class="scenario-header-label mono">Scenario Analysis — ${c.name}</div>
+          <div class="scenario-header-name mono" style="color:${scenario.color}">${scenario.label}</div>
+          <div class="scenario-header-desc">${scenario.desc}</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div class="scenario-header-label mono">Target Year</div>
+          <div class="scenario-header-name mono" style="color:var(--amber)">${result.targetYear}</div>
+        </div>
+      </div>
+      <div class="scenario-impact-strip">
+        <div class="impact-cell">
+          <div class="impact-cell-label mono">Revenue Impact</div>
+          <div class="impact-cell-val mono" style="color:${rvColor}">${fmt(result.revenueImpact)}</div>
+          <div class="impact-cell-pct" style="color:${rvColor}">${fmtPct(result.revenueImpactPct)}</div>
+          <div class="impact-cell-sub">vs baseline</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-cell-label mono">EBITDA Impact</div>
+          <div class="impact-cell-val mono" style="color:${ebColor}">${fmt(result.ebitdaImpact)}</div>
+          <div class="impact-cell-pct" style="color:${ebColor}">${fmtPct(result.ebitdaImpactPct)}</div>
+          <div class="impact-cell-sub">vs baseline</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-cell-label mono">Valuation Impact</div>
+          <div class="impact-cell-val mono" style="color:${vlColor}">${fmt(result.valuationImpact)}</div>
+          <div class="impact-cell-pct" style="color:${vlColor}">${fmtPct(result.valuationImpactPct)}</div>
+          <div class="impact-cell-sub">market cap delta</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-cell-label mono">Stranded Assets</div>
+          <div class="impact-cell-val mono" style="color:var(--red);font-size:16px;margin-top:4px">${result.strandedAssetPct}%</div>
+          <div class="impact-cell-pct" style="color:var(--text-muted)">of total assets</div>
+          <div class="impact-cell-sub">at risk by ${result.targetYear}</div>
+        </div>
+      </div>
+      <div class="section-label"><span>Pathway Impact by Year — ${c.industryLabel}</span></div>
+      <table class="scenario-breakdown-table">
+        <thead><tr>
+          <th>Year</th><th>Revenue Impact</th><th>Revenue %</th><th>EBITDA Impact</th><th>Stranded %</th><th>Valuation Impact</th>
+        </tr></thead>
+        <tbody>
+          ${[2027, 2030, 2035, 2040, 2045, 2050].filter(y => y <= result.targetYear).map(yr => {
+            const r2 = I.runScenario(c, activeScenario, yr);
+            if (!r2) return '';
+            const rvc = r2.revenueImpactPct < 0 ? 'var(--red)' : 'var(--green)';
+            const ebc = r2.ebitdaImpactPct < 0 ? 'var(--red)' : 'var(--green)';
+            const vlc = r2.valuationImpactPct < 0 ? 'var(--red)' : 'var(--green)';
+            return `<tr>
+              <td class="mono-val text-amber">${yr}</td>
+              <td class="mono-val" style="color:${rvc}">${fmt(r2.revenueImpact)}</td>
+              <td class="mono-val" style="color:${rvc}">${fmtPct(r2.revenueImpactPct)}</td>
+              <td class="mono-val" style="color:${ebc}">${fmt(r2.ebitdaImpact)}</td>
+              <td class="mono-val" style="color:var(--red)">${r2.strandedAssetPct}%</td>
+              <td class="mono-val" style="color:${vlc}">${fmt(r2.valuationImpact)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderScenarioResultsPortfolio(result, scenario) {
+    document.getElementById('scenario-results').innerHTML = `
+      <div class="scenario-header">
+        <div>
+          <div class="scenario-header-label mono">Portfolio Scenario Analysis — ${result.portfolio.count} Entities</div>
+          <div class="scenario-header-name mono" style="color:${scenario.color}">${scenario.label}</div>
+          <div class="scenario-header-desc">${scenario.desc}</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div class="scenario-header-label mono">Target Year</div>
+          <div class="scenario-header-name mono" style="color:var(--amber)">${result.targetYear}</div>
+        </div>
+      </div>
+      <div class="scenario-impact-strip">
+        <div class="impact-cell">
+          <div class="impact-cell-label mono">Total Revenue Impact</div>
+          <div class="impact-cell-val mono text-red">${fmt(result.totalRevenueImpact)}</div>
+          <div class="impact-cell-sub">weighted portfolio</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-cell-label mono">Valuation Impact</div>
+          <div class="impact-cell-val mono text-red">${fmt(result.totalValuationImpact)}</div>
+          <div class="impact-cell-sub">weighted portfolio</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-cell-label mono">Avg Stranded %</div>
+          <div class="impact-cell-val mono" style="color:var(--red);font-size:16px;margin-top:4px">${result.avgStrandedPct}%</div>
+          <div class="impact-cell-sub">weighted average</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-cell-label mono">Portfolio C-Score</div>
+          <div class="impact-cell-val mono" style="color:${scoreColor(result.portfolio.portfolioScore)}">${result.portfolio.portfolioScore}</div>
+          <div class="impact-cell-sub">${result.portfolio.portfolioRating.grade}</div>
+        </div>
+      </div>
+      <div class="section-label"><span>Holdings — Scenario Impact</span></div>
+      <table class="scenario-breakdown-table">
+        <thead><tr><th>Entity</th><th>Weight</th><th>Rev Impact</th><th>Rev %</th><th>Stranded %</th><th>Val Impact</th></tr></thead>
+        <tbody>
+          ${result.results.map(({ company: c, weight, result: r }) => {
+            if (!r) return '';
+            const rvc = r.revenueImpactPct < 0 ? 'var(--red)' : 'var(--green)';
+            const vlc = r.valuationImpactPct < 0 ? 'var(--red)' : 'var(--green)';
+            return `<tr>
+              <td style="font-weight:600">${c.name}</td>
+              <td class="mono-val text-amber">${weight.toFixed(1)}%</td>
+              <td class="mono-val" style="color:${rvc}">${fmt(r.revenueImpact)}</td>
+              <td class="mono-val" style="color:${rvc}">${fmtPct(r.revenueImpactPct)}</td>
+              <td class="mono-val text-red">${r.strandedAssetPct}%</td>
+              <td class="mono-val" style="color:${vlc}">${fmt(r.valuationImpact)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderScenarioComparison(c, targetYear) {
+    const scenarioIds = ['1.5c', '2c', '3c', 'delayed', 'nz2050', 'carbon_shock'];
+    document.getElementById('scenario-comparison').innerHTML = `
+      <div style="padding:8px 12px;border-bottom:1px solid var(--border)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Revenue Impact by Scenario — ${targetYear}</div>
+      </div>
+      ${scenarioIds.map(sid => {
+        const sc = I.SCENARIOS[sid];
+        const r = I.runScenario(c, sid, targetYear);
+        if (!r) return '';
+        const pct = r.revenueImpactPct;
+        const col = pct < -20 ? '#FF3333' : pct < -10 ? '#FF6600' : pct < 0 ? '#FFB800' : '#00CC44';
+        return `<div class="comparison-row">
+          <div>
+            <div class="cr-label">${sc.shortLabel}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="cr-impact mono-val" style="color:${col}">${fmtPct(pct)}</div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="padding:10px 12px;border-top:1px solid var(--border)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Stranded Asset Risk</div>
+        ${scenarioIds.map(sid => {
+          const sc = I.SCENARIOS[sid];
+          const r = I.runScenario(c, sid, targetYear);
+          if (!r) return '';
+          const col = r.strandedAssetPct > 50 ? '#FF3333' : r.strandedAssetPct > 25 ? '#FF6600' : r.strandedAssetPct > 10 ? '#FFB800' : '#00CC44';
+          return `<div class="comparison-row">
+            <span class="cr-label">${sc.shortLabel}</span>
+            <span class="cr-impact mono-val" style="color:${col}">${r.strandedAssetPct}%</span>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  // ════════════════════════════════════════════════
+  // MODULE 4 — MARKET INTELLIGENCE ENGINE
+  // ════════════════════════════════════════════════
+
+  function renderMarketIntel() {
+    // Intelligence feed
+    const typeColors = {
+      'POLICY': { bg: 'rgba(0,153,204,0.08)', border: 'rgba(0,153,204,0.2)', color: '#0099CC' },
+      'CARBON MARKET': { bg: 'rgba(255,102,0,0.08)', border: 'rgba(255,102,0,0.2)', color: '#FF6600' },
+      'REGULATORY': { bg: 'rgba(255,184,0,0.08)', border: 'rgba(255,184,0,0.2)', color: '#FFB800' },
+      'CLIMATE EVENT': { bg: 'rgba(255,51,51,0.08)', border: 'rgba(255,51,51,0.2)', color: '#FF3333' },
+      'RESEARCH': { bg: 'rgba(153,102,255,0.08)', border: 'rgba(153,102,255,0.2)', color: '#9966FF' }
+    };
+    const sevColors = {
+      'CRITICAL': { bg: 'rgba(255,51,51,0.08)', border: 'rgba(255,51,51,0.2)', color: '#FF3333' },
+      'HIGH': { bg: 'rgba(255,102,0,0.08)', border: 'rgba(255,102,0,0.2)', color: '#FF6600' },
+      'MEDIUM': { bg: 'rgba(255,184,0,0.08)', border: 'rgba(255,184,0,0.2)', color: '#FFB800' },
+      'LOW': { bg: 'rgba(0,204,68,0.08)', border: 'rgba(0,204,68,0.2)', color: '#00CC44' }
+    };
+    document.getElementById('intel-feed').innerHTML = I.MARKET_INTEL.map(item => {
+      const tc = typeColors[item.type] || typeColors['RESEARCH'];
+      const sc = sevColors[item.severity] || sevColors['LOW'];
+      return `<div class="intel-item">
+        <div class="intel-item-row1">
+          <span class="intel-type-tag" style="background:${tc.bg};border:1px solid ${tc.border};color:${tc.color}">${item.type}</span>
+          <span class="intel-severity-tag" style="background:${sc.bg};border:1px solid ${sc.border};color:${sc.color}">${item.severity}</span>
+          <span class="intel-region mono">${item.region}</span>
+          <span class="intel-date mono">${item.date}</span>
+        </div>
+        <div class="intel-headline">${item.headline}</div>
+        <div class="intel-body">${item.body}</div>
+        <div class="intel-tags">${item.tags.map(t => `<span class="intel-tag mono">${t}</span>`).join('')}</div>
+      </div>`;
+    }).join('');
+
+    // Market data rail
+    document.getElementById('market-data-rail').innerHTML = `
+      <div class="rail-sec-hdr mono" style="padding:7px 12px;border-bottom:1px solid var(--border)">Carbon Market Prices</div>
+      ${I.CARBON_PRICES.map(cp => {
+        const col = cp.trend === 'up' ? '#00CC44' : '#FF3333';
+        const sign = cp.change > 0 ? '+' : '';
+        return `<div class="carbon-price-item">
+          <div>
+            <div class="cp-market mono">${cp.market}</div>
+            <div class="cp-unit mono">${cp.unit}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="cp-price mono" style="color:var(--amber)">${cp.price.toFixed(2)}</div>
+            <div class="cp-change mono" style="color:${col}">${sign}${cp.change.toFixed(2)} (${sign}${cp.changePct.toFixed(2)}%)</div>
+          </div>
+        </div>`;
+      }).join('')}
+      <div style="border-top:1px solid var(--border)">
+        <div class="rail-sec-hdr mono" style="padding:7px 12px;border-bottom:1px solid var(--border)">Policy Tracker</div>
+        <div class="key-metrics-block">
+          ${[
+            ['EU ETS Phase 4', 'Active', 'var(--green)'],
+            ['EU CBAM Phase 1', 'Active', 'var(--green)'],
+            ['EU CBAM Phase 2', 'Oct 2026', 'var(--amber)'],
+            ['India ICCTS Phase 2', 'FY2027', 'var(--amber)'],
+            ['SEBI BRSR Core', 'FY2026-27', 'var(--amber)'],
+            ['IMO FuelEU Maritime', 'Active', 'var(--green)'],
+            ['SEC Climate Rule Ph.2', 'FY2026', 'var(--amber)'],
+            ['ISSB S1+S2 Mandatory', 'Australia 2025', 'var(--cyan)'],
+          ].map(([label, status, col]) => `
+            <div class="km-item">
+              <span class="km-label">${label}</span>
+              <span class="km-val mono" style="color:${col}">${status}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border)">
+        <div class="rail-sec-hdr mono" style="padding:7px 12px;border-bottom:1px solid var(--border)">Platform Stats</div>
+        <div class="key-metrics-block">
+          ${[
+            ['Entities Tracked', '20', 'var(--amber)'],
+            ['Avg Platform Score', '59.4', 'var(--amber)'],
+            ['AAA/AA Entities', '4', 'var(--green)'],
+            ['B/CCC Entities', '5', 'var(--red)'],
+            ['SBTi Aligned', '10 / 20', 'var(--cyan)'],
+            ['Scenarios Available', '6', 'var(--cyan)'],
+          ].map(([label, val, col]) => `
+            <div class="km-item">
+              <span class="km-label">${label}</span>
+              <span class="km-val mono" style="color:${col}">${val}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Init
+  renderCompanyList(I.COMPANIES);
+  renderQuickAddChips();
+  renderHoldingsList();
+  // Auto-select first company
+  selectCompany(I.COMPANIES[0].id);
+
+})();
+</script>
+</body>
+</html>

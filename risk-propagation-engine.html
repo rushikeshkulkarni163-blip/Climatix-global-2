@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Risk Propagation Engine — Climactix Global Intelligence OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+
+/* ═══════════════════════════════════════════════════════════════════
+   CLIMACTIX GLOBAL — RISK PROPAGATION ENGINE
+   Institutional Intelligence Terminal
+   NASA Earth Data · Bloomberg Terminal · BlackRock Aladdin
+   Palantir Foundry · Refinitiv Workspace
+   ─────────────────────────────────────────────────────────────────
+   Color System: Deep graphite + muted navy + cold blue accents
+   NO amber/orange primary. NO glow. NO cyberpunk.
+═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Backgrounds ── */
+  --bg-0:      #070B11;
+  --bg-1:      #0B1420;
+  --bg-2:      #0E1929;
+  --bg-3:      #111F30;
+  --bg-4:      #152335;
+
+  /* ── Borders ── */
+  --bd-0:      #1A2B3C;
+  --bd-1:      #223448;
+  --bd-2:      #2C4158;
+
+  /* ── Text ── */
+  --tx-0:      #D8E8F5;
+  --tx-1:      #8AAEC9;
+  --tx-2:      #526D87;
+  --tx-3:      #2F4A62;
+
+  /* ── Accents ── */
+  --blue:      #4FA3FF;
+  --blue-dim:  rgba(79,163,255,0.12);
+  --cyan:      #6BD6FF;
+  --cyan-dim:  rgba(107,214,255,0.10);
+
+  /* ── Status ── */
+  --crit:      #F05454;
+  --crit-dim:  rgba(240,84,84,0.12);
+  --warn:      #C9843A;
+  --warn-dim:  rgba(201,132,58,0.12);
+  --ok:        #4DB87A;
+  --ok-dim:    rgba(77,184,122,0.12);
+  --info:      #4FA3FF;
+
+  /* ── Typography ── */
+  --sans:  'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --mono:  'IBM Plex Mono', 'Courier New', monospace;
+
+  /* ── Motion ── */
+  --t:     0.12s ease;
+  --t-med: 0.20s ease;
+
+  /* ── Layout ── */
+  --hdr-h:   44px;
+  --nav-w:   192px;
+  --intel-w: 288px;
+  --tbl-h:   248px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+html,body {
+  height:100%; width:100%;
+  background:var(--bg-0);
+  color:var(--tx-0);
+  font-family:var(--sans);
+  font-size:12px;
+  line-height:1.45;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ═══ SCROLLBAR ══════════════════════════════════════════════════ */
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:var(--bg-0); }
+::-webkit-scrollbar-thumb { background:var(--bd-1); border-radius:1px; }
+
+/* ═══ TOP HEADER BAR ═════════════════════════════════════════════ */
+.hdr {
+  position:fixed; top:0; left:0; right:0;
+  height:var(--hdr-h);
+  background:var(--bg-1);
+  border-bottom:1px solid var(--bd-0);
+  display:flex; align-items:center;
+  padding:0 12px;
+  gap:0;
+  z-index:200;
+}
+
+.hdr-logo {
+  display:flex; align-items:center; gap:8px;
+  padding-right:14px;
+  border-right:1px solid var(--bd-0);
+  margin-right:12px;
+  flex-shrink:0;
+}
+
+.hdr-logo-mark {
+  width:22px; height:22px;
+  background:var(--blue);
+  display:flex; align-items:center; justify-content:center;
+  border-radius:2px;
+}
+
+.hdr-logo-txt {
+  font-size:11px; font-weight:700;
+  letter-spacing:0.09em;
+  color:var(--tx-0);
+  text-transform:uppercase;
+}
+
+.hdr-meta {
+  display:flex; align-items:center; gap:8px; flex:1; flex-wrap:wrap;
+}
+
+.hdr-chip {
+  display:flex; align-items:center; gap:5px;
+  padding:3px 8px;
+  background:var(--bg-2);
+  border:1px solid var(--bd-0);
+  border-radius:2px;
+  font-size:10px;
+  font-family:var(--mono);
+  white-space:nowrap;
+}
+.hdr-chip-lbl { color:var(--tx-2); font-size:9px; letter-spacing:0.06em; text-transform:uppercase; }
+.hdr-chip-val { color:var(--tx-0); font-weight:500; }
+
+.hdr-sep { width:1px; height:20px; background:var(--bd-0); margin:0 4px; flex-shrink:0; }
+
+.hdr-status-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--ok); flex-shrink:0;
+}
+.hdr-status-dot.live { animation:pulse-dot 2s infinite; }
+@keyframes pulse-dot {
+  0%,100%{opacity:1} 50%{opacity:0.35}
+}
+
+.hdr-actions {
+  display:flex; align-items:center; gap:6px; margin-left:auto; flex-shrink:0;
+}
+
+.btn {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 10px;
+  border-radius:2px;
+  font-size:10px; font-family:var(--sans); font-weight:500;
+  cursor:pointer; transition:var(--t);
+  white-space:nowrap;
+}
+.btn-ghost {
+  background:transparent;
+  border:1px solid var(--bd-0);
+  color:var(--tx-1);
+}
+.btn-ghost:hover { border-color:var(--blue); color:var(--blue); }
+
+.btn-primary {
+  background:var(--blue);
+  border:1px solid var(--blue);
+  color:#000; font-weight:600;
+}
+.btn-primary:hover { background:#6BB4FF; }
+
+/* ═══ APP LAYOUT ══════════════════════════════════════════════════ */
+.layout {
+  display:flex;
+  height:100vh;
+  padding-top:var(--hdr-h);
+}
+
+/* ═══ LEFT SIDEBAR ════════════════════════════════════════════════ */
+.sidebar {
+  width:var(--nav-w);
+  background:var(--bg-1);
+  border-right:1px solid var(--bd-0);
+  display:flex; flex-direction:column;
+  overflow:hidden; flex-shrink:0;
+}
+
+.nav-section {
+  padding:10px 0;
+  border-bottom:1px solid var(--bd-0);
+}
+.nav-section-lbl {
+  padding:0 12px 5px;
+  font-size:8.5px; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--tx-2);
+}
+
+.nav-item {
+  display:flex; align-items:center; gap:7px;
+  padding:5px 12px;
+  cursor:pointer;
+  transition:var(--t);
+  color:var(--tx-1);
+  font-size:11.5px;
+  border-left:2px solid transparent;
+  user-select:none;
+}
+.nav-item:hover { background:var(--bg-2); color:var(--tx-0); }
+.nav-item.active {
+  background:var(--bg-2);
+  color:var(--blue);
+  border-left-color:var(--blue);
+}
+.nav-icon { width:13px; height:13px; flex-shrink:0; fill:none; stroke:currentColor; stroke-width:1.5; }
+
+.nav-badge {
+  margin-left:auto;
+  padding:1px 5px;
+  font-size:8.5px; font-weight:700;
+  border-radius:2px; flex-shrink:0;
+}
+.nb-crit { background:var(--crit-dim); color:var(--crit); }
+.nb-warn { background:var(--warn-dim); color:var(--warn); }
+
+/* Sidebar quick metrics */
+.sidebar-kpi-area {
+  padding:12px;
+  flex:1; overflow-y:auto;
+}
+.skpi-lbl {
+  font-size:8.5px; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--tx-2); margin-bottom:10px;
+}
+.skpi {
+  margin-bottom:13px;
+}
+.skpi-name { font-size:9px; color:var(--tx-2); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:2px; }
+.skpi-val {
+  font-family:var(--mono);
+  font-size:17px; font-weight:600;
+  line-height:1;
+}
+.skpi-sub { font-size:9px; color:var(--tx-2); margin-top:2px; }
+.v-crit { color:var(--crit); }
+.v-warn { color:var(--warn); }
+.v-ok   { color:var(--ok); }
+.v-blue { color:var(--blue); }
+.v-muted { color:var(--tx-1); }
+
+/* ═══ MAIN CONTENT AREA ═══════════════════════════════════════════ */
+.main {
+  flex:1;
+  display:flex; flex-direction:column;
+  overflow:hidden; min-width:0;
+}
+
+.upper {
+  flex:1;
+  display:flex;
+  overflow:hidden; min-height:0;
+}
+
+/* ─── Propagation Panel ─────────────────────────────────────────── */
+.prop-panel {
+  flex:1;
+  display:flex; flex-direction:column;
+  border-right:1px solid var(--bd-0);
+  overflow:hidden; min-width:0;
+}
+
+.panel-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 12px;
+  background:var(--bg-1);
+  border-bottom:1px solid var(--bd-0);
+  flex-shrink:0;
+}
+.panel-title {
+  font-size:9.5px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--tx-1);
+}
+.panel-title span { color:var(--tx-2); font-weight:400; }
+
+.panel-ctrls { display:flex; align-items:center; gap:4px; }
+.ctrl-btn {
+  padding:3px 8px;
+  font-size:9.5px; font-family:var(--sans);
+  border:1px solid var(--bd-0);
+  background:transparent; color:var(--tx-1);
+  cursor:pointer; border-radius:2px;
+  transition:var(--t);
+}
+.ctrl-btn:hover   { border-color:var(--blue); color:var(--blue); background:var(--blue-dim); }
+.ctrl-btn.active  { border-color:var(--blue); color:var(--blue); background:var(--blue-dim); }
+.ctrl-sep { width:1px; height:14px; background:var(--bd-0); margin:0 2px; }
+
+.graph-wrap {
+  flex:1;
+  position:relative;
+  overflow:hidden;
+  background:var(--bg-0);
+}
+
+/* Subtle grid */
+.graph-wrap::before {
+  content:'';
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(79,163,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79,163,255,0.025) 1px, transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;
+}
+
+#rpe-svg { width:100%; height:100%; display:block; }
+
+/* ─── Node Tooltip ──────────────────────────────────────────────── */
+.node-tip {
+  position:absolute;
+  background:var(--bg-3);
+  border:1px solid var(--bd-1);
+  border-radius:2px;
+  padding:11px 13px;
+  width:210px;
+  pointer-events:none;
+  display:none;
+  z-index:60;
+}
+.nt-name {
+  font-size:9px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--tx-0); margin-bottom:7px;
+}
+.nt-row {
+  display:flex; justify-content:space-between;
+  margin-bottom:4px;
+}
+.nt-lbl { font-size:9.5px; color:var(--tx-2); }
+.nt-val { font-family:var(--mono); font-size:9.5px; color:var(--tx-0); }
+.nt-hint {
+  margin-top:7px; padding-top:7px;
+  border-top:1px solid var(--bd-0);
+  font-size:8.5px; color:var(--tx-2);
+}
+
+/* ─── Intelligence Panel (Right) ─────────────────────────────────── */
+.intel-panel {
+  width:var(--intel-w);
+  flex-shrink:0;
+  display:flex; flex-direction:column;
+  overflow-y:auto;
+  background:var(--bg-1);
+}
+
+.ip-section {
+  border-bottom:1px solid var(--bd-0);
+  padding:11px 13px;
+}
+.ip-title {
+  font-size:8.5px; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--tx-2);
+  margin-bottom:9px;
+  display:flex; align-items:center; gap:6px;
+}
+
+/* Risk driver bars */
+.rd-row {
+  display:flex; align-items:center; gap:7px;
+  margin-bottom:7px;
+}
+.rd-name { font-size:10.5px; color:var(--tx-1); flex:1; min-width:0; }
+.rd-bar-track {
+  width:52px; height:2px;
+  background:var(--bd-0);
+  border-radius:1px; flex-shrink:0;
+}
+.rd-bar-fill { height:100%; border-radius:1px; }
+.rd-val {
+  font-family:var(--mono); font-size:10.5px;
+  min-width:28px; text-align:right;
+  flex-shrink:0;
+}
+
+/* Metric rows */
+.met-row {
+  display:flex; align-items:baseline; justify-content:space-between;
+  padding:4.5px 0;
+  border-bottom:1px solid var(--bd-0);
+}
+.met-row:last-child { border-bottom:none; }
+.met-lbl { font-size:10.5px; color:var(--tx-2); }
+.met-val { font-family:var(--mono); font-size:11px; font-weight:500; color:var(--tx-0); }
+.met-val.crit { color:var(--crit); }
+.met-val.warn { color:var(--warn); }
+.met-val.ok   { color:var(--ok); }
+.met-val.blue { color:var(--blue); }
+
+.conf-tag {
+  font-size:8.5px; padding:1px 5px;
+  border-radius:2px; font-family:var(--mono);
+}
+.conf-ok   { background:var(--ok-dim);   color:var(--ok); }
+.conf-warn { background:var(--warn-dim); color:var(--warn); }
+.conf-crit { background:var(--crit-dim); color:var(--crit); }
+
+/* Recommendations */
+.rec-item {
+  display:flex; gap:7px;
+  padding:6px 0;
+  border-bottom:1px solid var(--bd-0);
+}
+.rec-item:last-child { border-bottom:none; }
+.rec-bar { width:2.5px; border-radius:1px; flex-shrink:0; }
+.rec-bar.crit { background:var(--crit); }
+.rec-bar.warn { background:var(--warn); }
+.rec-bar.info { background:var(--blue); }
+.rec-ttl { font-size:10.5px; color:var(--tx-0); margin-bottom:2px; line-height:1.3; }
+.rec-det { font-size:9.5px; color:var(--tx-2); }
+
+/* Source footnote */
+.ip-source {
+  font-size:9px; color:var(--tx-2); line-height:1.65;
+}
+
+/* ═══ BOTTOM TABLE ══════════════════════════════════════════════════ */
+.lower {
+  height:var(--tbl-h);
+  flex-shrink:0;
+  border-top:1px solid var(--bd-0);
+  display:flex; flex-direction:column;
+  background:var(--bg-1);
+}
+
+.tbl-bar {
+  display:flex; align-items:center; gap:7px;
+  padding:7px 12px;
+  background:var(--bg-1);
+  border-bottom:1px solid var(--bd-0);
+  flex-shrink:0;
+}
+.tbl-title {
+  font-size:9.5px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--tx-1);
+}
+.tbl-sub { font-size:9px; color:var(--tx-2); font-weight:400; margin-left:6px; }
+
+.fchip {
+  padding:2px 7px;
+  border:1px solid var(--bd-0);
+  border-radius:2px;
+  font-size:9.5px; color:var(--tx-2);
+  cursor:pointer; transition:var(--t);
+  background:transparent; font-family:var(--sans);
+}
+.fchip:hover  { border-color:var(--blue); color:var(--blue); }
+.fchip.active { border-color:var(--blue); color:var(--blue); background:var(--blue-dim); }
+
+.tbl-scroll { flex:1; overflow-y:auto; overflow-x:auto; }
+
+.data-tbl {
+  width:100%; border-collapse:collapse;
+  font-size:11px;
+}
+.data-tbl thead {
+  position:sticky; top:0;
+  background:var(--bg-2); z-index:10;
+}
+.data-tbl th {
+  padding:5px 10px;
+  text-align:left;
+  font-size:8.5px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--tx-2);
+  border-bottom:1px solid var(--bd-0);
+  white-space:nowrap; cursor:pointer; user-select:none;
+}
+.data-tbl th:hover { color:var(--tx-1); }
+.data-tbl th.sorted { color:var(--blue); }
+.sort-ico { opacity:0.35; margin-left:3px; font-size:8px; }
+.data-tbl th.sorted .sort-ico { opacity:1; }
+.data-tbl td {
+  padding:6px 10px;
+  border-bottom:1px solid var(--bd-0);
+  vertical-align:middle; white-space:nowrap;
+}
+.data-tbl tr:hover td { background:var(--bg-2); }
+
+.td-zone   { font-size:11px; color:var(--tx-0); font-weight:500; }
+.td-cntry  { font-size:9px;  color:var(--tx-2); }
+.td-hazard { font-size:10.5px; color:var(--tx-1); }
+.td-score  { font-family:var(--mono); font-size:12px; font-weight:600; }
+.tc { color:var(--crit); }
+.th { color:var(--warn); }
+.tm { color:var(--blue); }
+.td-trend  { font-family:var(--mono); font-size:10.5px; }
+.t-up { color:var(--crit); }
+.t-dn { color:var(--ok);   }
+.rating-badge {
+  display:inline-block;
+  padding:1px 6px;
+  font-size:8.5px; font-weight:700;
+  letter-spacing:0.05em; text-transform:uppercase;
+  border-radius:2px;
+}
+.rb-crit { background:var(--crit-dim); color:var(--crit); border:1px solid rgba(240,84,84,0.25); }
+.rb-high { background:var(--warn-dim); color:var(--warn); border:1px solid rgba(201,132,58,0.25); }
+.rb-med  { background:var(--blue-dim); color:var(--blue); border:1px solid rgba(79,163,255,0.25); }
+.sup-dot {
+  display:inline-block; width:6px; height:6px;
+  border-radius:50%; margin-right:4px;
+}
+.sd-h { background:var(--crit); }
+.sd-m { background:var(--warn); }
+.sd-l { background:var(--ok); }
+.td-loss { font-family:var(--mono); font-size:10.5px; color:var(--tx-1); }
+.td-conf { font-family:var(--mono); font-size:9.5px; color:var(--tx-2); }
+.td-delta { font-family:var(--mono); font-size:10.5px; }
+
+/* ═══ DETAIL DRAWER ═════════════════════════════════════════════ */
+.drawer {
+  position:fixed;
+  top:var(--hdr-h); right:0; bottom:0;
+  width:360px;
+  background:var(--bg-1);
+  border-left:1px solid var(--bd-1);
+  z-index:150;
+  transform:translateX(100%);
+  transition:transform 0.22s ease;
+  display:flex; flex-direction:column;
+}
+.drawer.open { transform:translateX(0); }
+
+.drw-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 14px;
+  border-bottom:1px solid var(--bd-0);
+  flex-shrink:0;
+}
+.drw-title {
+  font-size:10px; font-weight:700;
+  letter-spacing:0.09em; text-transform:uppercase;
+  color:var(--tx-0);
+}
+.drw-close {
+  background:none; border:none;
+  color:var(--tx-2); cursor:pointer; font-size:15px; line-height:1;
+  padding:2px; transition:var(--t);
+}
+.drw-close:hover { color:var(--tx-0); }
+
+.drw-body {
+  flex:1; overflow-y:auto;
+  padding:14px;
+}
+
+.drw-kpi-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:6px; margin-bottom:18px;
+}
+.drw-kpi {
+  padding:8px 10px;
+  background:var(--bg-2);
+  border:1px solid var(--bd-0);
+  border-radius:2px;
+}
+.drw-kpi-lbl { font-size:8.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--tx-2); margin-bottom:3px; }
+.drw-kpi-val { font-family:var(--mono); font-size:16px; font-weight:600; line-height:1; }
+
+.drw-section { margin-bottom:18px; }
+.drw-sec-ttl {
+  font-size:8.5px; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--tx-2); margin-bottom:9px;
+}
+.drw-desc {
+  font-size:11px; color:var(--tx-1); line-height:1.6;
+}
+
+.tl-item {
+  display:flex; gap:9px;
+  margin-bottom:9px;
+}
+.tl-dot {
+  width:7px; height:7px; border-radius:50%;
+  margin-top:4px; flex-shrink:0;
+}
+.tl-dot.crit { background:var(--crit); }
+.tl-dot.warn { background:var(--warn); }
+.tl-dot.info { background:var(--blue); }
+.tl-period { font-size:9px; color:var(--tx-2); font-family:var(--mono); margin-bottom:1px; }
+.tl-text { font-size:10.5px; color:var(--tx-1); line-height:1.45; }
+
+.asset-card {
+  padding:7px 9px;
+  background:var(--bg-2);
+  border:1px solid var(--bd-0);
+  border-radius:2px;
+  margin-bottom:5px;
+}
+.asset-name { font-size:11px; color:var(--tx-0); margin-bottom:2px; }
+.asset-det  { font-size:9.5px; color:var(--tx-2); }
+
+.conn-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:5px 0;
+  border-bottom:1px solid var(--bd-0);
+}
+.conn-row:last-child { border-bottom:none; }
+.conn-name { font-size:10.5px; color:var(--tx-1); }
+.conn-meta { font-family:var(--mono); font-size:9.5px; color:var(--tx-2); }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOP HEADER BAR
+═══════════════════════════════════════════════════════════════ -->
+<header class="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-logo-mark">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <rect x="1" y="1" width="4" height="4" fill="#000" opacity="0.9"/>
+        <rect x="7" y="1" width="4" height="4" fill="#000" opacity="0.6"/>
+        <rect x="1" y="7" width="4" height="4" fill="#000" opacity="0.6"/>
+        <rect x="7" y="7" width="4" height="4" fill="#000" opacity="0.9"/>
+      </svg>
+    </div>
+    <span class="hdr-logo-txt">Climactix</span>
+  </div>
+
+  <div class="hdr-meta">
+    <div class="hdr-chip">
+      <span class="hdr-chip-lbl">Scenario</span>
+      <span class="hdr-chip-val">NGFS 2°C Orderly</span>
+    </div>
+    <div class="hdr-chip">
+      <span class="hdr-chip-lbl">Module</span>
+      <span class="hdr-chip-val">Risk Propagation Engine</span>
+    </div>
+    <div class="hdr-chip">
+      <div class="hdr-status-dot live"></div>
+      <span class="hdr-chip-val" style="color:var(--ok)">LIVE SIMULATION</span>
+    </div>
+    <div class="hdr-sep"></div>
+    <div class="hdr-chip">
+      <span class="hdr-chip-lbl">Updated</span>
+      <span class="hdr-chip-val" id="hdr-updated">8s ago</span>
+    </div>
+    <div class="hdr-chip">
+      <span class="hdr-chip-lbl">Confidence</span>
+      <span class="hdr-chip-val" style="color:var(--ok)">87%</span>
+    </div>
+    <div class="hdr-chip">
+      <span class="hdr-chip-lbl">Active Exposures</span>
+      <span class="hdr-chip-val" style="color:var(--crit)">23</span>
+    </div>
+    <div class="hdr-chip">
+      <span class="hdr-chip-lbl">Runtime</span>
+      <span class="hdr-chip-val" id="hdr-runtime">00:04:32</span>
+    </div>
+    <div class="hdr-chip">
+      <span class="hdr-chip-lbl">Model</span>
+      <span class="hdr-chip-val">C-LAYER v2.4</span>
+    </div>
+  </div>
+
+  <div class="hdr-actions">
+    <button class="btn btn-ghost">Export</button>
+    <button class="btn btn-ghost">TCFD Report</button>
+    <button class="btn btn-primary">▶ Run Simulation</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     APP LAYOUT
+═══════════════════════════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- ═══ LEFT SIDEBAR ═══ -->
+  <nav class="sidebar">
+    <div class="nav-section">
+      <div class="nav-section-lbl">Intelligence</div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><rect x="1" y="1" width="5" height="5"/><rect x="8" y="1" width="5" height="5"/><rect x="1" y="8" width="5" height="5"/><rect x="8" y="8" width="5" height="5"/></svg>
+        Portfolio Overview
+      </div>
+      <div class="nav-item active" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><line x1="7" y1="2" x2="7" y2="7"/><line x1="7" y1="7" x2="11" y2="9.5"/></svg>
+        Risk Propagation
+      </div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><path d="M2 11 L5 6.5 L8.5 8.5 L12 3"/></svg>
+        Physical Risk
+        <span class="nav-badge nb-crit">7</span>
+      </div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><path d="M7 13C7 13 2 9 2 5.5A5 5 0 0 1 12 5.5C12 9 7 13 7 13Z"/></svg>
+        Transition Risk
+      </div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><path d="M2 7 L4 5 L7 6.5 L10 4 L12 5.5"/><circle cx="2" cy="7" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="5.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+        Supply Chain
+        <span class="nav-badge nb-warn">3</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-lbl">Exposure</div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="1"/><path d="M4 7 L6 9.5 L10 4.5"/></svg>
+        Geographic
+      </div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12"/><line x1="1" y1="5" x2="13" y2="5"/><line x1="1" y1="9" x2="13" y2="9"/></svg>
+        Regulatory
+      </div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><line x1="7" y1="3.5" x2="7" y2="7"/><line x1="9" y1="9" x2="7" y2="7"/></svg>
+        Scenario Engine
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-lbl">Output</div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><path d="M3 1H9L12 4V13H3Z"/><line x1="5.5" y1="7" x2="9.5" y2="7"/><line x1="5.5" y1="10" x2="9.5" y2="10"/></svg>
+        Reports
+      </div>
+      <div class="nav-item" onclick="navActivate(this)">
+        <svg class="nav-icon" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><line x1="7" y1="4.5" x2="7" y2="7"/><circle cx="7" cy="9.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+        Intelligence Feed
+      </div>
+    </div>
+
+    <div class="sidebar-kpi-area">
+      <div class="skpi-lbl">Model Metrics</div>
+      <div class="skpi">
+        <div class="skpi-name">Total Exposure</div>
+        <div class="skpi-val v-crit">$4.7B</div>
+        <div class="skpi-sub">3-year horizon · NGFS 2°C</div>
+      </div>
+      <div class="skpi">
+        <div class="skpi-name">Revenue at Risk</div>
+        <div class="skpi-val v-warn">$1.24B</div>
+        <div class="skpi-sub">Base case estimate</div>
+      </div>
+      <div class="skpi">
+        <div class="skpi-name">C-Score Rating</div>
+        <div class="skpi-val v-blue">BBB</div>
+        <div class="skpi-sub">↓ –1 notch · 30d</div>
+      </div>
+      <div class="skpi">
+        <div class="skpi-name">Active Nodes</div>
+        <div class="skpi-val v-muted">7 / 7</div>
+        <div class="skpi-sub">All cascades active</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main">
+    <div class="upper">
+
+      <!-- ─── PROPAGATION NETWORK ─── -->
+      <div class="prop-panel">
+        <div class="panel-hdr">
+          <div>
+            <div class="panel-title">CASCADE RISK MODEL <span>· 7 NODES · REAL-TIME PROPAGATION</span></div>
+          </div>
+          <div class="panel-ctrls">
+            <button class="ctrl-btn active" onclick="setView('network',this)">Network</button>
+            <button class="ctrl-btn" onclick="setView('matrix',this)">Matrix</button>
+            <button class="ctrl-btn" onclick="setView('timeline',this)">Timeline</button>
+            <div class="ctrl-sep"></div>
+            <button class="ctrl-btn" onclick="resetHighlight()">Reset</button>
+          </div>
+        </div>
+
+        <div class="graph-wrap" id="graph-wrap">
+          <svg id="rpe-svg"></svg>
+          <!-- Tooltip -->
+          <div class="node-tip" id="node-tip">
+            <div class="nt-name" id="nt-name">—</div>
+            <div class="nt-row"><span class="nt-lbl">Risk Type</span><span class="nt-val" id="nt-type">—</span></div>
+            <div class="nt-row"><span class="nt-lbl">Exposure</span><span class="nt-val" id="nt-exp">—</span></div>
+            <div class="nt-row"><span class="nt-lbl">Financial Impact</span><span class="nt-val" id="nt-impact">—</span></div>
+            <div class="nt-row"><span class="nt-lbl">Confidence</span><span class="nt-val" id="nt-conf">—</span></div>
+            <div class="nt-row"><span class="nt-lbl">30d Trend</span><span class="nt-val" id="nt-trend" style="color:var(--crit)">—</span></div>
+            <div class="nt-hint">Click to open full analysis →</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── INTELLIGENCE PANEL ─── -->
+      <div class="intel-panel">
+        <div class="panel-hdr" style="border-bottom:1px solid var(--bd-0)">
+          <div class="panel-title">Intelligence Panel</div>
+        </div>
+
+        <!-- Key Risk Drivers -->
+        <div class="ip-section">
+          <div class="ip-title">Key Risk Drivers</div>
+          <div class="rd-row">
+            <span class="rd-name">Flood Exposure</span>
+            <div class="rd-bar-track"><div class="rd-bar-fill" style="width:87%;background:var(--crit)"></div></div>
+            <span class="rd-val" style="color:var(--crit)">87</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-name">Carbon Tax Impact</span>
+            <div class="rd-bar-track"><div class="rd-bar-fill" style="width:74%;background:var(--warn)"></div></div>
+            <span class="rd-val" style="color:var(--warn)">74</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-name">Supply Disruption</span>
+            <div class="rd-bar-track"><div class="rd-bar-fill" style="width:68%;background:var(--warn)"></div></div>
+            <span class="rd-val" style="color:var(--warn)">68</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-name">Regulatory Trigger</span>
+            <div class="rd-bar-track"><div class="rd-bar-fill" style="width:61%;background:var(--blue)"></div></div>
+            <span class="rd-val" style="color:var(--blue)">61</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-name">Asset Stranding</span>
+            <div class="rd-bar-track"><div class="rd-bar-fill" style="width:55%;background:var(--blue)"></div></div>
+            <span class="rd-val" style="color:var(--blue)">55</span>
+          </div>
+          <div class="rd-row">
+            <span class="rd-name">Market Repricing</span>
+            <div class="rd-bar-track"><div class="rd-bar-fill" style="width:47%;background:var(--tx-2)"></div></div>
+            <span class="rd-val" style="color:var(--tx-1)">47</span>
+          </div>
+        </div>
+
+        <!-- Financial Exposure -->
+        <div class="ip-section">
+          <div class="ip-title">Financial Exposure <span class="conf-tag conf-ok" style="font-size:8px;padding:1px 4px;">87% conf.</span></div>
+          <div class="met-row"><span class="met-lbl">Total Exposure</span><span class="met-val crit">$4.73B</span></div>
+          <div class="met-row"><span class="met-lbl">Revenue at Risk</span><span class="met-val warn">$1.24B</span></div>
+          <div class="met-row"><span class="met-lbl">EBITDA Impact</span><span class="met-val warn">–18.4%</span></div>
+          <div class="met-row"><span class="met-lbl">Stranded Assets</span><span class="met-val warn">$640M</span></div>
+          <div class="met-row"><span class="met-lbl">Carbon Liability</span><span class="met-val blue">$210M</span></div>
+          <div class="met-row"><span class="met-lbl">Insurance Gap</span><span class="met-val crit">$380M</span></div>
+        </div>
+
+        <!-- Asset Vulnerability -->
+        <div class="ip-section">
+          <div class="ip-title">Asset Vulnerability</div>
+          <div class="met-row"><span class="met-lbl">Sites Assessed</span><span class="met-val">38</span></div>
+          <div class="met-row"><span class="met-lbl">High Vulnerability</span><span class="met-val crit">14 sites</span></div>
+          <div class="met-row"><span class="met-lbl">Flood Zone Exposure</span><span class="met-val crit">6 sites</span></div>
+          <div class="met-row"><span class="met-lbl">Heat Stress Exposure</span><span class="met-val warn">9 sites</span></div>
+          <div class="met-row"><span class="met-lbl">Avg Vulnerability Score</span><span class="met-val warn">64.2 / 100</span></div>
+        </div>
+
+        <!-- Supply Chain -->
+        <div class="ip-section">
+          <div class="ip-title">Supply Chain Concentration</div>
+          <div class="met-row"><span class="met-lbl">Critical Tier-1 Suppliers</span><span class="met-val crit">3 high-risk zones</span></div>
+          <div class="met-row"><span class="met-lbl">HHI Concentration</span><span class="met-val warn">0.31 (High)</span></div>
+          <div class="met-row"><span class="met-lbl">Alt. Source Available</span><span class="met-val blue">62% partial</span></div>
+          <div class="met-row"><span class="met-lbl">Disruption Recovery (est.)</span><span class="met-val">60–90 days</span></div>
+        </div>
+
+        <!-- Mitigation Recommendations -->
+        <div class="ip-section">
+          <div class="ip-title">Mitigation Actions</div>
+          <div class="rec-item">
+            <div class="rec-bar crit"></div>
+            <div>
+              <div class="rec-ttl">Hedge flood exposure · Bangladesh Delta</div>
+              <div class="rec-det">3 facilities · $340M exposure · Q2 2025</div>
+            </div>
+          </div>
+          <div class="rec-item">
+            <div class="rec-bar crit"></div>
+            <div>
+              <div class="rec-ttl">Diversify Tier-1 supply from Persian Gulf</div>
+              <div class="rec-det">$180M at risk · extreme heat scenario</div>
+            </div>
+          </div>
+          <div class="rec-item">
+            <div class="rec-bar warn"></div>
+            <div>
+              <div class="rec-ttl">Carbon tax provision · Scope 2 re-pricing</div>
+              <div class="rec-det">$75/tCO₂ by 2026 · $210M liability</div>
+            </div>
+          </div>
+          <div class="rec-item">
+            <div class="rec-bar info"></div>
+            <div>
+              <div class="rec-ttl">Reclassify 5 facilities as stranded assets</div>
+              <div class="rec-det">Accelerated depreciation schedule required</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sources -->
+        <div class="ip-section">
+          <div class="ip-title">Methodology</div>
+          <div class="ip-source">NGFS Phase IV Scenario Framework · IPCC AR6 Physical Hazard Data · S&amp;P Global Physical Risk Scores · MSCI Climate Value-at-Risk · Internal C-LAYER Framework v2.4 · TCFD LEAP methodology</div>
+        </div>
+      </div>
+    </div><!-- /upper -->
+
+    <!-- ═══ GEOGRAPHIC HOTSPOTS TABLE ═══ -->
+    <div class="lower">
+      <div class="tbl-bar">
+        <div class="tbl-title">Geographic Hotspots <span class="tbl-sub">· 12 active zones · sorted by risk score</span></div>
+        <button class="fchip active" onclick="filterTable('all',this)">All</button>
+        <button class="fchip" onclick="filterTable('critical',this)">Critical</button>
+        <button class="fchip" onclick="filterTable('high',this)">High</button>
+        <button class="fchip" onclick="filterTable('flood',this)">Flood</button>
+        <button class="fchip" onclick="filterTable('heat',this)">Heat</button>
+        <button class="fchip" onclick="filterTable('supply',this)">Supply Conc.</button>
+        <div style="margin-left:auto">
+          <button class="ctrl-btn">↓ Export CSV</button>
+        </div>
+      </div>
+      <div class="tbl-scroll">
+        <table class="data-tbl" id="hotspot-tbl">
+          <thead>
+            <tr>
+              <th onclick="sortHotspots('zone')">Zone / Region <span class="sort-ico">↕</span></th>
+              <th onclick="sortHotspots('hazard')">Primary Hazard <span class="sort-ico">↕</span></th>
+              <th onclick="sortHotspots('score')" class="sorted">Risk Score <span class="sort-ico">↓</span></th>
+              <th>30d Trend</th>
+              <th onclick="sortHotspots('delta')">Scenario Δ <span class="sort-ico">↕</span></th>
+              <th onclick="sortHotspots('rating')">Rating <span class="sort-ico">↕</span></th>
+              <th>Supplier Dependency</th>
+              <th onclick="sortHotspots('loss')">Econ. Loss Est. <span class="sort-ico">↕</span></th>
+              <th>Confidence Interval</th>
+            </tr>
+          </thead>
+          <tbody id="hotspot-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ═══ DETAIL DRAWER ═══ -->
+<div class="drawer" id="drawer">
+  <div class="drw-hdr">
+    <div class="drw-title" id="drw-title">Node Analysis</div>
+    <button class="drw-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drw-body" id="drw-body"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   DATA LAYER
+═══════════════════════════════════════════════════════════════════ */
+
+const NODES = [
+  {
+    id:'climate_event',
+    name:'CLIMATE EVENT',
+    type:'Primary Trigger',
+    exposure:100, financialImpact:'$2.4B', confidence:94, trendDelta:'+8.2%',
+    severity:'crit',
+    desc:'Compound climate hazard trigger: extreme heat wave and flash flood under NGFS 2°C Orderly pathway. Modeled probability 73% within 2025–2028 horizon.',
+    timeline:[
+      {period:'Q1–Q2 2025',text:'Sustained heat anomaly onset >45°C — Persian Gulf and South Asian corridors',type:'warn'},
+      {period:'Q3 2025',text:'Monsoon intensification — Bangladesh Delta and Mekong flood amplification',type:'crit'},
+      {period:'2026',text:'Compound event probability escalates to 81% under 2°C warming trajectory',type:'crit'},
+      {period:'2027–28',text:'Structural operational disruption — Tier-1 supply assets reach critical threshold',type:'warn'}
+    ],
+    assets:[
+      {name:'Bangladesh Manufacturing Hub',det:'Flood zone Band 4 · $340M direct exposure'},
+      {name:'Persian Gulf Operations Center',det:'Extreme heat >48°C · 32% capacity reduction'},
+      {name:'Mekong Delta Logistics Hub',det:'Flood + storm surge · $160M exposure'}
+    ]
+  },
+  {
+    id:'physical_assets',
+    name:'PHYSICAL ASSETS',
+    type:'Direct Impact',
+    exposure:87, financialImpact:'$1.8B', confidence:91, trendDelta:'+5.4%',
+    severity:'crit',
+    desc:'Direct physical infrastructure exposure across 38 operational sites. 14 classified high-vulnerability under NGFS 2°C scenario. Insurance coverage gap: $380M.',
+    timeline:[
+      {period:'Now',text:'6 facilities in active flood risk zones — flood modeling updated 08:42 UTC',type:'crit'},
+      {period:'Q2 2025',text:'Heat stress reaches manufacturing threshold at 9 Gulf-region facilities',type:'warn'},
+      {period:'2026',text:'5 facilities reach stranded asset threshold — accelerated depreciation required',type:'crit'}
+    ],
+    assets:[
+      {name:'Facility Alpha (Dhaka, Bangladesh)',det:'Flood risk Band 4 · $180M · insurance gap $62M'},
+      {name:'Facility Beta (Karachi, Pakistan)',det:'Extreme heat · $95M · 40% capacity impact'},
+      {name:'Facility Gamma (Kolkata, India)',det:'Cyclone + flood compound · $140M exposure'}
+    ]
+  },
+  {
+    id:'operations',
+    name:'OPERATIONS',
+    type:'Indirect Impact',
+    exposure:74, financialImpact:'$620M', confidence:82, trendDelta:'+3.7%',
+    severity:'high',
+    desc:'Operational disruption cascading from physical asset damage and supply chain stress. Modeled as 60–90 day interruption events under compound scenario with partial BCP activation.',
+    timeline:[
+      {period:'Q3 2025',text:'Initial operational disruption — Bangladesh hub shutdown triggered',type:'crit'},
+      {period:'Q4 2025',text:'Business continuity activation · partial recovery · 40% capacity restored',type:'warn'},
+      {period:'Q1 2026',text:'Full operations restoration contingent on infrastructure repair',type:'info'}
+    ],
+    assets:[
+      {name:'Bangladesh Operations (Primary)',det:'60-day disruption · $220M revenue impact'},
+      {name:'Gulf Region Operations',det:'Heat-related downtime · $140M EBITDA impact'},
+      {name:'Mekong Logistics Network',det:'Partial disruption · $90M inventory impact'}
+    ]
+  },
+  {
+    id:'supply_chain',
+    name:'SUPPLY CHAIN',
+    type:'Tier 1–3 Network',
+    exposure:68, financialImpact:'$480M', confidence:78, trendDelta:'+4.1%',
+    severity:'high',
+    desc:'Concentrated supply chain risk — 3 critical Tier-1 suppliers operate within identified high-risk geographic zones. HHI concentration index 0.31 indicates high single-source dependency.',
+    timeline:[
+      {period:'Q3 2025',text:'3 Tier-1 suppliers face concurrent operational disruption',type:'crit'},
+      {period:'Q4 2025',text:'Input cost escalation — climate-disrupted commodity markets',type:'warn'},
+      {period:'2026',text:'Structural sourcing reallocation required if disruption persists >90 days',type:'info'}
+    ],
+    assets:[
+      {name:'Supplier Alpha (Bangladesh)',det:'Critical dependency · 42% input volume · $260M at risk'},
+      {name:'Supplier Beta (Philippines)',det:'Typhoon zone · $140M exposure · no backup source'},
+      {name:'Supplier Gamma (Vietnam)',det:'Flood risk · $80M · partial alternate available'}
+    ]
+  },
+  {
+    id:'revenue',
+    name:'REVENUE',
+    type:'Financial Impact',
+    exposure:61, financialImpact:'$1.24B', confidence:85, trendDelta:'+2.8%',
+    severity:'high',
+    desc:'Revenue-at-risk quantified across 3-year horizon under NGFS 2°C base case. Includes direct operational disruption, demand-side climate effects, and carbon cost pass-through.',
+    timeline:[
+      {period:'2025',text:'$410M revenue at risk — direct physical disruption impact',type:'crit'},
+      {period:'2026',text:'$530M — compound disruption plus carbon cost pass-through to prices',type:'crit'},
+      {period:'2027',text:'$300M residual — demand suppression in heat-stressed markets',type:'warn'}
+    ],
+    assets:[
+      {name:'Bangladesh Revenue Stream',det:'$340M · direct operational disruption'},
+      {name:'Gulf Revenue Stream',det:'$280M · heat-related demand compression'},
+      {name:'Mekong Revenue Stream',det:'$160M · logistics disruption impact'}
+    ]
+  },
+  {
+    id:'market_risk',
+    name:'MARKET RISK',
+    type:'Systemic',
+    exposure:55, financialImpact:'$730M', confidence:76, trendDelta:'+1.9%',
+    severity:'med',
+    desc:'Systemic market risk from sector-wide climate repricing. Carbon transition premium and ESG rerating expected under 2°C regulatory environment. Credit downgrade probability rising.',
+    timeline:[
+      {period:'2025–26',text:'Sector-wide carbon cost integration — cost-of-capital adjustment begins',type:'warn'},
+      {period:'2026',text:'Climate risk materiality disclosure triggers investor rerating',type:'warn'},
+      {period:'2027',text:'Potential credit downgrade — Moody\'s/S&P climate sensitivity framework',type:'crit'}
+    ],
+    assets:[
+      {name:'Corporate Debt Instruments',det:'Climate risk premium +42bps · $480M refinancing exposure'},
+      {name:'Equity Valuation',det:'ESG discount risk 8–12% to forward P/E multiple'}
+    ]
+  },
+  {
+    id:'policy_response',
+    name:'POLICY RESPONSE',
+    type:'Regulatory',
+    exposure:48, financialImpact:'$210M', confidence:88, trendDelta:'+6.5%',
+    severity:'med',
+    desc:'Regulatory and policy response triggers: carbon pricing legislation, TCFD mandatory disclosure enforcement, CSRD implementation, and BRSR amendment cycles.',
+    timeline:[
+      {period:'Q1 2025',text:'CSRD full enforcement begins for Tier-1 entities — disclosure penalty risk',type:'warn'},
+      {period:'H2 2025',text:'India BRSR Core amendments — expanded Scope 3 mandatory reporting',type:'info'},
+      {period:'2026',text:'Carbon tax $75/tCO₂ enacted — $210M annual liability materializes',type:'crit'}
+    ],
+    assets:[
+      {name:'Carbon Tax Liability',det:'$75/tCO₂ · 2.8 MtCO₂e annual · $210M liability'},
+      {name:'Disclosure Compliance Cost',det:'TCFD + CSRD + BRSR · $12M compliance investment'},
+      {name:'Regulatory Penalty Exposure',det:'Non-compliance risk · up to $28M estimated fines'}
+    ]
+  }
+];
+
+const EDGES = [
+  {src:'climate_event',  tgt:'physical_assets', str:0.91, label:'91%', type:'crit', delay:'0–3m'},
+  {src:'climate_event',  tgt:'operations',      str:0.74, label:'74%', type:'high', delay:'1–4m'},
+  {src:'climate_event',  tgt:'supply_chain',    str:0.68, label:'68%', type:'high', delay:'1–6m'},
+  {src:'physical_assets',tgt:'revenue',         str:0.83, label:'83%', type:'crit', delay:'2–8m'},
+  {src:'operations',     tgt:'revenue',         str:0.71, label:'71%', type:'high', delay:'1–3m'},
+  {src:'supply_chain',   tgt:'operations',      str:0.62, label:'62%', type:'high', delay:'3–9m'},
+  {src:'supply_chain',   tgt:'market_risk',     str:0.44, label:'44%', type:'med',  delay:'6–12m'},
+  {src:'revenue',        tgt:'market_risk',     str:0.58, label:'58%', type:'high', delay:'3–6m'},
+  {src:'policy_response',tgt:'market_risk',     str:0.66, label:'66%', type:'high', delay:'0–6m'},
+  {src:'policy_response',tgt:'operations',      str:0.39, label:'39%', type:'med',  delay:'6–18m'}
+];
+
+const HOTSPOTS = [
+  {zone:'Bangladesh Delta',    country:'Bangladesh',            hazard:'Flood + Sea Level Rise', score:84.2, trend:6.1,  delta:12.4, rating:'critical', supply:'HIGH',   loss:'$340–480M', conf:'85–92%'},
+  {zone:'Persian Gulf',        country:'UAE / Saudi Arabia',    hazard:'Extreme Heat',           score:81.7, trend:4.8,  delta:9.8,  rating:'critical', supply:'HIGH',   loss:'$280–360M', conf:'82–89%'},
+  {zone:'Philippines',         country:'Philippines',           hazard:'Typhoon + Storm Surge',  score:71.2, trend:1.8,  delta:4.9,  rating:'high',     supply:'MEDIUM', loss:'$140–190M', conf:'73–81%'},
+  {zone:'Sahel Region',        country:'Mali / Niger / Chad',   hazard:'Water Stress + Drought', score:76.3, trend:3.2,  delta:8.1,  rating:'high',     supply:'MEDIUM', loss:'$140–200M', conf:'74–82%'},
+  {zone:'Mekong Delta',        country:'Vietnam / Thailand',    hazard:'Flood + Storm Surge',    score:73.8, trend:2.9,  delta:7.3,  rating:'high',     supply:'MEDIUM', loss:'$160–230M', conf:'78–85%'},
+  {zone:'Eastern India',       country:'India',                 hazard:'Cyclone + Riverine Flood',score:62.1,trend:2.1,  delta:5.6,  rating:'medium',   supply:'MEDIUM', loss:'$110–170M', conf:'72–80%'},
+  {zone:'US West Coast',       country:'United States',         hazard:'Wildfire + Drought',     score:65.4, trend:5.3,  delta:11.2, rating:'medium',   supply:'LOW',    loss:'$90–140M',  conf:'70–78%'},
+  {zone:'Central Europe',      country:'Germany / Austria',     hazard:'Riverine Flood',         score:58.7, trend:3.4,  delta:6.8,  rating:'medium',   supply:'LOW',    loss:'$60–100M',  conf:'75–83%'},
+  {zone:'Sub-Saharan Coast',   country:'Mozambique / Tanzania', hazard:'Cyclone + Flood',        score:67.9, trend:2.6,  delta:6.1,  rating:'high',     supply:'LOW',    loss:'$80–120M',  conf:'68–76%'},
+  {zone:'South China Coast',   country:'China (Guangdong)',     hazard:'Typhoon + Flood',        score:69.3, trend:1.4,  delta:3.8,  rating:'high',     supply:'HIGH',   loss:'$200–280M', conf:'76–84%'}
+];
+
+/* ═══════════════════════════════════════════════════════════════════
+   GRAPH RENDERER
+═══════════════════════════════════════════════════════════════════ */
+
+const NW = 126, NH = 70;
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function el(tag) { return document.createElementNS(SVG_NS, tag); }
+
+function getNodePositions(W, H) {
+  return {
+    climate_event:   {x: W*0.50, y: H*0.11},
+    physical_assets: {x: W*0.17, y: H*0.42},
+    operations:      {x: W*0.50, y: H*0.42},
+    supply_chain:    {x: W*0.83, y: H*0.42},
+    revenue:         {x: W*0.30, y: H*0.74},
+    market_risk:     {x: W*0.70, y: H*0.74},
+    policy_response: {x: W*0.50, y: H*0.88}
+  };
+}
+
+function edgeColor(type) {
+  return {crit:'#F05454', high:'#C9843A', med:'#4FA3FF'}[type] || '#4FA3FF';
+}
+
+function sevColor(sev) {
+  return {crit:'#F05454', high:'#C9843A', med:'#4FA3FF'}[sev] || '#4FA3FF';
+}
+
+let currentPositions = {};
+
+function buildGraph() {
+  const svg = document.getElementById('rpe-svg');
+  svg.innerHTML = '';
+
+  const wrap = document.getElementById('graph-wrap');
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight;
+
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  currentPositions = getNodePositions(W, H);
+
+  // ── Defs (arrowhead markers) ──
+  const defs = el('defs');
+  ['crit','high','med'].forEach(t => {
+    const m = el('marker');
+    m.setAttribute('id',`arr-${t}`);
+    m.setAttribute('markerWidth','7');
+    m.setAttribute('markerHeight','5');
+    m.setAttribute('refX','6.5');
+    m.setAttribute('refY','2.5');
+    m.setAttribute('orient','auto');
+    const p = el('polygon');
+    p.setAttribute('points','0 0, 7 2.5, 0 5');
+    p.setAttribute('fill', edgeColor(t));
+    p.setAttribute('opacity','0.65');
+    m.appendChild(p);
+    defs.appendChild(m);
+  });
+  svg.appendChild(defs);
+
+  // ── Edges ──
+  const eGrp = el('g');
+  eGrp.setAttribute('id','edge-grp');
+
+  EDGES.forEach(edge => {
+    const s = currentPositions[edge.src];
+    const t = currentPositions[edge.tgt];
+    if (!s || !t) return;
+
+    const x1 = s.x, y1 = s.y + NH/2;
+    const x2 = t.x, y2 = t.y - NH/2;
+    const cy = (y1 + y2) / 2;
+
+    const path = el('path');
+    const d = `M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`;
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', edgeColor(edge.type));
+    path.setAttribute('stroke-width', (edge.str * 2.8).toFixed(1));
+    path.setAttribute('stroke-opacity','0.3');
+    path.setAttribute('fill','none');
+    path.setAttribute('marker-end', `url(#arr-${edge.type})`);
+    path.setAttribute('data-src', edge.src);
+    path.setAttribute('data-tgt', edge.tgt);
+    path.setAttribute('data-str', edge.str);
+    path.setAttribute('class', `edge e-${edge.src} e-${edge.tgt}`);
+    eGrp.appendChild(path);
+
+    // Probability label on mid-curve
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+
+    const lbg = el('rect');
+    lbg.setAttribute('x', mx - 14); lbg.setAttribute('y', my - 7.5);
+    lbg.setAttribute('width', 28); lbg.setAttribute('height', 13);
+    lbg.setAttribute('fill','#0E1929');
+    lbg.setAttribute('stroke','#1A2B3C');
+    lbg.setAttribute('stroke-width','1');
+    lbg.setAttribute('rx','1');
+    eGrp.appendChild(lbg);
+
+    const ltxt = el('text');
+    ltxt.setAttribute('x', mx); ltxt.setAttribute('y', my);
+    ltxt.setAttribute('text-anchor','middle');
+    ltxt.setAttribute('dominant-baseline','middle');
+    ltxt.setAttribute('font-size','7.5');
+    ltxt.setAttribute('font-family','IBM Plex Mono, monospace');
+    ltxt.setAttribute('fill', edgeColor(edge.type));
+    ltxt.setAttribute('opacity','0.8');
+    ltxt.textContent = edge.label;
+    eGrp.appendChild(ltxt);
+  });
+
+  svg.appendChild(eGrp);
+
+  // ── Nodes ──
+  const nGrp = el('g');
+  nGrp.setAttribute('id','node-grp');
+
+  NODES.forEach(node => {
+    const pos = currentPositions[node.id];
+    if (!pos) return;
+
+    const nx = pos.x - NW/2;
+    const ny = pos.y - NH/2;
+    const sc = sevColor(node.severity);
+
+    const g = el('g');
+    g.setAttribute('class','node-g');
+    g.setAttribute('data-id', node.id);
+    g.style.cursor = 'pointer';
+
+    // Shadow / depth rect
+    const shadow = el('rect');
+    shadow.setAttribute('x', nx+2); shadow.setAttribute('y', ny+2);
+    shadow.setAttribute('width', NW); shadow.setAttribute('height', NH);
+    shadow.setAttribute('fill', '#000'); shadow.setAttribute('opacity','0.35');
+    shadow.setAttribute('rx','2');
+    g.appendChild(shadow);
+
+    // Background
+    const bg = el('rect');
+    bg.setAttribute('x', nx); bg.setAttribute('y', ny);
+    bg.setAttribute('width', NW); bg.setAttribute('height', NH);
+    bg.setAttribute('fill','#111F30');
+    bg.setAttribute('stroke', sc);
+    bg.setAttribute('stroke-width','1');
+    bg.setAttribute('stroke-opacity','0.55');
+    bg.setAttribute('rx','2');
+    g.appendChild(bg);
+
+    // Left accent bar
+    const bar = el('rect');
+    bar.setAttribute('x', nx); bar.setAttribute('y', ny);
+    bar.setAttribute('width','3'); bar.setAttribute('height', NH);
+    bar.setAttribute('fill', sc); bar.setAttribute('opacity','0.75');
+    bar.setAttribute('rx','1');
+    g.appendChild(bar);
+
+    // Confidence indicator (top-right dot)
+    const cDot = el('circle');
+    cDot.setAttribute('cx', nx + NW - 8); cDot.setAttribute('cy', ny + 9);
+    cDot.setAttribute('r','3.5');
+    const confC = node.confidence >= 85 ? '#4DB87A' : node.confidence >= 70 ? '#C9843A' : '#F05454';
+    cDot.setAttribute('fill', confC);
+    cDot.setAttribute('opacity','0.9');
+    g.appendChild(cDot);
+
+    // Node name
+    const nameT = el('text');
+    nameT.setAttribute('x', nx+10); nameT.setAttribute('y', ny+16);
+    nameT.setAttribute('font-size','8.5');
+    nameT.setAttribute('font-family','IBM Plex Sans, sans-serif');
+    nameT.setAttribute('font-weight','700');
+    nameT.setAttribute('letter-spacing','0.07em');
+    nameT.setAttribute('fill','#D8E8F5');
+    nameT.textContent = node.name;
+    g.appendChild(nameT);
+
+    // Node type
+    const typeT = el('text');
+    typeT.setAttribute('x', nx+10); typeT.setAttribute('y', ny+27);
+    typeT.setAttribute('font-size','7.5');
+    typeT.setAttribute('font-family','IBM Plex Sans, sans-serif');
+    typeT.setAttribute('fill','#526D87');
+    typeT.textContent = node.type;
+    g.appendChild(typeT);
+
+    // Divider
+    const div = el('line');
+    div.setAttribute('x1', nx+6); div.setAttribute('y1', ny+34);
+    div.setAttribute('x2', nx+NW-6); div.setAttribute('y2', ny+34);
+    div.setAttribute('stroke','#1A2B3C'); div.setAttribute('stroke-width','1');
+    g.appendChild(div);
+
+    // Exposure label
+    const expLbl = el('text');
+    expLbl.setAttribute('x', nx+10); expLbl.setAttribute('y', ny+46);
+    expLbl.setAttribute('font-size','7.5');
+    expLbl.setAttribute('font-family','IBM Plex Sans, sans-serif');
+    expLbl.setAttribute('fill','#526D87');
+    expLbl.textContent = 'EXPOSURE';
+    g.appendChild(expLbl);
+
+    // Exposure value
+    const expVal = el('text');
+    expVal.setAttribute('x', nx+10); expVal.setAttribute('y', ny+60);
+    expVal.setAttribute('font-size','15');
+    expVal.setAttribute('font-family','IBM Plex Mono, monospace');
+    expVal.setAttribute('font-weight','600');
+    expVal.setAttribute('fill', sc);
+    expVal.textContent = `${node.exposure}%`;
+    g.appendChild(expVal);
+
+    // Impact label
+    const impLbl = el('text');
+    impLbl.setAttribute('x', nx+NW-10); impLbl.setAttribute('y', ny+46);
+    impLbl.setAttribute('font-size','7.5');
+    impLbl.setAttribute('font-family','IBM Plex Sans, sans-serif');
+    impLbl.setAttribute('fill','#526D87');
+    impLbl.setAttribute('text-anchor','end');
+    impLbl.textContent = 'IMPACT';
+    g.appendChild(impLbl);
+
+    // Impact value
+    const impVal = el('text');
+    impVal.setAttribute('x', nx+NW-10); impVal.setAttribute('y', ny+60);
+    impVal.setAttribute('font-size','11');
+    impVal.setAttribute('font-family','IBM Plex Mono, monospace');
+    impVal.setAttribute('font-weight','500');
+    impVal.setAttribute('fill','#8AAEC9');
+    impVal.setAttribute('text-anchor','end');
+    impVal.textContent = node.financialImpact;
+    g.appendChild(impVal);
+
+    // Events
+    g.addEventListener('mouseenter', e => showTip(e, node, pos));
+    g.addEventListener('mouseleave', hideTip);
+    g.addEventListener('click', () => openDrawer(node));
+
+    nGrp.appendChild(g);
+  });
+
+  svg.appendChild(nGrp);
+}
+
+/* ═══ TOOLTIP ═══════════════════════════════════════════════════ */
+function showTip(e, node, pos) {
+  const tip = document.getElementById('node-tip');
+  const wrap = document.getElementById('graph-wrap');
+
+  document.getElementById('nt-name').textContent   = node.name;
+  document.getElementById('nt-type').textContent   = node.type;
+  document.getElementById('nt-exp').textContent    = `${node.exposure}%`;
+  document.getElementById('nt-impact').textContent = node.financialImpact;
+  document.getElementById('nt-conf').textContent   = `${node.confidence}%`;
+  document.getElementById('nt-trend').textContent  = node.trendDelta;
+
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  let tx = pos.x + NW/2 + 12;
+  let ty = pos.y - NH/2 - 8;
+  if (tx + 218 > W) tx = pos.x - NW/2 - 222;
+  if (ty < 4) ty = 4;
+  if (ty + 140 > H) ty = H - 144;
+
+  tip.style.left = tx + 'px';
+  tip.style.top  = ty + 'px';
+  tip.style.display = 'block';
+
+  // Highlight connected edges
+  document.querySelectorAll(`.e-${node.id}`).forEach(el => {
+    el.setAttribute('stroke-opacity','0.85');
+    el.setAttribute('stroke-width', (parseFloat(el.getAttribute('data-str')) * 4.5).toFixed(1));
+  });
+  // Dim unrelated edges
+  document.querySelectorAll('.edge').forEach(el => {
+    if (!el.classList.contains(`e-${node.id}`)) {
+      el.setAttribute('stroke-opacity','0.08');
+    }
+  });
+}
+
+function hideTip() {
+  document.getElementById('node-tip').style.display = 'none';
+  // Restore edges
+  EDGES.forEach(edge => {
+    const els = document.querySelectorAll(`[data-src="${edge.src}"][data-tgt="${edge.tgt}"]`);
+    els.forEach(el => {
+      el.setAttribute('stroke-opacity','0.30');
+      el.setAttribute('stroke-width', (edge.str * 2.8).toFixed(1));
+    });
+  });
+}
+
+function resetHighlight() { hideTip(); }
+
+/* ═══ DETAIL DRAWER ════════════════════════════════════════════ */
+function openDrawer(node) {
+  document.getElementById('drw-title').textContent = `${node.name} — ${node.type}`;
+  const sc = sevColor(node.severity);
+
+  let html = `
+    <div class="drw-kpi-grid">
+      <div class="drw-kpi">
+        <div class="drw-kpi-lbl">Exposure</div>
+        <div class="drw-kpi-val" style="color:${sc}">${node.exposure}%</div>
+      </div>
+      <div class="drw-kpi">
+        <div class="drw-kpi-lbl">Financial Impact</div>
+        <div class="drw-kpi-val" style="color:var(--tx-0)">${node.financialImpact}</div>
+      </div>
+      <div class="drw-kpi">
+        <div class="drw-kpi-lbl">Confidence</div>
+        <div class="drw-kpi-val" style="color:var(--ok)">${node.confidence}%</div>
+      </div>
+      <div class="drw-kpi">
+        <div class="drw-kpi-lbl">30d Trend</div>
+        <div class="drw-kpi-val" style="color:var(--crit)">${node.trendDelta}</div>
+      </div>
+    </div>
+
+    <div class="drw-section">
+      <div class="drw-sec-ttl">Analysis</div>
+      <div class="drw-desc">${node.desc}</div>
+    </div>`;
+
+  if (node.timeline) {
+    html += `<div class="drw-section"><div class="drw-sec-ttl">Timeline Progression</div>`;
+    node.timeline.forEach(t => {
+      html += `<div class="tl-item">
+        <div class="tl-dot ${t.type}"></div>
+        <div>
+          <div class="tl-period">${t.period}</div>
+          <div class="tl-text">${t.text}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (node.assets) {
+    html += `<div class="drw-section"><div class="drw-sec-ttl">Affected Assets</div>`;
+    node.assets.forEach(a => {
+      html += `<div class="asset-card"><div class="asset-name">${a.name}</div><div class="asset-det">${a.det}</div></div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Connected nodes
+  const connected = EDGES
+    .filter(e => e.src === node.id || e.tgt === node.id)
+    .map(e => {
+      const otherId = e.src === node.id ? e.tgt : e.src;
+      const dir = e.src === node.id ? '→' : '←';
+      const other = NODES.find(n => n.id === otherId);
+      return {other, dir, str:e.label, delay:e.delay};
+    });
+
+  if (connected.length) {
+    html += `<div class="drw-section"><div class="drw-sec-ttl">Cascade Connections</div>`;
+    connected.forEach(c => {
+      html += `<div class="conn-row">
+        <span class="conn-name">${c.dir} ${c.other.name}</span>
+        <span class="conn-meta">${c.str} · ${c.delay}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById('drw-body').innerHTML = html;
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+}
+
+/* ═══ VIEW MODE ════════════════════════════════════════════════ */
+function setView(mode, btn) {
+  document.querySelectorAll('.ctrl-btn').forEach(b => {
+    if (['Network','Matrix','Timeline'].includes(b.textContent.trim())) {
+      b.classList.remove('active');
+    }
+  });
+  btn.classList.add('active');
+  // Network is the only implemented view — others are nav UI
+  if (mode !== 'network') {
+    // Show placeholder note in graph
+    const svg = document.getElementById('rpe-svg');
+    const wrap = document.getElementById('graph-wrap');
+    const W = wrap.clientWidth, H = wrap.clientHeight;
+    svg.innerHTML = '';
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    const t = el('text');
+    t.setAttribute('x', W/2); t.setAttribute('y', H/2);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-size','11'); t.setAttribute('font-family','IBM Plex Sans, sans-serif');
+    t.setAttribute('fill','#526D87');
+    t.textContent = mode.charAt(0).toUpperCase()+mode.slice(1)+' view — select node to populate';
+    svg.appendChild(t);
+  } else {
+    buildGraph();
+  }
+}
+
+/* ═══ HOTSPOTS TABLE ════════════════════════════════════════════ */
+let hotspotData = [...HOTSPOTS];
+let sortKey = 'score';
+let sortDir = -1;
+let activeFilter = 'all';
+
+function ratingClass(r) {
+  if (r==='critical') return 'tc';
+  if (r==='high') return 'th';
+  return 'tm';
+}
+function ratingBadge(r) {
+  if (r==='critical') return 'rb-crit';
+  if (r==='high')     return 'rb-high';
+  return 'rb-med';
+}
+function supplyDot(s) {
+  if (s==='HIGH')   return 'sd-h';
+  if (s==='MEDIUM') return 'sd-m';
+  return 'sd-l';
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('hotspot-tbody');
+  tbody.innerHTML = data.map(h => `
+    <tr>
+      <td>
+        <div class="td-zone">${h.zone}</div>
+        <div class="td-cntry">${h.country}</div>
+      </td>
+      <td class="td-hazard">${h.hazard}</td>
+      <td><span class="td-score ${ratingClass(h.rating)}">${h.score.toFixed(1)}</span></td>
+      <td><span class="td-trend t-up">▲ +${h.trend.toFixed(1)}</span></td>
+      <td><span class="td-delta" style="color:var(--crit)">+${h.delta.toFixed(1)}%</span></td>
+      <td><span class="rating-badge ${ratingBadge(h.rating)}">${h.rating.toUpperCase()}</span></td>
+      <td>
+        <span class="sup-dot ${supplyDot(h.supply)}"></span>
+        <span style="font-size:10.5px;color:var(--tx-1)">${h.supply}</span>
+      </td>
+      <td class="td-loss">${h.loss}</td>
+      <td class="td-conf">${h.conf}</td>
+    </tr>
+  `).join('');
+}
+
+function sortHotspots(key) {
+  if (sortKey === key) sortDir *= -1;
+  else { sortKey = key; sortDir = -1; }
+
+  document.querySelectorAll('.data-tbl th').forEach(th => th.classList.remove('sorted'));
+
+  const sorted = [...hotspotData].sort((a, b) => {
+    const va = a[key] ?? 0;
+    const vb = b[key] ?? 0;
+    if (typeof va === 'number') return (va - vb) * sortDir;
+    return String(va).localeCompare(String(vb)) * sortDir;
+  });
+  renderTable(sorted);
+}
+
+function filterTable(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+
+  const map = {
+    all:      () => true,
+    critical: h => h.rating === 'critical',
+    high:     h => h.rating === 'high',
+    flood:    h => h.hazard.toLowerCase().includes('flood'),
+    heat:     h => h.hazard.toLowerCase().includes('heat'),
+    supply:   h => h.supply === 'HIGH'
+  };
+  hotspotData = HOTSPOTS.filter(map[type] || (() => true));
+  renderTable(hotspotData);
+}
+
+/* ═══ NAV ══════════════════════════════════════════════════════ */
+function navActivate(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ═══ LIVE COUNTERS ════════════════════════════════════════════ */
+let runtimeSec = 272;
+let updatedSec = 8;
+
+setInterval(() => {
+  runtimeSec++;
+  const h = Math.floor(runtimeSec / 3600);
+  const m = Math.floor((runtimeSec % 3600) / 60);
+  const s = runtimeSec % 60;
+  document.getElementById('hdr-runtime').textContent =
+    `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}, 1000);
+
+setInterval(() => {
+  updatedSec++;
+  const el = document.getElementById('hdr-updated');
+  if (updatedSec < 60) el.textContent = `${updatedSec}s ago`;
+  else el.textContent = `${Math.floor(updatedSec/60)}m ago`;
+  if (updatedSec >= 30) updatedSec = 0;
+}, 1000);
+
+/* ═══ KEYBOARD ═════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDrawer();
+});
+
+/* ═══ INIT ══════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  buildGraph();
+  renderTable(HOTSPOTS);
+});
+
+window.addEventListener('resize', () => {
+  buildGraph();
+});
+
+</script>
+</body>
+</html>
