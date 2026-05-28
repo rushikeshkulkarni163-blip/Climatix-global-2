@@ -1,34 +1,54 @@
-import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
 interface DataPanelProps {
-  title?: string;
-  label?: string;
-  children: ReactNode;
-  action?: ReactNode;
+  title?:     string;
+  label?:     string;
+  children:   ReactNode;
+  action?:    ReactNode;
   className?: string;
-  noPad?: boolean;
+  noPad?:     boolean;
+  accent?:    string;
 }
 
-export default function DataPanel({ title, label, children, action, className, noPad }: DataPanelProps) {
+export default function DataPanel({
+  title, label, children, action, className = "", noPad, accent = "#4DA3FF",
+}: DataPanelProps) {
   return (
-    <div className={cn("bg-white border border-gray-200", className)}>
+    <div
+      className={className}
+      style={{ background: "#0F1722", border: "1px solid #1E2C3D" }}
+    >
       {(title || label || action) && (
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-          <div className="flex items-center gap-3">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "8px 12px",
+            borderBottom: "1px solid #1E2C3D",
+            gap: 8,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 2, height: 10, background: accent, flexShrink: 0 }} />
             {label && (
-              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.18em]">
+              <span style={{
+                fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 700,
+                letterSpacing: "0.18em", textTransform: "uppercase", color: "#3D506A",
+              }}>
                 {label}
               </span>
             )}
             {title && (
-              <span className="text-xs font-bold text-gray-800">{title}</span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 600, color: "#8CA3BA" }}>
+                {title}
+              </span>
             )}
           </div>
           {action && <div>{action}</div>}
         </div>
       )}
-      <div className={noPad ? "" : "p-4"}>{children}</div>
+      <div style={noPad ? {} : { padding: "12px" }}>{children}</div>
     </div>
   );
 }

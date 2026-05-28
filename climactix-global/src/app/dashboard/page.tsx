@@ -1,274 +1,283 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import {
-  Thermometer, Wind, Droplets, AlertTriangle, TrendingUp,
-  BarChart3, Globe, Info
+  TrendingUp, TrendingDown, AlertTriangle, Shield, Building2,
+  Zap, Droplets, Flame, Wind, Activity, ArrowRight, Info,
+  ChevronDown, RefreshCw, BarChart2, Globe
 } from "lucide-react";
-import RiskGauge from "@/components/charts/RiskGauge";
-import RiskRadar from "@/components/charts/RiskRadar";
-import TemperatureTimeline from "@/components/charts/TemperatureTimeline";
-import EmissionsTrajectory from "@/components/charts/EmissionsTrajectory";
-import SectorBenchmark from "@/components/charts/SectorBenchmark";
-import CarbonWaterfall from "@/components/charts/CarbonWaterfall";
-import AirQualityChart from "@/components/charts/AirQualityChart";
-import ESGScoreChart from "@/components/charts/ESGScoreChart";
-import DisasterMap from "@/components/charts/DisasterMap";
-import FinancialRiskTreeMap from "@/components/charts/FinancialRiskTreeMap";
-import { SkeletonChart } from "@/components/ui/SkeletonCard";
-import ErrorBoundary from "@/components/ui/ErrorBoundary";
-import RiskBadge from "@/components/ui/RiskBadge";
-import type { ClimateRiskScore, AssessmentFormData, AirQualityData, DisasterEvent } from "@/types";
-import { SECTOR_CONFIGS } from "@/lib/scoring/sectorConfig";
-import Link from "next/link";
 
-const DEMO_SCORE: ClimateRiskScore = {
-  overall: 62,
-  physicalRisk: { acute: 58, chronic: 45, score: 51 },
-  transitionRisk: { policy: 72, technology: 68, market: 55, reputation: 48, score: 62 },
-  esgScore: { environmental: 60, social: 45, governance: 38, score: 52 },
-  vulnerabilityIndex: 64,
-  adaptationCapacity: 37,
-  riskRating: "HIGH",
-  confidence: 78,
-};
+const COMMAND_METRICS = [
+  { label: "PORTFOLIO CLIMATE VaR",    value: "$2.84B",   sub: "95th pct / 1-yr horizon",   color: "#FF5B5B", trend: "+12.3%" },
+  { label: "REVENUE AT RISK",          value: "18.4%",    sub: "Across 248 active entities", color: "#D8913F", trend: "+3.1pp" },
+  { label: "PHYSICAL RISK EXPOSURE",   value: "ELEVATED", sub: "3 active extreme events",    color: "#D8913F", trend: null },
+  { label: "NET-ZERO CREDIBILITY AVG", value: "BBB",      sub: "Across tracked portfolio",   color: "#D8913F", trend: "-1 notch" },
+  { label: "CARBON PRICE SENSITIVITY", value: "$180M",    sub: "@$100/t scenario impact",    color: "#4DA3FF", trend: null },
+  { label: "STRANDED ASSET RISK",      value: "$0.94B",   sub: "Coal + O&G exposure",        color: "#FF5B5B", trend: "+8.7%" },
+];
 
-const DEMO_FORM: AssessmentFormData = {
-  companyProfile: {
-    organizationName: "Demo Corp",
-    industry: "energy-oil-gas",
-    subSector: "Upstream E&P",
-    country: "United States",
-    countryCode: "USA",
-    revenueRange: "100m-1b",
-    employeeCount: "1001-10000",
-    latitude: 40.71,
-    longitude: -74.01,
-  },
-  emissions: { scope1: 45000, scope2: 28000, scope3: 180000, useEstimate: false, fossilFuelPercent: 78, renewablePercent: 22, energyIntensity: 350, emissionsTrend: "stable" },
-  physicalAssets: { assetTypes: ["manufacturing", "coastal"], floodZone: false, coastalProximity: true, wildfireZone: false, waterStressRegion: true, heatStressDays: 18, waterStressIndex: 0.55 },
-  esgGovernance: { climatePolicy: "developing", netZeroYear: 2050, boardOversight: false, tcfdDisclosure: true, cdpDisclosure: false, carbonOffsets: true, supplyChainEsg: false },
-  scenario: { timeHorizon: 2050, warmingScenario: "2.0", reportType: "technical", units: "metric" },
-};
+const PHYSICAL_EVENTS = [
+  { id: "E001", type: "FLOOD",    region: "Brahmaputra Basin",        severity: "CRITICAL", entities: 12, impact: "$340M",  status: "ACTIVE" },
+  { id: "E002", type: "HEATWAVE", region: "Deccan Plateau",           severity: "HIGH",     entities: 31, impact: "$120M",  status: "ACTIVE" },
+  { id: "E003", type: "CYCLONE",  region: "Bay of Bengal",            severity: "HIGH",     entities: 8,  impact: "$210M",  status: "WATCH"  },
+  { id: "E004", type: "DROUGHT",  region: "Vidarbha Agriculture Zone",severity: "ELEVATED", entities: 19, impact: "$88M",   status: "ACTIVE" },
+  { id: "E005", type: "SEA LEVEL",region: "Mumbai Coastal Strip",     severity: "ELEVATED", entities: 24, impact: "$450M",  status: "MONITOR"},
+];
+
+const PORTFOLIO_COMPANIES = [
+  { name: "Tata Steel",          sector: "STEEL",       rating: "BBB", physical: 64, transition: 71, clScore: 49, rar: "22.1%", trend: "down" },
+  { name: "NTPC Limited",        sector: "POWER",       rating: "BB",  physical: 78, transition: 83, clScore: 38, rar: "31.4%", trend: "down" },
+  { name: "Infosys",             sector: "IT SERVICES", rating: "AA",  physical: 28, transition: 22, clScore: 81, rar: "4.2%",  trend: "up"   },
+  { name: "Reliance Industries", sector: "ENERGY",      rating: "B",   physical: 71, transition: 88, clScore: 33, rar: "38.7%", trend: "down" },
+  { name: "HDFC Bank",           sector: "BANKING",     rating: "A",   physical: 42, transition: 38, clScore: 68, rar: "9.8%",  trend: "flat" },
+  { name: "L&T Limited",         sector: "ENGINEERING", rating: "BBB", physical: 55, transition: 61, clScore: 54, rar: "17.3%", trend: "down" },
+  { name: "Adani Green",         sector: "RENEWABLES",  rating: "AA",  physical: 38, transition: 18, clScore: 76, rar: "6.1%",  trend: "up"   },
+  { name: "Coal India",          sector: "MINING",      rating: "CCC", physical: 82, transition: 95, clScore: 14, rar: "64.2%", trend: "down" },
+];
+
+const SCENARIO_DELTA = [
+  { scenario: "NGFS 1.5°C NZ 2050",   ebitda: "-8.2%",  rev: "-5.1%",  capex: "+24%", stranded: "$0.4B", color: "#63C982" },
+  { scenario: "NGFS 2.0°C Orderly",   ebitda: "-14.7%", rev: "-9.3%",  capex: "+18%", stranded: "$0.9B", color: "#4DA3FF" },
+  { scenario: "NGFS 3.0°C Delayed",   ebitda: "-22.1%", rev: "-15.8%", capex: "+11%", stranded: "$1.7B", color: "#D8913F" },
+  { scenario: "NGFS Disorderly Trans.",ebitda: "-31.4%", rev: "-23.2%", capex: "+8%",  stranded: "$2.6B", color: "#FF5B5B" },
+];
+
+const ACTIONS = [
+  { priority: "P1", label: "Divest Coal India — CCC rated, 64% revenue-at-risk",            sector: "PORTFOLIO" },
+  { priority: "P1", label: "Brahmaputra flood contingency for 12 exposed entities",          sector: "PHYSICAL"  },
+  { priority: "P2", label: "Request NTPC transition plan — BB→B migration risk",             sector: "TRANSITION"},
+  { priority: "P2", label: "Engage Reliance on carbon tax — 38.7% RaR at $100/t",           sector: "CARBON"    },
+  { priority: "P3", label: "Schedule HDFC supply-chain climate assessment",                  sector: "SUPPLY"    },
+];
+
+const RIGHT_PANEL = [
+  { key: "REVENUE AT RISK",    val: "$520M",  label: "12-month horizon",          color: "#FF5B5B" },
+  { key: "ASSET VULNERABILITY",val: "31.8%",  label: "Assets at elevated risk",   color: "#D8913F" },
+  { key: "REG. TRIGGERS",      val: "7",      label: "Regulatory triggers active",color: "#D8913F" },
+  { key: "CARBON SENSITIVITY", val: "$180M",  label: "@$100/t carbon price",      color: "#4DA3FF" },
+  { key: "SUPPLY CHAIN RISK",  val: "HIGH",   label: "4 critical dependencies",   color: "#FF5B5B" },
+  { key: "INSURANCE EXPOSURE", val: "$1.2B",  label: "Uninsurable exposure",      color: "#D8913F" },
+];
+
+function RatingBadge({ rating }: { rating: string }) {
+  const map: Record<string, string> = {
+    AAA: "risk-aaa", AA: "risk-aa", A: "risk-a",
+    BBB: "risk-bbb", BB: "risk-bb", B: "risk-b", CCC: "risk-ccc",
+  };
+  return <span className={map[rating] ?? "risk-bbb"}>{rating}</span>;
+}
+
+function SeverityBadge({ sev }: { sev: string }) {
+  const col: Record<string, string> = { CRITICAL: "#FF5B5B", HIGH: "#D8913F", ELEVATED: "#C9A227", MONITOR: "#4DA3FF" };
+  const bg:  Record<string, string> = { CRITICAL: "#2A0F0F", HIGH: "#2A1A08", ELEVATED: "#1F1800", MONITOR: "#0D2040" };
+  return (
+    <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 700, letterSpacing: "0.12em", padding: "2px 6px", color: col[sev] ?? "#8CA3BA", background: bg[sev] ?? "transparent", border: `1px solid ${col[sev] ?? "#8CA3BA"}33` }}>
+      {sev}
+    </span>
+  );
+}
+
+function RiskBar({ pct, color }: { pct: number; color: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      <div style={{ flex: 1, height: 3, background: "#1E2C3D", borderRadius: 1, overflow: "hidden" }}>
+        <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 1 }} />
+      </div>
+      <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 600, color: "#62758C", width: "22px", textAlign: "right" }}>
+        {pct}
+      </span>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
-  const [score, setScore] = useState<ClimateRiskScore>(DEMO_SCORE);
-  const [form, setForm] = useState<AssessmentFormData>(DEMO_FORM);
-  const [hasCustom, setHasCustom] = useState(false);
-
-  useEffect(() => {
-    try {
-      const storedForm = localStorage.getItem("cg_form");
-      const storedScore = localStorage.getItem("cg_score");
-      if (storedForm && storedScore) {
-        setForm(JSON.parse(storedForm) as AssessmentFormData);
-        setScore(JSON.parse(storedScore) as ClimateRiskScore);
-        setHasCustom(true);
-      }
-    } catch {}
-  }, []);
-
-  const { lat, longitude: lng } = { lat: form.companyProfile.latitude, longitude: form.companyProfile.longitude };
-
-  const { data: tempData, isLoading: tempLoading } = useQuery({
-    queryKey: ["temperature", lat, lng],
-    queryFn: async () => {
-      const res = await fetch(`/api/climate/temperature?lat=${lat}&lng=${lng}`);
-      const json = await res.json() as { data: { daily?: { time?: string[]; temperature_2m_max?: number[]; temperature_2m_min?: number[] } } };
-      const daily = json.data?.daily;
-      const time = daily?.time ?? [];
-      const tmax = daily?.temperature_2m_max ?? [];
-      const tmin = daily?.temperature_2m_min ?? [];
-      return {
-        time,
-        temperature2m: tmax.map((t, i) => (t + (tmin[i] ?? t)) / 2),
-      };
-    },
-  });
-
-  const { data: aqData, isLoading: aqLoading } = useQuery({
-    queryKey: ["air-quality", lat, lng],
-    queryFn: async () => {
-      const res = await fetch(`/api/air-quality?lat=${lat}&lng=${lng}`);
-      const json = await res.json() as { data: AirQualityData };
-      return json.data;
-    },
-  });
-
-  const { data: disasters, isLoading: disasterLoading } = useQuery({
-    queryKey: ["disasters", form.companyProfile.countryCode],
-    queryFn: async () => {
-      const res = await fetch(`/api/disasters?country=${form.companyProfile.countryCode}`);
-      const json = await res.json() as { data: DisasterEvent[] };
-      return json.data ?? [];
-    },
-  });
-
-  const sector = SECTOR_CONFIGS[form.companyProfile.industry];
-  const totalEmissions = form.emissions.scope1 + form.emissions.scope2 + form.emissions.scope3;
-  const revenue = { "under-1m": 500000, "1m-10m": 5000000, "10m-100m": 50000000, "100m-1b": 500000000, "over-1b": 5000000000 }[form.companyProfile.revenueRange] ?? 50000000;
+  const [activeTab, setActiveTab] = useState<"overview" | "physical" | "transition" | "regulatory">("overview");
 
   return (
-    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+    <div style={{ minHeight: "100%", background: "#0C1220" }}>
+
+      {/* Page header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", borderBottom: "1px solid #1E2C3D", background: "#0F1722" }}>
         <div>
-          <h1 className="section-title">Climate Risk Dashboard</h1>
-          <p className="text-gray-500 text-sm">
-            {hasCustom ? form.companyProfile.organizationName : "Demo Mode"} · {form.companyProfile.country} · {sector.label}
-          </p>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.20em", textTransform: "uppercase", marginBottom: "3px" }}>
+            CLIMATE RISK INTELLIGENCE OPERATING SYSTEM
+          </div>
+          <h1 style={{ fontSize: "16px", fontWeight: 700, color: "#DDE7F2", letterSpacing: "-0.01em", margin: 0 }}>
+            Unified Intelligence Dashboard
+          </h1>
         </div>
-        <div className="flex gap-3 items-center">
-          <RiskBadge rating={score.riskRating} />
-          {!hasCustom && (
-            <Link href="/risk-analysis" className="btn-primary text-sm py-2">
-              Run Your Assessment
-            </Link>
-          )}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.12em" }}>UPDATED 28s AGO</span>
+          <button className="btn-intel" style={{ padding: "5px 12px", display: "flex", alignItems: "center", gap: 6 }}>
+            <BarChart2 size={10} />
+            Generate Report
+          </button>
         </div>
       </div>
 
-      {!hasCustom && (
-        <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center gap-3 text-sm text-amber-700">
-          <Info className="w-4 h-4 flex-shrink-0" />
-          Showing demo data. <Link href="/risk-analysis" className="font-semibold underline">Run your own assessment</Link> to see your real risk profile.
-        </div>
-      )}
-
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Overall Risk Score", value: `${score.overall}/100`, icon: TrendingUp, color: "text-orange-600" },
-          { label: "Carbon Intensity", value: `${((form.emissions.scope1 + form.emissions.scope2) / Math.max(revenue / 1e6, 1)).toFixed(0)} tCO₂e/$M`, icon: BarChart3, color: "text-brand-teal" },
-          { label: "ESG Score", value: `${score.esgScore.score}/100`, icon: Globe, color: "text-green-600" },
-          { label: "Total Emissions", value: `${(totalEmissions / 1000).toFixed(1)}k tCO₂e`, icon: Thermometer, color: "text-red-500" },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="card card-hover">
-            <div className="flex items-center gap-2 mb-2">
-              <Icon className={`w-4 h-4 ${color}`} />
-              <span className="text-xs text-gray-500">{label}</span>
+      {/* Command Metrics */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", borderBottom: "1px solid #1E2C3D" }}>
+        {COMMAND_METRICS.map((m, i) => (
+          <div key={i} style={{ padding: "10px 14px", borderRight: i < 5 ? "1px solid #1E2C3D" : "none", background: "#0F1722" }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "4px" }}>{m.label}</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "15px", fontWeight: 700, color: m.color }}>{m.value}</span>
+              {m.trend && <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: m.color, fontWeight: 600 }}>{m.trend}</span>}
             </div>
-            <div className={`text-xl font-bold ${color}`}>{value}</div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", marginTop: "3px" }}>{m.sub}</div>
           </div>
         ))}
       </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {/* Main grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 260px", minHeight: "calc(100vh - 240px)" }}>
 
-        {/* 1. Risk Gauge */}
-        <ErrorBoundary>
-          <div className="card">
-            <h3 className="font-bold text-brand-navy mb-4">Composite Risk Score</h3>
-            <RiskGauge score={score.overall} rating={score.riskRating} />
+        {/* LEFT: Portfolio */}
+        <div style={{ borderRight: "1px solid #1E2C3D", display: "flex", flexDirection: "column" }}>
+          <div className="intel-header">
+            <Globe size={11} style={{ color: "#4DA3FF" }} />
+            PORTFOLIO CLIMATE EXPOSURE
+            <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A" }}>{PORTFOLIO_COMPANIES.length} ENTITIES</span>
           </div>
-        </ErrorBoundary>
 
-        {/* 2. Risk Radar */}
-        <ErrorBoundary>
-          <div className="card md:col-span-1">
-            <h3 className="font-bold text-brand-navy mb-2">Risk Dimensions Radar</h3>
-            <p className="text-xs text-gray-400 mb-2">Company vs. Sector Average</p>
-            <RiskRadar score={score} />
+          <div style={{ display: "flex", borderBottom: "1px solid #1E2C3D", background: "#0F1722" }}>
+            {(["overview", "physical", "transition", "regulatory"] as const).map(tab => (
+              <button key={tab} onClick={() => setActiveTab(tab)} style={{ padding: "6px 12px", fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: activeTab === tab ? "#4DA3FF" : "#3D506A", borderBottom: activeTab === tab ? "2px solid #4DA3FF" : "2px solid transparent", background: "transparent", cursor: "pointer" }}>
+                {tab}
+              </button>
+            ))}
           </div>
-        </ErrorBoundary>
 
-        {/* 3. Temperature Timeline */}
-        <ErrorBoundary>
-          <div className="card">
-            <h3 className="font-bold text-brand-navy mb-2">Temperature Timeline & Projections</h3>
-            <p className="text-xs text-gray-400 mb-2">Historical + 3 scenario paths · {form.companyProfile.country}</p>
-            {tempLoading ? (
-              <SkeletonChart />
-            ) : (
-              <TemperatureTimeline data={tempData ?? { time: [], temperature2m: [] }} />
-            )}
+          <div style={{ overflowY: "auto" }}>
+            <table className="intel-table" style={{ width: "100%" }}>
+              <thead>
+                <tr>
+                  <th>ENTITY</th><th>SECTOR</th><th>RATING</th><th>PHYS.</th><th>TRANS.</th><th>CL</th><th>RaR</th>
+                </tr>
+              </thead>
+              <tbody>
+                {PORTFOLIO_COMPANIES.map(co => (
+                  <tr key={co.name} style={{ cursor: "pointer" }}>
+                    <td><span style={{ color: "#DDE7F2", fontWeight: 600, fontSize: "11px" }}>{co.name}</span></td>
+                    <td><span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.08em" }}>{co.sector}</span></td>
+                    <td><RatingBadge rating={co.rating} /></td>
+                    <td><RiskBar pct={co.physical}    color={co.physical    > 70 ? "#FF5B5B" : co.physical    > 50 ? "#D8913F" : "#63C982"} /></td>
+                    <td><RiskBar pct={co.transition}  color={co.transition  > 70 ? "#FF5B5B" : co.transition  > 50 ? "#D8913F" : "#63C982"} /></td>
+                    <td><span style={{ fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 700, color: co.clScore >= 70 ? "#63C982" : co.clScore >= 50 ? "#4DA3FF" : co.clScore >= 30 ? "#D8913F" : "#FF5B5B" }}>{co.clScore}</span></td>
+                    <td><span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 600, color: parseFloat(co.rar) > 25 ? "#FF5B5B" : parseFloat(co.rar) > 12 ? "#D8913F" : "#63C982" }}>{co.rar}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </ErrorBoundary>
+        </div>
 
-        {/* 4. Emissions Trajectory */}
-        <ErrorBoundary>
-          <div className="card">
-            <h3 className="font-bold text-brand-navy mb-2">Emissions Trajectory</h3>
-            <p className="text-xs text-gray-400 mb-2">BAU vs. NDC vs. Net Zero · to {form.scenario.timeHorizon}</p>
-            <EmissionsTrajectory baseEmissions={totalEmissions || 100000} timeHorizon={form.scenario.timeHorizon} />
+        {/* CENTER: Events + Scenarios + Actions */}
+        <div style={{ borderRight: "1px solid #1E2C3D", display: "flex", flexDirection: "column" }}>
+          <div className="intel-header">
+            <AlertTriangle size={11} style={{ color: "#FF5B5B" }} />
+            ACTIVE PHYSICAL RISK EVENTS
+            <span style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: "8px", color: "#FF5B5B", fontWeight: 700 }}>
+              {PHYSICAL_EVENTS.filter(e => e.status === "ACTIVE").length} ACTIVE
+            </span>
           </div>
-        </ErrorBoundary>
 
-        {/* 5. Sector Benchmark */}
-        <ErrorBoundary>
-          <div className="card">
-            <h3 className="font-bold text-brand-navy mb-2">Carbon Intensity Benchmark</h3>
-            <p className="text-xs text-gray-400 mb-2">vs. {sector.label}</p>
-            <SectorBenchmark
-              companyScore={(form.emissions.scope1 + form.emissions.scope2) / Math.max(revenue / 1e6, 1)}
-              sectorMedian={sector.carbonIntensityBenchmark}
-              bestInClass={Math.round(sector.carbonIntensityBenchmark * 0.3)}
-            />
+          {PHYSICAL_EVENTS.map(ev => (
+            <div key={ev.id} style={{ display: "grid", gridTemplateColumns: "44px 90px 1fr 65px 75px", alignItems: "center", padding: "7px 12px", borderBottom: "1px solid #1E2C3D", gap: 8, cursor: "pointer" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#111C2B"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A" }}>{ev.id}</span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 700, letterSpacing: "0.10em", color: ev.type === "FLOOD" ? "#4DA3FF" : ev.type === "HEATWAVE" ? "#FF5B5B" : ev.type === "CYCLONE" ? "#D8913F" : "#8CA3BA" }}>{ev.type}</span>
+              <span style={{ fontSize: "11px", color: "#8CA3BA", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ev.region}</span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "#FF5B5B", fontWeight: 600 }}>{ev.impact}</span>
+              <SeverityBadge sev={ev.severity} />
+            </div>
+          ))}
+
+          <div className="intel-header">
+            <Activity size={11} style={{ color: "#4DA3FF" }} />
+            NGFS SCENARIO DELTA ANALYSIS
           </div>
-        </ErrorBoundary>
 
-        {/* 6. Carbon Budget Waterfall */}
-        <ErrorBoundary>
-          <div className="card">
-            <h3 className="font-bold text-brand-navy mb-2">Carbon Budget Analysis</h3>
-            <p className="text-xs text-gray-400 mb-2">vs. 1.5°C global carbon budget · to {form.scenario.timeHorizon}</p>
-            <CarbonWaterfall annualEmissions={totalEmissions || 100000} timeHorizon={form.scenario.timeHorizon} />
+          {SCENARIO_DELTA.map((sc, i) => (
+            <div key={i} style={{ padding: "10px 12px", borderBottom: "1px solid #1E2C3D", cursor: "pointer" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#111C2B"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", fontWeight: 700, color: sc.color }}>{sc.scenario}</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "#3D506A" }}>Stranded: <span style={{ color: sc.color, fontWeight: 700 }}>{sc.stranded}</span></span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 4 }}>
+                {[["EBITDA", sc.ebitda], ["REVENUE", sc.rev], ["CAPEX", sc.capex]].map(([l, v]) => (
+                  <div key={l} style={{ background: "#0F1722", border: "1px solid #1E2C3D", padding: "5px 8px" }}>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: "7px", color: "#3D506A", letterSpacing: "0.12em" }}>{l}</div>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: 700, color: sc.color }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <div className="intel-header">
+            <Shield size={11} style={{ color: "#63C982" }} />
+            RECOMMENDED ACTIONS
           </div>
-        </ErrorBoundary>
 
-        {/* 7. Air Quality */}
-        <ErrorBoundary>
-          <div className="card md:col-span-1">
-            <h3 className="font-bold text-brand-navy mb-2">Air Quality Monitoring</h3>
-            <p className="text-xs text-gray-400 mb-2">24-hour trend · operational location</p>
-            {aqLoading ? (
-              <SkeletonChart />
-            ) : aqData ? (
-              <AirQualityChart current={aqData} />
-            ) : (
-              <div className="text-gray-400 text-center py-8">No air quality data</div>
-            )}
+          {ACTIONS.map((a, i) => (
+            <div key={i} style={{ display: "flex", gap: 10, padding: "7px 12px", borderBottom: "1px solid #1E2C3D", alignItems: "flex-start", cursor: "pointer" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#111C2B"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "7px", fontWeight: 700, padding: "1px 5px", flexShrink: 0, color: a.priority === "P1" ? "#FF5B5B" : a.priority === "P2" ? "#D8913F" : "#4DA3FF", border: `1px solid ${a.priority === "P1" ? "#FF5B5B" : a.priority === "P2" ? "#D8913F" : "#4DA3FF"}33`, background: `${a.priority === "P1" ? "#FF5B5B" : a.priority === "P2" ? "#D8913F" : "#4DA3FF"}0D`, marginTop: "2px" }}>{a.priority}</span>
+              <span style={{ fontSize: "11px", color: "#8CA3BA", lineHeight: 1.4, flex: 1 }}>{a.label}</span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "7px", color: "#3D506A", letterSpacing: "0.10em", flexShrink: 0, marginTop: "2px" }}>{a.sector}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* RIGHT: Intelligence Panel */}
+        <div style={{ display: "flex", flexDirection: "column", borderTop: "none" }}>
+          <div className="intel-header">
+            <Zap size={11} style={{ color: "#4DA3FF" }} />
+            INTELLIGENCE SUMMARY
           </div>
-        </ErrorBoundary>
 
-        {/* 8. ESG Score Breakdown */}
-        <ErrorBoundary>
-          <div className="card">
-            <h3 className="font-bold text-brand-navy mb-2">ESG Score Breakdown</h3>
-            <p className="text-xs text-gray-400 mb-2">vs. Sector Median & Global Leaders</p>
-            <ESGScoreChart esgScore={score.esgScore} />
+          {RIGHT_PANEL.map(({ key, val, label, color }) => (
+            <div key={key} style={{ padding: "10px 14px", borderBottom: "1px solid #1E2C3D", cursor: "pointer" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#111C2B"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "3px" }}>{key}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "20px", fontWeight: 700, color }}>{val}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", marginTop: "2px" }}>{label}</div>
+            </div>
+          ))}
+
+          <div style={{ padding: "10px 14px", borderBottom: "1px solid #1E2C3D" }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 8 }}>METHODOLOGY</div>
+            {[["Model", "NGFS 2.0 + IPCC AR6"], ["Confidence", "91% (Ensemble)"], ["Horizon", "1Y / 5Y / 2050"], ["Updated", "Daily refresh"]].map(([l, v]) => (
+              <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0", borderBottom: "1px solid #1E2C3D" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "#3D506A" }}>{l}</span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "9px", color: "#62758C", fontWeight: 600 }}>{v}</span>
+              </div>
+            ))}
           </div>
-        </ErrorBoundary>
 
-        {/* 9. Disaster Exposure Map */}
-        <ErrorBoundary>
-          <div className="card">
-            <h3 className="font-bold text-brand-navy mb-2">Disaster Event Exposure</h3>
-            <p className="text-xs text-gray-400 mb-2">{form.companyProfile.country} · Recent events</p>
-            {disasterLoading ? (
-              <SkeletonChart />
-            ) : (
-              <DisasterMap disasters={disasters ?? []} country={form.companyProfile.countryCode} />
-            )}
+          <div style={{ padding: "10px 14px" }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 8 }}>QUICK ACTIONS</div>
+            {[
+              { label: "Run Stress Test",    href: "/terminal/simulation"   },
+              { label: "View Climate IDs",   href: "/climate-identity"      },
+              { label: "Generate TCFD",      href: "/report"                },
+              { label: "Supply Chain Map",   href: "/terminal/supply-chain" },
+            ].map(({ label, href }) => (
+              <a key={href} href={href} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px 0", borderBottom: "1px solid #1E2C3D", color: "#4DA3FF", fontSize: "11px", textDecoration: "none" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#7BBEFF"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "#4DA3FF"; }}>
+                {label}
+                <ArrowRight size={10} />
+              </a>
+            ))}
           </div>
-        </ErrorBoundary>
-
-        {/* 10. Financial Risk Treemap */}
-        <ErrorBoundary>
-          <div className="card xl:col-span-2">
-            <h3 className="font-bold text-brand-navy mb-2">Financial Risk Treemap</h3>
-            <p className="text-xs text-gray-400 mb-2">Value at risk by category ($)</p>
-            <FinancialRiskTreeMap riskScore={score} revenue={revenue} />
-          </div>
-        </ErrorBoundary>
-
-      </div>
-
-      {/* Data sources footer */}
-      <div className="mt-8 text-center text-xs text-gray-400">
-        Data sources: Open-Meteo · NASA POWER · OpenAQ · ReliefWeb · World Bank · UN SDG · REST Countries
+        </div>
       </div>
     </div>
   );

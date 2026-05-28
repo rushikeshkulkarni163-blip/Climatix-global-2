@@ -1,30 +1,26 @@
-import { cn } from "@/lib/utils";
-
 type Level = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "MINIMAL";
 
-const COLORS: Record<Level, string> = {
-  CRITICAL: "bg-red-50 text-red-700 border-red-200",
-  HIGH:     "bg-orange-50 text-orange-700 border-orange-200",
-  MEDIUM:   "bg-amber-50 text-amber-700 border-amber-200",
-  LOW:      "bg-blue-50 text-blue-700 border-blue-200",
-  MINIMAL:  "bg-emerald-50 text-emerald-700 border-emerald-200",
-};
-
-const DOTS: Record<Level, string> = {
-  CRITICAL: "bg-red-500",
-  HIGH:     "bg-orange-500",
-  MEDIUM:   "bg-amber-500",
-  LOW:      "bg-blue-500",
-  MINIMAL:  "bg-emerald-500",
+const STYLE: Record<Level, { color: string; bg: string; border: string }> = {
+  CRITICAL: { color: "#FF5B5B", bg: "rgba(255,91,91,0.1)",   border: "rgba(255,91,91,0.25)"   },
+  HIGH:     { color: "#D8913F", bg: "rgba(216,145,63,0.1)",  border: "rgba(216,145,63,0.25)"  },
+  MEDIUM:   { color: "#C9A227", bg: "rgba(201,162,39,0.1)",  border: "rgba(201,162,39,0.25)"  },
+  LOW:      { color: "#4DA3FF", bg: "rgba(77,163,255,0.1)",  border: "rgba(77,163,255,0.25)"  },
+  MINIMAL:  { color: "#63C982", bg: "rgba(99,201,130,0.1)",  border: "rgba(99,201,130,0.25)"  },
 };
 
 export default function RiskBadgeT({ level }: { level: Level }) {
+  const s = STYLE[level];
   return (
-    <span className={cn(
-      "inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest border",
-      COLORS[level]
-    )}>
-      <span className={cn("w-1.5 h-1.5 rounded-full", DOTS[level])} />
+    <span
+      style={{
+        display: "inline-flex", alignItems: "center", gap: 5,
+        padding: "2px 7px",
+        fontFamily: "var(--font-mono)", fontSize: "8px", fontWeight: 700,
+        letterSpacing: "0.14em", textTransform: "uppercase",
+        color: s.color, background: s.bg, border: `1px solid ${s.border}`,
+      }}
+    >
+      <span style={{ width: 5, height: 5, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
       {level}
     </span>
   );
