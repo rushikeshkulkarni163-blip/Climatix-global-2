@@ -9,6 +9,7 @@ export interface StoredUser extends BaseRecord {
   email: string;
   name: string;
   passwordHash: string;
+  salt: string;
   role: UserRole;
   plan: "free" | "professional" | "enterprise";
   organization?: string;
@@ -16,54 +17,51 @@ export interface StoredUser extends BaseRecord {
 }
 
 const COLLECTION = "users";
+const SCRYPT_N = 16384;
+const SCRYPT_R = 8;
+const SCRYPT_P = 1;
+const KEY_LEN = 64;
 
-function hashPassword(password: string): string {
-  return crypto
-    .createHash("sha256")
-    .update(password + "climactix_salt_v1")
-    .digest("hex");
+function hashPassword(password: string, salt: string): string {
+  // scrypt (OWASP recommended) with per-user random salt
+  return crypto.scryptSync(password, salt, KEY_LEN, { N: SCRYPT_N, r: SCRYPT_R, p: SCRYPT_P }).toString("hex");
+}
+
+function generateSalt(): string {
+  return crypto.randomBytes(32).toString("hex");
 }
 
 // ── Seed demo accounts on first run ──────────────────────────────────────────
+// Seed passwords read from env — never stored in source code
 
 function seedIfEmpty() {
   if (findAll<StoredUser>(COLLECTION).length > 0) return;
 
-  const now = "2024-01-01T00:00:00.000Z";
-  const seeds: Omit<StoredUser, "updatedAt">[] = [
-    {
-      id: crypto.randomUUID(),
-      email: "admin@climactixglobal.com",
-      name: "Climactix Admin",
-      passwordHash: hashPassword("Climactix2024!"),
-      role: "admin",
-      plan: "enterprise",
-      organization: "Climactix Global",
-      createdAt: now,
-    },
-    {
-      id: crypto.randomUUID(),
-      email: "analyst@climactixglobal.com",
-      name: "Climate Analyst",
-      passwordHash: hashPassword("Analyst2024!"),
-      role: "analyst",
-      plan: "professional",
-      organization: "Climactix Global",
-      createdAt: now,
-    },
-    {
-      id: crypto.randomUUID(),
-      email: "demo@climactixglobal.com",
-      name: "Demo User",
-      passwordHash: hashPassword("Demo2024!"),
-      role: "viewer",
-      plan: "free",
-      createdAt: now,
-    },
+  const adminPw   = process.env.SEED_ADMIN_PASSWORD;
+  const analystPw = process.env.SEED_ANALYST_PASSWORD;
+  const demoPw    = process.env.SEED_DEMO_PASSWORD;
+
+  if (!adminPw || !analystPw || !demoPw) {
+    console.warn("[auth] Seed passwords not set — skipping demo account creation. Set SEED_ADMIN_PASSWORD, SEED_ANALYST_PASSWORD, SEED_DEMO_PASSWORD.");
+    return;
+  }
+
+  const now = new Date().toISOString();
+  const rawSeeds = [
+    { email: "admin@climactixglobal.com",   name: "Climactix Admin", role: "admin"   as UserRole, plan: "enterprise"   as const, organization: "Climactix Global", pw: adminPw },
+    { email: "analyst@climactixglobal.com", name: "Climate Analyst", role: "analyst" as UserRole, plan: "professional" as const, organization: "Climactix Global", pw: analystPw },
+    { email: "demo@climactixglobal.com",    name: "Demo User",       role: "viewer"  as UserRole, plan: "free"         as const,                                   pw: demoPw },
   ];
 
-  for (const seed of seeds) {
-    insert<StoredUser>(COLLECTION, seed);
+  for (const s of rawSeeds) {
+    const salt = generateSalt();
+    insert<StoredUser>(COLLECTION, {
+      id: crypto.randomUUID(), createdAt: now,
+      email: s.email, name: s.name, role: s.role, plan: s.plan,
+      organization: s.organization,
+      salt,
+      passwordHash: hashPassword(s.pw, salt),
+    });
   }
 }
 
@@ -88,7 +86,11 @@ export function findUserById(id: string): StoredUser | null {
 }
 
 export function verifyPassword(stored: StoredUser, password: string): boolean {
-  return stored.passwordHash === hashPassword(password);
+  if (!stored.salt) return false;
+  return crypto.timingSafeEqual(
+    Buffer.from(stored.passwordHash, "hex"),
+    Buffer.from(hashPassword(password, stored.salt), "hex")
+  );
 }
 
 export function touchLastLogin(id: string): void {
@@ -110,10 +112,12 @@ export function createUser(payload: {
   if (payload.password.length < 8) {
     return { error: "Password must be at least 8 characters" };
   }
+  const salt = generateSalt();
   return insert<StoredUser>(COLLECTION, {
     email,
     name: payload.name,
-    passwordHash: hashPassword(payload.password),
+    salt,
+    passwordHash: hashPassword(payload.password, salt),
     role: payload.role ?? "viewer",
     plan: "free",
     organization: payload.organization,

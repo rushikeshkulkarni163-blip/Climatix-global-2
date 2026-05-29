@@ -279,11 +279,7 @@
         <div class="alert error"   id="siError"></div>
         <div class="alert success" id="siSuccess"></div>
 
-        <div style="background:rgba(99,220,175,0.06);border:1px solid rgba(99,220,175,0.18);border-radius:6px;padding:9px 12px;margin-bottom:14px;font-size:11.5px;color:#8a94a8;line-height:1.6;">
-          <strong style="color:#63dcaf;">Demo:</strong> demo@climactix.com / demo123
-          &nbsp;·&nbsp;
-          <span onclick="document.getElementById('siEmail').value='demo@climactix.com';document.getElementById('siPassword').value='demo123';" style="color:#63dcaf;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;">Auto-fill →</span>
-        </div>
+        <!-- Demo access banner removed — credentials managed via CX_DEMO_CONFIG -->
 
         <form id="signInForm" novalidate>
           <div class="field">
@@ -388,22 +384,28 @@
     }));
   }
 
-  function localSignUp({ fullName, email, companyName, password }) {
+  async function _hashCommPw(password) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password + '_cx_comm_v2'));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function localSignUp({ fullName, email, companyName, password }) {
     const users = _localUsers();
     if (users.find(u => u.email === email.toLowerCase()))
       throw { code: 'email-in-use' };
     const user = {
       id: 'local_' + Date.now(), full_name: fullName,
       email: email.toLowerCase(), company_name: companyName || '',
-      role: 'user', tier: 'free', pw: btoa(password),
+      role: 'user', tier: 'free', pw: await _hashCommPw(password),
     };
     users.push(user);
     localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
     return user;
   }
 
-  function localSignIn({ email, password }) {
-    const user = _localUsers().find(u => u.email === email.toLowerCase() && u.pw === btoa(password));
+  async function localSignIn({ email, password }) {
+    const pw = await _hashCommPw(password);
+    const user = _localUsers().find(u => u.email === email.toLowerCase() && u.pw === pw);
     if (!user) throw { code: 'invalid-credentials', message: 'Invalid email or password.' };
     return user;
   }

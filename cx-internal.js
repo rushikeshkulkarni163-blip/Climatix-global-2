@@ -486,15 +486,21 @@
   function generateReviewID(){ const c=_getCounters(); c.review++; _saveCounters(c); return `CX-REV-${String(c.review).padStart(7,'0')}`; }
   function _genToken(){ try{return Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b=>b.toString(16).padStart(2,'0')).join('');}catch{return Math.random().toString(36).repeat(3).slice(2,66);} }
 
+  // SHA-256 via SubtleCrypto — replaces btoa which is encoding, not hashing
+  async function _hashCXI(password) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password + '_cx_int_v2'));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   // ── Analyst user management
-  function createAnalyst(data){
+  async function createAnalyst(data){
     const analysts = JSON.parse(localStorage.getItem(CXI.ANALYSTS)||'[]');
     if(analysts.find(a=>a.email===data.email)) return {error:'Email already registered'};
     const id = generateAnalystID();
     const analyst = {
       id, email:data.email, name:data.name,
       role:data.role||'climate_analyst',
-      passwordHash: btoa(data.password+'_cx_int_salt'),
+      passwordHash: await _hashCXI(data.password),
       department:data.department||'Climate Intelligence',
       specialization:data.specialization||null,
       status:'active', createdAt:new Date().toISOString(), lastLogin:null,
@@ -507,10 +513,10 @@
 
   function getAnalystByEmail(email){ return (JSON.parse(localStorage.getItem(CXI.ANALYSTS)||'[]')).find(a=>a.email===email)||null; }
 
-  function authenticateAnalyst(email, password){
+  async function authenticateAnalyst(email, password){
     const analyst = getAnalystByEmail(email);
     if(!analyst) return {error:'No analyst account found for this email'};
-    if(analyst.passwordHash !== btoa(password+'_cx_int_salt')) return {error:'Incorrect password'};
+    if(analyst.passwordHash !== await _hashCXI(password)) return {error:'Incorrect password'};
     if(analyst.status!=='active') return {error:'Account suspended'};
     const analysts = JSON.parse(localStorage.getItem(CXI.ANALYSTS)||'[]');
     const i = analysts.findIndex(a=>a.id===analyst.id);
@@ -615,13 +621,14 @@
   function getReport(id){ return (JSON.parse(localStorage.getItem(CXI.REPORTS)||'[]')).find(r=>r.reportId===id)||null; }
   function getCompanyReports(companyId){ return (JSON.parse(localStorage.getItem(CXI.REPORTS)||'[]')).filter(r=>r.companyId===companyId); }
 
-  // ── Demo data seeding
-  function initInternalDemo(){
+  // ── Demo data seeding — password driven by window.CX_DEMO_CONFIG to keep credentials out of source
+  async function initInternalDemo(){
     if(localStorage.getItem('cx_int_demo_seeded')) return;
-    // Demo analyst
-    createAnalyst({name:'Alexandra Chen',email:'analyst@climactix.global',password:'demo123',role:'climate_analyst',department:'Climate Intelligence',specialization:'Energy & Industrials'});
-    createAnalyst({name:'James Okafor',email:'risk@climactix.global',password:'demo123',role:'financial_risk_analyst',department:'Financial Risk',specialization:'Banking & Finance'});
-    createAnalyst({name:'Sarah Mitchell',email:'admin@climactix.global',password:'demo123',role:'super_admin',department:'Platform Governance'});
+    const cfg = window.CX_DEMO_CONFIG;
+    if(!cfg || !cfg.enabled || !cfg.password) return;
+    await createAnalyst({name:'Alexandra Chen',email:'analyst@climactix.global',password:cfg.password,role:'climate_analyst',department:'Climate Intelligence',specialization:'Energy & Industrials'});
+    await createAnalyst({name:'James Okafor',email:'risk@climactix.global',password:cfg.password,role:'financial_risk_analyst',department:'Financial Risk',specialization:'Banking & Finance'});
+    await createAnalyst({name:'Sarah Mitchell',email:'admin@climactix.global',password:cfg.password,role:'super_admin',department:'Platform Governance'});
     // Create review queue entries for any existing submitted assessments
     if(window.ENTERPRISE){
       const companies=window.ENTERPRISE.listCompanies();

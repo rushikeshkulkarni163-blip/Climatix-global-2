@@ -35,6 +35,8 @@ from pydantic import BaseModel
 
 load_dotenv()
 
+from middleware.security import SecurityHeadersMiddleware, RateLimitMiddleware, validate_secrets_on_startup
+
 from services.extractor import extract_text
 from services.ai_engine import generate_all_narratives
 from services.scorer import calculate_scores
@@ -58,7 +60,10 @@ _SESSION_TTL  = 8 * 3600  # 8 hours
 
 
 def _admin_secret() -> str:
-    return os.getenv("ADMIN_SECRET", "cx_admin_hmac_secret_change_in_production")
+    secret = os.getenv("ADMIN_SECRET")
+    if not secret:
+        raise RuntimeError("ADMIN_SECRET environment variable is not set")
+    return secret
 
 
 def _make_token() -> str:
@@ -91,7 +96,10 @@ _ANALYST_COOKIE = "cx_analyst_session"
 
 
 def _analyst_secret() -> str:
-    return os.getenv("ANALYST_SECRET", "cx_analyst_hmac_secret_change_in_production")
+    secret = os.getenv("ANALYST_SECRET")
+    if not secret:
+        raise RuntimeError("ANALYST_SECRET environment variable is not set")
+    return secret
 
 
 def _make_analyst_token() -> str:
@@ -119,26 +127,41 @@ def _is_analyst(request: Request) -> bool:
 
 # ── App init ──────────────────────────────────────────────────────────────────
 
+is_production = os.getenv("APP_ENV", "development") == "production"
+
 app = FastAPI(
     title="Climactix AI API",
     description="ESG Intelligence Engine — powered by Claude · 9 AI modules",
     version="2.0.0",
+    docs_url="/docs" if not is_production else None,
+    redoc_url="/redoc" if not is_production else None,
+    openapi_url="/openapi.json" if not is_production else None,
 )
 
+@app.on_event("startup")
+async def startup_checks():
+    if is_production:
+        validate_secrets_on_startup()
+
+app.add_middleware(SecurityHeadersMiddleware, enable_hsts=is_production)
+app.add_middleware(RateLimitMiddleware, default_limit=120, window_seconds=60, auth_limit=10, auth_window=60)
+
 # ── CORS ──────────────────────────────────────────────────────────────────────
-# Credentials (cookies) require explicit origins — cannot use wildcard.
-# Allow any localhost:PORT for dev; production origins set via CORS_ORIGINS env.
 _env_origins = os.getenv("CORS_ORIGINS", "").strip()
 _explicit_origins = [o.strip() for o in _env_origins.split(",") if o.strip()] if _env_origins else []
+_dev_fallback = [] if is_production else [
+    "http://localhost:3000", "http://localhost:8080",
+    "http://localhost:5500", "http://127.0.0.1:5500",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_explicit_origins or ["http://localhost:3000", "http://localhost:8080", "http://localhost:5500", "http://127.0.0.1:5500"],
-    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
+    allow_origins=_explicit_origins or _dev_fallback,
+    allow_origin_regex=None if is_production else r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["Set-Cookie"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+    expose_headers=["X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset"],
 )
 
 # ── Auth + MFA + API key routers ──────────────────────────────────────────────

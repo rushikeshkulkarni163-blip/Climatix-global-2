@@ -207,18 +207,29 @@ function _saveLocalUsers(users) {
   localStorage.setItem(_LOCAL_USERS_KEY, JSON.stringify(users));
 }
 
-// Pre-seed demo accounts so the platform works immediately on first open
-function _ensureDemoUsers() {
+// SHA-256 via SubtleCrypto — replaces btoa which is encoding, not hashing
+async function _hashPw(password) {
+  const buf = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(password + 'cx_local_v2')
+  );
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Demo accounts — password loaded from window.CX_DEMO_CONFIG to keep credentials out of source
+async function _ensureDemoUsers() {
+  const cfg = window.CX_DEMO_CONFIG;
+  if (!cfg || !cfg.enabled || !cfg.password) return;
   const users = _getLocalUsers();
   const seeds = [
-    { id:'demo_admin',   full_name:'Demo Admin',    email:'admin@climactix.com',  company_name:'Climactix Global',  role:'admin', tier:'pro',  pw:btoa('demo123') },
-    { id:'demo_user',    full_name:'Demo User',      email:'demo@climactix.com',   company_name:'Acme Corp',         role:'user',  tier:'free', pw:btoa('demo123') },
-    { id:'demo_analyst', full_name:'Demo Analyst',   email:'analyst@climactix.com',company_name:'Climactix Global',  role:'analyst',tier:'pro', pw:btoa('demo123') },
+    { id:'demo_admin',   full_name:'Demo Admin',   email:'admin@climactix.com',  company_name:'Climactix Global', role:'admin',  tier:'pro'  },
+    { id:'demo_user',    full_name:'Demo User',     email:'demo@climactix.com',   company_name:'Acme Corp',        role:'user',   tier:'free' },
+    { id:'demo_analyst', full_name:'Demo Analyst',  email:'analyst@climactix.com',company_name:'Climactix Global', role:'analyst',tier:'pro'  },
   ];
   let changed = false;
   for (const seed of seeds) {
     if (!users.find(u => u.email === seed.email)) {
-      users.push(seed);
+      users.push({ ...seed, pw: await _hashPw(cfg.password) });
       changed = true;
     }
   }
@@ -226,7 +237,7 @@ function _ensureDemoUsers() {
 }
 
 async function _localSignUp({ fullName, email, companyName, password }) {
-  _ensureDemoUsers();
+  await _ensureDemoUsers();
   const users = _getLocalUsers();
   if (users.find(u => u.email === email.toLowerCase()))
     throw { code: 'email-in-use', message: 'An account with this email already exists.' };
@@ -236,7 +247,7 @@ async function _localSignUp({ fullName, email, companyName, password }) {
     email: email.toLowerCase(),
     company_name: companyName || '',
     role: 'user', tier: 'free',
-    pw: btoa(password),
+    pw: await _hashPw(password),
   };
   users.push(user);
   _saveLocalUsers(users);
@@ -244,7 +255,7 @@ async function _localSignUp({ fullName, email, companyName, password }) {
 }
 
 async function _localVerifyEmail(email, _token) {
-  _ensureDemoUsers();
+  await _ensureDemoUsers();
   const user = _getLocalUsers().find(u => u.email === email.toLowerCase());
   if (!user) throw { code: 'not-found', message: 'Account not found.' };
   _cache(user, false);
@@ -252,9 +263,10 @@ async function _localVerifyEmail(email, _token) {
 }
 
 async function _localSignIn({ email, password, remember }) {
-  _ensureDemoUsers();
+  await _ensureDemoUsers();
+  const pw = await _hashPw(password);
   const user = _getLocalUsers().find(
-    u => u.email === email.toLowerCase() && u.pw === btoa(password)
+    u => u.email === email.toLowerCase() && u.pw === pw
   );
   if (!user) throw { code: 'invalid-credentials', message: 'Invalid email or password.' };
   _cache(user, remember);
@@ -266,18 +278,18 @@ async function _localSignOut() {
 }
 
 async function _localForgotPassword(email) {
-  _ensureDemoUsers();
+  await _ensureDemoUsers();
   const user = _getLocalUsers().find(u => u.email === email.toLowerCase());
   if (!user) throw { code: 'not-found', message: 'No account found with this email.' };
   return { token: 'local_reset_' + Date.now(), email: email.toLowerCase() };
 }
 
 async function _localResetPassword(email, _token, newPassword) {
-  _ensureDemoUsers();
+  await _ensureDemoUsers();
   const users = _getLocalUsers();
   const i = users.findIndex(u => u.email === email.toLowerCase());
   if (i < 0) throw { code: 'not-found', message: 'Account not found.' };
-  users[i].pw = btoa(newPassword);
+  users[i].pw = await _hashPw(newPassword);
   _saveLocalUsers(users);
   _cache(users[i], false);
   return users[i];

@@ -574,14 +574,20 @@
     return String(Math.floor(100000 + Math.random() * 900000));
   }
 
+  // SHA-256 via SubtleCrypto — replaces btoa which is encoding, not hashing
+  async function _hashEnt(password) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password + '_cx_ent_v2'));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   // ── User operations
-  function createUser(data) {
+  async function createUser(data) {
     const users = JSON.parse(localStorage.getItem(EX.USERS) || '[]');
     if (users.find(u => u.email === data.email)) return { error: 'Email already registered' };
     const id = generateUserID();
     const user = {
       id, email: data.email,
-      passwordHash: btoa(data.password + '_cx_salt'),
+      passwordHash: await _hashEnt(data.password),
       name: data.name || '',
       createdAt: new Date().toISOString(),
       lastLogin: null,
@@ -598,10 +604,10 @@
     return users.find(u => u.email === email) || null;
   }
 
-  function authenticateUser(email, password) {
+  async function authenticateUser(email, password) {
     const user = getUserByEmail(email);
     if (!user) return { error: 'No account found for this email address' };
-    const hash = btoa(password + '_cx_salt');
+    const hash = await _hashEnt(password);
     if (user.passwordHash !== hash) return { error: 'Incorrect password' };
     if (user.status !== 'active') return { error: 'Account suspended — contact support' };
     const users = JSON.parse(localStorage.getItem(EX.USERS) || '[]');
@@ -780,11 +786,11 @@
   }
 
   // ── Demo data initialization
-  function initDemoData() {
+  async function initDemoData() {
     if (localStorage.getItem('cx_ent_demo_seeded')) return;
-
-    // Demo user
-    const demoUser = createUser({ email:'demo@climactix.com', password:'demo123', name:'Demo User' });
+    const cfg = window.CX_DEMO_CONFIG;
+    if (!cfg || !cfg.enabled || !cfg.password) return;
+    const demoUser = await createUser({ email:'demo@climactix.com', password:cfg.password, name:'Demo User' });
 
     // Demo company: ABC Logistics Pvt Ltd
     const demoCompany = createCompany({

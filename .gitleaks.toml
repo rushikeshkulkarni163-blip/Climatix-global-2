@@ -1,0 +1,49 @@
+# Gitleaks configuration for Climactix Global
+title = "Climactix Global — Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "climactix-anthropic-key"
+description = "Anthropic API key"
+regex = '''sk-ant-api[0-9]{2}-[a-zA-Z0-9\-_]{93}AA'''
+tags = ["key", "anthropic", "critical"]
+
+[[rules]]
+id = "climactix-openai-key"
+description = "OpenAI API key"
+regex = '''sk-proj-[a-zA-Z0-9\-_]{20,}T3BlbkFJ[a-zA-Z0-9\-_]{20,}'''
+tags = ["key", "openai", "critical"]
+
+[[rules]]
+id = "climactix-jwt-weak"
+description = "Weak/placeholder JWT secret"
+regex = '''JWT_SECRET\s*=\s*['"](climactix|replace|change|your|dev-secret|placeholder)'''
+tags = ["secret", "jwt", "high"]
+[rules.allowlist]
+description = "Allow in example files"
+paths = ['''\.example$''', '''\.env\.example$''', '''CLAUDE\.md$''']
+
+[[rules]]
+id = "climactix-default-password"
+description = "Default/weak password patterns"
+regex = '''(ADMIN|ANALYST|DB|NEO4J)_PASSWORD\s*=\s*['"](climactix|admin|analyst|demo|password|test|dev)[0-9]{0,4}['"]'''
+tags = ["secret", "password", "high"]
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''\.env\.example$''',
+  '''\.env\.prod\.example$''',
+  '''SECURITY\.md$''',
+  '''CLAUDE\.md$''',
+  '''\.pre-commit-config\.yaml$''',
+  '''\.secrets\.baseline$''',
+]
+regexes = [
+  '''REPLACE_WITH_''',
+  '''your_.*_here''',
+  '''sk-ant\.\.\.$''',
+  '''sk-proj-\.\.\.$''',
+]
