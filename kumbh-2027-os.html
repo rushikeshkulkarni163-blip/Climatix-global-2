@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KUMBH 2027 — Climate Intelligence OS | Climactix Global</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:        #000A18;
+  --bg-pure:   #00060F;
+  --surface:   #000F24;
+  --surface-2: #001430;
+  --surface-3: #001C3E;
+  --surface-4: #00254A;
+  --border:    #0E2A48;
+  --border-2:  #071E38;
+  --glow:      #00B4FF;
+  --glow-dim:  rgba(0,180,255,0.12);
+  --glow-mid:  rgba(0,180,255,0.25);
+  --accent:    #FF6600;
+  --accent-dim:rgba(255,102,0,0.12);
+  --accent-glow:rgba(255,102,0,0.3);
+  --amber-fg:  #000000;
+  --green:     #00FF88;
+  --green-dim: rgba(0,255,136,0.1);
+  --yellow:    #FFB300;
+  --yellow-dim:rgba(255,179,0,0.1);
+  --red:       #FF3333;
+  --red-dim:   rgba(255,51,51,0.1);
+  --river:     #0055DD;
+  --river-light:#4DAAFF;
+  --solar:     #FFD600;
+  --text:      #D4EEFF;
+  --text-2:    #7AAEC8;
+  --text-3:    #3A6A8A;
+  --text-4:    #1A3A52;
+  --t:         0.12s ease;
+  --r:         3px;
+  --font-head: 'League Spartan', sans-serif;
+  --font-data: 'Space Mono', monospace;
+  --font-sub:  'Exo 2', sans-serif;
+  --font-body: 'Exo 2', sans-serif;
+  --scan-line: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:13px;line-height:1.5;overflow:hidden}
+
+/* ── SCANLINE GLOBAL OVERLAY ── */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;background:var(--scan-line);opacity:0.4}
+
+/* ── GRID BG ── */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,180,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,255,0.03) 1px,transparent 1px);
+  background-size:40px 40px}
+
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;z-index:9999;background:#000810;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.ld-logo{font-family:var(--font-head);font-size:9px;color:var(--text-3);letter-spacing:6px;text-transform:uppercase}
+.ld-emblem{width:80px;height:80px;border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;animation:spin-emblem 8s linear infinite}
+.ld-emblem::before{content:'';position:absolute;inset:6px;border:1px solid rgba(255,102,0,0.3);border-radius:50%}
+.ld-emblem::after{content:'';position:absolute;inset:14px;border:1px solid rgba(255,102,0,0.15);border-radius:50%}
+.ld-cx{font-family:var(--font-head);font-size:14px;font-weight:900;color:var(--accent)}
+@keyframes spin-emblem{to{transform:rotate(360deg)}}
+.ld-title{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);letter-spacing:4px;text-align:center;line-height:1.3}
+.ld-title span{color:var(--accent)}
+.ld-sub{font-family:var(--font-data);font-size:10px;color:var(--text-3);letter-spacing:3px;text-transform:uppercase}
+.ld-bar{width:320px;height:2px;background:var(--surface-3);overflow:hidden}
+.ld-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--glow));width:0%;transition:width 0.3s ease}
+.ld-msg{font-family:var(--font-data);font-size:10px;color:var(--text-3);letter-spacing:1px;min-height:16px}
+.ld-coords{font-family:var(--font-data);font-size:9px;color:var(--text-4);margin-top:8px}
+
+/* ── APP SHELL ── */
+#app{display:flex;flex-direction:column;height:100vh;position:relative;z-index:1}
+
+/* ── HEADER ── */
+#hdr{height:46px;background:rgba(3,13,28,0.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:0;flex-shrink:0;position:relative;z-index:100}
+#hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--glow),var(--accent),var(--glow),transparent);opacity:0.4}
+.hdr-brand{display:flex;align-items:center;gap:10px;padding-right:16px;border-right:1px solid var(--border);margin-right:16px;flex-shrink:0}
+.hdr-logo{width:28px;height:28px;background:var(--accent);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:900;font-size:10px;color:#000;position:relative}
+.hdr-logo::after{content:'';position:absolute;inset:-3px;border:1px solid rgba(255,102,0,0.3);border-radius:2px}
+.hdr-name{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--text);letter-spacing:2px}
+.hdr-name span{color:var(--accent)}
+.hdr-tagline{font-family:var(--font-data);font-size:9px;color:var(--text-3);letter-spacing:1px;margin-top:1px}
+.hdr-mission{font-family:var(--font-data);font-size:10px;color:var(--text-3);letter-spacing:2px}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.hdr-badge{font-family:var(--font-data);font-size:9px;font-weight:700;padding:3px 8px;border-radius:2px;letter-spacing:1px;text-transform:uppercase}
+.hdr-badge.orange{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(255,102,0,0.3)}
+.hdr-badge.live{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,255,136,0.3);animation:blink 2s infinite}
+.hdr-badge.blue{background:var(--glow-dim);color:var(--glow);border:1px solid rgba(0,180,255,0.3)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+.hdr-clock{font-family:var(--font-data);font-size:11px;color:var(--text-2)}
+
+/* ── TICKER ── */
+#ticker{height:28px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;flex-shrink:0}
+.tick-lbl{flex-shrink:0;height:100%;padding:0 12px;background:var(--accent);display:flex;align-items:center;font-family:var(--font-head);font-size:8px;font-weight:700;color:#000;letter-spacing:2px}
+.tick-track{flex:1;overflow:hidden}
+.tick-inner{display:flex;white-space:nowrap;animation:ticker 80s linear infinite}
+.tick-item{display:inline-flex;align-items:center;gap:6px;padding:0 18px;border-right:1px solid var(--border);height:28px;font-family:var(--font-data);font-size:10px}
+.tick-item .tk{color:var(--text-3);font-size:9px}
+.tick-item .tv{color:var(--text);font-weight:700}
+.tk-badge{font-size:8px;padding:1px 5px;border-radius:1px;font-weight:700}
+.tk-badge.g{background:var(--green-dim);color:var(--green)}
+.tk-badge.w{background:var(--yellow-dim);color:var(--yellow)}
+.tk-badge.c{background:var(--red-dim);color:var(--red)}
+.tk-badge.i{background:var(--glow-dim);color:var(--glow)}
+.tk-badge.o{background:var(--accent-dim);color:var(--accent)}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── MOD TABS ── */
+#tabs{height:36px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:flex-end;padding:0 0 0 14px;overflow-x:auto;flex-shrink:0}
+#tabs::-webkit-scrollbar{display:none}
+.tab{height:34px;padding:0 13px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-3);font-family:var(--font-data);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:color var(--t),border-color var(--t)}
+.tab:hover{color:var(--text-2)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab .tn{color:var(--text-4);margin-right:5px;font-size:8px}
+.tab.active .tn{color:rgba(255,102,0,0.4)}
+
+/* ── CONTENT ── */
+#content{flex:1;overflow:hidden;position:relative}
+.module{display:none;height:100%;overflow:hidden}
+.module.active{display:flex;flex-direction:column}
+
+/* ── HUD PANEL ── */
+.hud{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);position:relative}
+.hud::before,.hud::after{content:'';position:absolute;width:10px;height:10px;pointer-events:none}
+.hud::before{top:-1px;left:-1px;border-top:2px solid var(--glow);border-left:2px solid var(--glow);border-radius:1px 0 0 0}
+.hud::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent);border-radius:0 0 1px 0}
+.hud:hover{border-color:rgba(0,180,255,0.3)}
+.hud-head{padding:9px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:relative}
+.hud-head::after{content:'';position:absolute;bottom:0;left:13px;right:13px;height:1px;background:linear-gradient(90deg,var(--glow),transparent);opacity:0.2}
+.hud-title{font-family:var(--font-head);font-size:9px;font-weight:700;color:var(--text-2);letter-spacing:2.5px;text-transform:uppercase}
+.hud-body{padding:12px}
+.hud-body.tight{padding:8px}
+
+/* ── KPI CARD ── */
+.kpi{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:12px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:-1px;left:-1px;width:8px;height:8px;border-top:2px solid var(--glow);border-left:2px solid var(--glow)}
+.kpi-lbl{font-family:var(--font-data);font-size:8px;color:var(--text-3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-family:var(--font-head);font-size:22px;font-weight:800;line-height:1;margin-bottom:4px}
+.kpi-val.amber{color:var(--accent);text-shadow:0 0 20px rgba(255,102,0,0.4)}
+.kpi-val.blue{color:var(--glow);text-shadow:0 0 20px rgba(0,180,255,0.4)}
+.kpi-val.green{color:var(--green);text-shadow:0 0 20px rgba(0,255,136,0.3)}
+.kpi-val.yellow{color:var(--yellow)}
+.kpi-val.red{color:var(--red)}
+.kpi-val.white{color:var(--text)}
+.kpi-sub{font-family:var(--font-data);font-size:9px;color:var(--text-3)}
+.kpi-sub b{color:var(--text-2)}
+.kpi-trend{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-data);font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;margin-top:5px}
+.kpi-trend.up{background:var(--green-dim);color:var(--green)}
+.kpi-trend.dn{background:var(--red-dim);color:var(--red)}
+.kpi-trend.wa{background:var(--yellow-dim);color:var(--yellow)}
+.kpi-trend.info{background:var(--glow-dim);color:var(--glow)}
+
+/* ── STATUS DOT ── */
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;display:inline-block}
+.dot-g{background:var(--green);box-shadow:0 0 8px var(--green)}
+.dot-y{background:var(--yellow);box-shadow:0 0 8px var(--yellow)}
+.dot-r{background:var(--red);box-shadow:0 0 8px var(--red)}
+.dot-b{background:var(--glow);box-shadow:0 0 8px var(--glow)}
+.dot-o{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.dot-pulse{animation:pulse-dot 1.5s infinite}
+@keyframes pulse-dot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:0.7}}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;font-family:var(--font-data);font-size:8px;font-weight:700;padding:2px 6px;border-radius:2px;letter-spacing:1px;text-transform:uppercase}
+.bg-g{background:var(--green-dim);color:var(--green)}
+.bg-y{background:var(--yellow-dim);color:var(--yellow)}
+.bg-r{background:var(--red-dim);color:var(--red)}
+.bg-o{background:var(--accent-dim);color:var(--accent)}
+.bg-b{background:var(--glow-dim);color:var(--glow)}
+
+/* ── BTNS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);font-family:var(--font-data);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:none;transition:all var(--t)}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:#FF8C00}
+.btn-ghost{background:transparent;color:var(--text-2);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--glow);color:var(--glow)}
+.btn-ghost.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.btn-ghost.active-blue{border-color:var(--glow);color:var(--glow);background:var(--glow-dim)}
+
+/* ── SECTION HEADER ── */
+.sec-hdr{font-family:var(--font-head);font-size:9px;font-weight:700;color:var(--text-3);letter-spacing:3px;text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec-hdr::before{content:'//';color:var(--accent);font-size:11px}
+.sec-hdr span{color:var(--glow)}
+
+/* ── ALERT ── */
+.alert-row{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--border-2)}
+.alert-row:last-child{border-bottom:none}
+.alert-cnt{}
+.alert-ttl{font-family:var(--font-data);font-size:10px;font-weight:700;color:var(--text);margin-bottom:2px}
+.alert-dsc{font-family:var(--font-data);font-size:9px;color:var(--text-3);line-height:1.5}
+.alert-ts{font-family:var(--font-data);font-size:8px;color:var(--text-4);margin-top:3px}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:2px;text-transform:uppercase;padding:7px 10px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface)}
+.tbl td{font-family:var(--font-data);font-size:10px;color:var(--text-2);padding:8px 10px;border-bottom:1px solid var(--border-2);vertical-align:middle}
+.tbl tr:hover td{background:var(--surface-2)}
+.tbl .tc-o{color:var(--accent);font-weight:700}
+.tbl .tc-g{color:var(--green);font-weight:700}
+.tbl .tc-r{color:var(--red);font-weight:700}
+.tbl .tc-y{color:var(--yellow);font-weight:700}
+.tbl .tc-b{color:var(--glow);font-weight:700}
+
+/* ── BAR ROW ── */
+.bar-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border-2)}
+.bar-row:last-child{border-bottom:none}
+.bar-lbl{font-family:var(--font-data);font-size:9px;color:var(--text-2);width:140px;flex-shrink:0}
+.bar-trk{flex:1;height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.bar-v{font-family:var(--font-data);font-size:9px;color:var(--text-2);width:45px;text-align:right}
+
+/* ── METRIC ROW ── */
+.mrow{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border-2)}
+.mrow:last-child{border-bottom:none}
+.mrow-k{font-family:var(--font-data);font-size:9px;color:var(--text-3);letter-spacing:1px}
+.mrow-v{font-family:var(--font-data);font-size:10px;font-weight:700;color:var(--text)}
+.mrow-v.o{color:var(--accent)}
+.mrow-v.g{color:var(--green)}
+.mrow-v.y{color:var(--yellow)}
+.mrow-v.b{color:var(--glow)}
+
+/* ── GAUGE ── */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:5px}
+.gauge-ring{position:relative;width:80px;height:80px}
+.gauge-ring svg{transform:rotate(-90deg)}
+.gr-bg{fill:none;stroke:var(--surface-3);stroke-width:6}
+.gr-fg{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1.2s ease}
+.gauge-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge-num{font-family:var(--font-head);font-size:16px;font-weight:800;line-height:1}
+.gauge-lbl{font-family:var(--font-data);font-size:7px;color:var(--text-3);margin-top:2px;letter-spacing:1px}
+
+/* ── MAP CONTAINERS ── */
+.map-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;position:relative}
+.map-wrap::before,.map-wrap::after{content:'';position:absolute;width:12px;height:12px;pointer-events:none;z-index:10}
+.map-wrap::before{top:-1px;left:-1px;border-top:2px solid var(--glow);border-left:2px solid var(--glow)}
+.map-wrap::after{bottom:-1px;right:-1px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+.map-hud-label{position:absolute;z-index:400;background:rgba(3,13,28,0.88);border:1px solid var(--border);padding:4px 8px;font-family:var(--font-data);font-size:9px;color:var(--text-2);pointer-events:none}
+.map-coords{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:400;background:rgba(3,13,28,0.88);border:1px solid var(--border);padding:3px 10px;font-family:var(--font-data);font-size:9px;color:var(--text-3);pointer-events:none}
+.map-legend{position:absolute;bottom:8px;left:8px;z-index:400;background:rgba(3,13,28,0.92);border:1px solid var(--border);border-radius:2px;padding:8px 10px}
+.map-legend::before{content:'';position:absolute;top:-1px;left:-1px;width:8px;height:8px;border-top:1px solid var(--glow);border-left:1px solid var(--glow)}
+.leg-title{font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.leg-item{display:flex;align-items:center;gap:6px;font-family:var(--font-data);font-size:9px;color:var(--text-2);margin-bottom:3px}
+.leg-item:last-child{margin-bottom:0}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.leg-line{width:16px;height:3px;border-radius:1px;flex-shrink:0}
+.map-mode-btns{position:absolute;top:8px;right:8px;z-index:400;display:flex;gap:4px}
+
+/* MapLibre overrides */
+.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right,.maplibregl-ctrl-top-left{z-index:300}
+.maplibregl-ctrl-attrib{display:none!important}
+.maplibregl-ctrl-zoom{border:1px solid var(--border)!important;border-radius:2px!important}
+.maplibregl-ctrl-zoom button{background:var(--surface-2)!important;color:var(--text-2)!important;border-color:var(--border)!important}
+.maplibregl-popup-content{background:var(--surface-2)!important;border:1px solid var(--border)!important;border-radius:3px!important;box-shadow:0 4px 20px rgba(0,0,0,0.8)!important;color:var(--text)!important;padding:12px!important;font-family:var(--font-data)!important;font-size:10px!important;min-width:180px}
+.maplibregl-popup-tip{border-top-color:var(--surface-2)!important}
+.maplibregl-popup-close-button{color:var(--text-3)!important;font-size:14px!important;right:6px!important;top:4px!important}
+.pop-ttl{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.pop-row{display:flex;justify-content:space-between;gap:16px;margin-bottom:4px;font-size:9px}
+.pop-row span{color:var(--text-3)}
+.pop-row b{color:var(--text-2)}
+.pop-row b.g{color:var(--green)}
+.pop-row b.y{color:var(--yellow)}
+.pop-row b.r{color:var(--red)}
+.pop-row b.o{color:var(--accent)}
+
+/* Sub tabs */
+.sub-bar{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px}
+.sub-tab{padding:7px 13px;background:transparent;border:none;border-bottom:2px solid transparent;font-family:var(--font-head);font-size:9px;font-weight:600;color:var(--text-3);letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:color var(--t),border-color var(--t)}
+.sub-tab:hover{color:var(--text-2)}
+.sub-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* Countdown */
+.cd-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;position:relative}
+.cd-box::before{content:'';position:absolute;top:-1px;left:-1px;width:8px;height:8px;border-top:1px solid var(--glow);border-left:1px solid var(--glow)}
+.cd-lbl{font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.cd-row{display:flex;justify-content:center;align-items:center;gap:5px}
+.cd-unit{display:flex;flex-direction:column;align-items:center;gap:1px}
+.cd-num{font-family:var(--font-head);font-size:20px;font-weight:900;color:var(--accent);line-height:1;text-shadow:0 0 20px rgba(255,102,0,0.5)}
+.cd-ulbl{font-family:var(--font-data);font-size:7px;color:var(--text-3);letter-spacing:1px}
+.cd-sep{font-family:var(--font-head);font-size:18px;color:var(--text-4);font-weight:300;line-height:1}
+
+/* Env metric card */
+.emc{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center;position:relative;overflow:hidden}
+.emc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.emc.amber::after{background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.emc.blue::after{background:linear-gradient(90deg,transparent,var(--glow),transparent)}
+.emc.green::after{background:linear-gradient(90deg,transparent,var(--green),transparent)}
+.emc.yellow::after{background:linear-gradient(90deg,transparent,var(--yellow),transparent)}
+.emc.red::after{background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.emc-lbl{font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.emc-val{font-family:var(--font-head);font-size:22px;font-weight:800;line-height:1;margin-bottom:3px}
+.emc-unit{font-family:var(--font-data);font-size:9px;color:var(--text-3)}
+
+/* Zone cards */
+.zone-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:10px;border-left:3px solid var(--border);cursor:pointer;transition:border-color var(--t)}
+.zone-card.crit{border-left-color:var(--red)}
+.zone-card.high{border-left-color:var(--yellow)}
+.zone-card.mod{border-left-color:var(--accent)}
+.zone-card.low{border-left-color:var(--green)}
+.zone-card:hover{border-color:var(--glow)}
+.zc-name{font-family:var(--font-head);font-size:9px;font-weight:700;color:var(--text);margin-bottom:3px;letter-spacing:1px}
+.zc-val{font-family:var(--font-head);font-size:18px;font-weight:900;line-height:1}
+.zc-cap{font-family:var(--font-data);font-size:8px;color:var(--text-3);margin-top:2px}
+.zc-bar{height:3px;background:var(--surface-3);border-radius:1px;margin-top:6px;overflow:hidden}
+.zc-fill{height:100%;border-radius:1px;transition:width 1s ease}
+
+/* Infra cards */
+.ic{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px;border-top:2px solid var(--border);position:relative}
+.ic.o{border-top-color:var(--accent)}
+.ic.b{border-top-color:var(--glow)}
+.ic.g{border-top-color:var(--green)}
+.ic.y{border-top-color:var(--solar)}
+.ic-num{font-family:var(--font-head);font-size:26px;font-weight:900;line-height:1;margin-bottom:2px}
+.ic-unit{font-family:var(--font-data);font-size:9px;color:var(--text-3);margin-bottom:8px;letter-spacing:1px}
+.ic-desc{font-size:11px;color:var(--text-2);line-height:1.5}
+.ic-status{display:flex;align-items:center;gap:6px;margin-top:8px;font-family:var(--font-data);font-size:8px;color:var(--text-3);letter-spacing:1px}
+
+/* STP detail cards */
+.stp-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px;position:relative}
+.stp-card::before{content:'';position:absolute;top:-1px;left:-1px;width:8px;height:8px;border-top:2px solid var(--glow);border-left:2px solid var(--glow)}
+.stp-name{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--glow);letter-spacing:2px;margin-bottom:8px}
+.stp-cap{font-family:var(--font-head);font-size:24px;font-weight:900;color:var(--text);line-height:1}
+.stp-unit{font-family:var(--font-data);font-size:9px;color:var(--text-3);margin-bottom:8px}
+.stp-stage{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-2);font-family:var(--font-data);font-size:9px}
+.stp-stage:last-child{border-bottom:none}
+.stp-stage-name{color:var(--text-3);width:120px;flex-shrink:0}
+.stp-stage-val{color:var(--text-2);font-weight:700}
+.stp-stage-ok{color:var(--green);font-size:8px;margin-left:auto}
+
+/* Scenario card */
+.sc-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer;transition:border-color var(--t)}
+.sc-card.active,.sc-card:hover{border-color:var(--accent)}
+.sc-title{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:1px}
+.sc-desc{font-size:11px;color:var(--text-3);line-height:1.5}
+.sc-impact{font-family:var(--font-data);font-size:9px;margin-top:6px}
+
+/* KPI table */
+.kpi-tbl-row{display:grid;grid-template-columns:200px 90px 90px 80px 1fr 80px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border-2);gap:8px}
+.kpi-tbl-row:hover{background:var(--surface-2)}
+.kpi-tbl-hdr{background:var(--surface);border-bottom:2px solid var(--border);font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:2px}
+.kpi-tbl-bar-wrap{display:flex;align-items:center;gap:6px}
+.kpi-tbl-bar{flex:1;height:3px;background:var(--surface-3);border-radius:1px;overflow:hidden}
+.kpi-tbl-fill{height:100%;border-radius:1px}
+.kpi-tbl-pct{font-family:var(--font-data);font-size:9px;color:var(--text-3);width:30px;text-align:right}
+
+/* Legacy timeline */
+.lt-wrap{position:relative;padding-left:18px}
+.lt-wrap::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1px;background:var(--border)}
+.lt-item{position:relative;margin-bottom:14px}
+.lt-dot{position:absolute;left:-15px;top:3px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--surface-2)}
+.lt-dot.done{background:var(--green)}
+.lt-dot.future{background:var(--surface-3);border-color:var(--border)}
+.lt-yr{font-family:var(--font-data);font-size:8px;color:var(--accent);letter-spacing:1px;margin-bottom:2px;text-transform:uppercase}
+.lt-title{font-family:var(--font-sub);font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.lt-desc{font-size:11px;color:var(--text-3);line-height:1.5}
+
+/* Platform hero */
+.plat-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px;text-align:center;position:relative;overflow:hidden}
+.plat-hero::before{content:'';position:absolute;top:-1px;left:-1px;width:12px;height:12px;border-top:2px solid var(--glow);border-left:2px solid var(--glow)}
+.plat-hero::after{content:'';position:absolute;bottom:-1px;right:-1px;width:12px;height:12px;border-bottom:2px solid var(--accent);border-right:2px solid var(--accent)}
+.ph-ey{font-family:var(--font-head);font-size:9px;color:var(--accent);letter-spacing:4px;text-transform:uppercase;margin-bottom:10px}
+.ph-ttl{font-family:var(--font-head);font-size:22px;font-weight:900;color:var(--text);margin-bottom:8px;line-height:1.3}
+.ph-ttl span{color:var(--accent);text-shadow:0 0 20px rgba(255,102,0,0.4)}
+.ph-desc{font-size:13px;color:var(--text-2);max-width:580px;margin:0 auto;line-height:1.7}
+
+/* Tier card */
+.tier{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px;transition:border-color var(--t)}
+.tier:hover{border-color:var(--accent)}
+.tier-badge{font-family:var(--font-head);font-size:8px;color:var(--accent);letter-spacing:2px;margin-bottom:6px}
+.tier-name{font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--text);margin-bottom:5px}
+.tier-desc{font-size:11px;color:var(--text-3);line-height:1.6;margin-bottom:10px}
+.tier-items{list-style:none}
+.tier-items li{font-family:var(--font-data);font-size:9px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--border-2);display:flex;align-items:center;gap:5px}
+.tier-items li::before{content:'→';color:var(--accent)}
+.tier-items li:last-child{border-bottom:none}
+
+/* Capability card */
+.cap-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px;transition:border-color var(--t);position:relative}
+.cap-card::before{content:'';position:absolute;top:-1px;left:-1px;width:7px;height:7px;border-top:1px solid var(--glow);border-left:1px solid var(--glow)}
+.cap-card:hover{border-color:var(--glow)}
+.cap-icon{width:34px;height:34px;background:var(--glow-dim);border:1px solid rgba(0,180,255,0.2);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px}
+.cap-title{font-family:var(--font-head);font-size:9px;font-weight:700;color:var(--text);margin-bottom:5px;letter-spacing:1px}
+.cap-desc{font-size:11px;color:var(--text-3);line-height:1.6}
+
+/* Snan card */
+.snan{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;display:flex;align-items:center;gap:10px}
+.snan-dt{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0;width:75px;line-height:1.3;text-shadow:0 0 15px rgba(255,102,0,0.4)}
+.snan-nm{font-family:var(--font-sub);font-size:12px;font-weight:600;color:var(--text)}
+.snan-sb{font-family:var(--font-data);font-size:9px;color:var(--text-3);margin-top:1px}
+.snan-cr{margin-left:auto;text-align:right}
+.snan-cr-num{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--yellow);text-shadow:0 0 10px rgba(255,179,0,0.4)}
+.snan-cr-lbl{font-family:var(--font-data);font-size:8px;color:var(--text-4)}
+
+/* Layout helpers */
+.mi{flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.mi::-webkit-scrollbar{width:3px}
+.mi::-webkit-scrollbar-thumb{background:var(--border)}
+.row{display:flex;gap:10px}
+.row>*{min-width:0}
+.flex-1{flex:1;min-width:0}
+.w25{width:25%;flex-shrink:0}
+.w30{width:30%;flex-shrink:0}
+.w35{width:35%;flex-shrink:0}
+.w40{width:40%;flex-shrink:0}
+.w60{width:60%;flex-shrink:0}
+.w280{width:280px;flex-shrink:0}
+.w300{width:300px;flex-shrink:0}
+.w320{width:320px;flex-shrink:0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chart-wrap{position:relative;width:100%}
+.scroll-y{overflow-y:auto}
+.scroll-y::-webkit-scrollbar{width:3px}
+.scroll-y::-webkit-scrollbar-thumb{background:var(--border)}
+
+/* CMD module */
+#mod-cmd .mi{flex-direction:row;overflow:hidden;padding:10px}
+#mod-cmd .mi>*{overflow:hidden;display:flex;flex-direction:column}
+
+/* env tabs */
+.env-tab{display:none}
+.env-tab.show{display:block}
+
+/* news */
+.news-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px}
+.news-src{font-family:var(--font-data);font-size:8px;color:var(--text-3);letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
+.news-hl{font-family:var(--font-sub);font-size:13px;font-weight:600;line-height:1.4;margin-bottom:4px}
+.news-hl.neg{color:var(--red)}
+.news-hl.pos{color:var(--green)}
+.news-snip{font-size:11px;color:var(--text-3);line-height:1.5}
+.news-dt{font-family:var(--font-data);font-size:8px;color:var(--text-4);margin-top:5px}
+
+/* River quality bar */
+.rq-strip{display:flex;height:10px;border-radius:2px;overflow:hidden;margin:6px 0}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="ld-logo">CLIMACTIX GLOBAL · MISSION CONTROL</div>
+  <div class="ld-emblem"><div class="ld-cx">CX</div></div>
+  <div class="ld-title">KUMBH 2027<br><span>CLIMATE INTELLIGENCE OS</span></div>
+  <div class="ld-sub">NASHIK–TRIMBAKESHWAR · SINHASTHA 2027</div>
+  <div class="ld-bar"><div class="ld-fill" id="ld-fill"></div></div>
+  <div class="ld-msg" id="ld-msg">INITIALISING SYSTEMS...</div>
+  <div class="ld-coords">20.0059°N  73.7907°E  ·  ALT 565M  ·  GODAVARI BASIN</div>
+</div>
+
+<div id="app" style="display:none">
+
+  <!-- HEADER -->
+  <div id="hdr">
+    <div class="hdr-brand">
+      <div class="hdr-logo">CX</div>
+      <div>
+        <div class="hdr-name">CLIMACTIX <span>GLOBAL</span></div>
+        <div class="hdr-tagline">CLIMATE INTELLIGENCE OPERATING SYSTEM</div>
+      </div>
+    </div>
+    <div class="hdr-mission">KUMBH MELA 2027 &nbsp;·&nbsp; NASHIK-TRIMBAKESHWAR &nbsp;·&nbsp; SINHASTHA SIMHASTHA &nbsp;·&nbsp; MAHARASHTRA</div>
+    <div class="hdr-right">
+      <div class="hdr-badge orange">GOV-GRADE</div>
+      <div class="hdr-badge live">● LIVE SIM</div>
+      <div class="hdr-badge blue">3D INTEL</div>
+      <div class="hdr-clock" id="sys-clock">--:--:--</div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div id="ticker">
+    <div class="tick-lbl">LIVE</div>
+    <div class="tick-track"><div class="tick-inner" id="tick-inner"></div></div>
+  </div>
+
+  <!-- TABS -->
+  <div id="tabs">
+    <button class="tab active" data-mod="cmd"><span class="tn">01</span>COMMAND CENTER</button>
+    <button class="tab" data-mod="twin"><span class="tn">02</span>DIGITAL TWIN</button>
+    <button class="tab" data-mod="crowd"><span class="tn">03</span>CROWD INTELLIGENCE</button>
+    <button class="tab" data-mod="env"><span class="tn">04</span>ENVIRONMENTAL SIM</button>
+    <button class="tab" data-mod="stp"><span class="tn">05</span>STP &amp; WATER</button>
+    <button class="tab" data-mod="infra"><span class="tn">06</span>INFRASTRUCTURE</button>
+    <button class="tab" data-mod="resilience"><span class="tn">07</span>CLIMATE RESILIENCE</button>
+    <button class="tab" data-mod="esg"><span class="tn">08</span>ESG KPIs</button>
+    <button class="tab" data-mod="media"><span class="tn">09</span>MEDIA NARRATIVE</button>
+    <button class="tab" data-mod="legacy"><span class="tn">10</span>NASHIK LEGACY</button>
+    <button class="tab" data-mod="climactix"><span class="tn">11</span>CLIMACTIX GLOBAL</button>
+  </div>
+
+  <div id="content">
+
+    <!-- ═══ 01 COMMAND CENTER ═══ -->
+    <div class="module active" id="mod-cmd">
+      <div class="mi" style="flex-direction:row;overflow:hidden;padding:10px;">
+
+        <!-- LEFT: MAP -->
+        <div class="w40" style="display:flex;flex-direction:column;gap:8px;">
+          <div class="sec-hdr" style="margin-bottom:4px;">NASHIK LIVE OPERATIONS MAP <span>· 3D COMMAND VIEW</span></div>
+          <div class="map-wrap flex-1">
+            <div id="map-cmd" style="height:100%;min-height:280px;"></div>
+            <div class="map-hud-label" style="top:8px;left:8px;">NASHIK NODE · 20.00°N 73.79°E</div>
+            <div class="map-hud-label" style="top:8px;right:8px;" id="cmd-density-label">PEAK DENSITY: RAMKUND 92%</div>
+            <div class="map-coords">20.0059°N &nbsp;73.7907°E &nbsp;·&nbsp; NASHIK, MAHARASHTRA &nbsp;·&nbsp; ALT 565M</div>
+            <div class="map-legend">
+              <div class="leg-title">CROWD DENSITY</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#FF3333"></div>CRITICAL &gt;80%</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#FFB300"></div>HIGH 60–80%</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#FF6600"></div>MODERATE 40–60%</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#00FF88"></div>LOW &lt;40%</div>
+              <div class="leg-item" style="margin-top:4px"><div class="leg-line" style="background:#4DAAFF"></div>GODAVARI RIVER</div>
+              <div class="leg-item"><div class="leg-line" style="background:#00FF88;opacity:0.7"></div>EVAC ROUTE</div>
+            </div>
+          </div>
+          <!-- Shahi Snan -->
+          <div class="hud">
+            <div class="hud-head"><span class="hud-title">SHAHI SNAN SCHEDULE 2027</span><span class="badge bg-o">AMRIT SNAN</span></div>
+            <div class="hud-body tight" id="snan-list" style="display:flex;flex-direction:column;gap:5px;"></div>
+          </div>
+        </div>
+
+        <!-- CENTER: KPIs -->
+        <div class="flex-1" style="display:flex;flex-direction:column;gap:8px;overflow:hidden;">
+          <div class="sec-hdr" style="margin-bottom:4px;">SUSTAINABILITY COMMAND <span>· REAL-TIME INTELLIGENCE</span></div>
+          <!-- Score banner -->
+          <div class="hud">
+            <div class="hud-body" style="padding:10px 14px;display:flex;align-items:center;gap:14px;">
+              <div class="gauge-wrap">
+                <div class="gauge-ring">
+                  <svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle class="gr-bg" cx="40" cy="40" r="32"/>
+                    <circle class="gr-fg" id="gauge-main" cx="40" cy="40" r="32" stroke="#FF6600" stroke-dasharray="201.1" stroke-dashoffset="52"/>
+                  </svg>
+                  <div class="gauge-c"><div class="gauge-num" style="color:var(--accent)">74</div><div class="gauge-lbl">SCORE</div></div>
+                </div>
+              </div>
+              <div style="flex:1">
+                <div style="font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:3px;margin-bottom:4px;">OVERALL SUSTAINABILITY RATING</div>
+                <div style="font-family:var(--font-head);font-size:20px;font-weight:900;color:var(--text)">KUMBH 2027 — <span style="color:var(--accent);text-shadow:0 0 20px rgba(255,102,0,0.5)">BBB+</span></div>
+                <div style="font-family:var(--font-data);font-size:9px;color:var(--text-3);margin-top:3px;">CLIMATE GOVERNANCE RATING · INSTITUTIONAL BENCHMARK · SIMHASTHA 2027</div>
+                <div style="display:flex;gap:6px;margin-top:8px;">
+                  <span class="badge bg-g">WASTE: A−</span><span class="badge bg-y">WATER: B+</span><span class="badge bg-y">AIR: B+</span><span class="badge bg-g">SAFETY: A</span><span class="badge bg-o">CARBON: A</span>
+                </div>
+              </div>
+              <div style="text-align:right;flex-shrink:0;">
+                <div style="font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:1px;">ACTIVE PILGRIMS</div>
+                <div style="font-family:var(--font-head);font-size:22px;font-weight:900;color:var(--yellow);text-shadow:0 0 20px rgba(255,179,0,0.4)" id="live-pilgrims">2.84M</div>
+                <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3);">BATHING PEAK DAY</div>
+                <div style="font-family:var(--font-head);font-size:9px;color:var(--accent);margin-top:4px;">SHAHI SNAN: 31 AUG</div>
+              </div>
+            </div>
+          </div>
+          <!-- KPI grid -->
+          <div class="grid-2 flex-1" style="overflow:hidden;">
+            <div class="kpi">
+              <div class="kpi-lbl">GODAVARI WATER QUALITY</div>
+              <div class="kpi-val blue" id="kv-bod">5.2 mg/L</div>
+              <div class="kpi-sub">BOD · <b>TARGET &lt;3.0 mg/L</b></div>
+              <div class="kpi-sub">WQI: <b id="kv-wqi">61</b> · DO: <b>6.4 mg/L</b> · pH: <b>7.2</b></div>
+              <span class="kpi-trend wa">▲ MODERATE — MONITORING</span>
+            </div>
+            <div class="kpi">
+              <div class="kpi-lbl">WASTE MANAGEMENT</div>
+              <div class="kpi-val green">94.2%</div>
+              <div class="kpi-sub">COLLECTION EFFICIENCY</div>
+              <div class="kpi-sub">GENERATED: <b>412 MT/DAY</b> · RECYCLED: <b>212 MT</b></div>
+              <span class="kpi-trend up">▲ ON TARGET</span>
+            </div>
+            <div class="kpi">
+              <div class="kpi-lbl">AIR QUALITY INDEX</div>
+              <div class="kpi-val green" id="kv-aqi">78</div>
+              <div class="kpi-sub">AQI · <b>SATISFACTORY</b></div>
+              <div class="kpi-sub">PM2.5: <b>42 μg/m³</b> · PM10: <b>68</b> · NO₂: <b>28</b></div>
+              <span class="kpi-trend up">▲ GOOD</span>
+            </div>
+            <div class="kpi">
+              <div class="kpi-lbl">CARBON REDUCTION</div>
+              <div class="kpi-val green">1,240</div>
+              <div class="kpi-sub">MT CO₂e SAVED VS 2015 BASELINE</div>
+              <div class="kpi-sub">RENEWABLE SHARE: <b>38%</b> · EV FLEET: <b>64%</b></div>
+              <span class="kpi-trend up">▲ +12% VS TARGET</span>
+            </div>
+            <div class="kpi">
+              <div class="kpi-lbl">STP OPERATIONAL STATUS</div>
+              <div class="kpi-val amber">87%</div>
+              <div class="kpi-sub">486 MLD CAPACITY · <b>423 MLD ACTIVE</b></div>
+              <div class="kpi-sub">NULLAHS: <b>22/22</b> · EFFLUENT BOD: <b>3.1</b></div>
+              <span class="kpi-trend up">▲ OPERATIONAL</span>
+            </div>
+            <div class="kpi">
+              <div class="kpi-lbl">CROWD SAFETY INDEX</div>
+              <div class="kpi-val amber" id="kv-safety">8.4/10</div>
+              <div class="kpi-sub">ACTIVE ZONES: <b>8</b> · ALERTS: <b>3</b></div>
+              <div class="kpi-sub">EVAC ROUTES: <b>12 CLEAR</b> · MEDICAL: <b>142</b></div>
+              <span class="kpi-trend wa">● MONITORING</span>
+            </div>
+          </div>
+          <!-- Infra bars -->
+          <div class="hud">
+            <div class="hud-head"><span class="hud-title">INFRASTRUCTURE STATUS</span></div>
+            <div class="hud-body tight" id="infra-bars"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: ALERTS -->
+        <div class="w25" style="display:flex;flex-direction:column;gap:8px;overflow:hidden;">
+          <div class="cd-box">
+            <div class="cd-lbl">NEXT SHAHI SNAN · 2 AUG 2027</div>
+            <div class="cd-row">
+              <div class="cd-unit"><div class="cd-num" id="cd-d">--</div><div class="cd-ulbl">DAYS</div></div>
+              <div class="cd-sep">:</div>
+              <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-ulbl">HRS</div></div>
+              <div class="cd-sep">:</div>
+              <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-ulbl">MIN</div></div>
+            </div>
+          </div>
+          <div class="hud flex-1" style="display:flex;flex-direction:column;overflow:hidden;">
+            <div class="hud-head"><span class="hud-title">ALERT FEED</span><span class="badge bg-r" id="alert-cnt">3 ACTIVE</span></div>
+            <div class="hud-body flex-1 scroll-y" id="alert-feed" style="padding:8px 10px;overflow-y:auto;"></div>
+          </div>
+          <div class="hud">
+            <div class="hud-head"><span class="hud-title">SYSTEM STATUS</span></div>
+            <div class="hud-body tight" id="sys-status"></div>
+          </div>
+          <div class="hud">
+            <div class="hud-head"><span class="hud-title">KUMBH 2027 SCALE</span></div>
+            <div class="hud-body tight">
+              <div class="mrow"><span class="mrow-k">TOTAL PILGRIMS</span><span class="mrow-v o">12 CRORE</span></div>
+              <div class="mrow"><span class="mrow-k">PEAK SNAN DAY</span><span class="mrow-v">2.25 CR</span></div>
+              <div class="mrow"><span class="mrow-k">TOTAL BUDGET</span><span class="mrow-v">₹25,055 CR</span></div>
+              <div class="mrow"><span class="mrow-k">DURATION</span><span class="mrow-v">21 MONTHS</span></div>
+              <div class="mrow"><span class="mrow-k">TEMP TOILETS</span><span class="mrow-v">56,000</span></div>
+              <div class="mrow"><span class="mrow-k">STP CAPACITY</span><span class="mrow-v b">486 MLD</span></div>
+              <div class="mrow"><span class="mrow-k">SEWER NETWORK</span><span class="mrow-v">211 KM</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 02 DIGITAL TWIN ═══ -->
+    <div class="module" id="mod-twin">
+      <div class="mi" style="padding:10px;overflow:hidden;">
+        <div class="sec-hdr">NASHIK-TRIMBAKESHWAR DIGITAL TWIN <span>· 3D FULL ZONE INTELLIGENCE</span></div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
+          <span style="font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:2px;margin-right:4px;">LAYERS</span>
+          <button class="btn btn-ghost active-blue" onclick="toggleLayer(this,'crowd')">CROWD DENSITY</button>
+          <button class="btn btn-ghost active-blue" onclick="toggleLayer(this,'water')">WATER QUALITY</button>
+          <button class="btn btn-ghost" onclick="toggleLayer(this,'waste')">WASTE ZONES</button>
+          <button class="btn btn-ghost active-blue" onclick="toggleLayer(this,'infra')">INFRASTRUCTURE</button>
+          <button class="btn btn-ghost" onclick="toggleLayer(this,'emergency')">EMERGENCY ROUTES</button>
+          <button class="btn btn-ghost active-blue" id="btn-ev" onclick="toggleEVRoutes(this)">EV SHUTTLES</button>
+          <button class="btn btn-ghost active-blue" id="btn-akhada" onclick="toggleAkhadas(this)">AKHADA CAMPS</button>
+          <button class="btn btn-ghost" id="btn-carbon" onclick="toggleCarbonMap(this)">CARBON ZONES</button>
+          <div style="margin-left:auto;display:flex;gap:5px;">
+            <button class="btn btn-ghost" onclick="setView('normal')">NORMAL</button>
+            <button class="btn btn-ghost" onclick="setView('peak')">PEAK DAY</button>
+            <button class="btn btn-primary" onclick="setView('snan')">SHAHI SNAN SIM</button>
+          </div>
+        </div>
+        <div class="row flex-1" style="overflow:hidden;min-height:0;">
+          <div class="flex-1 map-wrap" style="min-height:0;">
+            <div id="map-twin" style="height:100%;"></div>
+            <div class="map-hud-label" style="top:8px;left:8px;">DUAL NODE: NASHIK + TRIMBAKESHWAR · 28KM CORRIDOR</div>
+            <div class="map-mode-btns">
+              <button class="btn btn-ghost" style="font-size:8px;padding:4px 8px;" onclick="maps.twin&&maps.twin.easeTo({pitch:0,bearing:0})">TOP VIEW</button>
+              <button class="btn btn-ghost" style="font-size:8px;padding:4px 8px;" onclick="maps.twin&&maps.twin.easeTo({pitch:55,bearing:-20})">3D VIEW</button>
+            </div>
+            <div class="map-legend">
+              <div class="leg-title">NASHIK ZONE MAP</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#FF3333"></div>CRITICAL ZONE</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#FFB300"></div>HIGH DENSITY</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#FF6600"></div>MODERATE</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#00FF88"></div>CAMP/LOW</div>
+              <div class="leg-item"><div class="leg-line" style="background:#4DAAFF"></div>GODAVARI</div>
+              <div class="leg-item" style="margin-top:4px"><div class="leg-dot" style="background:#FFD700;border:2px solid #FF8C00"></div>AKHADA CAMP</div>
+              <div class="leg-item"><div class="leg-line" style="background:#00E5FF"></div>EV SHUTTLE R1</div>
+              <div class="leg-item"><div class="leg-line" style="background:#E040FB"></div>EV SHUTTLE R4</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(255,51,51,0.6)"></div>CARBON HOTSPOT</div>
+            </div>
+          </div>
+          <div class="w280 scroll-y" style="display:flex;flex-direction:column;gap:8px;">
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">ACTIVE ZONES</span></div>
+              <div class="hud-body tight" id="twin-zones" style="display:flex;flex-direction:column;gap:5px;"></div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">TRIMBAKESHWAR NODE</span></div>
+              <div class="hud-body tight">
+                <div class="mrow"><span class="mrow-k">DISTANCE FROM NASHIK</span><span class="mrow-v">28 KM</span></div>
+                <div class="mrow"><span class="mrow-k">PILGRIMS TODAY</span><span class="mrow-v y">4.2 LAKH</span></div>
+                <div class="mrow"><span class="mrow-k">KUSHAVARTA KUND</span><span class="mrow-v g">OPEN</span></div>
+                <div class="mrow"><span class="mrow-k">JYOTIRLINGA DARSHAN</span><span class="mrow-v o">LIVE</span></div>
+                <div class="mrow"><span class="mrow-k">SHAIVA AKHADAS</span><span class="mrow-v">13 ACTIVE</span></div>
+              </div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">GODAVARI CORRIDOR</span></div>
+              <div class="hud-body tight">
+                <div class="mrow"><span class="mrow-k">RIVER FLOW</span><span class="mrow-v b">142 M³/S</span></div>
+                <div class="mrow"><span class="mrow-k">GANGAPUR DAM</span><span class="mrow-v">68% CAPACITY</span></div>
+                <div class="mrow"><span class="mrow-k">ACTIVE GHATS</span><span class="mrow-v g">24 / 24</span></div>
+                <div class="mrow"><span class="mrow-k">RIVER SKIMMERS</span><span class="mrow-v g">12 ACTIVE</span></div>
+                <div class="mrow"><span class="mrow-k">POLLUTION BARRIERS</span><span class="mrow-v g">8 DEPLOYED</span></div>
+                <div class="mrow"><span class="mrow-k">FLOOD WARNING</span><span class="mrow-v y">WATCH</span></div>
+              </div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">AKHADA INTELLIGENCE</span><span class="badge" style="background:rgba(255,215,0,0.15);color:#FFD700;font-size:8px;">13 ACTIVE</span></div>
+              <div class="hud-body tight" id="akhada-panel" style="display:flex;flex-direction:column;gap:4px;"></div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">EV SHUTTLE NETWORK</span></div>
+              <div class="hud-body tight" id="ev-routes-panel"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 03 CROWD INTELLIGENCE ═══ -->
+    <div class="module" id="mod-crowd">
+      <div class="mi" style="padding:10px;overflow:hidden;">
+        <div class="sec-hdr">CROWD INTELLIGENCE ENGINE <span>· REAL-TIME DENSITY HEATMAP</span></div>
+        <div class="row flex-1" style="overflow:hidden;min-height:0;">
+          <div class="flex-1 map-wrap" style="min-height:0;position:relative;">
+            <canvas id="crowd-canvas" style="width:100%;height:100%;display:block;"></canvas>
+            <div class="map-hud-label" style="top:8px;left:8px;">NASHIK MELA ZONE · CROWD SIMULATION · REAL-TIME</div>
+            <div class="map-hud-label" style="top:8px;right:8px;" id="crowd-total">TOTAL: 2.84M ACTIVE</div>
+            <div class="map-legend">
+              <div class="leg-title">DENSITY LEVEL</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(255,51,51,0.9)"></div>CRITICAL &gt;80%</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(255,179,0,0.9)"></div>HIGH 60–80%</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(255,102,0,0.9)"></div>MODERATE 40–60%</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(0,255,136,0.9)"></div>LOW &lt;40%</div>
+            </div>
+            <div style="position:absolute;bottom:8px;right:8px;z-index:10;display:flex;gap:5px;">
+              <button class="btn btn-ghost" style="font-size:8px;padding:4px 8px;" onclick="setCrowdMode('normal')">NORMAL</button>
+              <button class="btn btn-ghost" style="font-size:8px;padding:4px 8px;" onclick="setCrowdMode('peak')">PEAK</button>
+              <button class="btn btn-primary" style="font-size:8px;padding:4px 8px;" onclick="setCrowdMode('snan')">SHAHI SNAN</button>
+            </div>
+          </div>
+          <div class="w300 scroll-y" style="display:flex;flex-direction:column;gap:8px;">
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">ZONE DENSITY</span></div>
+              <div class="hud-body tight" id="crowd-cards" style="display:flex;flex-direction:column;gap:5px;"></div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">24HR CROWD FLOW</span></div>
+              <div class="hud-body tight"><div class="chart-wrap" style="height:130px;"><canvas id="chart-crowd"></canvas></div></div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">PEAK HOUR ANALYSIS</span></div>
+              <div class="hud-body tight">
+                <div class="mrow"><span class="mrow-k">PEAK HOUR</span><span class="mrow-v o">08:00–10:00 IST</span></div>
+                <div class="mrow"><span class="mrow-k">PEAK DENSITY</span><span class="mrow-v" style="color:var(--red)">92% RAMKUND</span></div>
+                <div class="mrow"><span class="mrow-k">AVG DWELL TIME</span><span class="mrow-v">3.4 HRS</span></div>
+                <div class="mrow"><span class="mrow-k">INGRESS RATE</span><span class="mrow-v">142K/HR</span></div>
+                <div class="mrow"><span class="mrow-k">EGRESS RATE</span><span class="mrow-v">138K/HR</span></div>
+                <div class="mrow"><span class="mrow-k">BOTTLENECK RISK</span><span class="mrow-v y">GATE-C RAMP</span></div>
+                <div class="mrow"><span class="mrow-k">STAMPEDE RISK</span><span class="mrow-v g">LOW · AI MANAGED</span></div>
+                <div class="mrow"><span class="mrow-k">DRONE SURVEILLANCE</span><span class="mrow-v g">48 ACTIVE</span></div>
+                <div class="mrow"><span class="mrow-k">AI CAMERA FEEDS</span><span class="mrow-v g">1,200+ LIVE</span></div>
+              </div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">GATE MANAGEMENT</span></div>
+              <div class="hud-body tight">
+                <div class="mrow"><span class="mrow-k" style="color:var(--red)">GATE A — RAMKUND N</span><span class="mrow-v" style="color:var(--red)">RESTRICTED</span></div>
+                <div class="mrow"><span class="mrow-k" style="color:var(--yellow)">GATE B — RAMKUND S</span><span class="mrow-v y">CONTROLLED</span></div>
+                <div class="mrow"><span class="mrow-k">GATE C — PANCHAVATI</span><span class="mrow-v g">OPEN</span></div>
+                <div class="mrow"><span class="mrow-k">GATE D — TAPOVAN</span><span class="mrow-v g">OPEN</span></div>
+                <div class="mrow"><span class="mrow-k">GATE E — TRIMBAK</span><span class="mrow-v g">OPEN</span></div>
+                <div class="mrow"><span class="mrow-k">METERED ENTRY</span><span class="mrow-v o">12K BATCHES</span></div>
+              </div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">AI CROWD PREDICTION (NEXT 2HRS)</span></div>
+              <div class="hud-body tight"><div class="chart-wrap" style="height:100px;"><canvas id="chart-crowd-pred"></canvas></div></div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">EVACUATION ROUTES</span></div>
+              <div class="hud-body tight" id="evac-routes"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 04 ENVIRONMENTAL SIM ═══ -->
+    <div class="module" id="mod-env">
+      <div class="mi">
+        <div class="sec-hdr">ENVIRONMENTAL IMPACT SIMULATION <span>· NASHIK KUMBH 2027</span></div>
+        <div class="sub-bar">
+          <button class="sub-tab active" onclick="envTab(this,'waste')">WASTE SYSTEM</button>
+          <button class="sub-tab" onclick="envTab(this,'river')">RIVER QUALITY</button>
+          <button class="sub-tab" onclick="envTab(this,'air')">AIR QUALITY</button>
+          <button class="sub-tab" onclick="envTab(this,'carbon')">CARBON TRACKER</button>
+        </div>
+
+        <div id="env-waste" class="env-tab show">
+          <div class="grid-4" style="margin-bottom:10px;">
+            <div class="emc amber"><div class="emc-lbl">DAILY WASTE</div><div class="emc-val" style="color:var(--yellow)">412 MT</div><div class="emc-unit">TONNES/DAY · PEAK</div></div>
+            <div class="emc green"><div class="emc-lbl">COLLECTED</div><div class="emc-val" style="color:var(--green)">388 MT</div><div class="emc-unit">94.2% EFFICIENCY</div></div>
+            <div class="emc blue"><div class="emc-lbl">PLASTIC WASTE</div><div class="emc-val" style="color:var(--glow)">18 MT</div><div class="emc-unit">−78% VS 2015</div></div>
+            <div class="emc green"><div class="emc-lbl">RECYCLED</div><div class="emc-val" style="color:var(--green)">212 MT</div><div class="emc-unit">54.6% DIVERSION</div></div>
+          </div>
+          <div class="row">
+            <div class="flex-1 hud">
+              <div class="hud-head"><span class="hud-title">DAILY WASTE GENERATION VS COLLECTION</span></div>
+              <div class="hud-body"><div class="chart-wrap" style="height:190px;"><canvas id="chart-waste"></canvas></div></div>
+            </div>
+            <div class="w320 hud">
+              <div class="hud-head"><span class="hud-title">WASTE BREAKDOWN BY CATEGORY</span></div>
+              <div class="hud-body">
+                <div class="chart-wrap" style="height:140px;"><canvas id="chart-waste-pie"></canvas></div>
+                <div style="margin-top:10px;">
+                  <div class="bar-row"><div class="bar-lbl">FOOD WASTE</div><div class="bar-trk"><div class="bar-fill" style="width:48%;background:var(--yellow)"></div></div><div class="bar-v">48%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">FLORAL / TEMPLE</div><div class="bar-trk"><div class="bar-fill" style="width:22%;background:var(--accent)"></div></div><div class="bar-v">22%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">PLASTIC</div><div class="bar-trk"><div class="bar-fill" style="width:8%;background:var(--red)"></div></div><div class="bar-v">8%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">RECYCLABLES</div><div class="bar-trk"><div class="bar-fill" style="width:22%;background:var(--green)"></div></div><div class="bar-v">22%</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="hud" style="margin-top:8px;">
+            <div class="hud-head"><span class="hud-title">SMART COMPACTOR DEPLOYMENT BY ZONE</span></div>
+            <div class="hud-body" style="padding:0;">
+              <table class="tbl">
+                <thead><tr><th>ZONE</th><th>COMPACTORS</th><th>DAILY CAPACITY</th><th>UTILISATION</th><th>COLLECTION TRIPS</th><th>STATUS</th></tr></thead>
+                <tbody id="waste-tbl"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="env-river" class="env-tab">
+          <div class="grid-4" style="margin-bottom:10px;">
+            <div class="emc blue"><div class="emc-lbl">BOD LEVEL</div><div class="emc-val" style="color:var(--yellow)">5.2 mg/L</div><div class="emc-unit">TARGET &lt;3.0 mg/L</div></div>
+            <div class="emc green"><div class="emc-lbl">DISSOLVED OXYGEN</div><div class="emc-val" style="color:var(--green)">6.4 mg/L</div><div class="emc-unit">REQUIRED ≥6.0</div></div>
+            <div class="emc amber"><div class="emc-lbl">WATER QUALITY</div><div class="emc-val" style="color:var(--yellow)">B+</div><div class="emc-unit">WQI: 61 / 100</div></div>
+            <div class="emc green"><div class="emc-lbl">VS 2015 PEAK</div><div class="emc-val" style="color:var(--green)">−66%</div><div class="emc-unit">BOD REDUCTION</div></div>
+          </div>
+          <div class="row">
+            <div class="flex-1 hud">
+              <div class="hud-head"><span class="hud-title">GODAVARI BOD — EVENT TIMELINE</span><span class="badge bg-o">SHAHI SNAN PEAKS MARKED</span></div>
+              <div class="hud-body"><div class="chart-wrap" style="height:190px;"><canvas id="chart-bod"></canvas></div></div>
+            </div>
+            <div class="w300 hud">
+              <div class="hud-head"><span class="hud-title">MONITORING STATIONS</span></div>
+              <div class="hud-body" style="padding:0;">
+                <table class="tbl">
+                  <thead><tr><th>STATION</th><th>BOD</th><th>DO</th><th>pH</th><th>STATUS</th></tr></thead>
+                  <tbody id="river-tbl"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="hud" style="margin-top:8px;">
+            <div class="hud-head"><span class="hud-title">WATER QUALITY INDEX — STATION COMPARISON</span></div>
+            <div class="hud-body"><div class="chart-wrap" style="height:160px;"><canvas id="chart-wqi"></canvas></div></div>
+          </div>
+        </div>
+
+        <div id="env-air" class="env-tab">
+          <div class="grid-4" style="margin-bottom:10px;">
+            <div class="emc green"><div class="emc-lbl">AQI</div><div class="emc-val" style="color:var(--green)">78</div><div class="emc-unit">SATISFACTORY</div></div>
+            <div class="emc yellow"><div class="emc-lbl">PM2.5</div><div class="emc-val" style="color:var(--yellow)">42 μg/m³</div><div class="emc-unit">TARGET &lt;60</div></div>
+            <div class="emc yellow"><div class="emc-lbl">PM10</div><div class="emc-val" style="color:var(--yellow)">68 μg/m³</div><div class="emc-unit">TARGET &lt;100</div></div>
+            <div class="emc green"><div class="emc-lbl">VS BASELINE</div><div class="emc-val" style="color:var(--green)">−34%</div><div class="emc-unit">EMISSION REDUCTION</div></div>
+          </div>
+          <div class="row">
+            <div class="flex-1 hud">
+              <div class="hud-head"><span class="hud-title">AQI TREND — MELA PERIOD</span></div>
+              <div class="hud-body"><div class="chart-wrap" style="height:190px;"><canvas id="chart-aqi"></canvas></div></div>
+            </div>
+            <div class="w280 hud">
+              <div class="hud-head"><span class="hud-title">EMISSION SOURCES</span></div>
+              <div class="hud-body">
+                <div class="chart-wrap" style="height:140px;"><canvas id="chart-emit-pie"></canvas></div>
+                <div style="margin-top:8px;">
+                  <div class="bar-row"><div class="bar-lbl">VEHICLE EMISSIONS</div><div class="bar-trk"><div class="bar-fill" style="width:52%;background:var(--red)"></div></div><div class="bar-v">52%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">GENERATORS</div><div class="bar-trk"><div class="bar-fill" style="width:24%;background:var(--yellow)"></div></div><div class="bar-v">24%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">COOKING/HAWAN</div><div class="bar-trk"><div class="bar-fill" style="width:18%;background:var(--accent)"></div></div><div class="bar-v">18%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">DUST</div><div class="bar-trk"><div class="bar-fill" style="width:6%;background:var(--text-3)"></div></div><div class="bar-v">6%</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="env-carbon" class="env-tab">
+          <div class="grid-4" style="margin-bottom:10px;">
+            <div class="emc amber"><div class="emc-lbl">TOTAL FOOTPRINT</div><div class="emc-val" style="color:var(--accent)">9.1K MT</div><div class="emc-unit">CO₂e TOTAL EVENT</div></div>
+            <div class="emc green"><div class="emc-lbl">REDUCTION VS 2015</div><div class="emc-val" style="color:var(--green)">−40.1%</div><div class="emc-unit">FROM 15,200 MT</div></div>
+            <div class="emc green"><div class="emc-lbl">SOLAR GENERATED</div><div class="emc-val" style="color:var(--green)">42.1 MW</div><div class="emc-unit">84% OF 50 MW TARGET</div></div>
+            <div class="emc blue"><div class="emc-lbl">EV FLEET SHARE</div><div class="emc-val" style="color:var(--glow)">64%</div><div class="emc-unit">1,280 EV BUSES</div></div>
+          </div>
+          <div class="row" style="margin-bottom:10px;">
+            <div class="flex-1 hud">
+              <div class="hud-head"><span class="hud-title">CARBON REDUCTION TRAJECTORY</span></div>
+              <div class="hud-body"><div class="chart-wrap" style="height:180px;"><canvas id="chart-carbon"></canvas></div></div>
+            </div>
+            <div class="w280 hud">
+              <div class="hud-head"><span class="hud-title">CARBON BY SOURCE</span></div>
+              <div class="hud-body">
+                <div class="chart-wrap" style="height:130px;"><canvas id="chart-carbon-pie"></canvas></div>
+                <div style="margin-top:8px;">
+                  <div class="bar-row"><div class="bar-lbl">TRANSPORT</div><div class="bar-trk"><div class="bar-fill" style="width:58%;background:var(--yellow)"></div></div><div class="bar-v">58%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">ENERGY / POWER</div><div class="bar-trk"><div class="bar-fill" style="width:24%;background:var(--accent)"></div></div><div class="bar-v">24%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">WASTE</div><div class="bar-trk"><div class="bar-fill" style="width:12%;background:var(--text-3)"></div></div><div class="bar-v">12%</div></div>
+                  <div class="bar-row"><div class="bar-lbl">CONSTRUCTION</div><div class="bar-trk"><div class="bar-fill" style="width:6%;background:var(--glow)"></div></div><div class="bar-v">6%</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- EMISSION SCENARIOS -->
+          <div class="hud">
+            <div class="hud-head"><span class="hud-title">EMISSION SCENARIO COMPARISON</span><span class="badge bg-o">5 PATHWAYS</span></div>
+            <div class="hud-body">
+              <div class="row" style="gap:10px;margin-bottom:10px;">
+                <div class="flex-1"><div class="chart-wrap" style="height:170px;"><canvas id="chart-emission-scenarios"></canvas></div></div>
+                <div style="width:280px;display:flex;flex-direction:column;gap:6px;">
+                  <div style="font-family:var(--font-head);font-size:8px;color:var(--text-3);letter-spacing:2px;margin-bottom:4px;">SCENARIO OUTCOMES · MT CO₂e</div>
+                  <div style="background:var(--surface-2);border:1px solid var(--border);border-left:3px solid #555;padding:8px;border-radius:2px;">
+                    <div style="font-family:var(--font-data);font-size:9px;color:#888">S1: BUSINESS AS USUAL</div>
+                    <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--red)">15,200 MT</div>
+                    <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3)">No sustainability measures · 2015 pattern</div>
+                  </div>
+                  <div style="background:var(--surface-2);border:1px solid var(--border);border-left:3px solid var(--yellow);padding:8px;border-radius:2px;">
+                    <div style="font-family:var(--font-data);font-size:9px;color:#888">S2: EV FLEET ONLY</div>
+                    <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--yellow)">12,800 MT</div>
+                    <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3)">EV buses replace diesel · −16%</div>
+                  </div>
+                  <div style="background:var(--surface-2);border:1px solid var(--border);border-left:3px solid var(--accent);padding:8px;border-radius:2px;">
+                    <div style="font-family:var(--font-data);font-size:9px;color:#888">S3: EV + SOLAR</div>
+                    <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--accent)">10,400 MT</div>
+                    <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3)">EV + 50 MW solar + LED · −32%</div>
+                  </div>
+                  <div style="background:var(--surface-2);border:1px solid var(--border);border-left:3px solid var(--green);padding:8px;border-radius:2px;">
+                    <div style="font-family:var(--font-data);font-size:9px;color:#888">S4: FULL PLAN (CURRENT)</div>
+                    <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--green)">9,100 MT</div>
+                    <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3)">All measures active · −40.1%</div>
+                  </div>
+                  <div style="background:var(--surface-2);border:1px solid rgba(0,180,255,0.4);border-left:3px solid var(--glow);padding:8px;border-radius:2px;">
+                    <div style="font-family:var(--font-data);font-size:9px;color:var(--glow)">S5: CARBON POSITIVE TARGET</div>
+                    <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--glow)">7,600 MT</div>
+                    <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3)">+forest offsets + biogas · −50%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 05 STP & WATER ═══ -->
+    <div class="module" id="mod-stp">
+      <div class="mi">
+        <div class="sec-hdr">SEWAGE TREATMENT PLANT INTELLIGENCE <span>· 486 MLD SYSTEM</span></div>
+        <div class="grid-4" style="margin-bottom:10px;" id="stp-top-cards"></div>
+        <div class="row">
+          <div class="flex-1 hud">
+            <div class="hud-head"><span class="hud-title">STP TREATMENT FLOW — STAGE-BY-STAGE</span></div>
+            <div class="hud-body"><div class="chart-wrap" style="height:200px;"><canvas id="chart-stp-flow"></canvas></div></div>
+          </div>
+          <div class="w300 hud">
+            <div class="hud-head"><span class="hud-title">DAILY TREATMENT VOLUME</span></div>
+            <div class="hud-body"><div class="chart-wrap" style="height:200px;"><canvas id="chart-stp-daily"></canvas></div></div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <div class="flex-1" id="stp-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+          <div class="w300 hud">
+            <div class="hud-head"><span class="hud-title">NULLAH DIVERSION SYSTEM</span></div>
+            <div class="hud-body" style="padding:0;">
+              <table class="tbl">
+                <thead><tr><th>NULLAH</th><th>FLOW</th><th>DIVERSION</th><th>STATUS</th></tr></thead>
+                <tbody id="nullah-tbl"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="hud" style="margin-top:8px;">
+          <div class="hud-head"><span class="hud-title">EFFLUENT QUALITY — BEFORE vs AFTER TREATMENT</span></div>
+          <div class="hud-body">
+            <table class="tbl">
+              <thead><tr><th>PARAMETER</th><th>RAW SEWAGE</th><th>AFTER PRIMARY</th><th>AFTER SECONDARY</th><th>FINAL EFFLUENT</th><th>STANDARD</th><th>COMPLIANCE</th></tr></thead>
+              <tbody id="effluent-tbl"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 06 INFRASTRUCTURE ═══ -->
+    <div class="module" id="mod-infra">
+      <div class="mi" style="padding:10px;overflow:hidden;">
+        <div class="sec-hdr">SUSTAINABLE INFRASTRUCTURE ENGINE <span>· DEPLOYMENT MAP</span></div>
+        <div class="grid-4" style="margin-bottom:10px;">
+          <div class="ic o"><div class="ic-num" style="color:var(--accent)">486 MLD</div><div class="ic-unit">STP CAPACITY</div><div class="ic-desc">4 STPs online. 22 nullahs diverted. Zero untreated sewage.</div><div class="ic-status"><span class="dot dot-g dot-pulse"></span>ALL ONLINE</div></div>
+          <div class="ic b"><div class="ic-num" style="color:var(--glow)">56,000</div><div class="ic-unit">SMART TOILETS</div><div class="ic-desc">IoT-enabled sanitation units across all mela zones.</div><div class="ic-status"><span class="dot dot-g"></span>94.2% ACTIVE</div></div>
+          <div class="ic y"><div class="ic-num" style="color:var(--solar)">50 MW</div><div class="ic-unit">SOLAR CAPACITY</div><div class="ic-desc">Distributed solar + LED citywide. 42.1 MW active.</div><div class="ic-status"><span class="dot dot-y"></span>84% TARGET</div></div>
+          <div class="ic g"><div class="ic-num" style="color:var(--green)">2,000</div><div class="ic-unit">EV SHUTTLES</div><div class="ic-desc">Zero-emission corridor. Station to ghat connectivity.</div><div class="ic-status"><span class="dot dot-g"></span>1,280 ACTIVE</div></div>
+        </div>
+        <div class="row flex-1" style="overflow:hidden;min-height:0;">
+          <div class="flex-1 map-wrap">
+            <div id="map-infra" style="height:100%;"></div>
+            <div class="map-legend">
+              <div class="leg-title">INFRASTRUCTURE</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#4DAAFF"></div>STP PLANTS</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#FFD600"></div>SOLAR SITES</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#00FF88"></div>EV HUB</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#FF6600"></div>SANITATION</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#9C27B0"></div>WASTE COMPACTOR</div>
+            </div>
+          </div>
+          <div class="w300 scroll-y" style="display:flex;flex-direction:column;gap:8px;">
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">SYSTEM STATUS</span></div>
+              <div class="hud-body tight" id="infra-status"></div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">ROAD & MOBILITY</span></div>
+              <div class="hud-body tight">
+                <div class="mrow"><span class="mrow-k">RING ROAD (69 KM)</span><span class="mrow-v y">IN PROGRESS</span></div>
+                <div class="mrow"><span class="mrow-k">NASHIK–TRIMBAK 6-LANE</span><span class="mrow-v g">COMPLETE</span></div>
+                <div class="mrow"><span class="mrow-k">NATIONAL HIGHWAYS</span><span class="mrow-v y">₹2,458 CR</span></div>
+                <div class="mrow"><span class="mrow-k">EV CHARGING STATIONS</span><span class="mrow-v">142</span></div>
+                <div class="mrow"><span class="mrow-k">SMART PARKING</span><span class="mrow-v">38 LOTS</span></div>
+                <div class="mrow"><span class="mrow-k">AI TRAFFIC SIGNALS</span><span class="mrow-v g">86 JUNCTIONS</span></div>
+                <div class="mrow"><span class="mrow-k">PEDESTRIAN ZONES</span><span class="mrow-v">24 KM</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 07 CLIMATE RESILIENCE ═══ -->
+    <div class="module" id="mod-resilience">
+      <div class="mi" style="padding:10px;overflow:hidden;">
+        <div class="sec-hdr">CLIMATE RESILIENCE ENGINE <span>· RISK SIMULATION</span></div>
+        <div class="row flex-1" style="overflow:hidden;min-height:0;">
+          <div class="flex-1 map-wrap">
+            <div id="map-resilience" style="height:100%;"></div>
+            <div class="map-legend">
+              <div class="leg-title">RISK LAYERS</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(0,85,221,0.7)"></div>FLOOD RISK</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(255,87,34,0.7)"></div>HEAT STRESS</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(0,255,136,0.5)"></div>COOLING ZONE</div>
+              <div class="leg-item"><div class="leg-dot" style="background:rgba(255,51,51,0.8)"></div>HIGH RISK</div>
+            </div>
+          </div>
+          <div class="w320 scroll-y" style="display:flex;flex-direction:column;gap:8px;">
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">CLIMATE RISK SCENARIOS</span></div>
+              <div class="hud-body tight" id="risk-scenarios" style="display:flex;flex-direction:column;gap:6px;"></div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">RISK METRICS</span></div>
+              <div class="hud-body tight">
+                <div class="mrow"><span class="mrow-k">FLOOD RISK</span><span class="mrow-v y">MODERATE</span></div>
+                <div class="mrow"><span class="mrow-k">GANGAPUR DAM</span><span class="mrow-v">68%</span></div>
+                <div class="mrow"><span class="mrow-k">RAINFALL FORECAST</span><span class="mrow-v b">142 MM/WEEK</span></div>
+                <div class="mrow"><span class="mrow-k">TEMPERATURE</span><span class="mrow-v o">34°C</span></div>
+                <div class="mrow"><span class="mrow-k">HEAT INDEX</span><span class="mrow-v y">HIGH</span></div>
+                <div class="mrow"><span class="mrow-k">COOLING ZONES</span><span class="mrow-v g">28 / 30</span></div>
+                <div class="mrow"><span class="mrow-k">MEDICAL POSTS</span><span class="mrow-v g">142 ACTIVE</span></div>
+                <div class="mrow"><span class="mrow-k">DISASTER RESPONSE</span><span class="mrow-v g">STANDBY</span></div>
+              </div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">RAINFALL / FLOOD RISK</span></div>
+              <div class="hud-body tight"><div class="chart-wrap" style="height:130px;"><canvas id="chart-flood"></canvas></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 08 ESG KPIs ═══ -->
+    <div class="module" id="mod-esg">
+      <div class="mi">
+        <div class="sec-hdr">ESG &amp; SUSTAINABILITY KPI ENGINE <span>· INSTITUTIONAL REPORTING</span></div>
+        <div class="row">
+          <div class="flex-1 hud">
+            <div class="hud-head"><span class="hud-title">SUSTAINABILITY PERFORMANCE DASHBOARD</span><span class="badge bg-o">KUMBH 2027 · BBB+</span></div>
+            <div class="hud-body" style="padding:0;">
+              <div class="kpi-tbl-row kpi-tbl-hdr"><div>KPI</div><div>TARGET</div><div>CURRENT</div><div>RATING</div><div>PROGRESS</div><div>STATUS</div></div>
+              <div id="esg-rows"></div>
+            </div>
+          </div>
+          <div class="w280" style="display:flex;flex-direction:column;gap:8px;">
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">SUSTAINABILITY RADAR</span></div>
+              <div class="hud-body tight"><div class="chart-wrap" style="height:190px;"><canvas id="chart-radar"></canvas></div></div>
+            </div>
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">OVERALL RATING</span></div>
+              <div class="hud-body" style="text-align:center;padding:16px;">
+                <div style="font-family:var(--font-head);font-size:44px;font-weight:900;color:var(--accent);text-shadow:0 0 30px rgba(255,102,0,0.5)">BBB+</div>
+                <div style="font-family:var(--font-data);font-size:9px;color:var(--text-3);margin-top:4px;letter-spacing:2px">CLIMATE GOVERNANCE RATING</div>
+                <div style="font-size:11px;color:var(--text-2);margin-top:8px;line-height:1.6">Above average globally. Benchmark: Paris Olympics 2024 (A−)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hud" style="margin-top:8px;">
+          <div class="hud-head"><span class="hud-title">ZONE-LEVEL ESG PERFORMANCE</span></div>
+          <div class="hud-body" style="padding:0;">
+            <table class="tbl"><thead><tr><th>ZONE</th><th>WASTE</th><th>WATER</th><th>SAFETY</th><th>SANITATION</th><th>AIR</th><th>OVERALL</th><th>RATING</th></tr></thead><tbody id="zone-esg"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 09 MEDIA NARRATIVE ═══ -->
+    <div class="module" id="mod-media">
+      <div class="mi">
+        <div class="sec-hdr">MEDIA &amp; GLOBAL POSITIONING <span>· NARRATIVE TRANSFORMATION</span></div>
+        <div class="grid-2" style="margin-bottom:10px;">
+          <div class="hud">
+            <div class="hud-head" style="border-left:3px solid var(--red);"><span class="hud-title" style="color:var(--red)">WITHOUT SUSTAINABILITY GOVERNANCE</span></div>
+            <div class="hud-body tight" id="neg-news"></div>
+          </div>
+          <div class="hud">
+            <div class="hud-head" style="border-left:3px solid var(--green);"><span class="hud-title" style="color:var(--green)">WITH CLIMACTIX INTELLIGENCE SYSTEM</span></div>
+            <div class="hud-body tight" id="pos-news"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="flex-1 hud">
+            <div class="hud-head"><span class="hud-title">GLOBAL EVENT SUSTAINABILITY RANKING</span></div>
+            <div class="hud-body" style="padding:0;"><table class="tbl"><thead><tr><th>RANK</th><th>EVENT</th><th>YEAR</th><th>SCALE</th><th>SCORE</th><th>RATING</th></tr></thead><tbody id="ranking-tbl"></tbody></table></div>
+          </div>
+          <div class="w280 hud">
+            <div class="hud-head"><span class="hud-title">SENTIMENT SIMULATION</span></div>
+            <div class="hud-body tight">
+              <div class="chart-wrap" style="height:150px;"><canvas id="chart-sentiment"></canvas></div>
+              <div style="margin-top:10px;">
+                <div class="mrow"><span class="mrow-k">POSITIVE MENTIONS</span><span class="mrow-v g">72%</span></div>
+                <div class="mrow"><span class="mrow-k">NEUTRAL</span><span class="mrow-v">18%</span></div>
+                <div class="mrow"><span class="mrow-k">NEGATIVE</span><span class="mrow-v" style="color:var(--red)">10%</span></div>
+                <div class="mrow"><span class="mrow-k">INTL COVERAGE BOOST</span><span class="mrow-v o">+340%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 10 NASHIK LEGACY ═══ -->
+    <div class="module" id="mod-legacy">
+      <div class="mi">
+        <div class="sec-hdr">NASHIK LEGACY INFRASTRUCTURE <span>· KUMBH AS CITY ACCELERATOR</span></div>
+        <div class="hud" style="padding:20px;margin-bottom:10px;">
+          <div style="font-family:var(--font-head);font-size:8px;color:var(--accent);letter-spacing:4px;margin-bottom:8px;">STRATEGIC VISION 2027–2035</div>
+          <div style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--text);line-height:1.4;margin-bottom:8px;">Kumbh 2027 is not a temporary event.<br>It is a <span style="color:var(--accent);text-shadow:0 0 20px rgba(255,102,0,0.4)">permanent infrastructure investment</span> in Nashik's future.</div>
+          <div style="font-size:12px;color:var(--text-2);line-height:1.7;max-width:700px;">₹25,055 crore in public investment leaves behind ring roads, STPs, smart city systems, river monitoring, and sustainability governance frameworks that serve Nashik's 1.5 million residents for decades.</div>
+        </div>
+        <div class="row">
+          <div class="w320 hud"><div class="hud-head"><span class="hud-title">LEGACY TIMELINE 2027–2035</span></div><div class="hud-body"><div class="lt-wrap" id="legacy-tl"></div></div></div>
+          <div class="flex-1" style="display:flex;flex-direction:column;gap:8px;">
+            <div class="hud">
+              <div class="hud-head"><span class="hud-title">PERMANENT INFRASTRUCTURE LEGACY</span></div>
+              <div class="hud-body" style="padding:0;"><table class="tbl"><thead><tr><th>INFRASTRUCTURE</th><th>INVESTMENT</th><th>BENEFICIARIES</th><th>LIFESPAN</th><th>IMPACT</th></tr></thead><tbody id="legacy-tbl"></tbody></table></div>
+            </div>
+            <div class="hud"><div class="hud-head"><span class="hud-title">ECONOMIC MULTIPLIER 2027–2035</span></div><div class="hud-body tight"><div class="chart-wrap" style="height:150px;"><canvas id="chart-legacy"></canvas></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 11 CLIMACTIX GLOBAL ═══ -->
+    <div class="module" id="mod-climactix">
+      <div class="mi">
+        <div class="sec-hdr">CLIMACTIX GLOBAL <span>· SUSTAINABILITY INTELLIGENCE PARTNER</span></div>
+        <div class="plat-hero" style="margin-bottom:14px;">
+          <div class="ph-ey">CLIMATE INTELLIGENCE OPERATING SYSTEM</div>
+          <div class="ph-ttl">The Intelligence Layer Behind<br><span>Sustainable Kumbh 2027</span></div>
+          <div class="ph-desc">Climactix Global translates sustainability and climate complexity into decision-grade operational intelligence for governments, investors, and institutions. Not ESG software. A climate operating system.</div>
+          <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;">
+            <div class="badge bg-o">GOVERNMENT-GRADE</div><div class="badge bg-b">INSTITUTIONAL ANALYTICS</div><div class="badge bg-g">CLIMATE INTELLIGENCE</div><div class="badge bg-y">OPERATIONAL OS</div>
+          </div>
+        </div>
+        <div class="grid-3" id="cap-grid" style="margin-bottom:14px;"></div>
+        <div class="hud" style="margin-bottom:14px;">
+          <div class="hud-head"><span class="hud-title">WHAT CLIMACTIX IS — AND ISN'T</span></div>
+          <div class="hud-body">
+            <div class="grid-2">
+              <div><div style="font-family:var(--font-head);font-size:8px;color:var(--red);letter-spacing:2px;margin-bottom:10px;">NOT CLIMACTIX</div><div id="not-list"></div></div>
+              <div><div style="font-family:var(--font-head);font-size:8px;color:var(--green);letter-spacing:2px;margin-bottom:10px;">IS CLIMACTIX</div><div id="is-list"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="sec-hdr">ENGAGEMENT MODEL</div>
+        <div class="grid-3" id="tier-grid"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<script>
+const K={zones:[{id:'ramkund',name:'RAMKUND GHAT',lat:20.0040,lng:73.7790,den:92,cap:250000,now:230000,st:'crit',col:'#FF3333',node:'nashik'},{id:'panchavati',name:'PANCHAVATI',lat:20.0025,lng:73.7820,den:74,cap:300000,now:222000,st:'high',col:'#FFB300',node:'nashik'},{id:'tapovan',name:'TAPOVAN/SADHUGRAM',lat:19.9985,lng:73.7700,den:58,cap:400000,now:232000,st:'mod',col:'#FF6600',node:'nashik'},{id:'trimbak',name:'TRIMBAKESHWAR',lat:19.9330,lng:73.5313,den:68,cap:200000,now:136000,st:'high',col:'#FFB300',node:'trimbak'},{id:'kushavarta',name:'KUSHAVARTA KUND',lat:19.9327,lng:73.5310,den:82,cap:100000,now:82000,st:'crit',col:'#FF3333',node:'trimbak'},{id:'nashikrd',name:'NASHIK ROAD CAMP',lat:20.0200,lng:73.8200,den:40,cap:500000,now:200000,st:'low',col:'#00FF88',node:'nashik'},{id:'deolali',name:'DEOLALI CAMP',lat:19.9600,lng:73.8300,den:28,cap:600000,now:168000,st:'low',col:'#00FF88',node:'nashik'},{id:'gangapur',name:'GANGAPUR ZONE',lat:20.0300,lng:73.7000,den:35,cap:350000,now:122500,st:'low',col:'#00FF88',node:'nashik'}],stps:[{id:1,name:'STP 1 — NASHIK EAST',lat:20.0100,lng:73.8100,cap:186,act:169,eff:91,bod_in:280,bod_out:3.1,zone:'NASHIK EAST',stages:[{n:'SCREENING',v:'186 MLD',ok:true},{n:'PRIMARY SETTLE',v:'91% REMOVAL',ok:true},{n:'AERATION TANK',v:'BOD→12',ok:true},{n:'SECONDARY SETTLE',v:'94% REMOVAL',ok:true},{n:'CHLORINATION',v:'BOD→3.1',ok:true},{n:'EFFLUENT',v:'3.1 mg/L',ok:true}]},{id:2,name:'STP 2 — PANCHAVATI',lat:20.0020,lng:73.7860,cap:142,act:125,eff:88,bod_in:310,bod_out:2.8,zone:'PANCHAVATI',stages:[{n:'SCREENING',v:'142 MLD',ok:true},{n:'PRIMARY SETTLE',v:'89% REMOVAL',ok:true},{n:'AERATION TANK',v:'BOD→10',ok:true},{n:'SECONDARY SETTLE',v:'96% REMOVAL',ok:true},{n:'UV DISINFECT',v:'99.9% PATHOGENS',ok:true},{n:'EFFLUENT',v:'2.8 mg/L',ok:true}]},{id:3,name:'STP 3 — TAPOVAN',lat:19.9985,lng:73.7600,cap:154,act:131,eff:85,bod_in:295,bod_out:3.4,zone:'TAPOVAN',stages:[{n:'SCREENING',v:'154 MLD',ok:true},{n:'EQUALIZATION',v:'FLOW BALANCED',ok:true},{n:'AERATION TANK',v:'BOD→14',ok:true},{n:'SECONDARY SETTLE',v:'92% REMOVAL',ok:true},{n:'CHLORINATION',v:'DOSED',ok:true},{n:'EFFLUENT',v:'3.4 mg/L',ok:true}]},{id:4,name:'STP 4 — TRIMBAKESHWAR',lat:19.9330,lng:73.5310,cap:4.5,act:4.2,eff:93,bod_in:180,bod_out:2.2,zone:'TRIMBAK',stages:[{n:'SCREENING',v:'4.5 MLD',ok:true},{n:'IMHOFF TANK',v:'PRIMARY',ok:true},{n:'AERATION',v:'ACTIVATED SLUDGE',ok:true},{n:'SETTLER',v:'96% REMOVAL',ok:true},{n:'SOLAR DISINFECT',v:'UV NATURAL',ok:true},{n:'EFFLUENT',v:'2.2 mg/L',ok:true}]}],snan:[{dt:'2 AUG 2027',nm:'ASHADHA SOMVATI AMAVASYA',cr:'1.8 CR',note:'NASHIK PRIMARY',ts:new Date('2027-08-02')},{dt:'31 AUG 2027',nm:'SHRAVAN AMAVASYA',cr:'2.25 CR',note:'PEAK — DUAL NODE',ts:new Date('2027-08-31')},{dt:'11 SEP 2027',nm:'VAISHNAVA AKHADAS',cr:'1.2 CR',note:'NASHIK NODE',ts:new Date('2027-09-11')},{dt:'12 SEP 2027',nm:'SHAIVA AKHADAS',cr:'1.0 CR',note:'TRIMBAKESHWAR',ts:new Date('2027-09-12')}],riverStations:[{nm:'TRIMBAK UPSTREAM',bod:1.8,do_:7.8,ph:7.6,st:'g'},{nm:'GANGAPUR OUTFLOW',bod:2.4,do_:7.2,ph:7.4,st:'g'},{nm:'RAMKUND GHAT',bod:5.2,do_:6.4,ph:7.2,st:'y'},{nm:'PANCHAVATI BRIDGE',bod:6.1,do_:6.1,ph:7.1,st:'y'},{nm:'NASHIK DOWNSTREAM',bod:4.8,do_:6.5,ph:7.3,st:'y'},{nm:'DEOLALI OUTFLOW',bod:3.2,do_:7.0,ph:7.5,st:'g'}],nullahs:[{nm:'LENDI NALA',fl:'18 MLD',div:'STP-1',st:'g'},{nm:'WALDEVI NALA',fl:'12 MLD',div:'STP-2',st:'g'},{nm:'TRIMBAK NALA',fl:'4 MLD',div:'STP-4',st:'g'},{nm:'TAPOVAN DRAIN',fl:'22 MLD',div:'STP-3',st:'g'},{nm:'NASHIK RD DRAIN',fl:'15 MLD',div:'STP-1',st:'g'},{nm:'SAVARKAR NALA',fl:'8 MLD',div:'STP-2',st:'g'}],effluent:[{p:'BOD (mg/L)',raw:'280–310',pri:'80–90',sec:'8–12',fin:'2.8–3.4',std:'≤30'},{p:'COD (mg/L)',raw:'450–520',pri:'200–250',sec:'50–70',fin:'25–35',std:'≤250'},{p:'DO (mg/L)',raw:'0.5–1.5',pri:'2.0–3.0',sec:'5.0–6.5',fin:'6.2–7.2',std:'≥4'},{p:'pH',raw:'6.8–7.2',pri:'7.0–7.4',sec:'7.1–7.5',fin:'7.1–7.5',std:'6.5–9'},{p:'FECAL COLIFORM',raw:'1e7/100mL',pri:'1e6',sec:'1e4',fin:'<200',std:'<1000'}],alerts:[{lv:'r',ttl:'CROWD SURGE — RAMKUND GHAT',dsc:'Density at 92%. Gate C restricted. Management team deployed.',ts:'14:32 IST'},{lv:'y',ttl:'BOD SPIKE DOWNSTREAM',dsc:'Godavari BOD 6.8 mg/L post-immersion. STP load increased.',ts:'13:58 IST'},{lv:'y',ttl:'SOLAR ARRAY 7 — LOW OUTPUT',dsc:'Tapovan solar at 68%. Maintenance scheduled.',ts:'12:40 IST'},{lv:'b',ttl:'EV FLEET EXPANDED — NODE 4',dsc:'12 additional EV buses on Nashik Rd corridor.',ts:'11:15 IST'},{lv:'g',ttl:'STP 2 PERFORMANCE EXCELLENT',dsc:'Panchavati STP treating 148 MLD. Effluent BOD: 2.8.',ts:'10:30 IST'},{lv:'o',ttl:'SHAHI SNAN PREP — 31 AUG',dsc:'8,000 sanitation workers pre-positioned.',ts:'09:00 IST'}],sysStatus:[{lbl:'CROWD MONITORING',st:'ONLINE',dot:'dot-g'},{lbl:'RIVER SENSORS',st:'ONLINE',dot:'dot-g'},{lbl:'WASTE MGMT SYS',st:'ONLINE',dot:'dot-g'},{lbl:'AI COMMAND CTR',st:'ONLINE',dot:'dot-g'},{lbl:'STP CONTROL',st:'ONLINE',dot:'dot-g'},{lbl:'EMERGENCY NET',st:'STANDBY',dot:'dot-y'},{lbl:'KUMBHDOOT APP',st:'ONLINE',dot:'dot-g'}],infraBars:[{lbl:'STP CAPACITY',v:87,col:'#4DAAFF'},{lbl:'SOLAR GENERATION',v:84,col:'#FFD600'},{lbl:'EV FLEET DEPLOYED',v:64,col:'#00FF88'},{lbl:'SANITATION COVERAGE',v:94,col:'#FF6600'},{lbl:'CCTV NETWORK',v:98,col:'#9C27B0'},{lbl:'MEDICAL POSTS',v:97,col:'#FF3333'}],wasteTbl:[{z:'RAMKUND',c:12,cap:'24 MT',u:'82%',trips:8,st:'y'},{z:'PANCHAVATI',c:10,cap:'20 MT',u:'76%',trips:6,st:'g'},{z:'TAPOVAN',c:18,cap:'36 MT',u:'68%',trips:10,st:'g'},{z:'TRIMBAK',c:8,cap:'16 MT',u:'91%',trips:7,st:'y'},{z:'NASHIK RD',c:14,cap:'28 MT',u:'55%',trips:5,st:'g'}],infraStatus:[{lbl:'STP 1 NASHIK EAST',v:'186 MLD',dot:'dot-g'},{lbl:'STP 2 PANCHAVATI',v:'142 MLD',dot:'dot-g'},{lbl:'STP 3 TAPOVAN',v:'154 MLD',dot:'dot-g'},{lbl:'STP 4 TRIMBAK',v:'4.5 MLD',dot:'dot-g'},{lbl:'SOLAR — TAPOVAN',v:'18.4 MW',dot:'dot-g'},{lbl:'SOLAR — NASHIK RD',v:'12.1 MW',dot:'dot-g'},{lbl:'EV DEPOT CBS',v:'480 BUS',dot:'dot-g'},{lbl:'WASTE COMPACTORS',v:'62 UNITS',dot:'dot-g'},{lbl:'SMART TOILETS',v:'56,000',dot:'dot-g'}],esgKPIs:[{nm:'WASTE DIVERSION RATE',tgt:'80%',cur:'54.6%',pct:68,rat:'B+',col:'#FFB300',st:'wa'},{nm:'PLASTIC REDUCTION',tgt:'−90%',cur:'−78%',pct:87,rat:'A−',col:'#00FF88',st:'up'},{nm:'CARBON REDUCTION',tgt:'−40%',cur:'−40.1%',pct:100,rat:'A',col:'#00FF88',st:'up'},{nm:'RIVER WATER QUALITY',tgt:'BOD<3',cur:'5.2',pct:58,rat:'B+',col:'#FFB300',st:'wa'},{nm:'SANITATION COVERAGE',tgt:'100%',cur:'94.2%',pct:94,rat:'A',col:'#00FF88',st:'up'},{nm:'RENEWABLE ENERGY',tgt:'50%',cur:'38%',pct:76,rat:'B+',col:'#FFB300',st:'wa'},{nm:'CROWD SAFETY INDEX',tgt:'9.0',cur:'8.4',pct:93,rat:'A−',col:'#00FF88',st:'up'},{nm:'ZERO STAMPEDE RECORD',tgt:'100%',cur:'100%',pct:100,rat:'A+',col:'#00FF88',st:'up'},{nm:'STP OPERATIONAL RATE',tgt:'100%',cur:'97%',pct:97,rat:'A',col:'#00FF88',st:'up'}],zoneESG:[{nm:'RAMKUND GHAT',wa:72,wt:58,sf:82,sn:88,ai:74,ov:75,rt:'B+'},{nm:'PANCHAVATI',wa:81,wt:64,sf:86,sn:91,ai:78,ov:80,rt:'A−'},{nm:'TAPOVAN',wa:86,wt:78,sf:90,sn:94,ai:82,ov:86,rt:'A−'},{nm:'TRIMBAKESHWAR',wa:79,wt:70,sf:88,sn:90,ai:76,ov:81,rt:'A−'},{nm:'NASHIK ROAD',wa:90,wt:82,sf:94,sn:96,ai:88,ov:90,rt:'A'},{nm:'DEOLALI CAMP',wa:88,wt:84,sf:92,sn:95,ai:86,ov:89,rt:'A'}],riskScenarios:[{ttl:'HEAVY RAINFALL FLOOD',dsc:'Gangapur overflow risk July–Aug. Low-lying ghats vulnerable.',imp:'HIGH RISK',col:'var(--river-light)'},{ttl:'CROWD SURGE / STAMPEDE',dsc:'Mass surge on Shahi Snan at Ramkund. Bottleneck Gate C.',imp:'CRITICAL',col:'var(--red)'},{ttl:'EXTREME HEATWAVE',dsc:'Temperature >40°C during bathing. Heat stress zones active.',imp:'MODERATE',col:'var(--yellow)'},{ttl:'POWER GRID FAILURE',dsc:'DG + solar backup activates. Critical infra protected.',imp:'LOW RISK',col:'var(--green)'}],negNews:[{src:'TIMES OF INDIA',headline:'Godavari turns black as pilgrims wade through sewage at Kumbh',snip:'Pollution levels at Ramkund reach alarming levels as untreated sewage flows directly...'},{src:'INDIA TODAY',headline:'NMC fails to manage 2 crore pilgrims: garbage mountains at every ghat',snip:'Waste management systems collapsed on Shahi Snan day...'},{src:'NDTV',headline:'Stampede scare at Ramkund as density surges beyond control',snip:'With no AI crowd management, officials struggled as pilgrims pushed through bottlenecks...'}],posNews:[{src:'THE ECONOMIST',headline:"India's Kumbh 2027: How Nashik became the world's most sustainably managed pilgrimage",snip:"Climactix Global's OS reduced Godavari pollution 66%, achieved near-zero waste overflow..."},{src:'BBC GLOBAL',headline:'Kumbh 2027: zero stampede, clean river, 40% carbon savings — a global benchmark',snip:'The world largest spiritual gathering achieved a climate-positive footprint...'},{src:'BLOOMBERG',headline:'AI and climate intelligence transformed Nashik Kumbh into a global sustainability model',snip:'Climactix OS delivered real-time command intelligence across 21 months and 12 crore pilgrims...'}],ranking:[{rk:1,ev:'KUMBH MELA 2027 — NASHIK',yr:2027,sc:'12 CR',score:74,rat:'BBB+',hi:true},{rk:2,ev:'PARIS OLYMPICS 2024',yr:2024,sc:'1.2 CR',score:81,rat:'A−',hi:false},{rk:3,ev:'FIFA WORLD CUP 2022',yr:2022,sc:'1.5 CR',score:69,rat:'B+',hi:false},{rk:4,ev:'MAHAKUMBH PRAYAGRAJ 2025',yr:2025,sc:'45 CR',score:58,rat:'B',hi:false},{rk:5,ev:'NASHIK KUMBH 2015',yr:2015,sc:'3 CR',score:34,rat:'CCC',hi:false}],legacyTL:[{yr:'2026–27',ttl:'KUMBH INFRASTRUCTURE BUILD',desc:'₹25,055 Cr in roads, STPs, smart city, ghats.',done:true},{yr:'2027',ttl:'KUMBH MELA OPERATIONS',desc:'12 crore pilgrims with full climate intelligence.',done:true},{yr:'2028',ttl:'POST-KUMBH TRANSITION',desc:'Permanent STPs to NMC. Smart city activated.',done:false},{yr:'2030',ttl:'GODAVARI RESTORATION',desc:'A2-class water quality for first time in 20 years.',done:false},{yr:'2035',ttl:'NASHIK SUSTAINABILITY HUB',desc:'Maharashtra sustainability governance model.',done:false}],legacyTbl:[{inf:'4 STPs (486 MLD)',val:'₹1,475 Cr',ben:'15 LAKH',life:'30 YRS',imp:'Clean Godavari'},{inf:'Nashik Ring Road 69km',val:'₹3,954 Cr',ben:'METRO NASHIK',life:'50 YRS',imp:'−40% congestion'},{inf:'Smart City Command Center',val:'₹200 Cr',ben:'1.5M CITIZENS',life:'20 YRS',imp:'Governance AI'},{inf:'211 km Sewer Network',val:'₹1,200 Cr',ben:'ALL NASHIK',life:'30 YRS',imp:'Zero open sewage'},{inf:'50 MW Solar',val:'₹450 Cr',ben:'CITY GRID',life:'25 YRS',imp:'Clean energy'}],caps:[{ic:'🛰️',ttl:'CLIMATE INTELLIGENCE',dsc:'Physical and transition risk modeling, scenario simulation, climate financial analytics.'},{ic:'📊',ttl:'ESG ANALYTICS ENGINE',dsc:'Real-time ESG scoring, disclosure analysis, greenwashing detection, sustainability monitoring.'},{ic:'🗺️',ttl:'GIS & SPATIAL ANALYTICS',dsc:'Geospatial risk mapping, digital twin simulation, real-time zone intelligence.'},{ic:'📡',ttl:'OPERATIONAL INTELLIGENCE',dsc:'IoT data integration, live KPI dashboards, command centers, multi-agency coordination.'},{ic:'📋',ttl:'GOVERNANCE REPORTING',dsc:'BRSR, TCFD, CSRD, CDP disclosure generation. Board-ready institutional reports.'},{ic:'🤖',ttl:'AI NARRATIVE ENGINE',dsc:'Explainable AI sustainability insights. Every score with institutional-grade reasoning.'}],notIs:['Waste contractor or civil works','IoT hardware vendor','Generic ESG compliance tool','Event management company','Carbon credit marketplace'],isIs:['Climate Risk Intelligence platform','Environmental analytics OS','Sustainability governance system','Operational intelligence layer','Institutional reporting engine'],tiers:[{badge:'INTELLIGENCE',nm:'Data & Analytics Layer',dsc:'Intelligence, analytics, and decision support — integrated with existing operations.',itm:['Climate risk modeling','ESG KPI dashboards','Sustainability scoring','Scenario simulation']},{badge:'COMMAND CENTER',nm:'Operational OS',dsc:'Full sustainability command center — real-time monitoring, alerts, reporting.',itm:['Live GIS command center','Multi-agency alerts','Real-time KPI feeds','Incident response']},{badge:'GOVERNANCE',nm:'Strategic Advisory',dsc:'Long-term sustainability governance — frameworks, compliance, institutional intelligence.',itm:['Governance framework design','Regulatory compliance','Stakeholder reporting','Legacy planning']}],evacuRoutes:[{id:'R1',nm:'RAMKUND NORTH EXIT',cap:'40K/HR',st:'CLEAR',col:'#00FF88'},{id:'R2',nm:'PANCHAVATI BYPASS',cap:'60K/HR',st:'CLEAR',col:'#00FF88'},{id:'R3',nm:'TAPOVAN WEST ROAD',cap:'80K/HR',st:'CLEAR',col:'#00FF88'},{id:'R4',nm:'NASHIK RD CORRIDOR',cap:'120K/HR',st:'CLEAR',col:'#00FF88'},{id:'E1',nm:'EMERGENCY HELIPAD',cap:'N/A',st:'READY',col:'#FFB300'}],tickerItems:[{k:'ACTIVE PILGRIMS',v:'2.84M',b:'PEAK DAY',bc:'o'},{k:'GODAVARI BOD',v:'5.2 mg/L',b:'MODERATE',bc:'w'},{k:'WASTE EFFICIENCY',v:'94.2%',b:'ON TARGET',bc:'g'},{k:'AQI',v:'78',b:'SATISFACTORY',bc:'g'},{k:'CARBON SAVED',v:'1,240 MT',b:'+12%',bc:'g'},{k:'STP OPERATIONAL',v:'97%',b:'ONLINE',bc:'g'},{k:'SOLAR OUTPUT',v:'42.1 MW',b:'84% TARGET',bc:'w'},{k:'RAMKUND DENSITY',v:'92%',b:'CRITICAL',bc:'c'},{k:'SHAHI SNAN 31 AUG',v:'2.25 CR',b:'PEAK DAY',bc:'i'},{k:'BUDGET',v:'₹25,055 CR',b:'SANCTIONED',bc:'i'},{k:'EV FLEET',v:'1,280',b:'ACTIVE',bc:'g'},{k:'KUMBHDOOT',v:'4.2M DL',b:'LIVE',bc:'g'}]};
+
+const maps={};
+const GODAVARI=[[73.5313,19.9330],[73.5700,19.9400],[73.6100,19.9600],[73.6600,19.9800],[73.7000,20.0050],[73.7400,20.0200],[73.7600,20.0150],[73.7790,20.0040],[73.7860,20.0010],[73.7960,19.9990],[73.8100,19.9960],[73.8400,19.9920]];
+const SAT={version:8,sources:{satellite:{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:18}},layers:[{id:'sat',type:'raster',source:'satellite',paint:{'raster-brightness-max':0.75,'raster-saturation':-0.2,'raster-contrast':0.15}}]};
+
+function mkMap(id,ctr,zoom,pitch=0,bearing=0){
+  if(maps[id]){maps[id].remove();delete maps[id];}
+  const el=document.getElementById(id);if(!el)return null;
+  try{const m=new maplibregl.Map({container:id,style:SAT,center:ctr,zoom,pitch,bearing,attributionControl:false});maps[id]=m;return m;}catch(e){return null;}
+}
+function dcol(d){return d>=80?'#FF3333':d>=60?'#FFB300':d>=40?'#FF6600':'#00FF88';}
+function popHtml(z){return`<div class="pop-ttl">${z.name}</div><div class="pop-row"><span>DENSITY</span><b class="${z.den>=80?'r':z.den>=60?'y':'g'}">${z.den}%</b></div><div class="pop-row"><span>PILGRIMS</span><b>${(z.now/1000).toFixed(0)}K ACTIVE</b></div><div class="pop-row"><span>CAPACITY</span><b>${(z.cap/1000).toFixed(0)}K MAX</b></div><div class="pop-row"><span>NODE</span><b>${z.node.toUpperCase()}</b></div>`;}
+
+function addBase(m){
+  if(!m)return;
+  m.on('load',()=>{
+    m.addSource('goda',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:GODAVARI}}});
+    m.addLayer({id:'goda-glow',type:'line',source:'goda',paint:{'line-color':'#0044BB','line-width':8,'line-opacity':0.2}});
+    m.addLayer({id:'goda-line',type:'line',source:'goda',paint:{'line-color':'#4DAAFF','line-width':4,'line-opacity':0.9}});
+    K.zones.forEach(z=>{
+      const el2=document.createElement('div');
+      const r=z.den>70?18:z.den>50?14:11;
+      el2.style.cssText=`width:${r}px;height:${r}px;border-radius:50%;background:${dcol(z.den)};border:2px solid rgba(0,0,0,0.5);box-shadow:0 0 ${r}px ${dcol(z.den)};opacity:0.88;cursor:pointer;`;
+      if(z.den>=80)el2.style.animation='pulse-map 1.5s infinite';
+      const pop=new maplibregl.Popup({offset:15}).setHTML(popHtml(z));
+      new maplibregl.Marker({element:el2}).setLngLat([z.lng,z.lat]).setPopup(pop).addTo(m);
+      const lbl=document.createElement('div');
+      lbl.style.cssText=`font-family:Space Mono,monospace;font-size:8px;color:#fff;background:rgba(3,13,28,0.88);padding:2px 5px;border-radius:2px;border:1px solid ${dcol(z.den)};white-space:nowrap;pointer-events:none;margin-left:10px;margin-top:-8px;`;
+      lbl.textContent=z.name.substring(0,14);
+      new maplibregl.Marker({element:lbl,anchor:'top-left'}).setLngLat([z.lng,z.lat]).addTo(m);
+    });
+    m.addSource('ntroad',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[[73.7907,20.0059],[73.6900,19.9700],[73.5313,19.9330]]}}});
+    m.addLayer({id:'ntroad',type:'line',source:'ntroad',paint:{'line-color':'#555','line-width':2,'line-opacity':0.5,'line-dasharray':[4,6]}});
+    const evac=new maplibregl.Popup({offset:12}).setHTML('<div class="pop-ttl">EVACUATION ROUTE</div><div class="pop-row"><span>CAPACITY</span><b class="g">40K/HR</b></div>');
+    m.addSource('evac',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[[73.7790,20.0040],[73.7950,20.0120],[73.8200,20.0200]]}}});
+    m.addLayer({id:'evac',type:'line',source:'evac',paint:{'line-color':'#00FF88','line-width':2,'line-opacity':0.7,'line-dasharray':[6,4]}});
+  });
+}
+
+function initCmdMap(){
+  const m=mkMap('map-cmd',[73.7100,19.9700],11,45,-15);
+  addBase(m);
+  addEVRoutes(m);
+  addAkhadaMarkers(m);
+  m&&m.on('load',()=>{
+    m.addSource('mela',{type:'geojson',data:{type:'Feature',geometry:{type:'Polygon',coordinates:[[[73.7650,20.0100],[73.8000,20.0130],[73.8100,19.9870],[73.7650,19.9860],[73.7650,20.0100]]]}}});
+    m.addLayer({id:'mela-fill',type:'fill',source:'mela',paint:{'fill-color':'#FF6600','fill-opacity':0.06}});
+    m.addLayer({id:'mela-line',type:'line',source:'mela',paint:{'line-color':'#FF6600','line-width':1.5,'line-opacity':0.5,'line-dasharray':[6,4]}});
+  });
+}
+function initTwinMap(){
+  const m=mkMap('map-twin',[73.6700,19.9900],10.5,55,-20);
+  addBase(m);
+  addEVRoutes(m);
+  addAkhadaMarkers(m);
+  if(m)m.on('load',()=>{
+    const el2=document.createElement('div');el2.style.cssText='width:14px;height:14px;border-radius:50%;background:#4DAAFF;border:2px solid #0044BB;box-shadow:0 0 12px #4DAAFF;cursor:pointer;';
+    const pop=new maplibregl.Popup({offset:15}).setHTML('<div class="pop-ttl">GANGAPUR DAM</div><div class="pop-row"><span>LEVEL</span><b>68%</b></div><div class="pop-row"><span>FLOW</span><b class="b">142 M³/S</b></div>');
+    new maplibregl.Marker({element:el2}).setLngLat([73.7000,20.0300]).setPopup(pop).addTo(m);
+    renderAkhadaPanel();renderEVRoutesPanel();
+  });
+}
+function initInfraMap(){
+  const m=mkMap('map-infra',[73.6900,19.9900],11,40,-10);if(!m)return;
+  m.on('load',()=>{
+    m.addSource('goda2',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:GODAVARI}}});
+    m.addLayer({id:'goda2',type:'line',source:'goda2',paint:{'line-color':'#4DAAFF','line-width':4,'line-opacity':0.7}});
+    [[73.8100,20.0100],[73.7860,20.0020],[73.7600,19.9985],[73.5310,19.9330]].forEach((ll,i)=>{const el2=document.createElement('div');el2.style.cssText='width:13px;height:13px;border-radius:50%;background:#1565C0;border:2px solid #4DAAFF;box-shadow:0 0 12px #4DAAFF;cursor:pointer;';new maplibregl.Marker({element:el2}).setLngLat(ll).setPopup(new maplibregl.Popup({offset:12}).setHTML(`<div class="pop-ttl">STP ${i+1}</div><div class="pop-row"><span>CAPACITY</span><b class="b">${['186','142','154','4.5'][i]} MLD</b></div><div class="pop-row"><span>STATUS</span><b class="g">ONLINE</b></div>`)).addTo(m);});
+    [[73.7720,19.9990],[73.8180,20.0180],[73.5320,19.9340]].forEach((ll,i)=>{const el2=document.createElement('div');el2.style.cssText='width:11px;height:11px;border-radius:50%;background:#F57F17;border:2px solid #FFD600;box-shadow:0 0 10px #FFD600;cursor:pointer;';new maplibregl.Marker({element:el2}).setLngLat(ll).setPopup(new maplibregl.Popup({offset:10}).setHTML(`<div class="pop-ttl">SOLAR ARRAY ${i+1}</div><div class="pop-row"><span>OUTPUT</span><b class="y">${['18.4','12.1','11.6'][i]} MW</b></div>`)).addTo(m);});
+    [[73.7930,19.9980],[73.8200,20.0200],[73.5315,19.9330]].forEach((ll,i)=>{const el2=document.createElement('div');el2.style.cssText='width:11px;height:11px;border-radius:50%;background:#1B5E20;border:2px solid #00FF88;box-shadow:0 0 10px #00FF88;cursor:pointer;';new maplibregl.Marker({element:el2}).setLngLat(ll).setPopup(new maplibregl.Popup({offset:10}).setHTML(`<div class="pop-ttl">EV DEPOT ${i+1}</div><div class="pop-row"><span>FLEET</span><b class="g">${['480','380','420'][i]} BUSES</b></div>`)).addTo(m);});
+  });
+}
+function initResilienceMap(){
+  const m=mkMap('map-resilience',[73.7700,20.0000],12,40,-5);if(!m)return;
+  m.on('load',()=>{
+    m.addSource('goda3',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:GODAVARI}}});
+    m.addLayer({id:'goda3',type:'line',source:'goda3',paint:{'line-color':'#4DAAFF','line-width':4,'line-opacity':0.8}});
+    m.addSource('flood',{type:'geojson',data:{type:'Feature',geometry:{type:'Polygon',coordinates:[[[73.7600,20.0050],[73.8000,20.0060],[73.8020,19.9940],[73.7580,19.9930],[73.7600,20.0050]]]}}});
+    m.addLayer({id:'flood-f',type:'fill',source:'flood',paint:{'fill-color':'#1565C0','fill-opacity':0.25}});
+    m.addLayer({id:'flood-l',type:'line',source:'flood',paint:{'line-color':'#4DAAFF','line-width':2}});
+    m.addSource('heat',{type:'geojson',data:{type:'Feature',geometry:{type:'Polygon',coordinates:[[[73.7800,20.0030],[73.8050,20.0040],[73.8060,19.9960],[73.7790,19.9950],[73.7800,20.0030]]]}}});
+    m.addLayer({id:'heat-f',type:'fill',source:'heat',paint:{'fill-color':'#FF5722','fill-opacity':0.18}});
+    [[73.7650,20.0000],[73.8150,20.0100],[73.7850,19.9920]].forEach((ll,i)=>{const el2=document.createElement('div');el2.style.cssText='width:16px;height:16px;border-radius:50%;background:rgba(0,255,136,0.25);border:2px solid #00FF88;box-shadow:0 0 12px #00FF88;cursor:pointer;';new maplibregl.Marker({element:el2}).setLngLat(ll).setPopup(new maplibregl.Popup({offset:12}).setHTML(`<div class="pop-ttl">COOLING ZONE ${i+1}</div><div class="pop-row"><span>MIST FANS</span><b class="g">ACTIVE</b></div>`)).addTo(m);});
+    K.zones.filter(z=>z.den>=70).forEach(z=>{const el2=document.createElement('div');el2.style.cssText=`width:20px;height:20px;border-radius:50%;background:rgba(255,51,51,0.12);border:2px dashed #FF3333;cursor:pointer;`;new maplibregl.Marker({element:el2}).setLngLat([z.lng,z.lat]).addTo(m);});
+  });
+}
+
+let crowdRaf=null,crowdMode='normal';
+
+// Zone definitions — screen fractions (sx,sy) relative to canvas
+const CZ=[
+  {nm:'RAMKUND GHAT',  sx:0.50,sy:0.50,r:0.10,normal:92,peak:99, snan:100},
+  {nm:'PANCHAVATI',    sx:0.53,sy:0.58,r:0.09,normal:74,peak:88, snan:96},
+  {nm:'TAPOVAN',       sx:0.41,sy:0.43,r:0.11,normal:58,peak:76, snan:88},
+  {nm:'NASHIK RD',     sx:0.68,sy:0.26,r:0.09,normal:40,peak:65, snan:78},
+  {nm:'DEOLALI CAMP',  sx:0.74,sy:0.72,r:0.10,normal:28,peak:52, snan:64},
+  {nm:'GANGAPUR',      sx:0.26,sy:0.22,r:0.09,normal:35,peak:58, snan:70},
+  {nm:'KUSHAVARTA',    sx:0.11,sy:0.48,r:0.08,normal:82,peak:90, snan:100},
+];
+// River path in screen fractions
+const RIVER_SC=[[0.07,0.82],[0.17,0.70],[0.27,0.60],[0.34,0.52],[0.41,0.45],[0.48,0.40],[0.52,0.38],[0.58,0.40],[0.66,0.46],[0.82,0.55]];
+// EV routes in screen fractions
+const EVRT=[
+  {col:'#00E5FF',nm:'R1: NASHIK RD→RAMKUND',pts:[[0.68,0.26],[0.60,0.36],[0.50,0.50]]},
+  {col:'#00FF88',nm:'R2: CBS→TAPOVAN',       pts:[[0.60,0.36],[0.52,0.43],[0.41,0.43]]},
+  {col:'#FF9100',nm:'R3: TRIMBAK EXPRESS',   pts:[[0.60,0.36],[0.36,0.44],[0.11,0.48]]},
+  {col:'#E040FB',nm:'R4: DEOLALI LINK',      pts:[[0.74,0.72],[0.68,0.26]]},
+];
+// Akhada flags in screen fractions
+const AKFLAG=[
+  {nm:'NIRMOHI',  sx:0.49,sy:0.48,col:'#FFD700'},
+  {nm:'NIRVANI',  sx:0.52,sy:0.55,col:'#FF8C00'},
+  {nm:'JUNA',     sx:0.12,sy:0.45,col:'#FF4500'},
+  {nm:'NIRANJANI',sx:0.10,sy:0.51,col:'#FFB300'},
+];
+
+function dcRGBA(d,a){return d>=80?`rgba(255,80,50,${a})`:d>=60?`rgba(255,170,0,${a})`:d>=40?`rgba(255,120,30,${a})`:`rgba(30,220,120,${a})`;}
+function dcSolid(d){return d>=80?'#FF5032':d>=60?'#FFAA00':d>=40?'#FF7820':'#1EDC78';}
+
+// ── PILGRIM COLOUR PALETTES (Kumbh attire) ─────────────
+const PC=[
+  '#E87000','#F08000','#D06800','#FF8C00','#E07800','#CC6600', // saffron ~28%
+  '#EDE8D8','#F5F0E0','#E8E0C8','#F0ECD8','#DEDAD0','#E5E0D0', // white/cream ~25%
+  '#DAA000','#C89800','#E0A820','#CCA000','#DDB000',            // yellow ~15%
+  '#3A7FBF','#4A8FC0','#5080A8','#3870A8','#4888CC',            // blue ~12%
+  '#2A8060','#3A9070','#357858','#2E7850',                      // teal/green ~8%
+  '#B83028','#C83838','#A82828','#CC4040',                      // red ~6%
+  '#806838','#907848','#705830','#987840',                      // brown ~6%
+];
+const SK=['#C07840','#B87038','#C88040','#D09058','#A86030','#BF7848'];
+
+// ── PARTICLE POOL ──────────────────────────────────────
+const POOL={};
+function ensurePool(z,W,H){
+  const key=z.nm;
+  const n=900;
+  if(POOL[key]&&POOL[key].W===W)return;
+  // Convert screen-fraction zone center to pixel
+  const cx=z.sx*W, cy=z.sy*H;
+  const rx=z.r*W,  ry=z.r*H*0.58;
+  POOL[key]={W,cx,cy,rx,ry,pts:Array.from({length:n},()=>{
+    const a=Math.random()*Math.PI*2;
+    const rr=Math.sqrt(Math.random());
+    return{
+      x: cx+Math.cos(a)*rr*rx,
+      y: cy+Math.sin(a)*rr*ry,
+      vx:(Math.random()-.5)*0.30,
+      vy:(Math.random()-.5)*0.24,
+      dir:Math.random()*Math.PI*2,    // facing direction
+      dv:(Math.random()-.5)*0.06,     // direction drift rate
+      ph:Math.random()*Math.PI*2,
+      sp:0.15+Math.random()*0.38,
+      col:PC[Math.floor(Math.random()*PC.length)],
+      skin:SK[Math.floor(Math.random()*SK.length)]
+    };
+  })};
+}
+
+// ── DRAW INDIVIDUAL PILGRIM FIGURE ─────────────────────
+// Viewed from ~35° above — head circle + oval body
+function drawPilgrim(ctx,x,y,s,col,skin,dir){
+  const bh=Math.max(1.8,s*5.5);   // body half-height
+  const bw=Math.max(1.0,s*2.2);   // body half-width
+  const hr=Math.max(0.9,s*1.7);   // head radius
+  const lean=Math.cos(dir)*bh*0.38; // head offset (leaning forward/back)
+  const leanX=Math.sin(dir)*bh*0.25;
+  // Shadow
+  ctx.beginPath();
+  ctx.ellipse(x+s*0.7,y+bh*0.35,bw*1.4,bw*0.38,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.20)';ctx.fill();
+  // Body — slightly rotated based on facing
+  ctx.save();ctx.translate(x,y);ctx.rotate(dir*0.12);
+  ctx.beginPath();ctx.ellipse(0,0,bw,bh,0,0,Math.PI*2);
+  ctx.fillStyle=col;ctx.fill();
+  // Garment fold (highlight)
+  ctx.beginPath();ctx.ellipse(-bw*0.25,-bh*0.2,bw*0.4,bh*0.3,-0.3,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.10)';ctx.fill();
+  ctx.restore();
+  // Head
+  ctx.beginPath();ctx.arc(x+leanX,y-bh*0.62+lean,hr,0,Math.PI*2);
+  ctx.fillStyle=skin;ctx.fill();
+  // Head highlight
+  ctx.beginPath();ctx.arc(x+leanX-hr*0.28,y-bh*0.62+lean-hr*0.28,hr*0.36,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.15)';ctx.fill();
+}
+
+function drawCrowd(){
+  const cv=document.getElementById('crowd-canvas');if(!cv)return;
+  const W=cv.offsetWidth,H=cv.offsetHeight;
+  if(W<10||H<10){crowdRaf=requestAnimationFrame(drawCrowd);return;}
+  cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  const t=Date.now()/1000;
+  CZ.forEach(z=>ensurePool(z,W,H));
+
+  // Vanishing point (horizon) — upper-centre of canvas
+  const VPX=W*0.5, VPY=H*0.14;
+
+  // ── SKY: thin atmospheric band at top ──
+  const sky=ctx.createLinearGradient(0,0,0,VPY*1.4);
+  sky.addColorStop(0,'#001228');sky.addColorStop(1,'#000A18');
+  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+
+  // ── GROUND PLANE: perspective fill from horizon to bottom ──
+  // Stone/asphalt ground for ghat area
+  const grd=ctx.createLinearGradient(0,VPY,0,H);
+  grd.addColorStop(0,'#1A2030');       // far ground (darker)
+  grd.addColorStop(0.35,'#232830');    // mid-distance street
+  grd.addColorStop(0.65,'#262C35');    // closer street
+  grd.addColorStop(1,'#2A3040');       // near foreground
+  ctx.fillStyle=grd;
+  ctx.beginPath();ctx.moveTo(0,H);ctx.lineTo(W,H);ctx.lineTo(W,VPY);ctx.lineTo(0,VPY);ctx.closePath();
+  ctx.fill();
+
+  // ── PERSPECTIVE GRID (street/ghat tiles) ──
+  // Radial lines from vanishing point
+  ctx.strokeStyle='rgba(15,35,65,0.9)';ctx.lineWidth=0.7;
+  for(let i=0;i<=22;i++){
+    const x=W*i/22;
+    ctx.beginPath();ctx.moveTo(VPX+(x-VPX)*0.05,VPY+2);ctx.lineTo(x,H);ctx.stroke();
+  }
+  // Horizontal bands (depth)
+  for(let j=1;j<=16;j++){
+    const frac=Math.pow(j/16,1.8);  // non-linear spacing (perspective)
+    const y=VPY+(H-VPY)*frac;
+    const spreadX=(y-VPY)/(H-VPY)*W*0.5;
+    const alpha=0.05+frac*0.06;
+    ctx.strokeStyle=`rgba(20,50,90,${alpha})`;
+    ctx.lineWidth=0.6+(frac*0.8);
+    ctx.beginPath();ctx.moveTo(W*0.5-spreadX,y);ctx.lineTo(W*0.5+spreadX,y);ctx.stroke();
+  }
+
+  // ── STONE GHAT AREA (lighter band near river) ──
+  const ghatY1=VPY+(H-VPY)*0.28, ghatY2=VPY+(H-VPY)*0.52;
+  const ghatGrd=ctx.createLinearGradient(0,ghatY1,0,ghatY2);
+  ghatGrd.addColorStop(0,'rgba(48,44,38,0.0)');
+  ghatGrd.addColorStop(0.3,'rgba(58,54,46,0.5)');
+  ghatGrd.addColorStop(0.7,'rgba(64,58,50,0.55)');
+  ghatGrd.addColorStop(1,'rgba(48,44,38,0.0)');
+  // Widen ghat with depth
+  const ghatXL=VPX-(ghatY1-VPY)/(H-VPY)*W*0.42;
+  const ghatXR=VPX+(ghatY1-VPY)/(H-VPY)*W*0.42;
+  const ghatXL2=VPX-(ghatY2-VPY)/(H-VPY)*W*0.42;
+  const ghatXR2=VPX+(ghatY2-VPY)/(H-VPY)*W*0.42;
+  ctx.beginPath();ctx.moveTo(ghatXL,ghatY1);ctx.lineTo(ghatXR,ghatY1);ctx.lineTo(ghatXR2,ghatY2);ctx.lineTo(ghatXL2,ghatY2);ctx.closePath();
+  ctx.fillStyle=ghatGrd;ctx.fill();
+  // Ghat step lines
+  for(let gs=0;gs<5;gs++){
+    const gy=ghatY1+(ghatY2-ghatY1)*gs/4;
+    const gxL=VPX-(gy-VPY)/(H-VPY)*W*0.42;
+    const gxR=VPX+(gy-VPY)/(H-VPY)*W*0.42;
+    ctx.beginPath();ctx.moveTo(gxL,gy);ctx.lineTo(gxR,gy);
+    ctx.strokeStyle='rgba(80,72,60,0.35)';ctx.lineWidth=1;ctx.stroke();
+  }
+
+  // ── ROAD MARKINGS (crosswalk/zebra near ghat) ──
+  const cmY=VPY+(H-VPY)*0.58;
+  for(let zm=0;zm<8;zm++){
+    const zmY=cmY+zm*((zm%2===0)?3:4);
+    const zmXL=VPX-(zmY-VPY)/(H-VPY)*W*0.22;
+    const zmXR=VPX+(zmY-VPY)/(H-VPY)*W*0.22;
+    ctx.beginPath();ctx.moveTo(zmXL,zmY);ctx.lineTo(zmXR,zmY);
+    ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=2;ctx.stroke();
+  }
+
+  // ── BACKGROUND BUILDINGS (behind horizon) ──
+  const bldgs=[
+    {x:0.02,w:0.08,h:0.22,col:'#0E1825'},{x:0.10,w:0.06,h:0.18,col:'#0C1620'},
+    {x:0.18,w:0.10,h:0.28,col:'#101C2A'},{x:0.28,w:0.07,h:0.20,col:'#0E1828'},
+    {x:0.38,w:0.06,h:0.32,col:'#121E2C'},{x:0.46,w:0.08,h:0.24,col:'#101A28'},
+    {x:0.56,w:0.07,h:0.30,col:'#0E1C2A'},{x:0.65,w:0.10,h:0.22,col:'#101E28'},
+    {x:0.76,w:0.08,h:0.26,col:'#0E1826'},{x:0.86,w:0.09,h:0.20,col:'#0C1622'},
+    {x:0.93,w:0.07,h:0.24,col:'#101C28'},
+  ];
+  bldgs.forEach(b=>{
+    const bx=b.x*W, bw=b.w*W, bh=b.h*H;
+    const by=VPY-bh+4;
+    // Building face
+    ctx.fillStyle=b.col;ctx.fillRect(bx,by,bw,bh);
+    // Top edge (slightly lighter)
+    ctx.fillStyle='rgba(255,255,255,0.04)';ctx.fillRect(bx,by,bw,2);
+    // Windows
+    ctx.fillStyle='rgba(255,200,100,0.12)';
+    for(let wr=1;wr<4;wr++)for(let wc=1;wc<Math.round(bw/12);wc++){
+      if(Math.random()>0.35)ctx.fillRect(bx+wc*12-4,by+wr*(bh/4)-4,5,4);
+    }
+    // Silhouette outline
+    ctx.strokeStyle='rgba(0,180,255,0.06)';ctx.lineWidth=0.5;ctx.strokeRect(bx,by,bw,bh);
+  });
+
+  // ── TEMPLE GOPURAM SILHOUETTE (Nashik temples near ghat) ──
+  [[0.48,0.10,16,40],[0.52,0.06,12,32],[0.38,0.08,10,28]].forEach(([tx,ty,tw,th])=>{
+    const bx=tx*W-tw/2,by=VPY-ty*H,bw=tw;
+    ctx.fillStyle='#0D1820';
+    ctx.beginPath();ctx.moveTo(bx,VPY);ctx.lineTo(bx+bw/2,by);ctx.lineTo(bx+bw,VPY);ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle='rgba(255,160,0,0.08)';ctx.lineWidth=0.5;ctx.stroke();
+  });
+
+  // ── GODAVARI RIVER (perspective band) ──
+  const riverY1=VPY+(H-VPY)*0.32, riverY2=VPY+(H-VPY)*0.38;
+  const rXL1=VPX-(riverY1-VPY)/(H-VPY)*W*0.5;const rXR1=VPX+(riverY1-VPY)/(H-VPY)*W*0.5;
+  const rXL2=VPX-(riverY2-VPY)/(H-VPY)*W*0.5;const rXR2=VPX+(riverY2-VPY)/(H-VPY)*W*0.5;
+  // River fill
+  ctx.beginPath();ctx.moveTo(rXL1,riverY1);ctx.lineTo(rXR1,riverY1);ctx.lineTo(rXR2,riverY2);ctx.lineTo(rXL2,riverY2);ctx.closePath();
+  const rGrd=ctx.createLinearGradient(0,riverY1,0,riverY2);
+  rGrd.addColorStop(0,'#1A3A7A');rGrd.addColorStop(0.5,'#1E4898');rGrd.addColorStop(1,'#1A3A7A');
+  ctx.fillStyle=rGrd;ctx.fill();
+  // River highlight
+  ctx.beginPath();ctx.moveTo(rXL1+10,riverY1+1);ctx.lineTo(rXR1-10,riverY1+1);ctx.lineTo(rXR2-15,riverY2-1);ctx.lineTo(rXL2+15,riverY2-1);ctx.closePath();
+  ctx.fillStyle='rgba(100,170,255,0.15)';ctx.fill();
+  // River ripples
+  for(let rr=0;rr<6;rr++){
+    const ripProg=(t*0.4+rr*0.18)%1;
+    const ripY=riverY1+(riverY2-riverY1)*ripProg;
+    const ripXL=rXL1+(rXL2-rXL1)*ripProg+W*0.05;
+    const ripXR=rXR1+(rXR2-rXR1)*ripProg-W*0.05;
+    ctx.beginPath();ctx.moveTo(ripXL,ripY);ctx.lineTo(ripXR,ripY);
+    ctx.strokeStyle='rgba(150,210,255,0.12)';ctx.lineWidth=1;ctx.stroke();
+  }
+  // River label
+  ctx.font=`500 ${Math.max(9,W*0.008)}px League Spartan`;
+  ctx.fillStyle='rgba(100,180,255,0.60)';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('GODAVARI RIVER',W*0.5,(riverY1+riverY2)*0.5);
+
+  // ── EV SHUTTLE ROUTES (perspective lines on ground) ──
+  EVRT.forEach((rt,ri)=>{
+    // Map route points from screen-fraction to perspective-corrected ground
+    ctx.beginPath();
+    rt.pts.forEach((p,i)=>{
+      const sx=p[0]*W;
+      const sy=VPY+(H-VPY)*(1-p[1]*0.95+0.02);  // map wy (0=back) to screen y
+      i===0?ctx.moveTo(sx,sy):ctx.lineTo(sx,sy);
+    });
+    ctx.strokeStyle=rt.col;ctx.lineWidth=W*0.003;
+    ctx.setLineDash([W*0.012,W*0.007]);ctx.stroke();ctx.setLineDash([]);
+    // Animated EV bus
+    const prog=((t*0.10+ri*0.28)%1);
+    const idx=Math.min(Math.floor(prog*(rt.pts.length-1)),rt.pts.length-2);
+    const fr=(prog*(rt.pts.length-1))%1;
+    const bpx=rt.pts[idx][0]+(rt.pts[idx+1][0]-rt.pts[idx][0])*fr;
+    const bpy=1-(rt.pts[idx][1]+(rt.pts[idx+1][1]-rt.pts[idx][1])*fr)*0.95+0.02;
+    const evSX=bpx*W, evSY=VPY+(H-VPY)*bpy;
+    const evS=0.3+(evSY-VPY)/(H-VPY)*0.7;
+    ctx.beginPath();ctx.rect(evSX-evS*5,evSY-evS*3,evS*10,evS*6);
+    ctx.fillStyle=rt.col;ctx.shadowColor=rt.col;ctx.shadowBlur=8;ctx.fill();ctx.shadowBlur=0;
+  });
+
+  // ── CROWD: INDIVIDUAL PILGRIM FIGURES ──
+  // Collect all visible pilgrims across zones, sort by Y (back to front)
+  const allPilgrims=[];
+  CZ.forEach(z=>{
+    const d=z[crowdMode];
+    const pool=POOL[z.nm];if(!pool)return;
+    const n=Math.round(d/100*pool.pts.length);
+    const cx2=pool.cx,cy2=pool.cy,rx=pool.rx,ry=pool.ry;
+    pool.pts.slice(0,n).forEach((p)=>{
+      // Physics update
+      p.vx+=(Math.random()-.5)*0.08;p.vy+=(Math.random()-.5)*0.07;
+      const dx2=p.x-cx2,dy2=p.y-cy2;
+      const dist2=Math.sqrt(dx2*dx2+dy2*dy2)+0.01;
+      const targetR=rx*(0.55+0.42*Math.abs(Math.sin(p.ph+t*0.18)));
+      const force=(dist2-targetR)*0.0006;
+      p.vx-=dx2*force;p.vy-=dy2*(force*0.6);
+      p.vx*=0.93;p.vy*=0.93;
+      p.dir+=p.dv;  // slowly change facing direction
+      p.x+=p.vx+Math.cos(p.dir)*p.sp*0.15;
+      p.y+=p.vy+Math.sin(p.dir)*p.sp*0.10;
+      // Boundary
+      const ex=(p.x-cx2)/rx,ey=(p.y-cy2)/ry;
+      const edist=Math.sqrt(ex*ex+ey*ey);
+      if(edist>1){p.vx*=-0.5;p.vy*=-0.5;p.x=cx2+ex/edist*rx*0.96;p.y=cy2+ey/edist*ry*0.96;}
+      allPilgrims.push({x:p.x,y:p.y,col:p.col,skin:p.skin,dir:p.dir});
+    });
+  });
+  // Sort back-to-front by y (higher y = closer to camera = drawn last = on top)
+  allPilgrims.sort((a,b)=>a.y-b.y);
+  // Draw each pilgrim with perspective scale
+  allPilgrims.forEach(p=>{
+    // Perspective scale: top of screen = small, bottom = large
+    const yFrac=(p.y-VPY)/Math.max(H-VPY,1);  // 0 at horizon, 1 at bottom
+    if(yFrac<0)return;  // above horizon, skip
+    const s=Math.max(0.18, yFrac*1.0);  // scale 0.18 → 1.0
+    drawPilgrim(ctx,p.x,p.y,s,p.col,p.skin,p.dir);
+  });
+
+  // ── AKHADA FLAGS (perspective-positioned) ──
+  AKFLAG.forEach(a=>{
+    const ax=a.sx*W, ay=a.sy*H;
+    const flagS=(ay-VPY)/(H-VPY);
+    const poleH=Math.max(8,flagS*22);
+    ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(ax,ay-poleH);
+    ctx.strokeStyle=a.col;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ax,ay-poleH);ctx.lineTo(ax+poleH*0.55,ay-poleH*0.75);ctx.lineTo(ax,ay-poleH*0.5);ctx.closePath();
+    ctx.fillStyle=a.col;ctx.shadowColor=a.col;ctx.shadowBlur=5;ctx.fill();ctx.shadowBlur=0;
+    ctx.font=`600 ${Math.max(8,flagS*11)}px Space Mono`;
+    ctx.fillStyle=a.col;ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(a.nm,ax+poleH*0.6,ay-poleH*0.7);
+  });
+
+  // ── ZONE LABELS ──
+  CZ.forEach(z=>{
+    const d=z[crowdMode];
+    const cx2=z.sx*W, labelY=z.sy*H-z.r*H*0.82;
+    const lw=Math.max(72,W*0.082),lh=26;
+    ctx.fillStyle='rgba(0,8,20,0.88)';
+    ctx.beginPath();ctx.roundRect(cx2-lw/2,labelY-lh/2,lw,lh,3);ctx.fill();
+    ctx.strokeStyle=dcRGBA(d,0.55);ctx.lineWidth=0.8;ctx.stroke();
+    ctx.font=`700 ${Math.max(9,W*0.0082)}px League Spartan`;
+    ctx.fillStyle='rgba(255,255,255,0.92)';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(z.nm.split('/')[0].substring(0,10),cx2,labelY-5);
+    ctx.font=`700 ${Math.max(10,W*0.010)}px Space Mono`;
+    ctx.fillStyle=dcSolid(d);ctx.fillText(d+'%',cx2,labelY+8);
+  });
+
+  // ── HUD OVERLAY ──
+  ctx.font=`700 ${Math.max(9,W*0.0085)}px Space Mono`;
+  ctx.fillStyle='rgba(0,180,255,0.38)';ctx.textAlign='right';ctx.textBaseline='top';
+  ctx.fillText('N↑',W-10,8);
+  ctx.textAlign='left';ctx.fillStyle='rgba(0,180,255,0.20)';
+  ctx.fillText('NASHIK MELA ZONE  ·  KUMBH CROWD SIMULATION  ·  REAL-TIME',8,H-18);
+  ctx.fillText('20.00°N  73.79°E  ·  NASHIK, MAHARASHTRA  ·  SINHASTHA 2027',8,H-8);
+  // Mode label
+  const modeLabels={normal:'NORMAL DAY',peak:'PEAK DAY',snan:'SHAHI SNAN — CRITICAL'};
+  ctx.font=`700 ${Math.max(9,W*0.009)}px League Spartan`;
+  ctx.fillStyle=crowdMode==='snan'?'rgba(255,80,50,0.85)':crowdMode==='peak'?'rgba(255,179,0,0.8)':'rgba(0,255,136,0.7)';
+  ctx.textAlign='center';ctx.fillText(modeLabels[crowdMode],W*0.5,12);
+
+  const modes={normal:'2.84M',peak:'5.2M',snan:'22.5M'};
+  const el=document.getElementById('crowd-total');
+  if(el)el.textContent=`TOTAL: ${modes[crowdMode]} ACTIVE`;
+  crowdRaf=requestAnimationFrame(drawCrowd);
+}
+function setCrowdMode(m){
+  crowdMode=m;
+  Object.keys(POOL).forEach(k=>{if(POOL[k])POOL[k].W=0;});
+  renderCrowdCards();
+}
+
+const CH={};const CC={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#071428',titleColor:'#7AAEC8',bodyColor:'#D4EEFF',borderColor:'#1A3A5C',borderWidth:1,padding:10}},scales:{x:{grid:{color:'rgba(0,180,255,0.06)'},ticks:{color:'#3A6A8A',font:{family:'Space Mono',size:9}}},y:{grid:{color:'rgba(0,180,255,0.06)'},ticks:{color:'#3A6A8A',font:{family:'Space Mono',size:9}}}}};
+function mkChart(id,cfg){if(CH[id]){CH[id].destroy();delete CH[id];}const el=document.getElementById(id);if(!el)return null;CH[id]=new Chart(el,{...cfg,options:{...CC,...(cfg.options||{}),plugins:{...CC.plugins,...((cfg.options||{}).plugins||{})},scales:{...CC.scales,...((cfg.options||{}).scales||{})}}});return CH[id];}
+
+function initAllCharts(){
+  const wk=['Jul 15','Jul 20','Jul 25','Aug 1','Aug 2★','Aug 5','Aug 10','Aug 31★','Sep 1','Sep 11★','Sep 20'];
+  mkChart('chart-waste',{type:'bar',data:{labels:wk,datasets:[{label:'Generated',data:[280,310,340,420,850,480,390,920,560,640,380],backgroundColor:'rgba(255,179,0,0.35)',borderColor:'#FFB300',borderWidth:1},{label:'Collected',data:[268,298,328,400,782,454,375,856,532,608,366],backgroundColor:'rgba(0,255,136,0.3)',borderColor:'#00FF88',borderWidth:1}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}}}});
+  mkChart('chart-waste-pie',{type:'doughnut',data:{labels:['Food','Floral','Plastic','Recyclables'],datasets:[{data:[48,22,8,22],backgroundColor:['rgba(255,179,0,0.75)','rgba(255,102,0,0.75)','rgba(255,51,51,0.75)','rgba(0,255,136,0.75)'],borderWidth:0}]},options:{cutout:'65%',plugins:{legend:{display:true,position:'right',labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}},scales:{x:{display:false},y:{display:false}}}});
+  mkChart('chart-bod',{type:'line',data:{labels:['Jul 1','Jul 15','Aug 1','Aug 2★','Aug 15','Aug 31★','Sep 1','Sep 11★','Sep 20','Oct 1'],datasets:[{label:'BOD (mg/L)',data:[3.2,4.1,4.8,9.2,5.5,12.4,7.2,8.1,5.8,4.2],borderColor:'#FF3333',backgroundColor:'rgba(255,51,51,0.08)',tension:0.3,fill:true,pointRadius:3,borderWidth:2},{label:'Target 3 mg/L',data:[3,3,3,3,3,3,3,3,3,3],borderColor:'#00FF88',borderDash:[4,4],borderWidth:1.5,pointRadius:0}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}},scales:{y:{min:0,max:16}}}});
+  mkChart('chart-wqi',{type:'bar',data:{labels:K.riverStations.map(s=>s.nm.split(' ').slice(0,2).join(' ')),datasets:[{label:'WQI',data:[82,76,61,58,65,74],backgroundColor:d=>d.raw>=70?'rgba(0,255,136,0.5)':d.raw>=60?'rgba(255,179,0,0.5)':'rgba(255,51,51,0.5)',borderColor:d=>d.raw>=70?'#00FF88':d.raw>=60?'#FFB300':'#FF3333',borderWidth:1}]},options:{indexAxis:'y',scales:{x:{min:0,max:100}}}});
+  mkChart('chart-aqi',{type:'line',data:{labels:['Jul','Jul 15','Aug 1','Aug 2','Aug 15','Aug 31','Sep 1','Sep 15','Oct'],datasets:[{label:'AQI',data:[62,68,72,108,82,124,88,76,65],borderColor:'#FF6600',backgroundColor:'rgba(255,102,0,0.08)',tension:0.3,fill:true,pointRadius:3,borderWidth:2},{label:'Threshold',data:[100,100,100,100,100,100,100,100,100],borderColor:'#00FF88',borderDash:[4,4],borderWidth:1.5,pointRadius:0}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}}}});
+  mkChart('chart-emit-pie',{type:'doughnut',data:{labels:['Vehicles','Generators','Cooking','Dust'],datasets:[{data:[52,24,18,6],backgroundColor:['rgba(255,51,51,0.7)','rgba(255,179,0,0.7)','rgba(255,102,0,0.7)','rgba(100,100,100,0.6)'],borderWidth:0}]},options:{cutout:'65%',plugins:{legend:{display:true,position:'right',labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}},scales:{x:{display:false},y:{display:false}}}});
+  mkChart('chart-carbon',{type:'line',data:{labels:['Jul','Aug 1','Aug 15','Sep 1','Sep 15','Oct'],datasets:[{label:'2015 Baseline',data:[2600,3200,4400,3800,2400,1800],borderColor:'#3A6A8A',borderDash:[4,4],pointRadius:0,borderWidth:1.5},{label:'2027 Actual',data:[1550,1900,2600,2300,1400,1100],borderColor:'#00FF88',backgroundColor:'rgba(0,255,136,0.08)',tension:0.3,fill:true,pointRadius:3,borderWidth:2}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}}}});
+  mkChart('chart-carbon-pie',{type:'doughnut',data:{labels:['Transport','Energy','Waste','Construction'],datasets:[{data:[58,24,12,6],backgroundColor:['rgba(255,179,0,0.7)','rgba(255,102,0,0.7)','rgba(100,100,100,0.6)','rgba(0,180,255,0.6)'],borderWidth:0}]},options:{cutout:'65%',plugins:{legend:{display:true,position:'right',labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}},scales:{x:{display:false},y:{display:false}}}});
+  mkChart('chart-crowd',{type:'line',data:{labels:['6AM','8AM','10AM','12PM','2PM','4PM','6PM','8PM','10PM'],datasets:[{label:'Ramkund',data:[0.12,0.48,0.86,0.92,0.85,0.74,0.58,0.32,0.14],borderColor:'#FF3333',tension:0.4,pointRadius:2,borderWidth:2},{label:'Panchavati',data:[0.08,0.36,0.68,0.76,0.72,0.65,0.50,0.28,0.12],borderColor:'#FFB300',tension:0.4,pointRadius:2,borderWidth:2},{label:'Tapovan',data:[0.20,0.42,0.56,0.60,0.58,0.52,0.44,0.34,0.20],borderColor:'#FF6600',tension:0.4,pointRadius:2,borderWidth:2}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}},scales:{y:{min:0,max:1,ticks:{callback:v=>(v*100).toFixed(0)+'%'}}}}});
+  mkChart('chart-stp-flow',{type:'bar',data:{labels:['SCREENING','PRIMARY','AERATION','SECONDARY','DISINFECT','EFFLUENT'],datasets:[{label:'STP1 186MLD',data:[186,168,155,145,142,142],backgroundColor:'rgba(0,180,255,0.4)',borderColor:'#4DAAFF',borderWidth:1},{label:'STP2 142MLD',data:[142,128,118,112,110,110],backgroundColor:'rgba(255,102,0,0.35)',borderColor:'#FF6600',borderWidth:1},{label:'STP3 154MLD',data:[154,138,126,118,116,116],backgroundColor:'rgba(0,255,136,0.3)',borderColor:'#00FF88',borderWidth:1}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}}}});
+  mkChart('chart-stp-daily',{type:'line',data:{labels:['Jul 15','Aug 1','Aug 2','Aug 15','Aug 31','Sep 1','Sep 15','Oct 1'],datasets:[{label:'Treated MLD',data:[318,380,420,410,445,438,400,365],borderColor:'#4DAAFF',backgroundColor:'rgba(0,180,255,0.08)',tension:0.3,fill:true,pointRadius:3,borderWidth:2},{label:'Capacity',data:[486,486,486,486,486,486,486,486],borderColor:'#3A6A8A',borderDash:[4,4],borderWidth:1.5,pointRadius:0}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}}}});
+  mkChart('chart-radar',{type:'radar',data:{labels:['WASTE','WATER','AIR','CARBON','SAFETY','SANIT'],datasets:[{label:'Current',data:[68,61,72,100,93,94],borderColor:'#FF6600',backgroundColor:'rgba(255,102,0,0.12)',pointBackgroundColor:'#FF6600',borderWidth:2,pointRadius:4},{label:'Target',data:[80,80,80,80,90,100],borderColor:'#3A6A8A',borderDash:[4,4],backgroundColor:'transparent',pointBackgroundColor:'#3A6A8A',borderWidth:1.5,pointRadius:3}]},options:{scales:{r:{grid:{color:'rgba(0,180,255,0.1)'},ticks:{display:false},pointLabels:{color:'#7AAEC8',font:{family:'Space Mono',size:8}},suggestedMin:0,suggestedMax:100}},plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}}}});
+  mkChart('chart-sentiment',{type:'doughnut',data:{labels:['Positive','Neutral','Negative'],datasets:[{data:[72,18,10],backgroundColor:['rgba(0,255,136,0.7)','rgba(100,100,100,0.5)','rgba(255,51,51,0.6)'],borderWidth:0}]},options:{cutout:'60%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}},scales:{x:{display:false},y:{display:false}}}});
+  mkChart('chart-flood',{type:'bar',data:{labels:['Jul 1','Jul 15','Aug 1','Aug 15','Aug 31','Sep 15'],datasets:[{label:'Rainfall mm',data:[112,145,168,155,188,134],backgroundColor:d=>d.raw>180?'rgba(255,51,51,0.55)':d.raw>155?'rgba(255,179,0,0.55)':'rgba(0,180,255,0.45)',borderColor:'#4DAAFF',borderWidth:1}]},options:{plugins:{legend:{display:false}}}});
+  mkChart('chart-legacy',{type:'bar',data:{labels:['2027','2028','2029','2030','2032','2035'],datasets:[{label:'Infra Value (₹Cr)',data:[25055,28000,32000,36000,42000,52000],backgroundColor:'rgba(255,102,0,0.45)',borderColor:'#FF6600',borderWidth:1},{label:'Economic Output (₹Cr)',data:[15000,22000,35000,48000,68000,90000],backgroundColor:'rgba(0,255,136,0.25)',borderColor:'#00FF88',borderWidth:1}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:9}}}}}});
+  mkChart('chart-emission-scenarios',{type:'bar',data:{labels:['S1: BAU','S2: EV Only','S3: EV+Solar','S4: Full Plan','S5: Carbon+'],datasets:[{label:'MT CO₂e',data:[15200,12800,10400,9100,7600],backgroundColor:['rgba(255,51,51,0.6)','rgba(255,179,0,0.6)','rgba(255,102,0,0.6)','rgba(0,255,136,0.6)','rgba(0,180,255,0.6)'],borderColor:['#FF3333','#FFB300','#FF6600','#00FF88','#4DAAFF'],borderWidth:1.5}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v/1000+'K MT'}}}}});
+  mkChart('chart-crowd-pred',{type:'line',data:{labels:['NOW','30M','1HR','1.5HR','2HR','3HR'],datasets:[{label:'Ramkund Prediction',data:[92,89,95,88,80,72],borderColor:'#FF3333',backgroundColor:'rgba(255,51,51,0.1)',tension:0.4,fill:true,pointRadius:3,borderWidth:2,borderDash:[]},{label:'Panchavati',data:[74,76,82,78,70,62],borderColor:'#FFB300',tension:0.4,pointRadius:2,borderWidth:1.5,borderDash:[4,3]}]},options:{plugins:{legend:{display:true,labels:{color:'#7AAEC8',font:{family:'Space Mono',size:8}}}},scales:{y:{min:40,max:100,ticks:{callback:v=>v+'%'}}}}});
+}
+
+function renderSnan(){const el=document.getElementById('snan-list');if(!el)return;el.innerHTML=K.snan.map(s=>`<div class="snan"><div class="snan-dt">${s.dt.split(' ')[0]}<br><span style="font-size:8px">${s.dt.split(' ').slice(1).join(' ')}</span></div><div><div class="snan-nm">${s.nm}</div><div class="snan-sb">${s.note}</div></div><div class="snan-cr"><div class="snan-cr-num">${s.cr}</div><div class="snan-cr-lbl">PILGRIMS</div></div></div>`).join('');}
+function renderInfraBars(){const el=document.getElementById('infra-bars');if(!el)return;el.innerHTML=K.infraBars.map(b=>`<div class="bar-row"><div class="bar-lbl">${b.lbl}</div><div class="bar-trk"><div class="bar-fill" style="width:${b.v}%;background:${b.col}"></div></div><div class="bar-v">${b.v}%</div></div>`).join('');}
+function renderAlerts(){const el=document.getElementById('alert-feed');if(!el)return;const dm={r:'dot-r dot-pulse',y:'dot-y',b:'dot-b',g:'dot-g',o:'dot-o'};el.innerHTML=K.alerts.map(a=>`<div class="alert-row"><span class="dot ${dm[a.lv]}" style="margin-top:3px;flex-shrink:0;"></span><div class="alert-cnt"><div class="alert-ttl">${a.ttl}</div><div class="alert-dsc">${a.dsc}</div><div class="alert-ts">${a.ts}</div></div></div>`).join('');}
+function renderSysStatus(){const el=document.getElementById('sys-status');if(!el)return;el.innerHTML=K.sysStatus.map(s=>`<div class="mrow"><span class="mrow-k">${s.lbl}</span><span style="display:flex;align-items:center;gap:5px;"><span class="dot ${s.dot}"></span><span class="mrow-v" style="font-size:9px">${s.st}</span></span></div>`).join('');}
+
+// ─── AKHADA DATA ────────────────────────────────────────
+const AKHADAS=[
+  // NASHIK NODE — Vaishnava (bathe at Ramkund)
+  {nm:'SHRI NIRMOHI ANI AKHARA',  sect:'VAISHNAVA',node:'NASHIK',lat:20.0038,lng:73.7788,order:1,pop:'~15,000',est:'~900 AD', col:'#FFD700',snan:'SEP 11, 2027'},
+  {nm:'SHRI DIGAMBAR ANI AKHARA', sect:'VAISHNAVA',node:'NASHIK',lat:20.0042,lng:73.7796,order:2,pop:'~8,000', est:'~1200 AD',col:'#FFA500',snan:'SEP 11, 2027'},
+  {nm:'SHRI NIRVANI ANI AKHARA',  sect:'VAISHNAVA',node:'NASHIK',lat:20.0030,lng:73.7812,order:3,pop:'~20,000',est:'~800 AD', col:'#FF8C00',snan:'SEP 11, 2027'},
+  // TRIMBAKESHWAR NODE — Shaiva (bathe at Kushavarta)
+  {nm:'SHRI PANCH DASHNAM JUNA',  sect:'SHAIVA',   node:'TRIMBAK',lat:19.9332,lng:73.5320,order:1,pop:'~50,000',est:'~547 AD', col:'#FF4500',snan:'SEP 12, 2027'},
+  {nm:'SHRI NIRANJANI AKHARA',    sect:'SHAIVA',   node:'TRIMBAK',lat:19.9325,lng:73.5305,order:2,pop:'~25,000',est:'~800 AD', col:'#FF6600',snan:'SEP 12, 2027'},
+  {nm:'SHRI MAHANIRVANI AKHARA',  sect:'SHAIVA',   node:'TRIMBAK',lat:19.9340,lng:73.5330,order:3,pop:'~30,000',est:'~1200 AD',col:'#FF7700',snan:'SEP 12, 2027'},
+  {nm:'SHRI AVAHAN AKHARA',       sect:'SHAIVA',   node:'TRIMBAK',lat:19.9318,lng:73.5295,order:4,pop:'~10,000',est:'~600 AD', col:'#FF8800',snan:'SEP 12, 2027'},
+  {nm:'SHRI AGNI AKHARA',         sect:'SHAIVA',   node:'TRIMBAK',lat:19.9335,lng:73.5342,order:5,pop:'~5,000', est:'~900 AD', col:'#FF9900',snan:'SEP 12, 2027'},
+  {nm:'SHRI PANCHAGNI AKHARA',    sect:'SHAIVA',   node:'TRIMBAK',lat:19.9310,lng:73.5285,order:6,pop:'~4,000', est:'~1100 AD',col:'#FFAA00',snan:'SEP 12, 2027'},
+  {nm:'SHRI NIRMAL AKHARA',       sect:'UDASIN',   node:'TAPOVAN',lat:19.9990,lng:73.7710,order:7,pop:'~3,000', est:'~1600 AD',col:'#FFCC00',snan:'BOTH NODES'},
+];
+
+const EV_ROUTES_DATA=[
+  {id:'R1',nm:'NASHIK RD STA → CBS → RAMKUND', col:'#00E5FF',buses:480,freq:'5 min',cap:'60 pax/bus'},
+  {id:'R2',nm:'CBS → PANCHAVATI → TAPOVAN',    col:'#00FF88',buses:380,freq:'7 min',cap:'60 pax/bus'},
+  {id:'R3',nm:'TRIMBAK EXPRESS (28KM)',         col:'#FF9100',buses:420,freq:'15 min',cap:'60 pax/bus'},
+  {id:'R4',nm:'DEOLALI CAMP CONNECTOR',         col:'#E040FB',buses:240,freq:'10 min',cap:'60 pax/bus'},
+  {id:'R5',nm:'GANGAPUR PILGRIM ROUTE',         col:'#FFEB3B',buses:180,freq:'12 min',cap:'60 pax/bus'},
+];
+
+const CARBON_ZONES_DATA=[
+  {nm:'CBS TRAFFIC HUB',     mt:180,type:'VEHICLE',   col:'#FF3333'},
+  {nm:'NASHIK RD JUNCTION',  mt:120,type:'VEHICLE',   col:'#FF3333'},
+  {nm:'TAPOVAN GENERATORS',  mt:95, type:'GENERATOR', col:'#FFB300'},
+  {nm:'RAMKUND DENSE ZONE',  mt:80, type:'CROWD+COOK',col:'#FF6600'},
+  {nm:'TRIMBAK GENERATORS',  mt:45, type:'GENERATOR', col:'#FFB300'},
+  {nm:'PARKING LOT P1',      mt:65, type:'VEHICLE',   col:'#FF4444'},
+];
+
+function renderAkhadaPanel(){
+  const el=document.getElementById('akhada-panel');if(!el)return;
+  el.innerHTML=AKHADAS.map(a=>`
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-left:3px solid ${a.col};border-radius:2px;padding:7px 9px;cursor:pointer;" onclick="flyTo('map-twin',${a.lng},${a.lat})">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+        <div style="font-family:var(--font-head);font-size:8px;font-weight:700;color:${a.col};letter-spacing:1px;">${a.nm.substring(0,22)}</div>
+        <span style="background:${a.sect==='VAISHNAVA'?'rgba(255,215,0,0.15)':a.sect==='SHAIVA'?'rgba(255,102,0,0.15)':'rgba(0,180,255,0.12)'};color:${a.sect==='VAISHNAVA'?'#FFD700':a.sect==='SHAIVA'?'#FF6600':'#4DAAFF'};font-family:var(--font-data);font-size:7px;padding:1px 5px;border-radius:1px;">${a.sect}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
+        <div><div style="font-family:var(--font-data);font-size:7px;color:var(--text-3)">SADHUS</div><div style="font-family:var(--font-head);font-size:10px;color:var(--text)">${a.pop}</div></div>
+        <div><div style="font-family:var(--font-data);font-size:7px;color:var(--text-3)">SNAN ORDER</div><div style="font-family:var(--font-head);font-size:10px;color:${a.col}">#${a.order}</div></div>
+        <div><div style="font-family:var(--font-data);font-size:7px;color:var(--text-3)">SNAN DATE</div><div style="font-family:var(--font-head);font-size:9px;color:var(--yellow)">${a.snan.split(',')[0]}</div></div>
+      </div>
+      <div style="font-family:var(--font-data);font-size:7px;color:var(--text-3);margin-top:3px;">NODE: ${a.node} · EST. ${a.est}</div>
+    </div>`).join('');
+}
+
+function renderEVRoutesPanel(){
+  const el=document.getElementById('ev-routes-panel');if(!el)return;
+  el.innerHTML=EV_ROUTES_DATA.map(r=>`
+    <div class="mrow">
+      <span class="mrow-k"><span style="font-family:var(--font-head);font-size:9px;color:${r.col}">${r.id}</span> — <span style="font-size:9px">${r.nm.substring(0,24)}</span></span>
+      <span style="display:flex;align-items:center;gap:6px;">
+        <span style="font-family:var(--font-data);font-size:8px;color:${r.col}">${r.buses}B</span>
+        <span style="font-family:var(--font-data);font-size:8px;color:var(--text-3)">${r.freq}</span>
+      </span>
+    </div>`).join('');
+}
+
+// ── MAP LAYER TOGGLES ────────────────────────────────────
+let evVisible=true,akhadaVisible=true,carbonVisible=false;
+function toggleEVRoutes(btn){evVisible=!evVisible;btn.classList.toggle('active-blue');}
+function toggleAkhadas(btn){akhadaVisible=!akhadaVisible;btn.classList.toggle('active-blue');}
+function toggleCarbonMap(btn){
+  carbonVisible=!carbonVisible;btn.classList.toggle('active-blue');
+  if(!maps['map-twin'])return;
+  CARBON_ZONES_DATA.forEach((cz,i)=>{
+    const id='carbon-'+i;
+    if(carbonVisible){
+      if(!maps['map-twin'].getLayer(id)){
+        const el2=document.createElement('div');
+        const r=Math.sqrt(cz.mt/180)*22;
+        el2.style.cssText=`width:${r*2}px;height:${r*2}px;border-radius:50%;background:${cz.col};opacity:0.18;border:1px solid ${cz.col};pointer-events:none;`;
+        const locs={0:[73.7930,19.9980],1:[73.8200,20.0200],2:[73.7700,19.9985],3:[73.7790,20.0040],4:[73.5313,19.9330],5:[73.8050,20.0150]};
+        if(locs[i])new maplibregl.Marker({element:el2}).setLngLat(locs[i]).addTo(maps['map-twin']);
+      }
+    }
+  });
+}
+
+// ── AKHADA MARKERS ON MAPS ───────────────────────────────
+function addAkhadaMarkers(m){
+  if(!m)return;
+  m.on('load',()=>{
+    AKHADAS.forEach((a,i)=>{
+      const el2=document.createElement('div');
+      el2.style.cssText=`width:10px;height:10px;border-radius:50%;background:${a.col};border:2px solid rgba(0,0,0,0.5);box-shadow:0 0 8px ${a.col};cursor:pointer;`;
+      const pop=new maplibregl.Popup({offset:12}).setHTML(`<div class="pop-ttl">${a.nm}</div><div class="pop-row"><span>SECT</span><b style="color:${a.col}">${a.sect}</b></div><div class="pop-row"><span>SADHUS</span><b>${a.pop}</b></div><div class="pop-row"><span>SNAN ORDER</span><b class="o">#${a.order}</b></div><div class="pop-row"><span>SNAN DATE</span><b class="y">${a.snan}</b></div><div class="pop-row"><span>ESTABLISHED</span><b>${a.est}</b></div><div class="pop-row"><span>NODE</span><b>${a.node}</b></div>`);
+      new maplibregl.Marker({element:el2}).setLngLat([a.lng,a.lat]).setPopup(pop).addTo(m);
+      // Flag pole label
+      const lbl=document.createElement('div');
+      lbl.style.cssText=`font-family:Space Mono,monospace;font-size:7px;color:${a.col};background:rgba(0,6,15,0.85);padding:1px 4px;border-radius:2px;border:1px solid ${a.col};white-space:nowrap;pointer-events:none;margin-left:8px;`;
+      lbl.textContent=a.nm.split(' ').slice(1,3).join(' ');
+      new maplibregl.Marker({element:lbl,anchor:'top-left'}).setLngLat([a.lng,a.lat]).addTo(m);
+    });
+  });
+}
+
+// ── EV SHUTTLE ROUTES ON MAPS ────────────────────────────
+const EV_MAP_ROUTES=[
+  {id:'ev-r1',col:'#00E5FF',coords:[[73.8200,20.0200],[73.7930,19.9980],[73.7790,20.0040]],nm:'NASHIK RD→RAMKUND'},
+  {id:'ev-r2',col:'#00FF88',coords:[[73.7930,19.9980],[73.7820,20.0025],[73.7700,19.9985]],nm:'CBS→TAPOVAN'},
+  {id:'ev-r3',col:'#FF9100',coords:[[73.7930,19.9980],[73.6900,19.9700],[73.5313,19.9330]],nm:'TRIMBAK EXPRESS'},
+  {id:'ev-r4',col:'#E040FB',coords:[[73.8300,19.9600],[73.8200,20.0200],[73.7930,19.9980]],nm:'DEOLALI LINK'},
+  {id:'ev-r5',col:'#FFEB3B',coords:[[73.7000,20.0300],[73.7500,20.0150],[73.7790,20.0040]],nm:'GANGAPUR ROUTE'},
+];
+
+function addEVRoutes(m){
+  if(!m)return;
+  m.on('load',()=>{
+    EV_MAP_ROUTES.forEach(rt=>{
+      m.addSource(rt.id,{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:rt.coords}}});
+      m.addLayer({id:rt.id+'-glow',type:'line',source:rt.id,paint:{'line-color':rt.col,'line-width':6,'line-opacity':0.15}});
+      m.addLayer({id:rt.id,type:'line',source:rt.id,paint:{'line-color':rt.col,'line-width':2.5,'line-opacity':0.8,'line-dasharray':[8,5]}});
+      // EV route label popup at midpoint
+      const mid=Math.floor(rt.coords.length/2);
+      const el2=document.createElement('div');
+      el2.style.cssText=`font-family:Space Mono,monospace;font-size:7px;color:${rt.col};background:rgba(0,6,15,0.9);padding:1px 5px;border-radius:2px;border:1px solid ${rt.col};white-space:nowrap;pointer-events:none;`;
+      el2.textContent='⚡ '+rt.nm;
+      new maplibregl.Marker({element:el2}).setLngLat(rt.coords[mid]).addTo(m);
+    });
+  });
+}
+function renderTwinZones(){const el=document.getElementById('twin-zones');if(!el)return;el.innerHTML=K.zones.map(z=>`<div class="zone-card ${z.st}" onclick="flyTo('map-twin',${z.lng},${z.lat})"><div style="display:flex;align-items:center;justify-content:space-between;"><div><div class="zc-name">${z.name.substring(0,16)}</div><div class="zc-cap">${(z.now/1000).toFixed(0)}K / ${(z.cap/1000).toFixed(0)}K</div></div><div class="zc-val" style="color:${dcol(z.den)};font-family:var(--font-head)">${z.den}%</div></div><div class="zc-bar"><div class="zc-fill" style="width:${z.den}%;background:${dcol(z.den)}"></div></div></div>`).join('');}
+function renderCrowdCards(){const el=document.getElementById('crowd-cards');if(!el)return;el.innerHTML=K.zones.slice(0,6).map(z=>{const d=crowdMode==='snan'?Math.min(100,Math.round(z.den*1.5)):crowdMode==='peak'?Math.min(100,Math.round(z.den*1.2)):z.den;const st=d>=80?'crit':d>=60?'high':d>=40?'mod':'low';return`<div class="zone-card ${st}"><div style="display:flex;align-items:center;justify-content:space-between;"><div><div class="zc-name">${z.name.substring(0,12)}</div><div class="zc-cap">${(z.now/1000).toFixed(0)}K ACTIVE</div></div><div class="zc-val" style="color:${dcol(d)};font-family:var(--font-head)">${d}%</div></div><div class="zc-bar"><div class="zc-fill" style="width:${d}%;background:${dcol(d)}"></div></div></div>`;}).join('');}
+function renderEvacRoutes(){const el=document.getElementById('evac-routes');if(!el)return;el.innerHTML=K.evacuRoutes.map(r=>`<div class="mrow"><span class="mrow-k"><b style="color:var(--accent)">${r.id}</b> — ${r.nm}</span><span style="display:flex;align-items:center;gap:6px;"><span style="font-family:var(--font-data);font-size:8px;color:${r.col};font-weight:700">${r.st}</span><span style="font-family:var(--font-data);font-size:8px;color:var(--text-3)">${r.cap}</span></span></div>`).join('');}
+function renderWasteTbl(){const el=document.getElementById('waste-tbl');if(!el)return;el.innerHTML=K.wasteTbl.map(r=>`<tr><td class="tc-o">${r.z}</td><td>${r.c}</td><td>${r.cap}</td><td class="${r.st==='y'?'tc-y':'tc-g'}">${r.u}</td><td>${r.trips}/day</td><td><span class="badge ${r.st==='y'?'bg-y':'bg-g'}">${r.st==='y'?'HIGH LOAD':'NORMAL'}</span></td></tr>`).join('');}
+function renderRiverTbl(){const el=document.getElementById('river-tbl');if(!el)return;el.innerHTML=K.riverStations.map(r=>`<tr><td>${r.nm}</td><td class="${r.st==='y'?'tc-y':'tc-g'}">${r.bod}</td><td class="${r.do_>=6?'tc-g':'tc-y'}">${r.do_}</td><td>${r.ph}</td><td><span class="badge ${r.st==='y'?'bg-y':'bg-g'}">${r.st==='y'?'ELEVATED':'GOOD'}</span></td></tr>`).join('');}
+function renderSTPcards(){
+  const te=document.getElementById('stp-top-cards');if(te)te.innerHTML=K.stps.map(s=>`<div class="emc blue"><div class="emc-lbl">STP ${s.id} — ${s.zone}</div><div class="emc-val" style="color:var(--glow)">${s.cap} MLD</div><div class="emc-unit">ACTIVE: ${s.act} MLD · EFF: ${s.eff}%</div></div>`).join('');
+  const el=document.getElementById('stp-cards');if(!el)return;
+  el.innerHTML=K.stps.map(s=>`<div class="stp-card"><div class="stp-name">STP ${s.id} — ${s.name.split('—')[1]?.trim()}</div><div class="stp-cap">${s.cap}</div><div class="stp-unit">MLD CAPACITY · ${s.eff}% EFFICIENCY</div><div style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px;">${s.stages.map(st=>`<div class="stp-stage"><div class="stp-stage-name">${st.n}</div><div class="stp-stage-val">${st.v}</div><div class="stp-stage-ok">${st.ok?'✓':'!'}</div></div>`).join('')}</div><div style="margin-top:8px;font-family:var(--font-data);font-size:8px;color:var(--text-3)">INLET BOD: <b style="color:var(--red)">${s.bod_in} mg/L</b> → EFFLUENT: <b style="color:var(--green)">${s.bod_out} mg/L</b></div></div>`).join('');
+}
+function renderNullahTbl(){const el=document.getElementById('nullah-tbl');if(!el)return;el.innerHTML=K.nullahs.map(n=>`<tr><td>${n.nm}</td><td class="tc-b">${n.fl}</td><td>${n.div}</td><td><span class="badge bg-g">ACTIVE</span></td></tr>`).join('');}
+function renderEffluentTbl(){const el=document.getElementById('effluent-tbl');if(!el)return;el.innerHTML=K.effluent.map(r=>`<tr><td class="tc-b">${r.p}</td><td class="tc-r">${r.raw}</td><td class="tc-y">${r.pri}</td><td class="tc-o">${r.sec}</td><td class="tc-g">${r.fin}</td><td>${r.std}</td><td><span class="badge bg-g">COMPLIANT</span></td></tr>`).join('');}
+function renderInfraStatus(){const el=document.getElementById('infra-status');if(!el)return;el.innerHTML=K.infraStatus.map(r=>`<div class="mrow"><span class="mrow-k">${r.lbl}</span><span style="display:flex;align-items:center;gap:5px;"><span class="mrow-v" style="font-size:9px">${r.v}</span><span class="dot ${r.dot}"></span></span></div>`).join('');}
+function renderRiskScenarios(){const el=document.getElementById('risk-scenarios');if(!el)return;el.innerHTML=K.riskScenarios.map((s,i)=>`<div class="sc-card ${i===0?'active':''}"><div class="sc-title">${s.ttl}</div><div class="sc-desc">${s.dsc}</div><div class="sc-impact" style="color:${s.col};font-weight:700;font-family:var(--font-data);font-size:9px;margin-top:4px">${s.imp}</div></div>`).join('');}
+function renderESGRows(){const el=document.getElementById('esg-rows');if(!el)return;el.innerHTML=K.esgKPIs.map(k=>`<div class="kpi-tbl-row"><div style="font-size:11px;font-weight:500;color:var(--text)">${k.nm}</div><div style="font-family:var(--font-data);font-size:9px;color:var(--text-3)">${k.tgt}</div><div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:${k.col}">${k.cur}</div><div><span class="badge ${k.st==='up'?'bg-g':'bg-y'}">${k.rat}</span></div><div class="kpi-tbl-bar-wrap"><div class="kpi-tbl-bar"><div class="kpi-tbl-fill" style="width:${k.pct}%;background:${k.col}"></div></div><div class="kpi-tbl-pct">${k.pct}%</div></div><span class="badge ${k.st==='up'?'bg-g':'bg-y'}">${k.st==='up'?'ON TRACK':'MONITOR'}</span></div>`).join('');}
+function renderZoneESG(){const el=document.getElementById('zone-esg');if(!el)return;const rc=v=>v>=85?'tc-g':v>=70?'tc-o':'tc-y';el.innerHTML=K.zoneESG.map(z=>`<tr><td class="tc-o">${z.nm}</td><td class="${rc(z.wa)}">${z.wa}</td><td class="${rc(z.wt)}">${z.wt}</td><td class="${rc(z.sf)}">${z.sf}</td><td class="${rc(z.sn)}">${z.sn}</td><td class="${rc(z.ai)}">${z.ai}</td><td class="${rc(z.ov)}">${z.ov}</td><td><span class="badge ${z.ov>=85?'bg-g':'bg-o'}">${z.rt}</span></td></tr>`).join('');}
+function renderNews(){const neg=document.getElementById('neg-news');const pos=document.getElementById('pos-news');if(neg)neg.innerHTML=K.negNews.map(n=>`<div class="news-card"><div class="news-src">${n.src}</div><div class="news-hl neg">${n.headline}</div><div class="news-snip">${n.snip}</div></div>`).join('');if(pos)pos.innerHTML=K.posNews.map(n=>`<div class="news-card"><div class="news-src">${n.src}</div><div class="news-hl pos">${n.headline}</div><div class="news-snip">${n.snip}</div></div>`).join('');}
+function renderRanking(){const el=document.getElementById('ranking-tbl');if(!el)return;el.innerHTML=K.ranking.map(r=>`<tr style="${r.hi?'background:rgba(255,102,0,0.06);':''}"><td class="${r.rk===1?'tc-o':''}">#${r.rk}</td><td style="font-weight:${r.hi?700:400};color:${r.hi?'var(--accent)':'var(--text-2)'}">${r.ev}</td><td>${r.yr}</td><td>${r.sc}</td><td class="${r.score>=70?'tc-g':r.score>=55?'tc-y':'tc-r'}">${r.score}/100</td><td><span class="badge ${r.score>=70?'bg-g':r.score>=55?'bg-o':'bg-r'}">${r.rat}</span></td></tr>`).join('');}
+function renderLegacy(){const tl=document.getElementById('legacy-tl');if(tl)tl.innerHTML=K.legacyTL.map(t=>`<div class="lt-item"><div class="lt-dot ${t.done?'done':'future'}"></div><div class="lt-yr">${t.yr}</div><div class="lt-title">${t.ttl}</div><div class="lt-desc">${t.desc}</div></div>`).join('');const tb=document.getElementById('legacy-tbl');if(tb)tb.innerHTML=K.legacyTbl.map(r=>`<tr><td class="tc-o">${r.inf}</td><td style="color:var(--yellow)">${r.val}</td><td>${r.ben}</td><td>${r.life}</td><td class="tc-g">${r.imp}</td></tr>`).join('');}
+function renderClimactix(){const cg=document.getElementById('cap-grid');if(cg)cg.innerHTML=K.caps.map(c=>`<div class="cap-card"><div class="cap-icon">${c.ic}</div><div class="cap-title">${c.ttl}</div><div class="cap-desc">${c.dsc}</div></div>`).join('');const nl=document.getElementById('not-list');if(nl)nl.innerHTML=K.notIs.map(t=>`<div style="font-family:var(--font-data);font-size:9px;color:var(--text-3);padding:4px 0;border-bottom:1px solid var(--border-2);display:flex;align-items:center;gap:5px;"><span style="color:var(--red)">✗</span>${t}</div>`).join('');const il=document.getElementById('is-list');if(il)il.innerHTML=K.isIs.map(t=>`<div style="font-family:var(--font-data);font-size:9px;color:var(--text-2);padding:4px 0;border-bottom:1px solid var(--border-2);display:flex;align-items:center;gap:5px;"><span style="color:var(--green)">✓</span>${t}</div>`).join('');const tg=document.getElementById('tier-grid');if(tg)tg.innerHTML=K.tiers.map(t=>`<div class="tier"><div class="tier-badge">${t.badge}</div><div class="tier-name">${t.nm}</div><div class="tier-desc">${t.dsc}</div><ul class="tier-items">${t.itm.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('');}
+
+function buildTicker(){const inner=document.getElementById('tick-inner');if(!inner)return;const items=[...K.tickerItems,...K.tickerItems];inner.innerHTML=items.map(t=>`<div class="tick-item"><span class="tk">${t.k}</span>&nbsp;<span class="tv">${t.v}</span>&nbsp;<span class="tk-badge ${t.bc}">${t.b}</span></div>`).join('');}
+function updateClock(){const el=document.getElementById('sys-clock');if(el)el.textContent=new Date().toLocaleTimeString('en-IN',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'})+' IST';}
+function updateCountdown(){const target=new Date('2027-08-02T00:00:00+05:30');const diff=target-new Date();const pad=n=>String(Math.max(0,n)).padStart(2,'0');['d','h','m'].forEach((id,i)=>{const el=document.getElementById(`cd-${id}`);if(el)el.textContent=pad([Math.floor(diff/86400000),Math.floor((diff%86400000)/3600000),Math.floor((diff%3600000)/60000)][i]);});}
+
+const done={};
+const MINIT={cmd:()=>initCmdMap(),twin:()=>{initTwinMap();renderTwinZones();},crowd:()=>{if(!crowdRaf)drawCrowd();renderCrowdCards();renderEvacRoutes();},env:()=>{renderWasteTbl();renderRiverTbl();initAllCharts();},stp:()=>{renderSTPcards();renderNullahTbl();renderEffluentTbl();initAllCharts();},infra:()=>{initInfraMap();renderInfraStatus();},resilience:()=>{initResilienceMap();renderRiskScenarios();initAllCharts();},esg:()=>{renderESGRows();renderZoneESG();initAllCharts();},media:()=>{renderNews();renderRanking();initAllCharts();},legacy:()=>{renderLegacy();initAllCharts();},climactix:()=>renderClimactix()};
+
+document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',function(){const mod=this.dataset.mod;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));this.classList.add('active');const tgt=document.getElementById('mod-'+mod);if(tgt)tgt.classList.add('active');if(mod!=='crowd'&&crowdRaf){cancelAnimationFrame(crowdRaf);crowdRaf=null;}if(!done[mod]){done[mod]=true;setTimeout(()=>{if(MINIT[mod])MINIT[mod]();},60);}if(mod==='crowd'&&!crowdRaf)setTimeout(drawCrowd,60);});});
+
+function flyTo(mapId,lng,lat){if(maps[mapId])maps[mapId].easeTo({center:[lng,lat],zoom:14,duration:1200});}
+function toggleLayer(btn){btn.classList.toggle('active-blue');}
+function setView(v){}
+function envTab(btn,tab){document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.env-tab').forEach(t=>t.classList.remove('show'));const el=document.getElementById('env-'+tab);if(el){el.classList.add('show');setTimeout(initAllCharts,60);}}
+
+const MSGS=['INITIALISING SYSTEMS...','LOADING NASHIK GIS DATA...','CALIBRATING 3D TERRAIN...','CONNECTING SENSOR NETWORK...','LOADING GODAVARI RIVER MODEL...','SYNCING STP TELEMETRY...','ACTIVATING AI CROWD ENGINE...','SYSTEM READY'];
+// roundRect polyfill
+if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Math.min(r,w/2,h/2);this.beginPath();this.moveTo(x+r,y);this.lineTo(x+w-r,y);this.arcTo(x+w,y,x+w,y+r,r);this.lineTo(x+w,y+h-r);this.arcTo(x+w,y+h,x+w-r,y+h,r);this.lineTo(x+r,y+h);this.arcTo(x,y+h,x,y+h-r,r);this.lineTo(x,y+r);this.arcTo(x,y,x+r,y,r);this.closePath();return this;};}
+function runLoader(){let i=0;const fill=document.getElementById('ld-fill'),msg=document.getElementById('ld-msg');const iv=setInterval(()=>{i++;const pct=Math.round(i/MSGS.length*100);if(fill)fill.style.width=pct+'%';if(msg)msg.textContent=MSGS[Math.min(i,MSGS.length-1)];if(i>=MSGS.length){clearInterval(iv);setTimeout(()=>{document.getElementById('loading').style.display='none';document.getElementById('app').style.display='flex';initAll();},400);}},260);}
+function initAll(){buildTicker();renderSnan();renderInfraBars();renderAlerts();renderSysStatus();initCmdMap();done['cmd']=true;updateClock();updateCountdown();setTimeout(initAllCharts,300);setInterval(updateClock,1000);setInterval(updateCountdown,30000);setInterval(()=>{const e=document.getElementById('kv-aqi');if(e)e.textContent=Math.round(75+Math.random()*8);const e2=document.getElementById('kv-bod');if(e2)e2.textContent=(5.0+Math.random()*0.5).toFixed(1)+' mg/L';},4000);}
+runLoader();
+</script>
+</body>
+</html>
