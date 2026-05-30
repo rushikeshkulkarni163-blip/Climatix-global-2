@@ -18,8 +18,14 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
+            echo "→ Fixing repo ownership..."
+            sudo chown -R $(whoami):$(whoami) /opt/climactix
             git config --global --add safe.directory /opt/climactix
-            cd /opt/climactix
-            git pull origin main
+            echo "→ Pulling latest code..."
+            cd /opt/climactix && git pull origin main
+            echo "→ Files on server:"
+            ls *.html | head -20
+            echo "→ Restarting containers..."
             docker compose -f docker-compose.prod.yml up --build -d || docker-compose -f docker-compose.prod.yml up --build -d
             echo "✅ Deployed at $(date)"
