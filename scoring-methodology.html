@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CIS Scoring Methodology — Climactix Global</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000000;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;
+  --border:#2C2C2C;--border-strong:#333333;
+  --amber:#FF6600;--amber-dim:#CC5200;--cyan:#0099CC;--green:#00CC44;--red:#FF3333;--blue:#3399FF;
+  --text:#FFFFFF;--text-2:#888888;--text-muted:#555555;
+  --t:0.12s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px;line-height:1.5;min-height:100vh}
+.mono{font-family:'IBM Plex Mono','Courier New',monospace}
+
+/* ── Nav */
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.nav-left{display:flex;align-items:center;gap:12px}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--text)}
+.nav-sep{color:var(--border-strong);font-size:16px}
+.nav-ctx{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:.06em;text-transform:uppercase}
+.nav-right{display:flex;gap:8px;align-items:center}
+.nav-link{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:2px;transition:all var(--t)}
+.nav-link:hover{border-color:var(--amber);color:var(--amber)}
+.nav-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,102,0,.08);border:1px solid rgba(255,102,0,.25);color:var(--amber);padding:3px 8px;border-radius:2px}
+
+/* ── Hero */
+.hero{position:relative;min-height:560px;display:flex;align-items:center;border-bottom:1px solid var(--border);overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-content{position:relative;z-index:2;padding:60px 48px;max-width:760px}
+.hero-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.hero-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--amber)}
+.hero-title{font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:1.05;margin-bottom:20px}
+.hero-title span{color:var(--amber)}
+.hero-sub{font-size:15px;color:var(--text-2);line-height:1.7;max-width:580px;margin-bottom:32px}
+.hero-stats{display:flex;gap:32px;flex-wrap:wrap}
+.hero-stat{display:flex;flex-direction:column;gap:2px}
+.hero-stat-val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--amber)}
+.hero-stat-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+.hero-globe{position:absolute;right:-60px;top:50%;transform:translateY(-50%);z-index:1;opacity:.18}
+
+/* ── Layout */
+.page{max-width:1280px;margin:0 auto;padding:0 24px}
+.section{padding:64px 0;border-bottom:1px solid var(--border)}
+.section-header{margin-bottom:40px}
+.section-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-eyebrow::before{content:'';display:block;width:16px;height:1px;background:var(--amber)}
+.section-title{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.2;margin-bottom:10px}
+.section-desc{font-size:13px;color:var(--text-2);max-width:680px;line-height:1.7}
+
+/* ── Architecture flow */
+.arch-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:32px}
+.arch-node{background:var(--surface);padding:20px 18px;position:relative}
+.arch-node::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--amber);font-weight:700;z-index:2}
+.arch-node:last-child::after{display:none}
+.arch-node-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--amber);letter-spacing:.1em;margin-bottom:8px}
+.arch-node-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.arch-node-desc{font-size:10px;color:var(--text-muted);line-height:1.5}
+.arch-node-icon{margin-bottom:10px}
+
+/* ── Pillars grid */
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.pillar-card{background:var(--surface);padding:0;overflow:hidden;transition:background var(--t)}
+.pillar-card:hover{background:var(--surface-2)}
+.pillar-illus{width:100%;height:160px;display:block;position:relative;overflow:hidden}
+.pillar-body{padding:20px 18px}
+.pillar-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--amber);letter-spacing:.1em;margin-bottom:6px}
+.pillar-title{font-size:14px;font-weight:800;margin-bottom:4px;letter-spacing:-.01em}
+.pillar-weight{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:12px}
+.pillar-indicators{display:flex;flex-direction:column;gap:4px}
+.pillar-indicator{font-size:10px;color:var(--text-2);display:flex;align-items:center;gap:6px}
+.pillar-indicator::before{content:'';width:4px;height:4px;background:var(--amber);border-radius:1px;flex-shrink:0}
+
+/* ── Rating scale */
+.rating-scale{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.rating-row{display:grid;grid-template-columns:80px 120px 1fr 100px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);transition:background var(--t)}
+.rating-row:last-child{border-bottom:none}
+.rating-row:hover{background:var(--surface)}
+.rating-grade{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700}
+.rating-range{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted)}
+.rating-desc{font-size:11px;color:var(--text-2)}
+.rating-bar-wrap{height:4px;background:var(--surface-4);border-radius:2px;overflow:hidden}
+.rating-bar{height:100%;border-radius:2px}
+
+/* ── Industry grid */
+.industry-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.industry-card{background:var(--surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px;transition:background var(--t);cursor:default}
+.industry-card:hover{background:var(--surface-2)}
+.industry-icon{width:40px;height:40px}
+.industry-label{font-size:11px;font-weight:600;line-height:1.3}
+.industry-weight-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:.06em}
+.industry-primary-risk{font-size:9px;color:var(--amber)}
+
+/* ── Data architecture layers */
+.data-layers{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.data-layer{display:grid;grid-template-columns:200px 1fr;background:var(--surface);border-bottom:1px solid var(--border)}
+.data-layer:last-child{border-bottom:none}
+.data-layer-label{padding:16px 18px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+.data-layer-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--amber);letter-spacing:.1em}
+.data-layer-name{font-size:12px;font-weight:700}
+.data-layer-content{padding:16px 18px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+.data-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:3px 8px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)}
+.data-tag.source{border-color:rgba(0,153,204,.3);color:var(--cyan);background:rgba(0,153,204,.04)}
+.data-tag.output{border-color:rgba(255,102,0,.3);color:var(--amber);background:rgba(255,102,0,.04)}
+
+/* ── Verification visual */
+.verif-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.verif-card{background:var(--surface);padding:20px 16px}
+.verif-status{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.verif-score{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:700;margin-bottom:6px}
+.verif-desc{font-size:10px;color:var(--text-muted);line-height:1.5;margin-bottom:12px}
+.verif-bar{height:3px;border-radius:2px;margin-bottom:8px}
+.verif-effect{font-size:10px;padding:4px 8px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:9px}
+
+/* ── Confidence gauge */
+.confidence-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.conf-level{background:var(--surface);padding:18px 14px}
+.conf-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.conf-range{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;margin-bottom:4px}
+.conf-bar{height:4px;border-radius:2px;margin-bottom:8px}
+.conf-meaning{font-size:10px;color:var(--text-muted);line-height:1.5}
+
+/* ── Greenwashing visual */
+.gw-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:24px}
+.gw-level{background:var(--surface);padding:20px 16px}
+.gw-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin-bottom:10px}
+.gw-flags{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;margin-bottom:4px}
+.gw-triggers{display:flex;flex-direction:column;gap:3px;margin-top:8px}
+.gw-trigger{font-size:9px;color:var(--text-muted);display:flex;gap:5px;align-items:flex-start}
+.gw-trigger::before{content:'◆';font-size:7px;margin-top:1px;flex-shrink:0}
+
+/* ── Scenario table */
+.scenario-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.scenario-table th{background:var(--surface);font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted)}
+.scenario-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px}
+.scenario-table tr:last-child td{border-bottom:none}
+.scenario-table tr:hover td{background:var(--surface)}
+.scenario-val{font-family:'IBM Plex Mono',monospace;font-weight:600}
+
+/* ── Outputs grid */
+.outputs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.output-item{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px 14px;display:flex;flex-direction:column;gap:6px;transition:border-color var(--t)}
+.output-item:hover{border-color:var(--amber)}
+.output-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--amber);letter-spacing:.1em}
+.output-name{font-size:11px;font-weight:700;line-height:1.3}
+.output-desc{font-size:9px;color:var(--text-muted);line-height:1.5}
+
+/* ── Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────────────────-->
+<nav class="nav">
+  <div class="nav-left">
+    <span class="nav-logo mono">CLIMACTIX GLOBAL</span>
+    <span class="nav-sep">/</span>
+    <span class="nav-ctx mono">CIS METHODOLOGY v1.0</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-tag mono">PROPRIETARY IP</span>
+    <a href="investor-terminal.html" class="nav-link">TERMINAL</a>
+    <a href="enterprise-assessment.html" class="nav-link">ASSESSMENT</a>
+    <a href="index.html" class="nav-link">HOME</a>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────────-->
+<section class="hero">
+  <!-- Atmospheric SVG background: Earth grid + climate hazard glow -->
+  <div class="hero-bg">
+    <svg width="100%" height="100%" viewBox="0 0 1440 560" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow1" cx="80%" cy="50%" r="55%">
+          <stop offset="0%" stop-color="#FF6600" stop-opacity="0.07"/>
+          <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="glow2" cx="20%" cy="80%" r="40%">
+          <stop offset="0%" stop-color="#0099CC" stop-opacity="0.05"/>
+          <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="1440" height="560" fill="url(#glow1)"/>
+      <rect width="1440" height="560" fill="url(#glow2)"/>
+      <!-- Grid lines -->
+      <g stroke="#1A1A1A" stroke-width="1" opacity="0.6">
+        <line x1="0" y1="70" x2="1440" y2="70"/><line x1="0" y1="140" x2="1440" y2="140"/>
+        <line x1="0" y1="210" x2="1440" y2="210"/><line x1="0" y1="280" x2="1440" y2="280"/>
+        <line x1="0" y1="350" x2="1440" y2="350"/><line x1="0" y1="420" x2="1440" y2="420"/>
+        <line x1="0" y1="490" x2="1440" y2="490"/>
+        <line x1="180" y1="0" x2="180" y2="560"/><line x1="360" y1="0" x2="360" y2="560"/>
+        <line x1="540" y1="0" x2="540" y2="560"/><line x1="720" y1="0" x2="720" y2="560"/>
+        <line x1="900" y1="0" x2="900" y2="560"/><line x1="1080" y1="0" x2="1080" y2="560"/>
+        <line x1="1260" y1="0" x2="1260" y2="560"/>
+      </g>
+      <!-- Globe wireframe -->
+      <g transform="translate(1120,280)" opacity="0.15">
+        <circle cx="0" cy="0" r="220" fill="none" stroke="#FF6600" stroke-width="1"/>
+        <ellipse cx="0" cy="0" rx="220" ry="70" fill="none" stroke="#FF6600" stroke-width="0.8"/>
+        <ellipse cx="0" cy="0" rx="220" ry="140" fill="none" stroke="#FF6600" stroke-width="0.6"/>
+        <ellipse cx="0" cy="0" rx="80" ry="220" fill="none" stroke="#FF6600" stroke-width="0.8"/>
+        <ellipse cx="0" cy="0" rx="155" ry="220" fill="none" stroke="#FF6600" stroke-width="0.6"/>
+        <line x1="-220" y1="0" x2="220" y2="0" stroke="#FF6600" stroke-width="0.6"/>
+        <line x1="0" y1="-220" x2="0" y2="220" stroke="#FF6600" stroke-width="0.6"/>
+        <!-- Hotspots on globe -->
+        <circle cx="60" cy="-80" r="6" fill="#FF3333" opacity="0.8"/>
+        <circle cx="-40" cy="20" r="4" fill="#FF6600" opacity="0.8"/>
+        <circle cx="120" cy="40" r="5" fill="#FFB800" opacity="0.8"/>
+        <circle cx="-100" cy="-30" r="4" fill="#FF3333" opacity="0.6"/>
+        <circle cx="30" cy="100" r="5" fill="#FF6600" opacity="0.7"/>
+      </g>
+      <!-- Temperature anomaly curve -->
+      <g transform="translate(0,460)" opacity="0.25">
+        <polyline points="0,0 120,-8 240,-5 360,-15 480,-22 600,-30 720,-28 840,-42 960,-55 1080,-65 1200,-80 1320,-95 1440,-108"
+          fill="none" stroke="#FF6600" stroke-width="2" stroke-dasharray="4,2"/>
+        <polyline points="0,0 120,-4 240,-3 360,-8 480,-12 600,-18 720,-16 840,-25 960,-32 1080,-40 1200,-50 1320,-62 1440,-72"
+          fill="none" stroke="#FFB800" stroke-width="1.5" stroke-dasharray="4,2"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow mono">CLIMACTIX INTELLIGENCE SCORE — METHODOLOGY FRAMEWORK</div>
+    <h1 class="hero-title">The CIS:<br><span>Climate Risk Intelligence</span><br>Rating System</h1>
+    <p class="hero-sub">Institutional-grade climate risk quantification for enterprises, investors, and regulators. Comparable in methodology to Moody's credit ratings, MSCI ESG scores, and BlackRock Aladdin.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-val mono">6</span><span class="hero-stat-label">Scoring Pillars</span></div>
+      <div class="hero-stat"><span class="hero-stat-val mono">20+</span><span class="hero-stat-label">Industry Sectors</span></div>
+      <div class="hero-stat"><span class="hero-stat-val mono">16</span><span class="hero-stat-label">Rating Grades</span></div>
+      <div class="hero-stat"><span class="hero-stat-val mono">3,600+</span><span class="hero-stat-label">Peer Universe</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="page">
+
+<!-- ── Architecture Flow ─────────────────────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">SCORING ARCHITECTURE</div>
+    <h2 class="section-title">How CIS is Calculated</h2>
+    <p class="section-desc">Every score is traceable through a seven-stage pipeline from raw assessment data to a final rated output. No black-box logic.</p>
+  </div>
+
+  <div class="arch-flow">
+    <div class="arch-node">
+      <div class="arch-node-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="6" width="24" height="16" rx="2" stroke="#FF6600" stroke-width="1.5"/><line x1="7" y1="11" x2="21" y2="11" stroke="#FF6600" stroke-width="1.2"/><line x1="7" y1="15" x2="17" y2="15" stroke="#555" stroke-width="1.2"/><line x1="7" y1="19" x2="14" y2="19" stroke="#555" stroke-width="1.2"/></svg>
+      </div>
+      <div class="arch-node-num mono">01</div>
+      <div class="arch-node-title">Assessment Input</div>
+      <div class="arch-node-desc">Structured data from enterprise assessment, reports, and regulatory filings</div>
+    </div>
+    <div class="arch-node">
+      <div class="arch-node-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><polygon points="14,3 25,10 25,18 14,25 3,18 3,10" stroke="#FF6600" stroke-width="1.5" fill="none"/><circle cx="14" cy="14" r="4" stroke="#FF6600" stroke-width="1.2"/><line x1="14" y1="3" x2="14" y2="10" stroke="#333" stroke-width="1"/><line x1="14" y1="18" x2="14" y2="25" stroke="#333" stroke-width="1"/></svg>
+      </div>
+      <div class="arch-node-num mono">02</div>
+      <div class="arch-node-title">6-Pillar Scoring</div>
+      <div class="arch-node-desc">Each pillar scored 0–100 using indicator-weighted algorithms</div>
+    </div>
+    <div class="arch-node">
+      <div class="arch-node-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="3" width="10" height="10" rx="1" stroke="#FF6600" stroke-width="1.5"/><rect x="15" y="3" width="10" height="10" rx="1" stroke="#0099CC" stroke-width="1.5"/><rect x="3" y="15" width="10" height="10" rx="1" stroke="#0099CC" stroke-width="1.5"/><rect x="15" y="15" width="10" height="10" rx="1" stroke="#FF6600" stroke-width="1.5"/></svg>
+      </div>
+      <div class="arch-node-num mono">03</div>
+      <div class="arch-node-title">Industry Weights</div>
+      <div class="arch-node-desc">Sector-specific materiality adjustments applied across 20 industries</div>
+    </div>
+    <div class="arch-node">
+      <div class="arch-node-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="#FF6600" stroke-width="1.5"/><path d="M8 14 L12 18 L20 10" stroke="#00CC44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="arch-node-num mono">04</div>
+      <div class="arch-node-title">Verification Engine</div>
+      <div class="arch-node-desc">Every claim cross-checked against evidence — penalties for missing proof</div>
+    </div>
+  </div>
+
+  <!-- Row 2 of architecture: right to left -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden">
+    <div class="arch-node" style="background:var(--surface-2)">
+      <div class="arch-node-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 22 L10 12 L16 17 L22 6" stroke="#FF6600" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="22" r="2" fill="#FF6600"/><circle cx="22" cy="6" r="2" fill="#0099CC"/></svg>
+      </div>
+      <div class="arch-node-num mono">05</div>
+      <div class="arch-node-title">Confidence + Greenwashing</div>
+      <div class="arch-node-desc">Confidence score (data quality) and greenwashing risk assessment applied separately from performance score</div>
+    </div>
+    <div class="arch-node" style="background:var(--surface-2)">
+      <div class="arch-node-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="16" width="6" height="9" rx="1" fill="#333"/><rect x="11" y="10" width="6" height="15" rx="1" fill="#555"/><rect x="19" y="4" width="6" height="21" rx="1" fill="#FF6600" opacity="0.8"/><line x1="3" y1="26" x2="25" y2="26" stroke="#333" stroke-width="1.2"/></svg>
+      </div>
+      <div class="arch-node-num mono">06</div>
+      <div class="arch-node-title">Benchmarking</div>
+      <div class="arch-node-desc">Percentile ranking vs industry, regional, and global peer universes</div>
+    </div>
+    <div class="arch-node" style="background:var(--surface-2)">
+      <div class="arch-node-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="#FF6600" stroke-width="1.5"/><text x="14" y="19" text-anchor="middle" fill="#FF6600" font-size="12" font-weight="700" font-family="monospace">A</text></svg>
+      </div>
+      <div class="arch-node-num mono">07</div>
+      <div class="arch-node-title">CIS Rating Output</div>
+      <div class="arch-node-desc">Final score (0–100), letter grade (AAA–D), confidence, verification, and 18-component report package</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 6 Pillars with SVG Illustrations ─────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">SCORING PILLARS</div>
+    <h2 class="section-title">Six Dimensions of Climate Intelligence</h2>
+    <p class="section-desc">Each pillar measures a distinct dimension of climate risk and readiness. Pillar weights adjust by industry — a bank's transition risk weight differs from a cement producer's.</p>
+  </div>
+
+  <div class="pillars-grid">
+
+    <!-- PILLAR 1: GOVERNANCE — SVG: Board room / governance structure -->
+    <div class="pillar-card">
+      <svg class="pillar-illus" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:#0A0A0A">
+        <defs><radialGradient id="pg1" cx="50%" cy="0%" r="80%"><stop offset="0%" stop-color="#FF6600" stop-opacity="0.12"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+        <rect width="380" height="160" fill="url(#pg1)"/>
+        <!-- Board table -->
+        <rect x="80" y="60" width="220" height="60" rx="3" fill="none" stroke="#2C2C2C" stroke-width="1.5"/>
+        <rect x="80" y="60" width="220" height="14" rx="2" fill="#1A1A1A"/>
+        <!-- Board seats -->
+        <g fill="#2C2C2C">
+          <rect x="100" y="44" width="16" height="14" rx="2"/><rect x="124" y="44" width="16" height="14" rx="2"/>
+          <rect x="148" y="44" width="16" height="14" rx="2"/><rect x="172" y="44" width="16" height="14" rx="2"/>
+          <rect x="196" y="44" width="16" height="14" rx="2"/><rect x="220" y="44" width="16" height="14" rx="2"/>
+          <rect x="244" y="44" width="16" height="14" rx="2"/>
+        </g>
+        <!-- Amber highlight: CCO seat -->
+        <rect x="172" y="44" width="16" height="14" rx="2" fill="#FF6600" opacity="0.6"/>
+        <rect x="172" y="44" width="16" height="14" rx="2" fill="none" stroke="#FF6600" stroke-width="1"/>
+        <!-- Climate agenda items -->
+        <rect x="92" y="82" width="60" height="6" rx="1" fill="#FF6600" opacity="0.3"/>
+        <rect x="92" y="92" width="46" height="5" rx="1" fill="#333"/>
+        <rect x="92" y="101" width="38" height="5" rx="1" fill="#333"/>
+        <!-- Check marks -->
+        <g stroke="#00CC44" stroke-width="1.5" fill="none">
+          <polyline points="162,84 165,87 170,82"/>
+          <polyline points="162,94 165,97 170,92"/>
+        </g>
+        <!-- Network lines from board -->
+        <g stroke="#FF6600" stroke-width="0.6" opacity="0.4" stroke-dasharray="3,2">
+          <line x1="108" y1="58" x2="80" y2="100"/><line x1="180" y1="58" x2="160" y2="120"/>
+          <line x1="252" y1="58" x2="300" y2="100"/>
+        </g>
+        <!-- Label -->
+        <text x="20" y="148" fill="#FF6600" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">GOVERNANCE</text>
+      </svg>
+      <div class="pillar-body">
+        <div class="pillar-num mono">PILLAR 01</div>
+        <div class="pillar-title">Climate Governance Score</div>
+        <div class="pillar-weight mono">DEFAULT WEIGHT: 15% | RANGE: 12–20%</div>
+        <div class="pillar-indicators">
+          <div class="pillar-indicator">Board climate committee</div>
+          <div class="pillar-indicator">CCO or climate executive</div>
+          <div class="pillar-indicator">Executive remuneration linkage</div>
+          <div class="pillar-indicator">Board agenda frequency</div>
+          <div class="pillar-indicator">Climate in enterprise risk framework</div>
+          <div class="pillar-indicator">External assurance on governance</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 2: PHYSICAL RISK — SVG: Flood waters with city -->
+    <div class="pillar-card">
+      <svg class="pillar-illus" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:#060810">
+        <defs>
+          <linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0044AA" stop-opacity="0.8"/><stop offset="100%" stop-color="#001133" stop-opacity="1"/></linearGradient>
+          <radialGradient id="pg2" cx="50%" cy="100%" r="70%"><stop offset="0%" stop-color="#0055CC" stop-opacity="0.15"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient>
+        </defs>
+        <rect width="380" height="160" fill="url(#pg2)"/>
+        <!-- City skyline (submerged) -->
+        <g fill="#111827" stroke="#1E293B" stroke-width="0.8">
+          <rect x="20" y="50" width="18" height="80"/><rect x="24" y="40" width="10" height="10"/>
+          <rect x="50" y="35" width="24" height="95"/><rect x="55" y="25" width="14" height="10"/>
+          <rect x="86" y="45" width="20" height="85"/><rect x="88" y="30" width="16" height="15"/>
+          <rect x="118" y="30" width="28" height="100"/><rect x="124" y="15" width="16" height="15"/>
+          <rect x="158" y="50" width="22" height="80"/>
+          <rect x="192" y="38" width="30" height="92"/><rect x="198" y="22" width="18" height="16"/>
+          <rect x="234" y="55" width="20" height="75"/>
+          <rect x="266" y="42" width="26" height="88"/><rect x="270" y="28" width="18" height="14"/>
+          <rect x="304" y="35" width="22" height="95"/>
+          <rect x="338" y="48" width="24" height="82"/>
+        </g>
+        <!-- Windows in buildings -->
+        <g fill="#0099CC" opacity="0.4">
+          <rect x="54" y="38" width="4" height="4"/><rect x="62" y="38" width="4" height="4"/>
+          <rect x="54" y="48" width="4" height="4"/><rect x="62" y="48" width="4" height="4"/>
+          <rect x="122" y="20" width="4" height="4"/><rect x="130" y="20" width="4" height="4"/>
+          <rect x="197" y="27" width="4" height="4"/><rect x="205" y="27" width="4" height="4"/>
+          <rect x="270" y="32" width="4" height="4"/><rect x="278" y="32" width="4" height="4"/>
+        </g>
+        <!-- Flood water surface -->
+        <path d="M0,100 Q40,93 80,100 Q120,107 160,100 Q200,93 240,100 Q280,107 320,100 Q360,93 380,100 L380,160 L0,160 Z" fill="url(#water)"/>
+        <!-- Water ripples -->
+        <g stroke="#0099CC" stroke-width="0.8" fill="none" opacity="0.5">
+          <ellipse cx="80" cy="102" rx="20" ry="3"/><ellipse cx="200" cy="100" rx="25" ry="3"/>
+          <ellipse cx="320" cy="102" rx="18" ry="3"/>
+        </g>
+        <!-- Flood level line -->
+        <line x1="0" y1="100" x2="380" y2="100" stroke="#0099CC" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <!-- Risk indicators -->
+        <g fill="#FF3333" opacity="0.8">
+          <polygon points="110,52 118,70 102,70"/><line x1="110" y1="55" x2="110" y2="64" stroke="#FF3333" stroke-width="1.5"/><circle cx="110" cy="67" r="1.5" fill="#FF3333"/>
+          <polygon points="278,30 286,48 270,48"/><line x1="278" y1="33" x2="278" y2="42" stroke="#FF3333" stroke-width="1.5"/><circle cx="278" cy="45" r="1.5" fill="#FF3333"/>
+        </g>
+        <text x="20" y="148" fill="#0099CC" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">PHYSICAL RISK</text>
+      </svg>
+      <div class="pillar-body">
+        <div class="pillar-num mono">PILLAR 02</div>
+        <div class="pillar-title">Physical Risk Exposure Score</div>
+        <div class="pillar-weight mono">DEFAULT WEIGHT: 20% | RANGE: 10–30%</div>
+        <div class="pillar-indicators">
+          <div class="pillar-indicator">Flood zone facility exposure</div>
+          <div class="pillar-indicator">Heat stress composite score</div>
+          <div class="pillar-indicator">Water stress index</div>
+          <div class="pillar-indicator">Cyclone &amp; wildfire exposure</div>
+          <div class="pillar-indicator">Coastal / sea-level risk</div>
+          <div class="pillar-indicator">Supply chain geo-concentration</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 3: TRANSITION RISK — SVG: Carbon emissions + regulation -->
+    <div class="pillar-card">
+      <svg class="pillar-illus" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:#080600">
+        <defs><radialGradient id="pg3" cx="50%" cy="100%" r="80%"><stop offset="0%" stop-color="#FF6600" stop-opacity="0.18"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+        <rect width="380" height="160" fill="url(#pg3)"/>
+        <!-- Industrial stacks -->
+        <g fill="#1a1208" stroke="#2C2C2C" stroke-width="0.8">
+          <rect x="40" y="80" width="30" height="75"/><rect x="50" y="70" width="10" height="10"/>
+          <rect x="85" y="65" width="36" height="90"/><rect x="97" y="55" width="12" height="10"/>
+          <rect x="135" y="75" width="28" height="80"/>
+          <rect x="175" y="50" width="40" height="105"/><rect x="188" y="38" width="14" height="12"/>
+          <rect x="228" y="68" width="32" height="87"/>
+          <rect x="272" y="60" width="38" height="95"/><rect x="285" y="48" width="12" height="12"/>
+          <rect x="322" y="78" width="28" height="77"/>
+        </g>
+        <!-- Smoke clouds -->
+        <g fill="#333" opacity="0.7">
+          <circle cx="55" cy="60" r="10"/><circle cx="65" cy="55" r="8"/><circle cx="72" cy="62" r="7"/>
+          <circle cx="103" cy="42" r="11"/><circle cx="115" cy="37" r="9"/><circle cx="122" cy="44" r="8"/>
+          <circle cx="195" cy="24" r="13"/><circle cx="208" cy="18" r="10"/><circle cx="218" cy="26" r="9"/>
+          <circle cx="291" cy="34" r="12"/><circle cx="303" cy="28" r="10"/><circle cx="312" cy="36" r="8"/>
+        </g>
+        <!-- CO2 molecule labels -->
+        <g font-family="'IBM Plex Mono',monospace" font-size="8" fill="#FF6600" opacity="0.6">
+          <text x="55" y="38">CO₂</text><text x="100" y="22">CO₂</text>
+          <text x="185" y="10">CO₂</text><text x="288" y="20">CO₂</text>
+        </g>
+        <!-- Carbon price bar -->
+        <rect x="20" y="115" width="340" height="20" rx="2" fill="#111" stroke="#2C2C2C" stroke-width="0.8"/>
+        <rect x="20" y="115" width="210" height="20" rx="2" fill="#FF6600" opacity="0.6"/>
+        <text x="28" y="128" fill="#FF6600" font-family="'IBM Plex Mono',monospace" font-size="8" font-weight="700">CARBON PRICE EXPOSURE</text>
+        <text x="330" y="128" fill="#FF6600" font-family="'IBM Plex Mono',monospace" font-size="8" font-weight="700">HIGH</text>
+        <text x="20" y="148" fill="#FF6600" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">TRANSITION RISK</text>
+      </svg>
+      <div class="pillar-body">
+        <div class="pillar-num mono">PILLAR 03</div>
+        <div class="pillar-title">Transition Risk Score</div>
+        <div class="pillar-weight mono">DEFAULT WEIGHT: 20% | RANGE: 15–32%</div>
+        <div class="pillar-indicators">
+          <div class="pillar-indicator">Carbon intensity (tCO2e / $M revenue)</div>
+          <div class="pillar-indicator">Fossil fuel dependency %</div>
+          <div class="pillar-indicator">Net-zero target credibility</div>
+          <div class="pillar-indicator">CBAM &amp; ETS regulatory exposure</div>
+          <div class="pillar-indicator">Stranded asset risk ($M)</div>
+          <div class="pillar-indicator">Carbon price exposure ($M)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 4: DISCLOSURE — SVG: Document / framework alignment -->
+    <div class="pillar-card">
+      <svg class="pillar-illus" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:#040808">
+        <defs><radialGradient id="pg4" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#0099CC" stop-opacity="0.12"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+        <rect width="380" height="160" fill="url(#pg4)"/>
+        <!-- Main report document -->
+        <rect x="120" y="20" width="140" height="120" rx="3" fill="#0D1117" stroke="#1E293B" stroke-width="1.5"/>
+        <rect x="120" y="20" width="140" height="22" rx="2" fill="#111827"/>
+        <text x="190" y="35" text-anchor="middle" fill="#0099CC" font-family="'IBM Plex Mono',monospace" font-size="8" font-weight="700">CLIMATE DISCLOSURE</text>
+        <!-- Framework badges -->
+        <g font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="700">
+          <rect x="130" y="50" width="36" height="14" rx="2" fill="rgba(255,102,0,0.1)" stroke="#FF6600" stroke-width="0.8"/>
+          <text x="148" y="61" text-anchor="middle" fill="#FF6600">TCFD</text>
+          <rect x="172" y="50" width="32" height="14" rx="2" fill="rgba(0,153,204,0.1)" stroke="#0099CC" stroke-width="0.8"/>
+          <text x="188" y="61" text-anchor="middle" fill="#0099CC">ISSB</text>
+          <rect x="210" y="50" width="32" height="14" rx="2" fill="rgba(0,204,68,0.1)" stroke="#00CC44" stroke-width="0.8"/>
+          <text x="226" y="61" text-anchor="middle" fill="#00CC44">GRI</text>
+          <rect x="130" y="70" width="32" height="14" rx="2" fill="rgba(0,153,204,0.1)" stroke="#0099CC" stroke-width="0.8"/>
+          <text x="146" y="81" text-anchor="middle" fill="#0099CC">BRSR</text>
+          <rect x="168" y="70" width="34" height="14" rx="2" fill="rgba(255,102,0,0.1)" stroke="#FF6600" stroke-width="0.8"/>
+          <text x="185" y="81" text-anchor="middle" fill="#FF6600">SASB</text>
+          <rect x="208" y="70" width="34" height="14" rx="2" fill="rgba(0,204,68,0.1)" stroke="#00CC44" stroke-width="0.8"/>
+          <text x="225" y="81" text-anchor="middle" fill="#00CC44">CDP</text>
+        </g>
+        <!-- Completeness bar -->
+        <rect x="130" y="95" width="120" height="5" rx="2" fill="#1A1A1A"/>
+        <rect x="130" y="95" width="88" height="5" rx="2" fill="#0099CC" opacity="0.8"/>
+        <text x="130" y="110" fill="#555" font-family="'IBM Plex Mono',monospace" font-size="7">COMPLETENESS</text>
+        <text x="220" y="110" fill="#0099CC" font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="700">73%</text>
+        <!-- 3rd party assurance tick -->
+        <g transform="translate(130,118)">
+          <circle cx="8" cy="8" r="8" fill="rgba(0,204,68,0.1)" stroke="#00CC44" stroke-width="0.8"/>
+          <polyline points="4,8 7,11 12,5" stroke="#00CC44" stroke-width="1.5" fill="none"/>
+          <text x="22" y="12" fill="#00CC44" font-family="'IBM Plex Mono',monospace" font-size="7">3RD PARTY ASSURED</text>
+        </g>
+        <!-- Side documents (smaller) -->
+        <rect x="40" y="35" width="72" height="90" rx="2" fill="#0D1117" stroke="#1E2030" stroke-width="1" opacity="0.7" transform="rotate(-8,76,80)"/>
+        <rect x="268" y="35" width="72" height="90" rx="2" fill="#0D1117" stroke="#1E2030" stroke-width="1" opacity="0.7" transform="rotate(8,304,80)"/>
+        <text x="20" y="148" fill="#0099CC" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">DISCLOSURE QUALITY</text>
+      </svg>
+      <div class="pillar-body">
+        <div class="pillar-num mono">PILLAR 04</div>
+        <div class="pillar-title">Disclosure &amp; Data Quality Score</div>
+        <div class="pillar-weight mono">DEFAULT WEIGHT: 15% | RANGE: 12–20%</div>
+        <div class="pillar-indicators">
+          <div class="pillar-indicator">BRSR completeness (0–100%)</div>
+          <div class="pillar-indicator">TCFD / ISSB S2 alignment</div>
+          <div class="pillar-indicator">GRI / SASB / CDP coverage</div>
+          <div class="pillar-indicator">Third-party assurance</div>
+          <div class="pillar-indicator">Historical data coverage (years)</div>
+          <div class="pillar-indicator">Restatement history</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 5: RESILIENCE — SVG: Shield / adaptation infrastructure -->
+    <div class="pillar-card">
+      <svg class="pillar-illus" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:#040A04">
+        <defs><radialGradient id="pg5" cx="50%" cy="50%" r="65%"><stop offset="0%" stop-color="#00CC44" stop-opacity="0.10"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+        <rect width="380" height="160" fill="url(#pg5)"/>
+        <!-- Shield -->
+        <path d="M190,18 L230,35 L230,80 Q230,115 190,130 Q150,115 150,80 L150,35 Z" fill="rgba(0,204,68,0.06)" stroke="#00CC44" stroke-width="1.5"/>
+        <!-- Shield checkmarks -->
+        <g stroke="#00CC44" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="170,65 182,78 210,55"/>
+        </g>
+        <!-- Resilience rings emanating -->
+        <g stroke="#00CC44" fill="none" opacity="0.15">
+          <circle cx="190" cy="74" r="50" stroke-width="1"/><circle cx="190" cy="74" r="70" stroke-width="0.8"/>
+          <circle cx="190" cy="74" r="90" stroke-width="0.6"/>
+        </g>
+        <!-- Adaptation arrows -->
+        <g stroke="#00CC44" stroke-width="1.5" fill="#00CC44" opacity="0.7">
+          <line x1="60" y1="100" x2="110" y2="100"/><polygon points="110,95 120,100 110,105"/>
+          <line x1="320" y1="100" x2="270" y2="100"/><polygon points="270,95 260,100 270,105"/>
+          <line x1="190" y1="20" x2="190" y2="10"/><polygon points="185,10 190,0 195,10"/>
+        </g>
+        <!-- Investment bar -->
+        <rect x="20" y="128" width="340" height="16" rx="2" fill="#0A1A0A" stroke="#1A2C1A" stroke-width="0.8"/>
+        <rect x="20" y="128" width="120" height="16" rx="2" fill="#00CC44" opacity="0.5"/>
+        <text x="28" y="140" fill="#00CC44" font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="700">CLIMATE CAPEX 8.4%</text>
+        <text x="20" y="155" fill="#00CC44" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">RESILIENCE</text>
+      </svg>
+      <div class="pillar-body">
+        <div class="pillar-num mono">PILLAR 05</div>
+        <div class="pillar-title">Resilience &amp; Adaptation Score</div>
+        <div class="pillar-weight mono">DEFAULT WEIGHT: 15% | RANGE: 10–20%</div>
+        <div class="pillar-indicators">
+          <div class="pillar-indicator">Adaptation plan documented</div>
+          <div class="pillar-indicator">BCM plan includes climate scenarios</div>
+          <div class="pillar-indicator">Climate CAPEX % allocation</div>
+          <div class="pillar-indicator">Resilience project count</div>
+          <div class="pillar-indicator">ISSB S2 scenario analysis</div>
+          <div class="pillar-indicator">Supply chain resilience plan</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PILLAR 6: FINANCIAL MATERIALITY — SVG: Risk exposure chart -->
+    <div class="pillar-card">
+      <svg class="pillar-illus" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:#080408">
+        <defs><radialGradient id="pg6" cx="30%" cy="100%" r="70%"><stop offset="0%" stop-color="#FFB800" stop-opacity="0.12"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+        <rect width="380" height="160" fill="url(#pg6)"/>
+        <!-- Scenario bars -->
+        <g>
+          <!-- 1.5°C -->
+          <rect x="40" y="110" width="48" height="25" rx="1" fill="#00CC44" opacity="0.5"/>
+          <rect x="40" y="88" width="48" height="22" rx="1" fill="#00CC44" opacity="0.3"/>
+          <text x="64" y="107" text-anchor="middle" fill="#00CC44" font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="700">1.5°C</text>
+          <text x="64" y="78" text-anchor="middle" fill="#00CC44" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700">-8%</text>
+          <!-- 2°C -->
+          <rect x="106" y="100" width="48" height="35" rx="1" fill="#FFB800" opacity="0.5"/>
+          <rect x="106" y="68" width="48" height="32" rx="1" fill="#FFB800" opacity="0.3"/>
+          <text x="130" y="108" text-anchor="middle" fill="#FFB800" font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="700">2°C</text>
+          <text x="130" y="58" text-anchor="middle" fill="#FFB800" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700">-14%</text>
+          <!-- 3°C -->
+          <rect x="172" y="80" width="48" height="55" rx="1" fill="#FF7700" opacity="0.5"/>
+          <rect x="172" y="38" width="48" height="42" rx="1" fill="#FF7700" opacity="0.3"/>
+          <text x="196" y="98" text-anchor="middle" fill="#FF7700" font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="700">3°C</text>
+          <text x="196" y="28" text-anchor="middle" fill="#FF7700" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700">-22%</text>
+          <!-- 4°C -->
+          <rect x="238" y="55" width="48" height="80" rx="1" fill="#FF3333" opacity="0.5"/>
+          <rect x="238" y="15" width="48" height="40" rx="1" fill="#FF3333" opacity="0.3"/>
+          <text x="262" y="78" text-anchor="middle" fill="#FF3333" font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="700">4°C</text>
+          <text x="262" y="12" text-anchor="middle" fill="#FF3333" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700">-38%</text>
+        </g>
+        <!-- Baseline -->
+        <line x1="30" y1="135" x2="310" y2="135" stroke="#2C2C2C" stroke-width="1"/>
+        <text x="316" y="139" fill="#555" font-family="'IBM Plex Mono',monospace" font-size="7">BASE</text>
+        <!-- $ label -->
+        <text x="330" y="80" fill="#FFB800" font-family="'IBM Plex Mono',monospace" font-size="20" font-weight="700" opacity="0.3">$</text>
+        <text x="20" y="150" fill="#FFB800" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">FINANCIAL MATERIALITY</text>
+      </svg>
+      <div class="pillar-body">
+        <div class="pillar-num mono">PILLAR 06</div>
+        <div class="pillar-title">Financial Materiality Score</div>
+        <div class="pillar-weight mono">DEFAULT WEIGHT: 15% | RANGE: 8–18%</div>
+        <div class="pillar-indicators">
+          <div class="pillar-indicator">Revenue at risk % (by scenario)</div>
+          <div class="pillar-indicator">EBITDA sensitivity</div>
+          <div class="pillar-indicator">Asset impairment risk</div>
+          <div class="pillar-indicator">Climate in financial statements</div>
+          <div class="pillar-indicator">NGFS scenario modeling</div>
+          <div class="pillar-indicator">Investor materiality disclosure</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pillars-grid -->
+</section>
+
+<!-- ── Rating Scale ───────────────────────────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">RATING SCALE</div>
+    <h2 class="section-title">CIS Rating Grades — AAA to D</h2>
+    <p class="section-desc">Structured identically to Moody's and S&P credit rating scales. A company can hold a high performance rating but a low confidence score — both are reported separately.</p>
+  </div>
+
+  <div class="rating-scale">
+    <div class="rating-row"><span class="rating-grade mono" style="color:#00CC44">AAA</span><span class="rating-range mono">95–100</span><span class="rating-desc">Climate Intelligence Leader — Sector benchmark. Exemplary governance, near-zero transition risk, verified disclosures.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:100%;background:#00CC44"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#22CC55">AA+</span><span class="rating-range mono">90–94</span><span class="rating-desc">Climate Excellence — Leading climate management with minor gaps.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:94%;background:#22CC55"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#44CC66">AA</span><span class="rating-range mono">85–89</span><span class="rating-desc">Advanced Climate Resilience — Robust adaptation and disclosure. Top-decile peer performance.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:88%;background:#44CC66"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#66CC88">AA-</span><span class="rating-range mono">80–84</span><span class="rating-desc">Strong Climate Preparedness — Above-average across most pillars with one area for improvement.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:82%;background:#66CC88"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#88CCAA">A+</span><span class="rating-range mono">75–79</span><span class="rating-desc">Above-Average Climate Readiness — Solid management with meaningful improvement potential.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:77%;background:#88CCAA"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#0099CC">A</span><span class="rating-range mono">70–74</span><span class="rating-desc">Solid Climate Readiness — Above industry median. Credible but not exceptional.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:72%;background:#0099CC"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#2299BB">A-</span><span class="rating-range mono">65–69</span><span class="rating-desc">Adequate Climate Management — Meeting baseline requirements; lagging on one or more pillars.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:67%;background:#2299BB"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#4499AA">BBB+</span><span class="rating-range mono">60–64</span><span class="rating-desc">Developing Climate Capabilities — Around industry median. Governance evolving.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:62%;background:#4499AA"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#FFB800">BBB</span><span class="rating-range mono">55–59</span><span class="rating-desc">Baseline Climate Risk — Material gaps in at least two pillars. Monitor for deterioration.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:57%;background:#FFB800"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#FF9900">BBB-</span><span class="rating-range mono">50–54</span><span class="rating-desc">Moderate Climate Exposure — Below-median performance. Significant physical or transition risk.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:52%;background:#FF9900"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#FF7700">BB</span><span class="rating-range mono">45–49</span><span class="rating-desc">Elevated Climate Risk — Structural deficiencies. Inadequate disclosure and adaptation planning.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:47%;background:#FF7700"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#FF6600">B</span><span class="rating-range mono">40–44</span><span class="rating-desc">High Climate Risk — Multi-pillar failures. Investor-grade caution advised.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:42%;background:#FF6600"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#FF3333">CCC</span><span class="rating-range mono">30–39</span><span class="rating-desc">Severe Climate Vulnerability — Critical gaps. Near-term financial risk from climate elevated.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:34%;background:#FF3333"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#CC2222">CC</span><span class="rating-range mono">20–29</span><span class="rating-desc">Critical Climate Exposure — Severe structural vulnerability. No credible pathway disclosed.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:24%;background:#CC2222"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#AA1111">C</span><span class="rating-range mono">10–19</span><span class="rating-desc">Near-Default Climate Risk — Existential climate exposure without mitigation.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:15%;background:#AA1111"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#880000">D</span><span class="rating-range mono">0–9</span><span class="rating-desc">Climate Risk Default — No meaningful climate management. Immediate remediation required.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:5%;background:#880000"></div></div></div>
+  </div>
+</section>
+
+<!-- ── Verification Engine ────────────────────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">VERIFICATION ENGINE</div>
+    <h2 class="section-title">Evidence Quality Scoring</h2>
+    <p class="section-desc">Every assessment answer receives an evidence status. Unverified claims receive score penalties; high-quality verified evidence earns score uplift. No answer is taken at face value.</p>
+  </div>
+
+  <div class="verif-grid">
+    <div class="verif-card">
+      <div class="verif-status mono" style="color:#00CC44">VERIFIED</div>
+      <div class="verif-bar" style="width:100%;background:#00CC44;opacity:0.8"></div>
+      <div class="verif-desc">Backed by regulatory filing, audited statement, or third-party assurance report. Highest trust weight (0.90–1.00).</div>
+      <div class="verif-effect" style="background:rgba(0,204,68,.1);color:#00CC44;border:1px solid rgba(0,204,68,.3)">+3.5 PTS UPLIFT</div>
+    </div>
+    <div class="verif-card">
+      <div class="verif-status mono" style="color:#FFB800">PARTIALLY VERIFIED</div>
+      <div class="verif-bar" style="width:65%;background:#FFB800;opacity:0.8"></div>
+      <div class="verif-desc">Sourced from published sustainability report or website but not independently assured. Medium trust weight (0.30–0.55).</div>
+      <div class="verif-effect" style="background:rgba(255,184,0,.06);color:#FFB800;border:1px solid rgba(255,184,0,.3)">NEUTRAL</div>
+    </div>
+    <div class="verif-card">
+      <div class="verif-status mono" style="color:#FF6600">UNVERIFIED</div>
+      <div class="verif-bar" style="width:20%;background:#FF6600;opacity:0.8"></div>
+      <div class="verif-desc">Self-declared with no supporting evidence document. Trust weight 0.0. Triggers risk flag for high-materiality claims.</div>
+      <div class="verif-effect" style="background:rgba(255,102,0,.1);color:#FF6600;border:1px solid rgba(255,102,0,.3)">-4 TO -8 PTS PENALTY</div>
+    </div>
+    <div class="verif-card">
+      <div class="verif-status mono" style="color:#FF3333">CONTRADICTORY</div>
+      <div class="verif-bar" style="width:5%;background:#FF3333;opacity:0.8"></div>
+      <div class="verif-desc">Evidence conflicts with disclosed claim — e.g., reported target vs. actual CAPEX or emissions data. Triggers greenwashing flag.</div>
+      <div class="verif-effect" style="background:rgba(255,51,51,.1);color:#FF3333;border:1px solid rgba(255,51,51,.3)">-6 PTS + GW FLAG</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Confidence Scoring ─────────────────────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">CONFIDENCE SCORING</div>
+    <h2 class="section-title">Confidence ≠ Performance</h2>
+    <p class="section-desc">A company can hold an AAA rating with Low Confidence — meaning the score is provisionally high but based on limited evidence. Both scores are always reported separately.</p>
+  </div>
+
+  <div class="confidence-grid">
+    <div class="conf-level">
+      <div class="conf-label mono" style="color:#00CC44">VERY HIGH</div>
+      <div class="conf-range mono" style="color:#00CC44">90–100</div>
+      <div class="conf-bar" style="width:100%;background:#00CC44"></div>
+      <div class="conf-meaning">Comprehensive data, third-party assured, 3+ years of history, full framework alignment. Institutional-grade reliability.</div>
+    </div>
+    <div class="conf-level">
+      <div class="conf-label mono" style="color:#66CC88">HIGH</div>
+      <div class="conf-range mono" style="color:#66CC88">80–89</div>
+      <div class="conf-bar" style="width:84%;background:#66CC88"></div>
+      <div class="conf-meaning">Strong data quality with minor gaps. Suitable for investment-grade decision-making. Minor assumptions applied.</div>
+    </div>
+    <div class="conf-level">
+      <div class="conf-label mono" style="color:#FFB800">MODERATE</div>
+      <div class="conf-range mono" style="color:#FFB800">65–79</div>
+      <div class="conf-bar" style="width:70%;background:#FFB800"></div>
+      <div class="conf-meaning">Partial data available. Some material claims unverified. Score directionally reliable but use with caution.</div>
+    </div>
+    <div class="conf-level">
+      <div class="conf-label mono" style="color:#FF6600">LOW</div>
+      <div class="conf-range mono" style="color:#FF6600">50–64</div>
+      <div class="conf-bar" style="width:54%;background:#FF6600"></div>
+      <div class="conf-meaning">Material data gaps. Multiple unverified claims. Rating requires supplemental evidence before institutional use.</div>
+    </div>
+    <div class="conf-level">
+      <div class="conf-label mono" style="color:#FF3333">INSUFFICIENT</div>
+      <div class="conf-range mono" style="color:#FF3333">&lt;50</div>
+      <div class="conf-bar" style="width:30%;background:#FF3333"></div>
+      <div class="conf-meaning">Inadequate evidence base. Score is indicative only. Not suitable for investment or regulatory decisions without further disclosure.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Greenwashing Detection ─────────────────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">GREENWASHING DETECTION ENGINE</div>
+    <h2 class="section-title">Proprietary Greenwashing Risk Score</h2>
+    <p class="section-desc">Eight automated detection rules flag inconsistencies between disclosed commitments and verifiable evidence. Triggered flags escalate the Greenwashing Risk level independently of the CIS score.</p>
+  </div>
+
+  <div class="gw-grid">
+    <div class="gw-level"><div class="gw-badge" style="background:rgba(0,204,68,.1);color:#00CC44;border:1px solid rgba(0,204,68,.3)">LOW RISK</div><div class="gw-flags mono" style="color:#00CC44">0–1 FLAGS</div><div class="conf-meaning">Commitments broadly supported by evidence. Minor disclosure gaps only.</div></div>
+    <div class="gw-level"><div class="gw-badge" style="background:rgba(255,184,0,.1);color:#FFB800;border:1px solid rgba(255,184,0,.3)">MODERATE</div><div class="gw-flags mono" style="color:#FFB800">2 FLAGS</div><div class="conf-meaning">Isolated target-evidence gap. Requires enhanced disclosure or clarification.</div></div>
+    <div class="gw-level"><div class="gw-badge" style="background:rgba(255,119,0,.1);color:#FF7700;border:1px solid rgba(255,119,0,.3)">ELEVATED</div><div class="gw-flags mono" style="color:#FF7700">3 FLAGS</div><div class="conf-meaning">Structural inconsistencies between narrative claims and quantified data.</div></div>
+    <div class="gw-level"><div class="gw-badge" style="background:rgba(255,102,0,.1);color:#FF6600;border:1px solid rgba(255,102,0,.3)">HIGH RISK</div><div class="gw-flags mono" style="color:#FF6600">4 FLAGS</div><div class="conf-meaning">Multiple material inconsistencies. High likelihood of misleading stakeholder communications.</div></div>
+    <div class="gw-level"><div class="gw-badge" style="background:rgba(255,51,51,.1);color:#FF3333;border:1px solid rgba(255,51,51,.3)">CRITICAL</div><div class="gw-flags mono" style="color:#FF3333">5+ FLAGS</div><div class="conf-meaning">Systemic greenwashing risk. Claims materially unsupported. Regulatory investigation risk elevated.</div></div>
+  </div>
+
+  <!-- Detection rules list -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:20px 20px">
+    <div class="section-eyebrow mono" style="margin-bottom:16px">AUTOMATED DETECTION RULES</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R01</span>Net-zero target declared with &gt;60% fossil dependency and no SBTi alignment</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R02</span>Climate targets declared with BRSR completeness &lt;50%</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R03</span>Emissions &gt;10 MtCO2e with no third-party assurance</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R04</span>Revenue-at-risk &gt;15% absent from financial statements</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R05</span>Net-zero target with &lt;1% CAPEX allocated to climate investments</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R06</span>Banking / insurance / oil &amp; gas with no ISSB S2 scenario analysis</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R07</span>Material emitter (&gt;5 MtCO2e) with no CDP response</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R08</span>No TCFD and no ISSB S2 alignment — climate risk undisclosed under any international standard</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Scenario Financial Impact ─────────────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">FINANCIAL MATERIALITY ENGINE</div>
+    <h2 class="section-title">NGFS Scenario Impact Translation</h2>
+    <p class="section-desc">Base financial exposure is translated into four NGFS-aligned scenario impact projections. Revenue-at-risk multipliers are calibrated against NGFS transition pathway assumptions.</p>
+  </div>
+
+  <table class="scenario-table">
+    <thead>
+      <tr>
+        <th>SCENARIO</th><th>PATHWAY TYPE</th><th>REVENUE MULTIPLIER</th><th>PRIMARY DRIVER</th><th>ASSET RISK PROFILE</th><th>APPLICABLE TO</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="scenario-val" style="color:#00CC44">1.5°C</span></td>
+        <td>Orderly Transition</td>
+        <td><span class="scenario-val mono" style="color:#00CC44">×0.85</span></td>
+        <td>Policy-driven, high upfront cost</td>
+        <td>Low physical / High transition</td>
+        <td>All sectors — best case policy alignment</td>
+      </tr>
+      <tr>
+        <td><span class="scenario-val" style="color:#FFB800">2°C</span></td>
+        <td>Delayed Transition</td>
+        <td><span class="scenario-val mono" style="color:#FFB800">×1.00</span></td>
+        <td>Moderate policy + physical risk</td>
+        <td>Medium physical / Medium transition</td>
+        <td>Reference baseline for all assessments</td>
+      </tr>
+      <tr>
+        <td><span class="scenario-val" style="color:#FF7700">3°C</span></td>
+        <td>Disorderly Transition</td>
+        <td><span class="scenario-val mono" style="color:#FF7700">×1.45</span></td>
+        <td>Policy failure + rising physical risk</td>
+        <td>High physical / Low transition cost</td>
+        <td>High-exposure sectors (energy, real estate, agriculture)</td>
+      </tr>
+      <tr>
+        <td><span class="scenario-val" style="color:#FF3333">4°C</span></td>
+        <td>Hot House World</td>
+        <td><span class="scenario-val mono" style="color:#FF3333">×2.10</span></td>
+        <td>Catastrophic physical impacts</td>
+        <td>Critical physical / Minimal transition</td>
+        <td>Worst-case stress test — all sectors</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── Data Architecture ──────────────────────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">DATA ARCHITECTURE</div>
+    <h2 class="section-title">Five-Layer Intelligence Stack</h2>
+    <p class="section-desc">The CIS draws from five distinct data layers. Company-submitted data is always cross-referenced against external geospatial, financial, and regulatory intelligence.</p>
+  </div>
+
+  <div class="data-layers">
+    <div class="data-layer">
+      <div class="data-layer-label"><div class="data-layer-num mono">LAYER 1</div><div class="data-layer-name">Company Data</div></div>
+      <div class="data-layer-content">
+        <span class="data-tag source">Assessment responses</span><span class="data-tag source">Annual reports</span><span class="data-tag source">Sustainability reports</span><span class="data-tag source">BRSR filings</span><span class="data-tag source">ESG disclosures</span><span class="data-tag source">Uploaded evidence documents</span><span class="data-tag source">CDP submissions</span>
+      </div>
+    </div>
+    <div class="data-layer">
+      <div class="data-layer-label"><div class="data-layer-num mono">LAYER 2</div><div class="data-layer-name">External Climate Data</div></div>
+      <div class="data-layer-content">
+        <span class="data-tag source">IPCC AR6 scenarios</span><span class="data-tag source">NGFS pathways</span><span class="data-tag source">NASA GISS</span><span class="data-tag source">NOAA climate projections</span><span class="data-tag source">World Bank climate portal</span><span class="data-tag source">CMIP6 models</span><span class="data-tag source">Copernicus ERA5</span><span class="data-tag source">IMD India</span>
+      </div>
+    </div>
+    <div class="data-layer">
+      <div class="data-layer-label"><div class="data-layer-num mono">LAYER 3</div><div class="data-layer-name">Hazard &amp; Geo Layer</div></div>
+      <div class="data-layer-content">
+        <span class="data-tag source">Flood risk maps (JRC)</span><span class="data-tag source">Drought indices</span><span class="data-tag source">Cyclone tracks</span><span class="data-tag source">Wildfire risk zones</span><span class="data-tag source">Water stress index (WRI Aqueduct)</span><span class="data-tag source">Heat stress index</span><span class="data-tag source">Facility geolocation</span><span class="data-tag source">Supply chain route exposure</span>
+      </div>
+    </div>
+    <div class="data-layer">
+      <div class="data-layer-label"><div class="data-layer-num mono">LAYER 4</div><div class="data-layer-name">Financial Intelligence</div></div>
+      <div class="data-layer-content">
+        <span class="data-tag source">Revenue &amp; EBITDA</span><span class="data-tag source">CAPEX / OPEX breakdown</span><span class="data-tag source">Debt &amp; balance sheet</span><span class="data-tag source">Insurance exposure</span><span class="data-tag source">Market cap</span><span class="data-tag source">Carbon cost modelling</span><span class="data-tag source">Asset book values</span>
+      </div>
+    </div>
+    <div class="data-layer">
+      <div class="data-layer-label"><div class="data-layer-num mono">LAYER 5</div><div class="data-layer-name">Regulatory Intelligence</div></div>
+      <div class="data-layer-content">
+        <span class="data-tag source">ISSB S1/S2</span><span class="data-tag source">BRSR Core</span><span class="data-tag source">CSRD / ESRS</span><span class="data-tag source">SEC climate rules</span><span class="data-tag source">CBAM tariff schedules</span><span class="data-tag source">EU Taxonomy</span><span class="data-tag source">RBI climate guidelines</span><span class="data-tag source">SEBI BRSR</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Final Outputs ──────────────────────────────────────────────────────────-->
+<section class="section">
+  <div class="section-header">
+    <div class="section-eyebrow mono">REPORT OUTPUTS</div>
+    <h2 class="section-title">18-Component Intelligence Report</h2>
+    <p class="section-desc">Every completed assessment automatically generates an 18-component intelligence package — boardroom-ready, investor-grade, and fully auditable.</p>
+  </div>
+
+  <div class="outputs-grid">
+    <div class="output-item"><div class="output-num mono">01</div><div class="output-name">Climactix Intelligence Score (CIS)</div><div class="output-desc">Composite 0–100 score with full pillar breakdown</div></div>
+    <div class="output-item"><div class="output-num mono">02</div><div class="output-name">Rating Grade</div><div class="output-desc">AAA through D with category description</div></div>
+    <div class="output-item"><div class="output-num mono">03</div><div class="output-name">Confidence Score</div><div class="output-desc">Data quality and evidence reliability rating</div></div>
+    <div class="output-item"><div class="output-num mono">04</div><div class="output-name">Verification Score</div><div class="output-desc">Claim-by-claim evidence quality assessment</div></div>
+    <div class="output-item"><div class="output-num mono">05</div><div class="output-name">Greenwashing Risk Score</div><div class="output-desc">Low → Critical with triggered rule citations</div></div>
+    <div class="output-item"><div class="output-num mono">06</div><div class="output-name">Industry Benchmark Ranking</div><div class="output-desc">Percentile vs industry, regional, and global peers</div></div>
+    <div class="output-item"><div class="output-num mono">07</div><div class="output-name">Climate Financial Impact Score</div><div class="output-desc">Revenue, EBITDA, and asset risk quantification</div></div>
+    <div class="output-item"><div class="output-num mono">08</div><div class="output-name">Climate Governance Score</div><div class="output-desc">Board, strategy, and accountability breakdown</div></div>
+    <div class="output-item"><div class="output-num mono">09</div><div class="output-name">Physical Risk Score</div><div class="output-desc">Per-hazard exposure with geospatial context</div></div>
+    <div class="output-item"><div class="output-num mono">10</div><div class="output-name">Transition Risk Score</div><div class="output-desc">Carbon, regulatory, and stranded asset analysis</div></div>
+    <div class="output-item"><div class="output-num mono">11</div><div class="output-name">Resilience Score</div><div class="output-desc">Adaptation investment and planning quality</div></div>
+    <div class="output-item"><div class="output-num mono">12</div><div class="output-name">Disclosure Quality Score</div><div class="output-desc">Framework alignment and assurance quality</div></div>
+    <div class="output-item"><div class="output-num mono">13</div><div class="output-name">Investor Summary</div><div class="output-desc">One-page investment-grade intelligence brief</div></div>
+    <div class="output-item"><div class="output-num mono">14</div><div class="output-name">Board-Level Summary</div><div class="output-desc">Executive climate risk narrative for board reporting</div></div>
+    <div class="output-item"><div class="output-num mono">15</div><div class="output-name">Regulatory Readiness Summary</div><div class="output-desc">BRSR / ISSB / CSRD compliance gap analysis</div></div>
+    <div class="output-item"><div class="output-num mono">16</div><div class="output-name">Climate Risk Heatmap</div><div class="output-desc">Facility-level hazard exposure visualization</div></div>
+    <div class="output-item"><div class="output-num mono">17</div><div class="output-name">Framework Alignment Matrix</div><div class="output-desc">Multi-framework gap and alignment status grid</div></div>
+    <div class="output-item"><div class="output-num mono">18</div><div class="output-name">Methodology Appendix</div><div class="output-desc">Full calculation trace — every indicator, weight, and evidence reference</div></div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────────────-->
+<footer style="padding:32px 0;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+  <div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber);letter-spacing:.08em;margin-bottom:4px">CLIMACTIX GLOBAL — CIS METHODOLOGY v1.0</div>
+    <div style="font-size:10px;color:var(--text-muted)">Proprietary IP of Climactix Global. All scoring logic, weights, and methodology are confidential.</div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <a href="investor-terminal.html" class="nav-link">TERMINAL</a>
+    <a href="enterprise-assessment.html" class="nav-link">ASSESSMENT</a>
+    <a href="brsr-intelligence.html" class="nav-link">BRSR</a>
+  </div>
+</footer>
+
+</div><!-- /page -->
+
+<script src="cis-engine.js"></script>
+<script>
+// Quick self-test to verify engine loads correctly
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.CIS_ENGINE) {
+    const test = window.CIS_ENGINE.generateReport({
+      industry: 'energy',
+      governance:      { board_climate_committee: true, cco_or_equivalent: true, executive_remuneration_linked: false, board_agenda_frequency: 'quarterly', climate_strategy_documented: true, targets_board_approved: true, climate_in_enterprise_risk: true, external_assurance: false, climate_board_training: false },
+      physical_risk:   { flood_zone_pct: 0.3, heat_stress_score: 70, water_stress_score: 65, cyclone_exposure: false },
+      transition_risk: { carbon_intensity: 1.2, fossil_fuel_pct: 75, net_zero_target_year: 2045, sbti_aligned: false },
+      disclosure:      { brsr_completeness: 0.6, tcfd_status: 'partial', gri_status: 'aligned', cdp_response: true, third_party_assurance: false },
+      resilience:      { adaptation_plan_documented: true, scenario_analysis_conducted: true, climate_capex_pct: 4 },
+      financial:       { revenue_at_risk_pct: 12, ebitda_sensitivity_pct: 8, financial_scenarios_modeled: true },
+    });
+    console.log('[CIS Engine] Self-test score:', test.cis_score, test.rating_grade);
+  }
+});
+</script>
+</body>
+</html>

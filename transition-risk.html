@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Climactix — Transition Risk Briefings</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})()</script>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   CLIMACTIX — TRANSITION RISK BRIEFINGS
+   Division 02 · Carbon Policy · CBAM · CSRD · ISSB Adoption · Stranded Assets
+═══════════════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#000000;--bg-alt:#0A0A0A;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;
+  --border:#2C2C2C;--border-strong:#333333;--border-accent:rgba(255,102,0,0.30);
+  --amber:#FF6600;--amber-dim:#CC5200;--amber-glow:rgba(255,102,0,0.08);
+  --cyan:#0099CC;--cyan-glow:rgba(0,153,204,0.10);
+  --green:#00CC44;--green-glow:rgba(0,204,68,0.10);
+  --red:#FF3333;--red-glow:rgba(255,51,51,0.10);--blue:#3399FF;
+  --text:#FFFFFF;--text-2:#888888;--text-muted:#555555;
+  --t:0.12s ease;--nav-h:44px;
+}
+[data-theme="light"]{--bg:#FFFFFF;--bg-alt:#F5F5F5;--surface:#FFFFFF;--surface-2:#EBEBEB;--surface-3:#E0E0E0;--surface-4:#D5D5D5;--border:#D0D0D0;--border-strong:#BBBBBB;--amber-glow:rgba(255,102,0,0.06);--text:#000000;--text-2:#333333;--text-muted:#666666}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:12px;line-height:1.5}
+.mono{font-family:'IBM Plex Mono',monospace}
+a{text-decoration:none;color:inherit}
+button,input,select{font-family:inherit}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--surface-3)}
+
+/* ── NAV */
+.nav{height:var(--nav-h);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;position:relative;z-index:200;flex-shrink:0}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em}
+.nav-sep{color:var(--border-strong);opacity:0.5;font-size:18px}
+.nav-module{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all var(--t);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pg 2s infinite}
+@keyframes pg{0%,100%{opacity:1}50%{opacity:.3}}
+.theme-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:4px;transition:color var(--t)}
+.theme-btn:hover{color:var(--amber)}
+
+/* ── WORKSPACE */
+.workspace{height:calc(100vh - var(--nav-h));display:flex;overflow:hidden}
+
+/* ── LEFT: BRIEFING FEED */
+.briefing-feed{width:360px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.feed-hdr{padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.feed-hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.feed-hdr-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)}
+.feed-tabs{display:flex;gap:0}
+.feed-tab{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--border);background:none;color:var(--text-muted);cursor:pointer;transition:all var(--t)}
+.feed-tab:first-child{border-radius:2px 0 0 2px}
+.feed-tab:last-child{border-radius:0 2px 2px 0;border-left:none}
+.feed-tab.active{background:var(--amber);color:#000;border-color:var(--amber)}
+.feed-body{flex:1;overflow-y:auto}
+.briefing-item{padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.briefing-item:hover{background:var(--surface-2)}
+.briefing-item.active{background:rgba(255,102,0,0.05);border-left:2px solid var(--amber)}
+.bi-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}
+.bi-badge{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 5px;border-radius:2px}
+.bi-date{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.bi-title{font-size:11px;font-weight:600;line-height:1.4;margin-bottom:3px}
+.bi-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.bi-impact{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;padding:1px 5px;border-radius:2px}
+
+/* ── MAIN AREA: BRIEFING DETAIL + PANELS */
+.main-area{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.main-top-bar{height:36px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:stretch;overflow-x:auto;flex-shrink:0}
+.m-tab{display:flex;align-items:center;gap:5px;padding:0 16px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all var(--t);white-space:nowrap;flex-shrink:0}
+.m-tab:hover{color:var(--text);background:var(--surface-2)}
+.m-tab.active{color:var(--amber);border-bottom-color:var(--amber);background:rgba(255,102,0,0.03)}
+.main-body{flex:1;overflow-y:auto;padding:16px}
+
+/* ── BRIEFING DETAIL */
+.briefing-detail{}
+.bd-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.bd-title{font-size:18px;font-weight:800;letter-spacing:-0.025em;line-height:1.2;margin-bottom:8px}
+.bd-sub{font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:12px;max-width:720px}
+.bd-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.bd-kpi{background:var(--surface);padding:10px 12px}
+.bd-kpi-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.bd-kpi-val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.bd-kpi-sub{font-size:10px;color:var(--text-2);margin-top:2px}
+
+/* ── TWO COL GRID */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+
+/* ── PANEL */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:12px}
+.panel-hdr{padding:8px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface)}
+.panel-hdr-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)}
+.panel-hdr-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.panel-body{padding:0}
+
+/* policy row */
+.policy-row{display:flex;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);align-items:flex-start}
+.policy-row:last-child{border-bottom:none}
+.policy-date{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber);flex-shrink:0;width:52px;line-height:1.4}
+.policy-body{flex:1}
+.policy-title{font-size:11px;font-weight:600;line-height:1.4;margin-bottom:2px}
+.policy-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.policy-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;padding:1px 5px;border-radius:2px;border:1px solid}
+.policy-status{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;padding:2px 6px;border-radius:2px;flex-shrink:0;align-self:flex-start}
+
+/* carbon price row */
+.carbon-row{display:flex;align-items:center;padding:7px 12px;border-bottom:1px solid var(--border);gap:8px}
+.carbon-row:last-child{border-bottom:none}
+.carbon-mkt{font-size:11px;font-weight:600;width:90px;flex-shrink:0}
+.carbon-region{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);width:70px;flex-shrink:0}
+.carbon-price{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0;width:70px;text-align:right}
+.carbon-chg{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;width:50px;text-align:right;flex-shrink:0}
+.carbon-bar-wrap{flex:1;height:3px;background:var(--border);border-radius:0;overflow:hidden}
+.carbon-bar-fill{height:100%;border-radius:0}
+.chg-up{color:var(--green)}
+.chg-dn{color:var(--red)}
+
+/* sector exposure row */
+.sector-row{display:flex;align-items:center;padding:7px 12px;border-bottom:1px solid var(--border);gap:8px}
+.sector-row:last-child{border-bottom:none}
+.sector-name{font-size:11px;font-weight:500;flex:1}
+.sector-bar-wrap{width:100px;height:3px;background:var(--border);border-radius:0;overflow:hidden}
+.sector-fill{height:100%}
+.sector-score{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;width:40px;text-align:right;flex-shrink:0}
+.sector-rating{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;width:30px;text-align:right;flex-shrink:0}
+
+/* timeline */
+.timeline-item{display:flex;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);align-items:flex-start}
+.timeline-item:last-child{border-bottom:none}
+.tl-year{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--cyan);width:44px;flex-shrink:0;padding-top:1px}
+.tl-dot{width:1px;background:var(--border);align-self:stretch;flex-shrink:0;margin-left:2px}
+.tl-body{flex:1}
+.tl-title{font-size:11px;font-weight:600;margin-bottom:2px;line-height:1.4}
+.tl-desc{font-size:10px;color:var(--text-muted);line-height:1.5}
+.tl-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.tl-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;padding:1px 5px;border-radius:2px}
+
+/* chips */
+.chip{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+.chip-amber{background:rgba(255,102,0,0.10);color:var(--amber);border:1px solid rgba(255,102,0,0.20)}
+.chip-green{background:rgba(0,204,68,0.08);color:var(--green);border:1px solid rgba(0,204,68,0.20)}
+.chip-red{background:rgba(255,51,51,0.08);color:var(--red);border:1px solid rgba(255,51,51,0.20)}
+.chip-cyan{background:rgba(0,153,204,0.10);color:var(--cyan);border:1px solid rgba(0,153,204,0.20)}
+.chip-gray{background:var(--surface-3);color:var(--text-2);border:1px solid var(--border)}
+
+/* policy impact simulator */
+.sim-slider{width:100%;-webkit-appearance:none;height:3px;background:var(--border);border-radius:0;outline:none;cursor:pointer}
+.sim-slider::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--amber);cursor:pointer}
+.sim-result{background:var(--surface-2);border:1px solid var(--border);border-radius:3px;padding:10px 12px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">CLIMACTIX</span>
+  <span class="nav-sep">|</span>
+  <span class="nav-module">DIV 02 · TRANSITION RISK BRIEFINGS</span>
+  <div class="nav-right">
+    <span class="live-dot"></span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)">48 Active Policies</span>
+    <button class="nav-btn" id="exportBtn">Export Briefing</button>
+    <a href="research.html" class="nav-btn">← Research Hub</a>
+    <button class="theme-btn" onclick="toggleTheme()">◑</button>
+  </div>
+</nav>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- LEFT: BRIEFING FEED -->
+  <div class="briefing-feed">
+    <div class="feed-hdr">
+      <div class="feed-hdr-top">
+        <span class="feed-hdr-label">Briefings</span>
+        <div class="feed-tabs">
+          <button class="feed-tab active" onclick="setFeedTab(this,'weekly')">Weekly</button>
+          <button class="feed-tab" onclick="setFeedTab(this,'monthly')">Monthly</button>
+          <button class="feed-tab" onclick="setFeedTab(this,'alerts')">Alerts</button>
+        </div>
+      </div>
+    </div>
+    <div class="feed-body" id="feedBody">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="main-area">
+    <div class="main-top-bar">
+      <button class="m-tab active" onclick="setMainTab(this,'overview')">Briefing Detail</button>
+      <button class="m-tab" onclick="setMainTab(this,'carbon')">Carbon Pricing</button>
+      <button class="m-tab" onclick="setMainTab(this,'regulatory')">Regulatory Timeline</button>
+      <button class="m-tab" onclick="setMainTab(this,'heatmap')">Sector Exposure</button>
+      <button class="m-tab" onclick="setMainTab(this,'simulator')">Policy Simulator</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="main-body" id="view-overview">
+      <div class="briefing-detail">
+        <div class="bd-eyebrow">
+          <span class="chip chip-amber">WEEKLY BRIEFING</span>
+          <span>Week 22, 2026</span>
+          <span>29 May 2026</span>
+        </div>
+        <h2 class="bd-title">Transition Risk Intelligence Brief — W22 2026</h2>
+        <p class="bd-sub">This week: CBAM expanded to cover cement and steel embedded carbon declarations. SEBI issues stricter BRSR Core assurance guidelines. India carbon market price discovery continues at ₹2,840/tCO₂. EU extends ETS to maritime sector from Q3 2026. NGFS updates baseline scenario assumptions — 1.5°C pathway now requires $130/tCO₂ global carbon price by 2030.</p>
+        <div class="bd-kpis">
+          <div class="bd-kpi">
+            <div class="bd-kpi-label">EU ETS Price</div>
+            <div class="bd-kpi-val" style="color:var(--amber)">€68.40</div>
+            <div class="bd-kpi-sub"><span style="color:var(--green);font-weight:700">+€0.82</span> this week</div>
+          </div>
+          <div class="bd-kpi">
+            <div class="bd-kpi-label">India Carbon Mkt</div>
+            <div class="bd-kpi-val" style="color:var(--cyan)">₹2,840</div>
+            <div class="bd-kpi-sub"><span style="color:var(--green);font-weight:700">+3.4%</span> /tCO₂e</div>
+          </div>
+          <div class="bd-kpi">
+            <div class="bd-kpi-label">Active Policies</div>
+            <div class="bd-kpi-val" style="color:var(--text)">48</div>
+            <div class="bd-kpi-sub"><span style="color:var(--amber);font-weight:700">+3</span> enacted this month</div>
+          </div>
+          <div class="bd-kpi">
+            <div class="bd-kpi-label">High-Risk Sectors</div>
+            <div class="bd-kpi-val" style="color:var(--red)">6</div>
+            <div class="bd-kpi-sub">Above 70/100 transition risk</div>
+          </div>
+        </div>
+
+        <!-- POLICY UPDATES THIS WEEK -->
+        <div class="panel">
+          <div class="panel-hdr">
+            <span class="panel-hdr-label">Key Policy Developments — Week 22</span>
+            <span class="panel-hdr-meta">CBAM · SEBI · ISSB · EU ETS</span>
+          </div>
+          <div class="panel-body">
+            <div class="policy-row">
+              <div class="policy-date">27 May</div>
+              <div class="policy-body">
+                <div class="policy-title">EU CBAM — Extended to Cement, Steel, Aluminium: Embedded Carbon Declarations from Q3 2026</div>
+                <div class="policy-meta">
+                  <span class="policy-tag" style="color:var(--amber);border-color:rgba(255,102,0,0.30);background:rgba(255,102,0,0.08)">EU</span>
+                  <span>Carbon Border Adjustment Mechanism</span>
+                  <span>Indian exporters: €3.2B annual exposure</span>
+                </div>
+              </div>
+              <span class="policy-status chip chip-amber">ACTIVE</span>
+            </div>
+            <div class="policy-row">
+              <div class="policy-date">26 May</div>
+              <div class="policy-body">
+                <div class="policy-title">SEBI Strengthens BRSR Core Assurance: Third-Party Verification Mandatory for Top 150 Listed Companies</div>
+                <div class="policy-meta">
+                  <span class="policy-tag" style="color:var(--cyan);border-color:rgba(0,153,204,0.30);background:rgba(0,153,204,0.08)">SEBI</span>
+                  <span>India · Effective FY2025-26</span>
+                </div>
+              </div>
+              <span class="policy-status chip chip-cyan">MANDATORY</span>
+            </div>
+            <div class="policy-row">
+              <div class="policy-date">24 May</div>
+              <div class="policy-body">
+                <div class="policy-title">NGFS Scenario Update — Net Zero 2050 Pathway Revised: $130/tCO₂ Required by 2030 (Up from $110)</div>
+                <div class="policy-meta">
+                  <span class="policy-tag" style="color:var(--green);border-color:rgba(0,204,68,0.30);background:rgba(0,204,68,0.08)">NGFS</span>
+                  <span>Phase IV · All scenarios revised</span>
+                </div>
+              </div>
+              <span class="policy-status chip chip-green">DATA UPDATE</span>
+            </div>
+            <div class="policy-row">
+              <div class="policy-date">22 May</div>
+              <div class="policy-body">
+                <div class="policy-title">EU ETS Maritime Extension — Shipping Companies Added to Carbon Market from Q3 2026</div>
+                <div class="policy-meta">
+                  <span class="policy-tag" style="color:var(--amber);border-color:rgba(255,102,0,0.30);background:rgba(255,102,0,0.08)">EU ETS</span>
+                  <span>Maritime sector · 50% of voyages in/out EU</span>
+                </div>
+              </div>
+              <span class="policy-status chip chip-amber">CONFIRMED</span>
+            </div>
+            <div class="policy-row">
+              <div class="policy-date">20 May</div>
+              <div class="policy-body">
+                <div class="policy-title">ISSB Jurisdictional Adoption Update — 22 Countries Now Committed to IFRS S1/S2 by 2027</div>
+                <div class="policy-meta">
+                  <span class="policy-tag" style="color:var(--blue);border-color:rgba(51,153,255,0.30);background:rgba(51,153,255,0.08)">ISSB</span>
+                  <span>Global · India monitoring for FY2026</span>
+                </div>
+              </div>
+              <span class="policy-status chip chip-gray">TRACKING</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAPITAL FLOWS -->
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-hdr"><span class="panel-hdr-label">Transition Capital Flows</span><span class="panel-hdr-meta">YTD 2026</span></div>
+            <div class="panel-body">
+              <div class="carbon-row">
+                <span class="carbon-mkt">Green Bonds</span>
+                <span class="carbon-region">Global</span>
+                <span class="carbon-price" style="color:var(--green)">$420B</span>
+                <div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:84%;background:var(--green)"></div></div>
+                <span class="carbon-chg chg-up">+22%</span>
+              </div>
+              <div class="carbon-row">
+                <span class="carbon-mkt">Sustainability Loans</span>
+                <span class="carbon-region">Asia-Pac</span>
+                <span class="carbon-price" style="color:var(--cyan)">$186B</span>
+                <div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:62%;background:var(--cyan)"></div></div>
+                <span class="carbon-chg chg-up">+18%</span>
+              </div>
+              <div class="carbon-row">
+                <span class="carbon-mkt">Fossil Fuel Divest.</span>
+                <span class="carbon-region">Global</span>
+                <span class="carbon-price" style="color:var(--amber)">$2.4T</span>
+                <div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:72%;background:var(--amber)"></div></div>
+                <span class="carbon-chg chg-up">+14%</span>
+              </div>
+              <div class="carbon-row">
+                <span class="carbon-mkt">ESG AUM</span>
+                <span class="carbon-region">Global</span>
+                <span class="carbon-price" style="color:var(--blue)">$40T</span>
+                <div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:100%;background:var(--blue)"></div></div>
+                <span class="carbon-chg chg-up">+9%</span>
+              </div>
+              <div class="carbon-row">
+                <span class="carbon-mkt">Stranded Asset Risk</span>
+                <span class="carbon-region">Fossil</span>
+                <span class="carbon-price" style="color:var(--red)">$1.4T</span>
+                <div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:56%;background:var(--red)"></div></div>
+                <span class="carbon-chg chg-dn">+28%</span>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-hdr"><span class="panel-hdr-label">AI Analyst Note</span><span class="panel-hdr-meta"><span class="live-dot"></span> Generated</span></div>
+            <div class="panel-body" style="padding:12px">
+              <div style="font-size:11px;color:var(--text-2);line-height:1.70;margin-bottom:10px">
+                <strong style="color:var(--amber)">Transition Inflection Signal:</strong> The simultaneous enforcement of EU CBAM (cement/steel) and SEBI BRSR Core assurance creates a dual-compliance burden for Indian heavy industry exporters that is materially underpriced in current equity valuations. Sectors most exposed: Steel (+₹24,000 Cr liability), Chemicals (+₹18,000 Cr), Cement (+₹11,000 Cr).
+              </div>
+              <div style="font-size:11px;color:var(--text-2);line-height:1.70;margin-bottom:10px">
+                <strong style="color:var(--cyan)">Investor Note:</strong> NGFS scenario revision (+$20/tCO₂ price path) increases stranded asset risk for India coal and oil assets by an estimated 18–24% under the Net Zero 2050 pathway. Portfolio managers with India fossil fuel exposure should re-run scenario stress tests under updated NGFS Phase IV assumptions.
+              </div>
+              <div style="border-top:1px solid var(--border);padding-top:8px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)">Sources: NGFS Phase IV 2024 · EU Official Journal · SEBI Circular 2026 · IEA WEO 2025</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARBON PRICING VIEW -->
+    <div class="main-body" id="view-carbon" style="display:none">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px">Global Carbon Market Pricing Intelligence · Live</div>
+      <div class="bd-kpis" style="margin-bottom:16px">
+        <div class="bd-kpi"><div class="bd-kpi-label">EU ETS</div><div class="bd-kpi-val" style="color:var(--amber)">€68.40</div><div class="bd-kpi-sub"><span style="color:var(--green);font-weight:700">+1.2%</span> /tCO₂</div></div>
+        <div class="bd-kpi"><div class="bd-kpi-label">India ICM</div><div class="bd-kpi-val" style="color:var(--cyan)">₹2,840</div><div class="bd-kpi-sub"><span style="color:var(--green);font-weight:700">+3.4%</span> /tCO₂e</div></div>
+        <div class="bd-kpi"><div class="bd-kpi-label">UK ETS</div><div class="bd-kpi-val" style="color:var(--green)">£52.10</div><div class="bd-kpi-sub"><span style="color:var(--red);font-weight:700">-0.4%</span> /tCO₂</div></div>
+        <div class="bd-kpi"><div class="bd-kpi-label">NGFS 2030 Target</div><div class="bd-kpi-val" style="color:var(--red)">$130</div><div class="bd-kpi-sub">Required for 1.5°C</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-hdr-label">Carbon Market Pricing — Global Comparison</span><span class="panel-hdr-meta">May 2026</span></div>
+        <div class="panel-body">
+          <div class="carbon-row"><span class="carbon-mkt">EU ETS (EUA)</span><span class="carbon-region">Europe</span><span class="carbon-price" style="color:var(--amber)">€68.40</span><div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:53%;background:var(--amber)"></div></div><span class="carbon-chg chg-up">+1.2%</span></div>
+          <div class="carbon-row"><span class="carbon-mkt">UK ETS</span><span class="carbon-region">UK</span><span class="carbon-price" style="color:var(--green)">£52.10</span><div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:40%;background:var(--green)"></div></div><span class="carbon-chg chg-dn">-0.4%</span></div>
+          <div class="carbon-row"><span class="carbon-mkt">RGGI (USA)</span><span class="carbon-region">N.E. USA</span><span class="carbon-price" style="color:var(--cyan)">$14.80</span><div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:11%;background:var(--cyan)"></div></div><span class="carbon-chg chg-up">+0.7%</span></div>
+          <div class="carbon-row"><span class="carbon-mkt">California CaT</span><span class="carbon-region">USA-CA</span><span class="carbon-price" style="color:var(--cyan)">$38.20</span><div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:29%;background:var(--cyan)"></div></div><span class="carbon-chg chg-up">+2.1%</span></div>
+          <div class="carbon-row"><span class="carbon-mkt">China ETS</span><span class="carbon-region">China</span><span class="carbon-price" style="color:var(--text-2)">¥82.40</span><div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:9%;background:var(--border-strong)"></div></div><span class="carbon-chg chg-up">+4.8%</span></div>
+          <div class="carbon-row"><span class="carbon-mkt">India ICM</span><span class="carbon-region">India</span><span class="carbon-price" style="color:var(--green)">₹2,840</span><div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:22%;background:var(--green)"></div></div><span class="carbon-chg chg-up">+3.4%</span></div>
+          <div class="carbon-row"><span class="carbon-mkt">Korea ETS</span><span class="carbon-region">Korea</span><span class="carbon-price" style="color:var(--text-2)">₩19,400</span><div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:13%;background:var(--border-strong)"></div></div><span class="carbon-chg chg-dn">-1.2%</span></div>
+          <div class="carbon-row"><span class="carbon-mkt" style="font-weight:700;color:var(--amber)">NGFS 2030 Target</span><span class="carbon-region">Required</span><span class="carbon-price" style="color:var(--red)">$130+</span><div class="carbon-bar-wrap"><div class="carbon-bar-fill" style="width:100%;background:var(--red);opacity:0.4"></div></div><span class="carbon-chg" style="color:var(--red)">GAP</span></div>
+        </div>
+      </div>
+      <div style="background:rgba(255,51,51,0.06);border:1px solid rgba(255,51,51,0.20);border-radius:3px;padding:10px 14px;font-size:11px;color:var(--text-2);line-height:1.65">
+        <strong style="color:var(--red)">Carbon Pricing Gap Alert:</strong> Current global weighted-average carbon price is approximately $28/tCO₂ vs the NGFS-required $130/tCO₂ by 2030 for the 1.5°C pathway. This gap creates both transition risk (regulatory catch-up risk) and opportunity (early movers benefit from carbon credit appreciation). Indian companies with low-carbon intensity and certified emission reductions may gain significant competitive advantage as domestic ICM prices approach global levels.
+      </div>
+    </div>
+
+    <!-- REGULATORY TIMELINE VIEW -->
+    <div class="main-body" id="view-regulatory" style="display:none">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px">Global Climate Regulatory Timeline · 2023–2030</div>
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-hdr-label">Enacted & Upcoming Regulations</span><span class="panel-hdr-meta">48 Active Policies</span></div>
+        <div class="panel-body">
+          <div class="timeline-item">
+            <div class="tl-year">2023</div>
+            <div class="tl-body">
+              <div class="tl-title">EU CBAM Phase 1 — Reporting Obligation (Oct 2023)</div>
+              <div class="tl-desc">EU Carbon Border Adjustment Mechanism enters transitional phase. Importers of cement, steel, aluminium, fertilisers, hydrogen, electricity must report embedded carbon.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-green">ACTIVE</span><span class="tl-tag chip chip-cyan">EU</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-year">2024</div>
+            <div class="tl-body">
+              <div class="tl-title">ISSB IFRS S1/S2 Effective — Sustainability & Climate Disclosures</div>
+              <div class="tl-desc">ISSB Standards S1 (General Sustainability Disclosures) and S2 (Climate-related Disclosures) effective for annual reporting periods beginning Jan 2024. 22 jurisdictions committed.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-green">ACTIVE</span><span class="tl-tag chip chip-amber">GLOBAL</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-year">2024</div>
+            <div class="tl-body">
+              <div class="tl-title">CSRD Phase 1 — Large Listed EU Companies (~1,000 companies)</div>
+              <div class="tl-desc">Corporate Sustainability Reporting Directive enters force for large listed EU companies. ESRS E1 (climate) mandatory. Double materiality assessment required.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-green">ACTIVE</span><span class="tl-tag chip chip-cyan">EU</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-year">2025</div>
+            <div class="tl-body">
+              <div class="tl-title">SEBI BRSR Core — Top 150 Listed Companies Mandatory Assurance</div>
+              <div class="tl-desc">SEBI mandates third-party reasonable assurance for BRSR Core KPIs for India's top 150 companies by market cap. Includes GHG emissions, water, waste, energy metrics.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-green">ACTIVE</span><span class="tl-tag chip chip-amber">INDIA</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-year">2026</div>
+            <div class="tl-body">
+              <div class="tl-title">EU CBAM Full Implementation — Carbon Certificates for All Imports</div>
+              <div class="tl-desc">CBAM moves from reporting to full certificate surrender. Importers pay for embedded carbon above EU ETS price. Indian steel/cement/chemical exporters face significant liability.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-amber">JAN 2026</span><span class="tl-tag chip chip-cyan">EU</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-year">2026</div>
+            <div class="tl-body">
+              <div class="tl-title">India Carbon Credit Trading Scheme — Domestic Market Price Discovery</div>
+              <div class="tl-desc">India's Carbon Credit Trading Scheme (CCTS) gains traction. Domestic carbon price discovery continues. SEBI regulates carbon credit market instruments. BEE administers PAT scheme integration.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-amber">ACTIVE</span><span class="tl-tag chip chip-amber">INDIA</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-year">2027</div>
+            <div class="tl-body">
+              <div class="tl-title">CSRD Phase 2 — Large Non-Listed EU Companies (~50,000 companies)</div>
+              <div class="tl-desc">Significant expansion of CSRD scope. Value chain reporting requirements create indirect obligations for Indian suppliers and partners of EU multinationals.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-cyan">2027</span><span class="tl-tag chip chip-cyan">EU</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-year">2028</div>
+            <div class="tl-body">
+              <div class="tl-title">SEC Climate Disclosure Rule — Full Phase-In All US-Listed Companies</div>
+              <div class="tl-desc">SEC climate disclosure rules fully in effect for all registered entities including foreign private issuers. Scope 1, 2 emissions mandatory; Scope 3 for large accelerated filers.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-cyan">2028</span><span class="tl-tag chip chip-amber">USA</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="tl-year">2030</div>
+            <div class="tl-body">
+              <div class="tl-title">NGFS Carbon Price Target — $130+/tCO₂ Required for 1.5°C Alignment</div>
+              <div class="tl-desc">NGFS Net Zero 2050 pathway requires global average carbon price of $130/tCO₂ by 2030. Current global weighted average: ~$28/tCO₂. Gap of $102/tCO₂ creates massive regulatory catch-up risk.</div>
+              <div class="tl-tags"><span class="tl-tag chip chip-red">TARGET</span><span class="tl-tag chip chip-amber">GLOBAL</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTOR HEATMAP VIEW -->
+    <div class="main-body" id="view-heatmap" style="display:none">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px">Transition Risk Exposure Heatmap · India Sectors</div>
+      <div class="two-col" style="margin-bottom:0">
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-hdr-label">Policy Transition Risk by Sector</span><span class="panel-hdr-meta">Score out of 100</span></div>
+          <div class="panel-body">
+            <div class="sector-row"><span class="sector-name">Oil & Gas</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:92%;background:var(--red)"></div></div><span class="sector-score" style="color:var(--red)">92</span><span class="sector-rating" style="color:var(--red)">B-</span></div>
+            <div class="sector-row"><span class="sector-name">Thermal Power</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:88%;background:var(--red)"></div></div><span class="sector-score" style="color:var(--red)">88</span><span class="sector-rating" style="color:var(--red)">B</span></div>
+            <div class="sector-row"><span class="sector-name">Coal / Mining</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:95%;background:var(--red)"></div></div><span class="sector-score" style="color:var(--red)">95</span><span class="sector-rating" style="color:var(--red)">CCC</span></div>
+            <div class="sector-row"><span class="sector-name">Steel / Metals</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:85%;background:var(--red)"></div></div><span class="sector-score" style="color:var(--red)">85</span><span class="sector-rating" style="color:var(--red)">B</span></div>
+            <div class="sector-row"><span class="sector-name">Chemicals</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:74%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">74</span><span class="sector-rating" style="color:var(--amber)">BB</span></div>
+            <div class="sector-row"><span class="sector-name">Cement</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:78%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">78</span><span class="sector-rating" style="color:var(--amber)">BB-</span></div>
+            <div class="sector-row"><span class="sector-name">Automobiles</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:62%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">62</span><span class="sector-rating" style="color:var(--amber)">BB</span></div>
+            <div class="sector-row"><span class="sector-name">Real Estate</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:55%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">55</span><span class="sector-rating" style="color:var(--amber)">BBB-</span></div>
+            <div class="sector-row"><span class="sector-name">Banking</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:52%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">52</span><span class="sector-rating" style="color:var(--amber)">BBB-</span></div>
+            <div class="sector-row"><span class="sector-name">Renewables</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:21%;background:var(--green)"></div></div><span class="sector-score" style="color:var(--green)">21</span><span class="sector-rating" style="color:var(--green)">A</span></div>
+            <div class="sector-row"><span class="sector-name">IT / Software</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:31%;background:var(--green)"></div></div><span class="sector-score" style="color:var(--green)">31</span><span class="sector-rating" style="color:var(--green)">A-</span></div>
+            <div class="sector-row"><span class="sector-name">Healthcare / Pharma</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:38%;background:var(--green)"></div></div><span class="sector-score" style="color:var(--green)">38</span><span class="sector-rating" style="color:var(--green)">BBB+</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-hdr"><span class="panel-hdr-label">Stranded Asset Exposure (India) · 2°C Scenario</span></div>
+          <div class="panel-body">
+            <div class="sector-row"><span class="sector-name">Coal Assets (E&P)</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:100%;background:var(--red)"></div></div><span class="sector-score" style="color:var(--red)">$42B</span><span class="sector-rating" style="color:var(--red)">CRIT</span></div>
+            <div class="sector-row"><span class="sector-name">Oil & Gas Upstream</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:81%;background:var(--red)"></div></div><span class="sector-score" style="color:var(--red)">$34B</span><span class="sector-rating" style="color:var(--red)">HIGH</span></div>
+            <div class="sector-row"><span class="sector-name">Thermal Power Plants</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:67%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">$28B</span><span class="sector-rating" style="color:var(--amber)">HIGH</span></div>
+            <div class="sector-row"><span class="sector-name">BF-BOF Steel</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:50%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">$21B</span><span class="sector-rating" style="color:var(--amber)">MED</span></div>
+            <div class="sector-row"><span class="sector-name">ICE Vehicles (Mfg)</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:38%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">$16B</span><span class="sector-rating" style="color:var(--amber)">MED</span></div>
+            <div class="sector-row"><span class="sector-name">Fossil Chemicals</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:31%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">$13B</span><span class="sector-rating" style="color:var(--amber)">MED</span></div>
+            <div class="sector-row"><span class="sector-name">Gas Infrastructure</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:24%;background:var(--amber)"></div></div><span class="sector-score" style="color:var(--amber)">$10B</span><span class="sector-rating" style="color:var(--amber)">MED</span></div>
+            <div class="sector-row"><span class="sector-name">Real Estate (brown)</span><div class="sector-bar-wrap"><div class="sector-fill" style="width:17%;background:var(--green)"></div></div><span class="sector-score" style="color:var(--green)">$7B</span><span class="sector-rating" style="color:var(--green)">LOW</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POLICY IMPACT SIMULATOR -->
+    <div class="main-body" id="view-simulator" style="display:none">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px">Policy Impact Simulator · Carbon Price Scenario Engine</div>
+      <div style="max-width:600px">
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-hdr"><span class="panel-hdr-label">Carbon Price Scenario Inputs</span></div>
+          <div style="padding:14px 12px">
+            <div style="margin-bottom:14px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase">Carbon Price ($/tCO₂)</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--amber)" id="cpVal">50</span>
+              </div>
+              <input type="range" class="sim-slider" id="cpSlider" min="10" max="200" value="50" oninput="updateSimulator()"/>
+              <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-top:3px"><span>$10</span><span>Current: ~$28</span><span>NGFS 2030: $130</span><span>$200</span></div>
+            </div>
+            <div style="margin-bottom:14px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase">Emissions (MtCO₂/year)</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--cyan)" id="emVal">50</span>
+              </div>
+              <input type="range" class="sim-slider" id="emSlider" min="1" max="500" value="50" oninput="updateSimulator()"/>
+            </div>
+            <div style="margin-bottom:14px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase">CBAM Export Value ($B)</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;color:var(--green)" id="cbamVal">2.0</span>
+              </div>
+              <input type="range" class="sim-slider" id="cbamSlider" min="0.1" max="20" step="0.1" value="2.0" oninput="updateSimulator()"/>
+            </div>
+          </div>
+        </div>
+        <div class="sim-result" id="simResult">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px">Simulation Output</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="simOutputs"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light')})();
+function toggleTheme(){const t=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t)}
+
+const WEEKLY = [
+  {badge:'WEEKLY BRIEF',cls:'chip-amber',title:'Transition Risk Intelligence Brief — W22 2026',date:'29 May 2026',region:'Global',impact:'HIGH',topics:['CBAM','SEBI','NGFS Update']},
+  {badge:'WEEKLY BRIEF',cls:'chip-amber',title:'Carbon Market Weekly — EU ETS at €68.40, India ICM Gains',date:'22 May 2026',region:'Global',impact:'MEDIUM',topics:['EU ETS','India ICM']},
+  {badge:'WEEKLY BRIEF',cls:'chip-amber',title:'W20 Briefing — CSRD Phase 2 Impact on Indian Supply Chains',date:'15 May 2026',region:'India · EU',impact:'HIGH',topics:['CSRD','Supply Chain']},
+  {badge:'SECTOR ALERT',cls:'chip-red',title:'Steel Sector Alert — CBAM Certificate Liability Estimate Updated',date:'12 May 2026',region:'India',impact:'HIGH',topics:['Steel','CBAM']},
+  {badge:'POLICY UPDATE',cls:'chip-cyan',title:'SEBI Climate Policy Round-up — May 2026',date:'8 May 2026',region:'India',impact:'MEDIUM',topics:['SEBI','BRSR']},
+];
+const MONTHLY = [
+  {badge:'MONTHLY OUTLOOK',cls:'chip-green',title:'May 2026 — Transition Risk Monthly Outlook',date:'01 May 2026',region:'Global',impact:'HIGH',topics:['Policy','Carbon','Stranded Assets']},
+  {badge:'MONTHLY OUTLOOK',cls:'chip-green',title:'April 2026 — India Climate Finance & Carbon Market Update',date:'01 Apr 2026',region:'India',impact:'MEDIUM',topics:['ICM','Green Finance']},
+  {badge:'MONTHLY OUTLOOK',cls:'chip-green',title:'March 2026 — NGFS Scenario Revision Impact Analysis',date:'01 Mar 2026',region:'Global',impact:'HIGH',topics:['NGFS','Scenarios']},
+];
+const ALERTS = [
+  {badge:'CRITICAL ALERT',cls:'chip-red',title:'Coal India: Stranded Asset Risk Revised +18% Under NGFS Phase IV',date:'24 May 2026',region:'India',impact:'CRITICAL',topics:['Coal','Stranded Asset','CCC']},
+  {badge:'REGULATORY ALERT',cls:'chip-amber',title:'SEBI BRSR: 3 Companies Flagged for Assurance Non-Compliance',date:'20 May 2026',region:'India',impact:'HIGH',topics:['BRSR','Compliance']},
+  {badge:'MARKET ALERT',cls:'chip-amber',title:'EU ETS Price Spike — €2.10 Single-Day Gain on Policy News',date:'18 May 2026',region:'EU',impact:'MEDIUM',topics:['EU ETS','Carbon Price']},
+];
+
+let currentFeed = 'weekly';
+
+function renderFeed(type){
+  const feeds={weekly:WEEKLY,monthly:MONTHLY,alerts:ALERTS};
+  const data=feeds[type]||WEEKLY;
+  document.getElementById('feedBody').innerHTML=data.map((b,i)=>`
+    <div class="briefing-item${i===0?' active':''}" onclick="selectBriefing(this)">
+      <div class="bi-header">
+        <span class="bi-badge chip ${b.cls}">${b.badge}</span>
+        <span class="bi-date">${b.date}</span>
+      </div>
+      <div class="bi-title">${b.title}</div>
+      <div class="bi-meta">
+        <span>${b.region}</span>
+        <span class="bi-impact ${b.impact==='CRITICAL'?'chip chip-red':b.impact==='HIGH'?'chip chip-amber':'chip chip-gray'}">${b.impact}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectBriefing(el){
+  document.querySelectorAll('.briefing-item').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setFeedTab(btn,type){
+  document.querySelectorAll('.feed-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFeed=type;
+  renderFeed(type);
+}
+
+function setMainTab(btn,view){
+  document.querySelectorAll('.m-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['overview','carbon','regulatory','heatmap','simulator'].forEach(v=>{
+    const el=document.getElementById('view-'+v);
+    if(el) el.style.display=v===view?'block':'none';
+  });
+}
+
+function updateSimulator(){
+  const cp=+document.getElementById('cpSlider').value;
+  const em=+document.getElementById('emSlider').value;
+  const cbam=+document.getElementById('cbamSlider').value;
+  document.getElementById('cpVal').textContent='$'+cp;
+  document.getElementById('emVal').textContent=em;
+  document.getElementById('cbamVal').textContent=cbam.toFixed(1);
+  const carbonLiab=(cp*em).toFixed(0);
+  const cbamLiab=(cbam*0.22*cp/100).toFixed(2);
+  const ebitdaImpact=(-(cp/200)*28).toFixed(1);
+  const strandedRisk=cp>100?'HIGH':cp>50?'MEDIUM':'LOW';
+  const strandedCol=cp>100?'var(--red)':cp>50?'var(--amber)':'var(--green)';
+  document.getElementById('simOutputs').innerHTML=`
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">Carbon Liability</div><div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--red)">$${Number(carbonLiab).toLocaleString()}M</div><div style="font-size:10px;color:var(--text-muted)">Annual carbon tax cost</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">CBAM Exposure</div><div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--amber)">$${cbamLiab}B</div><div style="font-size:10px;color:var(--text-muted)">Annual CBAM certificates</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">EBITDA Impact</div><div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--red)">${ebitdaImpact}%</div><div style="font-size:10px;color:var(--text-muted)">Estimated EBITDA compression</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px">Stranded Asset Risk</div><div style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:${strandedCol}">${strandedRisk}</div><div style="font-size:10px;color:var(--text-muted)">Under this carbon price path</div></div>
+  `;
+}
+
+document.getElementById('exportBtn').addEventListener('click',()=>alert('Export: Weekly/Monthly Briefing PDF, regulatory timeline export, carbon pricing data CSV. Active in full deployment.'));
+renderFeed('weekly');
+updateSimulator();
+</script>
+</body>
+</html>

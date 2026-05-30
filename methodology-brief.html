@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>CIS Methodology Brief — Climactix Global</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000000;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;
+  --border:#2C2C2C;--border-strong:#333333;
+  --amber:#FF6600;--amber-dim:#CC5200;--cyan:#0099CC;--green:#00CC44;--red:#FF3333;--blue:#3399FF;
+  --text:#FFFFFF;--text-2:#888888;--text-muted:#555555;
+  --t:0.12s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px;line-height:1.6;min-height:100vh}
+.mono{font-family:'IBM Plex Mono','Courier New',monospace}
+
+/* ── Nav */
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.nav-left{display:flex;align-items:center;gap:12px}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--text);text-decoration:none}
+.nav-sep{color:var(--border-strong)}
+.nav-ctx{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:.06em;text-transform:uppercase}
+.nav-right{display:flex;gap:8px;align-items:center}
+.nav-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:2px;transition:all var(--t)}
+.nav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.nav-btn.primary{background:var(--amber);border-color:var(--amber);color:#000}
+.nav-btn.primary:hover{background:var(--amber-dim);border-color:var(--amber-dim)}
+
+/* ── Document layout */
+.doc-wrap{max-width:860px;margin:0 auto;padding:56px 24px 80px}
+
+/* ── Document header */
+.doc-header{padding-bottom:32px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.doc-classification{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.doc-class-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:2px}
+.doc-version{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+.doc-date{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+.doc-title{font-size:34px;font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:10px}
+.doc-title span{color:var(--amber)}
+.doc-subtitle{font-size:14px;color:var(--text-2);line-height:1.6;max-width:680px;margin-bottom:24px}
+.doc-meta{display:flex;gap:24px;flex-wrap:wrap}
+.doc-meta-item{display:flex;flex-direction:column;gap:2px}
+.doc-meta-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.doc-meta-val{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;color:var(--amber)}
+
+/* ── Executive summary box */
+.exec-summary{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--amber);padding:20px 24px;border-radius:3px;margin-bottom:40px}
+.exec-summary-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+.exec-summary p{font-size:13px;color:var(--text-2);line-height:1.75}
+.exec-summary p+p{margin-top:12px}
+
+/* ── Sections */
+.doc-section{margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid var(--border)}
+.doc-section:last-of-type{border-bottom:none}
+.section-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.section-title{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
+.section-body{font-size:13px;color:var(--text-2);line-height:1.75}
+.section-body p+p{margin-top:12px}
+.section-body strong{color:var(--text);font-weight:600}
+
+/* ── Pillar table */
+.pillar-table{width:100%;border-collapse:collapse;margin:20px 0;border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.pillar-table th{background:var(--surface);font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-strong);color:var(--text-muted)}
+.pillar-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;font-size:12px}
+.pillar-table tr:last-child td{border-bottom:none}
+.pillar-table tr:hover td{background:var(--surface)}
+.pillar-num-cell{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--amber);white-space:nowrap;font-size:11px}
+.pillar-name-cell{font-weight:700;color:var(--text);font-size:12px}
+.pillar-weight-cell{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-2)}
+.pillar-key-cell{font-size:11px;color:var(--text-muted);line-height:1.5}
+
+/* ── Rating table */
+.rating-table{width:100%;border-collapse:collapse;margin:20px 0;border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.rating-table th{background:var(--surface);font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-strong);color:var(--text-muted)}
+.rating-table td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:11px}
+.rating-table tr:last-child td{border-bottom:none}
+.r-grade{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px}
+.r-range{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted)}
+.r-bar{display:inline-block;height:3px;border-radius:2px;vertical-align:middle;margin-left:6px}
+
+/* ── Two-column grid */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.info-box{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:16px 18px}
+.info-box-title{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.info-box-body{font-size:12px;color:var(--text-2);line-height:1.65}
+
+/* ── Inline tags */
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:2px;margin:2px 2px 2px 0;vertical-align:middle}
+.tag-amber{background:rgba(255,102,0,.08);border:1px solid rgba(255,102,0,.25);color:var(--amber)}
+.tag-cyan{background:rgba(0,153,204,.08);border:1px solid rgba(0,153,204,.25);color:var(--cyan)}
+.tag-green{background:rgba(0,204,68,.08);border:1px solid rgba(0,204,68,.25);color:var(--green)}
+.tag-muted{background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--text-muted)}
+
+/* ── Callout blocks */
+.callout{display:flex;gap:14px;padding:16px 18px;border-radius:3px;margin:20px 0}
+.callout-amber{background:rgba(255,102,0,.05);border:1px solid rgba(255,102,0,.2)}
+.callout-green{background:rgba(0,204,68,.05);border:1px solid rgba(0,204,68,.2)}
+.callout-red{background:rgba(255,51,51,.05);border:1px solid rgba(255,51,51,.2)}
+.callout-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.callout-text{font-size:12px;line-height:1.65;color:var(--text-2)}
+.callout-text strong{font-weight:700}
+
+/* ── Principle list */
+.principle-list{display:flex;flex-direction:column;gap:12px;margin:20px 0}
+.principle{display:flex;gap:14px;align-items:flex-start}
+.principle-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--amber);flex-shrink:0;width:28px}
+.principle-body{font-size:12px;color:var(--text-2);line-height:1.65}
+.principle-body strong{color:var(--text);font-weight:600}
+
+/* ── CTA block */
+.cta-block{background:var(--surface);border:1px solid var(--border-strong);border-radius:3px;padding:28px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:40px}
+.cta-block-text{flex:1}
+.cta-block-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:6px}
+.cta-block-title{font-size:16px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.cta-block-desc{font-size:12px;color:var(--text-2)}
+.cta-actions{display:flex;gap:8px;flex-shrink:0}
+.cta-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;text-decoration:none;transition:all var(--t);display:inline-block}
+.cta-btn.primary{background:var(--amber);color:#000;border:1px solid var(--amber)}
+.cta-btn.primary:hover{background:var(--amber-dim);border-color:var(--amber-dim)}
+.cta-btn.secondary{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
+.cta-btn.secondary:hover{border-color:var(--amber);color:var(--amber)}
+
+/* ── SVG illustrations in section headers */
+.section-illus{float:right;margin:0 0 16px 24px;opacity:.9}
+.clearfix::after{content:'';display:table;clear:both}
+
+/* ── Footnote */
+.footnote{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);line-height:1.6;padding-top:24px;border-top:1px solid var(--border);margin-top:40px}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────────────────-->
+<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo mono">CLIMACTIX GLOBAL</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-ctx mono">METHODOLOGY BRIEF</span>
+  </div>
+  <div class="nav-right">
+    <a href="scoring-methodology.html" class="nav-btn">Full Methodology</a>
+    <a href="investor-terminal.html" class="nav-btn">Terminal</a>
+    <a href="enterprise-assessment.html" class="nav-btn">Assessment</a>
+    <a href="index.html" class="nav-btn primary">Home</a>
+  </div>
+</nav>
+
+<div class="doc-wrap">
+
+  <!-- ── Document Header ───────────────────────────────────────────────────-->
+  <div class="doc-header">
+    <div class="doc-classification">
+      <span class="doc-class-badge tag-amber">METHODOLOGY BRIEF</span>
+      <span class="doc-class-badge tag-muted">PROPRIETARY IP</span>
+      <span class="doc-version mono">Version 1.0</span>
+      <span class="doc-date mono">May 2026</span>
+    </div>
+
+    <h1 class="doc-title">Climactix Intelligence Score<br><span>(CIS) — Methodology Brief</span></h1>
+    <p class="doc-subtitle">A concise overview of the scoring framework, rating architecture, data methodology, and intellectual foundations of the Climactix Global Climate Risk Intelligence Platform.</p>
+
+    <div class="doc-meta">
+      <div class="doc-meta-item"><div class="doc-meta-label">Framework</div><div class="doc-meta-val">CIS v1.0</div></div>
+      <div class="doc-meta-item"><div class="doc-meta-label">Scoring Pillars</div><div class="doc-meta-val">6</div></div>
+      <div class="doc-meta-item"><div class="doc-meta-label">Rating Grades</div><div class="doc-meta-val">AAA → D</div></div>
+      <div class="doc-meta-item"><div class="doc-meta-label">Industries Covered</div><div class="doc-meta-val">20</div></div>
+      <div class="doc-meta-item"><div class="doc-meta-label">Peer Universe</div><div class="doc-meta-val">3,600+</div></div>
+      <div class="doc-meta-item"><div class="doc-meta-label">Framework Alignment</div><div class="doc-meta-val">ISSB · TCFD · GRI · BRSR</div></div>
+    </div>
+  </div>
+
+  <!-- ── Executive Summary ─────────────────────────────────────────────────-->
+  <div class="exec-summary">
+    <div class="exec-summary-label">Executive Summary</div>
+    <p>The <strong>Climactix Intelligence Score (CIS)</strong> is an institutional-grade, forward-looking climate risk rating system designed to quantify how climate change can affect the future performance, resilience, valuation, and competitiveness of an organization. Unlike conventional ESG scores that reward disclosure volume, CIS measures six distinct dimensions of climate risk exposure and management quality — producing a composite score from 0 to 100 mapped to a 16-grade letter rating from AAA through D.</p>
+    <p>The methodology is industry-adjusted, evidence-verified, confidence-separated, and fully auditable. Every score component is traceable to a data input, a weighted indicator, and a peer benchmark reference. CIS is built for institutional use by investors, lenders, insurers, regulators, and corporate boards — not for marketing or ESG reporting purposes.</p>
+  </div>
+
+  <!-- ── SECTION 1: Purpose & Philosophy ───────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 01</div>
+    <h2 class="section-title">Purpose &amp; Core Philosophy</h2>
+
+    <!-- SVG: Purpose icon — balance of risk vs readiness -->
+    <svg class="section-illus" width="120" height="100" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+      <line x1="60" y1="10" x2="60" y2="55" stroke="#2C2C2C" stroke-width="2"/>
+      <line x1="20" y1="55" x2="100" y2="55" stroke="#2C2C2C" stroke-width="2"/>
+      <line x1="20" y1="55" x2="20" y2="68" stroke="#FF6600" stroke-width="1.5"/>
+      <line x1="100" y1="55" x2="100" y2="48" stroke="#0099CC" stroke-width="1.5"/>
+      <rect x="8" y="68" width="24" height="16" rx="2" fill="rgba(255,102,0,0.15)" stroke="#FF6600" stroke-width="1"/>
+      <rect x="88" y="48" width="24" height="16" rx="2" fill="rgba(0,153,204,0.15)" stroke="#0099CC" stroke-width="1"/>
+      <text x="20" y="80" text-anchor="middle" fill="#FF6600" font-size="7" font-family="'IBM Plex Mono',monospace">RISK</text>
+      <text x="100" y="60" text-anchor="middle" fill="#0099CC" font-size="7" font-family="'IBM Plex Mono',monospace">READY</text>
+      <circle cx="60" cy="10" r="4" fill="#FF6600"/>
+      <text x="60" y="93" text-anchor="middle" fill="#555" font-size="7" font-family="'IBM Plex Mono',monospace">CIS BALANCE</text>
+    </svg>
+
+    <div class="section-body clearfix">
+      <p>Conventional ESG rating methodologies fail to serve investors and risk managers because they measure <strong>disclosure quality rather than actual risk exposure</strong>. A company that publishes comprehensive sustainability reports but operates coal-intensive assets in flood-prone regions may score higher than a genuinely low-risk enterprise with limited disclosure capacity.</p>
+      <p>CIS is built on a different foundation. It asks a single primary question: <strong>"How much can climate change impact this organization's future financial performance, resilience, and competitiveness?"</strong> — and answers it through quantified, evidence-backed, industry-calibrated scoring.</p>
+      <p>The methodology is explicitly designed to support:</p>
+    </div>
+
+    <div class="principle-list">
+      <div class="principle"><div class="principle-num">P1</div><div class="principle-body"><strong>Climate-Adjusted Investment Decisions</strong> — Portfolio managers and analysts need ratings comparable across sectors, geographies, and regulatory environments.</div></div>
+      <div class="principle"><div class="principle-num">P2</div><div class="principle-body"><strong>Credit Risk Integration</strong> — Lenders and insurers require quantified estimates of how climate scenarios affect revenue, asset values, and cash flows.</div></div>
+      <div class="principle"><div class="principle-num">P3</div><div class="principle-body"><strong>Regulatory Readiness Assessment</strong> — Boards and CFOs need to understand their exposure to ISSB S2, BRSR, CSRD, TCFD, and CBAM requirements.</div></div>
+      <div class="principle"><div class="principle-num">P4</div><div class="principle-body"><strong>Greenwashing Accountability</strong> — An automated evidence-verification engine flags claims unsupported by quantifiable, auditable data.</div></div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: Scoring Architecture ───────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 02</div>
+    <h2 class="section-title">Scoring Architecture — The Six Pillars</h2>
+    <div class="section-body">
+      <p>The CIS is a weighted composite of six scoring pillars. Each pillar is independently scored on a 0–100 scale using indicator-specific algorithms. Pillar weights are not fixed — they are calibrated per industry using Climactix's proprietary materiality ontology (see Section 4).</p>
+    </div>
+
+    <table class="pillar-table">
+      <thead>
+        <tr>
+          <th>PILLAR</th>
+          <th>DIMENSION</th>
+          <th>DEFAULT WEIGHT</th>
+          <th>RANGE</th>
+          <th>KEY INDICATORS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pillar-num-cell">P1</td>
+          <td class="pillar-name-cell">Climate Governance</td>
+          <td class="pillar-weight-cell">15%</td>
+          <td class="pillar-weight-cell">12–20%</td>
+          <td class="pillar-key-cell">Board climate committee, CCO appointment, executive remuneration linkage, board agenda frequency, climate in enterprise risk framework, external assurance</td>
+        </tr>
+        <tr>
+          <td class="pillar-num-cell">P2</td>
+          <td class="pillar-name-cell">Physical Risk Exposure</td>
+          <td class="pillar-weight-cell">20%</td>
+          <td class="pillar-weight-cell">10–30%</td>
+          <td class="pillar-key-cell">Flood zone facility exposure, heat stress index, water stress score, cyclone &amp; wildfire exposure, coastal/sea-level risk, supply chain geo-concentration</td>
+        </tr>
+        <tr>
+          <td class="pillar-num-cell">P3</td>
+          <td class="pillar-name-cell">Transition Risk Readiness</td>
+          <td class="pillar-weight-cell">20%</td>
+          <td class="pillar-weight-cell">15–32%</td>
+          <td class="pillar-key-cell">Carbon intensity (tCO2e/$M revenue), fossil fuel dependency, net-zero pathway credibility, CBAM &amp; ETS exposure, stranded asset risk, carbon price exposure</td>
+        </tr>
+        <tr>
+          <td class="pillar-num-cell">P4</td>
+          <td class="pillar-name-cell">Disclosure &amp; Data Quality</td>
+          <td class="pillar-weight-cell">15%</td>
+          <td class="pillar-weight-cell">12–20%</td>
+          <td class="pillar-key-cell">BRSR completeness, TCFD/ISSB/GRI/SASB alignment, CDP response, third-party assurance, historical data years, restatement history</td>
+        </tr>
+        <tr>
+          <td class="pillar-num-cell">P5</td>
+          <td class="pillar-name-cell">Resilience &amp; Adaptation</td>
+          <td class="pillar-weight-cell">15%</td>
+          <td class="pillar-weight-cell">10–20%</td>
+          <td class="pillar-key-cell">Adaptation plan, business continuity (climate), climate CAPEX %, resilience project count, ISSB S2 scenario analysis, supply chain resilience plan</td>
+        </tr>
+        <tr>
+          <td class="pillar-num-cell">P6</td>
+          <td class="pillar-name-cell">Financial Materiality</td>
+          <td class="pillar-weight-cell">15%</td>
+          <td class="pillar-weight-cell">8–18%</td>
+          <td class="pillar-key-cell">Revenue-at-risk %, EBITDA sensitivity, asset impairment risk, NGFS scenario modeling, climate disclosure in financial statements, investor materiality communication</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-amber">
+      <div class="callout-icon">◆</div>
+      <div class="callout-text"><strong>Composite Formula:</strong> CIS = Σ (Pillar Score × Industry-Adjusted Weight) across all six pillars. The composite is bounded to 0–100 and mapped to a letter rating grade. Industry weight adjustments ensure that a coal power plant and a technology firm are not compared using identical materiality assumptions.</div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: Rating Scale ────────────────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 03</div>
+    <h2 class="section-title">Rating Scale — AAA through D</h2>
+    <div class="section-body">
+      <p>The CIS rating scale mirrors the Moody's and S&P credit rating architecture — familiar to institutional investors, consistent in interpretation, and structured to convey relative quality with precision. Ratings are assigned at the time of assessment and reviewed upon material data updates or annual reassessment cycles.</p>
+    </div>
+
+    <table class="rating-table">
+      <thead><tr><th>GRADE</th><th>SCORE RANGE</th><th>CATEGORY</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td><span class="r-grade" style="color:#00CC44">AAA</span></td><td class="r-range">95–100</td><td><span class="tag tag-green">Investment Prime</span></td><td>Sector benchmark. Exemplary governance, verified disclosures, near-zero transition risk.</td></tr>
+        <tr><td><span class="r-grade" style="color:#22CC55">AA+ / AA / AA-</span></td><td class="r-range">80–94</td><td><span class="tag tag-green">Investment Strong</span></td><td>Top-decile performance. Robust across all pillars with minor improvement areas.</td></tr>
+        <tr><td><span class="r-grade" style="color:#0099CC">A+ / A / A-</span></td><td class="r-range">65–79</td><td><span class="tag tag-cyan">Investment Adequate</span></td><td>Above industry median. Credible management with measurable improvement potential.</td></tr>
+        <tr><td><span class="r-grade" style="color:#FFB800">BBB+ / BBB / BBB-</span></td><td class="r-range">50–64</td><td><span class="tag tag-amber">Baseline Exposure</span></td><td>Around industry median. Material gaps in one or more pillars. Monitor for deterioration.</td></tr>
+        <tr><td><span class="r-grade" style="color:#FF6600">BB / B</span></td><td class="r-range">40–49</td><td><span class="tag" style="background:rgba(255,102,0,.08);border:1px solid rgba(255,102,0,.3);color:#FF6600">Elevated Risk</span></td><td>Structural deficiencies. Inadequate adaptation planning or disclosure. Investor caution advised.</td></tr>
+        <tr><td><span class="r-grade" style="color:#FF3333">CCC / CC / C</span></td><td class="r-range">10–39</td><td><span class="tag" style="background:rgba(255,51,51,.08);border:1px solid rgba(255,51,51,.3);color:#FF3333">Severe Vulnerability</span></td><td>Critical multi-pillar failures. Near-term financial climate risk elevated. Remediation required.</td></tr>
+        <tr><td><span class="r-grade" style="color:#880000">D</span></td><td class="r-range">0–9</td><td><span class="tag" style="background:rgba(136,0,0,.15);border:1px solid rgba(136,0,0,.4);color:#AA1111">Default</span></td><td>No meaningful climate management. Existential exposure without mitigation pathway.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 4: Industry Materiality ───────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 04</div>
+    <h2 class="section-title">Industry-Specific Materiality Adjustments</h2>
+
+    <!-- SVG: Industry ontology visual -->
+    <svg class="section-illus" width="130" height="110" viewBox="0 0 130 110" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="126" height="106" rx="3" fill="#0F0F0F" stroke="#2C2C2C" stroke-width="1"/>
+      <rect x="10" y="12" width="50" height="20" rx="2" fill="rgba(255,102,0,0.1)" stroke="#FF6600" stroke-width="0.8"/>
+      <text x="35" y="25" text-anchor="middle" fill="#FF6600" font-size="7" font-family="'IBM Plex Mono',monospace">OIL &amp; GAS</text>
+      <text x="35" y="36" text-anchor="middle" fill="#555" font-size="6" font-family="'IBM Plex Mono',monospace">TRANS: 30%</text>
+      <rect x="70" y="12" width="52" height="20" rx="2" fill="rgba(0,153,204,0.1)" stroke="#0099CC" stroke-width="0.8"/>
+      <text x="96" y="25" text-anchor="middle" fill="#0099CC" font-size="7" font-family="'IBM Plex Mono',monospace">BANKING</text>
+      <text x="96" y="36" text-anchor="middle" fill="#555" font-size="6" font-family="'IBM Plex Mono',monospace">TRANS: 25%</text>
+      <rect x="10" y="42" width="50" height="20" rx="2" fill="rgba(0,204,68,0.1)" stroke="#00CC44" stroke-width="0.8"/>
+      <text x="35" y="55" text-anchor="middle" fill="#00CC44" font-size="7" font-family="'IBM Plex Mono',monospace">RENEWABLES</text>
+      <text x="35" y="66" text-anchor="middle" fill="#555" font-size="6" font-family="'IBM Plex Mono',monospace">PHYS: 25%</text>
+      <rect x="70" y="42" width="52" height="20" rx="2" fill="rgba(255,184,0,0.1)" stroke="#FFB800" stroke-width="0.8"/>
+      <text x="96" y="55" text-anchor="middle" fill="#FFB800" font-size="7" font-family="'IBM Plex Mono',monospace">REAL ESTATE</text>
+      <text x="96" y="66" text-anchor="middle" fill="#555" font-size="6" font-family="'IBM Plex Mono',monospace">PHYS: 30%</text>
+      <rect x="10" y="72" width="112" height="20" rx="2" fill="rgba(255,255,255,0.02)" stroke="#333" stroke-width="0.8"/>
+      <text x="66" y="82" text-anchor="middle" fill="#555" font-size="7" font-family="'IBM Plex Mono',monospace">20 INDUSTRY CONFIGURATIONS</text>
+      <text x="66" y="93" text-anchor="middle" fill="#333" font-size="6" font-family="'IBM Plex Mono',monospace">SECTOR-SPECIFIC WEIGHTS + INDICATORS</text>
+    </svg>
+
+    <div class="section-body clearfix">
+      <p>A single universal weighting across all industries produces misleading ratings. A cement plant faces a fundamentally different materiality profile than a software company. Climactix addresses this through a <strong>proprietary industry ontology covering 20 sectors</strong>, each with calibrated pillar weights, material indicator sets, peer group definitions, and carbon intensity benchmarks.</p>
+      <p>Key examples of industry materiality divergence:</p>
+    </div>
+
+    <div class="two-col">
+      <div class="info-box">
+        <div class="info-box-title">Oil &amp; Gas</div>
+        <div class="info-box-body">Transition Risk raised to <strong>30%</strong> weight. Physical Risk reduced to 15%. Key material indicators: Scope 3 absolute emissions, stranded asset value ($M), reserve life index, capex split between fossil and clean, methane intensity, flaring rate. SBTi alignment is required for credible pathway scoring.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-title">Real Estate &amp; Infrastructure</div>
+        <div class="info-box-body">Physical Risk raised to <strong>30%</strong> weight — highest of any sector. Building-level flood zone exposure, urban heat island index, sea-level portfolio value, and green building certification percentage are primary drivers. Brown asset stranding risk feeds into Transition Risk pillar.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-title">Banking &amp; Financial Services</div>
+        <div class="info-box-body">Governance and Transition Risk each weighted at <strong>20%+</strong>. Financed emissions (PCAF-aligned), portfolio transition risk, and climate stress-test conduct are key. The NGFS guidelines, RBI Climate Risk Framework, and PCAF standard are primary applicable frameworks.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-title">Agriculture &amp; Food Systems</div>
+        <div class="info-box-body">Physical Risk is weighted at <strong>30%</strong> — tied highest with Real Estate. Drought index, water intensity, crop yield climate sensitivity, deforestation exposure, and soil carbon sequestration are material. TNFD and Science Based Targets for Nature apply in addition to TCFD.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: Confidence vs Performance ──────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 05</div>
+    <h2 class="section-title">The Confidence Distinction</h2>
+    <div class="section-body">
+      <p>One of the defining methodological innovations of CIS is the explicit separation of <strong>performance score</strong> from <strong>confidence score</strong>. These are always reported independently and should never be collapsed into a single number.</p>
+      <p>A company may receive an <strong>AA rating</strong> but a <strong>Low Confidence</strong> score — meaning the inputs supporting that rating are insufficiently verified to be relied upon for institutional decision-making. Conversely, a company may have a BBB rating with Very High Confidence, meaning the lower performance is well-supported by verified data.</p>
+    </div>
+
+    <div class="two-col">
+      <div class="info-box">
+        <div class="info-box-title">Confidence Score Inputs</div>
+        <div class="info-box-body">
+          Data completeness across all 6 pillars (40 pts)<br>
+          Evidence verification quality from the Verification Engine (35 pts)<br>
+          Disclosure consistency — historical years, assurance quality, restatement history (25 pts)
+        </div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-title">Confidence Levels</div>
+        <div class="info-box-body">
+          <span class="tag tag-green">Very High</span> 90–100 · Institutional grade<br>
+          <span class="tag tag-green">High</span> 80–89 · Investment reliable<br>
+          <span class="tag tag-amber">Moderate</span> 65–79 · Use with caution<br>
+          <span class="tag" style="background:rgba(255,102,0,.08);border:1px solid rgba(255,102,0,.3);color:#FF6600">Low</span> 50–64 · Supplemental evidence needed<br>
+          <span class="tag" style="background:rgba(255,51,51,.08);border:1px solid rgba(255,51,51,.3);color:#FF3333">Insufficient</span> &lt;50 · Not decision-grade
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: Verification Engine ───────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 06</div>
+    <h2 class="section-title">Verification &amp; Evidence Engine</h2>
+    <div class="section-body">
+      <p>Every claim submitted in a Climactix assessment is classified against four evidence statuses. Unverified claims on high-materiality indicators (net-zero targets, Scope 1 emissions, revenue-at-risk) carry a doubled penalty. Evidence from regulatory filings carries the highest trust weight (1.00); self-declared claims with no supporting document carry the lowest (0.30).</p>
+    </div>
+
+    <div class="two-col">
+      <div class="info-box" style="border-color:rgba(0,204,68,.2)">
+        <div class="info-box-title" style="color:#00CC44">VERIFIED</div>
+        <div class="info-box-body">Backed by regulatory filing, audited statement, or third-party assurance. Trust weight: 0.90–1.00. Earns a score uplift of up to +3.5 points on the CIS composite.</div>
+      </div>
+      <div class="info-box" style="border-color:rgba(255,184,0,.2)">
+        <div class="info-box-title" style="color:#FFB800">PARTIALLY VERIFIED</div>
+        <div class="info-box-body">Sourced from published reports without assurance. Trust weight: 0.30–0.55. Neutral score impact. Encourages progression to full assurance.</div>
+      </div>
+      <div class="info-box" style="border-color:rgba(255,102,0,.2)">
+        <div class="info-box-title" style="color:#FF6600">UNVERIFIED</div>
+        <div class="info-box-body">Self-declared with no supporting document. Trust weight: 0.0. Applies a penalty of 4–8 points on CIS composite; doubled for high-materiality claims.</div>
+      </div>
+      <div class="info-box" style="border-color:rgba(255,51,51,.2)">
+        <div class="info-box-title" style="color:#FF3333">CONTRADICTORY</div>
+        <div class="info-box-body">Evidence conflicts directly with the claim — e.g., reported emissions target vs. CAPEX allocation data. Applies a 6-point CIS penalty and triggers a Greenwashing flag automatically.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 7: Greenwashing Detection ─────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 07</div>
+    <h2 class="section-title">Greenwashing Detection Engine</h2>
+    <div class="section-body">
+      <p>Climactix operates an eight-rule automated greenwashing detection engine that runs on every assessment. Triggered flags accumulate into a Greenwashing Risk rating — separate from the CIS performance score. The engine is calibrated against ISSB S2, TCFD, CDP, and BRSR requirements and looks for structural inconsistencies between disclosed commitments and verifiable evidence.</p>
+    </div>
+
+    <div class="callout callout-red">
+      <div class="callout-icon">⚑</div>
+      <div class="callout-text">
+        <strong>Eight Detection Rules (R01–R08):</strong> Net-zero target with >60% fossil dependency and no SBTi alignment · Climate targets with BRSR completeness <50% · Emissions >10 MtCO2e with no third-party assurance · Revenue-at-risk >15% absent from financial statements · Net-zero target with <1% climate CAPEX · Banking/insurance/oil &amp; gas sector with no ISSB S2 scenario analysis · Material emitter with no CDP response · No TCFD or ISSB S2 alignment at all.
+      </div>
+    </div>
+
+    <div class="section-body" style="margin-top:16px">
+      <p>Greenwashing Risk is rated <span class="tag tag-green">Low</span> (0–1 flags), <span class="tag tag-amber">Moderate</span> (2), <span class="tag" style="background:rgba(255,119,0,.08);border:1px solid rgba(255,119,0,.3);color:#FF7700">Elevated</span> (3), <span class="tag" style="background:rgba(255,102,0,.08);border:1px solid rgba(255,102,0,.3);color:#FF6600">High</span> (4), or <span class="tag" style="background:rgba(255,51,51,.08);border:1px solid rgba(255,51,51,.3);color:#FF3333">Critical</span> (5+). All triggered flags are listed verbatim in the generated report with the specific rule reference.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 8: Financial Impact Translation ───────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 08</div>
+    <h2 class="section-title">Financial Impact Translation</h2>
+    <div class="section-body">
+      <p>CIS translates physical and transition risk exposure into scenario-adjusted financial impact projections across four NGFS-aligned pathways. Base financial exposure inputs (revenue-at-risk %, EBITDA sensitivity, asset impairment risk) are multiplied by scenario-specific factors derived from NGFS transition pathway calibration.</p>
+    </div>
+
+    <div class="two-col" style="grid-template-columns: repeat(4, 1fr)">
+      <div class="info-box" style="border-color:rgba(0,204,68,.2)">
+        <div class="info-box-title" style="color:#00CC44">1.5°C</div>
+        <div class="info-box-body">Multiplier ×0.85 · Orderly transition · High upfront cost · Low physical risk · Policy-driven</div>
+      </div>
+      <div class="info-box" style="border-color:rgba(255,184,0,.2)">
+        <div class="info-box-title" style="color:#FFB800">2°C</div>
+        <div class="info-box-body">Multiplier ×1.00 · Reference baseline · Moderate physical + transition risk</div>
+      </div>
+      <div class="info-box" style="border-color:rgba(255,102,0,.2)">
+        <div class="info-box-title" style="color:#FF7700">3°C</div>
+        <div class="info-box-body">Multiplier ×1.45 · Disorderly transition · Policy failure · Rising physical risk</div>
+      </div>
+      <div class="info-box" style="border-color:rgba(255,51,51,.2)">
+        <div class="info-box-title" style="color:#FF3333">4°C</div>
+        <div class="info-box-body">Multiplier ×2.10 · Hot House World · Catastrophic physical · Stress test ceiling</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 9: Benchmarking ───────────────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 09</div>
+    <h2 class="section-title">Benchmarking &amp; Peer Comparison</h2>
+    <div class="section-body">
+      <p>Every CIS output includes a percentile ranking against three reference groups: the company's industry peer universe, its regional peer group, and the global cross-sector universe of 3,600+ assessed entities. Percentiles are computed using a piecewise-linear cumulative distribution function anchored at sector-specific P25, P50, and P75 statistics maintained by Climactix's intelligence database.</p>
+      <p>Pillar-level peer comparison is also provided — each of the six pillars is benchmarked against the industry median to identify whether specific dimensions are <strong>Above Peers</strong>, <strong>Inline with Peers</strong>, or <strong>Below Peers</strong>. This supports targeted improvement planning rather than aggregate score chasing.</p>
+    </div>
+
+    <div class="callout callout-green">
+      <div class="callout-icon">◈</div>
+      <div class="callout-text"><strong>Benchmark output:</strong> Industry percentile rank · Regional percentile · Global percentile · Industry median CIS · Leader threshold (P90) · Laggard threshold (P10) · Points to leader · Peer universe size · Pillar-level vs-peers assessment for all six pillars.</div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 10: Auditability ──────────────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 10</div>
+    <h2 class="section-title">Auditability &amp; Transparency Principle</h2>
+    <div class="section-body">
+      <p>Every CIS report includes a <strong>Methodology Appendix</strong> — a complete trace of every indicator score, weight applied, evidence status, benchmark referenced, and framework alignment used to produce the final rating. No Climactix score is a black box. This principle is non-negotiable.</p>
+      <p>The Appendix allows an independent auditor, regulator, or board director to reconstruct the score from first principles using only the assessment inputs. This auditability is what distinguishes CIS from legacy ESG ratings that produce scores without traceable calculation paths.</p>
+    </div>
+
+    <div class="principle-list">
+      <div class="principle"><div class="principle-num">A1</div><div class="principle-body"><strong>Every score has a trace</strong> — pillar scores link to indicator weights, which link to assessment inputs and evidence items.</div></div>
+      <div class="principle"><div class="principle-num">A2</div><div class="principle-body"><strong>Every claim has a status</strong> — Verified, Partially Verified, Unverified, or Contradictory. No input is treated as fact without classification.</div></div>
+      <div class="principle"><div class="principle-num">A3</div><div class="principle-body"><strong>Every benchmark is referenced</strong> — Peer universe, sample size, distribution statistics, and data vintage are disclosed alongside each percentile rank.</div></div>
+      <div class="principle"><div class="principle-num">A4</div><div class="principle-body"><strong>Confidence is always separate</strong> — The confidence score is never collapsed into the performance score. Both must always be reported together.</div></div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 11: Framework Alignment ───────────────────────────────────-->
+  <div class="doc-section">
+    <div class="section-num">SECTION 11</div>
+    <h2 class="section-title">Regulatory &amp; Framework Alignment</h2>
+    <div class="section-body">
+      <p>CIS is designed to be compatible with and informative of the major global climate disclosure and risk management frameworks. The scoring indicators, data requirements, and output reports are aligned to the following standards:</p>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin:16px 0">
+      <span class="tag tag-amber">TCFD</span>
+      <span class="tag tag-amber">ISSB S1 / S2</span>
+      <span class="tag tag-amber">CSRD / ESRS</span>
+      <span class="tag tag-amber">BRSR Core (India)</span>
+      <span class="tag tag-cyan">GRI 302 / 305</span>
+      <span class="tag tag-cyan">SASB</span>
+      <span class="tag tag-cyan">CDP Climate</span>
+      <span class="tag tag-cyan">PCAF</span>
+      <span class="tag tag-muted">NGFS Scenarios</span>
+      <span class="tag tag-muted">EU Taxonomy</span>
+      <span class="tag tag-muted">CBAM</span>
+      <span class="tag tag-muted">IMO MEPC</span>
+      <span class="tag tag-muted">CORSIA</span>
+      <span class="tag tag-muted">SBTi</span>
+      <span class="tag tag-muted">RE100</span>
+      <span class="tag tag-muted">TNFD</span>
+      <span class="tag tag-muted">SEC Climate Rules</span>
+      <span class="tag tag-muted">RBI Climate Guidelines</span>
+      <span class="tag tag-muted">SEBI BRSR</span>
+    </div>
+
+    <div class="section-body">
+      <p>Framework alignment status for each standard is assessed in the Disclosure Pillar and reported in the <strong>Framework Alignment Matrix</strong> — one of the 18 components generated per assessment. Alignment levels: <span class="tag tag-green">Aligned</span> <span class="tag tag-amber">Partial</span> <span class="tag" style="background:rgba(255,51,51,.08);border:1px solid rgba(255,51,51,.3);color:#FF3333">Missing</span></p>
+    </div>
+  </div>
+
+  <!-- ── CTA ────────────────────────────────────────────────────────────────-->
+  <div class="cta-block">
+    <div class="cta-block-text">
+      <div class="cta-block-label">Go deeper</div>
+      <div class="cta-block-title">Full Scoring Methodology &amp; Visual Architecture</div>
+      <div class="cta-block-desc">Explore the complete interactive methodology page — pillar SVG diagrams, rating scale, data architecture layers, verification engine, and 18-component output overview.</div>
+    </div>
+    <div class="cta-actions">
+      <a href="scoring-methodology.html" class="cta-btn primary">Full Methodology →</a>
+      <a href="enterprise-assessment.html" class="cta-btn secondary">Start Assessment</a>
+    </div>
+  </div>
+
+  <!-- ── Footnote ───────────────────────────────────────────────────────────-->
+  <div class="footnote">
+    <strong>CLIMACTIX GLOBAL — CIS METHODOLOGY BRIEF v1.0 — May 2026</strong><br>
+    This document is a summary overview of the Climactix Intelligence Score methodology. Full algorithmic specifications, indicator weights, industry ontology definitions, and benchmark distribution statistics are maintained in the Climactix Global Methodology Documentation and are available to institutional subscribers under NDA.<br><br>
+    Climactix Global does not provide investment advice. CIS ratings are risk intelligence outputs for informational purposes only. Past scores do not guarantee future performance. All data inputs remain subject to verification quality as described in Section 6.
+  </div>
+
+</div><!-- /doc-wrap -->
+
+</body>
+</html>

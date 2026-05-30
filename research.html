@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Climactix — Institutional Research Layer</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})()</script>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   CLIMACTIX — INSTITUTIONAL RESEARCH LAYER
+   Bloomberg · Moody's · MSCI · BlackRock Aladdin Grade
+   4 Intelligence Divisions · AI Research Engine · Framework Ontology
+═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:#000000; --bg-alt:#0A0A0A; --surface:#0F0F0F; --surface-2:#1A1A1A; --surface-3:#242424; --surface-4:#2E2E2E;
+  --border:#2C2C2C; --border-strong:#333333; --border-accent:rgba(255,102,0,0.30);
+  --amber:#FF6600; --amber-dim:#CC5200; --amber-glow:rgba(255,102,0,0.08);
+  --cyan:#0099CC; --cyan-glow:rgba(0,153,204,0.10);
+  --green:#00CC44; --green-glow:rgba(0,204,68,0.10);
+  --red:#FF3333; --red-glow:rgba(255,51,51,0.10); --blue:#3399FF;
+  --text:#FFFFFF; --text-2:#888888; --text-muted:#555555;
+  --t:0.12s ease;
+}
+[data-theme="light"] {
+  --bg:#FFFFFF; --bg-alt:#F5F5F5; --surface:#FFFFFF; --surface-2:#EBEBEB; --surface-3:#E0E0E0; --surface-4:#D5D5D5;
+  --border:#D0D0D0; --border-strong:#BBBBBB; --border-accent:rgba(255,102,0,0.25);
+  --amber-glow:rgba(255,102,0,0.06);
+  --text:#000000; --text-2:#333333; --text-muted:#666666;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:12px;line-height:1.5}
+.mono{font-family:'IBM Plex Mono',monospace}
+a{text-decoration:none;color:inherit}
+button,input,select{font-family:inherit}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--surface-3)}
+
+/* ── TICKER */
+.ticker-bar{height:28px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;position:sticky;top:0;z-index:300}
+.ticker-label{flex-shrink:0;background:var(--amber);color:#000;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;padding:0 10px;height:100%;display:flex;align-items:center}
+.ticker-track{display:flex;gap:0;white-space:nowrap;animation:ticker-scroll 60s linear infinite;padding:0 20px}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{display:inline-flex;align-items:center;gap:6px;padding:0 18px;border-right:1px solid var(--border)}
+.tick-name{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.06em}
+.tick-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber)}
+.tick-chg{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700}
+.tick-up{color:var(--green)}
+.tick-dn{color:var(--red)}
+
+/* ── NAV */
+.nav{height:44px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:28px;z-index:200}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.06em}
+.nav-sep{color:var(--border-strong);font-size:18px;opacity:0.5}
+.nav-module{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber)}
+.nav-links{display:flex;align-items:center;gap:2px;margin-left:16px}
+.nav-link{font-size:11px;font-weight:500;color:var(--text-muted);padding:4px 10px;border-radius:2px;border:none;background:none;cursor:pointer;transition:all var(--t);white-space:nowrap;text-decoration:none;display:inline-block}
+.nav-link:hover{background:var(--surface-2);color:var(--text)}
+.nav-link.active{color:var(--amber);border-bottom:2px solid var(--amber)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all var(--t);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.nav-btn:hover{border-color:var(--amber);color:var(--amber)}
+.nav-btn-primary{background:var(--amber);color:#000;border-color:var(--amber)}
+.nav-btn-primary:hover{background:var(--amber-dim);border-color:var(--amber-dim);color:#000}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse-g 2s infinite}
+@keyframes pulse-g{0%,100%{opacity:1}50%{opacity:0.3}}
+.theme-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:4px;transition:color var(--t)}
+.theme-btn:hover{color:var(--amber)}
+
+/* ── LAYOUT */
+.page{max-width:1560px;margin:0 auto;padding:0 20px 40px}
+
+/* ── HERO */
+.research-hero{padding:28px 0 20px;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.hero-title{font-size:28px;font-weight:800;letter-spacing:-0.04em;line-height:1.15;margin-bottom:8px}
+.hero-sub{font-size:12px;color:var(--text-2);max-width:680px;line-height:1.6}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero-meta{display:flex;align-items:center;gap:16px;margin-top:12px}
+.hero-meta-item{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+.hero-meta-item strong{color:var(--text-2)}
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── DIVISION GRID */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 0 12px}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted)}
+.section-action{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);cursor:pointer;transition:opacity var(--t)}
+.section-action:hover{opacity:0.7}
+
+.division-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:24px}
+.division-card{background:var(--surface);padding:20px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:background var(--t);text-decoration:none;color:inherit;position:relative}
+.division-card:hover{background:var(--surface-2)}
+.division-card.featured{border-left:3px solid var(--amber)}
+.div-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;color:var(--text-muted)}
+.div-icon{font-size:18px;margin:6px 0 2px}
+.div-title{font-size:13px;font-weight:700;letter-spacing:-0.01em;line-height:1.3}
+.div-desc{font-size:11px;color:var(--text-2);line-height:1.55;flex:1}
+.div-stats{display:flex;gap:12px;margin-top:4px}
+.div-stat{display:flex;flex-direction:column;gap:2px}
+.div-stat-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--amber)}
+.div-stat-label{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted)}
+.div-enter{margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:4px}
+.div-badge{position:absolute;top:14px;right:14px;font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+.badge-live{background:rgba(0,204,68,0.10);color:var(--green);border:1px solid rgba(0,204,68,0.20)}
+.badge-new{background:var(--amber-glow);color:var(--amber);border:1px solid rgba(255,102,0,0.20)}
+
+/* ── KPI STRIP */
+.kpi-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:24px}
+.kpi-cell{background:var(--surface);padding:12px 14px}
+.kpi-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px}
+.kpi-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.kpi-sub{font-size:10px;color:var(--text-2);margin-top:3px;display:flex;align-items:center;gap:4px}
+.kpi-up{color:var(--green);font-weight:700}
+.kpi-dn{color:var(--red);font-weight:700}
+
+/* ── THREE COLUMN LAYOUT */
+.three-col{display:grid;grid-template-columns:1fr 1fr 340px;gap:16px;margin-bottom:24px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+
+/* ── PANEL */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.panel-hdr{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface)}
+.panel-hdr-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)}
+.panel-hdr-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.panel-body{padding:0}
+
+/* ── REPORT FEED */
+.report-item{display:flex;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t);text-decoration:none;color:inherit}
+.report-item:last-child{border-bottom:none}
+.report-item:hover{background:var(--surface-2)}
+.report-item.pinned{border-left:2px solid var(--amber)}
+.ri-type-badge{flex-shrink:0;margin-top:2px}
+.ri-badge{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 6px;border-radius:2px;white-space:nowrap}
+.ri-body{flex:1;min-width:0}
+.ri-title{font-size:12px;font-weight:600;line-height:1.4;margin-bottom:3px}
+.ri-meta{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.ri-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:1px 5px;border-radius:2px;background:var(--surface-3);color:var(--text-2);border:1px solid var(--border)}
+.ri-right{flex-shrink:0;text-align:right}
+.ri-rating{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;line-height:1}
+.ri-conf{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted);margin-top:2px}
+
+/* ── FRAMEWORK GRID */
+.fw-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border)}
+.fw-cell{background:var(--surface);padding:10px 12px}
+.fw-name{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.06em;color:var(--text);margin-bottom:3px}
+.fw-status{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase}
+.fw-cov{font-size:10px;color:var(--text-muted);margin-top:3px}
+.fw-bar{height:2px;background:var(--border);border-radius:0;margin-top:6px;overflow:hidden}
+.fw-fill{height:100%;border-radius:0}
+
+/* ── SIGNAL FEED */
+.signal-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);transition:background var(--t)}
+.signal-item:last-child{border-bottom:none}
+.signal-item:hover{background:var(--surface-2)}
+.signal-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.sig-body{flex:1}
+.sig-headline{font-size:11px;font-weight:600;line-height:1.45;margin-bottom:2px}
+.sig-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.sig-impact{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;padding:1px 5px;border-radius:2px;margin-left:4px}
+
+/* ── AI ENGINE STATUS */
+.ai-status-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border)}
+.ai-status-row:last-child{border-bottom:none}
+.ai-sr-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-2);flex:1}
+.ai-sr-status{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.06em}
+.ai-sr-bar{width:60px;height:2px;background:var(--border);border-radius:0;overflow:hidden;flex-shrink:0}
+.ai-sr-fill{height:100%}
+
+/* ── REGULATORY TIMELINE */
+.reg-item{display:flex;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);align-items:flex-start}
+.reg-item:last-child{border-bottom:none}
+.reg-date{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber);flex-shrink:0;width:56px}
+.reg-body{flex:1}
+.reg-title{font-size:11px;font-weight:600;line-height:1.4;margin-bottom:2px}
+.reg-meta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text-muted)}
+.reg-tag{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;padding:1px 5px;border-radius:2px;background:rgba(0,153,204,0.10);color:var(--cyan);border:1px solid rgba(0,153,204,0.20)}
+
+/* ── SCORE RING */
+.score-ring-wrap{display:flex;align-items:center;gap:14px;padding:14px}
+.ring-svg{flex-shrink:0}
+.ring-info .ring-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-0.03em;line-height:1}
+.ring-info .ring-label{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-top:3px}
+.ring-info .ring-sub{font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.5}
+
+/* ── TABLE */
+.data-table{width:100%;border-collapse:collapse}
+.data-table thead th{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);padding:8px 14px;border-bottom:1px solid var(--border);background:var(--surface);text-align:left;white-space:nowrap}
+.data-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t)}
+.data-table tbody tr:last-child{border-bottom:none}
+.data-table tbody tr:hover{background:var(--surface-2)}
+.data-table td{padding:8px 14px;font-size:11px}
+.td-mono{font-family:'IBM Plex Mono',monospace;font-size:11px}
+.td-amber{color:var(--amber);font-weight:700}
+.td-green{color:var(--green);font-weight:700}
+.td-red{color:var(--red);font-weight:700}
+.td-cyan{color:var(--cyan);font-weight:700}
+
+/* ── STATUS CHIPS */
+.chip{font-family:'IBM Plex Mono',monospace;font-size:7px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+.chip-amber{background:rgba(255,102,0,0.10);color:var(--amber);border:1px solid rgba(255,102,0,0.20)}
+.chip-green{background:rgba(0,204,68,0.08);color:var(--green);border:1px solid rgba(0,204,68,0.20)}
+.chip-red{background:rgba(255,51,51,0.08);color:var(--red);border:1px solid rgba(255,51,51,0.20)}
+.chip-cyan{background:rgba(0,153,204,0.10);color:var(--cyan);border:1px solid rgba(0,153,204,0.20)}
+.chip-gray{background:var(--surface-3);color:var(--text-2);border:1px solid var(--border)}
+
+/* ── FOOTER */
+.page-footer{border-top:1px solid var(--border);padding:16px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.footer-mono{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)}
+.footer-links{display:flex;gap:16px}
+.footer-link{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);text-decoration:none;transition:color var(--t)}
+.footer-link:hover{color:var(--amber)}
+</style>
+</head>
+<body>
+
+<!-- TICKER BAR -->
+<div class="ticker-bar">
+  <div class="ticker-label">RESEARCH FEED</div>
+  <div style="flex:1;overflow:hidden">
+    <div class="ticker-track" id="tickerTrack">
+      <span class="tick-item"><span class="tick-name">EU-ETS</span><span class="tick-val">€68.40</span><span class="tick-chg tick-up">+1.2%</span></span>
+      <span class="tick-item"><span class="tick-name">CBAM PHASE-1</span><span class="tick-val">ACTIVE</span><span class="tick-chg tick-up">OCT 2023</span></span>
+      <span class="tick-item"><span class="tick-name">INDIA CARBON MKT</span><span class="tick-val">₹2,840/tCO₂</span><span class="tick-chg tick-up">+3.4%</span></span>
+      <span class="tick-item"><span class="tick-name">ISSB S2 EFFECTIVE</span><span class="tick-val">JAN 2024</span><span class="tick-chg tick-up">MANDATORY</span></span>
+      <span class="tick-item"><span class="tick-name">SEBI BRSR CORE</span><span class="tick-val">TOP 150</span><span class="tick-chg tick-up">ASSURED</span></span>
+      <span class="tick-item"><span class="tick-name">GLOBAL TEMP ANOM</span><span class="tick-val">+1.45°C</span><span class="tick-chg tick-dn">CRITICAL</span></span>
+      <span class="tick-item"><span class="tick-name">INDIA HEAT DAYS</span><span class="tick-val">38 DAYS</span><span class="tick-chg tick-dn">+14 YoY</span></span>
+      <span class="tick-item"><span class="tick-name">CSRD REPORTS DUE</span><span class="tick-val">FY 2025</span><span class="tick-chg tick-amber">50K COS.</span></span>
+      <span class="tick-item"><span class="tick-name">NGFS PATHWAYS</span><span class="tick-val">6 ACTIVE</span><span class="tick-chg tick-up">UPDATED</span></span>
+      <span class="tick-item"><span class="tick-name">GLOBAL NDC COVERAGE</span><span class="tick-val">89%</span><span class="tick-chg tick-up">GDP WEIGHTED</span></span>
+      <!-- duplicate for infinite scroll -->
+      <span class="tick-item"><span class="tick-name">EU-ETS</span><span class="tick-val">€68.40</span><span class="tick-chg tick-up">+1.2%</span></span>
+      <span class="tick-item"><span class="tick-name">CBAM PHASE-1</span><span class="tick-val">ACTIVE</span><span class="tick-chg tick-up">OCT 2023</span></span>
+      <span class="tick-item"><span class="tick-name">INDIA CARBON MKT</span><span class="tick-val">₹2,840/tCO₂</span><span class="tick-chg tick-up">+3.4%</span></span>
+      <span class="tick-item"><span class="tick-name">ISSB S2 EFFECTIVE</span><span class="tick-val">JAN 2024</span><span class="tick-chg tick-up">MANDATORY</span></span>
+      <span class="tick-item"><span class="tick-name">SEBI BRSR CORE</span><span class="tick-val">TOP 150</span><span class="tick-chg tick-up">ASSURED</span></span>
+      <span class="tick-item"><span class="tick-name">GLOBAL TEMP ANOM</span><span class="tick-val">+1.45°C</span><span class="tick-chg tick-dn">CRITICAL</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-logo">CLIMACTIX</span>
+  <span class="nav-sep">|</span>
+  <span class="nav-module">RESEARCH INTELLIGENCE</span>
+  <div class="nav-links">
+    <a href="intelligence-reports.html" class="nav-link">Intelligence Reports</a>
+    <a href="transition-risk.html" class="nav-link">Transition Risk</a>
+    <a href="india-climate-outlook.html" class="nav-link">India Outlook</a>
+    <a href="brsr-intelligence.html" class="nav-link">BRSR Intelligence</a>
+    <a href="investor-terminal.html" class="nav-link">Investor Terminal</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+  </div>
+  <div class="nav-right">
+    <span class="live-dot"></span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted)">LIVE</span>
+    <a href="enterprise-assessment.html" class="nav-btn nav-btn-primary">New Assessment</a>
+    <button class="nav-btn" id="exportBtn">Export</button>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">◑</button>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- HERO -->
+  <div class="research-hero">
+    <div class="hero-row">
+      <div>
+        <div class="hero-eyebrow">Climactix Research Layer · v2.4 · Updated 2026-05-29</div>
+        <h1 class="hero-title">Institutional Climate<br>Intelligence Infrastructure</h1>
+        <p class="hero-sub">Bloomberg · Moody's · MSCI grade climate-financial research. Four intelligence divisions covering transition risk, India climate economics, BRSR disclosure integrity, and enterprise climate intelligence — powered by AI synthesis and aligned to ISSB, GRI, TCFD, SEBI, NGFS, and IPCC frameworks.</p>
+        <div class="hero-meta">
+          <span class="hero-meta-item"><span class="live-dot"></span> <strong>4</strong> Divisions Active</span>
+          <span class="hero-meta-item">&#9632; <strong>14</strong> Report Types</span>
+          <span class="hero-meta-item">&#9632; <strong>10</strong> Frameworks Mapped</span>
+          <span class="hero-meta-item">&#9632; <strong>20</strong> Company Profiles</span>
+          <span class="hero-meta-item">&#9632; <strong>6</strong> NGFS Scenarios</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a href="intelligence-reports.html" class="nav-btn nav-btn-primary">Enter Research Terminal</a>
+        <button class="nav-btn" onclick="document.getElementById('divGrid').scrollIntoView({behavior:'smooth'})">View Divisions</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI STRIP -->
+  <div class="section-hdr">
+    <span class="section-label">Research Intelligence KPIs · Real-Time</span>
+    <span class="section-action" id="kpiRefresh">Refresh ↺</span>
+  </div>
+  <div class="kpi-strip">
+    <div class="kpi-cell">
+      <div class="kpi-label">Reports Generated</div>
+      <div class="kpi-val mono" style="color:var(--amber)">2,847</div>
+      <div class="kpi-sub"><span class="kpi-up">+124</span> this month</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Companies Covered</div>
+      <div class="kpi-val mono" style="color:var(--cyan)">20</div>
+      <div class="kpi-sub">13 industries</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">BRSR Notes</div>
+      <div class="kpi-val mono" style="color:var(--green)">147</div>
+      <div class="kpi-sub"><span class="kpi-up">+18</span> this week</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Avg Confidence</div>
+      <div class="kpi-val mono" style="color:var(--amber)">87.4%</div>
+      <div class="kpi-sub">AI synthesis score</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Greenwash Flags</div>
+      <div class="kpi-val mono" style="color:var(--red)">34</div>
+      <div class="kpi-sub"><span class="kpi-dn">+7</span> new alerts</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Frameworks Mapped</div>
+      <div class="kpi-val mono" style="color:var(--blue)">10</div>
+      <div class="kpi-sub">ISSB · GRI · TCFD · SEBI</div>
+    </div>
+  </div>
+
+  <!-- DIVISION CARDS -->
+  <div class="section-hdr" id="divGrid">
+    <span class="section-label">Intelligence Divisions</span>
+    <span class="section-action">4 active divisions</span>
+  </div>
+  <div class="division-grid">
+
+    <a href="intelligence-reports.html" class="division-card featured">
+      <span class="div-badge badge-live">Live</span>
+      <div class="div-num">DIVISION 01</div>
+      <div class="div-icon" style="font-size:16px;font-family:'IBM Plex Mono',monospace;color:var(--amber)">[ CIR ]</div>
+      <div class="div-title">Climactix Intelligence Reports</div>
+      <div class="div-desc">Institutional-grade climate intelligence for companies, sectors, portfolios, and infrastructure. 14 report types covering physical risk, transition risk, carbon exposure, greenwashing detection, and climate-financial materiality — all AI-generated and source-cited.</div>
+      <div class="div-stats">
+        <div class="div-stat"><div class="div-stat-val">14</div><div class="div-stat-label">Report Types</div></div>
+        <div class="div-stat"><div class="div-stat-val">87%</div><div class="div-stat-label">Avg Confidence</div></div>
+        <div class="div-stat"><div class="div-stat-val">2.8K</div><div class="div-stat-label">Generated</div></div>
+      </div>
+      <div class="div-enter">Enter Division 01 →</div>
+    </a>
+
+    <a href="transition-risk.html" class="division-card">
+      <span class="div-badge badge-new">Updated</span>
+      <div class="div-num">DIVISION 02</div>
+      <div class="div-icon" style="font-size:16px;font-family:'IBM Plex Mono',monospace;color:var(--cyan)">[ TRB ]</div>
+      <div class="div-title">Transition Risk Briefings</div>
+      <div class="div-desc">Institutional transition-risk intelligence engine. Tracks carbon policy, CBAM, SEC climate rules, ISSB adoption, CSRD, SEBI BRSR changes, stranded asset risks, and energy transition exposure — with weekly briefings and sector alerts.</div>
+      <div class="div-stats">
+        <div class="div-stat"><div class="div-stat-val">48</div><div class="div-stat-label">Active Policies</div></div>
+        <div class="div-stat"><div class="div-stat-val">€68.40</div><div class="div-stat-label">EU-ETS Price</div></div>
+        <div class="div-stat"><div class="div-stat-val">6</div><div class="div-stat-label">Sector Alerts</div></div>
+      </div>
+      <div class="div-enter">Enter Division 02 →</div>
+    </a>
+
+    <a href="india-climate-outlook.html" class="division-card">
+      <div class="div-num">DIVISION 03</div>
+      <div class="div-icon" style="font-size:16px;font-family:'IBM Plex Mono',monospace;color:var(--green)">[ ICO ]</div>
+      <div class="div-title">India Climate Risk Outlook</div>
+      <div class="div-desc">India-focused climate-economic intelligence system. State-wise risk mapping, heat stress, flood exposure, water stress, industrial corridor vulnerability, coastal risk, agricultural disruption — with AI-generated economic implications aligned to RBI and SEBI frameworks.</div>
+      <div class="div-stats">
+        <div class="div-stat"><div class="div-stat-val">28</div><div class="div-stat-label">States Mapped</div></div>
+        <div class="div-stat"><div class="div-stat-val">7</div><div class="div-stat-label">Risk Layers</div></div>
+        <div class="div-stat"><div class="div-stat-val">HIGH</div><div class="div-stat-label">National Alert</div></div>
+      </div>
+      <div class="div-enter">Enter Division 03 →</div>
+    </a>
+
+    <a href="brsr-intelligence.html" class="division-card">
+      <div class="div-num">DIVISION 04</div>
+      <div class="div-icon" style="font-size:16px;font-family:'IBM Plex Mono',monospace;color:var(--blue)">[ BRS ]</div>
+      <div class="div-title">BRSR Intelligence Notes</div>
+      <div class="div-desc">India's first AI-powered BRSR intelligence infrastructure. Parse filings, benchmark peers, detect inconsistencies and greenwashing, compare year-over-year disclosures, generate BRSR Credibility Scores, Disclosure Quality Scores, and Assurance Readiness Scores.</div>
+      <div class="div-stats">
+        <div class="div-stat"><div class="div-stat-val">147</div><div class="div-stat-label">Notes Published</div></div>
+        <div class="div-stat"><div class="div-stat-val">34</div><div class="div-stat-label">Anomaly Flags</div></div>
+        <div class="div-stat"><div class="div-stat-val">AAA–D</div><div class="div-stat-label">Rating Scale</div></div>
+      </div>
+      <div class="div-enter">Enter Division 04 →</div>
+    </a>
+
+  </div>
+
+  <!-- MAIN THREE COLUMN -->
+  <div class="three-col">
+
+    <!-- RECENT INTELLIGENCE REPORTS -->
+    <div class="panel" style="grid-column:span 2">
+      <div class="panel-hdr">
+        <span class="panel-hdr-label">Recent Intelligence Reports</span>
+        <a href="intelligence-reports.html" style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);text-decoration:none">View All →</a>
+      </div>
+      <div class="panel-body">
+        <a class="report-item pinned" href="intelligence-reports.html">
+          <div class="ri-type-badge"><span class="ri-badge chip-amber">COMPANY INTEL</span></div>
+          <div class="ri-body">
+            <div class="ri-title">Reliance Industries — Climate Risk Intelligence Report Q2 2026</div>
+            <div class="ri-meta">
+              <span>29 May 2026</span>
+              <span class="ri-tag">PHYSICAL RISK</span>
+              <span class="ri-tag">TRANSITION</span>
+              <span class="ri-tag">SCOPE 3</span>
+            </div>
+          </div>
+          <div class="ri-right"><div class="ri-rating td-amber">BB+</div><div class="ri-conf">93% conf.</div></div>
+        </a>
+        <a class="report-item" href="intelligence-reports.html">
+          <div class="ri-type-badge"><span class="ri-badge chip-cyan">SECTOR OUTLOOK</span></div>
+          <div class="ri-body">
+            <div class="ri-title">India Steel Sector — Transition Risk Exposure Intelligence 2026</div>
+            <div class="ri-meta"><span>27 May 2026</span><span class="ri-tag">CARBON TAX</span><span class="ri-tag">CBAM</span></div>
+          </div>
+          <div class="ri-right"><div class="ri-rating td-red">B+</div><div class="ri-conf">88% conf.</div></div>
+        </a>
+        <a class="report-item" href="intelligence-reports.html">
+          <div class="ri-type-badge"><span class="ri-badge chip-green">NET ZERO</span></div>
+          <div class="ri-body">
+            <div class="ri-title">Tata Consultancy Services — Net Zero Credibility Assessment 2026</div>
+            <div class="ri-meta"><span>25 May 2026</span><span class="ri-tag">SCIENCE-BASED</span><span class="ri-tag">SCOPE 1/2/3</span></div>
+          </div>
+          <div class="ri-right"><div class="ri-rating td-green">A</div><div class="ri-conf">91% conf.</div></div>
+        </a>
+        <a class="report-item" href="intelligence-reports.html">
+          <div class="ri-type-badge"><span class="ri-badge chip-red">GREENWASH</span></div>
+          <div class="ri-body">
+            <div class="ri-title">Coal India Limited — Greenwashing Risk Assessment · Disclosure Anomaly</div>
+            <div class="ri-meta"><span>23 May 2026</span><span class="ri-tag">GREENWASH ALERT</span><span class="ri-tag">BRSR</span></div>
+          </div>
+          <div class="ri-right"><div class="ri-rating td-red">CCC</div><div class="ri-conf">96% conf.</div></div>
+        </a>
+        <a class="report-item" href="intelligence-reports.html">
+          <div class="ri-type-badge"><span class="ri-badge chip-amber">PORTFOLIO RISK</span></div>
+          <div class="ri-body">
+            <div class="ri-title">ESG Infrastructure Fund — Portfolio Climate Exposure · Scenario Stress Test</div>
+            <div class="ri-meta"><span>22 May 2026</span><span class="ri-tag">2°C SCENARIO</span><span class="ri-tag">STRANDED ASSETS</span></div>
+          </div>
+          <div class="ri-right"><div class="ri-rating td-amber">BBB-</div><div class="ri-conf">85% conf.</div></div>
+        </a>
+        <a class="report-item" href="intelligence-reports.html">
+          <div class="ri-type-badge"><span class="ri-badge chip-cyan">SUPPLY CHAIN</span></div>
+          <div class="ri-body">
+            <div class="ri-title">Infosys Limited — Supply Chain Climate Vulnerability Intelligence</div>
+            <div class="ri-meta"><span>21 May 2026</span><span class="ri-tag">SCOPE 3</span><span class="ri-tag">WATER STRESS</span></div>
+          </div>
+          <div class="ri-right"><div class="ri-rating td-cyan">A-</div><div class="ri-conf">89% conf.</div></div>
+        </a>
+        <a class="report-item" href="intelligence-reports.html">
+          <div class="ri-type-badge"><span class="ri-badge chip-gray">PHYSICAL RISK</span></div>
+          <div class="ri-body">
+            <div class="ri-title">NTPC Limited — Physical Risk Intelligence · Flood & Heat Exposure</div>
+            <div class="ri-meta"><span>19 May 2026</span><span class="ri-tag">FLOOD RISK</span><span class="ri-tag">HEAT STRESS</span></div>
+          </div>
+          <div class="ri-right"><div class="ri-rating td-red">BB-</div><div class="ri-conf">82% conf.</div></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: AI Engine + Regulatory -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- AI ENGINE STATUS -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-hdr-label">AI Research Engine</span>
+          <span class="panel-hdr-meta"><span class="live-dot"></span> ACTIVE</span>
+        </div>
+        <div class="panel-body">
+          <div class="ai-status-row">
+            <span class="ai-sr-label">Climate Reasoning Engine</span>
+            <div class="ai-sr-bar"><div class="ai-sr-fill" style="width:94%;background:var(--green)"></div></div>
+            <span class="ai-sr-status" style="color:var(--green)">ONLINE</span>
+          </div>
+          <div class="ai-status-row">
+            <span class="ai-sr-label">Benchmark Engine</span>
+            <div class="ai-sr-bar"><div class="ai-sr-fill" style="width:100%;background:var(--green)"></div></div>
+            <span class="ai-sr-status" style="color:var(--green)">ONLINE</span>
+          </div>
+          <div class="ai-status-row">
+            <span class="ai-sr-label">Greenwash Detector</span>
+            <div class="ai-sr-bar"><div class="ai-sr-fill" style="width:88%;background:var(--amber)"></div></div>
+            <span class="ai-sr-status" style="color:var(--amber)">88%</span>
+          </div>
+          <div class="ai-status-row">
+            <span class="ai-sr-label">Framework Ontology</span>
+            <div class="ai-sr-bar"><div class="ai-sr-fill" style="width:100%;background:var(--green)"></div></div>
+            <span class="ai-sr-status" style="color:var(--green)">10/10</span>
+          </div>
+          <div class="ai-status-row">
+            <span class="ai-sr-label">Citation Engine</span>
+            <div class="ai-sr-bar"><div class="ai-sr-fill" style="width:76%;background:var(--cyan)"></div></div>
+            <span class="ai-sr-status" style="color:var(--cyan)">SYNCING</span>
+          </div>
+          <div class="ai-status-row">
+            <span class="ai-sr-label">RAG Pipeline</span>
+            <div class="ai-sr-bar"><div class="ai-sr-fill" style="width:92%;background:var(--green)"></div></div>
+            <span class="ai-sr-status" style="color:var(--green)">ONLINE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- UPCOMING REGULATORY -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-hdr-label">Regulatory Calendar</span>
+          <a href="transition-risk.html" style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--amber);text-decoration:none">Full →</a>
+        </div>
+        <div class="panel-body">
+          <div class="reg-item">
+            <div class="reg-date">JUN 26</div>
+            <div class="reg-body">
+              <div class="reg-title">SEBI BRSR Core Assurance Deadline — Top 150 Listed Cos.</div>
+              <div class="reg-meta"><span class="reg-tag">SEBI</span> India · Mandatory</div>
+            </div>
+          </div>
+          <div class="reg-item">
+            <div class="reg-date">JUL 01</div>
+            <div class="reg-body">
+              <div class="reg-title">EU CBAM Full Implementation — Embedded Carbon Declarations</div>
+              <div class="reg-meta"><span class="reg-tag">EU</span> Carbon Tax Regime</div>
+            </div>
+          </div>
+          <div class="reg-item">
+            <div class="reg-date">SEP 30</div>
+            <div class="reg-body">
+              <div class="reg-title">CSRD Phase 2 — Large Non-Listed EU Companies</div>
+              <div class="reg-meta"><span class="reg-tag">CSRD</span> ~50,000 companies</div>
+            </div>
+          </div>
+          <div class="reg-item">
+            <div class="reg-date">DEC 31</div>
+            <div class="reg-body">
+              <div class="reg-title">SEC Climate Disclosure Rule — Phase-In for Large Accelerated Filers</div>
+              <div class="reg-meta"><span class="reg-tag">SEC</span> USA · Mandatory</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FRAMEWORK ALIGNMENT -->
+  <div class="section-hdr">
+    <span class="section-label">Framework Alignment Engine · 10 Active Frameworks</span>
+    <span class="section-action">Methodology Notes →</span>
+  </div>
+  <div class="panel" style="margin-bottom:24px">
+    <div class="fw-grid">
+      <div class="fw-cell">
+        <div class="fw-name">ISSB / IFRS S1/S2</div>
+        <div class="fw-status" style="color:var(--green)">Fully Mapped</div>
+        <div class="fw-cov">Climate disclosures, risks & opportunities</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">GRI Standards</div>
+        <div class="fw-status" style="color:var(--green)">Fully Mapped</div>
+        <div class="fw-cov">GRI 305 Emissions, GRI 201 Economic</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:96%;background:var(--green)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">TCFD</div>
+        <div class="fw-status" style="color:var(--green)">Fully Mapped</div>
+        <div class="fw-cov">Governance, Strategy, Risk, Metrics</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">SEBI BRSR Core</div>
+        <div class="fw-status" style="color:var(--green)">Fully Mapped</div>
+        <div class="fw-cov">9 KPIs, Principle-wise reporting</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">SASB</div>
+        <div class="fw-status" style="color:var(--amber)">77% Mapped</div>
+        <div class="fw-cov">77 sector-specific materiality maps</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:77%;background:var(--amber)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">CSRD / ESRS</div>
+        <div class="fw-status" style="color:var(--amber)">82% Mapped</div>
+        <div class="fw-cov">ESRS E1–E5, S1–S4, G1</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:82%;background:var(--amber)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">CDP</div>
+        <div class="fw-status" style="color:var(--amber)">88% Mapped</div>
+        <div class="fw-cov">Climate Change, Water, Forests</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:88%;background:var(--amber)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">TNFD</div>
+        <div class="fw-status" style="color:var(--cyan)">64% Mapped</div>
+        <div class="fw-cov">Nature-related financial disclosures</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:64%;background:var(--cyan)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">UN SDGs</div>
+        <div class="fw-status" style="color:var(--green)">Fully Mapped</div>
+        <div class="fw-cov">SDG 7, 13, 14, 15, 17 priority</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:95%;background:var(--green)"></div></div>
+      </div>
+      <div class="fw-cell">
+        <div class="fw-name">NGFS Pathways</div>
+        <div class="fw-status" style="color:var(--green)">Fully Mapped</div>
+        <div class="fw-cov">6 scenarios · 1.5°C to 4°C</div>
+        <div class="fw-bar"><div class="fw-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTELLIGENCE SIGNALS + SECTOR TABLE -->
+  <div class="two-col">
+
+    <!-- INTELLIGENCE SIGNALS -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-hdr-label">Intelligence Signals Feed</span>
+        <span class="panel-hdr-meta">Live · Updated every 4h</span>
+      </div>
+      <div class="panel-body">
+        <div class="signal-item">
+          <div class="signal-dot" style="background:var(--red)"></div>
+          <div class="sig-body">
+            <div class="sig-headline">India June heatwave forecast: 12 states above 45°C — manufacturing risk elevated</div>
+            <div class="sig-meta">PHYSICAL RISK · IPCC AR6 · <span class="sig-impact" style="background:rgba(255,51,51,0.10);color:var(--red);border:1px solid rgba(255,51,51,0.20)">HIGH IMPACT</span></div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot" style="background:var(--amber)"></div>
+          <div class="sig-body">
+            <div class="sig-headline">CBAM cement/steel declarants face €42/tCO₂ embedded carbon liability from Q3 2026</div>
+            <div class="sig-meta">TRANSITION RISK · EU Commission · <span class="sig-impact" style="background:var(--amber-glow);color:var(--amber);border:1px solid rgba(255,102,0,0.20)">MEDIUM IMPACT</span></div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot" style="background:var(--amber)"></div>
+          <div class="sig-body">
+            <div class="sig-headline">SEBI issues guidance on BRSR Core assurance — third-party verification now mandatory for top 150</div>
+            <div class="sig-meta">REGULATORY · SEBI Circular · <span class="sig-impact" style="background:var(--amber-glow);color:var(--amber);border:1px solid rgba(255,102,0,0.20)">MANDATORY</span></div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot" style="background:var(--green)"></div>
+          <div class="sig-body">
+            <div class="sig-headline">IEA: India renewable capacity additions hit 28 GW in FY26 — transition acceleration confirmed</div>
+            <div class="sig-meta">TRANSITION OPPORTUNITY · IEA Report · <span class="sig-impact" style="background:var(--green-glow);color:var(--green);border:1px solid rgba(0,204,68,0.20)">POSITIVE</span></div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot" style="background:var(--red)"></div>
+          <div class="sig-body">
+            <div class="sig-headline">Mumbai coastal flooding event: ₹2,400 Cr infrastructure exposure in Dharavi industrial corridor</div>
+            <div class="sig-meta">PHYSICAL RISK · RBI Climate Report · <span class="sig-impact" style="background:rgba(255,51,51,0.10);color:var(--red);border:1px solid rgba(255,51,51,0.20)">HIGH IMPACT</span></div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot" style="background:var(--cyan)"></div>
+          <div class="sig-body">
+            <div class="sig-headline">NGFS updates Net Zero 2050 scenario — 1.5°C pathway now assumes $130/tCO₂ by 2030</div>
+            <div class="sig-meta">SCENARIO UPDATE · NGFS Phase IV · <span class="sig-impact" style="background:var(--cyan-glow);color:var(--cyan);border:1px solid rgba(0,153,204,0.20)">DATA UPDATE</span></div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot" style="background:var(--amber)"></div>
+          <div class="sig-body">
+            <div class="sig-headline">Adani Group BRSR disclosure: 3 material inconsistencies flagged by AI anomaly detector</div>
+            <div class="sig-meta">GREENWASH ALERT · Internal · <span class="sig-impact" style="background:var(--amber-glow);color:var(--amber);border:1px solid rgba(255,102,0,0.20)">REVIEW REQUIRED</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTOR RISK TABLE -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-hdr-label">Sector Climate Risk Matrix · India Focus</span>
+        <span class="panel-hdr-meta">May 2026</span>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Sector</th>
+              <th>Phys. Risk</th>
+              <th>Trans. Risk</th>
+              <th>C-Rating</th>
+              <th>Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Oil & Gas</td>
+              <td class="td-mono td-red">78/100</td>
+              <td class="td-mono td-red">92/100</td>
+              <td class="td-mono td-red">B-</td>
+              <td class="td-mono td-dn">↓</td>
+            </tr>
+            <tr>
+              <td>Steel / Metals</td>
+              <td class="td-mono td-amber">65/100</td>
+              <td class="td-mono td-red">85/100</td>
+              <td class="td-mono td-red">B</td>
+              <td class="td-mono td-dn">↓</td>
+            </tr>
+            <tr>
+              <td>Power / Utilities</td>
+              <td class="td-mono td-amber">71/100</td>
+              <td class="td-mono td-amber">68/100</td>
+              <td class="td-mono td-amber">BB-</td>
+              <td class="td-mono" style="color:var(--text-2)">→</td>
+            </tr>
+            <tr>
+              <td>Banking / Finance</td>
+              <td class="td-mono" style="color:var(--green);font-weight:700">34/100</td>
+              <td class="td-mono td-amber">52/100</td>
+              <td class="td-mono td-amber">BBB-</td>
+              <td class="td-mono td-up">↑</td>
+            </tr>
+            <tr>
+              <td>IT / Software</td>
+              <td class="td-mono" style="color:var(--green);font-weight:700">28/100</td>
+              <td class="td-mono" style="color:var(--green);font-weight:700">31/100</td>
+              <td class="td-mono td-green">A-</td>
+              <td class="td-mono td-up">↑</td>
+            </tr>
+            <tr>
+              <td>Chemicals</td>
+              <td class="td-mono td-amber">60/100</td>
+              <td class="td-mono td-amber">74/100</td>
+              <td class="td-mono td-amber">BB</td>
+              <td class="td-mono td-dn">↓</td>
+            </tr>
+            <tr>
+              <td>Real Estate</td>
+              <td class="td-mono td-red">82/100</td>
+              <td class="td-mono td-amber">55/100</td>
+              <td class="td-mono td-amber">BB-</td>
+              <td class="td-mono td-dn">↓</td>
+            </tr>
+            <tr>
+              <td>FMCG / Consumer</td>
+              <td class="td-mono td-amber">58/100</td>
+              <td class="td-mono" style="color:var(--green);font-weight:700">38/100</td>
+              <td class="td-mono td-amber">BBB</td>
+              <td class="td-mono" style="color:var(--text-2)">→</td>
+            </tr>
+            <tr>
+              <td>Agriculture</td>
+              <td class="td-mono td-red">88/100</td>
+              <td class="td-mono" style="color:var(--green);font-weight:700">29/100</td>
+              <td class="td-mono td-amber">BB</td>
+              <td class="td-mono td-dn">↓</td>
+            </tr>
+            <tr>
+              <td>Telecom / Infra</td>
+              <td class="td-mono td-amber">44/100</td>
+              <td class="td-mono" style="color:var(--green);font-weight:700">35/100</td>
+              <td class="td-mono td-amber">BBB-</td>
+              <td class="td-mono td-up">↑</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer">
+    <span class="footer-mono">CLIMACTIX RESEARCH INTELLIGENCE LAYER · v2.4 · © 2026 Climactix Global · All research is AI-synthesized and source-cited. Not investment advice.</span>
+    <div class="footer-links">
+      <a href="intelligence-reports.html" class="footer-link">Reports</a>
+      <a href="transition-risk.html" class="footer-link">Transition Risk</a>
+      <a href="india-climate-outlook.html" class="footer-link">India Outlook</a>
+      <a href="brsr-intelligence.html" class="footer-link">BRSR Notes</a>
+      <a href="investor-terminal.html" class="footer-link">Investor Terminal</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light')})();
+function toggleTheme(){
+  const t=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('cx-theme',t);
+}
+document.getElementById('kpiRefresh').addEventListener('click',function(){
+  this.textContent='Refreshing...';
+  setTimeout(()=>{this.textContent='Refresh ↺';},1200);
+});
+document.getElementById('exportBtn').addEventListener('click',function(){
+  alert('Export package: PDF report bundle, CSV data tables, framework mapping export. Feature active in full deployment.');
+});
+</script>
+</body>
+</html>
