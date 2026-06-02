@@ -1842,62 +1842,44 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 
 <script>
 /* ══════════════════════════════════════════
-   BACKGROUND VIDEO — MP4 locally, Canva on server
-   1. Try hero-reel.mp4 (works on localhost)
-   2. If file missing (server), switch to Canva iframe
-   3. Fade canvas out once either source is playing
+   BACKGROUND VIDEO
+   • HEAD-check hero-reel.mp4 first
+   • If exists  → play locally (muted autoplay)
+   • If missing → load Canva embed immediately
 ══════════════════════════════════════════ */
 (function(){
-  var CANVA_SRC = 'https://www.canva.com/design/DAHLWrJxDEA/RVV8oOS8_Roj6jQIT9TsfQ/watch?embed&autoplay=1&loop=1';
-
-  var vid    = document.getElementById('heroBgVideo');
-  var frame  = document.getElementById('heroBgIframe');
-  var canvas = document.getElementById('heroBgCanvas');
+  var CANVA = 'https://www.canva.com/design/DAHLWrJxDEA/RVV8oOS8_Roj6jQIT9TsfQ/watch?embed';
+  var vid   = document.getElementById('heroBgVideo');
+  var frame = document.getElementById('heroBgIframe');
+  var cnv   = document.getElementById('heroBgCanvas');
 
   function fadeCanvas(){
-    if(canvas){ canvas.style.transition='opacity 1.8s ease'; canvas.style.opacity='0'; }
+    if(cnv){ cnv.style.transition='opacity 2s ease'; cnv.style.opacity='0'; }
   }
 
-  /* ── MP4 path ── */
-  function startMp4(){
-    vid.muted = true;
-    vid.addEventListener('playing', fadeCanvas, {once:true});
-    vid.addEventListener('timeupdate', function(){
-      if(vid.currentTime > 0.05) fadeCanvas();
-    }, {once:true});
-
-    var p = vid.play();
-    if(p && p.catch) p.catch(function(){ switchToCanva(); });
-    /* extra retry for Safari */
-    setTimeout(function(){ if(vid.paused) vid.play().catch(function(){}); }, 500);
+  function showCanva(){
+    if(vid)   { vid.pause(); vid.style.display='none'; }
+    if(frame) {
+      frame.style.display = 'block';
+      frame.src = CANVA;
+      setTimeout(fadeCanvas, 1500);
+    }
   }
 
-  /* ── Canva iframe fallback ── */
-  function switchToCanva(){
-    vid.style.display    = 'none';
-    frame.style.display  = 'block';
-    frame.src            = CANVA_SRC;
-    /* iframe can't fire 'playing' — just fade canvas after load */
-    frame.addEventListener('load', function(){
-      setTimeout(fadeCanvas, 1000);
-    });
-    /* worst-case fallback fade */
-    setTimeout(fadeCanvas, 3000);
+  function showMp4(){
+    if(vid){
+      vid.style.display = 'block';
+      vid.muted = true;
+      vid.play().catch(function(){});
+      vid.addEventListener('playing',   fadeCanvas, {once:true});
+      vid.addEventListener('timeupdate',function(){ if(vid.currentTime>.1) fadeCanvas(); },{once:true});
+    }
   }
 
-  /* ── Detect missing MP4 (server 404) ── */
-  vid.addEventListener('error', switchToCanva);
-  vid.querySelectorAll('source').forEach(function(s){
-    s.addEventListener('error', switchToCanva);
-  });
-
-  /* ── Also switch if video stalls for 4 seconds ── */
-  var stallTimer = setTimeout(function(){
-    if(vid.readyState < 2) switchToCanva();
-  }, 4000);
-  vid.addEventListener('canplay', function(){ clearTimeout(stallTimer); });
-
-  startMp4();
+  /* Check if MP4 exists on this server before trying to load it */
+  fetch('hero-reel.mp4', {method:'HEAD'})
+    .then(function(r){ r.ok ? showMp4() : showCanva(); })
+    .catch(function(){  showCanva(); });
 })();
 
 /* ── Theme toggle ── */
