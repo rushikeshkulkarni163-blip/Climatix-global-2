@@ -847,7 +847,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
     preload="auto"
     aria-hidden="true"
   >
-    <source src="hero-reel.mp4" type="video/mp4">
+    <source src="hero-reel.mp4?v=2" type="video/mp4">
   </video>
 
   <iframe
@@ -1883,6 +1883,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
     if(vid){
       vid.style.display = 'block';
       vid.muted = true;
+      /* reload source to bypass cache */
+      var src = vid.querySelector('source');
+      if(src) vid.load();
       vid.play().catch(function(){});
       vid.addEventListener('playing',   fadeCanvas, {once:true});
       vid.addEventListener('timeupdate',function(){ if(vid.currentTime>.1) fadeCanvas(); },{once:true});
@@ -1890,7 +1893,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   }
 
   /* Check if MP4 exists on this server before trying to load it */
-  fetch('hero-reel.mp4', {method:'HEAD'})
+  fetch('hero-reel.mp4?v=2', {method:'HEAD'})
     .then(function(r){ r.ok ? showMp4() : showCanva(); })
     .catch(function(){  showCanva(); });
 })();
