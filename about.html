@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>About Climactix Global — Climate Risk Intelligence Infrastructure</title>
+<meta name="description" content="Climactix Global is a Climate Risk Intelligence Infrastructure Company. We transform climate and sustainability data into decision-grade intelligence for enterprises, investors, and institutions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png">
+<script>
+(function(){
+  var t=localStorage.getItem('cx-theme')||'dark';
+  if(t==='light') document.documentElement.setAttribute('data-theme','light');
+})();
+</script>
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS — NASA Earth Science Palette
+   Matches global style.css exactly
+═══════════════════════════════════════════════ */
+:root{
+  --bg:#06090F;--bg-alt:#030508;
+  --surface:#0C1018;--surface-2:#111820;--surface-3:#182030;--surface-4:#1E2838;
+  --border:rgba(255,255,255,.07);--border-strong:rgba(255,255,255,.13);
+  --border-accent:rgba(27,110,235,.35);
+  --blue:#1B6EEB;--blue-bright:#5BA3F5;--blue-dim:#1452B0;
+  --blue-glow:rgba(27,110,235,.12);--blue-tint:rgba(27,110,235,.06);
+  /* amber kept only as data-accent (warm alerts, revenue metrics) */
+  --amber:#E87722;--amber-dim:#C05C12;--amber-glow:rgba(232,119,34,.10);
+  --cyan:#56CCF2;--green:#2ECC80;--red:#E84C4C;
+  --text:#FFFFFF;--text-2:#7B9DBF;--text-muted:#4A6880;--text-faint:#243444;
+  --mono:'IBM Plex Mono','JetBrains Mono','Courier New',monospace;
+  --sans:'Inter','Public Sans',system-ui,sans-serif;
+  --t:0.18s cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="light"]{
+  --bg:#FFFFFF;--bg-alt:#F7F7F7;
+  --surface:#FFFFFF;--surface-2:#F4F4F4;--surface-3:#EBEBEB;--surface-4:#E0E0E0;
+  --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.14);
+  --text:#0A0A0A;--text-2:#3D3D3D;--text-muted:#666666;--text-faint:#999999;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* ═══════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════ */
+.nav{
+  height:44px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;border-bottom:1px solid var(--border);
+  background:var(--bg);position:sticky;top:0;z-index:200;
+}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-logo-img{height:22px;width:auto;display:block}
+.nav-logo-text{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--text);text-transform:uppercase}
+.nav-sep{color:var(--border-strong);font-size:14px;user-select:none}
+.nav-ctx{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-bright)}
+.nav-links{display:flex;align-items:center;gap:0}
+.nav-link{
+  font-size:13px;font-weight:400;color:rgba(255,255,255,.55);text-decoration:none;
+  padding:4px 14px;border-radius:0;transition:color var(--t);
+  height:44px;display:flex;align-items:center;letter-spacing:.01em;
+}
+.nav-link:hover{color:rgba(255,255,255,.95)}
+.nav-link.active{color:#fff}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;padding:6px 16px;border-radius:2px;
+  text-decoration:none;transition:all var(--t);cursor:pointer;
+}
+.nav-btn-outline{background:none;border:1px solid var(--border-strong);color:var(--text-2)}
+.nav-btn-outline:hover{border-color:var(--blue);color:var(--blue-bright)}
+.nav-btn-blue{background:var(--blue);border:none;color:#fff}
+.nav-btn-blue:hover{background:var(--blue-dim)}
+.theme-toggle{
+  background:none;border:1px solid var(--border);color:var(--text-muted);
+  width:28px;height:28px;border-radius:2px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;transition:all var(--t);
+}
+.theme-toggle:hover{border-color:var(--blue);color:var(--blue-bright)}
+
+/* ═══════════════════════════════════════════════
+   HERO — CINEMATIC VIDEO
+═══════════════════════════════════════════════ */
+.hero{
+  position:relative;min-height:100vh;display:flex;align-items:center;
+  overflow:hidden;background:#06090F;
+}
+.hero-video-wrap{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero-video-fallback{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 90% 70% at 65% 45%, rgba(27,110,235,.13) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 90% at 15% 60%, rgba(91,163,245,.07) 0%, transparent 60%),
+    #06090F;
+}
+/* Particle canvas — always visible behind everything */
+#heroBgCanvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  z-index:1;opacity:.6;pointer-events:none;
+}
+/* Background video element — hidden until playing */
+.hero-bg-video{
+  position:absolute;top:50%;left:50%;
+  width:max(100%,calc(100vh * 16/9));
+  height:max(100%,calc(100vw * 9/16));
+  transform:translate(-50%,-50%);
+  object-fit:cover;border:none;
+  opacity:0;z-index:2;pointer-events:none;
+  transition:opacity 1.4s ease;
+}
+.hero-bg-video.playing{opacity:.36}
+/* Play-film button — permanently visible, bottom-right of hero */
+.film-play-btn{
+  position:absolute;bottom:44px;right:36px;z-index:5;
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.6);
+  background:rgba(12,16,24,.75);
+  border:1px solid rgba(91,163,245,.25);
+  padding:10px 18px;border-radius:2px;cursor:pointer;
+  transition:all var(--t);
+  backdrop-filter:none;
+}
+.film-play-btn:hover{
+  border-color:var(--blue-bright);color:#fff;
+  background:rgba(27,110,235,.18);
+}
+.film-play-btn.hide{display:none}
+.film-play-btn svg{width:14px;height:14px;flex-shrink:0}
+/* play ring animation */
+.film-play-ring{
+  width:32px;height:32px;border-radius:50%;
+  border:1.5px solid rgba(91,163,245,.4);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;
+}
+.film-play-ring::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(91,163,245,.15);
+  animation:ringPulse 2.4s ease infinite;
+}
+@keyframes ringPulse{
+  0%{transform:scale(1);opacity:.6}
+  100%{transform:scale(1.6);opacity:0}
+}
+.hero-grid-overlay{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(27,110,235,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27,110,235,.06) 1px, transparent 1px);
+  background-size:60px 60px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+}
+.hero-overlay{
+  position:absolute;inset:0;z-index:2;
+  background:linear-gradient(180deg, rgba(6,9,15,.15) 0%, rgba(6,9,15,.55) 60%, rgba(6,9,15,.92) 100%);
+}
+.hero-content{
+  position:relative;z-index:3;max-width:1280px;margin:0 auto;
+  padding:0 24px;width:100%;
+}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--blue-bright);
+  margin-bottom:24px;display:flex;align-items:center;gap:10px;
+}
+.hero-eyebrow-line{width:32px;height:1px;background:var(--blue);flex-shrink:0}
+.hero-title{
+  font-size:clamp(36px,5vw,68px);font-weight:900;
+  letter-spacing:-.04em;line-height:1.02;
+  margin-bottom:24px;max-width:840px;
+}
+.hero-title em{font-style:normal;color:var(--blue-bright)}
+.hero-sub{
+  font-size:clamp(15px,1.6vw,18px);color:var(--text-2);
+  line-height:1.75;max-width:620px;margin-bottom:40px;font-weight:400;
+}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:64px}
+.cta-primary{
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;background:var(--blue);color:#fff;
+  padding:10px 28px;border-radius:2px;text-decoration:none;
+  border:none;cursor:pointer;transition:background var(--t);display:inline-block;
+}
+.cta-primary:hover{background:var(--blue-dim)}
+.cta-outline{
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;background:none;
+  border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.75);
+  padding:9px 28px;border-radius:2px;text-decoration:none;
+  cursor:pointer;transition:all var(--t);display:inline-block;
+}
+.cta-outline:hover{border-color:var(--blue-bright);color:#fff}
+.hero-kpi-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--border-strong);border-radius:3px;
+  background:rgba(12,16,24,.88);overflow:hidden;max-width:840px;
+}
+.hero-kpi{
+  padding:18px 20px;border-right:1px solid var(--border);
+  position:relative;
+}
+.hero-kpi:last-child{border-right:none}
+.hero-kpi-label{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);
+  margin-bottom:6px;
+}
+.hero-kpi-val{
+  font-family:var(--mono);font-size:22px;font-weight:800;
+  letter-spacing:-.03em;color:var(--blue-bright);line-height:1;
+  margin-bottom:4px;
+}
+.hero-kpi-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
+
+/* Scroll indicator */
+.hero-scroll{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  z-index:3;display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:8px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-muted);text-decoration:none;
+}
+.hero-scroll-arrow{width:1px;height:28px;background:var(--border-strong);position:relative;overflow:hidden}
+.hero-scroll-arrow::after{
+  content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;
+  background:var(--blue-bright);animation:scrollDrop 1.8s ease infinite;
+}
+@keyframes scrollDrop{to{top:200%}}
+
+/* ═══════════════════════════════════════════════
+   INTELLIGENCE TICKER
+═══════════════════════════════════════════════ */
+.ticker-strip{
+  height:36px;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;overflow:hidden;position:relative;
+}
+.ticker-label{
+  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;background:var(--blue);color:#fff;
+  padding:0 12px;height:100%;display:flex;align-items:center;
+  flex-shrink:0;white-space:nowrap;z-index:2;
+}
+.ticker-scroll{display:flex;align-items:center;overflow:hidden;flex:1;position:relative}
+.ticker-track{
+  display:flex;align-items:center;gap:0;white-space:nowrap;
+  animation:tickerScroll 40s linear infinite;
+}
+.ticker-item{
+  font-family:var(--mono);font-size:10px;color:var(--text-2);
+  padding:0 24px;border-right:1px solid var(--border);
+  display:flex;align-items:center;gap:6px;height:36px;
+}
+.ticker-item-val{color:var(--blue-bright);font-weight:700}
+.ticker-item-up{color:var(--green)}
+.ticker-item-down{color:var(--red)}
+@keyframes tickerScroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE LAYOUT
+═══════════════════════════════════════════════ */
+.page{max-width:1280px;margin:0 auto;padding:0 24px}
+.section{padding:80px 0;border-bottom:1px solid var(--border)}
+.section:last-of-type{border-bottom:none}
+.section-eyebrow{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--blue-bright);
+  margin-bottom:12px;display:flex;align-items:center;gap:10px;
+}
+.section-eyebrow::before{content:'';width:20px;height:1px;background:var(--blue);flex-shrink:0}
+.section-title{
+  font-size:clamp(28px,3.5vw,42px);font-weight:800;
+  letter-spacing:-.035em;line-height:1.1;margin-bottom:16px;
+}
+.section-desc{
+  font-size:15px;color:var(--text-2);max-width:640px;
+  line-height:1.8;margin-bottom:48px;
+}
+
+/* ═══════════════════════════════════════════════
+   WHO WE ARE
+═══════════════════════════════════════════════ */
+.identity-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  border-radius:3px;overflow:hidden;margin-bottom:48px;
+}
+.identity-cell{
+  background:var(--surface);padding:32px 28px;
+  transition:background var(--t);
+}
+.identity-cell:hover{background:var(--surface-2)}
+.identity-cell-num{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.1em;color:var(--blue-bright);margin-bottom:12px;
+}
+.identity-cell-title{
+  font-size:17px;font-weight:700;letter-spacing:-.01em;
+  margin-bottom:10px;
+}
+.identity-cell-body{font-size:13px;color:var(--text-2);line-height:1.7}
+.not-this-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  margin-bottom:40px;
+}
+.not-this-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;padding:20px 20px 20px 24px;
+  border-left:3px solid var(--red);
+}
+.not-this-label{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin-bottom:6px;
+}
+.not-this-text{font-size:13px;color:var(--text-2);line-height:1.5}
+.yes-this-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;padding:20px 20px 20px 24px;
+  border-left:3px solid var(--blue);
+}
+.yes-this-label{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--blue-bright);margin-bottom:6px;
+}
+.yes-this-text{font-size:13px;color:var(--text-2);line-height:1.5}
+
+/* ═══════════════════════════════════════════════
+   WHAT WE DO — CAPABILITY CARDS
+═══════════════════════════════════════════════ */
+.capability-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+}
+.cap-card{
+  background:var(--surface);padding:28px 24px;
+  transition:background var(--t);position:relative;overflow:hidden;
+}
+.cap-card:hover{background:var(--surface-2)}
+.cap-card-icon{
+  width:36px;height:36px;border:1px solid var(--border-strong);
+  border-radius:3px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;background:var(--surface-2);
+}
+.cap-card-icon svg{width:18px;height:18px;color:var(--blue-bright)}
+.cap-num{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.12em;color:var(--blue-bright);margin-bottom:8px;
+}
+.cap-title{
+  font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:10px;
+}
+.cap-body{font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px}
+.cap-tags{display:flex;flex-wrap:wrap;gap:6px}
+.cap-tag{
+  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 8px;border-radius:2px;
+  background:rgba(27,110,235,.08);border:1px solid rgba(27,110,235,.25);color:var(--blue-bright);
+}
+
+/* ═══════════════════════════════════════════════
+   PLATFORM SHOWCASE — DASHBOARD MOCKUP
+═══════════════════════════════════════════════ */
+.platform-section{background:var(--bg-alt)}
+.platform-layout{
+  display:grid;grid-template-columns:1fr 480px;
+  gap:48px;align-items:center;
+}
+.platform-copy{padding-right:8px}
+.platform-features{
+  display:flex;flex-direction:column;gap:0;
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+  margin-top:32px;
+}
+.platform-feat{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  transition:background var(--t);cursor:default;
+}
+.platform-feat:last-child{border-bottom:none}
+.platform-feat:hover{background:var(--surface-2)}
+.platform-feat-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--border-strong);
+  flex-shrink:0;margin-top:5px;transition:background var(--t);
+}
+.platform-feat:hover .platform-feat-dot{background:var(--blue-bright)}
+.platform-feat-text{font-size:13px;color:var(--text-2);line-height:1.5}
+.platform-feat-text strong{color:var(--text);font-weight:600}
+
+/* Terminal Mockup */
+.terminal-mock{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:3px;overflow:hidden;
+}
+.mock-header{
+  height:32px;background:var(--surface-2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 12px;gap:10px;
+}
+.mock-dots{display:flex;gap:5px}
+.mock-dot{width:8px;height:8px;border-radius:50%;background:var(--border-strong)}
+.mock-title{
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);
+  margin-left:4px;
+}
+.mock-live{
+  margin-left:auto;font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(0,204,68,.08);border:1px solid rgba(0,204,68,.2);
+  color:var(--green);padding:2px 8px;border-radius:2px;
+  display:flex;align-items:center;gap:5px;
+}
+.mock-live-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--green);
+  animation:pulse 2s ease infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:1}50%{opacity:.4}
+}
+.mock-kpi-row{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:0;border-bottom:1px solid var(--border);
+}
+.mock-kpi{
+  padding:14px 14px;border-right:1px solid var(--border);
+}
+.mock-kpi:last-child{border-right:none}
+.mock-kpi-label{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:5px;
+}
+.mock-kpi-val{
+  font-family:var(--mono);font-size:18px;font-weight:800;
+  letter-spacing:-.03em;color:var(--blue-bright);
+}
+.mock-kpi-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+.mock-score-row{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--border);
+}
+.mock-score-panel{padding:14px;border-right:1px solid var(--border)}
+.mock-score-panel:last-child{border-right:none}
+.mock-score-label{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;
+}
+.mock-score-bar-track{height:3px;background:var(--border);border-radius:0;overflow:hidden;margin-bottom:6px}
+.mock-score-bar-fill{height:100%;background:var(--blue);transition:width .6s ease}
+.mock-score-val{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--blue-bright)}
+.mock-score-name{font-size:11px;color:var(--text-2);margin-top:2px}
+.mock-risk-table{width:100%;border-collapse:collapse}
+.mock-risk-table th{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);
+  padding:8px 14px;border-bottom:1px solid var(--border);text-align:left;
+  background:var(--surface);
+}
+.mock-risk-table td{
+  font-size:11px;padding:8px 14px;border-bottom:1px solid var(--border);
+  color:var(--text-2);
+}
+.mock-risk-table tr:last-child td{border-bottom:none}
+.mock-risk-table tr:hover td{background:var(--surface-2)}
+.mock-badge{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;
+}
+.badge-high{background:rgba(255,51,51,.08);border:1px solid rgba(255,51,51,.2);color:var(--red)}
+.badge-med{background:rgba(27,110,235,.08);border:1px solid rgba(27,110,235,.25);color:var(--blue-bright)}
+.badge-low{background:rgba(0,204,68,.08);border:1px solid rgba(0,204,68,.2);color:var(--green)}
+.mono{font-family:var(--mono)}
+
+/* ═══════════════════════════════════════════════
+   INTELLIGENCE MODEL — ARCHITECTURE
+═══════════════════════════════════════════════ */
+.intel-layout{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:start;
+}
+.layer-stack{
+  display:flex;flex-direction:column;gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  border-radius:3px;overflow:hidden;
+}
+.layer-row{
+  display:flex;align-items:stretch;background:var(--surface);
+  transition:background var(--t);cursor:default;
+}
+.layer-row:hover{background:var(--surface-2)}
+.layer-index{
+  width:40px;flex-shrink:0;
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.08em;color:var(--blue-bright);
+  display:flex;align-items:center;justify-content:center;
+  border-right:1px solid var(--border);background:rgba(27,110,235,.06);
+}
+.layer-body{padding:14px 16px;flex:1}
+.layer-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.layer-desc{font-size:12px;color:var(--text-muted);line-height:1.5}
+.layer-badge{
+  flex-shrink:0;padding:0 14px;display:flex;align-items:center;
+}
+.layer-badge span{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;
+  border-radius:2px;background:var(--surface-3);color:var(--text-muted);
+  border:1px solid var(--border);white-space:nowrap;
+}
+
+.intel-right{}
+.intel-explain-title{
+  font-size:24px;font-weight:800;letter-spacing:-.025em;margin-bottom:20px;
+}
+.intel-explain-body{font-size:14px;color:var(--text-2);line-height:1.8;margin-bottom:24px}
+.intel-principles{
+  display:flex;flex-direction:column;gap:0;
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+}
+.intel-principle{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  transition:background var(--t);
+}
+.intel-principle:last-child{border-bottom:none}
+.intel-principle:hover{background:var(--surface-2)}
+.intel-principle-icon{
+  width:24px;height:24px;border-radius:2px;background:var(--blue-glow);
+  border:1px solid rgba(27,110,235,.25);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.intel-principle-icon svg{width:12px;height:12px;color:var(--blue-bright)}
+.intel-principle-text{font-size:13px;color:var(--text-2);line-height:1.5}
+.intel-principle-text strong{color:var(--text)}
+
+/* ═══════════════════════════════════════════════
+   MISSION & VISION
+═══════════════════════════════════════════════ */
+.mv-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--border);border:1px solid var(--border);
+  border-radius:3px;overflow:hidden;
+}
+.mv-panel{background:var(--surface);padding:48px 40px}
+.mv-panel:first-child{border-left:4px solid var(--blue)}
+.mv-panel:last-child{border-left:4px solid var(--cyan)}
+.mv-eyebrow{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;
+}
+.mv-eyebrow.blue{color:var(--blue-bright)}
+.mv-eyebrow.cyan{color:var(--cyan)}
+.mv-title{
+  font-size:28px;font-weight:800;letter-spacing:-.03em;
+  line-height:1.15;margin-bottom:20px;
+}
+.mv-body{font-size:15px;color:var(--text-2);line-height:1.85}
+
+/* ═══════════════════════════════════════════════
+   WHO WE SERVE
+═══════════════════════════════════════════════ */
+.serve-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+}
+.serve-card{
+  background:var(--surface);padding:24px 18px;
+  text-align:center;transition:background var(--t);
+  cursor:default;
+}
+.serve-card:hover{background:var(--surface-2)}
+.serve-card:hover .serve-icon-wrap{border-color:rgba(27,110,235,.4);background:rgba(27,110,235,.08)}
+.serve-card:hover .serve-icon-wrap svg{color:var(--blue-bright)}
+.serve-icon-wrap{
+  width:40px;height:40px;border:1px solid var(--border-strong);
+  border-radius:3px;margin:0 auto 12px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface-2);transition:all var(--t);
+}
+.serve-icon-wrap svg{width:18px;height:18px;color:var(--text-muted);transition:color var(--t)}
+.serve-name{
+  font-size:12px;font-weight:600;color:var(--text-2);
+  line-height:1.4;transition:color var(--t);
+}
+.serve-card:hover .serve-name{color:var(--text)}
+
+/* ═══════════════════════════════════════════════
+   WHY CLIMACTIX — CREDIBILITY PILLARS
+═══════════════════════════════════════════════ */
+.credibility-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+}
+.cred-card{
+  background:var(--surface);padding:24px 20px;
+  transition:background var(--t);
+}
+.cred-card:hover{background:var(--surface-2)}
+.cred-num{
+  font-family:var(--mono);font-size:28px;font-weight:800;
+  letter-spacing:-.04em;color:var(--border-strong);
+  margin-bottom:12px;line-height:1;
+  transition:color var(--t);
+}
+.cred-card:hover .cred-num{color:var(--blue-bright)}
+.cred-title{font-size:14px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em}
+.cred-body{font-size:12px;color:var(--text-muted);line-height:1.65}
+
+/* ═══════════════════════════════════════════════
+   GLOBAL INTELLIGENCE — WORLD MAP
+═══════════════════════════════════════════════ */
+.global-section{background:var(--bg-alt)}
+.global-layout{
+  display:grid;grid-template-columns:1fr 360px;
+  gap:48px;align-items:center;
+}
+.global-copy .section-desc{margin-bottom:32px}
+.global-stats{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+}
+.global-stat{background:var(--surface);padding:20px}
+.global-stat-val{
+  font-family:var(--mono);font-size:24px;font-weight:800;
+  letter-spacing:-.03em;color:var(--blue-bright);margin-bottom:4px;
+}
+.global-stat-label{font-family:var(--mono);font-size:9px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase}
+.map-container{position:relative}
+.map-svg{width:100%;height:auto;display:block}
+.map-node{
+  position:absolute;width:8px;height:8px;
+  border-radius:50%;border:1px solid var(--blue);
+  background:rgba(27,110,235,.35);cursor:pointer;
+  transition:all var(--t);
+}
+.map-node::before{
+  content:'';position:absolute;inset:-4px;
+  border-radius:50%;border:1px solid rgba(27,110,235,.2);
+  animation:nodePulse 2.5s ease infinite;
+}
+@keyframes nodePulse{
+  0%{transform:scale(1);opacity:.6}
+  100%{transform:scale(2.4);opacity:0}
+}
+.map-node:hover{background:rgba(27,110,235,.85);transform:scale(1.4)}
+
+/* ═══════════════════════════════════════════════
+   POSITIONING STRIP — "NOT THIS, BUT THAT"
+═══════════════════════════════════════════════ */
+.positioning-strip{
+  display:grid;grid-template-columns:1fr 40px 1fr;
+  gap:0;align-items:center;
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
+  margin-bottom:48px;
+}
+.pos-col{background:var(--surface);padding:32px 28px}
+.pos-col.neg{border-left:3px solid rgba(255,51,51,.4)}
+.pos-col.pos{border-left:3px solid var(--blue)}
+.pos-divider{
+  background:var(--surface-2);height:100%;display:flex;
+  align-items:center;justify-content:center;
+  border-left:1px solid var(--border);border-right:1px solid var(--border);
+}
+.pos-vs{
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:.1em;color:var(--text-muted);text-transform:uppercase;
+  writing-mode:vertical-rl;
+}
+.pos-label{
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  margin-bottom:16px;
+}
+.pos-label.neg{color:rgba(255,51,51,.7)}
+.pos-label.pos{color:var(--blue-bright)}
+.pos-list{display:flex;flex-direction:column;gap:8px}
+.pos-item{
+  font-size:13px;color:var(--text-2);line-height:1.4;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.pos-item::before{
+  content:'';width:4px;height:4px;border-radius:1px;
+  flex-shrink:0;margin-top:6px;
+}
+.pos-col.neg .pos-item::before{background:rgba(255,51,51,.5)}
+.pos-col.pos .pos-item::before{background:var(--blue)}
+
+/* ═══════════════════════════════════════════════
+   CTA SECTION
+═══════════════════════════════════════════════ */
+.cta-section{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:80px 0;text-align:center;position:relative;overflow:hidden;
+}
+.cta-section::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 80% at 50% 50%, rgba(27,110,235,.07) 0%, transparent 70%);
+  pointer-events:none;
+}
+.cta-section .section-eyebrow{justify-content:center}
+.cta-section .section-eyebrow::before{display:none}
+.cta-title{
+  font-size:clamp(28px,3.5vw,44px);font-weight:900;
+  letter-spacing:-.04em;line-height:1.1;margin-bottom:16px;
+}
+.cta-sub{
+  font-size:15px;color:var(--text-2);max-width:520px;
+  margin:0 auto 36px;line-height:1.8;
+}
+.cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* ═══════════════════════════════════════════════
+   FOOTER — matches global style.css exactly
+═══════════════════════════════════════════════ */
+.cx-footer{background:#000!important;border-top:1px solid rgba(255,255,255,.08)!important;font-family:var(--sans)}
+.footer-top{max-width:1320px;margin:0 auto;padding:72px clamp(24px,5vw,72px) 64px;display:grid;grid-template-columns:280px 1fr 200px;gap:80px;align-items:start;border-bottom:1px solid rgba(255,255,255,.07)}
+.footer-brand{display:flex;flex-direction:column;gap:0}
+.footer-brand-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.2;margin-bottom:16px}
+.footer-mission{font-size:14px;font-weight:400;color:rgba(255,255,255,.52);line-height:1.68;margin-bottom:24px;max-width:240px}
+.footer-cta-link{display:block;font-size:14px;color:rgba(255,255,255,.72);text-decoration:none;margin-bottom:22px;transition:color var(--t)}
+.footer-cta-link:hover{color:#fff}
+.footer-join-btn{display:inline-flex;align-items:center;gap:12px;background:transparent;border:none;padding:0;color:#fff;font-size:15px;font-weight:700;letter-spacing:-.01em;text-decoration:none;transition:opacity var(--t)}
+.footer-join-btn:hover{opacity:.82}
+.footer-join-arrow{width:32px;height:32px;border-radius:50%;background:#E5280C;display:inline-flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0;line-height:1}
+.footer-nav-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:40px}
+.footer-col{display:flex;flex-direction:column;gap:0}
+.footer-col-title{font-size:15px;font-weight:700;letter-spacing:-.01em;text-transform:none;color:#fff;margin-bottom:18px}
+.footer-link{display:block;font-size:14px;font-weight:400;color:rgba(255,255,255,.6);margin-bottom:12px;text-decoration:none;transition:color var(--t)}
+.footer-link:hover{color:#fff}
+.footer-socials{display:flex;flex-direction:column;gap:0;padding-top:2px}
+.footer-social-label{font-size:15px;font-weight:700;color:#fff;margin-bottom:16px;letter-spacing:-.01em}
+.footer-social-row{display:flex;flex-direction:row;gap:8px;flex-wrap:wrap}
+.footer-social-icon{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.10);border:none;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);text-decoration:none;transition:background var(--t),color var(--t)}
+.footer-social-icon:hover{background:rgba(255,255,255,.20);color:#fff}
+.footer-bottom{background:#000;border-top:1px solid rgba(255,255,255,.07)}
+.footer-bottom-inner{max-width:1320px;margin:0 auto;padding:20px clamp(24px,5vw,72px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-legal{font-size:13px;font-weight:400;color:rgba(255,255,255,.28)}
+.footer-legal-links{display:flex;align-items:center;gap:24px}
+.footer-legal-link{font-size:13px;font-weight:400;color:rgba(255,255,255,.4);text-decoration:none;transition:color var(--t)}
+.footer-legal-link:hover{color:rgba(255,255,255,.8)}
+.footer-updated{font-size:13px;color:rgba(255,255,255,.22)}
+@media(max-width:1100px){.footer-top{grid-template-columns:200px 1fr;gap:40px}.footer-socials{flex-direction:row;grid-column:1/-1}.footer-nav-cols{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.footer-top{grid-template-columns:1fr;gap:32px}.footer-nav-cols{grid-template-columns:repeat(2,1fr)}.footer-socials{flex-direction:row}}
+
+/* Watch CTA button */
+.cta-watch{
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;background:none;
+  border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.8);
+  padding:9px 24px;border-radius:2px;
+  cursor:pointer;transition:all var(--t);
+  display:inline-flex;align-items:center;gap:8px;
+}
+.cta-watch:hover{border-color:var(--blue-bright);color:#fff}
+
+/* Film modal */
+.film-modal{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.92);align-items:center;justify-content:center;
+  animation:modalFadeIn .18s ease;
+}
+.film-modal.open{display:flex}
+@keyframes modalFadeIn{from{opacity:0}to{opacity:1}}
+.film-modal-inner{
+  position:relative;width:min(92vw,1100px);
+}
+.film-modal-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 0 12px;
+}
+.film-modal-title{
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--blue-bright);
+}
+.film-modal-close{
+  background:var(--surface-2);border:1px solid var(--border-strong);
+  color:var(--text-2);width:30px;height:30px;border-radius:2px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:16px;transition:all var(--t);
+}
+.film-modal-close:hover{border-color:var(--blue);color:var(--blue-bright)}
+.film-modal-embed{
+  position:relative;width:100%;
+  padding-top:56.25%; /* 16:9 */
+  background:#000;border:1px solid var(--border);border-radius:3px;overflow:hidden;
+}
+.film-modal-embed iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:none;
+}
+.film-modal-caption{
+  margin-top:10px;font-family:var(--mono);font-size:9px;
+  color:var(--text-muted);letter-spacing:.06em;text-align:center;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media(max-width:1100px){
+  .platform-layout{grid-template-columns:1fr}
+  .intel-layout{grid-template-columns:1fr}
+  .global-layout{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+  .capability-grid{grid-template-columns:1fr 1fr}
+  .serve-grid{grid-template-columns:repeat(3,1fr)}
+  .credibility-grid{grid-template-columns:1fr 1fr}
+  .mv-grid{grid-template-columns:1fr}
+  .identity-grid{grid-template-columns:1fr}
+  .not-this-grid{grid-template-columns:1fr}
+  .positioning-strip{grid-template-columns:1fr}
+  .hero-kpi-bar{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .capability-grid{grid-template-columns:1fr}
+  .serve-grid{grid-template-columns:1fr 1fr}
+  .credibility-grid{grid-template-columns:1fr}
+  .hero-kpi-bar{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════ -->
+<header class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-brand">
+      <img src="Climatix_logo.png" alt="Climactix Global" class="nav-logo-img" onerror="this.style.display='none'">
+      <span class="nav-logo-text">Climactix</span>
+    </a>
+    <span class="nav-sep">/</span>
+    <span class="nav-ctx">About</span>
+  </div>
+
+  <nav class="nav-links" aria-label="Primary">
+    <a href="index.html" class="nav-link">Platform</a>
+    <a href="dashboard.html" class="nav-link">Intelligence</a>
+    <a href="investor-terminal.html" class="nav-link">Investors</a>
+    <a href="research.html" class="nav-link">Research</a>
+    <a href="scoring-methodology.html" class="nav-link">Methodology</a>
+    <a href="about.html" class="nav-link active">About</a>
+  </nav>
+
+  <div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+    <a href="enterprise-login.html" class="nav-btn nav-btn-outline">Sign In</a>
+    <a href="enterprise-onboarding.html" class="nav-btn nav-btn-blue">Get Access</a>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════
+     CINEMATIC HERO
+════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-video-wrap">
+    <div class="hero-video-fallback"></div>
+    <canvas id="heroBgCanvas" aria-hidden="true"></canvas>
+    <!-- populated by JS — either local MP4 <video> or Canva <iframe> -->
+    <div id="heroBgMedia"></div>
+  </div>
+
+  <!-- Always-visible play button — one click starts the film -->
+  <button class="film-play-btn" id="filmPlayBtn" onclick="startBgFilm()" aria-label="Play background film">
+    <div class="film-play-ring">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+    <span>Play Background Film</span>
+  </button>
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content page">
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-line"></span>
+      Climate Risk Intelligence Infrastructure
+    </div>
+
+    <h1 class="hero-title">
+      Climate Risk Intelligence<br>for a <em>Changing World</em>
+    </h1>
+
+    <p class="hero-sub">
+      Transforming climate data, operational exposure, and sustainability disclosures
+      into decision-grade intelligence for enterprises, investors, and institutions.
+    </p>
+
+    <div class="hero-ctas">
+      <a href="enterprise-onboarding.html" class="cta-primary">Explore Platform</a>
+      <a href="scoring-methodology.html" class="cta-outline">Our Methodology</a>
+      <button class="cta-watch" onclick="openFilmModal()" aria-label="Watch Intelligence Overview">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M8 5v14l11-7z"/></svg>
+        Watch Intelligence Overview
+      </button>
+    </div>
+
+    <div class="hero-kpi-bar">
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Industries Covered</div>
+        <div class="hero-kpi-val">26</div>
+        <div class="hero-kpi-desc">Sector-specific models</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Intelligence Layers</div>
+        <div class="hero-kpi-val">8</div>
+        <div class="hero-kpi-desc">C-LAYER framework</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Scenario Pathways</div>
+        <div class="hero-kpi-val">6</div>
+        <div class="hero-kpi-desc">NGFS-aligned</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Risk Models</div>
+        <div class="hero-kpi-val">40+</div>
+        <div class="hero-kpi-desc">Physical + transition</div>
+      </div>
+    </div>
+  </div>
+
+  <a href="#identity" class="hero-scroll" aria-label="Scroll down">
+    <span>Scroll</span>
+    <span class="hero-scroll-arrow"></span>
+  </a>
+</section>
+
+<!-- ════════════════════════════════════════════
+     INTELLIGENCE TICKER
+════════════════════════════════════════════ -->
+<div class="ticker-strip" aria-hidden="true">
+  <div class="ticker-label">Live Intelligence</div>
+  <div class="ticker-scroll">
+    <div class="ticker-track">
+      <!-- Track 1 -->
+      <div class="ticker-item">CARBON PRICE (EU ETS) <span class="ticker-item-val">€63.40</span> <span class="ticker-item-up">+1.2%</span></div>
+      <div class="ticker-item">INDIA CARBON CREDIT <span class="ticker-item-val">₹2,840</span> <span class="ticker-item-up">+0.8%</span></div>
+      <div class="ticker-item">GLOBAL TEMP ANOMALY <span class="ticker-item-val">+1.48°C</span></div>
+      <div class="ticker-item">SEA LEVEL RISE RATE <span class="ticker-item-val">3.7mm/yr</span> <span class="ticker-item-up">↑</span></div>
+      <div class="ticker-item">C-SCORE BENCHMARK <span class="ticker-item-val">AA+</span></div>
+      <div class="ticker-item">NGFS 1.5°C PATHWAY <span class="ticker-item-val">Active</span></div>
+      <div class="ticker-item">PHYSICAL RISK INDEX <span class="ticker-item-val">67.2</span> <span class="ticker-item-down">HIGH</span></div>
+      <div class="ticker-item">TRANSITION RISK INDEX <span class="ticker-item-val">54.8</span> <span class="ticker-item-val">MED</span></div>
+      <div class="ticker-item">BRSR COMPLIANCE <span class="ticker-item-val">SEBI 2024</span></div>
+      <div class="ticker-item">TCFD FRAMEWORK <span class="ticker-item-val">v2.0 Active</span></div>
+      <div class="ticker-item">CSRD READINESS <span class="ticker-item-val">86 Entities</span></div>
+      <div class="ticker-item">GREENWASHING FLAGS <span class="ticker-item-down">14 Detected</span></div>
+      <!-- Track 2 (duplicate for seamless loop) -->
+      <div class="ticker-item">CARBON PRICE (EU ETS) <span class="ticker-item-val">€63.40</span> <span class="ticker-item-up">+1.2%</span></div>
+      <div class="ticker-item">INDIA CARBON CREDIT <span class="ticker-item-val">₹2,840</span> <span class="ticker-item-up">+0.8%</span></div>
+      <div class="ticker-item">GLOBAL TEMP ANOMALY <span class="ticker-item-val">+1.48°C</span></div>
+      <div class="ticker-item">SEA LEVEL RISE RATE <span class="ticker-item-val">3.7mm/yr</span> <span class="ticker-item-up">↑</span></div>
+      <div class="ticker-item">C-SCORE BENCHMARK <span class="ticker-item-val">AA+</span></div>
+      <div class="ticker-item">NGFS 1.5°C PATHWAY <span class="ticker-item-val">Active</span></div>
+      <div class="ticker-item">PHYSICAL RISK INDEX <span class="ticker-item-val">67.2</span> <span class="ticker-item-down">HIGH</span></div>
+      <div class="ticker-item">TRANSITION RISK INDEX <span class="ticker-item-val">54.8</span> <span class="ticker-item-val">MED</span></div>
+      <div class="ticker-item">BRSR COMPLIANCE <span class="ticker-item-val">SEBI 2024</span></div>
+      <div class="ticker-item">TCFD FRAMEWORK <span class="ticker-item-val">v2.0 Active</span></div>
+      <div class="ticker-item">CSRD READINESS <span class="ticker-item-val">86 Entities</span></div>
+      <div class="ticker-item">GREENWASHING FLAGS <span class="ticker-item-down">14 Detected</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     WHO WE ARE — IDENTITY
+════════════════════════════════════════════ -->
+<section class="section" id="identity">
+  <div class="page">
+    <div class="section-eyebrow">Company Identity</div>
+    <h2 class="section-title">Who We Are</h2>
+    <p class="section-desc">
+      Climactix Global is building the next generation of climate intelligence infrastructure —
+      a system that helps organizations understand, quantify, and act on climate-related risk
+      with the precision and depth that capital markets demand.
+    </p>
+
+    <div class="positioning-strip">
+      <div class="pos-col neg">
+        <div class="pos-label neg">Climactix is NOT</div>
+        <div class="pos-list">
+          <div class="pos-item">A generic ESG dashboard or reporting portal</div>
+          <div class="pos-item">A sustainability consultancy or agency</div>
+          <div class="pos-item">A compliance checklist tool</div>
+          <div class="pos-item">A carbon calculator startup</div>
+          <div class="pos-item">An activist-driven awareness platform</div>
+        </div>
+      </div>
+      <div class="pos-divider"><span class="pos-vs">VS</span></div>
+      <div class="pos-col pos">
+        <div class="pos-label pos">Climactix IS</div>
+        <div class="pos-list">
+          <div class="pos-item">A Climate Risk Intelligence Infrastructure Company</div>
+          <div class="pos-item">A financial-grade risk analytics and scoring system</div>
+          <div class="pos-item">A climate operating system for enterprises and investors</div>
+          <div class="pos-item">A scenario simulation and risk quantification engine</div>
+          <div class="pos-item">An AI-native institutional intelligence platform</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="identity-grid">
+      <div class="identity-cell">
+        <div class="identity-cell-num">01 / FOUNDATION</div>
+        <div class="identity-cell-title">Built on Structured Intelligence</div>
+        <div class="identity-cell-body">
+          Every assessment, score, and signal on Climactix is derived from structured methodology —
+          sector-specific indicators, evidence validation, and multi-layer risk modeling.
+          No black boxes. No unverifiable claims. Every output is explainable.
+        </div>
+      </div>
+      <div class="identity-cell">
+        <div class="identity-cell-num">02 / POSITIONING</div>
+        <div class="identity-cell-title">Institutional by Design</div>
+        <div class="identity-cell-body">
+          Benchmarked against Bloomberg Terminal, MSCI Climate Analytics, BlackRock Aladdin,
+          and Moody's Analytics — the platform is built for analysts, risk officers, portfolio
+          managers, and institutional decision-makers, not consumer dashboards.
+        </div>
+      </div>
+      <div class="identity-cell">
+        <div class="identity-cell-num">03 / AMBITION</div>
+        <div class="identity-cell-title">Global Climate Risk Infrastructure</div>
+        <div class="identity-cell-body">
+          Our ambition extends beyond software. We are building the intelligence layer that
+          governments, regulators, capital markets, and enterprises will rely on to measure,
+          understand, and manage climate exposure across a changing world.
+        </div>
+      </div>
+      <div class="identity-cell">
+        <div class="identity-cell-num">04 / APPROACH</div>
+        <div class="identity-cell-title">Data-First, Finance-Grade</div>
+        <div class="identity-cell-body">
+          Climate intelligence is only valuable if it is quantifiable, comparable, and financially
+          material. Climactix translates operational and sustainability complexity into metrics
+          that capital allocation decisions can be built upon.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     WHAT WE DO — CAPABILITIES
+════════════════════════════════════════════ -->
+<section class="section" id="capabilities">
+  <div class="page">
+    <div class="section-eyebrow">Core Capabilities</div>
+    <h2 class="section-title">What We Do</h2>
+    <p class="section-desc">
+      Five intelligence disciplines converge on a single platform — providing the analytical
+      depth required by institutional users operating under real financial exposure.
+    </p>
+
+    <div class="capability-grid">
+      <!-- Climate Risk Intelligence -->
+      <div class="cap-card">
+        <div class="cap-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="cap-num">01</div>
+        <div class="cap-title">Climate Risk Intelligence</div>
+        <div class="cap-body">
+          Assess physical and transition climate exposure across operations, infrastructure,
+          supply chains, and business systems. Quantified scores. Sector benchmarks.
+          NGFS-aligned scenario outputs.
+        </div>
+        <div class="cap-tags">
+          <span class="cap-tag">Physical Risk</span>
+          <span class="cap-tag">Transition Risk</span>
+          <span class="cap-tag">Scenario Analysis</span>
+        </div>
+      </div>
+
+      <!-- Disclosure Intelligence -->
+      <div class="cap-card">
+        <div class="cap-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <div class="cap-num">02</div>
+        <div class="cap-title">Disclosure Intelligence</div>
+        <div class="cap-body">
+          Transform fragmented sustainability reporting into structured, verifiable intelligence.
+          AI-assisted alignment with TCFD, BRSR, CSRD, ISSB, CDP, and GRI frameworks.
+          Greenwashing detection built in.
+        </div>
+        <div class="cap-tags">
+          <span class="cap-tag">TCFD</span>
+          <span class="cap-tag">BRSR</span>
+          <span class="cap-tag">CSRD</span>
+          <span class="cap-tag">ESG Integrity</span>
+        </div>
+      </div>
+
+      <!-- Risk Benchmarking -->
+      <div class="cap-card">
+        <div class="cap-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <div class="cap-num">03</div>
+        <div class="cap-title">Risk Benchmarking</div>
+        <div class="cap-body">
+          Benchmark organizations against industry peers, geographies, sector averages,
+          and climate-risk categories. Understand relative exposure, maturity gaps,
+          and performance trajectories.
+        </div>
+        <div class="cap-tags">
+          <span class="cap-tag">Peer Comparison</span>
+          <span class="cap-tag">Sector Averages</span>
+          <span class="cap-tag">Maturity Gaps</span>
+        </div>
+      </div>
+
+      <!-- Scenario Analysis -->
+      <div class="cap-card">
+        <div class="cap-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="cap-num">04</div>
+        <div class="cap-title">Climate Scenario Analysis</div>
+        <div class="cap-body">
+          Simulate future exposure across 2030, 2040, and 2050 climate pathways.
+          Six NGFS-aligned scenario tracks: Orderly, Disorderly, Hot House, Net Zero,
+          Delayed Transition, and Current Policies.
+        </div>
+        <div class="cap-tags">
+          <span class="cap-tag">1.5°C / 2°C / 3°C</span>
+          <span class="cap-tag">NGFS Pathways</span>
+          <span class="cap-tag">Revenue at Risk</span>
+        </div>
+      </div>
+
+      <!-- Decision Intelligence -->
+      <div class="cap-card">
+        <div class="cap-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div class="cap-num">05</div>
+        <div class="cap-title">Decision Intelligence</div>
+        <div class="cap-body">
+          Convert raw climate and sustainability data into actionable business intelligence.
+          Board-ready reports. Investor-grade summaries. Risk-adjusted capital allocation signals
+          aligned with institutional frameworks.
+        </div>
+        <div class="cap-tags">
+          <span class="cap-tag">Board Reports</span>
+          <span class="cap-tag">Investor Signals</span>
+          <span class="cap-tag">Risk Narratives</span>
+        </div>
+      </div>
+
+      <!-- Enterprise Assessment -->
+      <div class="cap-card">
+        <div class="cap-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <div class="cap-num">06</div>
+        <div class="cap-title">Enterprise Assessment Engine</div>
+        <div class="cap-body">
+          Dynamic, industry-adaptive assessments that capture operational footprint,
+          emissions profile, governance posture, and supply chain exposure.
+          Evidence-validated. Auto-scoring. Multi-stage.
+        </div>
+        <div class="cap-tags">
+          <span class="cap-tag">C-LAYER Scoring</span>
+          <span class="cap-tag">26 Industries</span>
+          <span class="cap-tag">Evidence Validation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     PLATFORM SHOWCASE
+════════════════════════════════════════════ -->
+<section class="section platform-section" id="platform">
+  <div class="page">
+    <div class="platform-layout">
+      <div class="platform-copy">
+        <div class="section-eyebrow">Platform Architecture</div>
+        <h2 class="section-title">The Intelligence Terminal</h2>
+        <p class="section-desc">
+          A single institutional workspace — combining risk scores, scenario simulations,
+          benchmark comparisons, and disclosure intelligence into one
+          decision-grade terminal.
+        </p>
+
+        <div class="platform-features">
+          <div class="platform-feat">
+            <div class="platform-feat-dot"></div>
+            <div class="platform-feat-text"><strong>C-LAYER Framework</strong> — 8-layer scoring architecture covering core operations, financials, physical risk, transition risk, capital, supply chain, adaptation, and credibility.</div>
+          </div>
+          <div class="platform-feat">
+            <div class="platform-feat-dot"></div>
+            <div class="platform-feat-text"><strong>Physical Risk Engine</strong> — Flood, heatwave, water stress, cyclone, sea-level rise, and wildfire exposure quantified at asset and operational level.</div>
+          </div>
+          <div class="platform-feat">
+            <div class="platform-feat-dot"></div>
+            <div class="platform-feat-text"><strong>Investor Terminal</strong> — Portfolio-level climate exposure aggregation, company intelligence profiles across 20 entities and 13 industries.</div>
+          </div>
+          <div class="platform-feat">
+            <div class="platform-feat-dot"></div>
+            <div class="platform-feat-text"><strong>AI Narrative Engine</strong> — Institutional-grade ESG and climate reports generated from structured assessment data. TCFD, BRSR, CSRD-aligned.</div>
+          </div>
+          <div class="platform-feat">
+            <div class="platform-feat-dot"></div>
+            <div class="platform-feat-text"><strong>Greenwashing Detection</strong> — ESG Risk Intelligence Scanner flags disclosure inconsistencies, weak commitments, and unverifiable claims across 16 frameworks.</div>
+          </div>
+          <div class="platform-feat">
+            <div class="platform-feat-dot"></div>
+            <div class="platform-feat-text"><strong>Rating Scale</strong> — AAA → AA → A → BBB → BB → B → CCC institutional letter ratings. Not percentage scores. Designed for capital market use.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terminal Mockup -->
+      <div class="terminal-mock">
+        <div class="mock-header">
+          <div class="mock-dots">
+            <div class="mock-dot"></div>
+            <div class="mock-dot"></div>
+            <div class="mock-dot"></div>
+          </div>
+          <span class="mock-title">C-LAYER Intelligence Terminal</span>
+          <div class="mock-live"><div class="mock-live-dot"></div>Live</div>
+        </div>
+
+        <div class="mock-kpi-row">
+          <div class="mock-kpi">
+            <div class="mock-kpi-label">C-Score</div>
+            <div class="mock-kpi-val mono">AA</div>
+            <div class="mock-kpi-sub">Climate Rating</div>
+          </div>
+          <div class="mock-kpi">
+            <div class="mock-kpi-label">Physical Risk</div>
+            <div class="mock-kpi-val mono" style="color:var(--blue-bright)">67.2</div>
+            <div class="mock-kpi-sub">Exposure Index</div>
+          </div>
+          <div class="mock-kpi" style="border-right:none">
+            <div class="mock-kpi-label">Transition Risk</div>
+            <div class="mock-kpi-val mono" style="color:var(--cyan)">54.8</div>
+            <div class="mock-kpi-sub">Policy Exposure</div>
+          </div>
+        </div>
+
+        <div class="mock-score-row">
+          <div class="mock-score-panel">
+            <div class="mock-score-label">C-FIN Score</div>
+            <div class="mock-score-bar-track"><div class="mock-score-bar-fill" style="width:78%"></div></div>
+            <div class="mock-score-val mono">78/100</div>
+            <div class="mock-score-name">Financial Exposure</div>
+          </div>
+          <div class="mock-score-panel">
+            <div class="mock-score-label">C-ADAPT Score</div>
+            <div class="mock-score-bar-track"><div class="mock-score-bar-fill" style="width:62%;background:var(--cyan)"></div></div>
+            <div class="mock-score-val mono" style="color:var(--cyan)">62/100</div>
+            <div class="mock-score-name">Resilience Capacity</div>
+          </div>
+        </div>
+
+        <table class="mock-risk-table">
+          <thead>
+            <tr>
+              <th>Risk Factor</th>
+              <th>Score</th>
+              <th>Exposure</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Flood Risk</td>
+              <td class="mono" style="color:var(--red)">82.1</td>
+              <td><span class="mock-badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>Carbon Tax Exposure</td>
+              <td class="mono" style="color:var(--blue-bright)">58.4</td>
+              <td><span class="mock-badge badge-med">Medium</span></td>
+            </tr>
+            <tr>
+              <td>Heatwave Stress</td>
+              <td class="mono" style="color:var(--blue-bright)">61.7</td>
+              <td><span class="mock-badge badge-med">Medium</span></td>
+            </tr>
+            <tr>
+              <td>Regulatory Risk</td>
+              <td class="mono" style="color:var(--green)">34.2</td>
+              <td><span class="mock-badge badge-low">Low</span></td>
+            </tr>
+            <tr>
+              <td>Stranded Assets</td>
+              <td class="mono" style="color:var(--blue-bright)">47.9</td>
+              <td><span class="mock-badge badge-med">Medium</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     INTELLIGENCE MODEL
+════════════════════════════════════════════ -->
+<section class="section" id="intelligence-model">
+  <div class="page">
+    <div class="section-eyebrow">Methodology</div>
+    <h2 class="section-title">Built on Structured Intelligence</h2>
+    <p class="section-desc">
+      The C-LAYER framework represents eight distinct intelligence dimensions — each weighted,
+      explainable, and designed for institutional interpretation.
+    </p>
+
+    <div class="intel-layout">
+      <div class="layer-stack">
+        <div class="layer-row">
+          <div class="layer-index">L1</div>
+          <div class="layer-body">
+            <div class="layer-title">C-CORE — Operations Intelligence</div>
+            <div class="layer-desc">Emissions profile, energy systems, water footprint, waste management, and operational climate readiness</div>
+          </div>
+          <div class="layer-badge"><span>25%</span></div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-index">L2</div>
+          <div class="layer-body">
+            <div class="layer-title">C-FIN — Financial Exposure</div>
+            <div class="layer-desc">Revenue at risk, EBITDA impact, carbon cost exposure, stranded asset liability, and net-zero investment alignment</div>
+          </div>
+          <div class="layer-badge"><span>20%</span></div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-index">L3</div>
+          <div class="layer-body">
+            <div class="layer-title">C-RISK/P — Physical Risk</div>
+            <div class="layer-desc">Flood, heatwave, water stress, cyclone, sea-level rise, and wildfire exposure mapped to operational footprint</div>
+          </div>
+          <div class="layer-badge"><span>15%</span></div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-index">L4</div>
+          <div class="layer-body">
+            <div class="layer-title">C-RISK/T — Transition Risk</div>
+            <div class="layer-desc">Carbon tax, fossil dependency, technology transition, regulatory trajectory, and market shift exposure</div>
+          </div>
+          <div class="layer-badge"><span>15%</span></div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-index">L5</div>
+          <div class="layer-body">
+            <div class="layer-title">C-CAPITAL — Capital Alignment</div>
+            <div class="layer-desc">Green financing, sustainability-linked debt, net-zero investment commitments, and capital allocation transparency</div>
+          </div>
+          <div class="layer-badge"><span>10%</span></div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-index">L6</div>
+          <div class="layer-body">
+            <div class="layer-title">C-SUPPLY — Supply Chain</div>
+            <div class="layer-desc">Scope 3 exposure, supplier climate risk, geographic concentration, and supply chain vulnerability mapping</div>
+          </div>
+          <div class="layer-badge"><span>8%</span></div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-index">L7</div>
+          <div class="layer-body">
+            <div class="layer-title">C-ADAPT — Resilience Capacity</div>
+            <div class="layer-desc">Adaptation investments, climate contingency systems, business continuity planning, and resilience maturity</div>
+          </div>
+          <div class="layer-badge"><span>5%</span></div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-index">L8</div>
+          <div class="layer-body">
+            <div class="layer-title">C-TRUTH — Credibility &amp; Disclosure</div>
+            <div class="layer-desc">Greenwashing detection, disclosure integrity, commitment verifiability, and framework alignment quality</div>
+          </div>
+          <div class="layer-badge"><span>2%</span></div>
+        </div>
+      </div>
+
+      <div class="intel-right">
+        <div class="intel-explain-title">How Intelligence Is Built</div>
+        <div class="intel-explain-body">
+          Every Climactix score is derived from a structured chain: raw enterprise data is
+          validated against evidence, normalized to sector-specific benchmarks, weighted by
+          financial materiality, and scored across eight intelligence dimensions.
+          The output is a letter-rated climate intelligence profile — interpretable by
+          risk officers, portfolio managers, and regulators.
+        </div>
+
+        <div class="intel-principles">
+          <div class="intel-principle">
+            <div class="intel-principle-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="intel-principle-text"><strong>Evidence Validation</strong> — Every score input is validated against uploaded documents, third-party data, and cross-referenced against disclosure records</div>
+          </div>
+          <div class="intel-principle">
+            <div class="intel-principle-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+            </div>
+            <div class="intel-principle-text"><strong>Sector-Specific Models</strong> — Each of 26 industries has its own materiality mapping, indicator weights, and benchmark thresholds</div>
+          </div>
+          <div class="intel-principle">
+            <div class="intel-principle-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <div class="intel-principle-text"><strong>Confidence Scoring</strong> — Every intelligence output includes a confidence level derived from data completeness and evidence quality</div>
+          </div>
+          <div class="intel-principle">
+            <div class="intel-principle-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="intel-principle-text"><strong>Explainable Scoring</strong> — No black-box outputs. Every rating contains reasoning layers accessible to analysts, auditors, and regulators</div>
+          </div>
+          <div class="intel-principle">
+            <div class="intel-principle-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <div class="intel-principle-text"><strong>Framework Alignment</strong> — Outputs are mapped to TCFD, BRSR, CSRD, ISSB, GRI, and CDP frameworks simultaneously</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     MISSION & VISION
+════════════════════════════════════════════ -->
+<section class="section" id="mission" style="background:var(--bg-alt)">
+  <div class="page">
+    <div class="section-eyebrow">Purpose</div>
+    <h2 class="section-title">Mission &amp; Vision</h2>
+
+    <div class="mv-grid">
+      <div class="mv-panel">
+        <div class="mv-eyebrow blue">— Our Mission</div>
+        <div class="mv-title">Reduce Climate Uncertainty Through Measurable Intelligence</div>
+        <div class="mv-body">
+          To reduce climate uncertainty by transforming fragmented sustainability and operational
+          data into measurable intelligence that supports resilient, evidence-based decision-making
+          across enterprises, investors, and institutions.
+          <br><br>
+          We believe that climate risk is financial risk — and that the organizations best
+          positioned to navigate the energy transition will be those who can measure,
+          quantify, and act on it with precision.
+        </div>
+      </div>
+      <div class="mv-panel">
+        <div class="mv-eyebrow cyan">— Our Vision</div>
+        <div class="mv-title">The Climate-Risk Intelligence Infrastructure of the Future</div>
+        <div class="mv-body">
+          To become the climate-risk intelligence infrastructure that organizations,
+          governments, and capital markets rely upon to understand future exposure,
+          resilience capacity, and strategic opportunity.
+          <br><br>
+          Built in India. Designed for global intelligence. Climactix Global is building
+          the analytical infrastructure for a world where climate risk is as measurable
+          and universally understood as credit risk.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     WHO WE SERVE
+════════════════════════════════════════════ -->
+<section class="section" id="serve">
+  <div class="page">
+    <div class="section-eyebrow">Coverage</div>
+    <h2 class="section-title">Who We Serve</h2>
+    <p class="section-desc">
+      From multinational corporations to sovereign institutions — Climactix delivers
+      climate intelligence to decision-makers across the full capital and enterprise ecosystem.
+    </p>
+
+    <div class="serve-grid">
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <div class="serve-name">Enterprises &amp; Corporates</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+        </div>
+        <div class="serve-name">Financial Institutions</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+        </div>
+        <div class="serve-name">Asset Managers</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M3 7v1a3 3 0 006 0V7m0 1a3 3 0 006 0V7m0 1a3 3 0 006 0V7M3 7l2-4h14l2 4"/></svg>
+        </div>
+        <div class="serve-name">Governments &amp; Regulators</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <div class="serve-name">Energy &amp; Utilities</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+        </div>
+        <div class="serve-name">Manufacturing</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        </div>
+        <div class="serve-name">Real Estate</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h8l2-2zM13 6h4l4 4v6l-2 2h-6"/></svg>
+        </div>
+        <div class="serve-name">Logistics &amp; Transport</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        </div>
+        <div class="serve-name">Infrastructure Operators</div>
+      </div>
+      <div class="serve-card">
+        <div class="serve-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        </div>
+        <div class="serve-name">Public Sector</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     WHY CLIMACTIX — CREDIBILITY PILLARS
+════════════════════════════════════════════ -->
+<section class="section" id="why" style="background:var(--bg-alt)">
+  <div class="page">
+    <div class="section-eyebrow">Differentiation</div>
+    <h2 class="section-title">Why Climactix Global</h2>
+    <p class="section-desc">
+      Eight structural advantages that separate institutional-grade climate intelligence
+      from generic ESG software.
+    </p>
+
+    <div class="credibility-grid">
+      <div class="cred-card">
+        <div class="cred-num">01</div>
+        <div class="cred-title">Structured Methodologies</div>
+        <div class="cred-body">26 sector-specific models with explicit materiality mapping. Not a generic scorecard — a sector-calibrated intelligence architecture.</div>
+      </div>
+      <div class="cred-card">
+        <div class="cred-num">02</div>
+        <div class="cred-title">Framework Intelligence</div>
+        <div class="cred-body">Simultaneous alignment with TCFD, BRSR, CSRD, ISSB, GRI, CDP, and SFDR. One assessment, mapped to all major frameworks.</div>
+      </div>
+      <div class="cred-card">
+        <div class="cred-num">03</div>
+        <div class="cred-title">Explainable Scoring</div>
+        <div class="cred-body">Every rating contains structured reasoning layers. No black boxes. Audit-ready, regulator-interpretable, and capital market-grade.</div>
+      </div>
+      <div class="cred-card">
+        <div class="cred-num">04</div>
+        <div class="cred-title">Evidence-Based Assessments</div>
+        <div class="cred-body">AI-assisted validation cross-references every data point against uploaded documents, third-party records, and published disclosures.</div>
+      </div>
+      <div class="cred-card">
+        <div class="cred-num">05</div>
+        <div class="cred-title">Sector-Specific Models</div>
+        <div class="cred-body">Energy, banking, manufacturing, real estate, logistics, agriculture, healthcare — each sector has its own climate materiality map and benchmark set.</div>
+      </div>
+      <div class="cred-card">
+        <div class="cred-num">06</div>
+        <div class="cred-title">Benchmarking Architecture</div>
+        <div class="cred-body">Peer comparisons, sector averages, geography-adjusted benchmarks. Understand where an organization stands relative to the market and its competitors.</div>
+      </div>
+      <div class="cred-card">
+        <div class="cred-num">07</div>
+        <div class="cred-title">Climate Risk Simulations</div>
+        <div class="cred-body">Six NGFS-aligned scenario pathways, projected across 2030, 2040, and 2050 time horizons. Revenue at risk. EBITDA impact. Stranded asset exposure.</div>
+      </div>
+      <div class="cred-card">
+        <div class="cred-num">08</div>
+        <div class="cred-title">Confidence Scoring Systems</div>
+        <div class="cred-body">Data completeness and evidence quality feed into a confidence score attached to every output. Know exactly how reliable each intelligence signal is.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     GLOBAL INTELLIGENCE
+════════════════════════════════════════════ -->
+<section class="section" id="global" style="background:var(--bg)">
+  <div class="page">
+    <div class="global-layout">
+      <div class="global-copy">
+        <div class="section-eyebrow">Global Reach</div>
+        <h2 class="section-title">Built in India.<br>Designed for Global Intelligence.</h2>
+        <p class="section-desc">
+          Climate risk is borderless. Our intelligence infrastructure is built to cover
+          enterprises, investors, and institutions across emerging and developed markets —
+          with a particular depth of coverage for India, South Asia, and high-growth economies
+          where climate exposure is accelerating fastest.
+        </p>
+
+        <div class="global-stats">
+          <div class="global-stat">
+            <div class="global-stat-val">26</div>
+            <div class="global-stat-label">Industries</div>
+          </div>
+          <div class="global-stat">
+            <div class="global-stat-val">16+</div>
+            <div class="global-stat-label">ESG Frameworks</div>
+          </div>
+          <div class="global-stat">
+            <div class="global-stat-val">6</div>
+            <div class="global-stat-label">NGFS Scenarios</div>
+          </div>
+          <div class="global-stat">
+            <div class="global-stat-val">8</div>
+            <div class="global-stat-label">Risk Dimensions</div>
+          </div>
+        </div>
+
+        <div style="margin-top:32px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:3px;border-left:3px solid var(--blue)">
+          <div style="font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-bright);margin-bottom:10px">Coverage Expansion</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.7">
+            Intelligence coverage expanding to cover enterprises across South Asia, Southeast Asia,
+            the Middle East, and Sub-Saharan Africa — geographies where climate vulnerability
+            is highest and institutional intelligence infrastructure is most needed.
+          </div>
+        </div>
+      </div>
+
+      <!-- SVG World Map -->
+      <div class="map-container" style="position:relative">
+        <svg class="map-svg" viewBox="0 0 480 280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Global intelligence coverage map">
+          <!-- Background -->
+          <rect width="480" height="280" fill="#0F0F0F" rx="3"/>
+          <rect width="480" height="280" fill="none" stroke="#2C2C2C" rx="3"/>
+
+          <!-- Grid lines -->
+          <line x1="0" y1="140" x2="480" y2="140" stroke="#222" stroke-width=".5"/>
+          <line x1="240" y1="0" x2="240" y2="280" stroke="#222" stroke-width=".5"/>
+          <line x1="0" y1="70" x2="480" y2="70" stroke="#1A1A1A" stroke-width=".5"/>
+          <line x1="0" y1="210" x2="480" y2="210" stroke="#1A1A1A" stroke-width=".5"/>
+          <line x1="120" y1="0" x2="120" y2="280" stroke="#1A1A1A" stroke-width=".5"/>
+          <line x1="360" y1="0" x2="360" y2="280" stroke="#1A1A1A" stroke-width=".5"/>
+
+          <!-- Continent shapes (simplified) -->
+          <!-- North America -->
+          <path d="M60 60 L110 55 L130 70 L135 90 L125 110 L115 130 L100 145 L90 140 L75 130 L65 110 L55 85 Z" fill="#1A1A1A" stroke="#2C2C2C" stroke-width=".8"/>
+          <!-- South America -->
+          <path d="M100 155 L125 148 L130 170 L125 200 L115 220 L100 230 L88 215 L85 195 L88 170 Z" fill="#1A1A1A" stroke="#2C2C2C" stroke-width=".8"/>
+          <!-- Europe -->
+          <path d="M195 50 L230 45 L240 55 L245 70 L235 80 L220 85 L205 80 L195 70 Z" fill="#1A1A1A" stroke="#2C2C2C" stroke-width=".8"/>
+          <!-- Africa -->
+          <path d="M210 90 L245 85 L260 95 L265 120 L255 150 L245 175 L230 185 L215 178 L205 155 L200 125 L205 105 Z" fill="#1A1A1A" stroke="#2C2C2C" stroke-width=".8"/>
+          <!-- Asia (primary focus) -->
+          <path d="M255 45 L340 40 L375 50 L385 65 L375 85 L355 95 L330 100 L300 95 L275 85 L255 75 Z" fill="#242424" stroke="#333333" stroke-width=".8"/>
+          <!-- India (highlighted) -->
+          <path d="M295 90 L315 88 L320 100 L318 118 L310 135 L300 130 L292 115 L290 100 Z" fill="rgba(27,110,235,.12)" stroke="rgba(27,110,235,.4)" stroke-width="1"/>
+          <!-- South East Asia -->
+          <path d="M330 95 L360 90 L370 105 L360 118 L345 120 L330 112 Z" fill="#1A1A1A" stroke="#2C2C2C" stroke-width=".8"/>
+          <!-- Australia -->
+          <path d="M355 160 L395 155 L410 170 L405 195 L385 205 L360 200 L350 185 L348 168 Z" fill="#1A1A1A" stroke="#2C2C2C" stroke-width=".8"/>
+
+          <!-- Connection lines from India hub -->
+          <line x1="305" y1="112" x2="222" y2="60" stroke="rgba(27,110,235,.2)" stroke-width=".8" stroke-dasharray="4 3"/>
+          <line x1="305" y1="112" x2="85" y2="95" stroke="rgba(27,110,235,.15)" stroke-width=".8" stroke-dasharray="4 3"/>
+          <line x1="305" y1="112" x2="115" y2="185" stroke="rgba(27,110,235,.15)" stroke-width=".8" stroke-dasharray="4 3"/>
+          <line x1="305" y1="112" x2="380" y2="175" stroke="rgba(27,110,235,.2)" stroke-width=".8" stroke-dasharray="4 3"/>
+          <line x1="305" y1="112" x2="230" y2="135" stroke="rgba(0,153,204,.2)" stroke-width=".8" stroke-dasharray="4 3"/>
+          <line x1="305" y1="112" x2="345" y2="105" stroke="rgba(0,153,204,.2)" stroke-width=".8" stroke-dasharray="4 3"/>
+
+          <!-- Hub nodes -->
+          <!-- India (primary) -->
+          <circle cx="305" cy="112" r="5" fill="rgba(27,110,235,.2)" stroke="#1B6EEB" stroke-width="1.5"/>
+          <circle cx="305" cy="112" r="9" fill="none" stroke="rgba(27,110,235,.2)" stroke-width=".8"/>
+          <!-- Europe -->
+          <circle cx="222" cy="60" r="3.5" fill="rgba(27,110,235,.2)" stroke="rgba(27,110,235,.6)" stroke-width="1"/>
+          <!-- North America -->
+          <circle cx="85" cy="95" r="3.5" fill="rgba(27,110,235,.2)" stroke="rgba(27,110,235,.6)" stroke-width="1"/>
+          <!-- South America -->
+          <circle cx="115" cy="185" r="3" fill="rgba(0,153,204,.2)" stroke="rgba(0,153,204,.6)" stroke-width="1"/>
+          <!-- Australia -->
+          <circle cx="380" cy="175" r="3" fill="rgba(0,153,204,.2)" stroke="rgba(0,153,204,.6)" stroke-width="1"/>
+          <!-- Africa -->
+          <circle cx="230" cy="135" r="3" fill="rgba(0,153,204,.2)" stroke="rgba(0,153,204,.6)" stroke-width="1"/>
+          <!-- SE Asia -->
+          <circle cx="345" cy="105" r="3" fill="rgba(0,153,204,.2)" stroke="rgba(0,153,204,.6)" stroke-width="1"/>
+
+          <!-- Labels -->
+          <text x="295" y="148" fill="rgba(27,110,235,.8)" font-family="IBM Plex Mono" font-size="7" font-weight="700" letter-spacing=".08em">INDIA HUB</text>
+          <text x="208" y="52" fill="#555" font-family="IBM Plex Mono" font-size="6" letter-spacing=".06em">EUROPE</text>
+          <text x="65" y="108" fill="#555" font-family="IBM Plex Mono" font-size="6" letter-spacing=".06em">N.AMERICA</text>
+          <text x="332" y="100" fill="#555" font-family="IBM Plex Mono" font-size="6" letter-spacing=".06em">SEA</text>
+
+          <!-- Status bar -->
+          <rect x="0" y="260" width="480" height="20" fill="#1A1A1A"/>
+          <rect x="0" y="260" width="480" height="1" fill="#2C2C2C"/>
+          <text x="12" y="274" fill="#555" font-family="IBM Plex Mono" font-size="8" font-weight="700" letter-spacing=".1em">INTELLIGENCE COVERAGE</text>
+          <circle cx="190" cy="270" r="3" fill="#1B6EEB"/>
+          <text x="196" y="274" fill="#1B6EEB" font-family="IBM Plex Mono" font-size="8" font-weight="700">PRIMARY</text>
+          <circle cx="258" cy="270" r="3" fill="#0099CC"/>
+          <text x="264" y="274" fill="#0099CC" font-family="IBM Plex Mono" font-size="8" font-weight="700">EXPANDING</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     CTA SECTION
+════════════════════════════════════════════ -->
+<section class="cta-section" id="contact">
+  <div class="page" style="position:relative;z-index:1">
+    <div class="section-eyebrow" style="justify-content:center">
+      <span>Access the Platform</span>
+    </div>
+    <h2 class="cta-title">
+      Intelligence Infrastructure<br>for Climate Decision-Making
+    </h2>
+    <p class="cta-sub">
+      Join enterprises, investors, and institutions using Climactix Global
+      to understand, quantify, and act on climate risk with institutional-grade precision.
+    </p>
+    <div class="cta-actions">
+      <a href="enterprise-onboarding.html" class="cta-primary">Request Platform Access</a>
+      <a href="scoring-methodology.html" class="cta-outline">View Methodology</a>
+      <a href="research.html" class="cta-outline">Read Intelligence Reports</a>
+    </div>
+
+    <div style="margin-top:48px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;max-width:720px;margin-left:auto;margin-right:auto">
+      <div style="background:var(--surface);padding:20px;text-align:left">
+        <div style="font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">For Enterprises</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.55">Assess climate exposure, generate BRSR/TCFD reports, and benchmark against sector peers</div>
+      </div>
+      <div style="background:var(--surface);padding:20px;text-align:left;border-left:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">For Investors</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.55">Access company climate profiles, portfolio risk aggregation, and scenario stress testing</div>
+      </div>
+      <div style="background:var(--surface);padding:20px;text-align:left;border-left:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">For Institutions</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.55">Custom intelligence products, regulatory alignment support, and sovereign-grade risk analytics</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer class="cx-footer">
+
+  <div class="footer-top">
+
+    <!-- Brand column -->
+    <div class="footer-brand">
+      <div class="footer-brand-name">Climactix Global</div>
+      <p class="footer-mission">ESG intelligence infrastructure for financially material sustainability. Built for founders, VCs, regulators, and institutional investors.</p>
+      <a href="about.html" class="footer-cta-link">About the Climactix Mission</a>
+      <a href="community.html" class="footer-join-btn">Join Us <span class="footer-join-arrow">→</span></a>
+    </div>
+
+    <!-- Nav columns -->
+    <nav class="footer-nav-cols" aria-label="Footer navigation">
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <a href="generate.html" class="footer-link">ESG Intelligence Engine</a>
+        <a href="greenwashing-scanner.html" class="footer-link">ESG Risk Scanner</a>
+        <a href="climactix-ai.html" class="footer-link">AI Narrative Engine</a>
+        <a href="simulation.html" class="footer-link">Risk Intelligence Map</a>
+        <a href="digital-twin.html" class="footer-link">National Digital Twin</a>
+        <a href="dashboard.html" class="footer-link">ESG Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Frameworks</div>
+        <a href="#" class="footer-link">GRI &amp; SASB</a>
+        <a href="#" class="footer-link">TCFD &amp; ISSB IFRS S2</a>
+        <a href="#" class="footer-link">CSRD &amp; EU Taxonomy</a>
+        <a href="#" class="footer-link">SBTi &amp; CDP</a>
+        <a href="#" class="footer-link">SBTN &amp; RE100</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Community</div>
+        <a href="community.html" class="footer-link">Climate Feed</a>
+        <a href="leaderboard.html" class="footer-link">Leaderboard</a>
+        <a href="funding-hub.html" class="footer-link">VC Funding Hub</a>
+        <a href="solutions.html" class="footer-link">Solution Hub</a>
+        <a href="forum.html" class="footer-link">Forum</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Media &amp; Talks</div>
+        <a href="#" class="footer-link">Sunday Climate Talks</a>
+        <a href="scoring-methodology.html" class="footer-link">Methodology</a>
+        <a href="about.html" class="footer-link">About Climactix</a>
+        <a href="careers.html" class="footer-link">Careers</a>
+        <a href="research.html" class="footer-link">Intelligence Reports</a>
+      </div>
+    </nav>
+
+    <!-- Social column -->
+    <div class="footer-socials">
+      <div class="footer-social-label">Follow Climactix</div>
+      <div class="footer-social-row">
+        <a href="https://www.linkedin.com/company/climactix-global" target="_blank" rel="noopener" class="footer-social-icon" aria-label="LinkedIn">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/the_Sunday_climate_Talks" target="_blank" rel="noopener" class="footer-social-icon" aria-label="Instagram">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@sundayclimatetalks" target="_blank" rel="noopener" class="footer-social-icon" aria-label="YouTube">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Legal bar -->
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <span class="footer-legal">© 2025 Climactix Global · Rushikesh Kulkarni · All Rights Reserved</span>
+      <div class="footer-legal-links">
+        <a href="#" class="footer-legal-link">Privacy Policy</a>
+        <a href="#" class="footer-legal-link">Terms of Use</a>
+        <a href="#" class="footer-legal-link">Contact</a>
+      </div>
+      <span class="footer-updated">Founded Oct 2025 · India · Serving Globally</span>
+    </div>
+  </div>
+
+</footer>
+
+<!-- ════════ FILM MODAL ════════ -->
+<div class="film-modal" id="filmModal" role="dialog" aria-modal="true" aria-label="Intelligence Overview Film">
+  <div class="film-modal-inner">
+    <div class="film-modal-bar">
+      <span class="film-modal-title">— Intelligence Overview Film</span>
+      <button class="film-modal-close" onclick="closeFilmModal()" aria-label="Close">&times;</button>
+    </div>
+    <div class="film-modal-embed">
+      <iframe id="filmIframe" src="" allowfullscreen allow="fullscreen; autoplay"
+              title="Climactix Global — The world is changing faster than ever"></iframe>
+    </div>
+    <div class="film-modal-caption">Climactix Global · Climate Risk Intelligence Infrastructure · Built in India</div>
+  </div>
+</div>
+
+<script>
+/* ── Theme toggle ── */
+function toggleTheme(){
+  var t=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('cx-theme',t);
+}
+
+/* ══════════════════════════════════════════
+   BACKGROUND FILM
+   • On page load: try hero-reel.mp4 (silent autoplay, always works locally)
+   • If MP4 missing: show pulsing "Play Background Film" button
+   • On click: load Canva iframe (user gesture = autoplay unlocked)
+══════════════════════════════════════════ */
+(function(){
+  var mediaWrap = document.getElementById('heroBgMedia');
+  var playBtn   = document.getElementById('filmPlayBtn');
+  var bgCanvas  = document.getElementById('heroBgCanvas');
+  var CANVA     = 'https://www.canva.com/design/DAHLWrJxDEA/RVV8oOS8_Roj6jQIT9TsfQ/watch?embed&autoplay=1';
+
+  function fadeInMedia(el){
+    el.classList.add('playing');
+    if(bgCanvas) bgCanvas.style.transition = 'opacity 1.4s ease';
+    setTimeout(function(){ if(bgCanvas) bgCanvas.style.opacity = '0'; }, 600);
+    if(playBtn) playBtn.classList.add('hide');
+  }
+
+  /* ── 1. Try local MP4 (works without any user gesture when muted) ── */
+  var vid = document.createElement('video');
+  vid.className   = 'hero-bg-video';
+  vid.muted       = true;
+  vid.loop        = true;
+  vid.playsInline = true;
+  vid.setAttribute('playsinline','');
+  vid.src = 'hero-reel.mp4';
+  mediaWrap.appendChild(vid);
+
+  vid.addEventListener('playing', function(){ fadeInMedia(vid); });
+  vid.addEventListener('error',   function(){ vid.remove(); /* MP4 not found → keep play button */ });
+
+  var playPromise = vid.play();
+  if(playPromise && playPromise.catch) playPromise.catch(function(){/* blocked — keep play button */});
+
+  /* ── 2. On button click: user gesture unlocks Canva iframe autoplay ── */
+  window.startBgFilm = function(){
+    /* If MP4 is already playing, just hide the button */
+    if(!vid.paused && !vid.error){ fadeInMedia(vid); return; }
+
+    /* Otherwise load Canva iframe — this is user-initiated so autoplay works */
+    vid.remove();
+    var fr = document.createElement('iframe');
+    fr.className   = 'hero-bg-video';
+    fr.src         = CANVA;
+    fr.allow       = 'autoplay; fullscreen';
+    fr.setAttribute('allowfullscreen','');
+    fr.setAttribute('title','Climactix Global background film');
+    mediaWrap.appendChild(fr);
+
+    /* Fade in after short load delay */
+    setTimeout(function(){ fadeInMedia(fr); }, 800);
+  };
+})();
+
+/* ── Film modal ── */
+var CANVA_URL='https://www.canva.com/design/DAHLWrJxDEA/RVV8oOS8_Roj6jQIT9TsfQ/watch?embed';
+function openFilmModal(){
+  var modal=document.getElementById('filmModal');
+  var iframe=document.getElementById('filmIframe');
+  iframe.src=CANVA_URL;
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeFilmModal(){
+  var modal=document.getElementById('filmModal');
+  var iframe=document.getElementById('filmIframe');
+  modal.classList.remove('open');
+  iframe.src='';
+  document.body.style.overflow='';
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('filmModal').addEventListener('click',function(e){
+    if(e.target===this) closeFilmModal();
+  });
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') closeFilmModal();
+});
+
+/* ── Animated canvas bg (shows while video loads) ── */
+(function(){
+  var canvas=document.getElementById('heroBgCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W,H,nodes,raf;
+  var AMBER='rgba(27,110,235,', CYAN='rgba(91,163,245,';
+  function resize(){ W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
+  function makeNodes(n){
+    var a=[];
+    for(var i=0;i<n;i++) a.push({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-.5)*.18, vy:(Math.random()-.5)*.18,
+      r:Math.random()*1.4+.6,
+      color:Math.random()>.65?AMBER:CYAN,
+      alpha:Math.random()*.35+.15
+    });
+    return a;
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var n=nodes.length;
+    for(var i=0;i<n;i++){
+      for(var j=i+1;j<n;j++){
+        var dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<130){ ctx.beginPath(); ctx.strokeStyle='rgba(44,44,44,'+(.12*(1-d/130)).toFixed(3)+')'; ctx.lineWidth=.6; ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y); ctx.stroke(); }
+      }
+    }
+    for(var i=0;i<n;i++){
+      var nd=nodes[i];
+      ctx.beginPath(); ctx.arc(nd.x,nd.y,nd.r,0,Math.PI*2);
+      ctx.fillStyle=nd.color+nd.alpha+')'; ctx.fill();
+      nd.x+=nd.vx; nd.y+=nd.vy;
+      if(nd.x<0||nd.x>W) nd.vx*=-1;
+      if(nd.y<0||nd.y>H) nd.vy*=-1;
+    }
+    raf=requestAnimationFrame(draw);
+  }
+  function init(){ resize(); nodes=makeNodes(55); if(raf) cancelAnimationFrame(raf); draw(); }
+  window.addEventListener('resize',function(){ resize(); nodes=makeNodes(55); });
+  document.addEventListener('DOMContentLoaded',init);
+})();
+
+/* ── Score bar animation on scroll ── */
+(function(){
+  if(!window.IntersectionObserver) return;
+  var bars=document.querySelectorAll('.mock-score-bar-fill'), targets=[];
+  bars.forEach(function(b){ var w=b.style.width; b.style.width='0%'; targets.push({el:b,w:w}); });
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      targets.forEach(function(t){ if(e.target.contains(t.el)) setTimeout(function(){t.el.style.width=t.w;t.el.style.transition='width 0.8s ease';},200); });
+      obs.unobserve(e.target);
+    });
+  },{threshold:0.3});
+  var mock=document.querySelector('.terminal-mock');
+  if(mock) obs.observe(mock);
+})();
+
+/* ── Hero KPI stagger entrance ── */
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.hero-kpi').forEach(function(k,i){
+    k.style.cssText+='opacity:0;transform:translateY(8px);transition:opacity 0.4s ease,transform 0.4s ease';
+    setTimeout(function(){k.style.opacity='1';k.style.transform='translateY(0)';},600+i*100);
+  });
+});
+</script>
+</body>
+</html>
