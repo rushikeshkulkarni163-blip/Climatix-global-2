@@ -861,6 +861,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
     <source src="hero-reel.mp4" type="video/mp4">
   </video>
 
+  <!-- Canva iframe fallback — shown when MP4 is missing on server -->
+  <iframe
+    id="heroBgIframe"
+    class="hero-bg-video"
+    style="display:none;border:none;"
+    src=""
+    allow="autoplay; fullscreen"
+    allowfullscreen
+    aria-hidden="true"
+  ></iframe>
+
   <div class="hero-grid-overlay"></div>
   <div class="hero-overlay"></div>
 
@@ -1855,39 +1866,63 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 </div>
 
 <script>
-/* ── Background video: force-play + fade canvas on start ── */
+/* ══════════════════════════════════════════
+   BACKGROUND VIDEO — MP4 locally, Canva on server
+   1. Try hero-reel.mp4 (works on localhost)
+   2. If file missing (server), switch to Canva iframe
+   3. Fade canvas out once either source is playing
+══════════════════════════════════════════ */
 (function(){
-  function initVideo(){
-    var v = document.getElementById('heroBgVideo');
-    var c = document.getElementById('heroBgCanvas');
-    if(!v) return;
+  var CANVA_SRC = 'https://www.canva.com/design/DAHLWrJxDEA/RVV8oOS8_Roj6jQIT9TsfQ/watch?embed&autoplay=1&loop=1';
 
-    v.muted = true;
+  var vid    = document.getElementById('heroBgVideo');
+  var frame  = document.getElementById('heroBgIframe');
+  var canvas = document.getElementById('heroBgCanvas');
 
-    function tryPlay(){
-      var p = v.play();
-      if(p && p.catch) p.catch(function(){});
-    }
-
-    /* fade canvas out once video is running */
-    function onActive(){
-      if(c){ c.style.transition='opacity 1.6s ease'; c.style.opacity='0'; }
-    }
-
-    v.addEventListener('playing',   onActive);
-    v.addEventListener('timeupdate', function(){ if(v.currentTime > 0.1) onActive(); }, {once:true});
-
-    /* try immediately, then again after short delay (Safari needs this) */
-    tryPlay();
-    setTimeout(tryPlay, 300);
-    setTimeout(tryPlay, 800);
+  function fadeCanvas(){
+    if(canvas){ canvas.style.transition='opacity 1.8s ease'; canvas.style.opacity='0'; }
   }
 
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', initVideo);
-  } else {
-    initVideo();
+  /* ── MP4 path ── */
+  function startMp4(){
+    vid.muted = true;
+    vid.addEventListener('playing', fadeCanvas, {once:true});
+    vid.addEventListener('timeupdate', function(){
+      if(vid.currentTime > 0.05) fadeCanvas();
+    }, {once:true});
+
+    var p = vid.play();
+    if(p && p.catch) p.catch(function(){ switchToCanva(); });
+    /* extra retry for Safari */
+    setTimeout(function(){ if(vid.paused) vid.play().catch(function(){}); }, 500);
   }
+
+  /* ── Canva iframe fallback ── */
+  function switchToCanva(){
+    vid.style.display    = 'none';
+    frame.style.display  = 'block';
+    frame.src            = CANVA_SRC;
+    /* iframe can't fire 'playing' — just fade canvas after load */
+    frame.addEventListener('load', function(){
+      setTimeout(fadeCanvas, 1000);
+    });
+    /* worst-case fallback fade */
+    setTimeout(fadeCanvas, 3000);
+  }
+
+  /* ── Detect missing MP4 (server 404) ── */
+  vid.addEventListener('error', switchToCanva);
+  vid.querySelectorAll('source').forEach(function(s){
+    s.addEventListener('error', switchToCanva);
+  });
+
+  /* ── Also switch if video stalls for 4 seconds ── */
+  var stallTimer = setTimeout(function(){
+    if(vid.readyState < 2) switchToCanva();
+  }, 4000);
+  vid.addEventListener('canplay', function(){ clearTimeout(stallTimer); });
+
+  startMp4();
 })();
 
 /* ── Theme toggle ── */
