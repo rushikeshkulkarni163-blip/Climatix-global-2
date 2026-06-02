@@ -5,168 +5,223 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>CIS Scoring Methodology — Climactix Global</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+/* ══════════════════════════════════════════
+   NASA Earth Science Design System
+   Deep Space · Institutional Blue · Scientific Intelligence
+══════════════════════════════════════════ */
 :root{
-  --bg:#000000;--surface:#0F0F0F;--surface-2:#1A1A1A;--surface-3:#242424;--surface-4:#2E2E2E;
-  --border:#2C2C2C;--border-strong:#333333;
-  --amber:#FF6600;--amber-dim:#CC5200;--cyan:#0099CC;--green:#00CC44;--red:#FF3333;--blue:#3399FF;
-  --text:#FFFFFF;--text-2:#888888;--text-muted:#555555;
-  --t:0.12s ease;
+  /* NASA deep space backgrounds */
+  --bg:#06090F;--bg-alt:#030508;
+  --surface:#0C1018;--surface-2:#111820;--surface-3:#182030;--surface-4:#1E2838;
+  /* White-overlay border system */
+  --border:rgba(255,255,255,.07);--border-strong:rgba(255,255,255,.13);
+  --border-accent:rgba(27,110,235,.35);
+  /* NASA institutional blue — primary accent */
+  --blue:#1B6EEB;--blue-bright:#5BA3F5;--blue-dim:#1452B0;
+  --blue-glow:rgba(27,110,235,.12);--blue-tint:rgba(27,110,235,.06);
+  /* Data accents */
+  --cyan:#56CCF2;--green:#2ECC80;--red:#E84C4C;
+  --amber:#E87722; /* kept only for warm data metrics */
+  /* Text hierarchy — blue-tinted for NASA feel */
+  --text:#FFFFFF;--text-2:#7B9DBF;--text-muted:#4A6880;--text-faint:#243444;
+  --mono:'IBM Plex Mono','JetBrains Mono','Courier New',monospace;
+  --sans:'Inter','Public Sans',system-ui,sans-serif;
+  --t:0.18s cubic-bezier(0.4,0,0.2,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
-.mono{font-family:'IBM Plex Mono','Courier New',monospace}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+.mono{font-family:var(--mono)}
 
-/* ── Nav */
-.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
-.nav-left{display:flex;align-items:center;gap:12px}
-.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--text)}
-.nav-sep{color:var(--border-strong);font-size:16px}
-.nav-ctx{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:.06em;text-transform:uppercase}
-.nav-right{display:flex;gap:8px;align-items:center}
-.nav-link{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:2px;transition:all var(--t)}
-.nav-link:hover{border-color:var(--amber);color:var(--amber)}
-.nav-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,102,0,.08);border:1px solid rgba(255,102,0,.25);color:var(--amber);padding:3px 8px;border-radius:2px}
+/* ── Nav — NASA header style */
+.nav{
+  height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;border-bottom:1px solid var(--border);
+  background:rgba(6,9,15,.96);position:sticky;top:0;z-index:100;
+}
+.nav-left{display:flex;align-items:center;gap:14px}
+.nav-logo{font-family:var(--sans);font-size:13px;font-weight:800;letter-spacing:-.01em;color:var(--text);text-transform:uppercase}
+.nav-sep{color:var(--border-strong);font-size:18px;opacity:.5}
+.nav-ctx{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--blue-bright);letter-spacing:.04em;text-transform:uppercase}
+.nav-right{display:flex;gap:6px;align-items:center}
+.nav-link{
+  font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.01em;
+  color:rgba(255,255,255,.55);text-decoration:none;
+  padding:6px 14px;border:1px solid var(--border);border-radius:3px;
+  transition:all var(--t);
+}
+.nav-link:hover{border-color:var(--blue);color:#fff;background:var(--blue-tint)}
+.nav-tag{
+  font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;
+  background:rgba(27,110,235,.12);border:1px solid rgba(27,110,235,.3);
+  color:var(--blue-bright);padding:4px 12px;border-radius:3px;
+}
 
-/* ── Hero */
-.hero{position:relative;min-height:560px;display:flex;align-items:center;border-bottom:1px solid var(--border);overflow:hidden;background:#000}
+/* ── Hero — NASA cinematic style */
+.hero{position:relative;min-height:580px;display:flex;align-items:center;border-bottom:1px solid var(--border);overflow:hidden;background:var(--bg)}
 .hero-bg{position:absolute;inset:0;z-index:0}
-/* background video — slightly left, moderate zoom */
+/* background video */
 .hero-vid{
-  position:absolute;top:0;left:0;
-  width:100%;height:100%;
-  object-fit:cover;border:none;
-  z-index:1;pointer-events:none;
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  object-fit:cover;border:none;z-index:1;pointer-events:none;
   object-position:100% center;
   transform:scale(0.72);
   transform-origin:100% center;
 }
-/* Canva iframe: scale up, shift right, crop chrome */
 .hero-vid-frame{
-  position:absolute;
-  top:50%;left:50%;
-  width:max(130%,calc(130vh*16/9));
-  height:max(130%,calc(130vw*9/16));
+  position:absolute;top:50%;left:50%;
+  width:max(130%,calc(130vh*16/9));height:max(130%,calc(130vw*9/16));
   transform:translate(-38%,calc(-50% - 3.5%));
   border:none;z-index:1;pointer-events:none;
 }
-.hero-overlay{position:absolute;inset:0;z-index:2;background:rgba(0,0,0,.58);pointer-events:none}
-.hero-content{position:relative;z-index:3;padding:60px 48px;max-width:760px}
-.hero-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.hero-eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--amber)}
-.hero-title{font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:1.05;margin-bottom:20px}
-.hero-title span{color:var(--amber)}
-.hero-sub{font-size:15px;color:var(--text-2);line-height:1.7;max-width:580px;margin-bottom:32px}
-.hero-stats{display:flex;gap:32px;flex-wrap:wrap}
-.hero-stat{display:flex;flex-direction:column;gap:2px}
-.hero-stat-val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--amber)}
-.hero-stat-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
-.hero-globe{position:absolute;right:-60px;top:50%;transform:translateY(-50%);z-index:1;opacity:.18}
+.hero-overlay{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(105deg,rgba(6,9,15,.92) 40%,rgba(6,9,15,.55) 75%,rgba(6,9,15,.20) 100%);
+}
+.hero-content{position:relative;z-index:3;padding:72px 56px;max-width:720px}
+.hero-eyebrow{
+  font-family:var(--sans);font-size:11px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--blue-bright);
+  margin-bottom:20px;display:flex;align-items:center;gap:10px;
+}
+.hero-eyebrow::before{content:'';display:block;width:28px;height:2px;background:var(--blue);border-radius:1px;flex-shrink:0}
+.hero-title{
+  font-family:var(--sans);font-size:clamp(36px,4.5vw,56px);
+  font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:22px;
+}
+.hero-title span{color:var(--blue-bright)}
+.hero-sub{font-size:16px;color:var(--text-2);line-height:1.75;max-width:560px;margin-bottom:40px;font-weight:400}
+.hero-stats{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--border);border-radius:4px;overflow:hidden;max-width:560px}
+.hero-stat{
+  display:flex;flex-direction:column;gap:3px;
+  padding:18px 24px;flex:1;
+  border-right:1px solid var(--border);
+}
+.hero-stat:last-child{border-right:none}
+.hero-stat-val{font-family:var(--mono);font-size:26px;font-weight:800;color:var(--blue-bright);letter-spacing:-.02em;line-height:1}
+.hero-stat-label{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em}
+.hero-globe{display:none}
 
 /* ── Layout */
-.page{max-width:1280px;margin:0 auto;padding:0 24px}
-.section{padding:64px 0;border-bottom:1px solid var(--border)}
-.section-header{margin-bottom:40px}
-.section-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.section-eyebrow::before{content:'';display:block;width:16px;height:1px;background:var(--amber)}
-.section-title{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:1.2;margin-bottom:12px}
-.section-desc{font-size:15px;color:var(--text-2);max-width:680px;line-height:1.75}
+.page{max-width:1280px;margin:0 auto;padding:0 32px}
+.section{padding:72px 0;border-bottom:1px solid var(--border)}
+.section-header{margin-bottom:48px}
+.section-eyebrow{
+  font-family:var(--sans);font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--blue-bright);
+  margin-bottom:12px;display:flex;align-items:center;gap:10px;
+}
+.section-eyebrow::before{content:'';display:block;width:20px;height:2px;background:var(--blue);border-radius:1px;flex-shrink:0}
+.section-title{
+  font-family:var(--sans);font-size:clamp(26px,3vw,38px);
+  font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:14px;
+}
+.section-desc{font-size:16px;color:var(--text-2);max-width:680px;line-height:1.8}
 
 /* ── Architecture flow */
-.arch-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:32px}
-.arch-node{background:var(--surface);padding:20px 18px;position:relative}
-.arch-node::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--amber);font-weight:700;z-index:2}
+.arch-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:32px}
+.arch-node{background:var(--surface);padding:22px 20px;position:relative;transition:background var(--t)}
+.arch-node:hover{background:var(--surface-2)}
+.arch-node::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--blue);font-weight:700;z-index:2}
 .arch-node:last-child::after{display:none}
-.arch-node-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--amber);letter-spacing:.1em;margin-bottom:8px}
-.arch-node-title{font-size:14px;font-weight:700;margin-bottom:6px}
-.arch-node-desc{font-size:13px;color:var(--text-muted);line-height:1.55}
-.arch-node-icon{margin-bottom:10px}
+.arch-node-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--blue-bright);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.arch-node-title{font-size:14px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.arch-node-desc{font-size:13px;color:var(--text-muted);line-height:1.6}
+.arch-node-icon{margin-bottom:12px}
 
 /* ── Pillars grid */
-.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden}
 .pillar-card{background:var(--surface);padding:0;overflow:hidden;transition:background var(--t)}
 .pillar-card:hover{background:var(--surface-2)}
 .pillar-illus{width:100%;height:160px;display:block;position:relative;overflow:hidden}
-.pillar-body{padding:20px 18px}
-.pillar-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--amber);letter-spacing:.1em;margin-bottom:6px}
-.pillar-title{font-size:17px;font-weight:800;margin-bottom:6px;letter-spacing:-.01em}
-.pillar-weight{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);margin-bottom:14px}
-.pillar-indicators{display:flex;flex-direction:column;gap:6px}
-.pillar-indicator{font-size:13px;color:var(--text-2);display:flex;align-items:center;gap:8px}
-.pillar-indicator::before{content:'';width:4px;height:4px;background:var(--amber);border-radius:1px;flex-shrink:0}
+.pillar-body{padding:22px 20px}
+.pillar-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--blue-bright);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.pillar-title{font-size:17px;font-weight:800;margin-bottom:6px;letter-spacing:-.02em}
+.pillar-weight{font-family:var(--mono);font-size:11px;color:var(--text-muted);margin-bottom:14px}
+.pillar-indicators{display:flex;flex-direction:column;gap:7px}
+.pillar-indicator{font-size:13px;color:var(--text-2);display:flex;align-items:center;gap:9px;line-height:1.45}
+.pillar-indicator::before{content:'';width:5px;height:5px;background:var(--blue);border-radius:50%;flex-shrink:0}
 
 /* ── Rating scale */
-.rating-scale{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.rating-row{display:grid;grid-template-columns:80px 120px 1fr 100px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);transition:background var(--t)}
+.rating-scale{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.rating-row{display:grid;grid-template-columns:80px 120px 1fr 100px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);transition:background var(--t)}
 .rating-row:last-child{border-bottom:none}
-.rating-row:hover{background:var(--surface)}
-.rating-grade{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:700}
-.rating-range{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted)}
+.rating-row:hover{background:var(--surface-2)}
+.rating-grade{font-family:var(--mono);font-size:15px;font-weight:700}
+.rating-range{font-family:var(--mono);font-size:12px;color:var(--text-muted)}
 .rating-desc{font-size:13px;color:var(--text-2)}
 .rating-bar-wrap{height:4px;background:var(--surface-4);border-radius:2px;overflow:hidden}
 .rating-bar{height:100%;border-radius:2px}
 
 /* ── Industry grid */
-.industry-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.industry-card{background:var(--surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px;transition:background var(--t);cursor:default}
+.industry-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.industry-card{background:var(--surface);padding:18px 16px;display:flex;flex-direction:column;gap:10px;transition:background var(--t);cursor:default}
 .industry-card:hover{background:var(--surface-2)}
 .industry-icon{width:40px;height:40px}
-.industry-label{font-size:13px;font-weight:600;line-height:1.3}
-.industry-weight-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:.06em}
-.industry-primary-risk{font-size:11px;color:var(--amber)}
+.industry-label{font-size:13px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.industry-weight-tag{font-family:var(--mono);font-size:10px;color:var(--text-muted);letter-spacing:.04em}
+.industry-primary-risk{font-size:11px;color:var(--blue-bright)}
 
 /* ── Data architecture layers */
-.data-layers{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.data-layer{display:grid;grid-template-columns:200px 1fr;background:var(--surface);border-bottom:1px solid var(--border)}
+.data-layers{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.data-layer{display:grid;grid-template-columns:220px 1fr;background:var(--surface);border-bottom:1px solid var(--border);transition:background var(--t)}
+.data-layer:hover{background:var(--surface-2)}
 .data-layer:last-child{border-bottom:none}
-.data-layer-label{padding:16px 18px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
-.data-layer-num{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:var(--amber);letter-spacing:.1em}
-.data-layer-name{font-size:14px;font-weight:700}
-.data-layer-content{padding:16px 18px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
-.data-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:2px;color:var(--text-2)}
-.data-tag.source{border-color:rgba(0,153,204,.3);color:var(--cyan);background:rgba(0,153,204,.04)}
-.data-tag.output{border-color:rgba(255,102,0,.3);color:var(--amber);background:rgba(255,102,0,.04)}
+.data-layer-label{padding:18px 20px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+.data-layer-num{font-family:var(--sans);font-size:10px;font-weight:700;color:var(--blue-bright);letter-spacing:.1em;text-transform:uppercase}
+.data-layer-name{font-size:14px;font-weight:700;letter-spacing:-.01em}
+.data-layer-content{padding:18px 20px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
+.data-tag{font-family:var(--mono);font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:3px;color:var(--text-2)}
+.data-tag.source{border-color:rgba(86,204,242,.3);color:var(--cyan);background:rgba(86,204,242,.04)}
+.data-tag.output{border-color:rgba(27,110,235,.3);color:var(--blue-bright);background:rgba(27,110,235,.05)}
 
 /* ── Verification visual */
-.verif-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.verif-card{background:var(--surface);padding:20px 16px}
-.verif-status{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
-.verif-score{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:700;margin-bottom:6px}
-.verif-desc{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:14px}
+.verif-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.verif-card{background:var(--surface);padding:22px 18px;transition:background var(--t)}
+.verif-card:hover{background:var(--surface-2)}
+.verif-status{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.verif-score{font-family:var(--mono);font-size:26px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+.verif-desc{font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:14px}
 .verif-bar{height:3px;border-radius:2px;margin-bottom:10px}
-.verif-effect{padding:5px 10px;border-radius:2px;font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:11px}
+.verif-effect{padding:5px 12px;border-radius:3px;font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
 
 /* ── Confidence gauge */
-.confidence-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.conf-level{background:var(--surface);padding:18px 14px}
-.conf-label{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
-.conf-range{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:600;margin-bottom:6px}
+.confidence-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.conf-level{background:var(--surface);padding:20px 16px;transition:background var(--t)}
+.conf-level:hover{background:var(--surface-2)}
+.conf-label{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;color:var(--text)}
+.conf-range{font-family:var(--mono);font-size:14px;font-weight:600;margin-bottom:7px}
 .conf-bar{height:4px;border-radius:2px;margin-bottom:10px}
-.conf-meaning{font-size:13px;color:var(--text-muted);line-height:1.6}
+.conf-meaning{font-size:13px;color:var(--text-muted);line-height:1.65}
 
 /* ── Greenwashing visual */
-.gw-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:24px}
-.gw-level{background:var(--surface);padding:20px 16px}
-.gw-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;margin-bottom:10px}
-.gw-flags{font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;margin-bottom:6px}
-.gw-triggers{display:flex;flex-direction:column;gap:6px;margin-top:10px}
-.gw-trigger{font-size:12px;color:var(--text-muted);display:flex;gap:6px;align-items:flex-start}
-.gw-trigger::before{content:'◆';font-size:9px;margin-top:2px;flex-shrink:0}
+.gw-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:24px}
+.gw-level{background:var(--surface);padding:22px 18px;transition:background var(--t)}
+.gw-level:hover{background:var(--surface-2)}
+.gw-badge{display:inline-block;font-family:var(--sans);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:3px;margin-bottom:12px}
+.gw-flags{font-family:var(--mono);font-size:14px;font-weight:700;margin-bottom:7px}
+.gw-triggers{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.gw-trigger{font-size:12px;color:var(--text-muted);display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.gw-trigger::before{content:'◆';font-size:8px;margin-top:3px;flex-shrink:0;color:var(--blue-bright)}
 
 /* ── Scenario table */
-.scenario-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:3px;overflow:hidden}
-.scenario-table th{background:var(--surface);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted)}
-.scenario-table td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:14px}
+.scenario-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.scenario-table th{
+  background:var(--surface);font-family:var(--sans);font-size:11px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;padding:14px 18px;
+  text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);
+}
+.scenario-table td{padding:13px 18px;border-bottom:1px solid var(--border);font-size:14px}
 .scenario-table tr:last-child td{border-bottom:none}
 .scenario-table tr:hover td{background:var(--surface)}
-.scenario-val{font-family:'IBM Plex Mono',monospace;font-weight:600}
+.scenario-val{font-family:var(--mono);font-weight:600}
 
 /* ── Outputs grid */
 .outputs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .output-item{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px 14px;display:flex;flex-direction:column;gap:6px;transition:border-color var(--t)}
-.output-item:hover{border-color:var(--amber)}
-.output-num{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber);letter-spacing:.1em}
+.output-item:hover{border-color:var(--blue-bright)}
+.output-num{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--blue-bright);letter-spacing:.1em}
 .output-name{font-size:14px;font-weight:700;line-height:1.3}
 .output-desc{font-size:12px;color:var(--text-muted);line-height:1.55}
 
@@ -229,7 +284,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
   <div class="arch-flow">
     <div class="arch-node">
       <div class="arch-node-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="6" width="24" height="16" rx="2" stroke="#FF6600" stroke-width="1.5"/><line x1="7" y1="11" x2="21" y2="11" stroke="#FF6600" stroke-width="1.2"/><line x1="7" y1="15" x2="17" y2="15" stroke="#555" stroke-width="1.2"/><line x1="7" y1="19" x2="14" y2="19" stroke="#555" stroke-width="1.2"/></svg>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="6" width="24" height="16" rx="2" stroke="#1B6EEB" stroke-width="1.5"/><line x1="7" y1="11" x2="21" y2="11" stroke="#1B6EEB" stroke-width="1.2"/><line x1="7" y1="15" x2="17" y2="15" stroke="#555" stroke-width="1.2"/><line x1="7" y1="19" x2="14" y2="19" stroke="#555" stroke-width="1.2"/></svg>
       </div>
       <div class="arch-node-num mono">01</div>
       <div class="arch-node-title">Assessment Input</div>
@@ -237,7 +292,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     </div>
     <div class="arch-node">
       <div class="arch-node-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><polygon points="14,3 25,10 25,18 14,25 3,18 3,10" stroke="#FF6600" stroke-width="1.5" fill="none"/><circle cx="14" cy="14" r="4" stroke="#FF6600" stroke-width="1.2"/><line x1="14" y1="3" x2="14" y2="10" stroke="#333" stroke-width="1"/><line x1="14" y1="18" x2="14" y2="25" stroke="#333" stroke-width="1"/></svg>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><polygon points="14,3 25,10 25,18 14,25 3,18 3,10" stroke="#1B6EEB" stroke-width="1.5" fill="none"/><circle cx="14" cy="14" r="4" stroke="#1B6EEB" stroke-width="1.2"/><line x1="14" y1="3" x2="14" y2="10" stroke="#333" stroke-width="1"/><line x1="14" y1="18" x2="14" y2="25" stroke="#333" stroke-width="1"/></svg>
       </div>
       <div class="arch-node-num mono">02</div>
       <div class="arch-node-title">6-Pillar Scoring</div>
@@ -245,7 +300,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     </div>
     <div class="arch-node">
       <div class="arch-node-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="3" width="10" height="10" rx="1" stroke="#FF6600" stroke-width="1.5"/><rect x="15" y="3" width="10" height="10" rx="1" stroke="#0099CC" stroke-width="1.5"/><rect x="3" y="15" width="10" height="10" rx="1" stroke="#0099CC" stroke-width="1.5"/><rect x="15" y="15" width="10" height="10" rx="1" stroke="#FF6600" stroke-width="1.5"/></svg>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="3" width="10" height="10" rx="1" stroke="#1B6EEB" stroke-width="1.5"/><rect x="15" y="3" width="10" height="10" rx="1" stroke="#0099CC" stroke-width="1.5"/><rect x="3" y="15" width="10" height="10" rx="1" stroke="#0099CC" stroke-width="1.5"/><rect x="15" y="15" width="10" height="10" rx="1" stroke="#1B6EEB" stroke-width="1.5"/></svg>
       </div>
       <div class="arch-node-num mono">03</div>
       <div class="arch-node-title">Industry Weights</div>
@@ -253,7 +308,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     </div>
     <div class="arch-node">
       <div class="arch-node-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="#FF6600" stroke-width="1.5"/><path d="M8 14 L12 18 L20 10" stroke="#00CC44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="#1B6EEB" stroke-width="1.5"/><path d="M8 14 L12 18 L20 10" stroke="#00CC44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="arch-node-num mono">04</div>
       <div class="arch-node-title">Verification Engine</div>
@@ -265,7 +320,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:3px;overflow:hidden">
     <div class="arch-node" style="background:var(--surface-2)">
       <div class="arch-node-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 22 L10 12 L16 17 L22 6" stroke="#FF6600" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="22" r="2" fill="#FF6600"/><circle cx="22" cy="6" r="2" fill="#0099CC"/></svg>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 22 L10 12 L16 17 L22 6" stroke="#1B6EEB" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="22" r="2" fill="#1B6EEB"/><circle cx="22" cy="6" r="2" fill="#0099CC"/></svg>
       </div>
       <div class="arch-node-num mono">05</div>
       <div class="arch-node-title">Confidence + Greenwashing</div>
@@ -273,7 +328,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     </div>
     <div class="arch-node" style="background:var(--surface-2)">
       <div class="arch-node-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="16" width="6" height="9" rx="1" fill="#333"/><rect x="11" y="10" width="6" height="15" rx="1" fill="#555"/><rect x="19" y="4" width="6" height="21" rx="1" fill="#FF6600" opacity="0.8"/><line x1="3" y1="26" x2="25" y2="26" stroke="#333" stroke-width="1.2"/></svg>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="16" width="6" height="9" rx="1" fill="#333"/><rect x="11" y="10" width="6" height="15" rx="1" fill="#555"/><rect x="19" y="4" width="6" height="21" rx="1" fill="#1B6EEB" opacity="0.8"/><line x1="3" y1="26" x2="25" y2="26" stroke="#333" stroke-width="1.2"/></svg>
       </div>
       <div class="arch-node-num mono">06</div>
       <div class="arch-node-title">Benchmarking</div>
@@ -281,7 +336,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     </div>
     <div class="arch-node" style="background:var(--surface-2)">
       <div class="arch-node-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="#FF6600" stroke-width="1.5"/><text x="14" y="19" text-anchor="middle" fill="#FF6600" font-size="12" font-weight="700" font-family="monospace">A</text></svg>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="#1B6EEB" stroke-width="1.5"/><text x="14" y="19" text-anchor="middle" fill="#1B6EEB" font-size="12" font-weight="700" font-family="monospace">A</text></svg>
       </div>
       <div class="arch-node-num mono">07</div>
       <div class="arch-node-title">CIS Rating Output</div>
@@ -303,7 +358,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     <!-- PILLAR 1: GOVERNANCE — SVG: Board room / governance structure -->
     <div class="pillar-card">
       <svg class="pillar-illus" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:#0A0A0A">
-        <defs><radialGradient id="pg1" cx="50%" cy="0%" r="80%"><stop offset="0%" stop-color="#FF6600" stop-opacity="0.12"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+        <defs><radialGradient id="pg1" cx="50%" cy="0%" r="80%"><stop offset="0%" stop-color="#1B6EEB" stop-opacity="0.12"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
         <rect width="380" height="160" fill="url(#pg1)"/>
         <!-- Board table -->
         <rect x="80" y="60" width="220" height="60" rx="3" fill="none" stroke="#2C2C2C" stroke-width="1.5"/>
@@ -316,10 +371,10 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
           <rect x="244" y="44" width="16" height="14" rx="2"/>
         </g>
         <!-- Amber highlight: CCO seat -->
-        <rect x="172" y="44" width="16" height="14" rx="2" fill="#FF6600" opacity="0.6"/>
-        <rect x="172" y="44" width="16" height="14" rx="2" fill="none" stroke="#FF6600" stroke-width="1"/>
+        <rect x="172" y="44" width="16" height="14" rx="2" fill="#1B6EEB" opacity="0.6"/>
+        <rect x="172" y="44" width="16" height="14" rx="2" fill="none" stroke="#1B6EEB" stroke-width="1"/>
         <!-- Climate agenda items -->
-        <rect x="92" y="82" width="60" height="6" rx="1" fill="#FF6600" opacity="0.3"/>
+        <rect x="92" y="82" width="60" height="6" rx="1" fill="#1B6EEB" opacity="0.3"/>
         <rect x="92" y="92" width="46" height="5" rx="1" fill="#333"/>
         <rect x="92" y="101" width="38" height="5" rx="1" fill="#333"/>
         <!-- Check marks -->
@@ -328,12 +383,12 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
           <polyline points="162,94 165,97 170,92"/>
         </g>
         <!-- Network lines from board -->
-        <g stroke="#FF6600" stroke-width="0.6" opacity="0.4" stroke-dasharray="3,2">
+        <g stroke="#1B6EEB" stroke-width="0.6" opacity="0.4" stroke-dasharray="3,2">
           <line x1="108" y1="58" x2="80" y2="100"/><line x1="180" y1="58" x2="160" y2="120"/>
           <line x1="252" y1="58" x2="300" y2="100"/>
         </g>
         <!-- Label -->
-        <text x="20" y="148" fill="#FF6600" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">GOVERNANCE</text>
+        <text x="20" y="148" fill="#1B6EEB" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">GOVERNANCE</text>
       </svg>
       <div class="pillar-body">
         <div class="pillar-num mono">PILLAR 01</div>
@@ -413,7 +468,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     <!-- PILLAR 3: TRANSITION RISK — SVG: Carbon emissions + regulation -->
     <div class="pillar-card">
       <svg class="pillar-illus" viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:#080600">
-        <defs><radialGradient id="pg3" cx="50%" cy="100%" r="80%"><stop offset="0%" stop-color="#FF6600" stop-opacity="0.18"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+        <defs><radialGradient id="pg3" cx="50%" cy="100%" r="80%"><stop offset="0%" stop-color="#1B6EEB" stop-opacity="0.18"/><stop offset="100%" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
         <rect width="380" height="160" fill="url(#pg3)"/>
         <!-- Industrial stacks -->
         <g fill="#1a1208" stroke="#2C2C2C" stroke-width="0.8">
@@ -433,16 +488,16 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
           <circle cx="291" cy="34" r="12"/><circle cx="303" cy="28" r="10"/><circle cx="312" cy="36" r="8"/>
         </g>
         <!-- CO2 molecule labels -->
-        <g font-family="'IBM Plex Mono',monospace" font-size="8" fill="#FF6600" opacity="0.6">
+        <g font-family="'IBM Plex Mono',monospace" font-size="8" fill="#1B6EEB" opacity="0.6">
           <text x="55" y="38">CO₂</text><text x="100" y="22">CO₂</text>
           <text x="185" y="10">CO₂</text><text x="288" y="20">CO₂</text>
         </g>
         <!-- Carbon price bar -->
         <rect x="20" y="115" width="340" height="20" rx="2" fill="#111" stroke="#2C2C2C" stroke-width="0.8"/>
-        <rect x="20" y="115" width="210" height="20" rx="2" fill="#FF6600" opacity="0.6"/>
-        <text x="28" y="128" fill="#FF6600" font-family="'IBM Plex Mono',monospace" font-size="8" font-weight="700">CARBON PRICE EXPOSURE</text>
-        <text x="330" y="128" fill="#FF6600" font-family="'IBM Plex Mono',monospace" font-size="8" font-weight="700">HIGH</text>
-        <text x="20" y="148" fill="#FF6600" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">TRANSITION RISK</text>
+        <rect x="20" y="115" width="210" height="20" rx="2" fill="#1B6EEB" opacity="0.6"/>
+        <text x="28" y="128" fill="#1B6EEB" font-family="'IBM Plex Mono',monospace" font-size="8" font-weight="700">CARBON PRICE EXPOSURE</text>
+        <text x="330" y="128" fill="#1B6EEB" font-family="'IBM Plex Mono',monospace" font-size="8" font-weight="700">HIGH</text>
+        <text x="20" y="148" fill="#1B6EEB" font-family="'IBM Plex Mono',monospace" font-size="9" font-weight="700" letter-spacing="2">TRANSITION RISK</text>
       </svg>
       <div class="pillar-body">
         <div class="pillar-num mono">PILLAR 03</div>
@@ -470,16 +525,16 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
         <text x="190" y="35" text-anchor="middle" fill="#0099CC" font-family="'IBM Plex Mono',monospace" font-size="8" font-weight="700">CLIMATE DISCLOSURE</text>
         <!-- Framework badges -->
         <g font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="700">
-          <rect x="130" y="50" width="36" height="14" rx="2" fill="rgba(255,102,0,0.1)" stroke="#FF6600" stroke-width="0.8"/>
-          <text x="148" y="61" text-anchor="middle" fill="#FF6600">TCFD</text>
+          <rect x="130" y="50" width="36" height="14" rx="2" fill="rgba(27,110,235,0.1)" stroke="#1B6EEB" stroke-width="0.8"/>
+          <text x="148" y="61" text-anchor="middle" fill="#1B6EEB">TCFD</text>
           <rect x="172" y="50" width="32" height="14" rx="2" fill="rgba(0,153,204,0.1)" stroke="#0099CC" stroke-width="0.8"/>
           <text x="188" y="61" text-anchor="middle" fill="#0099CC">ISSB</text>
           <rect x="210" y="50" width="32" height="14" rx="2" fill="rgba(0,204,68,0.1)" stroke="#00CC44" stroke-width="0.8"/>
           <text x="226" y="61" text-anchor="middle" fill="#00CC44">GRI</text>
           <rect x="130" y="70" width="32" height="14" rx="2" fill="rgba(0,153,204,0.1)" stroke="#0099CC" stroke-width="0.8"/>
           <text x="146" y="81" text-anchor="middle" fill="#0099CC">BRSR</text>
-          <rect x="168" y="70" width="34" height="14" rx="2" fill="rgba(255,102,0,0.1)" stroke="#FF6600" stroke-width="0.8"/>
-          <text x="185" y="81" text-anchor="middle" fill="#FF6600">SASB</text>
+          <rect x="168" y="70" width="34" height="14" rx="2" fill="rgba(27,110,235,0.1)" stroke="#1B6EEB" stroke-width="0.8"/>
+          <text x="185" y="81" text-anchor="middle" fill="#1B6EEB">SASB</text>
           <rect x="208" y="70" width="34" height="14" rx="2" fill="rgba(0,204,68,0.1)" stroke="#00CC44" stroke-width="0.8"/>
           <text x="225" y="81" text-anchor="middle" fill="#00CC44">CDP</text>
         </g>
@@ -630,7 +685,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     <div class="rating-row"><span class="rating-grade mono" style="color:#FFB800">BBB</span><span class="rating-range mono">55–59</span><span class="rating-desc">Baseline Climate Risk — Material gaps in at least two pillars. Monitor for deterioration.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:57%;background:#FFB800"></div></div></div>
     <div class="rating-row"><span class="rating-grade mono" style="color:#FF9900">BBB-</span><span class="rating-range mono">50–54</span><span class="rating-desc">Moderate Climate Exposure — Below-median performance. Significant physical or transition risk.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:52%;background:#FF9900"></div></div></div>
     <div class="rating-row"><span class="rating-grade mono" style="color:#FF7700">BB</span><span class="rating-range mono">45–49</span><span class="rating-desc">Elevated Climate Risk — Structural deficiencies. Inadequate disclosure and adaptation planning.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:47%;background:#FF7700"></div></div></div>
-    <div class="rating-row"><span class="rating-grade mono" style="color:#FF6600">B</span><span class="rating-range mono">40–44</span><span class="rating-desc">High Climate Risk — Multi-pillar failures. Investor-grade caution advised.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:42%;background:#FF6600"></div></div></div>
+    <div class="rating-row"><span class="rating-grade mono" style="color:#1B6EEB">B</span><span class="rating-range mono">40–44</span><span class="rating-desc">High Climate Risk — Multi-pillar failures. Investor-grade caution advised.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:42%;background:#1B6EEB"></div></div></div>
     <div class="rating-row"><span class="rating-grade mono" style="color:#FF3333">CCC</span><span class="rating-range mono">30–39</span><span class="rating-desc">Severe Climate Vulnerability — Critical gaps. Near-term financial risk from climate elevated.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:34%;background:#FF3333"></div></div></div>
     <div class="rating-row"><span class="rating-grade mono" style="color:#CC2222">CC</span><span class="rating-range mono">20–29</span><span class="rating-desc">Critical Climate Exposure — Severe structural vulnerability. No credible pathway disclosed.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:24%;background:#CC2222"></div></div></div>
     <div class="rating-row"><span class="rating-grade mono" style="color:#AA1111">C</span><span class="rating-range mono">10–19</span><span class="rating-desc">Near-Default Climate Risk — Existential climate exposure without mitigation.</span><div class="rating-bar-wrap"><div class="rating-bar" style="width:15%;background:#AA1111"></div></div></div>
@@ -660,10 +715,10 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
       <div class="verif-effect" style="background:rgba(255,184,0,.06);color:#FFB800;border:1px solid rgba(255,184,0,.3)">NEUTRAL</div>
     </div>
     <div class="verif-card">
-      <div class="verif-status mono" style="color:#FF6600">UNVERIFIED</div>
-      <div class="verif-bar" style="width:20%;background:#FF6600;opacity:0.8"></div>
+      <div class="verif-status mono" style="color:#1B6EEB">UNVERIFIED</div>
+      <div class="verif-bar" style="width:20%;background:#1B6EEB;opacity:0.8"></div>
       <div class="verif-desc">Self-declared with no supporting evidence document. Trust weight 0.0. Triggers risk flag for high-materiality claims.</div>
-      <div class="verif-effect" style="background:rgba(255,102,0,.1);color:#FF6600;border:1px solid rgba(255,102,0,.3)">-4 TO -8 PTS PENALTY</div>
+      <div class="verif-effect" style="background:rgba(27,110,235,.1);color:#1B6EEB;border:1px solid rgba(27,110,235,.3)">-4 TO -8 PTS PENALTY</div>
     </div>
     <div class="verif-card">
       <div class="verif-status mono" style="color:#FF3333">CONTRADICTORY</div>
@@ -702,9 +757,9 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
       <div class="conf-meaning">Partial data available. Some material claims unverified. Score directionally reliable but use with caution.</div>
     </div>
     <div class="conf-level">
-      <div class="conf-label mono" style="color:#FF6600">LOW</div>
-      <div class="conf-range mono" style="color:#FF6600">50–64</div>
-      <div class="conf-bar" style="width:54%;background:#FF6600"></div>
+      <div class="conf-label mono" style="color:#1B6EEB">LOW</div>
+      <div class="conf-range mono" style="color:#1B6EEB">50–64</div>
+      <div class="conf-bar" style="width:54%;background:#1B6EEB"></div>
       <div class="conf-meaning">Material data gaps. Multiple unverified claims. Rating requires supplemental evidence before institutional use.</div>
     </div>
     <div class="conf-level">
@@ -728,7 +783,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
     <div class="gw-level"><div class="gw-badge" style="background:rgba(0,204,68,.1);color:#00CC44;border:1px solid rgba(0,204,68,.3)">LOW RISK</div><div class="gw-flags mono" style="color:#00CC44">0–1 FLAGS</div><div class="conf-meaning">Commitments broadly supported by evidence. Minor disclosure gaps only.</div></div>
     <div class="gw-level"><div class="gw-badge" style="background:rgba(255,184,0,.1);color:#FFB800;border:1px solid rgba(255,184,0,.3)">MODERATE</div><div class="gw-flags mono" style="color:#FFB800">2 FLAGS</div><div class="conf-meaning">Isolated target-evidence gap. Requires enhanced disclosure or clarification.</div></div>
     <div class="gw-level"><div class="gw-badge" style="background:rgba(255,119,0,.1);color:#FF7700;border:1px solid rgba(255,119,0,.3)">ELEVATED</div><div class="gw-flags mono" style="color:#FF7700">3 FLAGS</div><div class="conf-meaning">Structural inconsistencies between narrative claims and quantified data.</div></div>
-    <div class="gw-level"><div class="gw-badge" style="background:rgba(255,102,0,.1);color:#FF6600;border:1px solid rgba(255,102,0,.3)">HIGH RISK</div><div class="gw-flags mono" style="color:#FF6600">4 FLAGS</div><div class="conf-meaning">Multiple material inconsistencies. High likelihood of misleading stakeholder communications.</div></div>
+    <div class="gw-level"><div class="gw-badge" style="background:rgba(27,110,235,.1);color:#1B6EEB;border:1px solid rgba(27,110,235,.3)">HIGH RISK</div><div class="gw-flags mono" style="color:#1B6EEB">4 FLAGS</div><div class="conf-meaning">Multiple material inconsistencies. High likelihood of misleading stakeholder communications.</div></div>
     <div class="gw-level"><div class="gw-badge" style="background:rgba(255,51,51,.1);color:#FF3333;border:1px solid rgba(255,51,51,.3)">CRITICAL</div><div class="gw-flags mono" style="color:#FF3333">5+ FLAGS</div><div class="conf-meaning">Systemic greenwashing risk. Claims materially unsupported. Regulatory investigation risk elevated.</div></div>
   </div>
 
@@ -736,14 +791,14 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:20px 20px">
     <div class="section-eyebrow mono" style="margin-bottom:16px">AUTOMATED DETECTION RULES</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R01</span>Net-zero target declared with &gt;60% fossil dependency and no SBTi alignment</div>
-      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R02</span>Climate targets declared with BRSR completeness &lt;50%</div>
-      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R03</span>Emissions &gt;10 MtCO2e with no third-party assurance</div>
-      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R04</span>Revenue-at-risk &gt;15% absent from financial statements</div>
-      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R05</span>Net-zero target with &lt;1% CAPEX allocated to climate investments</div>
-      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R06</span>Banking / insurance / oil &amp; gas with no ISSB S2 scenario analysis</div>
-      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R07</span>Material emitter (&gt;5 MtCO2e) with no CDP response</div>
-      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#FF6600;flex-shrink:0;margin-right:8px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700">R08</span>No TCFD and no ISSB S2 alignment — climate risk undisclosed under any international standard</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#1B6EEB;flex-shrink:0;margin-right:8px;font-family:var(--mono);font-size:9px;font-weight:700">R01</span>Net-zero target declared with &gt;60% fossil dependency and no SBTi alignment</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#1B6EEB;flex-shrink:0;margin-right:8px;font-family:var(--mono);font-size:9px;font-weight:700">R02</span>Climate targets declared with BRSR completeness &lt;50%</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#1B6EEB;flex-shrink:0;margin-right:8px;font-family:var(--mono);font-size:9px;font-weight:700">R03</span>Emissions &gt;10 MtCO2e with no third-party assurance</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#1B6EEB;flex-shrink:0;margin-right:8px;font-family:var(--mono);font-size:9px;font-weight:700">R04</span>Revenue-at-risk &gt;15% absent from financial statements</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#1B6EEB;flex-shrink:0;margin-right:8px;font-family:var(--mono);font-size:9px;font-weight:700">R05</span>Net-zero target with &lt;1% CAPEX allocated to climate investments</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#1B6EEB;flex-shrink:0;margin-right:8px;font-family:var(--mono);font-size:9px;font-weight:700">R06</span>Banking / insurance / oil &amp; gas with no ISSB S2 scenario analysis</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#1B6EEB;flex-shrink:0;margin-right:8px;font-family:var(--mono);font-size:9px;font-weight:700">R07</span>Material emitter (&gt;5 MtCO2e) with no CDP response</div>
+      <div class="gw-trigger" style="font-size:11px;color:var(--text-2)"><span style="color:#1B6EEB;flex-shrink:0;margin-right:8px;font-family:var(--mono);font-size:9px;font-weight:700">R08</span>No TCFD and no ISSB S2 alignment — climate risk undisclosed under any international standard</div>
     </div>
   </div>
 </section>
@@ -874,7 +929,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,s
 <!-- ── Footer ─────────────────────────────────────────────────────────────────-->
 <footer style="padding:32px 0;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
   <div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber);letter-spacing:.08em;margin-bottom:4px">CLIMACTIX GLOBAL — CIS METHODOLOGY v1.0</div>
+    <div style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--blue-bright);letter-spacing:.08em;margin-bottom:4px">CLIMACTIX GLOBAL — CIS METHODOLOGY v1.0</div>
     <div style="font-size:10px;color:var(--text-muted)">Proprietary IP of Climactix Global. All scoring logic, weights, and methodology are confidential.</div>
   </div>
   <div style="display:flex;gap:8px">
