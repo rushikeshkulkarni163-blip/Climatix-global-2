@@ -854,7 +854,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   <video
     id="heroBgVideo"
     class="hero-bg-video"
-    autoplay muted loop playsinline
+    autoplay muted loop playsinline webkit-playsinline
+    preload="auto"
     aria-hidden="true"
   >
     <source src="hero-reel.mp4" type="video/mp4">
@@ -1854,12 +1855,40 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 </div>
 
 <script>
-/* ── Fade canvas out when video starts ── */
-document.addEventListener('DOMContentLoaded',function(){
-  var v=document.getElementById('heroBgVideo');
-  var c=document.getElementById('heroBgCanvas');
-  if(v&&c){v.addEventListener('playing',function(){c.style.opacity='0';});}
-});
+/* ── Background video: force-play + fade canvas on start ── */
+(function(){
+  function initVideo(){
+    var v = document.getElementById('heroBgVideo');
+    var c = document.getElementById('heroBgCanvas');
+    if(!v) return;
+
+    v.muted = true;
+
+    function tryPlay(){
+      var p = v.play();
+      if(p && p.catch) p.catch(function(){});
+    }
+
+    /* fade canvas out once video is running */
+    function onActive(){
+      if(c){ c.style.transition='opacity 1.6s ease'; c.style.opacity='0'; }
+    }
+
+    v.addEventListener('playing',   onActive);
+    v.addEventListener('timeupdate', function(){ if(v.currentTime > 0.1) onActive(); }, {once:true});
+
+    /* try immediately, then again after short delay (Safari needs this) */
+    tryPlay();
+    setTimeout(tryPlay, 300);
+    setTimeout(tryPlay, 800);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initVideo);
+  } else {
+    initVideo();
+  }
+})();
 
 /* ── Theme toggle ── */
 function toggleTheme(){
