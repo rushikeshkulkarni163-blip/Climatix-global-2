@@ -116,41 +116,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   transition:opacity 1.4s ease;
 }
 .hero-bg-video.playing{opacity:.36}
-/* Play-film button — permanently visible, bottom-right of hero */
-.film-play-btn{
-  position:absolute;bottom:44px;right:36px;z-index:5;
-  display:flex;align-items:center;gap:10px;
-  font-family:var(--mono);font-size:9px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(255,255,255,.6);
-  background:rgba(12,16,24,.75);
-  border:1px solid rgba(91,163,245,.25);
-  padding:10px 18px;border-radius:2px;cursor:pointer;
-  transition:all var(--t);
-  backdrop-filter:none;
-}
-.film-play-btn:hover{
-  border-color:var(--blue-bright);color:#fff;
-  background:rgba(27,110,235,.18);
-}
-.film-play-btn.hide{display:none}
-.film-play-btn svg{width:14px;height:14px;flex-shrink:0}
-/* play ring animation */
-.film-play-ring{
-  width:32px;height:32px;border-radius:50%;
-  border:1.5px solid rgba(91,163,245,.4);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;position:relative;
-}
-.film-play-ring::after{
-  content:'';position:absolute;inset:0;border-radius:50%;
-  border:1.5px solid rgba(91,163,245,.15);
-  animation:ringPulse 2.4s ease infinite;
-}
-@keyframes ringPulse{
-  0%{transform:scale(1);opacity:.6}
-  100%{transform:scale(1.6);opacity:0}
-}
 .hero-grid-overlay{
   position:absolute;inset:0;z-index:1;pointer-events:none;
   background-image:
@@ -875,17 +840,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
   <div class="hero-video-wrap">
     <div class="hero-video-fallback"></div>
     <canvas id="heroBgCanvas" aria-hidden="true"></canvas>
-    <!-- populated by JS — either local MP4 <video> or Canva <iframe> -->
-    <div id="heroBgMedia"></div>
+    <video
+      id="heroBgVideo"
+      class="hero-bg-video"
+      autoplay muted loop playsinline
+      aria-hidden="true"
+    >
+      <source src="hero-reel.mp4" type="video/mp4">
+    </video>
   </div>
-
-  <!-- Always-visible play button — one click starts the film -->
-  <button class="film-play-btn" id="filmPlayBtn" onclick="startBgFilm()" aria-label="Play background film">
-    <div class="film-play-ring">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-    </div>
-    <span>Play Background Film</span>
-  </button>
   <div class="hero-grid-overlay"></div>
   <div class="hero-overlay"></div>
 
@@ -1888,58 +1851,27 @@ function toggleTheme(){
 }
 
 /* ══════════════════════════════════════════
-   BACKGROUND FILM
-   • On page load: try hero-reel.mp4 (silent autoplay, always works locally)
-   • If MP4 missing: show pulsing "Play Background Film" button
-   • On click: load Canva iframe (user gesture = autoplay unlocked)
+   BACKGROUND VIDEO — fade in once playing
 ══════════════════════════════════════════ */
 (function(){
-  var mediaWrap = document.getElementById('heroBgMedia');
-  var playBtn   = document.getElementById('filmPlayBtn');
-  var bgCanvas  = document.getElementById('heroBgCanvas');
-  var CANVA     = 'https://www.canva.com/design/DAHLWrJxDEA/RVV8oOS8_Roj6jQIT9TsfQ/watch?embed&autoplay=1';
+  var vid    = document.getElementById('heroBgVideo');
+  var canvas = document.getElementById('heroBgCanvas');
+  if(!vid) return;
 
-  function fadeInMedia(el){
-    el.classList.add('playing');
-    if(bgCanvas) bgCanvas.style.transition = 'opacity 1.4s ease';
-    setTimeout(function(){ if(bgCanvas) bgCanvas.style.opacity = '0'; }, 600);
-    if(playBtn) playBtn.classList.add('hide');
+  function onPlaying(){
+    vid.classList.add('playing');
+    if(canvas){
+      canvas.style.transition = 'opacity 1.6s ease';
+      setTimeout(function(){ canvas.style.opacity = '0'; }, 400);
+    }
   }
 
-  /* ── 1. Try local MP4 (works without any user gesture when muted) ── */
-  var vid = document.createElement('video');
-  vid.className   = 'hero-bg-video';
-  vid.muted       = true;
-  vid.loop        = true;
-  vid.playsInline = true;
-  vid.setAttribute('playsinline','');
-  vid.src = 'hero-reel.mp4';
-  mediaWrap.appendChild(vid);
+  vid.addEventListener('playing', onPlaying);
 
-  vid.addEventListener('playing', function(){ fadeInMedia(vid); });
-  vid.addEventListener('error',   function(){ vid.remove(); /* MP4 not found → keep play button */ });
-
-  var playPromise = vid.play();
-  if(playPromise && playPromise.catch) playPromise.catch(function(){/* blocked — keep play button */});
-
-  /* ── 2. On button click: user gesture unlocks Canva iframe autoplay ── */
-  window.startBgFilm = function(){
-    /* If MP4 is already playing, just hide the button */
-    if(!vid.paused && !vid.error){ fadeInMedia(vid); return; }
-
-    /* Otherwise load Canva iframe — this is user-initiated so autoplay works */
-    vid.remove();
-    var fr = document.createElement('iframe');
-    fr.className   = 'hero-bg-video';
-    fr.src         = CANVA;
-    fr.allow       = 'autoplay; fullscreen';
-    fr.setAttribute('allowfullscreen','');
-    fr.setAttribute('title','Climactix Global background film');
-    mediaWrap.appendChild(fr);
-
-    /* Fade in after short load delay */
-    setTimeout(function(){ fadeInMedia(fr); }, 800);
-  };
+  /* Some browsers fire canplay but not playing — cover both */
+  vid.addEventListener('canplaythrough', function(){
+    vid.play().then(onPlaying).catch(function(){});
+  });
 })();
 
 /* ── Film modal ── */
