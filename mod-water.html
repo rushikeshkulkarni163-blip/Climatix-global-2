@@ -1,0 +1,820 @@
+<!-- MODULE: WATER & PUBLIC HEALTH RISK SIMULATION — mod-water -->
+<style>
+/* ── Module-scoped styles ─────────────────────────────────────────── */
+#mod-water{
+  display:flex;flex-direction:column;gap:20px;
+  font-family:var(--font-body);
+  color:var(--text);
+}
+
+/* Section header */
+#mod-water .sec-hdr{
+  font-family:var(--font-head);
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--glow);
+  display:flex;align-items:center;gap:10px;padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+}
+#mod-water .sec-hdr::before{
+  content:'//';font-family:var(--font-data);font-size:10px;
+  color:var(--text-3);letter-spacing:0;
+}
+#mod-water .sec-hdr .sec-hdr-tag{
+  margin-left:auto;font-family:var(--font-data);font-size:9px;
+  color:var(--text-3);letter-spacing:.06em;
+}
+
+/* KPI grid-4 */
+#mod-water .kpi-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+}
+#mod-water .kpi{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 16px;position:relative;overflow:hidden;
+}
+#mod-water .kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--river-light);opacity:.5;
+}
+#mod-water .kpi.kpi-amber::before{background:var(--accent);}
+#mod-water .kpi.kpi-red::before{background:var(--red);}
+#mod-water .kpi.kpi-yellow::before{background:var(--yellow);}
+#mod-water .kpi.kpi-green::before{background:var(--green);}
+#mod-water .kpi-label{
+  font-family:var(--font-data);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:8px;
+}
+#mod-water .kpi-val{
+  font-family:var(--font-data);font-size:22px;font-weight:700;line-height:1;
+  color:var(--text);margin-bottom:4px;
+}
+#mod-water .kpi-val.blue{color:var(--river-light);}
+#mod-water .kpi-val.amber{color:var(--accent);}
+#mod-water .kpi-val.red{color:var(--red);}
+#mod-water .kpi-val.yellow{color:var(--yellow);}
+#mod-water .kpi-val.green{color:var(--green);}
+#mod-water .kpi-sub{
+  font-family:var(--font-sub);font-size:10px;color:var(--text-2);
+}
+
+/* Main two-column layout */
+#mod-water .main-row{
+  display:flex;gap:16px;align-items:flex-start;
+}
+#mod-water .col-left{flex:1;display:flex;flex-direction:column;gap:14px;}
+#mod-water .col-right{width:284px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;}
+
+/* HUD panels */
+#mod-water .hud{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  position:relative;overflow:hidden;
+}
+#mod-water .hud::before{
+  content:'';position:absolute;top:0;left:0;width:18px;height:18px;
+  border-top:2px solid var(--glow);border-left:2px solid var(--glow);
+  border-radius:var(--r) 0 0 0;pointer-events:none;
+}
+#mod-water .hud::after{
+  content:'';position:absolute;bottom:0;right:0;width:18px;height:18px;
+  border-bottom:2px solid var(--accent);border-right:2px solid var(--accent);
+  border-radius:0 0 var(--r) var(--r);pointer-events:none;
+}
+#mod-water .hud-head{
+  padding:10px 14px;border-bottom:1px solid var(--border-2);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surface-2);
+}
+#mod-water .hud-title{
+  font-family:var(--font-head);font-size:10px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--text-2);
+}
+#mod-water .hud-body{padding:14px;}
+
+/* Canvas wrapper */
+#mod-water .canvas-wrap{
+  position:relative;width:100%;
+}
+#mod-water .canvas-wrap canvas{
+  width:100%;display:block;border-radius:2px;
+}
+#mod-water .canvas-label{
+  font-family:var(--font-data);font-size:9px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-3);margin-bottom:8px;
+}
+
+/* Legend */
+#mod-water .legend{
+  display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;
+}
+#mod-water .leg-item{
+  display:flex;align-items:center;gap:5px;
+  font-family:var(--font-data);font-size:9px;color:var(--text-2);
+}
+#mod-water .leg-line{width:20px;height:2px;}
+#mod-water .leg-dash{
+  width:20px;height:0;border-top:2px dashed;
+}
+
+/* Monitoring station table */
+#mod-water .tbl{
+  width:100%;border-collapse:collapse;font-size:11px;
+}
+#mod-water .tbl th{
+  font-family:var(--font-data);font-size:9px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-3);
+  padding:6px 8px;border-bottom:1px solid var(--border);
+  text-align:left;font-weight:400;
+}
+#mod-water .tbl td{
+  padding:7px 8px;border-bottom:1px solid var(--border-2);
+  font-family:var(--font-data);font-size:10px;color:var(--text);
+  vertical-align:middle;
+}
+#mod-water .tbl tr:last-child td{border-bottom:none;}
+#mod-water .tbl tr:hover td{background:var(--glow-dim);}
+#mod-water .tbl .station-name{
+  font-family:var(--font-sub);font-size:11px;font-weight:500;color:var(--text);
+}
+#mod-water .tbl .val-num{
+  font-family:var(--font-data);font-size:11px;
+}
+#mod-water .tbl .val-good{color:var(--green);}
+#mod-water .tbl .val-warn{color:var(--yellow);}
+#mod-water .tbl .val-crit{color:var(--red);}
+
+/* Badges */
+#mod-water .badge{
+  display:inline-block;padding:2px 7px;border-radius:2px;
+  font-family:var(--font-data);font-size:8px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+#mod-water .bg-g{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,255,136,0.25);}
+#mod-water .bg-y{background:var(--yellow-dim);color:var(--yellow);border:1px solid rgba(255,179,0,0.25);}
+#mod-water .bg-r{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,51,51,0.25);}
+#mod-water .bg-o{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(255,102,0,0.25);}
+#mod-water .bg-b{background:var(--glow-dim);color:var(--river-light);border:1px solid rgba(0,180,255,0.25);}
+
+/* Gauge cards */
+#mod-water .gauge-grid{
+  display:flex;flex-direction:column;gap:10px;
+}
+#mod-water .gauge-card{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);
+  padding:10px 12px;
+}
+#mod-water .gauge-hdr{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;
+}
+#mod-water .gauge-name{
+  font-family:var(--font-sub);font-size:10px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);
+}
+#mod-water .gauge-val{
+  font-family:var(--font-data);font-size:13px;font-weight:700;
+}
+#mod-water .gauge-track{
+  height:5px;background:var(--surface-3);border-radius:2px;overflow:hidden;
+  position:relative;
+}
+#mod-water .gauge-fill{
+  height:100%;border-radius:2px;transition:width var(--t);
+}
+#mod-water .gauge-threshold{
+  position:absolute;top:0;bottom:0;width:2px;background:var(--text-3);
+}
+#mod-water .gauge-meta{
+  display:flex;justify-content:space-between;margin-top:5px;
+}
+#mod-water .gauge-meta span{
+  font-family:var(--font-data);font-size:8px;color:var(--text-3);
+}
+
+/* Disease zone rows */
+#mod-water .zone-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;border-bottom:1px solid var(--border-2);
+}
+#mod-water .zone-row:last-child{border-bottom:none;}
+#mod-water .zone-left{display:flex;align-items:center;gap:8px;}
+#mod-water .dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+}
+#mod-water .dot-g{background:var(--green);box-shadow:0 0 5px var(--green);}
+#mod-water .dot-y{background:var(--yellow);box-shadow:0 0 5px var(--yellow);}
+#mod-water .dot-r{background:var(--red);box-shadow:0 0 5px var(--red);}
+#mod-water .dot-o{background:var(--accent);box-shadow:0 0 5px var(--accent);}
+#mod-water .zone-name{
+  font-family:var(--font-sub);font-size:11px;font-weight:500;color:var(--text);
+}
+#mod-water .zone-sub{
+  font-family:var(--font-data);font-size:9px;color:var(--text-3);
+}
+#mod-water .zone-risk{
+  font-family:var(--font-data);font-size:10px;font-weight:700;
+}
+
+/* Bar rows (gradient scale) */
+#mod-water .bar-row{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-data);font-size:9px;color:var(--text-2);
+}
+#mod-water .bar-row .bar-label{width:100px;flex-shrink:0;font-size:9px;}
+#mod-water .bar-row .bar-track{flex:1;height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden;}
+#mod-water .bar-row .bar-fill{height:100%;border-radius:2px;}
+#mod-water .bar-row .bar-val{width:38px;text-align:right;flex-shrink:0;font-size:10px;color:var(--text);}
+</style>
+
+<!-- ── Section Header ─────────────────────────────────────────────── -->
+<div class="sec-hdr">
+  WATER QUALITY &amp; PUBLIC HEALTH RISK · GODAVARI RIVER SIMULATION
+  <span class="sec-hdr-tag">LIVE SIM · NASHIK KUMBH PROTOCOL v2.4</span>
+</div>
+
+<!-- ── Top KPI Grid ───────────────────────────────────────────────── -->
+<div class="kpi-grid">
+  <div class="kpi kpi-green">
+    <div class="kpi-label">BOD Baseline</div>
+    <div class="kpi-val green">4.2<span style="font-size:12px;margin-left:3px;">mg/L</span></div>
+    <div class="kpi-sub">Pre-event baseline · Upstream</div>
+  </div>
+  <div class="kpi kpi-red">
+    <div class="kpi-label">Shahi Snan Peak Risk</div>
+    <div class="kpi-val red">12–18<span style="font-size:12px;margin-left:3px;">mg/L</span></div>
+    <div class="kpi-sub">Projected without STP intervention</div>
+  </div>
+  <div class="kpi kpi-amber">
+    <div class="kpi-label">Contamination Risk Index</div>
+    <div class="kpi-val amber">68<span style="font-size:12px;margin-left:3px;">/100</span></div>
+    <div class="kpi-sub">Composite · 6-hazard model</div>
+  </div>
+  <div class="kpi kpi-yellow">
+    <div class="kpi-label">Disease Risk Level</div>
+    <div class="kpi-val yellow" style="font-size:16px;padding-top:2px;">MOD-HIGH</div>
+    <div class="kpi-sub">Waterborne · Diarrheal · Skin</div>
+  </div>
+</div>
+
+<!-- ── Main Two-Column Row ────────────────────────────────────────── -->
+<div class="main-row">
+
+  <!-- LEFT COLUMN ── BOD Simulation + Monitoring Stations ───────── -->
+  <div class="col-left">
+
+    <!-- BOD Simulation Canvas -->
+    <div class="hud">
+      <div class="hud-head">
+        <span class="hud-title">GODAVARI BOD SIMULATION — WITH vs WITHOUT STP</span>
+        <span class="badge bg-b">SIMULATED</span>
+      </div>
+      <div class="hud-body" style="padding-bottom:12px;">
+        <div class="legend">
+          <div class="leg-item">
+            <div class="leg-line" style="background:var(--red);"></div>
+            <span>Without STP (projected)</span>
+          </div>
+          <div class="leg-item">
+            <div class="leg-line" style="background:var(--green);"></div>
+            <span>With STP (mitigated)</span>
+          </div>
+          <div class="leg-item">
+            <div class="leg-dash" style="border-color:var(--yellow);"></div>
+            <span>Bathing Standard (3 mg/L)</span>
+          </div>
+          <div class="leg-item">
+            <div class="leg-dash" style="border-color:rgba(0,180,255,0.5);"></div>
+            <span>Shahi Snan Events</span>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="chart-bod-simulation" height="220"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upstream vs Downstream Contamination Gradient -->
+    <div class="hud">
+      <div class="hud-head">
+        <span class="hud-title">UPSTREAM vs DOWNSTREAM CONTAMINATION GRADIENT</span>
+        <span class="badge bg-o">6 STATIONS</span>
+      </div>
+      <div class="hud-body" style="padding:0;">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="padding-left:14px;">MONITORING STATION</th>
+              <th>LOCATION</th>
+              <th>BOD (mg/L)</th>
+              <th>DO (mg/L)</th>
+              <th>COLIFORM CFU/100mL</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding-left:14px;"><span class="station-name">Trimbakeshwar Source</span></td>
+              <td><span style="font-family:var(--font-data);font-size:9px;color:var(--text-3);">+42 km upstream</span></td>
+              <td><span class="val-num val-good">1.8</span></td>
+              <td><span class="val-num val-good">8.4</span></td>
+              <td><span class="val-num val-good">&lt;50</span></td>
+              <td><span class="badge bg-g">CLEAN</span></td>
+            </tr>
+            <tr>
+              <td style="padding-left:14px;"><span class="station-name">Gangapur Dam Outflow</span></td>
+              <td><span style="font-family:var(--font-data);font-size:9px;color:var(--text-3);">+18 km upstream</span></td>
+              <td><span class="val-num val-good">2.6</span></td>
+              <td><span class="val-num val-good">7.9</span></td>
+              <td><span class="val-num val-good">120</span></td>
+              <td><span class="badge bg-g">ACCEPTABLE</span></td>
+            </tr>
+            <tr>
+              <td style="padding-left:14px;"><span class="station-name">Ramkund Ghat</span></td>
+              <td><span style="font-family:var(--font-data);font-size:9px;color:var(--text-3);">Primary bathing zone</span></td>
+              <td><span class="val-num val-warn">6.1</span></td>
+              <td><span class="val-num val-warn">5.2</span></td>
+              <td><span class="val-num val-warn">4,200</span></td>
+              <td><span class="badge bg-y">STRESSED</span></td>
+            </tr>
+            <tr>
+              <td style="padding-left:14px;"><span class="station-name">Panchavati Bridge</span></td>
+              <td><span style="font-family:var(--font-data);font-size:9px;color:var(--text-3);">Central city reach</span></td>
+              <td><span class="val-num val-warn">8.7</span></td>
+              <td><span class="val-num val-warn">4.1</span></td>
+              <td><span class="val-num val-crit">18,500</span></td>
+              <td><span class="badge bg-o">DEGRADED</span></td>
+            </tr>
+            <tr>
+              <td style="padding-left:14px;"><span class="station-name">Tapovan Nala Confluence</span></td>
+              <td><span style="font-family:var(--font-data);font-size:9px;color:var(--text-3);">-4 km downstream</span></td>
+              <td><span class="val-num val-crit">13.4</span></td>
+              <td><span class="val-num val-crit">2.8</span></td>
+              <td><span class="val-num val-crit">72,000</span></td>
+              <td><span class="badge bg-r">CRITICAL</span></td>
+            </tr>
+            <tr>
+              <td style="padding-left:14px;"><span class="station-name">Nashik-Ozar Exit</span></td>
+              <td><span style="font-family:var(--font-data);font-size:9px;color:var(--text-3);">-22 km downstream</span></td>
+              <td><span class="val-num val-crit">11.2</span></td>
+              <td><span class="val-num val-crit">3.3</span></td>
+              <td><span class="val-num val-crit">41,000</span></td>
+              <td><span class="badge bg-r">HIGH RISK</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /col-left -->
+
+  <!-- RIGHT COLUMN ── Gauge Cards + Disease Zones + Curve ──────── -->
+  <div class="col-right">
+
+    <!-- High-Risk Bathing Day Simulation gauges -->
+    <div class="hud">
+      <div class="hud-head">
+        <span class="hud-title">HIGH-RISK BATHING DAY SIM</span>
+        <span class="badge bg-r">SNAN DAY</span>
+      </div>
+      <div class="hud-body">
+        <div class="gauge-grid">
+
+          <div class="gauge-card">
+            <div class="gauge-hdr">
+              <span class="gauge-name">Crowd Density Impact</span>
+              <span class="gauge-val" style="color:var(--red);">84<span style="font-size:9px;">/100</span></span>
+            </div>
+            <div class="gauge-track">
+              <div class="gauge-fill" style="width:84%;background:linear-gradient(90deg,var(--yellow),var(--red));"></div>
+              <div class="gauge-threshold" style="left:60%;"></div>
+            </div>
+            <div class="gauge-meta">
+              <span>0 — NOMINAL</span>
+              <span>THRESHOLD 60</span>
+              <span>100 — EXTREME</span>
+            </div>
+          </div>
+
+          <div class="gauge-card">
+            <div class="gauge-hdr">
+              <span class="gauge-name">River Stress Level</span>
+              <span class="gauge-val" style="color:var(--accent);">71<span style="font-size:9px;">/100</span></span>
+            </div>
+            <div class="gauge-track">
+              <div class="gauge-fill" style="width:71%;background:linear-gradient(90deg,var(--green),var(--yellow),var(--accent));"></div>
+              <div class="gauge-threshold" style="left:50%;"></div>
+            </div>
+            <div class="gauge-meta">
+              <span>0 — LOW</span>
+              <span>THRESHOLD 50</span>
+              <span>100 — SEVERE</span>
+            </div>
+          </div>
+
+          <div class="gauge-card">
+            <div class="gauge-hdr">
+              <span class="gauge-name">Sanitation Pressure</span>
+              <span class="gauge-val" style="color:var(--red);">91<span style="font-size:9px;">/100</span></span>
+            </div>
+            <div class="gauge-track">
+              <div class="gauge-fill" style="width:91%;background:var(--red);"></div>
+              <div class="gauge-threshold" style="left:55%;"></div>
+            </div>
+            <div class="gauge-meta">
+              <span>0 — MANAGED</span>
+              <span>THRESHOLD 55</span>
+              <span>100 — FAILURE</span>
+            </div>
+          </div>
+
+          <div class="gauge-card">
+            <div class="gauge-hdr">
+              <span class="gauge-name">Water Quality Degradation</span>
+              <span class="gauge-val" style="color:var(--red);">78<span style="font-size:9px;">/100</span></span>
+            </div>
+            <div class="gauge-track">
+              <div class="gauge-fill" style="width:78%;background:linear-gradient(90deg,var(--yellow),var(--red));"></div>
+              <div class="gauge-threshold" style="left:40%;"></div>
+            </div>
+            <div class="gauge-meta">
+              <span>0 — SAFE</span>
+              <span>THRESHOLD 40</span>
+              <span>100 — UNSAFE</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Disease Risk Escalation Zones -->
+    <div class="hud">
+      <div class="hud-head">
+        <span class="hud-title">DISEASE RISK ESCALATION ZONES</span>
+        <span class="badge bg-y">4 ZONES</span>
+      </div>
+      <div class="hud-body" style="padding:10px 14px;">
+
+        <div class="zone-row">
+          <div class="zone-left">
+            <div class="dot dot-r"></div>
+            <div>
+              <div class="zone-name">Ramkund Ghat</div>
+              <div class="zone-sub">Primary immersion · 800K pilgrims/day</div>
+            </div>
+          </div>
+          <div>
+            <div class="zone-risk" style="color:var(--red);">CRITICAL</div>
+            <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3);text-align:right;">BOD 14.2 mg/L sim.</div>
+          </div>
+        </div>
+
+        <div class="zone-row">
+          <div class="zone-left">
+            <div class="dot dot-o"></div>
+            <div>
+              <div class="zone-name">Panchavati</div>
+              <div class="zone-sub">Secondary bathing · Nala discharge</div>
+            </div>
+          </div>
+          <div>
+            <div class="zone-risk" style="color:var(--accent);">HIGH</div>
+            <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3);text-align:right;">BOD 10.8 mg/L sim.</div>
+          </div>
+        </div>
+
+        <div class="zone-row">
+          <div class="zone-left">
+            <div class="dot dot-o"></div>
+            <div>
+              <div class="zone-name">Trimbakeshwar</div>
+              <div class="zone-sub">Source temple · Low flow risk</div>
+            </div>
+          </div>
+          <div>
+            <div class="zone-risk" style="color:var(--yellow);">MODERATE</div>
+            <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3);text-align:right;">BOD 6.3 mg/L sim.</div>
+          </div>
+        </div>
+
+        <div class="zone-row">
+          <div class="zone-left">
+            <div class="dot dot-r"></div>
+            <div>
+              <div class="zone-name">Downstream Villages</div>
+              <div class="zone-sub">Igatpuri–Sinnar reach · Agri use</div>
+            </div>
+          </div>
+          <div>
+            <div class="zone-risk" style="color:var(--red);">VERY HIGH</div>
+            <div style="font-family:var(--font-data);font-size:8px;color:var(--text-3);text-align:right;">BOD 18.1 mg/L sim.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Contamination Curve Canvas -->
+    <div class="hud">
+      <div class="hud-head">
+        <span class="hud-title">CONTAMINATION CURVE · SNAN DAY</span>
+        <span class="badge bg-r">REAL-TIME MODEL</span>
+      </div>
+      <div class="hud-body">
+        <div class="canvas-wrap">
+          <canvas id="chart-contamination-curve" height="130"></canvas>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+          <span style="font-family:var(--font-data);font-size:8px;color:var(--text-3);">04:00 — PRE-DAWN</span>
+          <span style="font-family:var(--font-data);font-size:8px;color:var(--accent);">PEAK SNAN</span>
+          <span style="font-family:var(--font-data);font-size:8px;color:var(--text-3);">22:00 — EVENING</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /col-right -->
+
+</div><!-- /main-row -->
+
+<!-- ── Canvas rendering scripts ──────────────────────────────────── -->
+<script>
+(function(){
+  'use strict';
+
+  // ── Utility: resolve CSS variable ────────────────────────────
+  function cv(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  // ── Shared draw helpers ───────────────────────────────────────
+  function clearCanvas(ctx, w, h){
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = cv('--surface');
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function drawGrid(ctx, w, h, cols, rows){
+    ctx.strokeStyle = cv('--border-2') || '#071E38';
+    ctx.lineWidth = 0.5;
+    for(let i = 1; i < cols; i++){
+      const x = (w / cols) * i;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for(let j = 1; j < rows; j++){
+      const y = (h / rows) * j;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+  }
+
+  function drawAxisLabels(ctx, labels, w, h, padL, padB){
+    ctx.fillStyle = cv('--text-3');
+    ctx.font = '700 8px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    const step = (w - padL) / (labels.length - 1);
+    labels.forEach(function(lbl, i){
+      ctx.fillText(lbl, padL + step * i, h - 4);
+    });
+  }
+
+  function drawYLabels(ctx, vals, w, h, padB, padL){
+    ctx.fillStyle = cv('--text-3');
+    ctx.font = '700 8px Space Mono, monospace';
+    ctx.textAlign = 'right';
+    const range = vals[vals.length-1] - vals[0];
+    const plotH = h - padB - 16;
+    vals.forEach(function(v){
+      const y = 12 + plotH * (1 - (v - vals[0]) / range);
+      ctx.fillText(v, padL - 4, y + 3);
+    });
+  }
+
+  function polyLine(ctx, points, stroke, lw, dash){
+    ctx.save();
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = lw || 1.5;
+    if(dash) ctx.setLineDash(dash);
+    ctx.beginPath();
+    points.forEach(function(p, i){
+      i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  function areaFill(ctx, points, fillColor, h, padB){
+    ctx.save();
+    ctx.fillStyle = fillColor;
+    ctx.beginPath();
+    ctx.moveTo(points[0][0], h - padB);
+    points.forEach(function(p){ ctx.lineTo(p[0], p[1]); });
+    ctx.lineTo(points[points.length-1][0], h - padB);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── BOD Simulation Chart ──────────────────────────────────────
+  function renderBOD(){
+    var canvas = document.getElementById('chart-bod-simulation');
+    if(!canvas) return;
+    var dpr = window.devicePixelRatio || 1;
+    var W = canvas.parentElement.clientWidth || 600;
+    var H = 220;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    var padL = 38, padB = 22, padT = 14, padR = 14;
+    var plotW = W - padL - padR;
+    var plotH = H - padB - padT;
+
+    clearCanvas(ctx, W, H);
+    drawGrid(ctx, W, H, 12, 6);
+
+    // Data: 25 time points across Kumbh period (weeks)
+    // Without STP — spikes on Snan days (idx 4, 10, 16)
+    var woSTP = [4.2,4.5,4.8,5.2,14.8,7.1,5.4,5.0,4.9,5.3,17.2,8.4,5.8,5.2,4.8,5.0,13.6,7.2,5.5,5.1,4.7,4.5,4.3,4.2,4.0];
+    // With STP — stays flat ≤ 6
+    var wSTP  = [4.2,4.3,4.4,4.5,5.4,4.8,4.6,4.5,4.4,4.6,5.7,5.0,4.7,4.5,4.3,4.5,5.3,4.8,4.6,4.4,4.3,4.2,4.1,4.0,4.0];
+
+    var yMin = 0, yMax = 20;
+    var n = woSTP.length;
+
+    function tx(i){ return padL + (i / (n-1)) * plotW; }
+    function ty(v){ return padT + plotH * (1 - (v - yMin)/(yMax - yMin)); }
+
+    // Y-axis labels
+    [0,5,10,15,20].forEach(function(v){
+      ctx.fillStyle = cv('--text-3');
+      ctx.font = '700 8px Space Mono, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(v, padL - 5, ty(v) + 3);
+    });
+
+    // X-axis labels (weeks)
+    ctx.fillStyle = cv('--text-3');
+    ctx.font = '700 7px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ['W1','','W3','','W5','','W7','','W9','','W11','','W13'].forEach(function(lbl, i){
+      if(lbl) ctx.fillText(lbl, padL + (i * 2 / (n-1)) * plotW, H - 6);
+    });
+
+    // Shahi Snan vertical markers
+    [4, 10, 16].forEach(function(idx){
+      var x = tx(idx);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(0,180,255,0.25)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, H - padB); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(0,180,255,0.6)';
+      ctx.font = '600 7px Space Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('SNAN', x, padT + 9);
+      ctx.restore();
+    });
+
+    // Area fill — without STP
+    var woPoints = woSTP.map(function(v,i){ return [tx(i), ty(v)]; });
+    areaFill(ctx, woPoints, 'rgba(255,51,51,0.07)', H, padB);
+
+    // Area fill — with STP
+    var wPoints = wSTP.map(function(v,i){ return [tx(i), ty(v)]; });
+    areaFill(ctx, wPoints, 'rgba(0,255,136,0.07)', H, padB);
+
+    // Bathing standard dashed line at 3 mg/L
+    var yBath = ty(3);
+    polyLine(ctx, [[padL, yBath],[W - padR, yBath]], cv('--yellow'), 1.2, [5,4]);
+    ctx.fillStyle = cv('--yellow');
+    ctx.font = '700 8px Space Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('3 mg/L STD', W - padR - 2, yBath - 3);
+
+    // Line — without STP
+    polyLine(ctx, woPoints, cv('--red'), 1.8);
+
+    // Line — with STP
+    polyLine(ctx, wPoints, cv('--green'), 1.8);
+
+    // Dot at peak
+    ctx.beginPath();
+    ctx.arc(tx(10), ty(woSTP[10]), 4, 0, Math.PI*2);
+    ctx.fillStyle = cv('--red');
+    ctx.fill();
+    ctx.fillStyle = cv('--text');
+    ctx.font = '700 8px Space Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('18 mg/L', tx(10)+6, ty(woSTP[10])-3);
+
+    // Y-axis line
+    ctx.strokeStyle = cv('--border');
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, H - padB); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL, H - padB); ctx.lineTo(W - padR, H - padB); ctx.stroke();
+  }
+
+  // ── Contamination Curve (Snan day intraday) ───────────────────
+  function renderCurve(){
+    var canvas = document.getElementById('chart-contamination-curve');
+    if(!canvas) return;
+    var dpr = window.devicePixelRatio || 1;
+    var W = canvas.parentElement.clientWidth || 256;
+    var H = 130;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    var padL = 30, padB = 18, padT = 10, padR = 10;
+    var plotW = W - padL - padR;
+    var plotH = H - padB - padT;
+
+    clearCanvas(ctx, W, H);
+
+    // 24 hourly data points — pre-dawn to post-dusk
+    var hours = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+    // BOD intraday contamination curve on peak Snan day
+    var bod = [4.0,3.9,4.1,4.5,5.2,7.8,11.4,15.6,17.8,16.2,14.0,12.1,10.8,9.5,8.4,7.6,8.2,9.4,11.2,9.8,8.1,6.9,5.8,5.0];
+    var n = hours.length;
+    var yMin = 0, yMax = 20;
+
+    function tx(i){ return padL + (i / (n-1)) * plotW; }
+    function ty(v){ return padT + plotH * (1 - (v - yMin)/(yMax - yMin)); }
+
+    // Grid
+    ctx.strokeStyle = cv('--border-2') || '#071E38';
+    ctx.lineWidth = 0.5;
+    [5,10,15].forEach(function(v){
+      var y = ty(v);
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    });
+
+    // Y labels
+    [0,10,20].forEach(function(v){
+      ctx.fillStyle = cv('--text-3');
+      ctx.font = '700 7px Space Mono, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(v, padL - 4, ty(v) + 3);
+    });
+
+    // Shade danger zone > 3 mg/L
+    var dangerY = ty(3);
+    ctx.fillStyle = 'rgba(255,51,51,0.06)';
+    ctx.fillRect(padL, padT, plotW, dangerY - padT);
+
+    // Gradient area fill
+    var grad = ctx.createLinearGradient(0, padT, 0, H - padB);
+    grad.addColorStop(0,'rgba(255,51,51,0.35)');
+    grad.addColorStop(0.5,'rgba(255,102,0,0.15)');
+    grad.addColorStop(1,'rgba(255,179,0,0.03)');
+    var points = bod.map(function(v,i){ return [tx(i),ty(v)]; });
+    areaFill(ctx, points, grad, H, padB);
+
+    // Line
+    polyLine(ctx, points, cv('--accent'), 1.8);
+
+    // Peak annotation
+    var peakIdx = bod.indexOf(Math.max.apply(null,bod));
+    ctx.beginPath();
+    ctx.arc(tx(peakIdx), ty(bod[peakIdx]), 3.5, 0, Math.PI*2);
+    ctx.fillStyle = cv('--red');
+    ctx.fill();
+
+    ctx.fillStyle = cv('--red');
+    ctx.font = '700 8px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('PEAK', tx(peakIdx), ty(bod[peakIdx]) - 6);
+
+    // Standard line
+    polyLine(ctx, [[padL, ty(3)],[W-padR, ty(3)]], cv('--yellow'), 1, [4,3]);
+
+    // Axes
+    ctx.strokeStyle = cv('--border');
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, H-padB); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL, H-padB); ctx.lineTo(W-padR, H-padB); ctx.stroke();
+  }
+
+  // ── Init on DOM ready ─────────────────────────────────────────
+  function init(){
+    renderBOD();
+    renderCurve();
+    window.addEventListener('resize', function(){
+      renderBOD();
+      renderCurve();
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>

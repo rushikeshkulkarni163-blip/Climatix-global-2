@@ -1,0 +1,428 @@
+<!-- MODULE: ENERGY IMPACT SIMULATION — id: mod-energy -->
+<section id="mod-energy" style="display:flex;flex-direction:column;gap:20px;">
+
+  <!-- Section Header -->
+  <div class="sec-hdr" style="display:flex;align-items:center;justify-content:space-between;">
+    <span>// ENERGY IMPACT SIMULATION &middot; KUMBH 2027 DEMAND ANALYSIS</span>
+    <span style="font-family:var(--font-data);font-size:11px;color:var(--text-3);letter-spacing:.08em;">SIM-ENG · v2.7 · LIVE</span>
+  </div>
+
+  <!-- Row 1: 4 KPI cards -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+
+    <div class="emc" style="border-top-color:var(--glow);">
+      <div class="hud-body" style="padding:14px 16px;">
+        <div style="font-family:var(--font-data);font-size:10px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">ESTIMATED PEAK DEMAND</div>
+        <div class="kpi-val blue" style="font-size:32px;line-height:1;margin-bottom:4px;">185 <span style="font-size:14px;color:var(--text-2);">MW</span></div>
+        <div style="font-family:var(--font-sub);font-size:11px;color:var(--text-3);">Purnima Peak Window · +18% YoY</div>
+      </div>
+    </div>
+
+    <div class="emc" style="border-top-color:var(--red);">
+      <div class="hud-body" style="padding:14px 16px;">
+        <div style="font-family:var(--font-data);font-size:10px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">DIESEL DEPENDENCY RISK</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+          <div class="kpi-val red" style="font-size:28px;line-height:1;">HIGH</div>
+          <span class="badge bg-r" style="font-size:10px;">CRITICAL</span>
+        </div>
+        <div style="font-family:var(--font-sub);font-size:11px;color:var(--text-3);">62% of backup supply diesel-based</div>
+      </div>
+    </div>
+
+    <div class="emc" style="border-top-color:var(--yellow);">
+      <div class="hud-body" style="padding:14px 16px;">
+        <div style="font-family:var(--font-data);font-size:10px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">FUEL PRESSURE INDEX</div>
+        <div style="margin-bottom:6px;">
+          <span class="kpi-val amber" style="font-size:32px;line-height:1;">78</span>
+          <span style="font-family:var(--font-data);font-size:14px;color:var(--text-2);"> /100</span>
+        </div>
+        <div style="height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden;">
+          <div style="width:78%;height:100%;background:var(--yellow);border-radius:2px;transition:width var(--t);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="emc" style="border-top-color:var(--green);">
+      <div class="hud-body" style="padding:14px 16px;">
+        <div style="font-family:var(--font-data);font-size:10px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">RENEWABLE POTENTIAL</div>
+        <div class="kpi-val green" style="font-size:32px;line-height:1;margin-bottom:4px;">42 <span style="font-size:14px;color:var(--text-2);">MW</span></div>
+        <div style="font-family:var(--font-sub);font-size:11px;color:var(--text-3);">Solar + portable hybrid sources</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Row 2: Chart + Planning comparison -->
+  <div style="display:flex;gap:14px;align-items:stretch;">
+
+    <!-- LEFT: Hourly demand bar chart -->
+    <div class="hud" style="flex:1;display:flex;flex-direction:column;">
+      <div class="hud-head" style="padding:10px 16px 0;">
+        <span class="hud-title">HOURLY ENERGY DEMAND &mdash; PEAK BATHING DAY</span>
+      </div>
+      <div class="hud-body" style="padding:12px 16px 14px;flex:1;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="width:10px;height:10px;background:var(--glow);border-radius:1px;"></div>
+            <span style="font-family:var(--font-data);font-size:10px;color:var(--text-3);">DEMAND (MW)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="width:10px;height:10px;background:var(--accent);border-radius:1px;opacity:.7;"></div>
+            <span style="font-family:var(--font-data);font-size:10px;color:var(--text-3);">PEAK THRESHOLD</span>
+          </div>
+        </div>
+        <canvas id="chart-energy-demand" style="height:200px;width:100%;display:block;"></canvas>
+      </div>
+    </div>
+
+    <!-- RIGHT: Without vs With planning -->
+    <div class="hud" style="width:280px;display:flex;flex-direction:column;">
+      <div class="hud-head" style="padding:10px 16px 0;">
+        <span class="hud-title">WITHOUT vs WITH PLANNING</span>
+      </div>
+      <div class="hud-body" style="padding:12px 14px 14px;flex:1;display:flex;flex-direction:column;gap:12px;">
+
+        <!-- WITHOUT -->
+        <div style="background:var(--red-dim);border:1px solid rgba(255,51,51,0.2);border-radius:var(--r);padding:10px 12px;">
+          <div style="font-family:var(--font-data);font-size:10px;color:var(--red);letter-spacing:.1em;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span class="dot dot-r"></span> WITHOUT PLANNING
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Grid management</span>
+              <span class="badge bg-r" style="font-size:9px;">UNCONTROLLED DIESEL</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Grid stability</span>
+              <span class="badge bg-r" style="font-size:9px;">LOCALIZED OUTAGES</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Fuel utilization</span>
+              <span class="badge bg-r" style="font-size:9px;">EXCESS FUEL BURN</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Emissions</span>
+              <span class="badge bg-r" style="font-size:9px;">HIGH EMISSIONS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- WITH -->
+        <div style="background:var(--green-dim);border:1px solid rgba(0,255,136,0.18);border-radius:var(--r);padding:10px 12px;">
+          <div style="font-family:var(--font-data);font-size:10px;color:var(--green);letter-spacing:.1em;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span class="dot dot-g"></span> WITH PLANNING
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Grid management</span>
+              <span class="badge bg-g" style="font-size:9px;">OPTIMIZED LOAD</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Grid stability</span>
+              <span class="badge bg-g" style="font-size:9px;">REDUCED STRESS</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Monitoring</span>
+              <span class="badge bg-g" style="font-size:9px;">BETTER VISIBILITY</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Fuel pressure</span>
+              <span class="badge bg-g" style="font-size:9px;">LOWER PRESSURE</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Row 3: 3 panels side by side -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+
+    <!-- Panel 1: Energy Load by Zone -->
+    <div class="hud" style="display:flex;flex-direction:column;">
+      <div class="hud-head" style="padding:10px 16px 0;">
+        <span class="hud-title">ENERGY LOAD BY ZONE</span>
+      </div>
+      <div class="hud-body" style="padding:12px 16px 14px;flex:1;display:flex;flex-direction:column;gap:9px;">
+
+        <!-- Ramkund -->
+        <div class="bar-row" style="display:flex;flex-direction:column;gap:3px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Ramkund</span>
+            <span style="font-family:var(--font-data);font-size:11px;color:var(--glow);">48 MW</span>
+          </div>
+          <div style="height:5px;background:var(--surface-3);border-radius:2px;overflow:hidden;">
+            <div style="width:78%;height:100%;background:var(--glow);border-radius:2px;transition:width var(--t);"></div>
+          </div>
+        </div>
+
+        <!-- Panchavati -->
+        <div class="bar-row" style="display:flex;flex-direction:column;gap:3px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Panchavati</span>
+            <span style="font-family:var(--font-data);font-size:11px;color:var(--glow);">42 MW</span>
+          </div>
+          <div style="height:5px;background:var(--surface-3);border-radius:2px;overflow:hidden;">
+            <div style="width:68%;height:100%;background:var(--glow);border-radius:2px;transition:width var(--t);"></div>
+          </div>
+        </div>
+
+        <!-- Tapovan -->
+        <div class="bar-row" style="display:flex;flex-direction:column;gap:3px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Tapovan</span>
+            <span style="font-family:var(--font-data);font-size:11px;color:var(--yellow);">35 MW</span>
+          </div>
+          <div style="height:5px;background:var(--surface-3);border-radius:2px;overflow:hidden;">
+            <div style="width:57%;height:100%;background:var(--yellow);border-radius:2px;transition:width var(--t);"></div>
+          </div>
+        </div>
+
+        <!-- Trimbak -->
+        <div class="bar-row" style="display:flex;flex-direction:column;gap:3px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Trimbak</span>
+            <span style="font-family:var(--font-data);font-size:11px;color:var(--yellow);">31 MW</span>
+          </div>
+          <div style="height:5px;background:var(--surface-3);border-radius:2px;overflow:hidden;">
+            <div style="width:50%;height:100%;background:var(--yellow);border-radius:2px;transition:width var(--t);"></div>
+          </div>
+        </div>
+
+        <!-- Nashik Road -->
+        <div class="bar-row" style="display:flex;flex-direction:column;gap:3px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:var(--font-sub);font-size:11px;color:var(--text-2);">Nashik Road</span>
+            <span style="font-family:var(--font-data);font-size:11px;color:var(--green);">29 MW</span>
+          </div>
+          <div style="height:5px;background:var(--surface-3);border-radius:2px;overflow:hidden;">
+            <div style="width:47%;height:100%;background:var(--green);border-radius:2px;transition:width var(--t);"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:6px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:var(--font-data);font-size:10px;color:var(--text-3);">TOTAL MAPPED LOAD</span>
+          <span style="font-family:var(--font-data);font-size:12px;color:var(--text);">185 MW</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Panel 2: Diesel Dependency Risk -->
+    <div class="hud" style="display:flex;flex-direction:column;">
+      <div class="hud-head" style="padding:10px 16px 0;">
+        <span class="hud-title">DIESEL DEPENDENCY RISK</span>
+      </div>
+      <div class="hud-body" style="padding:12px 16px 14px;flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;">
+
+        <!-- Gauge circle -->
+        <div style="position:relative;width:110px;height:110px;flex-shrink:0;">
+          <svg viewBox="0 0 110 110" width="110" height="110" style="display:block;">
+            <circle cx="55" cy="55" r="46" fill="none" stroke="var(--surface-3)" stroke-width="9"/>
+            <!-- 62% arc: circumference = 2*PI*46 ≈ 289.0; 62% = 179.2 -->
+            <circle cx="55" cy="55" r="46" fill="none" stroke="var(--red)" stroke-width="9"
+              stroke-dasharray="179.2 289.0"
+              stroke-dashoffset="72.25"
+              stroke-linecap="round"
+              style="transition:stroke-dasharray var(--t);"/>
+            <circle cx="55" cy="55" r="46" fill="none" stroke="var(--green)" stroke-width="9"
+              stroke-dasharray="109.8 289.0"
+              stroke-dashoffset="-106.95"
+              stroke-linecap="round"
+              style="transition:stroke-dasharray var(--t);"/>
+          </svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+            <div style="font-family:var(--font-data);font-size:22px;color:var(--red);line-height:1;">62%</div>
+            <div style="font-family:var(--font-data);font-size:9px;color:var(--text-3);letter-spacing:.06em;">DIESEL</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;font-family:var(--font-data);font-size:10px;">
+          <div style="display:flex;align-items:center;gap:5px;">
+            <div style="width:8px;height:8px;background:var(--red);border-radius:1px;"></div>
+            <span style="color:var(--text-3);">DIESEL 62%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <div style="width:8px;height:8px;background:var(--green);border-radius:1px;"></div>
+            <span style="color:var(--text-3);">RENEW 38%</span>
+          </div>
+        </div>
+
+        <!-- Risk metrics table -->
+        <table class="tbl" style="width:100%;font-size:11px;">
+          <tbody>
+            <tr>
+              <td style="color:var(--text-2);padding:4px 0;">Supply Risk Index</td>
+              <td style="text-align:right;font-family:var(--font-data);color:var(--red);">HIGH · 78</td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-2);padding:4px 0;">Backup Coverage</td>
+              <td style="text-align:right;font-family:var(--font-data);color:var(--yellow);">64%</td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-2);padding:4px 0;">Outage Probability</td>
+              <td style="text-align:right;font-family:var(--font-data);color:var(--yellow);">34%</td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-2);padding:4px 0;">Emission Factor</td>
+              <td style="text-align:right;font-family:var(--font-data);color:var(--red);">2.4 kg CO₂/kWh</td>
+            </tr>
+            <tr>
+              <td style="color:var(--text-2);padding:4px 0;">Fuel Reserve (hrs)</td>
+              <td style="text-align:right;font-family:var(--font-data);color:var(--text);">18 h</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <!-- Panel 3: Sustainability Impact Range -->
+    <div class="hud" style="display:flex;flex-direction:column;">
+      <div class="hud-head" style="padding:10px 16px 0;">
+        <span class="hud-title">SUSTAINABILITY IMPACT RANGE</span>
+      </div>
+      <div class="hud-body" style="padding:12px 14px 14px;flex:1;display:flex;flex-direction:column;gap:10px;">
+
+        <!-- Low intervention -->
+        <div style="background:var(--surface-3);border:1px solid var(--border);border-left:3px solid var(--yellow);border-radius:var(--r);padding:10px 12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+            <span style="font-family:var(--font-data);font-size:10px;color:var(--yellow);letter-spacing:.08em;">LOW INTERVENTION</span>
+            <span class="badge bg-y" style="font-size:9px;">SCENARIO A</span>
+          </div>
+          <div style="font-family:var(--font-data);font-size:22px;color:var(--yellow);line-height:1;margin-bottom:3px;">15–20%</div>
+          <div style="font-family:var(--font-sub);font-size:11px;color:var(--text-3);">Estimated demand reduction via basic load scheduling and awareness</div>
+          <div style="margin-top:6px;height:3px;background:var(--surface-4);border-radius:2px;overflow:hidden;">
+            <div style="width:17.5%;height:100%;background:var(--yellow);border-radius:2px;"></div>
+          </div>
+        </div>
+
+        <!-- Moderate intervention -->
+        <div style="background:var(--surface-3);border:1px solid var(--border);border-left:3px solid var(--glow);border-radius:var(--r);padding:10px 12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+            <span style="font-family:var(--font-data);font-size:10px;color:var(--glow);letter-spacing:.08em;">MODERATE INTERVENTION</span>
+            <span class="badge bg-b" style="font-size:9px;">SCENARIO B</span>
+          </div>
+          <div style="font-family:var(--font-data);font-size:22px;color:var(--glow);line-height:1;margin-bottom:3px;">25–35%</div>
+          <div style="font-family:var(--font-sub);font-size:11px;color:var(--text-3);">Zone-level demand management with renewable integration and smart monitoring</div>
+          <div style="margin-top:6px;height:3px;background:var(--surface-4);border-radius:2px;overflow:hidden;">
+            <div style="width:30%;height:100%;background:var(--glow);border-radius:2px;"></div>
+          </div>
+        </div>
+
+        <!-- High intervention -->
+        <div style="background:var(--surface-3);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:var(--r);padding:10px 12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+            <span style="font-family:var(--font-data);font-size:10px;color:var(--green);letter-spacing:.08em;">HIGH INTERVENTION</span>
+            <span class="badge bg-g" style="font-size:9px;">SCENARIO C</span>
+          </div>
+          <div style="font-family:var(--font-data);font-size:22px;color:var(--green);line-height:1;margin-bottom:3px;">40–50%</div>
+          <div style="font-family:var(--font-sub);font-size:11px;color:var(--text-3);">Full renewable deployment with AI dispatch, microgrids, and fuel elimination</div>
+          <div style="margin-top:6px;height:3px;background:var(--surface-4);border-radius:2px;overflow:hidden;">
+            <div style="width:45%;height:100%;background:var(--green);border-radius:2px;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- Chart.js init for energy demand -->
+<script>
+(function() {
+  var canvas = document.getElementById('chart-energy-demand');
+  if (!canvas) return;
+  var labels = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
+  var demand = [42,38,34,31,30,32,48,72,95,118,134,148,155,152,145,138,142,158,172,185,178,162,130,88];
+  var threshold = new Array(24).fill(160);
+
+  var ctx = canvas.getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Demand (MW)',
+          data: demand,
+          backgroundColor: demand.map(function(v) {
+            return v >= 160 ? 'rgba(255,51,51,0.75)' : v >= 130 ? 'rgba(255,179,0,0.7)' : 'rgba(0,180,255,0.6)';
+          }),
+          borderColor: demand.map(function(v) {
+            return v >= 160 ? '#FF3333' : v >= 130 ? '#FFB300' : '#00B4FF';
+          }),
+          borderWidth: 1,
+          borderRadius: 1,
+          barPercentage: 0.75,
+          categoryPercentage: 0.85,
+          order: 2
+        },
+        {
+          label: 'Peak Threshold',
+          data: threshold,
+          type: 'line',
+          borderColor: 'rgba(255,102,0,0.55)',
+          borderWidth: 1,
+          borderDash: [4,3],
+          pointRadius: 0,
+          fill: false,
+          tension: 0,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 600 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#001430',
+          titleColor: '#7AAEC8',
+          bodyColor: '#D4EEFF',
+          borderColor: '#0E2A48',
+          borderWidth: 1,
+          titleFont: { family: "'Space Mono', monospace", size: 10 },
+          bodyFont: { family: "'Space Mono', monospace", size: 11 },
+          callbacks: {
+            title: function(items) { return 'HOUR ' + items[0].label + ':00'; },
+            label: function(item) {
+              if (item.datasetIndex === 1) return null;
+              return ' ' + item.raw + ' MW';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(14,42,72,0.6)', lineWidth: 1 },
+          ticks: {
+            color: '#3A6A8A',
+            font: { family: "'Space Mono', monospace", size: 9 },
+            maxRotation: 0
+          },
+          border: { color: '#0E2A48' }
+        },
+        y: {
+          min: 0,
+          max: 210,
+          grid: { color: 'rgba(14,42,72,0.6)', lineWidth: 1 },
+          ticks: {
+            color: '#3A6A8A',
+            font: { family: "'Space Mono', monospace", size: 9 },
+            stepSize: 50,
+            callback: function(v) { return v + ' MW'; }
+          },
+          border: { color: '#0E2A48' }
+        }
+      }
+    }
+  });
+})();
+</script>

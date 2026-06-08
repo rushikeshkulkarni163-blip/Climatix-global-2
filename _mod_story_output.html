@@ -1,0 +1,778 @@
+<!-- MODULE: VISUAL IMPACT STORYTELLING | id: mod-story -->
+
+<style>
+/* ── Module-scoped styles ── */
+#mod-story {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Hero statement */
+.story-hero {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 36px 40px 32px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.story-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,180,255,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.story-hero-question {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text);
+  line-height: 1.25;
+  margin: 0 0 14px;
+  position: relative;
+  z-index: 1;
+}
+.story-hero-question span.hl-glow {
+  color: var(--glow);
+}
+.story-hero-sub {
+  font-family: var(--font-sub);
+  font-size: 14px;
+  color: var(--text-2);
+  letter-spacing: 0.5px;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+.story-hero-sub span.hl-accent {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Before / After comparison columns */
+.ba-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.ba-column {
+  border-radius: var(--r);
+  padding: 0;
+  overflow: hidden;
+}
+.ba-column-head {
+  padding: 14px 20px 12px;
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ba-column-head .ba-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ba-col-before {
+  border: 1px solid rgba(255,51,51,0.30);
+  background: linear-gradient(180deg, rgba(255,51,51,0.06) 0%, var(--surface) 40%);
+}
+.ba-col-before .ba-column-head {
+  background: rgba(255,51,51,0.10);
+  border-bottom: 1px solid rgba(255,51,51,0.20);
+  color: var(--red);
+}
+.ba-col-before .ba-dot { background: var(--red); }
+
+.ba-col-after {
+  border: 1px solid rgba(0,255,136,0.25);
+  background: linear-gradient(180deg, rgba(0,255,136,0.05) 0%, var(--surface) 40%);
+}
+.ba-col-after .ba-column-head {
+  background: rgba(0,255,136,0.08);
+  border-bottom: 1px solid rgba(0,255,136,0.18);
+  color: var(--green);
+}
+.ba-col-after .ba-dot { background: var(--green); }
+
+.ba-cards-list {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Before card */
+.before-card {
+  background: rgba(255,51,51,0.05);
+  border: 1px solid rgba(255,51,51,0.18);
+  border-radius: var(--r);
+  padding: 13px 15px 11px;
+  transition: border-color var(--t);
+}
+.before-card:hover {
+  border-color: rgba(255,51,51,0.38);
+}
+
+/* After card */
+.after-card {
+  background: rgba(0,255,136,0.04);
+  border: 1px solid rgba(0,255,136,0.15);
+  border-radius: var(--r);
+  padding: 13px 15px 11px;
+  transition: border-color var(--t);
+}
+.after-card:hover {
+  border-color: rgba(0,255,136,0.32);
+}
+
+.ba-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.ba-card-icon {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.ba-card-title {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text);
+  line-height: 1.3;
+}
+.ba-card-desc {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin-left: 28px;
+  margin-bottom: 7px;
+}
+.ba-card-indicator {
+  margin-left: 28px;
+  display: inline-block;
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.ind-red {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(255,51,51,0.25);
+}
+.ind-green {
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid rgba(0,255,136,0.22);
+}
+
+/* Transformation metrics row */
+.transform-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.transform-kpi {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px 18px 16px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  transition: border-color var(--t);
+}
+.transform-kpi::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--glow);
+}
+.transform-kpi:hover {
+  border-color: rgba(0,180,255,0.30);
+}
+.transform-kpi-icon {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 10px;
+}
+.transform-kpi-label {
+  font-family: var(--font-sub);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+.transform-kpi-val {
+  font-family: var(--font-data);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.transform-kpi-val.kpi-zero {
+  color: var(--glow);
+}
+.transform-kpi-val.kpi-amber {
+  color: var(--accent);
+}
+.transform-kpi-sub {
+  font-family: var(--font-sub);
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* Timeline chart panel */
+.timeline-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.timeline-head {
+  padding: 12px 20px 10px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.timeline-head-title {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.timeline-legend {
+  display: flex;
+  gap: 18px;
+}
+.tl-leg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--text-2);
+}
+.tl-leg-line {
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+}
+.timeline-body {
+  padding: 16px 20px 12px;
+  position: relative;
+}
+
+/* Why Climactix panel */
+.why-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.why-head {
+  padding: 12px 20px 10px;
+  background: linear-gradient(90deg, rgba(0,180,255,0.08) 0%, transparent 60%);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.why-head-title {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--glow);
+}
+.why-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+.why-col {
+  padding: 22px 24px 20px;
+  border-right: 1px solid var(--border);
+}
+.why-col:last-child {
+  border-right: none;
+}
+.why-col-title {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.why-col-title span {
+  color: var(--glow);
+  margin-right: 6px;
+}
+.why-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+.why-item-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--glow);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.why-item-text {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+.why-item-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ba-grid { grid-template-columns: 1fr; }
+  .transform-grid { grid-template-columns: repeat(2, 1fr); }
+  .why-body { grid-template-columns: 1fr; }
+  .why-col { border-right: none; border-bottom: 1px solid var(--border); }
+  .why-col:last-child { border-bottom: none; }
+}
+</style>
+
+<!-- SECTION HEADER -->
+<div class="sec-hdr">// OPERATIONAL IMPACT NARRATIVE &middot; FROM INACTION TO INTELLIGENCE</div>
+
+<!-- HERO STATEMENT -->
+<div class="story-hero">
+  <h2 class="story-hero-question">
+    What happens when <span class="hl-glow">12 crore pilgrims</span> gather without sustainability governance?
+  </h2>
+  <p class="story-hero-sub">
+    The <span class="hl-accent">Kumbh 2027</span> opportunity &mdash; and the cost of inaction.
+  </p>
+</div>
+
+<!-- BEFORE / AFTER COMPARISON -->
+<div class="ba-grid">
+
+  <!-- LEFT: BEFORE -->
+  <div class="ba-column ba-col-before">
+    <div class="ba-column-head">
+      <span class="ba-dot"></span>
+      WITHOUT SUSTAINABILITY MANAGEMENT
+    </div>
+    <div class="ba-cards-list">
+
+      <div class="before-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">🌊</span>
+          <span class="ba-card-title">Polluted Godavari</span>
+        </div>
+        <p class="ba-card-desc">Unmanaged waste discharge and open defecation drive BOD levels above CPCB safe limits during peak bathing dates, rendering sacred waters hazardous.</p>
+        <span class="ba-card-indicator ind-red">&#9650; BOD +340% above threshold</span>
+      </div>
+
+      <div class="before-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">🗑️</span>
+          <span class="ba-card-title">Waste Overflow</span>
+        </div>
+        <p class="ba-card-desc">12–14 lakh kg of solid waste generated daily with no real-time collection routing. Overflow within 36 hours of peak pilgrim arrival.</p>
+        <span class="ba-card-indicator ind-red">&#9650; 14 lakh kg/day unmanaged</span>
+      </div>
+
+      <div class="before-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">🚨</span>
+          <span class="ba-card-title">Crowd Congestion Crisis</span>
+        </div>
+        <p class="ba-card-desc">Absence of AI-driven crowd flow modelling creates high-density bottlenecks at ghats, elevating stampede probability during Shahi Snan dates.</p>
+        <span class="ba-card-indicator ind-red">&#9650; Critical density zones: 8–11</span>
+      </div>
+
+      <div class="before-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">🦠</span>
+          <span class="ba-card-title">Disease Outbreak Risk</span>
+        </div>
+        <p class="ba-card-desc">Contaminated water, inadequate sanitation, and absence of health surveillance creates vector for cholera, hepatitis A, and acute diarrhoeal outbreaks.</p>
+        <span class="ba-card-indicator ind-red">&#9650; Epidemic probability: HIGH</span>
+      </div>
+
+      <div class="before-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">📰</span>
+          <span class="ba-card-title">Media Escalation</span>
+        </div>
+        <p class="ba-card-desc">International press coverage amplifying pollution imagery and safety failures undermines India's global soft power and Kumbh's UNESCO-recognised cultural heritage standing.</p>
+        <span class="ba-card-indicator ind-red">&#9650; Reputational exposure: CRITICAL</span>
+      </div>
+
+      <div class="before-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">⚡</span>
+          <span class="ba-card-title">Infrastructure Strain</span>
+        </div>
+        <p class="ba-card-desc">Power grid overloading, potable water shortages, and road network saturation without predictive load balancing degrades citizen safety at scale.</p>
+        <span class="ba-card-indicator ind-red">&#9650; Grid failure probability: 62%</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: AFTER -->
+  <div class="ba-column ba-col-after">
+    <div class="ba-column-head">
+      <span class="ba-dot"></span>
+      WITH CLIMACTIX SUSTAINABILITY INTELLIGENCE
+    </div>
+    <div class="ba-cards-list">
+
+      <div class="after-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">💧</span>
+          <span class="ba-card-title">Clean Godavari Programme</span>
+        </div>
+        <p class="ba-card-desc">Real-time water quality monitoring at 24 sensor nodes with automated STP load balancing and daily compliance alerts to Mela Authority and CPCB.</p>
+        <span class="ba-card-indicator ind-green">&#9660; BOD reduced by 66% vs baseline</span>
+      </div>
+
+      <div class="after-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">♻️</span>
+          <span class="ba-card-title">Zero Overflow System</span>
+        </div>
+        <p class="ba-card-desc">IoT-linked waste bin monitoring, dynamic collection routing, and segregation enforcement at source eliminate overflow events across 34 waste zones.</p>
+        <span class="ba-card-indicator ind-green">&#9660; Overflow incidents: Zero</span>
+      </div>
+
+      <div class="after-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">🤖</span>
+          <span class="ba-card-title">AI Crowd Management</span>
+        </div>
+        <p class="ba-card-desc">Predictive crowd flow engine with 15-minute density forecasts, automated ghat diversion triggers, and real-time integration with police control rooms.</p>
+        <span class="ba-card-indicator ind-green">&#9660; Stampede risk: Zero incidents</span>
+      </div>
+
+      <div class="after-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">🏥</span>
+          <span class="ba-card-title">Disease Prevention Grid</span>
+        </div>
+        <p class="ba-card-desc">Epidemiological surveillance with wastewater-based early warning, syndromic surveillance at 18 health posts, and automated Ministry of Health escalation protocols.</p>
+        <span class="ba-card-indicator ind-green">&#9660; Outbreak probability: Contained</span>
+      </div>
+
+      <div class="after-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">📡</span>
+          <span class="ba-card-title">Positive Media Narrative</span>
+        </div>
+        <p class="ba-card-desc">Live transparency dashboards, public-facing sustainability score, and ISO 20121 event certification create verified evidence for positive international coverage.</p>
+        <span class="ba-card-indicator ind-green">&#9650; Positive press index: +84%</span>
+      </div>
+
+      <div class="after-card">
+        <div class="ba-card-top">
+          <span class="ba-card-icon">🔋</span>
+          <span class="ba-card-title">Smart Infrastructure</span>
+        </div>
+        <p class="ba-card-desc">Predictive load modelling for power, water, and transport networks with 48-hour stress forecasting enables preemptive resource deployment and zero outage SLA.</p>
+        <span class="ba-card-indicator ind-green">&#9660; Grid failure probability: &lt;4%</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- TRANSFORMATION METRICS ROW -->
+<div class="transform-grid">
+
+  <div class="transform-kpi">
+    <span class="transform-kpi-icon">🗑️</span>
+    <div class="transform-kpi-label">Waste Management</div>
+    <div class="transform-kpi-val">+58%</div>
+    <div class="transform-kpi-sub">Collection Efficiency Gain</div>
+  </div>
+
+  <div class="transform-kpi">
+    <span class="transform-kpi-icon">💧</span>
+    <div class="transform-kpi-label">River Quality</div>
+    <div class="transform-kpi-val">&#8722;66%</div>
+    <div class="transform-kpi-sub">BOD Reduction vs 2015</div>
+  </div>
+
+  <div class="transform-kpi">
+    <span class="transform-kpi-icon">🚶</span>
+    <div class="transform-kpi-label">Crowd Safety</div>
+    <div class="transform-kpi-val kpi-zero">ZERO</div>
+    <div class="transform-kpi-sub">Stampede Incidents Target</div>
+  </div>
+
+  <div class="transform-kpi">
+    <span class="transform-kpi-icon">🌱</span>
+    <div class="transform-kpi-label">Carbon Footprint</div>
+    <div class="transform-kpi-val kpi-amber">&#8722;40%</div>
+    <div class="transform-kpi-sub">Scope 1+2 Emissions Reduction</div>
+  </div>
+
+</div>
+
+<!-- TIMELINE CHART -->
+<div class="timeline-panel hud">
+  <div class="timeline-head">
+    <span class="timeline-head-title">// SUSTAINABILITY SCORE TRAJECTORY &mdash; 2015 BASELINE vs 2027 MANAGED PROJECTION</span>
+    <div class="timeline-legend">
+      <div class="tl-leg">
+        <div class="tl-leg-line" style="background:var(--red);"></div>
+        <span>2015 Kumbh (Nashik) — Unmanaged</span>
+      </div>
+      <div class="tl-leg">
+        <div class="tl-leg-line" style="background:var(--green);"></div>
+        <span>2027 Prayagraj — Climactix Managed</span>
+      </div>
+    </div>
+  </div>
+  <div class="timeline-body">
+    <canvas id="chart-transformation" height="180" style="width:100%;display:block;"></canvas>
+  </div>
+</div>
+
+<!-- WHY CLIMACTIX GLOBAL -->
+<div class="why-panel hud">
+  <div class="why-head">
+    <span class="why-head-title">// WHY CLIMACTIX GLOBAL &mdash; INSTITUTIONAL CAPABILITY STATEMENT</span>
+  </div>
+  <div class="why-body">
+
+    <div class="why-col">
+      <div class="why-col-title"><span>01</span> Our Intelligence Capabilities</div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text"><strong>Real-time environmental monitoring</strong> across water quality, air quality, waste density, and crowd flow — unified in a single operating system.</span>
+      </div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text"><strong>Predictive risk modelling</strong> using climate scenario analysis, epidemiological data, and infrastructure load forecasting at event scale.</span>
+      </div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text"><strong>AI-driven decision support</strong> translating sensor data into actionable intervention triggers for Mela Authority command centres.</span>
+      </div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text"><strong>Regulatory compliance automation</strong> for CPCB, MoEFCC, and ISO 20121 Event Sustainability Management standards.</span>
+      </div>
+    </div>
+
+    <div class="why-col">
+      <div class="why-col-title"><span>02</span> What We Deliver</div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text"><strong>Government-grade dashboards</strong> — live intelligence interfaces designed for district collectors, Mela Authority officials, and NDMA teams.</span>
+      </div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text"><strong>Audit-ready reporting</strong> — automated generation of daily compliance reports, incident logs, and post-event sustainability assessments.</span>
+      </div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text"><strong>Verifiable impact measurement</strong> — quantified before-and-after metrics anchored to CPCB, NGFS, and SDG indicator frameworks.</span>
+      </div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text"><strong>Stakeholder transparency</strong> — public-facing sustainability scorecards and media-ready data packages for positive narrative management.</span>
+      </div>
+    </div>
+
+    <div class="why-col">
+      <div class="why-col-title"><span>03</span> Our Commitment</div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text">We operate at the <strong>intersection of climate science, financial intelligence, and operational governance</strong> — not as a technology vendor, but as a sovereign-grade intelligence partner.</span>
+      </div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text">Every metric we produce is <strong>traceable, explainable, and institutionally defensible</strong> — calibrated to the standards of Moody's, MSCI, and BlackRock, applied to India's unique sustainability challenge.</span>
+      </div>
+      <div class="why-item">
+        <div class="why-item-dot"></div>
+        <span class="why-item-text">Kumbh 2027 will be remembered as the moment <strong>India set the global benchmark</strong> for sustainable mega-event governance — and Climactix Global will be the intelligence infrastructure that made it possible.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHART INIT SCRIPT -->
+<script>
+(function() {
+  function initTransformationChart() {
+    var canvas = document.getElementById('chart-transformation');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.offsetWidth || canvas.parentElement.offsetWidth || 800;
+    canvas.width = W;
+    canvas.height = 180;
+    var w = canvas.width, h = canvas.height;
+
+    // Data: sustainability score (0-100) across 8 event phases
+    var labels = ['Pre-Event\n-90d', 'Pre-Event\n-30d', 'Arrival\nPhase', 'Peak\nSnan 1', 'Peak\nSnan 2', 'Mid\nEvent', 'Dispersal', 'Post\nEvent'];
+    var baseline2015 = [28, 22, 18, 12, 10, 14, 20, 26];  // unmanaged
+    var managed2027  = [72, 78, 81, 84, 86, 87, 85, 82];   // managed
+
+    var padL = 52, padR = 24, padT = 20, padB = 46;
+    var cw = w - padL - padR;
+    var ch = h - padT - padB;
+    var n = labels.length;
+
+    function xp(i) { return padL + (i / (n - 1)) * cw; }
+    function yp(v) { return padT + ch - (v / 100) * ch; }
+
+    // Grid lines
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(14,42,72,0.7)';
+    ctx.lineWidth = 1;
+    for (var g = 0; g <= 4; g++) {
+      var gy = padT + (g / 4) * ch;
+      ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(padL + cw, gy); ctx.stroke();
+      var val = 100 - g * 25;
+      ctx.fillStyle = 'rgba(58,106,138,0.9)';
+      ctx.font = '9px Space Mono, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(val, padL - 6, gy + 3);
+    }
+
+    // X-axis tick labels
+    ctx.fillStyle = 'rgba(122,174,200,0.7)';
+    ctx.font = '9px Exo 2, sans-serif';
+    ctx.textAlign = 'center';
+    labels.forEach(function(lbl, i) {
+      var parts = lbl.split('\n');
+      var x = xp(i);
+      parts.forEach(function(p, pi) { ctx.fillText(p, x, h - padB + 13 + pi * 12); });
+    });
+
+    // Filled area: 2027 managed (green tint)
+    ctx.beginPath();
+    ctx.moveTo(xp(0), yp(managed2027[0]));
+    managed2027.forEach(function(v, i) { if (i > 0) ctx.lineTo(xp(i), yp(v)); });
+    ctx.lineTo(xp(n - 1), padT + ch);
+    ctx.lineTo(padL, padT + ch);
+    ctx.closePath();
+    var gradG = ctx.createLinearGradient(0, padT, 0, padT + ch);
+    gradG.addColorStop(0, 'rgba(0,255,136,0.14)');
+    gradG.addColorStop(1, 'rgba(0,255,136,0.01)');
+    ctx.fillStyle = gradG;
+    ctx.fill();
+
+    // Filled area: 2015 baseline (red tint)
+    ctx.beginPath();
+    ctx.moveTo(xp(0), yp(baseline2015[0]));
+    baseline2015.forEach(function(v, i) { if (i > 0) ctx.lineTo(xp(i), yp(v)); });
+    ctx.lineTo(xp(n - 1), padT + ch);
+    ctx.lineTo(padL, padT + ch);
+    ctx.closePath();
+    var gradR = ctx.createLinearGradient(0, padT, 0, padT + ch);
+    gradR.addColorStop(0, 'rgba(255,51,51,0.10)');
+    gradR.addColorStop(1, 'rgba(255,51,51,0.01)');
+    ctx.fillStyle = gradR;
+    ctx.fill();
+
+    // Line: 2027 managed
+    ctx.beginPath();
+    ctx.moveTo(xp(0), yp(managed2027[0]));
+    managed2027.forEach(function(v, i) { if (i > 0) ctx.lineTo(xp(i), yp(v)); });
+    ctx.strokeStyle = '#00FF88';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dots: 2027
+    managed2027.forEach(function(v, i) {
+      ctx.beginPath();
+      ctx.arc(xp(i), yp(v), 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#00FF88';
+      ctx.fill();
+    });
+
+    // Line: 2015 baseline
+    ctx.beginPath();
+    ctx.moveTo(xp(0), yp(baseline2015[0]));
+    baseline2015.forEach(function(v, i) { if (i > 0) ctx.lineTo(xp(i), yp(v)); });
+    ctx.strokeStyle = '#FF3333';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Dots: 2015
+    baseline2015.forEach(function(v, i) {
+      ctx.beginPath();
+      ctx.arc(xp(i), yp(v), 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#FF3333';
+      ctx.fill();
+    });
+
+    // Delta annotation at peak
+    var pi4 = 3;
+    var x4 = xp(pi4);
+    var y27 = yp(managed2027[pi4]);
+    var y15 = yp(baseline2015[pi4]);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,180,255,0.4)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(x4, y27); ctx.lineTo(x4, y15); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(0,180,255,0.85)';
+    ctx.font = 'bold 10px Space Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('+' + (managed2027[pi4] - baseline2015[pi4]) + ' pts', x4 + 5, (y27 + y15) / 2 + 3);
+    ctx.restore();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTransformationChart);
+  } else {
+    // slight delay to ensure layout is resolved
+    setTimeout(initTransformationChart, 60);
+  }
+})();
+</script>
