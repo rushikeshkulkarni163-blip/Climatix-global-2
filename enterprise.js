@@ -90,7 +90,17 @@
       regulatoryObligation: 'EU Data Act, energy efficiency directives, SEC climate disclosure, water use regulations',
       assessmentType: 'Technology Climate Risk Intelligence Assessment',
       keyRisks: ['Cooling water scarcity', 'Grid carbon intensity liability', 'Backup diesel regulatory risk', 'Heat-induced derating losses'],
-      industrySections: ['Power Efficiency (PUE)', 'Water Use Efficiency (WUE)', 'Grid Carbon Intensity', 'Backup & Resilience Infrastructure']
+      industrySections: ['Power Efficiency (PUE)', 'Water Use Efficiency (WUE)', 'Grid Carbon Intensity', 'Backup & Resilience Infrastructure', 'Scope 3 — Employee & Commute Emissions']
+    },
+    it_services: {
+      label: 'IT Services & Software', code: 'ITS',
+      riskTier: 'Moderate Transition Risk', riskColor: '#0099CC',
+      sectors: ['IT Consulting & Services', 'Enterprise Software', 'BPO & Outsourcing', 'Fintech', 'SaaS Platforms', 'Engineering Services'],
+      climateExposure: 'Campus energy intensity, employee commute emissions, client climate solutions revenue, talent climate risk',
+      regulatoryObligation: 'CSRD, SEC climate disclosure, BRSR (India), ISO 14001, RE100, SBTi alignment',
+      assessmentType: 'IT Services Climate Risk & ESG Intelligence Assessment',
+      keyRisks: ['Carbon neutrality credibility', 'Client climate-enabling revenue exposure', 'Talent transition risk', 'Campus energy cost volatility'],
+      industrySections: ['Campus Energy & Green Infrastructure', 'Carbon Neutrality Programme', 'Client Climate Solutions', 'Digital Talent & Climate Skilling']
     },
     ports: {
       label: 'Ports & Maritime Infrastructure', code: 'PRT',
@@ -337,7 +347,219 @@
       label:'Are climate requirements embedded in supplier contracts and procurement criteria?'},
     { id:'CX-SC03', section:'Supply Chain Due Diligence', clayer:'c_supply', type:'text', minWords:150,
       label:'Describe your supplier climate due diligence program and engagement strategy',
-      sublabel:'Include: screening criteria, supplier engagement programs, corrective action processes'}
+      sublabel:'Include: screening criteria, supplier engagement programs, corrective action processes'},
+
+    // ── ENERGY EFFICIENCY & RENEWABLE POWER (C-CAPITAL)
+    { id:'CX-EN01', section:'Energy Efficiency & Renewable Power', clayer:'c_capital', type:'number', unit:'%', critical:true,
+      label:'Percentage of total electricity consumption sourced from renewable energy (own generation + certified procurement)',
+      sublabel:'Include: rooftop solar, PPAs, RECs, grid-connected renewables. Exclude unbundled RECs where energy is not physically consumed' },
+    { id:'CX-EN02', section:'Energy Efficiency & Renewable Power', clayer:'c_capital', type:'number', unit:'GJ/INR Cr revenue',
+      label:'Energy intensity — total energy consumption per unit of revenue (GJ per INR Crore or USD Million of revenue)',
+      sublabel:'Report Scope 1 + Scope 2 energy. Use consistent revenue base. Year-on-year trend required' },
+    { id:'CX-EN03', section:'Energy Efficiency & Renewable Power', clayer:'c_capital', type:'dropdown',
+      label:'Energy intensity trend over the last 3 years',
+      opts:[
+        {label:'Decreased by more than 20% — sustained efficiency gains', score:100},
+        {label:'Decreased by 10–20%', score:80},
+        {label:'Decreased by 5–10%', score:60},
+        {label:'Flat — no material change', score:35},
+        {label:'Increased — operational growth outpacing efficiency', score:10}
+      ]},
+    { id:'CX-EN04', section:'Energy Efficiency & Renewable Power', clayer:'c_capital', type:'yesno',
+      label:'Has the company committed to 100% renewable electricity (RE100 or equivalent national/sectoral target)?'},
+    { id:'CX-EN05', section:'Energy Efficiency & Renewable Power', clayer:'c_adapt', type:'dropdown',
+      label:'Highest green building certification level achieved across primary operational facilities',
+      opts:[
+        {label:'LEED Platinum / GRIHA 5-Star / BREEAM Outstanding across majority of portfolio', score:100},
+        {label:'LEED Gold / GRIHA 4-Star / BREEAM Excellent', score:75},
+        {label:'LEED Silver / GRIHA 3-Star / BREEAM Very Good', score:50},
+        {label:'Certified at base level only', score:25},
+        {label:'No green building certifications held', score:0}
+      ]},
+
+    // ── WATER STEWARDSHIP (C-RISK/P)
+    { id:'CX-WT01', section:'Water Stewardship', clayer:'c_risk_p', type:'number', unit:'m³/year', critical:true,
+      label:'Total freshwater withdrawal from all sources (municipal, groundwater, surface water) in m³ per year',
+      sublabel:'Separate by source type. Flag any withdrawal from water-stressed basins per WRI Aqueduct classification' },
+    { id:'CX-WT02', section:'Water Stewardship', clayer:'c_risk_p', type:'dropdown', critical:true,
+      label:'Share of total operations (by headcount or revenue) located in WRI Aqueduct High or Extremely High water stress zones',
+      opts:[
+        {label:'>75% of operations in high/extremely high water stress', score:5},
+        {label:'50–75% in high water stress', score:20},
+        {label:'25–50% in high water stress', score:45},
+        {label:'<25% in high water stress', score:70},
+        {label:'Operations mapped — all in low/medium water stress', score:95}
+      ]},
+    { id:'CX-WT03', section:'Water Stewardship', clayer:'c_risk_p', type:'number', unit:'%',
+      label:'Percentage of wastewater generated that is treated and recycled/reused within operations',
+      sublabel:'Zero-liquid discharge (ZLD) or closed-loop systems score highest. Report treatment standard achieved' },
+    { id:'CX-WT04', section:'Water Stewardship', clayer:'c_risk_p', type:'dropdown',
+      label:'Per capita or per unit output water consumption trend (3-year)',
+      opts:[
+        {label:'Reduced by more than 30% per unit output', score:100},
+        {label:'Reduced by 15–30%', score:75},
+        {label:'Reduced by 5–15%', score:50},
+        {label:'Flat — no material improvement', score:25},
+        {label:'Increased per unit output', score:0}
+      ]},
+    { id:'CX-WT05', section:'Water Stewardship', clayer:'c_adapt', type:'yesno',
+      label:'Does the company have a formal water stewardship program addressing community water availability in operating regions?',
+      sublabel:'Include: watershed restoration, community water access programs, engagement with local water governance bodies' },
+
+    // ── WASTE & CIRCULAR ECONOMY (C-CAPITAL)
+    { id:'CX-WS01', section:'Waste & Circular Economy', clayer:'c_capital', type:'number', unit:'%',
+      label:'Percentage of total waste generated diverted from landfill (via reuse, recycling, composting, or energy recovery)',
+      sublabel:'Exclude incineration without energy recovery. Report split by hazardous/non-hazardous waste streams' },
+    { id:'CX-WS02', section:'Waste & Circular Economy', clayer:'c_capital', type:'dropdown',
+      label:'Company position on zero-waste-to-landfill (ZWTL) commitment',
+      opts:[
+        {label:'ZWTL certified or >99% diversion rate achieved', score:100},
+        {label:'>90% diversion — formal ZWTL target adopted', score:80},
+        {label:'75–90% diversion — on track toward ZWTL', score:60},
+        {label:'50–75% diversion — improvement programme underway', score:35},
+        {label:'<50% diversion — no formal waste reduction targets', score:5}
+      ]},
+    { id:'CX-WS03', section:'Waste & Circular Economy', clayer:'c_risk_t', type:'yesno',
+      label:'Has the company committed to eliminate single-use plastics from operations and product packaging by a defined target year?'},
+    { id:'CX-WS04', section:'Waste & Circular Economy', clayer:'c_capital', type:'dropdown',
+      label:'Electronic and hazardous waste (e-waste) management program',
+      opts:[
+        {label:'Certified e-waste recycler used — full asset tracking and chain of custody', score:100},
+        {label:'Authorised recycler engaged — partial tracking', score:65},
+        {label:'Vendor take-back programs used — no independent verification', score:35},
+        {label:'No formalised e-waste management programme', score:0}
+      ]},
+
+    // ── WORKFORCE DIVERSITY & INCLUSION (C-CORE)
+    { id:'CX-WF01', section:'Workforce Diversity & Inclusion', clayer:'c_core', type:'number', unit:'%', critical:true,
+      label:'Percentage of women in total global workforce',
+      sublabel:'Report as of latest fiscal year-end. Include full-time, part-time, and fixed-term employees. Exclude contract workers unless material' },
+    { id:'CX-WF02', section:'Workforce Diversity & Inclusion', clayer:'c_core', type:'number', unit:'%',
+      label:'Percentage of women in senior leadership (C-suite, VP level and above, and Board of Directors)',
+      sublabel:'Report Board and Executive Leadership separately. Disclose methodology for defining "senior leadership"' },
+    { id:'CX-WF03', section:'Workforce Diversity & Inclusion', clayer:'c_core', type:'yesno', critical:true,
+      label:'Has the company completed a formal pay equity analysis disaggregated by gender, ethnicity, and seniority level within the last 2 years?'},
+    { id:'CX-WF04', section:'Workforce Diversity & Inclusion', clayer:'c_core', type:'dropdown',
+      label:'Disability and LGBTQIA+ inclusion — programme maturity',
+      opts:[
+        {label:'Formal ERGs, inclusive hiring targets, and accessibility audits completed', score:100},
+        {label:'Policy commitments and ERGs in place — targets not yet formalised', score:70},
+        {label:'Non-discrimination policy only — no active inclusion programmes', score:35},
+        {label:'No formalised diversity and inclusion programmes', score:0}
+      ]},
+    { id:'CX-WF05', section:'Workforce Diversity & Inclusion', clayer:'c_core', type:'number', unit:'%',
+      label:'Percentage of employees hired locally (same country as the role) as a proportion of total hiring in the latest fiscal year',
+      sublabel:'Reflects contribution to local economic development and regulatory compliance in jurisdictions with local content requirements' },
+    { id:'CX-WF06', section:'Workforce Diversity & Inclusion', clayer:'c_core', type:'yesno',
+      label:'Is the company a signatory to UN Women Empowerment Principles (WEPs), UN Standards of Conduct on LGBTI non-discrimination, or equivalent international commitments?'},
+
+    // ── HUMAN CAPITAL DEVELOPMENT (C-ADAPT)
+    { id:'CX-HC01', section:'Human Capital Development', clayer:'c_adapt', type:'number', unit:'hours/employee/year', critical:true,
+      label:'Average training and development hours per employee per year (all categories of training)',
+      sublabel:'Include: on-the-job, instructor-led, digital, compliance, and sustainability training. Disaggregate by grade band if available' },
+    { id:'CX-HC02', section:'Human Capital Development', clayer:'c_adapt', type:'number', unit:'USD per employee',
+      label:'Annual investment in employee learning, reskilling, and upskilling programmes (USD per employee)',
+      sublabel:'Include direct L&D budget. Exclude mandatory compliance training costs. Report trend over 2 years' },
+    { id:'CX-HC03', section:'Human Capital Development', clayer:'c_adapt', type:'number', unit:'%',
+      label:'Employee voluntary attrition rate (annualised, latest fiscal year)',
+      sublabel:'Voluntary departures only. High attrition (>20%) signals human capital risk. Disaggregate by seniority if available' },
+    { id:'CX-HC04', section:'Human Capital Development', clayer:'c_adapt', type:'yesno',
+      label:'Does the company have a formalised employee wellness programme addressing physical, mental, and financial wellbeing?'},
+    { id:'CX-HC05', section:'Human Capital Development', clayer:'c_adapt', type:'dropdown',
+      label:'External employer recognition and workplace quality certifications held',
+      opts:[
+        {label:'Great Place to Work® certified + sector/regional employer awards', score:100},
+        {label:'Great Place to Work® certified only', score:75},
+        {label:'Industry employer awards — no third-party certification', score:45},
+        {label:'No external employer recognition', score:10}
+      ]},
+
+    // ── COMMUNITY & SOCIAL IMPACT (C-TRUTH)
+    { id:'CX-SR01', section:'Community & Social Impact', clayer:'c_truth', type:'number', unit:'USD M/year',
+      label:'Total annual community investment and CSR expenditure (USD Million)',
+      sublabel:'Include: direct charitable contributions, employee volunteering value, foundation grants, in-kind donations. Exclude regulatory mandatory spend where not strategically directed' },
+    { id:'CX-SR02', section:'Community & Social Impact', clayer:'c_truth', type:'number', unit:'people',
+      label:'Number of direct beneficiaries reached through community programmes in the latest fiscal year',
+      sublabel:'Count individuals — not households or indirect beneficiaries. Include education, health, livelihood, and digital access programmes' },
+    { id:'CX-SR03', section:'Community & Social Impact', clayer:'c_truth', type:'dropdown',
+      label:'SDG alignment — number of UN Sustainable Development Goals materially supported by the company\'s social programmes (with evidence)',
+      opts:[
+        {label:'10 or more SDGs with quantified impact evidence', score:100},
+        {label:'7–9 SDGs with outcome metrics', score:80},
+        {label:'4–6 SDGs with programme-level reporting', score:55},
+        {label:'1–3 SDGs — limited to CSR compliance spend', score:25},
+        {label:'No SDG alignment framework in place', score:0}
+      ]},
+    { id:'CX-SR04', section:'Community & Social Impact', clayer:'c_truth', type:'text', minWords:150,
+      label:'Describe your flagship community programme — outcomes achieved, communities served, and how it connects to core business strategy',
+      sublabel:'Avoid generic CSR language. Quantify outcomes, name geographies, reference third-party evaluations where available' },
+
+    // ── DATA PRIVACY & CYBERSECURITY GOVERNANCE (C-TRUTH)
+    { id:'CX-DP01', section:'Data Privacy & Cybersecurity', clayer:'c_truth', type:'dropdown', critical:true,
+      label:'Data privacy management framework and certification status',
+      opts:[
+        {label:'ISO 27701 (PIMS) certified + GDPR/applicable national law fully compliant', score:100},
+        {label:'ISO 27001 certified — ISO 27701 implementation in progress', score:75},
+        {label:'Internal data privacy policy aligned to GDPR — not independently certified', score:45},
+        {label:'Basic data privacy policy — no recognised framework', score:15},
+        {label:'No formalised data privacy programme', score:0}
+      ]},
+    { id:'CX-DP02', section:'Data Privacy & Cybersecurity', clayer:'c_truth', type:'dropdown',
+      label:'Significant data breaches or regulatory enforcement actions in the last 3 fiscal years',
+      opts:[
+        {label:'No material breaches — zero regulatory findings', score:100},
+        {label:'Minor incidents — contained, disclosed, and remediated within 72 hours', score:70},
+        {label:'One material breach — notified to regulators, customers informed', score:35},
+        {label:'Multiple material breaches or regulatory enforcement action', score:5}
+      ]},
+    { id:'CX-DP03', section:'Data Privacy & Cybersecurity', clayer:'c_truth', type:'yesno',
+      label:'Does the company have a dedicated CISO or Chief Privacy Officer with Board-level reporting authority?'},
+    { id:'CX-DP04', section:'Data Privacy & Cybersecurity', clayer:'c_truth', type:'dropdown',
+      label:'Cybersecurity governance maturity — based on NIST CSF or equivalent framework',
+      opts:[
+        {label:'NIST CSF Tier 4 (Adaptive) — real-time threat intelligence, continuous monitoring', score:100},
+        {label:'NIST CSF Tier 3 (Repeatable) — formal processes, organisation-wide awareness', score:75},
+        {label:'NIST CSF Tier 2 (Risk-Informed) — risk management approved but not yet enterprise-wide', score:45},
+        {label:'NIST CSF Tier 1 (Partial) — ad hoc, reactive', score:15}
+      ]},
+
+    // ── EXTERNAL ESG ASSURANCE & RATINGS (C-TRUTH)
+    { id:'CX-EX01', section:'External ESG Assurance & Ratings', clayer:'c_truth', type:'dropdown', critical:true,
+      label:'Level of third-party independent assurance obtained on ESG/sustainability disclosures',
+      opts:[
+        {label:'Reasonable assurance (audit-equivalent) on all material ESG metrics by Big 4 or equivalent', score:100},
+        {label:'Limited assurance on all material ESG metrics', score:80},
+        {label:'Limited assurance on GHG emissions only', score:55},
+        {label:'Internal verification only — no external assurance', score:20},
+        {label:'No assurance or verification on ESG data', score:0}
+      ]},
+    { id:'CX-EX02', section:'External ESG Assurance & Ratings', clayer:'c_truth', type:'dropdown',
+      label:'Current MSCI ESG Rating or equivalent institutional ESG rating',
+      opts:[
+        {label:'MSCI AAA or AA (Leader)', score:100},
+        {label:'MSCI A or BBB (Average)', score:65},
+        {label:'MSCI BB or B (Laggard)', score:30},
+        {label:'MSCI CCC (Severe ESG risks)', score:5},
+        {label:'Not rated by MSCI or equivalent', score:0}
+      ]},
+    { id:'CX-EX03', section:'External ESG Assurance & Ratings', clayer:'c_truth', type:'dropdown',
+      label:'CDP Climate Change disclosure score (latest submission)',
+      opts:[
+        {label:'CDP A or A- (Leadership)', score:100},
+        {label:'CDP B (Management)', score:70},
+        {label:'CDP C (Awareness)', score:40},
+        {label:'CDP D or D- (Disclosure only)', score:15},
+        {label:'Not disclosed to CDP', score:0}
+      ]},
+    { id:'CX-EX04', section:'External ESG Assurance & Ratings', clayer:'c_truth', type:'dropdown',
+      label:'Sustainability reporting standard(s) adopted for annual ESG/sustainability report',
+      opts:[
+        {label:'GRI Standards + TCFD + SASB — comprehensive multi-framework disclosure', score:100},
+        {label:'GRI Standards + TCFD', score:80},
+        {label:'GRI Standards only or TCFD only', score:55},
+        {label:'BRSR (India) or national equivalent only', score:35},
+        {label:'No recognised reporting standard adopted', score:0}
+      ]}
   ];
 
   // ── Industry-specific questions (loaded dynamically per industry)
@@ -469,7 +691,53 @@
       { id:'TEC-B01', section:'Backup & Resilience Infrastructure', clayer:'c_risk_p', type:'number', unit:'hours of backup',
         label:'Maximum aggregate backup generator runtime (hours) — climate disruption resilience buffer' },
       { id:'TEC-B02', section:'Backup & Resilience Infrastructure', clayer:'c_adapt', type:'text', minWords:150,
-        label:'Describe your climate resilience strategy for power grid vulnerability, cooling dependency, and extreme weather events' }
+        label:'Describe your climate resilience strategy for power grid vulnerability, cooling dependency, and extreme weather events' },
+      { id:'TEC-SC01', section:'Scope 3 — Employee & Commute Emissions', clayer:'c_capital', type:'number', unit:'tCO₂e',
+        label:'Estimated Scope 3 Category 7 emissions from employee commuting and business travel (tCO₂e/year)',
+        sublabel:'Include: air travel, road, rail. Report per employee intensity metric. Disclose any remote-work emission reduction quantification' },
+      { id:'TEC-SC02', section:'Scope 3 — Employee & Commute Emissions', clayer:'c_adapt', type:'dropdown',
+        label:'Remote and flexible work programme — carbon reduction impact',
+        opts:[{label:'>40% of work delivered remotely — quantified commute reduction tracked',score:100},{label:'20–40% remote — informal tracking only',score:65},{label:'<20% remote — return-to-office default',score:30},{label:'No remote work policy',score:5}]}
+    ],
+
+    it_services: [
+      { id:'ITS-E01', section:'Campus Energy & Green Infrastructure', clayer:'c_capital', type:'number', unit:'% renewable', critical:true,
+        label:'Percentage of total electricity across all campuses and offices sourced from renewable energy',
+        sublabel:'Report on-site solar, PPAs, and grid renewables separately. RE100 signatories must disclose hourly matching progress' },
+      { id:'ITS-E02', section:'Campus Energy & Green Infrastructure', clayer:'c_capital', type:'number', unit:'kWh/employee',
+        label:'Energy consumption per employee (kWh/employee/year) — latest year vs 3 years prior',
+        sublabel:'Efficiency benchmark for IT services sector: <3,000 kWh/employee. Disclose absolute consumption separately' },
+      { id:'ITS-E03', section:'Campus Energy & Green Infrastructure', clayer:'c_adapt', type:'dropdown',
+        label:'Green building certification coverage across owned and long-term leased facilities (by floor area)',
+        opts:[
+          {label:'>75% of floor area — LEED Platinum/Gold or GRIHA 4-5 Star', score:100},
+          {label:'50–75% of floor area certified at Gold/Platinum equivalent', score:75},
+          {label:'25–50% certified', score:50},
+          {label:'<25% certified or base-level certification only', score:25},
+          {label:'No green building certifications', score:0}
+        ]},
+      { id:'ITS-C01', section:'Carbon Neutrality Programme', clayer:'c_capital', type:'dropdown', critical:true,
+        label:'Carbon neutrality status — scope of coverage and certification standard applied',
+        opts:[
+          {label:'Certified carbon neutral (PAS 2060:2014 or equivalent) — Scope 1, 2 and material Scope 3', score:100},
+          {label:'Carbon neutral — Scope 1 and 2 only, with quality offsets (Gold Standard/VCS)', score:75},
+          {label:'Net-zero commitment with interim 2030 target — roadmap published', score:55},
+          {label:'Carbon neutral claim — no independent verification', score:20},
+          {label:'No carbon neutrality programme', score:0}
+        ]},
+      { id:'ITS-C02', section:'Carbon Neutrality Programme', clayer:'c_capital', type:'yesno',
+        label:'Are carbon offsets sourced from projects certified to Gold Standard, Verra VCS, or equivalent with verified co-benefits across UN SDGs?'},
+      { id:'ITS-T01', section:'Client Climate Solutions', clayer:'c_adapt', type:'text', minWords:200, critical:true,
+        label:'Describe climate-enabling technology solutions delivered to clients — quantify emissions reductions enabled (Scope 3 Cat. 11)',
+        sublabel:'Include: IoT/AI energy management, smart grid solutions, sustainable supply chain platforms, ESG analytics tools. Reference client case studies where permitted' },
+      { id:'ITS-T02', section:'Client Climate Solutions', clayer:'c_fin', type:'number', unit:'% of revenue',
+        label:'Percentage of total revenue attributable to products and services classified as climate-enabling or sustainability-oriented',
+        sublabel:'Use ICMA Green Bond Principles or EU Taxonomy-aligned classification where applicable' },
+      { id:'ITS-W01', section:'Digital Talent & Climate Skilling', clayer:'c_adapt', type:'number', unit:'people',
+        label:'Number of employees trained on sustainability, ESG, or climate risk topics in the latest fiscal year',
+        sublabel:'Include mandatory sustainability modules in onboarding and role-specific climate risk training for finance, procurement, and operations teams' },
+      { id:'ITS-W02', section:'Digital Talent & Climate Skilling', clayer:'c_adapt', type:'yesno',
+        label:'Does the company offer externally-accessible digital skilling programmes aligned to sustainability or digital transformation (reaching clients, communities, or students)?'}
     ],
 
     ports: [

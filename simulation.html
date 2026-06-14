@@ -849,19 +849,20 @@ body {
 .search-clear.visible { display: block; }
 .search-clear:hover { color: var(--tx0); }
 .search-results {
-  position: fixed; top: auto; left: 0; width: 258px;
-  background: var(--bg1); border: 1px solid var(--bd2); border-top: none;
-  z-index: 500; max-height: 260px; overflow-y: auto;
-  display: none; box-shadow: 0 16px 40px rgba(0,0,0,.65);
+  position: fixed; top: auto; left: 0; width: 262px;
+  background: #0A0A0A; border: 1px solid rgba(255,255,255,0.12); border-top: none;
+  border-top: 2px solid #FF6600;
+  z-index: 1002; max-height: 320px; overflow-y: auto;
+  display: none;
 }
 .search-results.open { display: block; }
 .search-result-item {
   display: flex; align-items: center; gap: 9px;
-  padding: 8px 14px; border-bottom: 1px solid var(--bd0);
+  padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
   cursor: pointer; transition: background .1s;
 }
 .search-result-item:last-child { border-bottom: none; }
-.search-result-item:hover { background: var(--bghov); }
+.search-result-item:hover { background: rgba(255,102,0,0.06); }
 .sr-ico {
   width: 22px; height: 22px; flex-shrink: 0; border-radius: 2px;
   display: flex; align-items: center; justify-content: center;
@@ -5805,60 +5806,145 @@ function onSearchKey(e){
   if(e.key==='Enter'&&_searchResults.length>0)pickSearchResult(_searchResults[0]);
 }
 
+/* Type display config */
+const SEARCH_TYPE_CFG={
+  asset:   {icon:'◉',badge:'ASSET',   color:'#FF6600'},
+  port:    {icon:'⚓',badge:'PORT',    color:'#0099CC'},
+  airport: {icon:'✈',badge:'AIRPORT', color:'#22D3EE'},
+  energy:  {icon:'⚡',badge:'ENERGY',  color:'#EAB308'},
+  dam:     {icon:'▲',badge:'DAM',     color:'#0099CC'},
+  water:   {icon:'◎',badge:'WATER',   color:'#3399FF'},
+  mining:  {icon:'⬡',badge:'MINING',  color:'#C26000'},
+  coord:   {icon:'⊕',badge:'COORD',   color:'#FF6600'},
+};
+
 function renderSearch(q){
   const res=document.getElementById('search-results');
-  /* Position fixed dropdown below the search bar */
+  const lp=document.getElementById('lp');
+  /* Position below search bar, aligned to left panel */
   const wrap=document.querySelector('.search-wrap');
-  if(wrap){const r=wrap.getBoundingClientRect();res.style.top=r.bottom+'px';}
+  if(wrap&&res){
+    const r=wrap.getBoundingClientRect();
+    res.style.top=r.bottom+'px';
+    res.style.left=r.left+'px';
+    res.style.width=r.width+'px';
+  }
+
   /* Coordinate pattern: "lat, lng" */
   const coordMatch=q.match(/^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/);
   _searchResults=[];
 
   if(coordMatch){
     const lat=parseFloat(coordMatch[1]),lng=parseFloat(coordMatch[2]);
-    if(lat>=-90&&lat<=90&&lng>=-180&&lng<=180){
-      _searchResults=[{type:'coord',label:`Fly to ${lat.toFixed(4)}, ${lng.toFixed(4)}`,
-        icon:'',sub:'Custom coordinates',lat,lng}];
-    }
+    if(lat>=-90&&lat<=90&&lng>=-180&&lng<=180)
+      _searchResults.push({type:'coord',label:`${lat.toFixed(4)}°, ${lng.toFixed(4)}°`,
+        sub:'Fly to coordinates',lat,lng});
   }
 
   const ql=q.toLowerCase();
+  const scoreMatch=(str)=>{
+    const s=str.toLowerCase();
+    if(s===ql)return 3;
+    if(s.startsWith(ql))return 2;
+    if(s.includes(ql))return 1;
+    return 0;
+  };
+
   /* Assets */
-  S.assets.filter(a=>a.name.toLowerCase().includes(ql)||a.country.toLowerCase().includes(ql))
-    .slice(0,4).forEach(a=>_searchResults.push({type:'asset',label:a.name,icon:'◉',sub:`${a.sector} · ${a.country}`,id:a.id,lat:a.lat,lng:a.lng}));
+  S.assets
+    .map(a=>({r:{type:'asset',label:a.name,sub:`${a.sector} · ${a.country}`,id:a.id,lat:a.lat,lng:a.lng},
+              s:Math.max(scoreMatch(a.name),scoreMatch(a.country),scoreMatch(a.sector))}))
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,3)
+    .forEach(x=>_searchResults.push(x.r));
+
+  /* Airports — search name, IATA, country, city */
+  AIRPORTS_DATA
+    .map(a=>({r:{type:'airport',label:a.name,sub:`${a.iata} · ${a.country} · ${a.pax}M pax`,lat:a.lat,lng:a.lng,iata:a.iata},
+              s:Math.max(scoreMatch(a.name),scoreMatch(a.iata),scoreMatch(a.country))}))
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,4)
+    .forEach(x=>_searchResults.push(x.r));
+
   /* Ports */
-  PORTS_DATA.filter(p=>p.name.toLowerCase().includes(ql)||p.country.toLowerCase().includes(ql))
-    .slice(0,4).forEach(p=>_searchResults.push({type:'port',label:p.name,icon:'',sub:`Port · ${p.country} · ${p.teu}M TEU`,lat:p.lat,lng:p.lng}));
-  /* Airports */
-  AIRPORTS_DATA.filter(a=>a.name.toLowerCase().includes(ql)||a.iata.toLowerCase().includes(ql)||a.country.toLowerCase().includes(ql))
-    .slice(0,4).forEach(a=>_searchResults.push({type:'airport',label:a.name,icon:'',sub:`Airport · ${a.iata} · ${a.country}`,lat:a.lat,lng:a.lng}));
+  PORTS_DATA
+    .map(p=>({r:{type:'port',label:p.name,sub:`${p.country} · ${p.teu}M TEU/yr`,lat:p.lat,lng:p.lng},
+              s:Math.max(scoreMatch(p.name),scoreMatch(p.country))}))
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,3)
+    .forEach(x=>_searchResults.push(x.r));
+
   /* Energy sites */
-  ENERGY_SITES_DATA.filter(e=>e.name.toLowerCase().includes(ql)||e.company.toLowerCase().includes(ql)||e.country.toLowerCase().includes(ql))
-    .slice(0,4).forEach(e=>_searchResults.push({type:'energy',label:e.name,icon:'',sub:`${e.type} · ${e.company} · ${e.country}`,lat:e.lat,lng:e.lng}));
+  ENERGY_SITES_DATA
+    .map(e=>({r:{type:'energy',label:e.name,sub:`${e.type} · ${e.company} · ${e.country}`,lat:e.lat,lng:e.lng},
+              s:Math.max(scoreMatch(e.name),scoreMatch(e.company),scoreMatch(e.country))}))
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,3)
+    .forEach(x=>_searchResults.push(x.r));
+
+  /* Dams */
+  DAMS_DATA
+    .map(d=>({r:{type:'dam',label:d.name,sub:`${d.river} · ${d.country} · ${d.mw.toLocaleString()} MW`,lat:d.lat,lng:d.lng},
+              s:Math.max(scoreMatch(d.name),scoreMatch(d.river),scoreMatch(d.country))}))
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,3)
+    .forEach(x=>_searchResults.push(x.r));
+
+  /* Water stress zones */
+  WATER_STRESS_DATA
+    .map(w=>({r:{type:'water',label:w.name,sub:`${w.country} · Stress ${w.stress}% · ${w.risk.toUpperCase()}`,lat:w.lat,lng:w.lng},
+              s:Math.max(scoreMatch(w.name),scoreMatch(w.country))}))
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2)
+    .forEach(x=>_searchResults.push(x.r));
+
+  /* Mining */
+  if(typeof MINING_SITES_DATA!=='undefined'){
+    MINING_SITES_DATA
+      .map(m=>({r:{type:'mining',label:m.name,sub:`${m.mineral} · ${m.country}`,lat:m.lat,lng:m.lng},
+                s:Math.max(scoreMatch(m.name),scoreMatch(m.mineral||''),scoreMatch(m.country))}))
+      .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2)
+      .forEach(x=>_searchResults.push(x.r));
+  }
+
+  /* Group header labels */
+  const typeOrder=['asset','airport','port','energy','dam','water','mining','coord'];
+  _searchResults.sort((a,b)=>typeOrder.indexOf(a.type)-typeOrder.indexOf(b.type));
 
   if(!_searchResults.length){
-    res.classList.remove('open');return;
+    res.innerHTML=`<div style="padding:14px 16px;text-align:center">
+      <div style="font-family:IBM Plex Mono,monospace;font-size:9px;font-weight:700;letter-spacing:.12em;color:rgba(255,255,255,.28);text-transform:uppercase;margin-bottom:5px">No results for "${q}"</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.20)">Try: city name, IATA code, country, or coordinates (lat, lng)</div>
+    </div>`;
+    res.classList.add('open');
+    return;
   }
-  res.innerHTML=_searchResults.map((r,i)=>`
-    <div class="search-result-item" onclick="pickSearchResult(_searchResults[${i}])">
-      <span style="font-size:12px;line-height:1">${r.icon}</span>
+
+  let lastType='';
+  res.innerHTML=_searchResults.map((r,i)=>{
+    const cfg=SEARCH_TYPE_CFG[r.type]||{icon:'·',badge:r.type.toUpperCase(),color:'#888'};
+    const hdr=r.type!==lastType
+      ?`<div style="padding:4px 12px 2px;font-family:IBM Plex Mono,monospace;font-size:7px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);background:rgba(255,255,255,.015);border-bottom:1px solid rgba(255,255,255,.04)">${cfg.badge}S</div>`
+      :'';
+    lastType=r.type;
+    return`${hdr}<div class="search-result-item" onclick="pickSearchResult(_searchResults[${i}])">
+      <span style="font-size:14px;line-height:1;flex-shrink:0;width:18px;text-align:center;color:${cfg.color}">${cfg.icon}</span>
       <div style="flex:1;min-width:0">
-        <div style="font-size:10px;font-weight:600;color:var(--tx0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.label}</div>
-        <div style="font-size:8px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.sub}</div>
+        <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.005em">${r.label}</div>
+        <div style="font-family:IBM Plex Mono,monospace;font-size:8px;color:rgba(255,255,255,.30);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px">${r.sub}</div>
       </div>
-    </div>`).join('');
+      <span style="font-family:IBM Plex Mono,monospace;font-size:7px;font-weight:700;letter-spacing:.10em;padding:1px 5px;border:1px solid ${cfg.color}30;color:${cfg.color}80;flex-shrink:0">${cfg.badge}</span>
+    </div>`;
+  }).join('');
   res.classList.add('open');
 }
 
 function pickSearchResult(r){
   if(!r)return;
   clearSearch();
-  if(map)map.flyTo({center:[r.lng,r.lat],zoom:r.type==='coord'?8:6,duration:900,essential:true});
+  const zoom={asset:7,airport:8,port:8,energy:7,dam:7,water:5,mining:7,coord:8}[r.type]||6;
+  if(map)map.flyTo({center:[r.lng,r.lat],zoom,duration:1100,essential:true});
   if(r.type==='asset')pickAsset(r.id);
-  /* Auto-enable the relevant infra layer for visual context */
-  if(r.type==='port'&&!S.infra.ports){toggleInfra('ports');}
-  if(r.type==='airport'&&!S.infra.airports){toggleInfra('airports');}
-  if(r.type==='energy'&&!S.infra.energy){toggleInfra('energy');}
+  /* Auto-enable the relevant infra layer */
+  if(r.type==='port'&&!S.infra.ports)toggleInfra('ports');
+  if(r.type==='airport'&&!S.infra.airports)toggleInfra('airports');
+  if(r.type==='energy'&&!S.infra.energy)toggleInfra('energy');
+  if(r.type==='dam'&&!S.infra.dams)toggleInfra('dams');
+  if(r.type==='water'&&!S.infra.water)toggleInfra('water');
 }
 
 /* ─── PIN MODAL ─── */

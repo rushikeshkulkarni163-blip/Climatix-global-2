@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planetary Intelligence · Climactix Global</title>
+  <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="stylesheet" href="site.css?v=3" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* NASA starfield */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.13) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 230px 230px, 140px 140px, 85px 85px;
+      background-position: 12px 20px, 65px 45px, 30px 100px;
+      pointer-events: none; z-index: 0; opacity: 0.32;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* ── NAV ── */
+    .cx-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      height: var(--nav-h);
+      background: rgba(0,0,0,0.94);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 var(--page-px); gap: 12px;
+    }
+    .cx-nav-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .cx-nav-logo img { height: 20px; }
+    .cx-nav-logo-text {
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--text);
+    }
+    .cx-nav-logo-sub {
+      font-family: var(--mono); font-size: 8px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+    }
+    .cx-nav-links { display: flex; align-items: center; gap: 2px; margin-left: 32px; }
+    .cx-nav-link {
+      font-family: var(--mono); font-size: 10px; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--text-muted); padding: 4px 10px;
+      border-bottom: 2px solid transparent; transition: var(--t);
+    }
+    .cx-nav-link:hover { color: var(--text); }
+    .cx-nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .cx-nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .cx-nav-cta {
+      background: var(--accent); color: var(--accent-fg);
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 6px 14px; border-radius: var(--r-sm); transition: var(--t);
+    }
+    .cx-nav-cta:hover { background: var(--accent-dim); }
+    .cx-nav-badge {
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted); border: 1px solid var(--border);
+      padding: 3px 8px; border-radius: 2px;
+    }
+
+    /* ── SCROLL CONTAINER ── */
+    .pi-scroll { padding-top: var(--nav-h); }
+
+    /* ── SECTION BASE ── */
+    .pi-section {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pi-section-label {
+      position: absolute; top: 28px; left: var(--page-px);
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex; align-items: center; gap: 8px;
+      z-index: 10;
+    }
+    .pi-section-label::before {
+      content: ''; display: block; width: 20px; height: 1px; background: var(--accent);
+    }
+
+    .pi-section-num {
+      position: absolute; bottom: 28px; right: var(--page-px);
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.1em; color: var(--text-muted); z-index: 10;
+    }
+
+    /* ══════════════════ S0 HERO ══════════════════ */
+    #s-hero { min-height: 100vh; background: #000; position: relative; border-bottom: none; }
+    #globe-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+    .hero-content {
+      position: relative; z-index: 10;
+      padding: 0 var(--page-px);
+      width: 100%;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; min-height: 100vh; gap: 60px;
+    }
+    .hero-left { padding-top: 60px; }
+    .hero-overline {
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hero-overline::before { content: ''; display: block; width: 28px; height: 1px; background: var(--accent); }
+    .hero-h1 {
+      font-family: var(--mono); font-size: clamp(26px, 3.2vw, 48px);
+      font-weight: 700; line-height: 1.1; letter-spacing: -0.02em;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .hero-h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub { font-size: 13px; line-height: 1.7; color: var(--text-2); max-width: 460px; margin-bottom: 32px; }
+    .hero-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: var(--accent-fg);
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 10px 24px; border-radius: var(--r-sm); transition: var(--t); cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--accent-dim); }
+    .btn-outline {
+      background: transparent; color: var(--text-2);
+      font-family: var(--mono); font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 10px 24px; border-radius: var(--r-sm);
+      border: 1px solid var(--border); transition: var(--t); cursor: pointer;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: var(--r);
+      margin-top: 36px; overflow: hidden;
+    }
+    .hero-stat { background: rgba(0,0,0,0.75); padding: 16px; }
+    .hero-stat-val {
+      font-family: var(--mono); font-size: 20px; font-weight: 700;
+      color: var(--accent); letter-spacing: -0.02em; margin-bottom: 3px;
+    }
+    .hero-stat-label {
+      font-family: var(--mono); font-size: 8px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .hero-right { display: flex; flex-direction: column; gap: 7px; padding-top: 80px; }
+    .hero-ticker-head {
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted);
+      padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+    }
+    .ticker-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 12px; background: rgba(0,0,0,0.65);
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      font-family: var(--mono); font-size: 10px;
+    }
+    .ticker-label { color: var(--text-2); font-size: 9px; }
+    .ticker-val { color: var(--accent); font-weight: 700; }
+    .ticker-delta { font-size: 9px; }
+    .ticker-delta.up { color: var(--red); }
+    .ticker-delta.dn { color: var(--green); }
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted); animation: bounceY 2s ease-in-out infinite;
+    }
+    .scroll-hint::after { content: '↓'; font-size: 13px; color: var(--accent); }
+    @keyframes bounceY {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ══════════════════ S1 TEMPERATURE ══════════════════ */
+    #s-temperature {
+      display: grid; grid-template-columns: 400px 1fr; min-height: 100vh;
+    }
+    .temp-panel {
+      border-right: 1px solid var(--border);
+      padding: 72px 28px 36px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .temp-viz { padding: 72px 36px 36px; display: flex; flex-direction: column; justify-content: center; }
+    #temp-canvas {
+      width: 100%; height: 340px;
+      border: 1px solid var(--border); border-radius: var(--r);
+      display: block; background: var(--surface);
+    }
+    .section-title {
+      font-family: var(--mono); font-size: clamp(16px,1.8vw,24px);
+      font-weight: 700; line-height: 1.15; color: var(--text);
+      margin-bottom: 10px; letter-spacing: -0.01em;
+    }
+    .section-title em { font-style: normal; color: var(--accent); }
+    .section-body { font-size: 12px; line-height: 1.7; color: var(--text-2); margin-bottom: 24px; }
+    .scenario-tabs { display: flex; flex-direction: column; gap: 5px; margin-bottom: 20px; }
+    .scenario-tab {
+      padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: var(--r-sm); cursor: pointer; transition: var(--t);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .scenario-tab:hover { border-color: var(--border-strong); }
+    .scenario-tab.active { border-color: var(--accent); background: var(--accent-glow); }
+    .scenario-tab-name {
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--text);
+    }
+    .scenario-tab.active .scenario-tab-name { color: var(--accent); }
+    .scenario-tab-temp { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text-muted); }
+    .scenario-tab.active .scenario-tab-temp { color: var(--accent); }
+    .scenario-tab-desc { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+    .temp-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .temp-metric {
+      padding: 10px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+    }
+    .temp-metric-val { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--accent); }
+    .temp-metric-label {
+      font-family: var(--mono); font-size: 8px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-top: 2px;
+    }
+
+    /* ══════════════════ S2 COUNTRY ══════════════════ */
+    #s-country { display: grid; grid-template-columns: 1fr 340px; min-height: 100vh; }
+    .country-map-wrap { padding: 72px 32px 36px; display: flex; flex-direction: column; justify-content: center; }
+    .country-panel {
+      border-left: 1px solid var(--border);
+      padding: 72px 24px 36px;
+      display: flex; flex-direction: column; justify-content: center; overflow-y: auto;
+    }
+    #country-canvas {
+      width: 100%; height: 340px;
+      border: 1px solid var(--border); border-radius: var(--r);
+      display: block; cursor: crosshair; background: var(--surface);
+    }
+    .country-list { display: flex; flex-direction: column; gap: 3px; margin-top: 14px; }
+    .country-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 9px; border: 1px solid var(--border);
+      border-radius: var(--r-sm); cursor: pointer; transition: var(--t);
+      font-family: var(--mono); font-size: 10px;
+    }
+    .country-item:hover { border-color: var(--border-strong); background: var(--surface); }
+    .country-item.active { border-color: var(--accent); background: var(--accent-glow); }
+    .country-item-name { color: var(--text); font-weight: 600; }
+    .country-item-score { color: var(--accent); font-weight: 700; }
+    .country-detail { margin-top: 14px; padding: 12px; background: var(--surface); border: 1px solid var(--border-accent); border-radius: var(--r); display: none; }
+    .country-detail.visible { display: block; }
+    .cd-name { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 8px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .cd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cd-item-label { font-family: var(--mono); font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+    .cd-item-val { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text); margin-top: 1px; }
+
+    /* ══════════════════ S3 RISK ══════════════════ */
+    #s-risk { display: grid; grid-template-columns: 1fr 360px; min-height: 100vh; }
+    .risk-map-wrap { padding: 72px 32px 36px; display: flex; flex-direction: column; justify-content: center; }
+    #risk-canvas {
+      width: 100%; height: 360px;
+      border: 1px solid var(--border); border-radius: var(--r);
+      display: block; background: var(--surface);
+    }
+    .risk-panel { border-left: 1px solid var(--border); padding: 72px 24px 36px; display: flex; flex-direction: column; justify-content: center; }
+    .risk-types { display: flex; flex-direction: column; gap: 4px; margin: 16px 0; }
+    .risk-type-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--r-sm);
+      cursor: pointer; transition: var(--t);
+    }
+    .risk-type-btn:hover { border-color: var(--border-strong); background: var(--surface); }
+    .risk-type-btn.active { border-color: var(--accent); background: var(--accent-glow); }
+    .risk-type-label { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+    .risk-type-val { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text-muted); }
+    .risk-type-btn.active .risk-type-val { color: var(--accent); }
+    .rb-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .rb-label { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); width: 120px; flex-shrink: 0; }
+    .rb-track { flex: 1; height: 3px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+    .rb-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+    .rb-val { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text); width: 30px; text-align: right; flex-shrink: 0; }
+
+    /* ══════════════════ S4 FINANCE ══════════════════ */
+    #s-finance {
+      min-height: 100vh; position: relative;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: 72px var(--page-px) 40px;
+    }
+    #finance-canvas {
+      width: 100%; max-width: 980px; height: 400px;
+      border: 1px solid var(--border); border-radius: var(--r);
+      display: block; background: var(--surface);
+    }
+    .finance-header { width: 100%; max-width: 980px; display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 16px; }
+    .finance-flows-info {
+      width: 100%; max-width: 980px;
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-top: none;
+      border-radius: 0 0 var(--r) var(--r); overflow: hidden;
+    }
+    .flow-stat { background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+    .flow-stat-val { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--accent); }
+    .flow-stat-label { font-family: var(--mono); font-size: 8px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+
+    /* ══════════════════ S5 TERMINAL ══════════════════ */
+    #s-terminal { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; align-items: stretch; }
+    .terminal-sidebar { border-right: 1px solid var(--border); padding: 72px 0 36px; display: flex; flex-direction: column; overflow-y: auto; }
+    .terminal-sidebar-head {
+      padding: 0 18px 10px; border-bottom: 1px solid var(--border); margin-bottom: 6px;
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted);
+    }
+    .terminal-entity {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 18px; cursor: pointer; transition: var(--t);
+      border-left: 2px solid transparent;
+    }
+    .terminal-entity:hover { background: var(--surface); }
+    .terminal-entity.active { background: var(--surface-2); border-left-color: var(--accent); }
+    .te-name { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--text); }
+    .te-score { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--accent); }
+    .te-type { font-family: var(--mono); font-size: 8px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+    .terminal-main { padding: 72px 32px 36px; overflow-y: auto; }
+    .terminal-entity-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .teh-name { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+    .teh-type { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); border: 1px solid var(--border); padding: 3px 7px; border-radius: 2px; }
+    .teh-score { margin-left: auto; font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--accent); }
+    .teh-rating { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text-muted); }
+    .terminal-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 18px;
+    }
+    .tg-cell { background: var(--surface); padding: 12px; }
+    .tg-label { font-family: var(--mono); font-size: 8px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
+    .tg-val { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--text); }
+    .tg-val.accent { color: var(--accent); }
+    .tg-val.danger { color: var(--red); }
+    .tg-val.success { color: var(--green); }
+    .terminal-signals { display: grid; grid-template-columns: repeat(2,1fr); gap: 5px; }
+    .signal-card { padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm); }
+    .signal-card-label { font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+    .signal-card-val { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text); }
+
+    /* ══════════════════ S6 STATS ══════════════════ */
+    #s-stats { min-height: 60vh; background: var(--surface); display: flex; align-items: center; justify-content: center; padding: 80px var(--page-px); }
+    .stats-grid { width: 100%; max-width: 1060px; display: grid; grid-template-columns: repeat(4,1fr); gap: 36px; }
+    .stat-big { display: flex; flex-direction: column; gap: 7px; border-left: 2px solid var(--border); padding-left: 18px; }
+    .stat-big.accent { border-left-color: var(--accent); }
+    .stat-big-val { font-family: var(--mono); font-size: clamp(26px,2.8vw,40px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 1; }
+    .stat-big.accent .stat-big-val { color: var(--accent); }
+    .stat-big-label { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-muted); }
+    .stat-big-sub { font-size: 11px; color: var(--text-muted); }
+
+    /* reveal */
+    .reveal { opacity: 0; transform: translateY(18px); }
+    .reveal.visible { opacity: 1; transform: translateY(0); transition: opacity 0.5s ease, transform 0.5s ease; }
+
+    @media (max-width: 900px) {
+      #s-temperature, #s-country, #s-risk { grid-template-columns: 1fr; }
+      .temp-panel, .country-panel, .risk-panel { border-right: none; border-bottom: 1px solid var(--border); }
+      #s-terminal { grid-template-columns: 1fr; }
+      .terminal-sidebar { border-right: none; border-bottom: 1px solid var(--border); max-height: 200px; }
+      .hero-content { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .finance-flows-info { grid-template-columns: repeat(2,1fr); }
+      .terminal-grid { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="cx-nav">
+  <div class="cx-nav-logo">
+    <img src="Climatix_logo.png" alt="Climactix" />
+    <div>
+      <div class="cx-nav-logo-text">Climactix Global</div>
+      <div class="cx-nav-logo-sub">Planetary Intelligence</div>
+    </div>
+  </div>
+  <div class="cx-nav-links">
+    <a href="dashboard.html" class="cx-nav-link">Dashboard</a>
+    <a href="simulation.html" class="cx-nav-link">Simulation</a>
+    <a href="investor-terminal.html" class="cx-nav-link">Terminal</a>
+    <a href="planetary-intelligence.html" class="cx-nav-link active">Planet</a>
+    <a href="climate-risk-os.html" class="cx-nav-link">Risk OS</a>
+  </div>
+  <div class="cx-nav-right">
+    <span class="cx-nav-badge">LIVE</span>
+    <a href="enterprise-login.html" class="cx-nav-cta">Access Platform</a>
+  </div>
+</nav>
+
+<div class="pi-scroll">
+
+  <!-- ═══════════════════════════════
+       S0 — HERO
+  ═══════════════════════════════ -->
+  <section id="s-hero" class="pi-section">
+    <canvas id="globe-canvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-left reveal">
+        <div class="hero-overline">Real-Time Climate Intelligence</div>
+        <h1 class="hero-h1">The Planet's<br/><em>Climate Risk</em><br/>Operating System</h1>
+        <p class="hero-sub">
+          Institutional-grade planetary intelligence synthesizing 6 IPCC scenarios,
+          180+ country risk profiles, and real-time climate finance flows into
+          decision-grade signals for capital allocation.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="document.getElementById('s-temperature').scrollIntoView({behavior:'smooth'})">Explore Intelligence</button>
+          <button class="btn-outline" onclick="document.getElementById('s-terminal').scrollIntoView({behavior:'smooth'})">Entity Terminal</button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-val">+1.24°C</div>
+            <div class="hero-stat-label">Anomaly vs Pre-Industrial</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">422.4 ppm</div>
+            <div class="hero-stat-label">CO₂ Concentration</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">−13.2%</div>
+            <div class="hero-stat-label">Arctic Ice Anomaly</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-right reveal">
+        <div class="hero-ticker-head">Live Climate Indicators</div>
+        <div class="ticker-row"><span class="ticker-label">GLOBAL TEMP ANOMALY</span><span class="ticker-val">+1.24°C</span><span class="ticker-delta up">↑ +0.02</span></div>
+        <div class="ticker-row"><span class="ticker-label">ARCTIC SEA ICE EXTENT</span><span class="ticker-val">12.8M km²</span><span class="ticker-delta up">↓ −6.4%</span></div>
+        <div class="ticker-row"><span class="ticker-label">GLOBAL SEA LEVEL</span><span class="ticker-val">+101mm</span><span class="ticker-delta up">↑ 3.7mm/yr</span></div>
+        <div class="ticker-row"><span class="ticker-label">OCEAN HEAT CONTENT</span><span class="ticker-val">+345 ZJ</span><span class="ticker-delta up">↑ HIGH</span></div>
+        <div class="ticker-row"><span class="ticker-label">CARBON PRICE (EU ETS)</span><span class="ticker-val">€62.40</span><span class="ticker-delta dn">↓ −1.8%</span></div>
+        <div class="ticker-row"><span class="ticker-label">GLOBAL FOREST LOSS</span><span class="ticker-val">4.7M ha</span><span class="ticker-delta up">↑ YTD</span></div>
+        <div class="ticker-row"><span class="ticker-label">CLEAN ENERGY INVEST</span><span class="ticker-val">$1.77T</span><span class="ticker-delta dn">↑ +24%</span></div>
+        <div class="ticker-row"><span class="ticker-label">CLIMATE DISPLACED</span><span class="ticker-val">32.6M</span><span class="ticker-delta up">↑ 2024</span></div>
+      </div>
+    </div>
+    <div class="scroll-hint">Scroll to explore</div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       S1 — TEMPERATURE INTELLIGENCE
+  ═══════════════════════════════ -->
+  <section id="s-temperature" class="pi-section" style="display:grid;grid-template-columns:400px 1fr;">
+    <div class="pi-section-label">01 · Temperature Intelligence</div>
+    <div class="temp-panel">
+      <div class="reveal">
+        <div class="section-title">Global Temperature<br/><em>Scenario Simulator</em></div>
+        <p class="section-body">Model warming trajectories across IPCC AR6 pathways. Each scenario reflects distinct policy, technology, and carbon removal assumptions.</p>
+      </div>
+      <div class="scenario-tabs reveal" id="scenario-tabs">
+        <div class="scenario-tab active" onclick="setScenario('ssp126',this)">
+          <div><div class="scenario-tab-name">SSP1-1.9 / SSP1-2.6</div><div class="scenario-tab-desc">Aggressive mitigation — Net zero 2050</div></div>
+          <div class="scenario-tab-temp">+1.5°C</div>
+        </div>
+        <div class="scenario-tab" onclick="setScenario('ssp245',this)">
+          <div><div class="scenario-tab-name">SSP2-4.5</div><div class="scenario-tab-desc">Intermediate — Current policies</div></div>
+          <div class="scenario-tab-temp">+2.7°C</div>
+        </div>
+        <div class="scenario-tab" onclick="setScenario('ssp370',this)">
+          <div><div class="scenario-tab-name">SSP3-7.0</div><div class="scenario-tab-desc">High emissions — Fragmented world</div></div>
+          <div class="scenario-tab-temp">+3.6°C</div>
+        </div>
+        <div class="scenario-tab" onclick="setScenario('ssp585',this)">
+          <div><div class="scenario-tab-name">SSP5-8.5</div><div class="scenario-tab-desc">Fossil fuel intensive — High end warming</div></div>
+          <div class="scenario-tab-temp">+4.4°C</div>
+        </div>
+      </div>
+      <div class="temp-metrics reveal">
+        <div class="temp-metric"><div class="temp-metric-val" id="tm-warming">+1.5°C</div><div class="temp-metric-label">2100 Warming</div></div>
+        <div class="temp-metric"><div class="temp-metric-val" id="tm-exceed">2041</div><div class="temp-metric-label">1.5°C Breach</div></div>
+        <div class="temp-metric"><div class="temp-metric-val" id="tm-slr">+0.44m</div><div class="temp-metric-label">Sea Level Rise</div></div>
+        <div class="temp-metric"><div class="temp-metric-val" id="tm-extreme">+40%</div><div class="temp-metric-label">Extreme Heat Events</div></div>
+      </div>
+    </div>
+    <div class="temp-viz reveal">
+      <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">GLOBAL MEAN SURFACE TEMPERATURE ANOMALY · 1850–2100</div>
+      <canvas id="temp-canvas"></canvas>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);">
+        <div style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);"><div style="width:8px;height:8px;border-radius:50%;background:#0EA5E9;"></div>SSP1-2.6</div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);"><div style="width:8px;height:8px;border-radius:50%;background:#00CC44;"></div>SSP2-4.5</div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);"><div style="width:8px;height:8px;border-radius:50%;background:#F59E0B;"></div>SSP3-7.0</div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);"><div style="width:8px;height:8px;border-radius:50%;background:#FF3333;"></div>SSP5-8.5</div>
+        <div style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);"><div style="width:8px;height:3px;background:rgba(255,255,255,0.3);border-radius:2px;"></div>Historical</div>
+      </div>
+      <div style="margin-top:16px;">
+        <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">FINANCIAL RISK IMPLICATIONS</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;" id="fin-risk-grid"></div>
+      </div>
+    </div>
+    <div class="pi-section-num">01/06</div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       S2 — COUNTRY RISK INTELLIGENCE
+  ═══════════════════════════════ -->
+  <section id="s-country" class="pi-section" style="display:grid;grid-template-columns:1fr 340px;">
+    <div class="pi-section-label">02 · Country Risk Intelligence</div>
+    <div class="country-map-wrap reveal">
+      <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">CLIMATE VULNERABILITY INDEX · 180 COUNTRIES</div>
+      <canvas id="country-canvas"></canvas>
+      <div style="display:flex;gap:14px;margin-top:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">
+          <div style="width:36px;height:4px;background:linear-gradient(to right,#0EA5E9,#F59E0B,#FF3333);border-radius:2px;"></div>Low → High Risk
+        </div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);margin-left:auto;">Source: INFORM, ND-GAIN, IPCC AR6</div>
+      </div>
+    </div>
+    <div class="country-panel">
+      <div class="reveal">
+        <div class="section-title" style="font-size:17px;">Country<br/><em>Climate Profiles</em></div>
+        <p class="section-body" style="font-size:11px;">Select a country for institutional-grade climate risk intelligence including physical exposure and financial vulnerability.</p>
+      </div>
+      <div class="country-list reveal" id="country-list"></div>
+      <div class="country-detail" id="country-detail"></div>
+    </div>
+    <div class="pi-section-num">02/06</div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       S3 — PHYSICAL RISK ATLAS
+  ═══════════════════════════════ -->
+  <section id="s-risk" class="pi-section" style="display:grid;grid-template-columns:1fr 360px;">
+    <div class="pi-section-label">03 · Physical Risk Atlas</div>
+    <div class="risk-map-wrap reveal">
+      <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">GLOBAL PHYSICAL HAZARD EXPOSURE · SELECT RISK TYPE</div>
+      <canvas id="risk-canvas"></canvas>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;" id="risk-legend"></div>
+    </div>
+    <div class="risk-panel">
+      <div class="reveal">
+        <div class="section-title" style="font-size:17px;">Physical<br/><em>Hazard Intelligence</em></div>
+        <p class="section-body" style="font-size:11px;">Quantified physical climate hazard exposure across geographies under 1.5°C–4°C warming scenarios.</p>
+      </div>
+      <div class="risk-types reveal" id="risk-types"></div>
+      <div class="risk-bar-wrap reveal" id="risk-bars"></div>
+    </div>
+    <div class="pi-section-num">03/06</div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       S4 — CLIMATE FINANCE FLOWS
+  ═══════════════════════════════ -->
+  <section id="s-finance" class="pi-section">
+    <div class="pi-section-label">04 · Climate Finance Intelligence</div>
+    <div class="finance-header reveal">
+      <div>
+        <div class="section-title" style="font-size:20px;margin-bottom:6px;">Global <em>Climate Finance</em> Flows</div>
+        <p style="font-size:11px;color:var(--text-2);max-width:520px;line-height:1.6;">Tracking $1.77 trillion in annual climate finance deployment across geographies, instruments, and sectors. Arc thickness represents capital volume.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">
+        <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);">FLOW TYPE</div>
+        <div style="display:flex;gap:8px;" id="finance-legend"></div>
+      </div>
+    </div>
+    <canvas id="finance-canvas"></canvas>
+    <div class="finance-flows-info reveal" id="finance-flows-info"></div>
+    <div class="pi-section-num">04/06</div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       S5 — INTELLIGENCE TERMINAL
+  ═══════════════════════════════ -->
+  <section id="s-terminal" class="pi-section" style="display:grid;grid-template-columns:260px 1fr;align-items:stretch;">
+    <div class="pi-section-label">05 · Entity Intelligence Terminal</div>
+    <div class="terminal-sidebar" id="terminal-sidebar"></div>
+    <div class="terminal-main" id="terminal-main"></div>
+    <div class="pi-section-num">05/06</div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       S6 — GLOBAL INTELLIGENCE STATS
+  ═══════════════════════════════ -->
+  <section id="s-stats" class="pi-section" style="min-height:60vh;background:var(--surface);">
+    <div class="pi-section-label">06 · Platform Intelligence</div>
+    <div class="stats-grid" style="margin:auto;">
+      <div class="stat-big accent">
+        <div class="stat-big-val" data-target="422.4" data-suffix=" ppm">0</div>
+        <div class="stat-big-label">Atmospheric CO₂</div>
+        <div class="stat-big-sub">Mauna Loa Observatory, 2025</div>
+      </div>
+      <div class="stat-big">
+        <div class="stat-big-val" data-target="32.6" data-suffix="M">0</div>
+        <div class="stat-big-label">Climate Displaced People</div>
+        <div class="stat-big-sub">Internal displacement, 2024</div>
+      </div>
+      <div class="stat-big">
+        <div class="stat-big-val" data-target="1.77" data-prefix="$" data-suffix="T">0</div>
+        <div class="stat-big-label">Annual Climate Finance</div>
+        <div class="stat-big-sub">Clean energy investment, 2024</div>
+      </div>
+      <div class="stat-big">
+        <div class="stat-big-val" data-target="387" data-suffix="">0</div>
+        <div class="stat-big-label">Extreme Weather Events</div>
+        <div class="stat-big-sub">Recorded climate disasters, 2024</div>
+      </div>
+    </div>
+    <div class="pi-section-num">06/06</div>
+  </section>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════ */
+const SCENARIOS = {
+  ssp126: { name:'SSP1-2.6', color:'#0EA5E9', temp2100:1.5, exceedYear:2041, slr:'+0.44m', extreme:'+40%',
+    finRisks:[{label:'Carbon Tax Exposure',val:'LOW'},{label:'Stranded Assets',val:'MODERATE'},{label:'Transition Cost',val:'$1.6T'}],
+    data:[0,0.05,0.1,0.15,0.2,0.28,0.38,0.5,0.62,0.74,0.85,0.95,1.04,1.10,1.18,1.24,1.28,1.32,1.35,1.38,1.4,1.42,1.44,1.45,1.46,1.47,1.47,1.48,1.48,1.49,1.5]
+  },
+  ssp245: { name:'SSP2-4.5', color:'#00CC44', temp2100:2.7, exceedYear:2036, slr:'+0.66m', extreme:'+70%',
+    finRisks:[{label:'Carbon Tax Exposure',val:'MODERATE'},{label:'Stranded Assets',val:'HIGH'},{label:'Transition Cost',val:'$3.4T'}],
+    data:[0,0.05,0.1,0.18,0.26,0.36,0.48,0.62,0.76,0.9,1.04,1.16,1.28,1.38,1.48,1.58,1.68,1.78,1.88,1.98,2.08,2.16,2.22,2.28,2.32,2.38,2.44,2.52,2.58,2.62,2.7]
+  },
+  ssp370: { name:'SSP3-7.0', color:'#F59E0B', temp2100:3.6, exceedYear:2033, slr:'+0.82m', extreme:'+110%',
+    finRisks:[{label:'Carbon Tax Exposure',val:'HIGH'},{label:'Stranded Assets',val:'VERY HIGH'},{label:'Transition Cost',val:'$5.2T'}],
+    data:[0,0.06,0.12,0.2,0.3,0.42,0.56,0.72,0.88,1.04,1.2,1.36,1.52,1.68,1.82,1.96,2.1,2.24,2.38,2.52,2.66,2.78,2.9,3.02,3.14,3.22,3.3,3.38,3.44,3.5,3.6]
+  },
+  ssp585: { name:'SSP5-8.5', color:'#FF3333', temp2100:4.4, exceedYear:2030, slr:'+1.01m', extreme:'+180%',
+    finRisks:[{label:'Carbon Tax Exposure',val:'CRITICAL'},{label:'Stranded Assets',val:'CRITICAL'},{label:'Transition Cost',val:'$8.7T'}],
+    data:[0,0.07,0.14,0.24,0.36,0.5,0.66,0.84,1.02,1.22,1.42,1.62,1.82,2.02,2.22,2.42,2.62,2.82,3.02,3.22,3.42,3.6,3.76,3.9,4.02,4.12,4.22,4.3,4.36,4.4,4.4]
+  }
+};
+const HISTORICAL = [-0.28,-0.22,-0.18,-0.12,-0.08,0.0,0.06,0.12,0.18,0.26,0.34,0.44,0.54,0.62,0.72,0.82,0.92,1.0,1.06,1.12,1.18,1.24];
+const COUNTRIES = [
+  {name:'Bangladesh',risk:88,temp:'+2.8°C',slr:'+0.9m',phys:87,trans:34,gdpRisk:'18.4%',flooded:'17%',rating:'CCC',sector:'Agriculture / Coastal'},
+  {name:'India',risk:71,temp:'+2.4°C',slr:'+0.5m',phys:72,trans:58,gdpRisk:'9.2%',flooded:'6%',rating:'BB',sector:'Multi-sector'},
+  {name:'China',risk:58,temp:'+2.1°C',slr:'+0.4m',phys:61,trans:72,gdpRisk:'5.8%',flooded:'4%',rating:'BBB',sector:'Industrial / Coastal'},
+  {name:'USA',risk:44,temp:'+2.0°C',slr:'+0.5m',phys:48,trans:68,gdpRisk:'3.2%',flooded:'3%',rating:'A',sector:'Multi-sector'},
+  {name:'Germany',risk:32,temp:'+1.8°C',slr:'+0.3m',phys:34,trans:82,gdpRisk:'2.1%',flooded:'2%',rating:'AA',sector:'Industrial'},
+  {name:'Pakistan',risk:84,temp:'+3.0°C',slr:'+0.7m',phys:82,trans:28,gdpRisk:'14.6%',flooded:'12%',rating:'CCC',sector:'Agriculture / Water'},
+  {name:'Indonesia',risk:76,temp:'+2.6°C',slr:'+0.8m',phys:79,trans:44,gdpRisk:'11.2%',flooded:'8%',rating:'B',sector:'Coastal / Forestry'},
+  {name:'Nigeria',risk:80,temp:'+3.2°C',slr:'+0.6m',phys:83,trans:22,gdpRisk:'13.1%',flooded:'11%',rating:'CCC',sector:'Agriculture / Oil'},
+];
+const RISK_TYPES = [
+  {id:'flood',label:'Flood',icon:'🌊',color:'#0EA5E9',levels:[{c:'Bangladesh',v:87},{c:'Netherlands',v:72},{c:'Pakistan',v:68},{c:'Indonesia',v:65},{c:'India',v:58}]},
+  {id:'heat',label:'Extreme Heat',icon:'🔥',color:'#FF3333',levels:[{c:'Pakistan',v:94},{c:'India',v:88},{c:'Bangladesh',v:82},{c:'Nigeria',v:79},{c:'Brazil',v:62}]},
+  {id:'drought',label:'Drought',icon:'💧',color:'#F59E0B',levels:[{c:'Nigeria',v:88},{c:'Pakistan',v:82},{c:'India',v:74},{c:'Brazil',v:68},{c:'Indonesia',v:52}]},
+  {id:'cyclone',label:'Cyclone / Storm',icon:'🌀',color:'#8B5CF6',levels:[{c:'Bangladesh',v:92},{c:'Indonesia',v:84},{c:'India',v:76},{c:'USA',v:62},{c:'China',v:54}]},
+  {id:'wildfire',label:'Wildfire',icon:'🔥',color:'#EF4444',levels:[{c:'USA',v:78},{c:'Brazil',v:72},{c:'Indonesia',v:68},{c:'India',v:54},{c:'China',v:42}]},
+  {id:'slr',label:'Sea Level Rise',icon:'📈',color:'#06B6D4',levels:[{c:'Bangladesh',v:96},{c:'Netherlands',v:88},{c:'Indonesia',v:82},{c:'India',v:64},{c:'China',v:56}]},
+];
+const FINANCE_FLOWS = [
+  {from:[38,28],to:[75,35],vol:48,type:'Green Bonds',color:'#0EA5E9'},
+  {from:[38,28],to:[60,55],vol:32,type:'Climate Aid',color:'#00CC44'},
+  {from:[20,25],to:[38,28],vol:56,type:'Green Bonds',color:'#0EA5E9'},
+  {from:[20,25],to:[75,35],vol:38,type:'Climate Aid',color:'#00CC44'},
+  {from:[20,25],to:[60,55],vol:24,type:'Climate Aid',color:'#00CC44'},
+  {from:[80,35],to:[75,40],vol:44,type:'BRI Green',color:'#F59E0B'},
+  {from:[80,35],to:[60,55],vol:36,type:'BRI Green',color:'#F59E0B'},
+  {from:[20,25],to:[80,35],vol:12,type:'Climate Aid',color:'#00CC44'},
+  {from:[38,28],to:[80,35],vol:22,type:'Green Bonds',color:'#0EA5E9'},
+  {from:[75,35],to:[60,55],vol:18,type:'South-South',color:'#8B5CF6'},
+];
+const ENTITIES = [
+  {name:'Tata Steel',type:'Company',score:52,rating:'BBB',country:'India',sector:'Steel',phys:62,trans:58,carbon:'2.1 tCO₂/t',net0:'2045',rev:'$28.4B',capex:'8.2%'},
+  {name:'Reliance Industries',type:'Company',score:44,rating:'BB',country:'India',sector:'O&G/Petrochem',phys:54,trans:38,carbon:'3.8 tCO₂/t',net0:'2050',rev:'$103B',capex:'4.1%'},
+  {name:'NTPC Limited',type:'Company',score:39,rating:'BB',country:'India',sector:'Power/Coal',phys:66,trans:32,carbon:'0.92 kg/kWh',net0:'2047',rev:'$18.2B',capex:'12.4%'},
+  {name:'Larsen & Toubro',type:'Company',score:62,rating:'BBB',country:'India',sector:'Engineering',phys:48,trans:64,carbon:'0.18 tCO₂/t',net0:'2040',rev:'$23.1B',capex:'5.8%'},
+  {name:'Infosys',type:'Company',score:81,rating:'A',country:'India',sector:'Technology',phys:22,trans:86,carbon:'0.04 tCO₂/$M',net0:'2040',rev:'$18.6B',capex:'2.1%'},
+  {name:'Adani Ports',type:'Company',score:47,rating:'BBB',country:'India',sector:'Ports/Infra',phys:74,trans:48,carbon:'0.44 tCO₂/t',net0:'2025',rev:'$4.2B',capex:'7.6%'},
+  {name:'Bangladesh',type:'Country',score:12,rating:'CCC',country:'BD',sector:'National',phys:87,trans:34,carbon:'0.5 tCO₂/cap',net0:'2060',rev:'$460B GDP',capex:'3.2%'},
+  {name:'India',type:'Country',score:29,rating:'BB',country:'IN',sector:'National',phys:72,trans:58,carbon:'1.9 tCO₂/cap',net0:'2070',rev:'$3.5T GDP',capex:'4.8%'},
+  {name:'Germany',type:'Country',score:72,rating:'AA',country:'DE',sector:'National',phys:34,trans:82,carbon:'7.7 tCO₂/cap',net0:'2045',rev:'$4.1T GDP',capex:'8.4%'},
+  {name:'China',type:'Country',score:41,rating:'BBB',country:'CN',sector:'National',phys:61,trans:72,carbon:'7.1 tCO₂/cap',net0:'2060',rev:'$18.6T GDP',capex:'6.2%'},
+  {name:'USA',type:'Country',score:56,rating:'A',country:'US',sector:'National',phys:48,trans:68,carbon:'14.2 tCO₂/cap',net0:'2050',rev:'$27.4T GDP',capex:'5.1%'},
+];
+
+/* ═══════════════════════════════════════════════
+   THREE.JS GLOBE
+═══════════════════════════════════════════════ */
+(function initGlobe(){
+  const canvas = document.getElementById('globe-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  renderer.setClearColor(0x000000,0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000);
+  camera.position.set(0,0,3.2);
+
+  scene.add(new THREE.AmbientLight(0xffffff,0.3));
+  const dl = new THREE.DirectionalLight(0x0EA5E9,0.9); dl.position.set(5,3,5); scene.add(dl);
+  const bl = new THREE.DirectionalLight(0x0EA5E9,0.2); bl.position.set(-5,-3,-5); scene.add(bl);
+
+  // Build globe texture
+  const ts = 2048;
+  const tc = document.createElement('canvas'); tc.width=ts; tc.height=ts;
+  const gx = tc.getContext('2d');
+  gx.fillStyle='#040D18'; gx.fillRect(0,0,ts,ts);
+
+  // Grid
+  gx.strokeStyle='rgba(14,165,233,0.07)'; gx.lineWidth=0.5;
+  for(let lon=-180;lon<=180;lon+=30){const x=((lon+180)/360)*ts;gx.beginPath();gx.moveTo(x,0);gx.lineTo(x,ts);gx.stroke();}
+  for(let lat=-90;lat<=90;lat+=30){const y=((90-lat)/180)*ts;gx.beginPath();gx.moveTo(0,y);gx.lineTo(ts,y);gx.stroke();}
+
+  // Continents
+  gx.fillStyle='#0D2035';
+  const conts=[
+    [[230,60],[270,58],[295,50],[310,30],[300,10],[280,8],[260,15],[240,25],[220,40]],
+    [[250,10],[268,8],[280,20],[285,35],[272,55],[258,62],[245,50],[240,30],[246,18]],
+    [[340,55],[355,60],[368,58],[375,52],[370,45],[358,42],[345,44],[338,50]],
+    [[340,35],[358,35],[368,28],[372,15],[368,0],[355,-12],[342,-22],[330,-30],[322,-24],[318,-10],[322,5],[330,20]],
+    [[375,52],[395,60],[430,65],[470,62],[500,55],[520,40],[510,25],[490,15],[470,20],[450,30],[420,40],[400,45],[380,50]],
+    [[470,22],[488,20],[496,10],[490,0],[475,5],[462,15]],
+    [[450,-10],[468,-8],[480,-20],[478,-32],[465,-38],[450,-34],[438,-26],[436,-16]],
+    [[295,72],[315,78],[330,74],[325,68],[308,66],[295,69]],
+  ];
+  conts.forEach(p=>{
+    gx.beginPath();
+    p.forEach(([lx,ly],i)=>{const px=(lx/360)*ts,py=((90-ly)/180)*ts;i===0?gx.moveTo(px,py):gx.lineTo(px,py);});
+    gx.closePath(); gx.fill();
+  });
+  gx.strokeStyle='rgba(14,165,233,0.22)'; gx.lineWidth=1.2;
+  conts.forEach(p=>{
+    gx.beginPath();
+    p.forEach(([lx,ly],i)=>{const px=(lx/360)*ts,py=((90-ly)/180)*ts;i===0?gx.moveTo(px,py):gx.lineTo(px,py);});
+    gx.closePath(); gx.stroke();
+  });
+
+  // Climate hotspots
+  [[90.4,23.7,'rgba(255,51,51,0.55)'],[78.9,20.6,'rgba(255,51,51,0.45)'],[30,9,'rgba(245,158,11,0.5)'],[107,-3,'rgba(245,158,11,0.4)'],[-55,-10,'rgba(245,158,11,0.35)']].forEach(([lon,lat,col])=>{
+    const x=((lon+180)/360)*ts, y=((90-lat)/180)*ts;
+    const g=gx.createRadialGradient(x,y,0,x,y,80);g.addColorStop(0,col);g.addColorStop(1,'transparent');
+    gx.fillStyle=g;gx.fillRect(x-80,y-80,160,160);
+  });
+
+  const texture = new THREE.CanvasTexture(tc);
+  const globe = new THREE.Mesh(
+    new THREE.SphereGeometry(1,64,64),
+    new THREE.MeshPhongMaterial({map:texture,specular:new THREE.Color(0x0EA5E9),shininess:12,emissive:new THREE.Color(0x020D18),emissiveIntensity:0.4})
+  );
+  scene.add(globe);
+
+  // Atmosphere
+  const atm = new THREE.Mesh(new THREE.SphereGeometry(1.09,64,64),new THREE.ShaderMaterial({
+    uniforms:{glowColor:{value:new THREE.Color(0x0EA5E9)}},
+    vertexShader:`varying float vI;void main(){vI=pow(0.65-dot(normalize(normalMatrix*normal),vec3(0,0,1)),2.0);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+    fragmentShader:`uniform vec3 glowColor;varying float vI;void main(){gl_FragColor=vec4(glowColor,vI*0.65);}`,
+    side:THREE.FrontSide,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false
+  }));
+  scene.add(atm);
+
+  // Particles
+  const pg=new THREE.BufferGeometry();
+  const pp=new Float32Array(2400*3);
+  for(let i=0;i<2400;i++){const th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),r=1.14+Math.random()*0.25;pp[i*3]=r*Math.sin(ph)*Math.cos(th);pp[i*3+1]=r*Math.sin(ph)*Math.sin(th);pp[i*3+2]=r*Math.cos(ph);}
+  pg.setAttribute('position',new THREE.BufferAttribute(pp,3));
+  const pts=new THREE.Points(pg,new THREE.PointsMaterial({color:0x0EA5E9,size:0.003,transparent:true,opacity:0.35}));
+  scene.add(pts);
+
+  window.addEventListener('resize',()=>{renderer.setSize(window.innerWidth,window.innerHeight);camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();});
+
+  let drag=false,lx=0,rotY=0;
+  canvas.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;});
+  window.addEventListener('mouseup',()=>{drag=false;});
+  window.addEventListener('mousemove',e=>{if(!drag)return;rotY+=(e.clientX-lx)*0.005;lx=e.clientX;});
+
+  function animate(){requestAnimationFrame(animate);if(!drag)globe.rotation.y+=0.0014;globe.rotation.y+=rotY*0.05;rotY*=0.92;atm.rotation.y=globe.rotation.y;pts.rotation.y+=0.0003;renderer.render(scene,camera);}
+  animate();
+})();
+
+/* ═══════════════════════════════════════════════
+   TEMPERATURE CHART
+═══════════════════════════════════════════════ */
+let currentScenario='ssp126';
+
+function drawTempChart(key){
+  const canvas=document.getElementById('temp-canvas');
+  if(!canvas||!canvas.offsetWidth)return;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth,H=canvas.offsetHeight;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+
+  const pad={top:18,right:16,bottom:32,left:48};
+  const cw=W-pad.left-pad.right,ch=H-pad.top-pad.bottom;
+  ctx.fillStyle='#0A0A0A';ctx.fillRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){const y=pad.top+(ch/5)*i;ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cw,y);ctx.stroke();}
+  for(let i=0;i<=6;i++){const x=pad.left+(cw/6)*i;ctx.beginPath();ctx.moveTo(x,pad.top);ctx.lineTo(x,pad.top+ch);ctx.stroke();}
+
+  const years=[];for(let y=1850;y<=2100;y++)years.push(y);
+  const minV=-0.5,maxV=5.5;
+  const xS=i=>pad.left+(i/(years.length-1))*cw;
+  const yS=v=>pad.top+ch-((v-minV)/(maxV-minV))*ch;
+
+  // threshold lines
+  [[1.5,'rgba(14,165,233,0.3)','1.5°C'],[2.0,'rgba(245,158,11,0.25)','2.0°C']].forEach(([v,c,l])=>{
+    ctx.strokeStyle=c;ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    const y=yS(v);ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cw,y);ctx.stroke();
+    ctx.setLineDash([]);ctx.fillStyle=c.replace('0.3','0.6').replace('0.25','0.6');
+    ctx.font='9px IBM Plex Mono';ctx.textAlign='right';ctx.fillText(l,pad.left-3,y+3);
+  });
+
+  // all scenario lines (dim)
+  Object.entries(SCENARIOS).forEach(([k,sc])=>{
+    if(k===key)return;
+    ctx.strokeStyle=sc.color+'20';ctx.lineWidth=1;ctx.setLineDash([]);
+    ctx.beginPath();
+    years.forEach((yr,i)=>{
+      const t=(yr-1850)/(2100-1850);const idx=t*(sc.data.length-1);
+      const lo=Math.floor(idx),hi=Math.min(Math.ceil(idx),sc.data.length-1);
+      const v=sc.data[lo]+(sc.data[hi]-sc.data[lo])*(idx-lo);
+      i===0?ctx.moveTo(xS(i),yS(v)):ctx.lineTo(xS(i),yS(v));
+    });
+    ctx.stroke();
+  });
+
+  // historical
+  ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=1.5;ctx.setLineDash([]);
+  ctx.beginPath();let started=false;
+  years.forEach((yr,i)=>{
+    if(yr>2024)return;
+    const t=(yr-1850)/(2024-1850);const idx=t*(HISTORICAL.length-1);
+    const lo=Math.floor(idx),hi=Math.min(Math.ceil(idx),HISTORICAL.length-1);
+    const v=HISTORICAL[lo]+(HISTORICAL[hi]-HISTORICAL[lo])*(idx-lo);
+    if(!started){ctx.moveTo(xS(i),yS(v));started=true;}else ctx.lineTo(xS(i),yS(v));
+  });
+  ctx.stroke();
+
+  // active scenario fill + line
+  const asc=SCENARIOS[key];
+  const grad=ctx.createLinearGradient(0,pad.top,0,pad.top+ch);
+  grad.addColorStop(0,asc.color+'28');grad.addColorStop(1,asc.color+'00');
+  ctx.fillStyle=grad;
+  ctx.beginPath();let fp=true;
+  years.forEach((yr,i)=>{
+    const t=(yr-1850)/(2100-1850);const idx=t*(asc.data.length-1);
+    const lo=Math.floor(idx),hi=Math.min(Math.ceil(idx),asc.data.length-1);
+    const v=asc.data[lo]+(asc.data[hi]-asc.data[lo])*(idx-lo);
+    if(fp){ctx.moveTo(xS(i),yS(v));fp=false;}else ctx.lineTo(xS(i),yS(v));
+  });
+  ctx.lineTo(xS(years.length-1),pad.top+ch);ctx.lineTo(xS(0),pad.top+ch);ctx.closePath();ctx.fill();
+
+  ctx.strokeStyle=asc.color;ctx.lineWidth=2.5;ctx.beginPath();fp=true;
+  years.forEach((yr,i)=>{
+    const t=(yr-1850)/(2100-1850);const idx=t*(asc.data.length-1);
+    const lo=Math.floor(idx),hi=Math.min(Math.ceil(idx),asc.data.length-1);
+    const v=asc.data[lo]+(asc.data[hi]-asc.data[lo])*(idx-lo);
+    if(fp){ctx.moveTo(xS(i),yS(v));fp=false;}else ctx.lineTo(xS(i),yS(v));
+  });
+  ctx.stroke();
+
+  // axes
+  ctx.fillStyle='#444';ctx.font='9px IBM Plex Mono';ctx.textAlign='center';
+  [1850,1900,1950,2000,2025,2050,2075,2100].forEach(yr=>{
+    const i=years.indexOf(yr);if(i<0)return;ctx.fillText(yr,xS(i),pad.top+ch+18);
+  });
+  ctx.textAlign='right';
+  for(let v=0;v<=5;v++){ctx.fillStyle='#444';ctx.fillText('+'+v+'°C',pad.left-5,yS(v)+3);}
+}
+
+function buildFinRiskGrid(key){
+  const sc=SCENARIOS[key];
+  const g=document.getElementById('fin-risk-grid');
+  if(!g)return;
+  g.innerHTML=sc.finRisks.map(r=>`
+    <div style="padding:9px 11px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);">
+      <div style="font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);">${r.label}</div>
+      <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent);margin-top:3px;">${r.val}</div>
+    </div>`).join('');
+}
+
+function setScenario(key,el){
+  currentScenario=key;
+  document.querySelectorAll('.scenario-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const sc=SCENARIOS[key];
+  document.getElementById('tm-warming').textContent='+'+sc.temp2100+'°C';
+  document.getElementById('tm-exceed').textContent=sc.exceedYear;
+  document.getElementById('tm-slr').textContent=sc.slr;
+  document.getElementById('tm-extreme').textContent=sc.extreme;
+  buildFinRiskGrid(key);drawTempChart(key);
+}
+
+/* ═══════════════════════════════════════════════
+   COUNTRY MAP
+═══════════════════════════════════════════════ */
+const CLOCS={Bangladesh:[90.4,23.7],India:[78.9,20.6],China:[104,35.9],USA:[-95.7,37.1],Germany:[10.5,51.2],Pakistan:[69.3,30.4],Indonesia:[113.9,-0.8],Nigeria:[8.7,9.1]};
+
+function buildCountryList(){
+  const list=document.getElementById('country-list');
+  list.innerHTML=COUNTRIES.map((c,i)=>`
+    <div class="country-item ${i===0?'active':''}" onclick="selectCountry(${i},this)">
+      <div><div class="country-item-name">${c.name}</div><div class="te-type">${c.sector}</div></div>
+      <div style="text-align:right;"><div class="country-item-score">${c.risk}/100</div><div style="font-size:9px;color:${c.risk>70?'var(--red)':c.risk>50?'var(--warning)':'var(--green)'};">${c.rating}</div></div>
+    </div>`).join('');
+  showCountryDetail(0);
+}
+
+function selectCountry(idx,el){
+  document.querySelectorAll('.country-item').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');showCountryDetail(idx);drawCountryMap(idx);
+}
+
+function showCountryDetail(idx){
+  const c=COUNTRIES[idx];
+  const d=document.getElementById('country-detail');
+  d.className='country-detail visible';
+  d.innerHTML=`<div class="cd-name">${c.name} · ${c.rating}</div>
+    <div class="cd-grid">
+      <div class="cd-item"><div class="cd-item-label">Physical Risk</div><div class="cd-item-val">${c.phys}/100</div></div>
+      <div class="cd-item"><div class="cd-item-label">Transition Risk</div><div class="cd-item-val">${c.trans}/100</div></div>
+      <div class="cd-item"><div class="cd-item-label">GDP At Risk</div><div class="cd-item-val">${c.gdpRisk}</div></div>
+      <div class="cd-item"><div class="cd-item-label">Flood Exposure</div><div class="cd-item-val">${c.flooded}</div></div>
+      <div class="cd-item"><div class="cd-item-label">Temp Scenario</div><div class="cd-item-val">${c.temp}</div></div>
+      <div class="cd-item"><div class="cd-item-label">Sea Level Rise</div><div class="cd-item-val">${c.slr}</div></div>
+    </div>`;
+}
+
+function drawCountryMap(activeIdx){
+  const canvas=document.getElementById('country-canvas');if(!canvas||!canvas.offsetWidth)return;
+  const dpr=window.devicePixelRatio||1,W=canvas.offsetWidth,H=canvas.offsetHeight;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  ctx.fillStyle='#080E14';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(14,165,233,0.05)';ctx.lineWidth=0.5;
+  for(let i=0;i<=12;i++){const x=(i/12)*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let i=0;i<=6;i++){const y=(i/6)*H;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const proj=(lon,lat)=>[(lon+180)/360*W,(90-lat)/180*H];
+  COUNTRIES.forEach((c,i)=>{
+    const ll=CLOCS[c.name];if(!ll)return;
+    const [px,py]=proj(ll[0],ll[1]);
+    const r=c.risk>70?7:c.risk>50?5:4;
+    const col=c.risk>70?'#FF3333':c.risk>50?'#F59E0B':'#0EA5E9';
+    const g=ctx.createRadialGradient(px,py,0,px,py,r*3.5);g.addColorStop(0,col+'55');g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,r*3.5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=i===activeIdx?col:col+'99';ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);ctx.fill();
+    if(i===activeIdx){ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px,py,r+4,0,Math.PI*2);ctx.stroke();}
+    ctx.fillStyle='rgba(255,255,255,0.65)';ctx.font='bold 9px IBM Plex Mono';ctx.textAlign='center';
+    ctx.fillText(c.name,px,py-r-4);
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   RISK MAP
+═══════════════════════════════════════════════ */
+let activeRisk='flood';
+const RLOCS={Bangladesh:[90.4,23.7],Netherlands:[5.3,52.1],Pakistan:[69.3,30.4],Indonesia:[113.9,-0.8],India:[78.9,20.6],Nigeria:[8.7,9.1],Brazil:[-51.9,-14.2],USA:[-95.7,37.1],China:[104,35.9]};
+
+function buildRiskTypes(){
+  const cont=document.getElementById('risk-types');
+  cont.innerHTML=RISK_TYPES.map(r=>`
+    <div class="risk-type-btn ${r.id===activeRisk?'active':''}" onclick="selectRisk('${r.id}',this)">
+      <div class="risk-type-label"><span style="font-size:13px;">${r.icon}</span>${r.label}</div>
+      <div class="risk-type-val">${r.levels[0].v}/100</div>
+    </div>`).join('');
+  buildRiskBars();drawRiskMap();
+}
+
+function selectRisk(id,el){
+  activeRisk=id;
+  document.querySelectorAll('.risk-type-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');buildRiskBars();drawRiskMap();
+}
+
+function buildRiskBars(){
+  const rt=RISK_TYPES.find(r=>r.id===activeRisk);
+  const cont=document.getElementById('risk-bars');
+  cont.innerHTML=`<div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">TOP EXPOSED COUNTRIES</div>
+    ${rt.levels.map(l=>`<div class="rb-row"><div class="rb-label">${l.c}</div><div class="rb-track"><div class="rb-fill" style="width:${l.v}%;background:${rt.color};"></div></div><div class="rb-val">${l.v}</div></div>`).join('')}`;
+}
+
+function drawRiskMap(){
+  const canvas=document.getElementById('risk-canvas');if(!canvas||!canvas.offsetWidth)return;
+  const dpr=window.devicePixelRatio||1,W=canvas.offsetWidth,H=canvas.offsetHeight;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  ctx.fillStyle='#080E14';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(14,165,233,0.05)';ctx.lineWidth=0.5;
+  for(let i=0;i<=12;i++){const x=(i/12)*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let i=0;i<=6;i++){const y=(i/6)*H;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const proj=(lon,lat)=>[(lon+180)/360*W,(90-lat)/180*H];
+  const rt=RISK_TYPES.find(r=>r.id===activeRisk);
+  rt.levels.forEach(l=>{
+    const ll=RLOCS[l.c];if(!ll)return;
+    const [px,py]=proj(ll[0],ll[1]);
+    const r=5+(l.v/100)*18;
+    const g=ctx.createRadialGradient(px,py,0,px,py,r*2.5);g.addColorStop(0,rt.color+'45');g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,r*2.5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=rt.color+'99';ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='bold 9px IBM Plex Mono';ctx.textAlign='center';ctx.fillText(l.c,px,py-r-3);
+  });
+  const leg=document.getElementById('risk-legend');
+  if(leg)leg.innerHTML=`<div style="padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:2px;font-family:var(--mono);font-size:9px;color:var(--text-muted);">● ${rt.label} — <span style="color:${rt.color};">Active Layer</span></div><div style="padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:2px;font-family:var(--mono);font-size:9px;color:var(--text-muted);">Dot size = exposure magnitude</div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   FINANCE FLOWS
+═══════════════════════════════════════════════ */
+function initFinanceFlows(){
+  const canvas=document.getElementById('finance-canvas');if(!canvas||!canvas.offsetWidth)return;
+  const dpr=window.devicePixelRatio||1,W=canvas.offsetWidth,H=canvas.offsetHeight;
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+  const particles=FINANCE_FLOWS.map(f=>({...f,t:Math.random(),speed:0.003+Math.random()*0.002}));
+
+  const leg=document.getElementById('finance-legend');
+  if(leg)leg.innerHTML=[{label:'Green Bonds',color:'#0EA5E9'},{label:'Climate Aid',color:'#00CC44'},{label:'BRI Green',color:'#F59E0B'},{label:'South-South',color:'#8B5CF6'}]
+    .map(t=>`<div style="display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--text-muted);"><div style="width:7px;height:7px;border-radius:50%;background:${t.color};"></div>${t.label}</div>`).join('');
+
+  const info=document.getElementById('finance-flows-info');
+  if(info)info.innerHTML=[{val:'$1.77T',label:'Total Climate Finance 2024'},{val:'$1.34T',label:'Clean Energy Investment'},{val:'$289B',label:'Climate Aid & Grants'},{val:'$142B',label:'Adaptation Finance'}]
+    .map(s=>`<div class="flow-stat"><div class="flow-stat-val">${s.val}</div><div class="flow-stat-label">${s.label}</div></div>`).join('');
+
+  function frame(){
+    requestAnimationFrame(frame);
+    ctx.clearRect(0,0,W,H);ctx.fillStyle='#080A0A';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(14,165,233,0.04)';ctx.lineWidth=0.5;
+    for(let i=0;i<=12;i++){const x=(i/12)*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let i=0;i<=6;i++){const y=(i/6)*H;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    particles.forEach(p=>{
+      p.t=(p.t+p.speed)%1;
+      const fx=p.from[0]/100*W,fy=p.from[1]/100*H;
+      const tx=p.to[0]/100*W,ty=p.to[1]/100*H;
+      const cx=(fx+tx)/2,cy=Math.min(fy,ty)-55-p.vol*0.25;
+      ctx.beginPath();ctx.moveTo(fx,fy);ctx.quadraticCurveTo(cx,cy,tx,ty);
+      ctx.strokeStyle=p.color+'18';ctx.lineWidth=1+(p.vol/100)*2;ctx.stroke();
+      const t=p.t;
+      const px=(1-t)*(1-t)*fx+2*(1-t)*t*cx+t*t*tx;
+      const py=(1-t)*(1-t)*fy+2*(1-t)*t*cy+t*t*ty;
+      const g=ctx.createRadialGradient(px,py,0,px,py,5);g.addColorStop(0,p.color+'FF');g.addColorStop(1,p.color+'00');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(px,py,2,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=p.color+'66';
+      ctx.beginPath();ctx.arc(fx,fy,4,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(tx,ty,4,0,Math.PI*2);ctx.fill();
+    });
+  }
+  frame();
+}
+
+/* ═══════════════════════════════════════════════
+   TERMINAL
+═══════════════════════════════════════════════ */
+function buildTerminal(){
+  const sb=document.getElementById('terminal-sidebar');
+  const cos=ENTITIES.filter(e=>e.type==='Company'),cns=ENTITIES.filter(e=>e.type==='Country');
+  sb.innerHTML=`
+    <div class="terminal-sidebar-head">Companies</div>
+    ${cos.map((e,i)=>`<div class="terminal-entity ${i===0?'active':''}" onclick="selectEntity(${ENTITIES.indexOf(e)},this)"><div><div class="te-name">${e.name}</div><div class="te-type">${e.sector}</div></div><div style="text-align:right;"><div class="te-score">${e.score}</div><div class="te-type">${e.rating}</div></div></div>`).join('')}
+    <div class="terminal-sidebar-head" style="margin-top:14px;">Countries</div>
+    ${cns.map(e=>`<div class="terminal-entity" onclick="selectEntity(${ENTITIES.indexOf(e)},this)"><div><div class="te-name">${e.name}</div><div class="te-type">${e.sector}</div></div><div style="text-align:right;"><div class="te-score">${e.score}</div><div class="te-type">${e.rating}</div></div></div>`).join('')}`;
+  renderEntityDetail(0);
+}
+
+function selectEntity(idx,el){
+  document.querySelectorAll('.terminal-entity').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');renderEntityDetail(idx);
+}
+
+function renderEntityDetail(idx){
+  const e=ENTITIES[idx];
+  const rC=v=>v>70?'var(--red)':v>50?'var(--warning)':'var(--green)';
+  document.getElementById('terminal-main').innerHTML=`
+    <div class="terminal-entity-header">
+      <div><div class="teh-name">${e.name}</div><div style="display:flex;gap:7px;margin-top:5px;"><div class="teh-type">${e.type}</div><div class="teh-type">${e.sector}</div><div class="teh-type">${e.country}</div></div></div>
+      <div style="margin-left:auto;text-align:right;"><div class="teh-score">${e.score}</div><div class="teh-rating">${e.rating} · C-SCORE</div></div>
+    </div>
+    <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">CORE INTELLIGENCE</div>
+    <div class="terminal-grid">
+      <div class="tg-cell"><div class="tg-label">C-Score</div><div class="tg-val accent">${e.score}/100</div></div>
+      <div class="tg-cell"><div class="tg-label">Rating</div><div class="tg-val ${e.score<40?'danger':e.score>65?'success':''}">${e.rating}</div></div>
+      <div class="tg-cell"><div class="tg-label">Physical Risk</div><div class="tg-val" style="color:${rC(e.phys)};">${e.phys}/100</div></div>
+      <div class="tg-cell"><div class="tg-label">Transition Risk</div><div class="tg-val" style="color:${rC(100-e.trans)};">${e.trans}/100</div></div>
+      <div class="tg-cell"><div class="tg-label">Revenue</div><div class="tg-val">${e.rev}</div></div>
+      <div class="tg-cell"><div class="tg-label">Net Zero Target</div><div class="tg-val">${e.net0}</div></div>
+      <div class="tg-cell"><div class="tg-label">Carbon Intensity</div><div class="tg-val">${e.carbon}</div></div>
+      <div class="tg-cell"><div class="tg-label">Green Capex</div><div class="tg-val">${e.capex}</div></div>
+    </div>
+    <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">RISK PROFILE</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;">
+      ${[{l:'Physical Risk Index',v:e.phys},{l:'Transition Readiness',v:e.trans},{l:'Carbon Exposure',v:Math.round(100-e.score*0.7)},{l:'Climate Credibility',v:e.score},{l:'Stranded Asset Risk',v:Math.round(100-e.trans*0.8)}]
+        .map(r=>`<div class="rb-row"><div class="rb-label">${r.l}</div><div class="rb-track"><div class="rb-fill" style="width:${r.v}%;"></div></div><div class="rb-val">${r.v}</div></div>`).join('')}
+    </div>
+    <div style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">SCENARIO STRESS TEST</div>
+    <div class="terminal-signals">
+      ${[{l:'1.5°C Impact',v:e.score>65?'LOW':'MODERATE'},{l:'2°C Impact',v:e.score<40?'CRITICAL':e.score<60?'HIGH':'MODERATE'},{l:'3°C Revenue Risk',v:e.score<40?'28–34%':e.score<60?'14–22%':'6–12%'},{l:'Regulatory Exposure',v:e.trans<40?'HIGH':e.trans<65?'MODERATE':'LOW'}]
+        .map(s=>`<div class="signal-card"><div class="signal-card-label">${s.l}</div><div class="signal-card-val" style="color:${s.v.includes('CRITICAL')||s.v.includes('HIGH')||parseInt(s.v)>20?'var(--red)':s.v==='LOW'?'var(--green)':'var(--warning)'};">${s.v}</div></div>`).join('')}
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   REVEAL + COUNTERS + INIT
+═══════════════════════════════════════════════ */
+function initReveal(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+function initCounters(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      const el=entry.target.querySelector('[data-target]');if(!el)return;
+      const target=parseFloat(el.dataset.target),prefix=el.dataset.prefix||'',suffix=el.dataset.suffix||'';
+      const dec=String(target).includes('.')?String(target).split('.')[1].length:0;
+      let st=null;
+      function step(ts){
+        if(!st)st=ts;const p=Math.min((ts-st)/1800,1);const ease=p<0.5?2*p*p:-1+(4-2*p)*p;
+        el.textContent=prefix+(target*ease).toFixed(dec)+suffix;if(p<1)requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);obs.unobserve(entry.target);
+    });
+  },{threshold:0.3});
+  document.querySelectorAll('.stat-big').forEach(el=>obs.observe(el));
+}
+
+function observeSection(id,fn){
+  const el=document.getElementById(id);if(!el)return;
+  const obs=new IntersectionObserver(entries=>{if(entries[0].isIntersecting){setTimeout(fn,80);obs.disconnect();}},{threshold:0.15});
+  obs.observe(el);
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  buildCountryList();buildRiskTypes();buildTerminal();initReveal();initCounters();
+  observeSection('s-temperature',()=>{drawTempChart(currentScenario);buildFinRiskGrid(currentScenario);});
+  observeSection('s-country',()=>drawCountryMap(0));
+  observeSection('s-risk',drawRiskMap);
+  observeSection('s-finance',initFinanceFlows);
+});
+</script>
+</body>
+</html>

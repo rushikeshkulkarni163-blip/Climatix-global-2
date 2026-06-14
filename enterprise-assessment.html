@@ -19,24 +19,41 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter','IBM Plex S
 .mono{font-family:'IBM Plex Mono','Courier New',monospace}
 
 /* ── Nav */
-.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
 .nav-left{display:flex;align-items:center;gap:10px}
-.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.05em}
-.nav-sep{color:var(--border-strong)}
-.nav-ctx{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber)}
-.nav-right{display:flex;align-items:center;gap:8px}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;letter-spacing:0.05em;color:var(--text)}
+.nav-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--amber);padding:2px 6px;border:1px solid rgba(255,102,0,0.3);background:rgba(255,102,0,0.06)}
+.nav-sep{color:var(--border-strong);font-size:11px}
+.nav-ctx{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-meta{display:flex;align-items:center;gap:6px}
+.nav-meta-text{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.4}}
+.nav-divider{width:1px;height:16px;background:var(--border-strong)}
 .nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all var(--t);text-decoration:none;display:inline-flex;align-items:center}
 .nav-btn:hover{border-color:var(--amber);color:var(--amber)}
 .nav-btn.save{background:rgba(255,102,0,0.08);border-color:rgba(255,102,0,0.3);color:var(--amber)}
 .save-indicator{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);transition:color var(--t)}
 .save-indicator.saved{color:var(--green)}
 
+/* ── Ticker */
+.ticker{height:28px;display:flex;align-items:center;border-bottom:1px solid var(--border);background:var(--surface);overflow:hidden;position:relative}
+.ticker-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);padding:0 12px;border-right:1px solid var(--border);flex-shrink:0;height:100%;display:flex;align-items:center;background:rgba(255,102,0,0.06)}
+.ticker-inner{display:flex;align-items:center;gap:0;overflow:hidden;flex:1}
+.ticker-scroll{display:flex;gap:0;animation:ticker-move 30s linear infinite;white-space:nowrap}
+.ticker-item{display:flex;align-items:center;gap:8px;padding:0 20px;border-right:1px solid var(--border);height:28px}
+.ticker-key{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
+.ticker-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber)}
+.ticker-val.green{color:var(--green)}
+@keyframes ticker-move{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
 /* ── Progress bar */
 .progress-bar-wrap{height:2px;background:var(--border);position:relative}
 .progress-bar-fill{height:100%;background:var(--amber);transition:width 0.4s ease}
 
 /* ── 3-column workspace */
-.workspace{display:grid;grid-template-columns:240px 1fr 300px;height:calc(100vh - 46px);overflow:hidden}
+.workspace{display:grid;grid-template-columns:240px 1fr 300px;height:calc(100vh - 76px);overflow:hidden}
 
 /* ── Section nav (left) */
 .section-nav{border-right:1px solid var(--border);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent;display:flex;flex-direction:column}
@@ -209,16 +226,51 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter','IBM Plex S
 <header class="nav">
   <div class="nav-left">
     <span class="nav-logo mono">CLIMACTIX</span>
-    <span class="nav-sep">/</span>
-    <span class="nav-ctx mono" id="nav-assessment-label">Enterprise Assessment</span>
+    <span class="nav-badge mono">ENTERPRISE</span>
+    <span class="nav-sep">|</span>
+    <span class="nav-ctx mono" id="nav-assessment-label">C-LAYER ASSESSMENT</span>
   </div>
   <div class="nav-right">
-    <span class="save-indicator mono" id="save-indicator">Auto-save on</span>
+    <div class="nav-meta">
+      <span class="live-dot"></span>
+      <span class="nav-meta-text" id="save-indicator">Auto-save on</span>
+    </div>
+    <div class="nav-divider"></div>
+    <span class="nav-meta-text" id="nav-utc-clock">—</span>
+    <div class="nav-divider"></div>
     <button class="nav-btn save mono" onclick="saveDraft()">Save Draft</button>
     <a href="enterprise-dashboard.html" class="nav-btn mono">Dashboard</a>
   </div>
 </header>
 <div class="progress-bar-wrap"><div class="progress-bar-fill" id="top-progress-fill" style="width:0%"></div></div>
+
+<!-- Ticker -->
+<div class="ticker">
+  <div class="ticker-tag mono">ASSESSMENT</div>
+  <div class="ticker-inner">
+    <div class="ticker-scroll" id="ticker-content">
+      <div class="ticker-item"><span class="ticker-key mono">C-SCORE</span><span class="ticker-val mono" id="tick-score">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">RATING</span><span class="ticker-val mono" id="tick-rating">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">PROGRESS</span><span class="ticker-val mono" id="tick-progress">0%</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-CORE</span><span class="ticker-val mono" id="tick-core">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-FIN</span><span class="ticker-val mono" id="tick-fin">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-RISK/P</span><span class="ticker-val mono" id="tick-rp">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-RISK/T</span><span class="ticker-val mono" id="tick-rt">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-CAPITAL</span><span class="ticker-val mono" id="tick-cap">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-TRUTH</span><span class="ticker-val mono" id="tick-truth">—</span></div>
+      <!-- duplicate for seamless loop -->
+      <div class="ticker-item"><span class="ticker-key mono">C-SCORE</span><span class="ticker-val mono" id="tick-score2">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">RATING</span><span class="ticker-val mono" id="tick-rating2">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">PROGRESS</span><span class="ticker-val mono" id="tick-progress2">0%</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-CORE</span><span class="ticker-val mono" id="tick-core2">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-FIN</span><span class="ticker-val mono" id="tick-fin2">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-RISK/P</span><span class="ticker-val mono" id="tick-rp2">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-RISK/T</span><span class="ticker-val mono" id="tick-rt2">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-CAPITAL</span><span class="ticker-val mono" id="tick-cap2">—</span></div>
+      <div class="ticker-item"><span class="ticker-key mono">C-TRUTH</span><span class="ticker-val mono" id="tick-truth2">—</span></div>
+    </div>
+  </div>
+</div>
 
 <div class="workspace">
 
@@ -731,13 +783,66 @@ Include relevant metrics, frameworks, and named governance mechanisms." rows="6"
 
   document.getElementById('nav-assessment-label').textContent = `${company.id} · ${industry.assessmentType||'Assessment'}`;
 
+  // ── UTC clock
+  function updateClock(){
+    const now = new Date();
+    const h = String(now.getUTCHours()).padStart(2,'0');
+    const m = String(now.getUTCMinutes()).padStart(2,'0');
+    const s = String(now.getUTCSeconds()).padStart(2,'0');
+    const el = document.getElementById('nav-utc-clock');
+    if(el) el.textContent = `${h}:${m}:${s} UTC`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── Ticker update
+  function updateTicker(){
+    const scores = computeScores();
+    const rating = getClimateRating(scores.overall);
+    const prog = scores.total > 0 ? Math.round((scores.answered/scores.total)*100) : 0;
+    const clayerScores = {};
+    SECTIONS.forEach(sec => {
+      const cl = C_LAYERS.find(c => c.id === sec.clayer);
+      if(!cl) return;
+      const secAnswered = sec.questions.filter(q => getAnswerValue(q) !== null);
+      if(secAnswered.length === 0) return;
+      const avg = secAnswered.reduce((sum,q) => sum + (getAnswerValue(q)||0),0) / secAnswered.length;
+      if(!clayerScores[sec.clayer]) clayerScores[sec.clayer] = [];
+      clayerScores[sec.clayer].push(avg);
+    });
+    const getClayerAvg = id => {
+      const vals = clayerScores[id];
+      if(!vals || !vals.length) return '—';
+      return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+    };
+    const pairs = [
+      ['tick-score','tick-score2', scores.overall||'—'],
+      ['tick-rating','tick-rating2', rating.grade||'—'],
+      ['tick-progress','tick-progress2', prog+'%'],
+      ['tick-core','tick-core2', getClayerAvg('c_core')],
+      ['tick-fin','tick-fin2', getClayerAvg('c_fin')],
+      ['tick-rp','tick-rp2', getClayerAvg('c_risk_p')],
+      ['tick-rt','tick-rt2', getClayerAvg('c_risk_t')],
+      ['tick-cap','tick-cap2', getClayerAvg('c_capital')],
+      ['tick-truth','tick-truth2', getClayerAvg('c_truth')]
+    ];
+    pairs.forEach(([id1,id2,val]) => {
+      const e1 = document.getElementById(id1);
+      const e2 = document.getElementById(id2);
+      if(e1) e1.textContent = val;
+      if(e2) e2.textContent = val;
+    });
+  }
+
   // ── Init
   buildSectionNav();
   renderSection(0);
   updateScoreRail();
   updateProgressBar();
+  updateTicker();
   // Auto-save every 30s
   setInterval(saveState, 30000);
+  setInterval(updateTicker, 5000);
 })();
 </script>
 </body>
