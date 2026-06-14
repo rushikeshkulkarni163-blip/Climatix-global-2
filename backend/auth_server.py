@@ -314,4 +314,4 @@ if __name__ == "__main__":
     print(f"\n  Climactix Auth Server")
     print(f"  http://localhost:{PORT}")
     print(f"  SQLite → {DB_PATH}\n")
-    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="info")  # nosec B104

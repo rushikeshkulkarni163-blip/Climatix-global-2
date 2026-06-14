@@ -1,0 +1,287 @@
+{
+  "realm": "climactix",
+  "displayName": "Climactix Global Intelligence Platform",
+  "displayNameHtml": "<span style='color:#FF6600;font-weight:700'>CLIMACTIX GLOBAL</span>",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 10,
+  "accessTokenLifespan": 900,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "offlineSessionIdleTimeout": 2592000,
+  "accessCodeLifespan": 60,
+  "accessCodeLifespanUserAction": 300,
+  "accessCodeLifespanLogin": 1800,
+  "actionTokenGeneratedByAdminLifespan": 43200,
+  "actionTokenGeneratedByUserLifespan": 300,
+  "oauth2DeviceCodeLifespan": 600,
+  "oauth2DevicePollingInterval": 5,
+  "passwordPolicy": "length(12) and upperCase(1) and digits(1) and specialChars(1) and notUsername(undefined) and notEmail(undefined)",
+  "otpPolicyType": "totp",
+  "otpPolicyAlgorithm": "HmacSHA256",
+  "otpPolicyInitialCounter": 0,
+  "otpPolicyDigits": 6,
+  "otpPolicyLookAheadWindow": 1,
+  "otpPolicyPeriod": 30,
+  "otpSupportedApplications": ["FreeOTP", "Google Authenticator", "Microsoft Authenticator"],
+  "webAuthnPolicyRpEntityName": "Climactix Global",
+  "webAuthnPolicySignatureAlgorithms": ["ES256"],
+  "webAuthnPolicyRpId": "climactix.global",
+  "webAuthnPolicyAttestationConveyancePreference": "not specified",
+  "webAuthnPolicyAuthenticatorAttachment": "not specified",
+  "webAuthnPolicyRequireResidentKey": "not specified",
+  "webAuthnPolicyUserVerificationRequirement": "not specified",
+  "smtpServer": {
+    "host": "${SMTP_HOST}",
+    "port": "${SMTP_PORT}",
+    "fromDisplayName": "Climactix Global",
+    "from": "${SMTP_FROM_EMAIL}",
+    "ssl": "false",
+    "starttls": "true",
+    "auth": "true",
+    "user": "${SMTP_USER}",
+    "password": "${SMTP_PASS}"
+  },
+  "loginTheme": "climactix",
+  "accountTheme": "climactix",
+  "adminTheme": "climactix",
+  "emailTheme": "climactix",
+  "eventsEnabled": true,
+  "eventsExpiration": 2592000,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "enabledEventTypes": [
+    "LOGIN", "LOGIN_ERROR", "LOGOUT", "LOGOUT_ERROR",
+    "REGISTER", "REGISTER_ERROR", "CODE_TO_TOKEN", "CODE_TO_TOKEN_ERROR",
+    "CLIENT_LOGIN", "CLIENT_LOGIN_ERROR", "REFRESH_TOKEN", "REFRESH_TOKEN_ERROR",
+    "VALIDATE_ACCESS_TOKEN", "VALIDATE_ACCESS_TOKEN_ERROR",
+    "INTROSPECT_TOKEN", "INTROSPECT_TOKEN_ERROR",
+    "UPDATE_EMAIL", "UPDATE_EMAIL_ERROR", "UPDATE_PASSWORD", "UPDATE_PASSWORD_ERROR",
+    "UPDATE_PROFILE", "UPDATE_PROFILE_ERROR",
+    "SEND_VERIFY_EMAIL", "SEND_VERIFY_EMAIL_ERROR", "VERIFY_EMAIL", "VERIFY_EMAIL_ERROR",
+    "SEND_RESET_PASSWORD", "SEND_RESET_PASSWORD_ERROR", "RESET_PASSWORD", "RESET_PASSWORD_ERROR",
+    "REMOVE_TOTP", "REMOVE_TOTP_ERROR", "UPDATE_TOTP", "UPDATE_TOTP_ERROR",
+    "GRANT_CONSENT", "GRANT_CONSENT_ERROR", "UPDATE_CONSENT", "UPDATE_CONSENT_ERROR",
+    "REVOKE_GRANT", "REVOKE_GRANT_ERROR",
+    "EXECUTE_ACTIONS", "EXECUTE_ACTIONS_ERROR",
+    "IMPERSONATE", "IMPERSONATE_ERROR"
+  ],
+  "clients": [
+    {
+      "clientId": "climactix-iam",
+      "name": "Climactix IAM Service",
+      "description": "NestJS IAM backend service",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${KEYCLOAK_IAM_CLIENT_SECRET}",
+      "redirectUris": [
+        "${APP_URL}/api/v1/auth/google/callback",
+        "${APP_URL}/api/v1/auth/microsoft/callback",
+        "${APP_URL}/api/v1/auth/linkedin/callback",
+        "${APP_URL}/api/v1/auth/saml/callback",
+        "http://localhost:3100/*"
+      ],
+      "webOrigins": ["${APP_URL}", "http://localhost:3000"],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "fullScopeAllowed": true,
+      "attributes": {
+        "access.token.lifespan": "900",
+        "refresh.token.max.reuse": "0",
+        "use.refresh.tokens": "true",
+        "exclude.session.state.from.auth.response": "false",
+        "client_credentials.use_refresh_token": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "backchannel.logout.session.required": "true",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "cx-user-id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "cx_user_id",
+            "claim.name": "cx_user_id",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "cx-org-id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "organization_id",
+            "claim.name": "org_id",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "cx-user-type",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "user_type",
+            "claim.name": "user_type",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "cx-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "config": {
+            "claim.name": "roles",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "climactix-web",
+      "name": "Climactix Web Application",
+      "description": "Next.js frontend application",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["${APP_URL}/*", "http://localhost:3000/*"],
+      "webOrigins": ["${APP_URL}", "http://localhost:3000"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "super_admin", "description": "Full platform access" },
+      { "name": "internal_admin", "description": "Climactix internal team" },
+      { "name": "investor", "description": "Institutional investor access" },
+      { "name": "esg_analyst", "description": "ESG analytics access" },
+      { "name": "enterprise_client", "description": "Enterprise client access" },
+      { "name": "auditor", "description": "Audit read access" },
+      { "name": "government", "description": "Government intelligence access" },
+      { "name": "community", "description": "Community access" },
+      { "name": "public", "description": "Public pages only" }
+    ]
+  },
+  "identityProviders": [
+    {
+      "alias": "google",
+      "displayName": "Google",
+      "providerId": "google",
+      "enabled": true,
+      "trustEmail": true,
+      "storeToken": false,
+      "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
+      "linkOnly": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "${GOOGLE_CLIENT_ID}",
+        "clientSecret": "${GOOGLE_CLIENT_SECRET}",
+        "syncMode": "IMPORT",
+        "useJwksUrl": "true"
+      }
+    },
+    {
+      "alias": "microsoft",
+      "displayName": "Microsoft",
+      "providerId": "oidc",
+      "enabled": true,
+      "trustEmail": true,
+      "storeToken": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+        "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+        "clientId": "${MICROSOFT_CLIENT_ID}",
+        "clientSecret": "${MICROSOFT_CLIENT_SECRET}",
+        "defaultScope": "openid email profile offline_access",
+        "syncMode": "IMPORT",
+        "useJwksUrl": "true",
+        "jwksUrl": "https://login.microsoftonline.com/common/discovery/v2.0/keys"
+      }
+    },
+    {
+      "alias": "linkedin",
+      "displayName": "LinkedIn",
+      "providerId": "linkedin-openid-connect",
+      "enabled": true,
+      "trustEmail": false,
+      "storeToken": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "${LINKEDIN_CLIENT_ID}",
+        "clientSecret": "${LINKEDIN_CLIENT_SECRET}",
+        "syncMode": "IMPORT"
+      }
+    }
+  ],
+  "authenticationFlows": [
+    {
+      "alias": "climactix-browser-flow",
+      "description": "Climactix browser authentication with MFA",
+      "providerId": "basic-flow",
+      "topLevel": true,
+      "builtIn": false,
+      "authenticationExecutions": [
+        {
+          "authenticator": "auth-cookie",
+          "requirement": "ALTERNATIVE",
+          "priority": 10
+        },
+        {
+          "authenticator": "auth-spnego",
+          "requirement": "DISABLED",
+          "priority": 20
+        },
+        {
+          "authenticator": "identity-provider-redirector",
+          "requirement": "ALTERNATIVE",
+          "priority": 25
+        },
+        {
+          "flowAlias": "climactix-forms-flow",
+          "requirement": "ALTERNATIVE",
+          "priority": 30,
+          "autheticatorFlow": true
+        }
+      ]
+    }
+  ]
+}

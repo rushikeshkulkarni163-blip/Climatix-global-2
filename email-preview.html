@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Climactix — Email Template Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #111; font-family: 'IBM Plex Mono', 'Courier New', monospace; padding: 40px 24px; }
+  .preview-nav {
+    max-width: 620px; margin: 0 auto 40px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .preview-nav button {
+    background: #1a1a1a; border: 1px solid #2C2C2C; color: #888;
+    font-family: inherit; font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 6px 14px; cursor: pointer;
+  }
+  .preview-nav button.active { border-color: #FF6600; color: #FF6600; background: #0d0d0d; }
+  .email-frame { display: none; }
+  .email-frame.active { display: block; }
+
+  /* ── EMAIL SHELL ─────────────────────────────── */
+  .email-wrap {
+    max-width: 600px; margin: 0 auto;
+    background: #000; border: 1px solid #222;
+    border-radius: 2px; overflow: hidden;
+  }
+
+  /* inbox bar mock */
+  .inbox-bar {
+    background: #0d0d0d; border-bottom: 1px solid #1a1a1a;
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .inbox-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .inbox-bar .subject { font-size: 12px; color: #666; letter-spacing: 0.04em; flex: 1; }
+  .inbox-bar .from { font-size: 10px; color: #FF6600; letter-spacing: 0.08em; }
+
+  /* email body */
+  .email-body {
+    background: #000; padding: 0;
+  }
+
+  /* header band */
+  .email-header {
+    background: #000; border-bottom: 1px solid #1a1a1a;
+    padding: 24px 40px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .email-logo {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: #FF6600;
+  }
+  .email-logo span { color: #444; margin-left: 8px; font-weight: 400; }
+  .email-badge {
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #444; border: 1px solid #1e1e1e; padding: 4px 8px;
+  }
+
+  /* content area */
+  .email-content { padding: 36px 40px 32px; }
+
+  .email-label {
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: #FF6600; margin-bottom: 12px;
+  }
+  .email-title {
+    font-size: 18px; font-weight: 700; color: #fff;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    margin-bottom: 20px; line-height: 1.3;
+  }
+  .email-divider { border: none; border-top: 1px solid #1a1a1a; margin: 24px 0; }
+  .email-text { font-size: 12.5px; color: #888; line-height: 1.8; margin-bottom: 12px; }
+  .email-text strong { color: #ccc; font-weight: 600; }
+  .email-text a { color: #FF6600; text-decoration: none; }
+
+  .email-btn {
+    display: inline-block; background: #FF6600; color: #000 !important;
+    padding: 13px 28px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    text-decoration: none; margin: 20px 0 4px;
+    border: none; cursor: pointer;
+  }
+  .email-btn-ghost {
+    display: inline-block; background: transparent;
+    border: 1px solid #333; color: #888 !important;
+    padding: 11px 24px; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    text-decoration: none; margin: 8px 0;
+  }
+
+  .email-code-block {
+    background: #080808; border: 1px solid #2C2C2C;
+    padding: 20px 32px; margin: 24px 0; text-align: center;
+  }
+  .email-code {
+    font-size: 36px; font-weight: 700; letter-spacing: 0.5em;
+    color: #FF6600; display: block; margin-bottom: 6px;
+  }
+  .email-code-label {
+    font-size: 9px; color: #444; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+
+  .email-url-box {
+    background: #080808; border: 1px solid #1e1e1e;
+    padding: 12px 16px; margin-top: 20px;
+    font-size: 10px; color: #444; word-break: break-all;
+    line-height: 1.6;
+  }
+  .email-url-box span { color: #FF6600; display: block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+
+  .email-meta-row {
+    display: flex; gap: 24px; margin: 20px 0;
+  }
+  .email-meta-item { flex: 1; }
+  .email-meta-item .k {
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #444;
+    margin-bottom: 4px;
+  }
+  .email-meta-item .v { font-size: 12px; color: #ccc; }
+
+  .email-alert-bar {
+    background: #120800; border-left: 3px solid #FF6600;
+    padding: 12px 16px; margin: 20px 0;
+    font-size: 12px; color: #FF6600; letter-spacing: 0.04em;
+  }
+
+  .email-welcome-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: #1a1a1a; border: 1px solid #1a1a1a; margin: 24px 0;
+  }
+  .email-welcome-cell {
+    background: #080808; padding: 14px 16px;
+  }
+  .email-welcome-cell .k { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #444; margin-bottom: 4px; }
+  .email-welcome-cell .v { font-size: 12px; color: #ccc; }
+
+  .email-expire-note {
+    font-size: 10px; color: #444; letter-spacing: 0.06em;
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid #111;
+  }
+  .email-expire-note .highlight { color: #FF6600; }
+
+  /* footer */
+  .email-footer {
+    background: #050505; border-top: 1px solid #111;
+    padding: 20px 40px 24px;
+  }
+  .email-footer-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .email-footer-logo { font-size: 10px; letter-spacing: 0.16em; color: #333; text-transform: uppercase; }
+  .email-footer-links { display: flex; gap: 16px; }
+  .email-footer-links a { font-size: 9px; color: #333; text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; }
+  .email-footer-copy { font-size: 10px; color: #2a2a2a; line-height: 1.6; }
+  .email-footer-security {
+    display: flex; gap: 20px; margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid #111;
+  }
+  .email-footer-security span {
+    font-size: 9px; color: #2e2e2e; letter-spacing: 0.1em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .email-footer-security span::before {
+    content: ''; display: inline-block; width: 6px; height: 6px;
+    border-radius: 50%; background: #2e2e2e;
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="preview-nav">
+  <button class="active" onclick="show('verify')">Email Verify</button>
+  <button onclick="show('otp')">OTP Code</button>
+  <button onclick="show('reset')">Password Reset</button>
+  <button onclick="show('welcome')">Welcome</button>
+  <button onclick="show('invite')">Team Invite</button>
+  <button onclick="show('security')">Security Alert</button>
+</div>
+
+<!-- ══════════════════════════════════ EMAIL VERIFY -->
+<div id="frame-verify" class="email-frame active">
+  <div class="email-wrap">
+    <div class="inbox-bar">
+      <div class="dot" style="background:#FF6600"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="subject">Verify your email — Climactix Global</div>
+      <div class="from">noreply@climactix.global</div>
+    </div>
+    <div class="email-body">
+      <div class="email-header">
+        <div class="email-logo">CLIMACTIX <span>| INTELLIGENCE PLATFORM</span></div>
+        <div class="email-badge">ACCOUNT SETUP</div>
+      </div>
+      <div class="email-content">
+        <div class="email-label">Action Required</div>
+        <div class="email-title">Verify Your<br>Email Address</div>
+        <p class="email-text">
+          You're one step away from accessing institutional-grade climate intelligence.
+          Confirm your email to activate your account.
+        </p>
+        <a href="#" class="email-btn">Verify Email Address →</a>
+        <div class="email-url-box">
+          <span>Or paste this link in your browser</span>
+          https://app.climactix.global/verify-email?token=&lt;secure-token&gt;
+        </div>
+        <div class="email-expire-note">
+          This link expires in <span class="highlight">24 hours</span>.
+          If you did not create an account, you can safely ignore this email.
+        </div>
+      </div>
+      <div class="email-footer">
+        <div class="email-footer-row">
+          <div class="email-footer-logo">Climactix Global</div>
+          <div class="email-footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Security</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+        <div class="email-footer-copy">
+          © 2026 Climactix Global. This is an automated message — please do not reply.
+        </div>
+        <div class="email-footer-security">
+          <span>TLS 1.3 Encrypted</span>
+          <span>OWASP Compliant</span>
+          <span>SOC 2 Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ OTP -->
+<div id="frame-otp" class="email-frame">
+  <div class="email-wrap">
+    <div class="inbox-bar">
+      <div class="dot" style="background:#FF6600"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="subject">Your Climactix verification code: 847 291</div>
+      <div class="from">noreply@climactix.global</div>
+    </div>
+    <div class="email-body">
+      <div class="email-header">
+        <div class="email-logo">CLIMACTIX <span>| INTELLIGENCE PLATFORM</span></div>
+        <div class="email-badge">VERIFICATION CODE</div>
+      </div>
+      <div class="email-content">
+        <div class="email-label">One-Time Password</div>
+        <div class="email-title">Your Verification<br>Code</div>
+        <p class="email-text">Use this code to complete sign-in. It is valid for <strong>10 minutes</strong>.</p>
+        <div class="email-code-block">
+          <span class="email-code">847 291</span>
+          <div class="email-code-label">One-Time Password · Do not share</div>
+        </div>
+        <p class="email-text">If you did not attempt to sign in, your account credentials may be compromised.
+          <a href="#">Secure your account →</a>
+        </p>
+        <div class="email-expire-note">
+          This code expires at <span class="highlight">14:37 UTC</span> — 10 minutes from when it was issued.
+        </div>
+      </div>
+      <div class="email-footer">
+        <div class="email-footer-row">
+          <div class="email-footer-logo">Climactix Global</div>
+          <div class="email-footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Security</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+        <div class="email-footer-copy">© 2026 Climactix Global. This is an automated message — please do not reply.</div>
+        <div class="email-footer-security">
+          <span>TLS 1.3 Encrypted</span>
+          <span>OWASP Compliant</span>
+          <span>SOC 2 Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ PASSWORD RESET -->
+<div id="frame-reset" class="email-frame">
+  <div class="email-wrap">
+    <div class="inbox-bar">
+      <div class="dot" style="background:#FF6600"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="subject">Password reset request — Climactix Global</div>
+      <div class="from">noreply@climactix.global</div>
+    </div>
+    <div class="email-body">
+      <div class="email-header">
+        <div class="email-logo">CLIMACTIX <span>| INTELLIGENCE PLATFORM</span></div>
+        <div class="email-badge">SECURITY</div>
+      </div>
+      <div class="email-content">
+        <div class="email-label">Account Security</div>
+        <div class="email-title">Password Reset<br>Request</div>
+        <p class="email-text">Hello <strong>Ishaan</strong>,</p>
+        <p class="email-text">
+          A password reset was requested for your Climactix Global account.
+          If this was you, click below to set a new password.
+        </p>
+        <a href="#" class="email-btn">Reset Password →</a>
+        <hr class="email-divider">
+        <div class="email-alert-bar">
+          ⚠ All active sessions will be terminated upon password change.
+        </div>
+        <p class="email-text">
+          If you did not request this reset, please ignore this email.
+          Your password will remain unchanged and no action is needed.
+        </p>
+        <div class="email-expire-note">
+          This link expires in <span class="highlight">1 hour</span>.
+        </div>
+      </div>
+      <div class="email-footer">
+        <div class="email-footer-row">
+          <div class="email-footer-logo">Climactix Global</div>
+          <div class="email-footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Security</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+        <div class="email-footer-copy">© 2026 Climactix Global. This is an automated message — please do not reply.</div>
+        <div class="email-footer-security">
+          <span>TLS 1.3 Encrypted</span>
+          <span>OWASP Compliant</span>
+          <span>SOC 2 Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ WELCOME -->
+<div id="frame-welcome" class="email-frame">
+  <div class="email-wrap">
+    <div class="inbox-bar">
+      <div class="dot" style="background:#FF6600"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="subject">Access Granted — Welcome to Climactix Global</div>
+      <div class="from">noreply@climactix.global</div>
+    </div>
+    <div class="email-body">
+      <div class="email-header">
+        <div class="email-logo">CLIMACTIX <span>| INTELLIGENCE PLATFORM</span></div>
+        <div class="email-badge">ACCESS GRANTED</div>
+      </div>
+      <div class="email-content">
+        <div class="email-label">Welcome</div>
+        <div class="email-title">Intelligence Platform<br>Access Activated</div>
+        <p class="email-text">Welcome, <strong>Ishaan Mehta</strong>.</p>
+        <p class="email-text">
+          Your organization <strong>Tata Steel Ltd</strong> has been configured on the Climactix Global
+          intelligence platform. You now have institutional-grade access to:
+        </p>
+        <div class="email-welcome-grid">
+          <div class="email-welcome-cell">
+            <div class="k">Module</div>
+            <div class="v">Climate Risk OS</div>
+          </div>
+          <div class="email-welcome-cell">
+            <div class="k">Role</div>
+            <div class="v">Enterprise Admin</div>
+          </div>
+          <div class="email-welcome-cell">
+            <div class="k">Organization</div>
+            <div class="v">Tata Steel Ltd</div>
+          </div>
+          <div class="email-welcome-cell">
+            <div class="k">Workspace</div>
+            <div class="v">tata-steel</div>
+          </div>
+        </div>
+        <a href="#" class="email-btn">Access Intelligence Platform →</a>
+      </div>
+      <div class="email-footer">
+        <div class="email-footer-row">
+          <div class="email-footer-logo">Climactix Global</div>
+          <div class="email-footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Security</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+        <div class="email-footer-copy">© 2026 Climactix Global. This is an automated message — please do not reply.</div>
+        <div class="email-footer-security">
+          <span>TLS 1.3 Encrypted</span>
+          <span>OWASP Compliant</span>
+          <span>SOC 2 Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ INVITE -->
+<div id="frame-invite" class="email-frame">
+  <div class="email-wrap">
+    <div class="inbox-bar">
+      <div class="dot" style="background:#FF6600"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="subject">You've been invited to Tata Steel — Climactix Global</div>
+      <div class="from">noreply@climactix.global</div>
+    </div>
+    <div class="email-body">
+      <div class="email-header">
+        <div class="email-logo">CLIMACTIX <span>| INTELLIGENCE PLATFORM</span></div>
+        <div class="email-badge">TEAM INVITE</div>
+      </div>
+      <div class="email-content">
+        <div class="email-label">Invitation</div>
+        <div class="email-title">You've Been Invited<br>to Join</div>
+        <p class="email-text">
+          <strong>Ishaan Mehta</strong> has invited you to join <strong>Tata Steel Ltd</strong>
+          on the Climactix Global Intelligence Platform.
+        </p>
+        <div class="email-meta-row">
+          <div class="email-meta-item">
+            <div class="k">Organization</div>
+            <div class="v">Tata Steel Ltd</div>
+          </div>
+          <div class="email-meta-item">
+            <div class="k">Role</div>
+            <div class="v">ESG Analyst</div>
+          </div>
+          <div class="email-meta-item">
+            <div class="k">Invited By</div>
+            <div class="v">Ishaan Mehta</div>
+          </div>
+        </div>
+        <a href="#" class="email-btn">Accept Invitation →</a>
+        <a href="#" class="email-btn-ghost">Decline</a>
+        <div class="email-expire-note">
+          This invitation expires in <span class="highlight">72 hours</span>.
+        </div>
+      </div>
+      <div class="email-footer">
+        <div class="email-footer-row">
+          <div class="email-footer-logo">Climactix Global</div>
+          <div class="email-footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Security</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+        <div class="email-footer-copy">© 2026 Climactix Global. This is an automated message — please do not reply.</div>
+        <div class="email-footer-security">
+          <span>TLS 1.3 Encrypted</span>
+          <span>OWASP Compliant</span>
+          <span>SOC 2 Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ SECURITY ALERT -->
+<div id="frame-security" class="email-frame">
+  <div class="email-wrap">
+    <div class="inbox-bar">
+      <div class="dot" style="background:#FF6600"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="dot" style="background:#2a2a2a"></div>
+      <div class="subject">Security Alert — New sign-in to your Climactix account</div>
+      <div class="from">noreply@climactix.global</div>
+    </div>
+    <div class="email-body">
+      <div class="email-header">
+        <div class="email-logo">CLIMACTIX <span>| INTELLIGENCE PLATFORM</span></div>
+        <div class="email-badge" style="border-color:#3a1500; color:#FF6600;">⚠ SECURITY</div>
+      </div>
+      <div class="email-content">
+        <div class="email-label" style="color:#FF6600;">Security Event</div>
+        <div class="email-title">Security Alert<br>Detected</div>
+        <div class="email-alert-bar">
+          New sign-in detected from an unrecognized device or location.
+        </div>
+        <div class="email-meta-row">
+          <div class="email-meta-item">
+            <div class="k">Event</div>
+            <div class="v">New Device Login</div>
+          </div>
+          <div class="email-meta-item">
+            <div class="k">IP Address</div>
+            <div class="v">103.24.187.42</div>
+          </div>
+        </div>
+        <div class="email-meta-row">
+          <div class="email-meta-item">
+            <div class="k">Location</div>
+            <div class="v">Mumbai, Maharashtra, IN</div>
+          </div>
+          <div class="email-meta-item">
+            <div class="k">Timestamp</div>
+            <div class="v">2026-06-12 09:14 UTC</div>
+          </div>
+        </div>
+        <p class="email-text">
+          If this was you, no action is needed. If you don't recognize this activity,
+          secure your account immediately.
+        </p>
+        <a href="#" class="email-btn">Secure My Account →</a>
+        <div class="email-expire-note">
+          If you believe your account is compromised, contact
+          <span class="highlight">security@climactix.global</span>
+        </div>
+      </div>
+      <div class="email-footer">
+        <div class="email-footer-row">
+          <div class="email-footer-logo">Climactix Global</div>
+          <div class="email-footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Security</a>
+            <a href="#">Support</a>
+          </div>
+        </div>
+        <div class="email-footer-copy">© 2026 Climactix Global. This is an automated message — please do not reply.</div>
+        <div class="email-footer-security">
+          <span>TLS 1.3 Encrypted</span>
+          <span>OWASP Compliant</span>
+          <span>SOC 2 Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.email-frame').forEach(f => f.classList.remove('active'));
+  document.querySelectorAll('.preview-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('frame-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

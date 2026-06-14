@@ -1,0 +1,202 @@
+version: "3.9"
+
+# ============================================================
+# Climactix Global — IAM Infrastructure
+# ============================================================
+# Services:
+#   iam-service     NestJS auth/IAM backend          :3100
+#   keycloak        Keycloak 23 IAM provider          :8080
+#   postgres-iam    Dedicated IAM PostgreSQL instance :5433
+#   redis-iam       Redis for sessions/rate-limiting  :6380
+#   mailhog         SMTP dev server (dev only)        :8025
+# ============================================================
+
+services:
+
+  # ── IAM Service (NestJS) ────────────────────────────────────
+  iam-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: climactix-iam
+    ports:
+      - "3100:3100"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=3100
+      - DATABASE_URL=postgresql://climactix_iam:${IAM_DB_PASSWORD:-iam_secret}@postgres-iam:5432/climactix_iam
+      - REDIS_URL=redis://redis-iam:6379/0
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - JWT_ACCESS_TTL=${JWT_ACCESS_TTL:-15m}
+      - JWT_REFRESH_TTL=${JWT_REFRESH_TTL:-7d}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - SMTP_HOST=${SMTP_HOST:-mailhog}
+      - SMTP_PORT=${SMTP_PORT:-1025}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-Climactix Global}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-noreply@climactix.global}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+      - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID:-}
+      - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET:-}
+      - MICROSOFT_TENANT_ID=${MICROSOFT_TENANT_ID:-common}
+      - LINKEDIN_CLIENT_ID=${LINKEDIN_CLIENT_ID:-}
+      - LINKEDIN_CLIENT_SECRET=${LINKEDIN_CLIENT_SECRET:-}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=climactix
+      - KEYCLOAK_CLIENT_ID=climactix-iam
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_IAM_CLIENT_SECRET:-}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000}
+      - COOKIE_SECURE=${COOKIE_SECURE:-false}
+      - APP_URL=${APP_URL:-http://localhost:3000}
+      - MAX_LOGIN_ATTEMPTS=10
+      - LOCKOUT_MINUTES=30
+      - RATE_LIMIT_MAX=100
+      - AUTH_RATE_LIMIT_MAX=10
+    depends_on:
+      postgres-iam:
+        condition: service_healthy
+      redis-iam:
+        condition: service_healthy
+    networks:
+      - iam-net
+      - climactix-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3100/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    volumes:
+      - ./backend/src:/app/src:ro  # dev hot-reload (remove in prod)
+
+  # ── Keycloak ────────────────────────────────────────────────
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.7
+    container_name: climactix-keycloak
+    ports:
+      - "8080:8080"
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN:-admin}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres-iam:5432/keycloak
+      - KC_DB_USERNAME=climactix_iam
+      - KC_DB_PASSWORD=${IAM_DB_PASSWORD:-iam_secret}
+      - KC_HOSTNAME=localhost
+      - KC_HOSTNAME_PORT=8080
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HTTP_ENABLED=true
+      - KC_FEATURES=preview
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-placeholder}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-placeholder}
+      - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID:-placeholder}
+      - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET:-placeholder}
+      - LINKEDIN_CLIENT_ID=${LINKEDIN_CLIENT_ID:-placeholder}
+      - LINKEDIN_CLIENT_SECRET=${LINKEDIN_CLIENT_SECRET:-placeholder}
+      - SMTP_HOST=${SMTP_HOST:-mailhog}
+      - SMTP_PORT=${SMTP_PORT:-1025}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-noreply@climactix.global}
+      - APP_URL=${APP_URL:-http://localhost:3000}
+      - KEYCLOAK_IAM_CLIENT_SECRET=${KEYCLOAK_IAM_CLIENT_SECRET:-dev-secret}
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    depends_on:
+      postgres-iam:
+        condition: service_healthy
+    networks:
+      - iam-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+
+  # ── IAM PostgreSQL ──────────────────────────────────────────
+  postgres-iam:
+    image: timescale/timescaledb:latest-pg16
+    container_name: climactix-postgres-iam
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=climactix_iam
+      - POSTGRES_PASSWORD=${IAM_DB_PASSWORD:-iam_secret}
+      - POSTGRES_MULTIPLE_DATABASES=climactix_iam,keycloak
+    volumes:
+      - postgres-iam-data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d:ro
+      - ./scripts/create-multiple-dbs.sh:/docker-entrypoint-initdb.d/000_create_dbs.sh:ro
+    networks:
+      - iam-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U climactix_iam -d climactix_iam"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── IAM Redis ───────────────────────────────────────────────
+  redis-iam:
+    image: redis:7-alpine
+    container_name: climactix-redis-iam
+    ports:
+      - "6380:6379"
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --requirepass ${REDIS_IAM_PASSWORD:-}
+      --loglevel warning
+    volumes:
+      - redis-iam-data:/data
+    networks:
+      - iam-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── MailHog (dev SMTP) ──────────────────────────────────────
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: climactix-mailhog
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    networks:
+      - iam-net
+    profiles:
+      - dev
+    restart: unless-stopped
+
+# ── Volumes ──────────────────────────────────────────────────
+volumes:
+  postgres-iam-data:
+  redis-iam-data:
+
+# ── Networks ─────────────────────────────────────────────────
+networks:
+  iam-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+  climactix-net:
+    external: true
+    name: climactix-global_climactix-net

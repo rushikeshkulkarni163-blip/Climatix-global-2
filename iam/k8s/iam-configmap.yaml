@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: climactix-iam-config
+  namespace: climactix
+data:
+  NODE_ENV: "production"
+  PORT: "3100"
+  JWT_ACCESS_TTL: "15m"
+  JWT_REFRESH_TTL: "7d"
+  JWT_REFRESH_REMEMBER_TTL: "30d"
+  MAX_LOGIN_ATTEMPTS: "10"
+  LOCKOUT_MINUTES: "30"
+  RATE_LIMIT_WINDOW_MS: "60000"
+  RATE_LIMIT_MAX: "100"
+  AUTH_RATE_LIMIT_MAX: "10"
+  KEYCLOAK_URL: "http://climactix-keycloak.climactix.svc.cluster.local"
+  KEYCLOAK_REALM: "climactix"
+  CORS_ORIGINS: "https://climactix.global,https://app.climactix.global"
+  COOKIE_SECURE: "true"
+  APP_URL: "https://climactix.global"
+  SMTP_SECURE: "true"
+  SMTP_PORT: "587"
+  SMTP_FROM_NAME: "Climactix Global"
+  API_VERSION: "v1"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: climactix-iam-secrets
+  namespace: climactix
+type: Opaque
+stringData:
+  # These must be overridden with real values via Helm/Vault in production
+  DATABASE_URL: "postgresql://climactix_iam:CHANGE_ME@climactix-postgres-iam:5432/climactix_iam"  # pragma: allowlist secret
+  REDIS_URL: "redis://:CHANGE_ME@climactix-redis-iam:6379/0"  # pragma: allowlist secret
+  JWT_ACCESS_SECRET: "REPLACE_WITH_64_CHAR_RANDOM_SECRET_AT_LEAST_64_CHARS_OF_ENTROPY_!!!"  # pragma: allowlist secret
+  JWT_REFRESH_SECRET: "REPLACE_WITH_64_CHAR_RANDOM_SECRET_AT_LEAST_64_CHARS_OF_ENTROPY_!!!"  # pragma: allowlist secret
+  ENCRYPTION_KEY: "REPLACE_WITH_64_HEX_CHARS_32_BYTE_AES256_KEY_00000000000000000000"  # pragma: allowlist secret
+  SMTP_HOST: "smtp.sendgrid.net"
+  SMTP_USER: "apikey"
+  SMTP_PASS: "SENDGRID_API_KEY"  # pragma: allowlist secret
+  SMTP_FROM_EMAIL: "noreply@climactix.global"
+  GOOGLE_CLIENT_ID: ""
+  GOOGLE_CLIENT_SECRET: ""  # pragma: allowlist secret
+  MICROSOFT_CLIENT_ID: ""
+  MICROSOFT_CLIENT_SECRET: ""  # pragma: allowlist secret
+  MICROSOFT_TENANT_ID: "common"
+  LINKEDIN_CLIENT_ID: ""
+  LINKEDIN_CLIENT_SECRET: ""  # pragma: allowlist secret
+  KEYCLOAK_CLIENT_ID: "climactix-iam"
+  KEYCLOAK_CLIENT_SECRET: ""  # pragma: allowlist secret
+  KEYCLOAK_ADMIN: "admin"
+  KEYCLOAK_ADMIN_PASSWORD: "CHANGE_ME"  # pragma: allowlist secret
+  IAM_DB_USER: "climactix_iam"
+  IAM_DB_PASSWORD: "CHANGE_ME"  # pragma: allowlist secret
