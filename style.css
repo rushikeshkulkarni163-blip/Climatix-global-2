@@ -455,8 +455,7 @@ p {
   transition: opacity var(--t), transform var(--t);
   z-index: 99;
 }
-.nav-dropdown.open .nav-dropdown-menu,
-.nav-dropdown:hover .nav-dropdown-menu {
+.nav-dropdown.open .nav-dropdown-menu {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
@@ -3445,13 +3444,21 @@ body {
 }
 
 /* ══════════════════════════════════════════════════════════
-   FORCE ALL TRANSFORMS OFF — no hover lifts
+   NO HOVER LIFTS — scoped to cards/UI elements only
    ══════════════════════════════════════════════════════════ */
-*:hover { transform: none !important; }
+.cx-concern-card:hover, .cx-fw-card:hover, .cx-gbm-deal:hover,
+.cx-pipe-card:hover, .cx-solution-card:hover, .cx-arch-item:hover,
+.cx-market-card:hover { transform: none !important; }
 
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
+/* Hard guard: mobile drawer must never render at desktop widths */
+@media (min-width: 769px) {
+  .cx-mob-drawer { display: none !important; }
+  .cx-mob-toggle { display: none !important; }
+}
+
 @media (max-width: 1200px) {
   .cx-hero-content { max-width: 460px; }
   .cx-vs-items { gap: 0; }
