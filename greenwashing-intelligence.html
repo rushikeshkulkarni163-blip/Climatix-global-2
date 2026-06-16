@@ -1,0 +1,2654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate Credibility Intelligence Engine — Climactix Global</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:           #000000;
+  --bg-alt:       #0A0A0A;
+  --surface:      #0F0F0F;
+  --surface-2:    #1A1A1A;
+  --surface-3:    #242424;
+  --surface-4:    #2E2E2E;
+  --border:       #2C2C2C;
+  --border-strong:#333333;
+  --border-accent:rgba(255,102,0,0.30);
+  --amber:        #FF6600;
+  --amber-dim:    #CC5200;
+  --amber-glow:   rgba(255,102,0,0.08);
+  --amber-fg:     #000000;
+  --cyan:         #0099CC;
+  --green:        #00CC44;
+  --green-glow:   rgba(0,204,68,0.10);
+  --red:          #FF3333;
+  --red-glow:     rgba(255,51,51,0.10);
+  --yellow:       #FFAA00;
+  --blue:         #3399FF;
+  --purple:       #CC66FF;
+  --text:         #FFFFFF;
+  --text-2:       #888888;
+  --text-muted:   #555555;
+  --t:            0.12s ease;
+  --mono:         'IBM Plex Mono', monospace;
+  --sans:         'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: #000;
+  border-bottom: 1px solid var(--border);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 32px;
+}
+
+.nav-brand {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--amber);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.nav-divider { width: 1px; height: 20px; background: var(--border); }
+
+.nav-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+.nav-spacer { flex: 1; }
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── LAYOUT ── */
+.page-wrapper {
+  padding-top: 48px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 32px 0 24px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--amber);
+  text-transform: uppercase;
+  background: var(--amber-glow);
+  border: 1px solid var(--border-accent);
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-bottom: 14px;
+}
+
+.hero-title {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-transform: uppercase;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.hero-title span { color: var(--amber); }
+
+.hero-sub {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.hero-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-meta-item svg { opacity: 0.5; }
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.20em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-label span { color: var(--amber); }
+
+/* ── UPLOAD CONSOLE ── */
+.upload-section { padding: 28px 0; }
+
+.upload-console {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.upload-console-header {
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.console-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.console-dot.red { background: #FF3B30; }
+.console-dot.yellow { background: #FFCC00; }
+.console-dot.green { background: #28CD41; }
+
+.console-title {
+  margin-left: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.upload-body { padding: 32px; }
+
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+}
+
+.upload-zone {
+  border: 1px dashed var(--border-strong);
+  border-radius: 3px;
+  background: var(--bg-alt);
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--t), background var(--t);
+  position: relative;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--amber);
+  background: var(--amber-glow);
+}
+
+.upload-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 16px;
+  opacity: 0.3;
+}
+
+.upload-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.upload-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.upload-formats {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.format-chip {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  color: var(--amber);
+  border: 1px solid var(--border-accent);
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.upload-config { display: flex; flex-direction: column; gap: 14px; }
+
+.config-group { display: flex; flex-direction: column; gap: 6px; }
+
+.config-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.config-input {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  width: 100%;
+  transition: border-color var(--t);
+  outline: none;
+}
+
+.config-input:focus { border-color: var(--amber); }
+
+.config-input::placeholder { color: var(--text-muted); }
+
+.scan-btn {
+  background: var(--amber);
+  color: var(--amber-fg);
+  border: none;
+  border-radius: 3px;
+  padding: 12px 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--t);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.scan-btn:hover { background: var(--amber-dim); }
+.scan-btn:disabled { background: var(--border-strong); color: var(--text-muted); cursor: not-allowed; }
+
+.selected-file {
+  display: none;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+  align-items: center;
+  gap: 8px;
+}
+
+.selected-file.visible { display: flex; }
+
+/* ── SCAN PROGRESS ── */
+.scan-progress {
+  display: none;
+  padding: 28px 0;
+}
+
+.scan-progress.visible { display: block; }
+
+.progress-console {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.progress-header {
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progress-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--amber);
+  text-transform: uppercase;
+}
+
+.progress-pct {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-2);
+}
+
+.progress-bar-wrap {
+  height: 2px;
+  background: var(--border);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--amber);
+  transition: width 0.6s ease;
+  width: 0%;
+}
+
+.progress-phases { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+
+.phase-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  transition: all var(--t);
+}
+
+.phase-item.active {
+  background: var(--amber-glow);
+  border-color: var(--border-accent);
+}
+
+.phase-item.done { opacity: 0.5; }
+
+.phase-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.phase-item.active .phase-icon {
+  border-color: var(--amber);
+  color: var(--amber);
+  animation: spin 1s linear infinite;
+}
+
+.phase-item.done .phase-icon {
+  border-color: var(--green);
+  background: var(--green);
+  color: #000;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.phase-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.phase-item.active .phase-name { color: var(--amber); }
+.phase-item.done .phase-name { color: var(--text-muted); }
+
+.phase-status {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ── RESULTS DASHBOARD ── */
+.results-dashboard {
+  display: none;
+  padding-bottom: 80px;
+}
+
+.results-dashboard.visible { display: block; }
+
+/* ── OVERVIEW ROW ── */
+.overview-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.overview-card {
+  background: var(--surface);
+  padding: 20px;
+}
+
+.ov-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.ov-value {
+  font-family: var(--mono);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.ov-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+/* ── TWO-COLUMN LAYOUT ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* ── PANEL ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.panel-header {
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-title {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+.panel-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.tag-amber { color: var(--amber); background: var(--amber-glow); border: 1px solid var(--border-accent); }
+.tag-green { color: var(--green); background: var(--green-glow); }
+.tag-red { color: var(--red); background: var(--red-glow); }
+
+.panel-body { padding: 20px; }
+
+/* ── RISK METER ── */
+.risk-meter-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 20px;
+}
+
+.gauge-svg { overflow: visible; }
+
+.gauge-track {
+  fill: none;
+  stroke: var(--surface-3);
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+
+.gauge-fill {
+  fill: none;
+  stroke-width: 14;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1), stroke 0.5s ease;
+  transform-origin: center;
+  transform: rotate(-220deg);
+}
+
+.gauge-center-score {
+  font-family: var(--mono);
+  font-size: 36px;
+  font-weight: 700;
+  fill: var(--text);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.gauge-center-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  fill: var(--text-muted);
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+
+.gauge-ticks text {
+  font-family: var(--mono);
+  font-size: 8px;
+  fill: var(--text-muted);
+}
+
+.risk-level-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+
+.risk-scale {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.scale-seg {
+  height: 3px;
+  border-radius: 1px;
+  flex: 1;
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+/* ── CREDIBILITY RADAR ── */
+.radar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+}
+
+.radar-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+  width: 100%;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.legend-val {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--amber);
+  margin-left: auto;
+}
+
+/* ── DETECTION MODULES GRID ── */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.module-card {
+  background: var(--surface);
+  padding: 16px;
+  position: relative;
+}
+
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.module-card.risk-Critical::before { background: var(--red); }
+.module-card.risk-High::before { background: var(--yellow); }
+.module-card.risk-Medium::before { background: var(--amber); }
+.module-card.risk-Low::before,
+.module-card.risk-Minimal::before { background: var(--green); }
+
+.module-num {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.module-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.module-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.module-score {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.module-score-max {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.module-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.module-bar-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 1s ease;
+}
+
+.module-risk-badge {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 2px 5px;
+  border-radius: 1px;
+}
+
+.module-signals {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.module-signal {
+  font-size: 9px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  padding-left: 8px;
+  position: relative;
+}
+
+.module-signal::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--border-strong);
+}
+
+/* ── CLAIMS MATRIX ── */
+.claims-table { width: 100%; border-collapse: collapse; }
+
+.claims-table th {
+  background: var(--surface-2);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.claims-table td {
+  padding: 10px 12px;
+  font-size: 11px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.claims-table tr:last-child td { border-bottom: none; }
+.claims-table tr:hover td { background: var(--surface-2); }
+
+.claim-type-badge {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 5px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.claim-text { color: var(--text-2); font-size: 11px; max-width: 300px; }
+
+.verified-yes { color: var(--green); font-family: var(--mono); font-size: 10px; }
+.verified-no { color: var(--red); font-family: var(--mono); font-size: 10px; }
+
+.data-yes { color: var(--green); }
+.data-no { color: var(--red); }
+
+/* ── CONTRADICTIONS ── */
+.contradiction-item {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.contradiction-item:last-child { margin-bottom: 0; }
+
+.contradiction-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background var(--t);
+}
+
+.contradiction-header:hover { background: var(--surface-2); }
+
+.contradiction-severity {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.sev-Critical { color: var(--red); background: var(--red-glow); border: 1px solid rgba(255,51,51,0.30); }
+.sev-High { color: var(--yellow); background: rgba(255,170,0,0.10); border: 1px solid rgba(255,170,0,0.30); }
+.sev-Medium { color: var(--amber); background: var(--amber-glow); border: 1px solid var(--border-accent); }
+.sev-Low { color: var(--text-muted); background: transparent; border: 1px solid var(--border); }
+
+.contradiction-type {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.contradiction-toggle {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: transform var(--t);
+}
+
+.contradiction-body {
+  display: none;
+  padding: 0 16px 16px;
+}
+
+.contradiction-body.open { display: block; }
+
+.contra-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.contra-col { display: flex; flex-direction: column; gap: 4px; }
+
+.contra-col-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.contra-narrative-label { color: var(--yellow); }
+.contra-reality-label { color: var(--red); }
+
+.contra-text { font-size: 11px; color: var(--text-2); line-height: 1.5; }
+
+.contra-evidence {
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--amber);
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-2);
+  border-radius: 2px;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.contra-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.contra-meta-item { display: flex; flex-direction: column; gap: 2px; }
+
+.contra-meta-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.contra-meta-text { font-size: 11px; color: var(--text-2); line-height: 1.4; }
+
+/* ── EMISSIONS GRAPH ── */
+.emissions-chart-wrap { padding: 20px; position: relative; }
+
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.legend-line {
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.emissions-svg { width: 100%; overflow: visible; }
+
+/* ── FINANCIAL SIMULATION ── */
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+
+.scenario-card {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface-2);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--t);
+}
+
+.scenario-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.scenario-card:hover { border-color: var(--border-strong); }
+
+.scenario-icon-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 2px 6px;
+  border-radius: 2px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.scenario-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.scenario-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.scenario-metrics { display: flex; flex-direction: column; gap: 6px; }
+
+.scenario-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.scenario-metric:last-child { border-bottom: none; }
+
+.sm-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sm-value {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.scenario-risk-level {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+
+/* ── REGULATORY MONITOR ── */
+.framework-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+
+.framework-group {
+  background: var(--surface);
+  padding: 16px;
+}
+
+.framework-name {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--amber);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.framework-req {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.req-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.req-icon.met { background: var(--green); }
+.req-icon.missing { background: var(--red); }
+
+.req-text {
+  font-size: 10px;
+  color: var(--text-2);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.req-text.missing-text { color: var(--red); opacity: 0.8; }
+
+/* ── EXPLAINABILITY CONSOLE ── */
+.finding-item {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.finding-item:last-child { margin-bottom: 0; }
+
+.finding-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+.finding-header:hover { background: var(--surface-2); }
+
+.finding-id {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  color: var(--amber);
+}
+
+.finding-cat {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.finding-title { font-size: 12px; color: var(--text); flex: 1; }
+
+.finding-sev {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.finding-body {
+  display: none;
+  padding: 0 16px 16px;
+}
+
+.finding-body.open { display: block; }
+
+.finding-text { font-size: 12px; color: var(--text-2); line-height: 1.6; margin-bottom: 10px; }
+
+.finding-implication {
+  background: var(--amber-glow);
+  border: 1px solid var(--border-accent);
+  border-radius: 2px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--amber);
+  line-height: 1.5;
+}
+
+.rationale-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.rationale-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.rationale-text { font-size: 12px; color: var(--text-2); line-height: 1.7; }
+
+/* ── RECOMMENDATIONS ── */
+.reco-item {
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  margin-bottom: 8px;
+}
+
+.reco-priority {
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  height: fit-content;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.priority-Critical, .priority-High { color: var(--red); background: var(--red-glow); border: 1px solid rgba(255,51,51,0.30); }
+.priority-Medium { color: var(--yellow); background: rgba(255,170,0,0.10); border: 1px solid rgba(255,170,0,0.30); }
+
+.reco-body { flex: 1; }
+
+.reco-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.reco-action { font-size: 11px; color: var(--text-2); line-height: 1.5; margin-bottom: 6px; }
+
+.reco-framework {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--amber);
+  letter-spacing: 0.06em;
+}
+
+/* ── EXPORT BAR ── */
+.export-bar {
+  border-top: 1px solid var(--border);
+  padding: 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.export-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--t);
+}
+
+.export-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+.export-btn-primary {
+  background: var(--amber);
+  color: var(--amber-fg);
+  border-color: var(--amber);
+}
+
+.export-btn-primary:hover { background: var(--amber-dim); border-color: var(--amber-dim); color: var(--amber-fg); }
+
+/* ── UTILITIES ── */
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+
+.mono { font-family: var(--mono); }
+.amber { color: var(--amber); }
+.green { color: var(--green); }
+.red { color: var(--red); }
+.text-muted { color: var(--text-muted); }
+.text-2 { color: var(--text-2); }
+
+.full-width { grid-column: 1 / -1; }
+
+.integrity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+.summary-text {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.7;
+  padding: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  border-left: 2px solid var(--amber);
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) {
+  .overview-row { grid-template-columns: repeat(2, 1fr); }
+  .modules-grid { grid-template-columns: repeat(2, 1fr); }
+  .three-col { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .two-col, .three-col { grid-template-columns: 1fr; }
+  .upload-grid { grid-template-columns: 1fr; }
+  .overview-row { grid-template-columns: 1fr 1fr; }
+  .modules-grid { grid-template-columns: 1fr 1fr; }
+  .scenario-grid { grid-template-columns: 1fr 1fr; }
+  .contra-grid { grid-template-columns: 1fr; }
+  .contra-meta { grid-template-columns: 1fr; }
+}
+
+/* ── SCAN COMPLETE FLASH ── */
+@keyframes flash-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in { animation: flash-in 0.3s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────────────────────── -->
+<nav class="nav">
+  <a href="index.html" class="nav-brand">Climactix Global</a>
+  <div class="nav-divider"></div>
+  <div class="nav-title">Climate Credibility Intelligence Engine</div>
+  <div class="nav-spacer"></div>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    <span>LIVE · v2.0</span>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+<div class="container">
+
+  <!-- ── HERO ────────────────────────────────────────────────────────────────── -->
+  <div class="hero">
+    <div class="hero-badge">
+      <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+        <circle cx="4" cy="4" r="3" fill="#FF6600"/>
+      </svg>
+      Climate Credibility Intelligence Infrastructure
+    </div>
+    <h1 class="hero-title">
+      Greenwashing Risk <span>&amp;</span> Climate<br>Credibility Intelligence System
+    </h1>
+    <p class="hero-sub">
+      Institutional-grade greenwashing detection, contradiction analysis, and climate financial exposure simulation for capital markets due diligence.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <rect x="1" y="1" width="8" height="8" rx="1" stroke="#555" stroke-width="1"/>
+          <path d="M3 5h4M3 3h4M3 7h2" stroke="#555" stroke-width="1"/>
+        </svg>
+        11-Stage Analysis Pipeline
+      </div>
+      <div class="hero-meta-item">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <circle cx="5" cy="5" r="4" stroke="#555" stroke-width="1"/>
+          <path d="M5 2v3l2 2" stroke="#555" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+        8 Detection Modules
+      </div>
+      <div class="hero-meta-item">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M1 8L3 5l2 2 2-3 2 2" stroke="#555" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        6-Scenario Financial Simulation
+      </div>
+      <div class="hero-meta-item">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M5 1l1.2 2.5L9 4l-2 1.9.5 2.6L5 7.3 2.5 8.5 3 5.9 1 4l2.8-.5z" stroke="#555" stroke-width="1" stroke-linejoin="round"/>
+        </svg>
+        GRI · TCFD · ISSB · CSRD Compliance
+      </div>
+    </div>
+  </div>
+
+  <!-- ── UPLOAD CONSOLE ───────────────────────────────────────────────────────── -->
+  <div class="upload-section" id="uploadSection">
+    <div class="section-label"><span>//</span> DOCUMENT INTELLIGENCE LAYER — UPLOAD CONSOLE</div>
+
+    <div class="upload-console">
+      <div class="upload-console-header">
+        <div class="console-dot red"></div>
+        <div class="console-dot yellow"></div>
+        <div class="console-dot green"></div>
+        <span class="console-title">CLIMATE CREDIBILITY SCAN · DOCUMENT INGESTION</span>
+      </div>
+      <div class="upload-body">
+        <div class="upload-grid">
+          <div>
+            <div
+              class="upload-zone"
+              id="uploadZone"
+              ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)"
+              ondrop="handleDrop(event)"
+            >
+              <input type="file" id="fileInput" accept=".pdf,.docx,.xlsx,.csv,.txt" onchange="handleFileSelect(event)">
+              <svg class="upload-icon" viewBox="0 0 40 40" fill="none">
+                <rect x="4" y="6" width="32" height="28" rx="2" stroke="#555" stroke-width="2"/>
+                <path d="M14 22l6-6 6 6M20 16v14" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div class="upload-label">DROP REPORT HERE OR CLICK TO BROWSE</div>
+              <div class="upload-sub">ESG Reports · Annual Reports · CDP Disclosures · SEC Filings</div>
+              <div class="upload-formats">
+                <span class="format-chip">PDF</span>
+                <span class="format-chip">DOCX</span>
+                <span class="format-chip">XLSX</span>
+                <span class="format-chip">TXT</span>
+              </div>
+            </div>
+            <div class="selected-file" id="selectedFile">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <rect x="2" y="1" width="10" height="12" rx="1" stroke="#888" stroke-width="1.5"/>
+                <path d="M4 5h6M4 7h6M4 9h4" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span id="selectedFileName">—</span>
+            </div>
+          </div>
+
+          <div class="upload-config">
+            <div class="config-group">
+              <label class="config-label">Company Name</label>
+              <input
+                type="text"
+                id="companyNameInput"
+                class="config-input"
+                placeholder="Auto-detected from file..."
+              >
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Analysis Mode</label>
+              <select id="analysisMode" class="config-input" style="appearance:none;">
+                <option value="full">Full Intelligence Scan</option>
+                <option value="quick">Quick Greenwashing Check</option>
+              </select>
+            </div>
+
+            <div class="config-group">
+              <label class="config-label">Intelligence Depth</label>
+              <select id="intelligenceDepth" class="config-input" style="appearance:none;">
+                <option value="deep">Deep (LLM + Rules)</option>
+                <option value="standard">Standard (Rules Only)</option>
+              </select>
+            </div>
+
+            <button class="scan-btn" id="scanBtn" onclick="startScan()" disabled>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <circle cx="6" cy="6" r="5" stroke="#000" stroke-width="1.5"/>
+                <path d="M4 6l1.5 1.5L8 4.5" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              INITIATE CREDIBILITY SCAN
+            </button>
+
+            <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border);">
+              <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);line-height:1.6;">
+                FILES PROCESSED LOCALLY · MAX 25MB · ENCRYPTED IN TRANSIT<br>
+                POWERED BY CLIMACTIX INTELLIGENCE ENGINE v2.0
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCAN PROGRESS ────────────────────────────────────────────────────────── -->
+  <div class="scan-progress" id="scanProgress">
+    <div class="section-label"><span>//</span> INTELLIGENCE ENGINE — SCAN IN PROGRESS</div>
+    <div class="progress-console">
+      <div class="progress-header">
+        <span class="progress-title">CLIMATE CREDIBILITY SCAN · PROCESSING</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+      <div class="progress-phases">
+        <div class="phase-item" id="ph0">
+          <div class="phase-icon">◐</div>
+          <span class="phase-name">Document Parsing &amp; Text Extraction</span>
+          <span class="phase-status" id="phStatus0">—</span>
+        </div>
+        <div class="phase-item" id="ph1">
+          <div class="phase-icon">1</div>
+          <span class="phase-name">Climate Claim Extraction (AI)</span>
+          <span class="phase-status" id="phStatus1">Pending</span>
+        </div>
+        <div class="phase-item" id="ph2">
+          <div class="phase-icon">2</div>
+          <span class="phase-name">Quantitative Data Mining</span>
+          <span class="phase-status" id="phStatus2">Pending</span>
+        </div>
+        <div class="phase-item" id="ph3">
+          <div class="phase-icon">3</div>
+          <span class="phase-name">Contradiction Detection Engine</span>
+          <span class="phase-status" id="phStatus3">Pending</span>
+        </div>
+        <div class="phase-item" id="ph4">
+          <div class="phase-icon">4</div>
+          <span class="phase-name">8-Module Greenwashing Detection</span>
+          <span class="phase-status" id="phStatus4">Pending</span>
+        </div>
+        <div class="phase-item" id="ph5">
+          <div class="phase-icon">5</div>
+          <span class="phase-name">7-Dimension Credibility Scoring</span>
+          <span class="phase-status" id="phStatus5">Pending</span>
+        </div>
+        <div class="phase-item" id="ph6">
+          <div class="phase-icon">6</div>
+          <span class="phase-name">Climate Financial Simulation</span>
+          <span class="phase-status" id="phStatus6">Pending</span>
+        </div>
+        <div class="phase-item" id="ph7">
+          <div class="phase-icon">7</div>
+          <span class="phase-name">AI Explainability &amp; Key Findings</span>
+          <span class="phase-status" id="phStatus7">Pending</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULTS DASHBOARD ─────────────────────────────────────────────────────── -->
+  <div class="results-dashboard" id="resultsDashboard">
+
+    <!-- Overview Row -->
+    <div class="section-label mt-24"><span>//</span> INTELLIGENCE SUMMARY — <span id="summaryCompany">—</span></div>
+    <div class="overview-row" id="overviewRow">
+      <div class="overview-card">
+        <div class="ov-label">Greenwashing Risk Score</div>
+        <div class="ov-value" id="ovGwScore" style="color:var(--red)">—</div>
+        <div class="ov-sub" id="ovGwLevel">— / 100</div>
+      </div>
+      <div class="overview-card">
+        <div class="ov-label">Climate Credibility Score</div>
+        <div class="ov-value" id="ovCredScore" style="color:var(--amber)">—</div>
+        <div class="ov-sub" id="ovCredRating">RATED —</div>
+      </div>
+      <div class="overview-card">
+        <div class="ov-label">Contradictions Detected</div>
+        <div class="ov-value" id="ovContradictions" style="color:var(--yellow)">—</div>
+        <div class="ov-sub" id="ovContraSev">SEVERITY: —</div>
+      </div>
+      <div class="overview-card">
+        <div class="ov-label">Framework Coverage</div>
+        <div class="ov-value" id="ovFramework" style="color:var(--cyan)">—%</div>
+        <div class="ov-sub" id="ovFrameworkSub">GRI · TCFD · ISSB</div>
+      </div>
+    </div>
+
+    <!-- Intelligence Summary -->
+    <div class="panel mb-24" id="integrityPanel">
+      <div class="panel-header">
+        <span class="panel-title">Integrity Assessment Summary</span>
+        <span class="panel-tag tag-amber" id="institutionalRatingTag">—</span>
+      </div>
+      <div class="panel-body">
+        <div class="summary-text" id="integritySummaryText">—</div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;" id="institutionalRatingBox"></div>
+      </div>
+    </div>
+
+    <!-- Greenwashing Meter + Credibility Radar -->
+    <div class="two-col mb-16">
+      <!-- Risk Meter -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Greenwashing Risk Meter</span>
+          <span class="panel-tag tag-amber" id="riskMeterTag">0–100 SCALE</span>
+        </div>
+        <div class="risk-meter-wrap">
+          <svg class="gauge-svg" width="200" height="160" viewBox="0 0 200 160">
+            <!-- Track (280° arc) -->
+            <path id="gaugeTrack" class="gauge-track"
+              d="M 25 145 A 75 75 0 1 1 175 145"
+              fill="none" stroke="var(--surface-3)" stroke-width="14" stroke-linecap="round"/>
+            <!-- Fill -->
+            <path id="gaugeFill" class="gauge-fill"
+              d="M 25 145 A 75 75 0 1 1 175 145"
+              fill="none" stroke="var(--amber)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="330" stroke-dashoffset="330"/>
+            <!-- Center text -->
+            <text x="100" y="108" class="gauge-center-score" id="gaugeScore">—</text>
+            <text x="100" y="126" class="gauge-center-label">RISK SCORE</text>
+          </svg>
+
+          <div class="risk-level-badge" id="riskLevelBadge"
+            style="color:var(--amber);background:var(--amber-glow);border-color:var(--border-accent)">
+            — RISK LEVEL
+          </div>
+
+          <div style="width:100%;padding:0 16px;">
+            <div class="risk-scale">
+              <div class="scale-seg" style="background:#00CC44"></div>
+              <div class="scale-seg" style="background:#FFAA00"></div>
+              <div class="scale-seg" style="background:#FF6600"></div>
+              <div class="scale-seg" style="background:#FF3333"></div>
+            </div>
+            <div class="scale-labels">
+              <span>0 CREDIBLE</span>
+              <span>25 MODERATE</span>
+              <span>50 HIGH</span>
+              <span>75 SEVERE</span>
+              <span>100</span>
+            </div>
+          </div>
+
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);text-align:center;letter-spacing:0.08em;text-transform:uppercase;" id="ratingDescription">—</div>
+        </div>
+      </div>
+
+      <!-- Credibility Radar -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Climate Credibility Index</span>
+          <span class="panel-tag tag-amber" id="credRatingTag">RATED —</span>
+        </div>
+        <div class="radar-wrap">
+          <svg id="radarSvg" width="220" height="200" viewBox="0 0 220 200"></svg>
+          <div class="radar-legend" id="radarLegend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detection Modules -->
+    <div class="section-label"><span>//</span> GREENWASHING DETECTION MODULES — 8-MODULE ANALYSIS</div>
+    <div class="modules-grid" id="modulesGrid"></div>
+
+    <!-- Claims Matrix -->
+    <div class="panel mb-16 mt-16" id="claimsPanel">
+      <div class="panel-header">
+        <span class="panel-title">Climate Claims vs Evidence Matrix</span>
+        <span class="panel-tag tag-amber" id="claimsCountTag">— CLAIMS</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="claims-table" id="claimsTable">
+          <thead>
+            <tr>
+              <th>CLAIM TYPE</th>
+              <th>CLAIM TEXT</th>
+              <th>TIMELINE</th>
+              <th>DATA SUPPORTED</th>
+              <th>VERIFIED</th>
+            </tr>
+          </thead>
+          <tbody id="claimsTbody"></tbody>
+        </table>
+        <div class="empty-state" id="claimsEmpty" style="display:none;">NO CLAIMS EXTRACTED</div>
+      </div>
+    </div>
+
+    <!-- Contradictions -->
+    <div class="panel mb-16">
+      <div class="panel-header">
+        <span class="panel-title">Contradiction Intelligence — Narrative vs Operational Reality</span>
+        <span class="panel-tag" id="contraSevTag">— SEVERITY</span>
+      </div>
+      <div class="panel-body" id="contradictionsBody">
+        <div class="empty-state">LOADING CONTRADICTION ANALYSIS...</div>
+      </div>
+    </div>
+
+    <!-- Emissions + CAPEX row -->
+    <div class="two-col mb-16">
+      <!-- Emissions Reality -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Emissions Data Reality Check</span>
+          <span class="panel-tag tag-amber">GHG SCOPE 1·2·3</span>
+        </div>
+        <div class="emissions-chart-wrap">
+          <div class="chart-legend">
+            <div class="chart-legend-item">
+              <div class="legend-line" style="background:var(--amber)"></div>
+              <span>SCOPE 1</span>
+            </div>
+            <div class="chart-legend-item">
+              <div class="legend-line" style="background:var(--blue)"></div>
+              <span>SCOPE 2</span>
+            </div>
+            <div class="chart-legend-item">
+              <div class="legend-line" style="background:var(--red)"></div>
+              <span>SCOPE 3</span>
+            </div>
+          </div>
+          <div id="emissionsViz"></div>
+        </div>
+      </div>
+
+      <!-- Data Extracted Summary -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Quantitative Data Extracted</span>
+          <span class="panel-tag tag-amber">REGEX MINING</span>
+        </div>
+        <div class="panel-body" id="dataExtractedBody">
+          <div class="empty-state">LOADING...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Simulation -->
+    <div class="panel mb-16">
+      <div class="panel-header">
+        <span class="panel-title">Climate Financial Exposure Simulator</span>
+        <span class="panel-tag tag-amber">6 SCENARIOS · EBITDA &amp; VALUATION IMPACT</span>
+      </div>
+      <div id="financialSimBody">
+        <div class="scenario-grid" id="scenarioGrid">
+          <div class="empty-state full-width">LOADING FINANCIAL SIMULATION...</div>
+        </div>
+        <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--surface-2);">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);line-height:1.6;" id="carbonLiabilityNote">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regulatory Monitor -->
+    <div class="panel mb-16">
+      <div class="panel-header">
+        <span class="panel-title">Regulatory Exposure Monitor — Framework Compliance Matrix</span>
+        <span class="panel-tag tag-amber" id="frameworkCoverTag">—% COVERAGE</span>
+      </div>
+      <div class="framework-grid" id="frameworkGrid"></div>
+    </div>
+
+    <!-- Explainability + Findings -->
+    <div class="two-col mb-16">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">AI Explainability Console</span>
+          <span class="panel-tag tag-amber">KEY FINDINGS</span>
+        </div>
+        <div class="panel-body" id="explainBody">
+          <div class="empty-state">LOADING...</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Institutional Recommendations</span>
+          <span class="panel-tag tag-amber">REMEDIATION INTELLIGENCE</span>
+        </div>
+        <div class="panel-body" id="recoBody">
+          <div class="empty-state">LOADING...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export Bar -->
+    <div class="export-bar">
+      <span class="export-label">Export Intelligence Report:</span>
+      <button class="export-btn export-btn-primary" onclick="exportPDF()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <rect x="2" y="1" width="8" height="10" rx="1" stroke="#000" stroke-width="1.5"/>
+          <path d="M4 7l2 2 2-2M6 4v5" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        PDF REPORT
+      </button>
+      <button class="export-btn" onclick="exportJSON()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 3h3M2 6h8M2 9h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        RAW JSON
+      </button>
+      <button class="export-btn" onclick="window.print()">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <rect x="2" y="3" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M4 3V1h4v2M4 9v2h4V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        PRINT
+      </button>
+      <div style="margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--text-muted);">
+        SCAN ID: <span id="exportScanId">—</span>
+      </div>
+    </div>
+
+  </div><!-- /results-dashboard -->
+</div><!-- /container -->
+</div><!-- /page-wrapper -->
+
+<script>
+// ── App State ──────────────────────────────────────────────────────────────
+const API_BASE = 'http://localhost:8000';
+let selectedFile = null;
+let scanResult = null;
+let scanStartTime = null;
+
+// ── File Handling ──────────────────────────────────────────────────────────
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) setSelectedFile(file);
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  document.getElementById('uploadZone').classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) setSelectedFile(file);
+}
+
+function setSelectedFile(file) {
+  selectedFile = file;
+  const el = document.getElementById('selectedFile');
+  document.getElementById('selectedFileName').textContent = `${file.name} — ${(file.size/1024/1024).toFixed(2)} MB`;
+  el.classList.add('visible');
+  document.getElementById('scanBtn').disabled = false;
+
+  // Auto-detect company name from filename
+  if (!document.getElementById('companyNameInput').value) {
+    const guess = file.name.replace(/\.(pdf|docx|xlsx|csv|txt)$/i, '')
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, l => l.toUpperCase());
+    document.getElementById('companyNameInput').placeholder = guess;
+  }
+}
+
+// ── Scan Pipeline ──────────────────────────────────────────────────────────
+async function startScan() {
+  if (!selectedFile) return;
+  scanStartTime = Date.now();
+
+  // Show progress, hide upload
+  document.getElementById('scanProgress').classList.add('visible');
+  document.getElementById('resultsDashboard').classList.remove('visible');
+  document.getElementById('scanBtn').disabled = true;
+
+  // Animate phases
+  animatePhases();
+
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+  const companyName = document.getElementById('companyNameInput').value;
+  if (companyName) formData.append('company_name', companyName);
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/v2/credibility/scan`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.detail || `HTTP ${resp.status}`);
+    }
+
+    scanResult = await resp.json();
+    completeProgress();
+    setTimeout(() => renderDashboard(scanResult), 600);
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+// ── Progress Animation ─────────────────────────────────────────────────────
+let phaseInterval = null;
+let currentPhase = -1;
+
+function animatePhases() {
+  const phases = ['ph0','ph1','ph2','ph3','ph4','ph5','ph6','ph7'];
+  const pct = [10, 22, 35, 48, 60, 72, 85, 95];
+  currentPhase = 0;
+
+  setPhaseActive(0);
+  updateProgress(5);
+
+  phaseInterval = setInterval(() => {
+    if (currentPhase < phases.length - 1) {
+      setPhaseComplete(currentPhase);
+      currentPhase++;
+      setPhaseActive(currentPhase);
+      updateProgress(pct[currentPhase]);
+    }
+  }, 2200);
+}
+
+function setPhaseActive(i) {
+  const el = document.getElementById(`ph${i}`);
+  if (!el) return;
+  el.classList.remove('done');
+  el.classList.add('active');
+  el.querySelector('.phase-icon').textContent = '◐';
+  el.querySelector('.phase-status').textContent = 'Processing...';
+}
+
+function setPhaseComplete(i) {
+  const el = document.getElementById(`ph${i}`);
+  if (!el) return;
+  el.classList.remove('active');
+  el.classList.add('done');
+  el.querySelector('.phase-icon').textContent = '✓';
+  el.querySelector('.phase-status').textContent = 'Complete';
+}
+
+function updateProgress(pct) {
+  document.getElementById('progressBar').style.width = `${pct}%`;
+  document.getElementById('progressPct').textContent = `${pct}%`;
+}
+
+function completeProgress() {
+  if (phaseInterval) clearInterval(phaseInterval);
+  for (let i = 0; i <= 7; i++) setPhaseComplete(i);
+  updateProgress(100);
+}
+
+function showError(msg) {
+  if (phaseInterval) clearInterval(phaseInterval);
+  document.getElementById('scanProgress').innerHTML = `
+    <div class="progress-console">
+      <div class="progress-header">
+        <span class="progress-title" style="color:var(--red)">SCAN ERROR</span>
+      </div>
+      <div style="padding:24px;font-family:var(--mono);font-size:11px;color:var(--red);">
+        ${escHtml(msg)}<br><br>
+        <button onclick="resetScan()" style="background:var(--amber);color:#000;border:none;padding:8px 16px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:0.10em;cursor:pointer;border-radius:2px;">RETRY SCAN</button>
+      </div>
+    </div>`;
+}
+
+function resetScan() {
+  location.reload();
+}
+
+// ── Dashboard Rendering ────────────────────────────────────────────────────
+function renderDashboard(data) {
+  document.getElementById('scanProgress').classList.remove('visible');
+  const dash = document.getElementById('resultsDashboard');
+  dash.classList.add('visible');
+  dash.classList.add('animate-in');
+
+  const company = data.company_name || '—';
+  document.getElementById('summaryCompany').textContent = company.toUpperCase();
+  document.getElementById('exportScanId').textContent = (data.scan_id || '—').slice(0,18).toUpperCase();
+
+  renderOverview(data);
+  renderIntegritySummary(data);
+  renderRiskMeter(data.greenwashing_risk_score || 0, data.greenwashing_risk_level || '—', data.institutional_rating || {});
+  renderCredibilityRadar(data.credibility_breakdown || {});
+  renderDetectionModules(data.detection_modules || {});
+  renderClaimsMatrix(data.claims_detected || []);
+  renderContradictions(data.contradictions || {});
+  renderDataExtracted(data.data_extracted || {});
+  renderEmissionsViz(data.data_extracted || {});
+  renderFinancialSim(data.financial_simulation || null);
+  renderRegulatoryMonitor(data.framework_results || {});
+  renderExplainability(data.explainability || {});
+  renderRecommendations(data.recommendations || []);
+}
+
+// ── Overview Row ──────────────────────────────────────────────────────────
+function renderOverview(data) {
+  const gw = data.greenwashing_risk_score ?? 0;
+  const cr = data.climate_credibility_score ?? 0;
+  const ct = (data.contradictions || {}).contradiction_count ?? 0;
+  const fw = (data.framework_results || {}).coverage_pct ?? 0;
+
+  document.getElementById('ovGwScore').textContent = gw;
+  document.getElementById('ovGwScore').style.color = riskColor(gw, true);
+  document.getElementById('ovGwLevel').textContent = `${data.greenwashing_risk_level || '—'} · /100`;
+
+  document.getElementById('ovCredScore').textContent = cr;
+  document.getElementById('ovCredScore').style.color = credColor(cr);
+  document.getElementById('ovCredRating').textContent = `RATED ${data.climate_credibility_rating || '—'}`;
+
+  document.getElementById('ovContradictions').textContent = ct;
+  document.getElementById('ovContraSev').textContent = `SEVERITY: ${(data.contradictions || {}).overall_severity || '—'}`;
+
+  document.getElementById('ovFramework').textContent = `${fw}%`;
+}
+
+function riskColor(score, invert = false) {
+  if (invert) {
+    if (score <= 25) return 'var(--green)';
+    if (score <= 50) return 'var(--yellow)';
+    if (score <= 75) return 'var(--amber)';
+    return 'var(--red)';
+  }
+  if (score >= 75) return 'var(--green)';
+  if (score >= 50) return 'var(--yellow)';
+  if (score >= 30) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+function credColor(score) {
+  if (score >= 75) return 'var(--green)';
+  if (score >= 55) return 'var(--amber)';
+  if (score >= 35) return 'var(--yellow)';
+  return 'var(--red)';
+}
+
+function sevColor(sev) {
+  const map = { Critical: 'var(--red)', High: 'var(--yellow)', Medium: 'var(--amber)', Low: 'var(--text-muted)', Minimal: 'var(--green)' };
+  return map[sev] || 'var(--text-muted)';
+}
+
+// ── Integrity Summary ─────────────────────────────────────────────────────
+function renderIntegritySummary(data) {
+  const ir = data.institutional_rating || {};
+  document.getElementById('institutionalRatingTag').textContent = `${ir.rating || '—'} · ${ir.level || '—'}`;
+  document.getElementById('institutionalRatingTag').style.color = ir.color || 'var(--amber)';
+
+  const summary = (data.contradictions || {}).integrity_summary || (data.explainability || {}).score_rationale || '—';
+  document.getElementById('integritySummaryText').textContent = summary;
+
+  const box = document.getElementById('institutionalRatingBox');
+  box.innerHTML = `
+    <div class="integrity-badge" style="color:${ir.color||'var(--amber)'};background:rgba(255,102,0,0.08);border:1px solid rgba(255,102,0,0.30);">
+      ${ir.rating || '—'} — ${ir.level || '—'}
+    </div>
+    <div class="integrity-badge" style="color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);">
+      CREDIBILITY: ${data.climate_credibility_rating || '—'} · ${data.climate_credibility_label || '—'}
+    </div>
+    <div class="integrity-badge" style="color:var(--text-muted);background:transparent;border:1px solid var(--border);">
+      ${data.scan_timestamp ? new Date(data.scan_timestamp).toLocaleString() : '—'}
+    </div>`;
+}
+
+// ── Risk Gauge ────────────────────────────────────────────────────────────
+function renderRiskMeter(score, level, ir) {
+  document.getElementById('gaugeScore').textContent = score;
+
+  // 280° arc, total path length ~330
+  const pct = score / 100;
+  const dashOffset = 330 - (330 * pct);
+  const fill = document.getElementById('gaugeFill');
+  fill.style.strokeDashoffset = 330;
+  fill.style.stroke = ir.color || riskColor(score, true);
+  setTimeout(() => { fill.style.strokeDashoffset = dashOffset; }, 100);
+
+  const badge = document.getElementById('riskLevelBadge');
+  const col = ir.color || riskColor(score, true);
+  badge.textContent = `${level} RISK`;
+  badge.style.color = col;
+  badge.style.background = `${col}18`;
+  badge.style.borderColor = `${col}44`;
+
+  document.getElementById('ratingDescription').textContent = ir.description || '—';
+  document.getElementById('riskMeterTag').textContent = score <= 25 ? 'CREDIBLE' : score <= 50 ? 'MODERATE' : score <= 75 ? 'HIGH RISK' : 'SEVERE';
+}
+
+// ── Radar Chart ───────────────────────────────────────────────────────────
+function renderCredibilityRadar(dims) {
+  const keys = Object.keys(dims);
+  if (!keys.length) return;
+
+  const labels = {
+    emission_integrity: 'EMISSION',
+    narrative_credibility: 'NARRATIVE',
+    disclosure_transparency: 'DISCLOSURE',
+    capex_alignment: 'CAPEX',
+    regulatory_alignment: 'REGULATORY',
+    supply_chain_integrity: 'SUPPLY CHAIN',
+    transition_credibility: 'TRANSITION',
+  };
+
+  const svg = document.getElementById('radarSvg');
+  const cx = 110, cy = 100, R = 75;
+  const n = keys.length;
+  const angleStep = (2 * Math.PI) / n;
+
+  let html = '';
+
+  // Grid circles
+  [0.25, 0.5, 0.75, 1.0].forEach(r => {
+    const pts = keys.map((_, i) => {
+      const a = i * angleStep - Math.PI / 2;
+      return `${cx + r * R * Math.cos(a)},${cy + r * R * Math.sin(a)}`;
+    }).join(' ');
+    html += `<polygon points="${pts}" fill="none" stroke="var(--border)" stroke-width="1"/>`;
+  });
+
+  // Axis lines
+  keys.forEach((_, i) => {
+    const a = i * angleStep - Math.PI / 2;
+    html += `<line x1="${cx}" y1="${cy}" x2="${cx + R * Math.cos(a)}" y2="${cy + R * Math.sin(a)}" stroke="var(--border)" stroke-width="1"/>`;
+  });
+
+  // Data polygon
+  const dataPoints = keys.map((k, i) => {
+    const score = (dims[k] || {}).score || 0;
+    const r = (score / 100) * R;
+    const a = i * angleStep - Math.PI / 2;
+    return `${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}`;
+  });
+  html += `<polygon points="${dataPoints.join(' ')}" fill="rgba(255,102,0,0.18)" stroke="var(--amber)" stroke-width="2"/>`;
+
+  // Data dots
+  keys.forEach((k, i) => {
+    const score = (dims[k] || {}).score || 0;
+    const r = (score / 100) * R;
+    const a = i * angleStep - Math.PI / 2;
+    html += `<circle cx="${cx + r * Math.cos(a)}" cy="${cy + r * Math.sin(a)}" r="3" fill="var(--amber)"/>`;
+  });
+
+  // Labels
+  keys.forEach((k, i) => {
+    const a = i * angleStep - Math.PI / 2;
+    const lx = cx + (R + 16) * Math.cos(a);
+    const ly = cy + (R + 16) * Math.sin(a);
+    const anchor = Math.abs(lx - cx) < 5 ? 'middle' : lx < cx ? 'end' : 'start';
+    html += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="middle"
+      style="font-family:var(--mono);font-size:7px;fill:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">
+      ${labels[k] || k.toUpperCase()}
+    </text>`;
+  });
+
+  svg.innerHTML = html;
+
+  // Legend
+  const legend = document.getElementById('radarLegend');
+  legend.innerHTML = keys.map(k => {
+    const d = dims[k] || {};
+    return `<div class="legend-item">
+      <div class="legend-dot" style="background:${credColor(d.score||0)}"></div>
+      <span class="legend-label">${(labels[k]||k).slice(0,12)}</span>
+      <span class="legend-val">${d.score||0}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('credRatingTag').textContent = `RATED ${(Object.values(dims)[0]||{}).rating||'—'}`;
+}
+
+// ── Detection Modules ─────────────────────────────────────────────────────
+function renderDetectionModules(result) {
+  const mods = result.modules || {};
+  const keys = Object.keys(mods);
+  if (!keys.length) return;
+
+  const labels = {
+    narrative_inflation: 'Narrative Inflation',
+    future_washing: 'Future-Washing',
+    carbon_reality_gap: 'Carbon Reality Gap',
+    capex_misalignment: 'CAPEX Misalignment',
+    supply_chain_contradictions: 'Supply Chain',
+    scope3_omission: 'Scope 3 Omission',
+    offset_dependency_risk: 'Offset Dependency',
+    regulatory_misalignment: 'Regulatory Align',
+  };
+
+  const colorMap = { Critical: 'var(--red)', High: 'var(--yellow)', Medium: 'var(--amber)', Low: 'var(--green)', Minimal: 'var(--green)' };
+  const bgMap = { Critical: 'rgba(255,51,51,0.12)', High: 'rgba(255,170,0,0.10)', Medium: 'rgba(255,102,0,0.08)', Low: 'rgba(0,204,68,0.08)', Minimal: 'rgba(0,204,68,0.06)' };
+
+  document.getElementById('modulesGrid').innerHTML = keys.map((k, idx) => {
+    const m = mods[k];
+    const score = m.score || 0;
+    const risk = m.risk_level || 'Low';
+    const col = colorMap[risk] || 'var(--amber)';
+    const signals = (m.signals_detected || []).slice(0, 2);
+
+    return `<div class="module-card risk-${risk}">
+      <div class="module-num">M-${String(idx+1).padStart(2,'0')}</div>
+      <div class="module-name">${labels[k] || k}</div>
+      <div class="module-score-row">
+        <span class="module-score" style="color:${col}">${score}</span>
+        <span class="module-score-max">/100</span>
+      </div>
+      <div class="module-bar">
+        <div class="module-bar-fill" style="width:${score}%;background:${col}"></div>
+      </div>
+      <div class="module-risk-badge" style="color:${col};background:${bgMap[risk]||'transparent'};border:1px solid ${col}44">
+        ${risk.toUpperCase()} RISK
+      </div>
+      ${signals.length ? `<div class="module-signals">${signals.map(s => `<div class="module-signal">${escHtml(s)}</div>`).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── Claims Matrix ─────────────────────────────────────────────────────────
+function renderClaimsMatrix(claims) {
+  const tag = document.getElementById('claimsCountTag');
+  tag.textContent = `${claims.length} CLAIMS`;
+
+  const tbody = document.getElementById('claimsTbody');
+  const empty = document.getElementById('claimsEmpty');
+
+  if (!claims.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  const typeColors = {
+    net_zero: { bg: 'rgba(255,51,51,0.15)', col: 'var(--red)' },
+    carbon_neutral: { bg: 'rgba(255,51,51,0.15)', col: 'var(--red)' },
+    science_based: { bg: 'rgba(0,153,204,0.15)', col: 'var(--cyan)' },
+    renewables: { bg: 'rgba(0,204,68,0.15)', col: 'var(--green)' },
+    supply_chain: { bg: 'rgba(255,102,0,0.12)', col: 'var(--amber)' },
+    biodiversity: { bg: 'rgba(0,204,68,0.10)', col: 'var(--green)' },
+    other: { bg: 'rgba(136,136,136,0.10)', col: 'var(--text-muted)' },
+  };
+
+  tbody.innerHTML = claims.map(c => {
+    const tc = typeColors[c.type] || typeColors.other;
+    const ty = (c.target_year || '—');
+    return `<tr>
+      <td><span class="claim-type-badge" style="background:${tc.bg};color:${tc.col};border:1px solid ${tc.col}44;">${(c.type||'other').replace(/_/g,' ').toUpperCase()}</span></td>
+      <td><div class="claim-text">${escHtml((c.claim||'—').slice(0,120))}${(c.claim||'').length>120?'...':''}</div></td>
+      <td><span class="mono text-2">${c.baseline_year ? c.baseline_year + ' → ' : ''}${ty}</span></td>
+      <td>${c.has_supporting_data ? '<span class="data-yes">● YES</span>' : '<span class="data-no">● NO</span>'}</td>
+      <td>${c.third_party_verified ? '<span class="verified-yes">✓ VERIFIED</span>' : '<span class="verified-no">✗ UNVERIFIED</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Contradictions ────────────────────────────────────────────────────────
+function renderContradictions(result) {
+  const sev = result.overall_severity || 'None';
+  const tag = document.getElementById('contraSevTag');
+  tag.textContent = `${sev.toUpperCase()} SEVERITY`;
+  const sevStyles = { Critical: 'tag-red', High: 'tag-amber', Medium: 'tag-amber', None: '' };
+  tag.className = `panel-tag ${sevStyles[sev] || ''}`;
+  if (sev === 'Critical' || sev === 'High') {
+    tag.style.cssText = sev === 'Critical'
+      ? 'color:var(--red);background:var(--red-glow);border:1px solid rgba(255,51,51,0.30);'
+      : 'color:var(--yellow);background:rgba(255,170,0,0.10);border:1px solid rgba(255,170,0,0.30);';
+  }
+
+  const body = document.getElementById('contradictionsBody');
+  const items = result.contradictions || [];
+
+  if (!items.length) {
+    body.innerHTML = `<div class="empty-state">NO MATERIAL CONTRADICTIONS DETECTED</div>`;
+    return;
+  }
+
+  body.innerHTML = items.map((c, idx) => `
+    <div class="contradiction-item">
+      <div class="contradiction-header" onclick="toggleContra(${idx})">
+        <span class="contradiction-severity sev-${c.severity}">${c.severity}</span>
+        <span class="contradiction-type">${escHtml((c.contradiction_type||'').replace(/_/g,' '))}</span>
+        <span class="mono" style="font-size:9px;color:var(--text-muted)">CONF ${Math.round((c.confidence||0)*100)}%</span>
+        <span class="contradiction-toggle" id="contra-toggle-${idx}">▼</span>
+      </div>
+      <div class="contradiction-body" id="contra-body-${idx}">
+        <div class="contra-grid">
+          <div class="contra-col">
+            <div class="contra-col-label contra-narrative-label">WHAT THEY CLAIM</div>
+            <div class="contra-text">${escHtml(c.narrative_claim||'—')}</div>
+          </div>
+          <div class="contra-col">
+            <div class="contra-col-label contra-reality-label">OPERATIONAL REALITY</div>
+            <div class="contra-text">${escHtml(c.operational_reality||'—')}</div>
+          </div>
+        </div>
+        ${c.evidence_excerpt ? `<div class="contra-evidence">"${escHtml(c.evidence_excerpt)}"</div>` : ''}
+        <div class="contra-meta">
+          <div class="contra-meta-item">
+            <div class="contra-meta-label">Regulatory Implication</div>
+            <div class="contra-meta-text">${escHtml(c.regulatory_implication||'—')}</div>
+          </div>
+          <div class="contra-meta-item">
+            <div class="contra-meta-label">Financial Materiality</div>
+            <div class="contra-meta-text">${escHtml(c.financial_materiality||'—')}</div>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleContra(idx) {
+  const body = document.getElementById(`contra-body-${idx}`);
+  const toggle = document.getElementById(`contra-toggle-${idx}`);
+  body.classList.toggle('open');
+  toggle.textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+
+// ── Data Extracted ─────────────────────────────────────────────────────────
+function renderDataExtracted(data) {
+  const rows = [
+    ['Scope 1 Emissions', data.scope_1 ? `${data.scope_1.value} ${data.scope_1.unit}` : null],
+    ['Scope 2 Emissions', data.scope_2 ? `${data.scope_2.value} ${data.scope_2.unit}` : null],
+    ['Scope 3 Emissions', data.scope_3 ? `${data.scope_3.value} ${data.scope_3.unit}` : null],
+    ['Energy Consumption', data.energy_consumption ? `${data.energy_consumption.value} ${data.energy_consumption.unit}` : null],
+    ['Baseline Year', data.baseline_year || null],
+    ['Net Zero Target', data.net_zero_target_year ? `${data.net_zero_target_year}` : null],
+    ['Carbon Neutral Target', data.carbon_neutral_target_year ? `${data.carbon_neutral_target_year}` : null],
+    ['Reporting Boundary', data.reporting_boundary_defined ? 'DEFINED' : 'NOT DEFINED'],
+    ['Third-Party Assurance', data.third_party_assurance ? 'PRESENT' : 'ABSENT'],
+    ['Transition Plan', data.transition_pathway_present ? 'PRESENT' : 'ABSENT'],
+    ['Emission Intensity', data.emission_intensity_reported ? 'REPORTED' : 'NOT REPORTED'],
+  ];
+
+  document.getElementById('dataExtractedBody').innerHTML = rows.map(([label, val]) => {
+    const hasVal = val !== null && val !== undefined;
+    const isGood = hasVal && !['NOT DEFINED', 'ABSENT', 'NOT REPORTED'].includes(val);
+    const col = !hasVal ? 'var(--red)' : isGood ? 'var(--green)' : 'var(--red)';
+    return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+      <span style="font-family:var(--mono);font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em">${label}</span>
+      <span style="font-family:var(--mono);font-size:10px;font-weight:600;color:${col}">${val || 'NOT FOUND'}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── Emissions Viz ──────────────────────────────────────────────────────────
+function renderEmissionsViz(data) {
+  const scopes = [
+    { label: 'SCOPE 1', data: data.scope_1, color: 'var(--amber)' },
+    { label: 'SCOPE 2', data: data.scope_2, color: 'var(--blue)' },
+    { label: 'SCOPE 3', data: data.scope_3, color: 'var(--red)' },
+  ];
+
+  const found = scopes.filter(s => s.data);
+  const container = document.getElementById('emissionsViz');
+
+  if (!found.length) {
+    container.innerHTML = `<div style="text-align:center;padding:32px;font-family:var(--mono);font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">NO QUANTITATIVE EMISSIONS DATA FOUND<br><br>
+      <span style="color:var(--red);font-size:9px;">CRITICAL DISCLOSURE GAP — GRI 305-1/305-2 REQUIRED</span></div>`;
+    return;
+  }
+
+  const maxVal = Math.max(...found.map(s => parseFloat(s.data.value.replace(/,/g,''))));
+
+  container.innerHTML = `<div style="display:flex;flex-direction:column;gap:12px;">
+    ${scopes.map(s => {
+      if (!s.data) {
+        return `<div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);width:70px;text-transform:uppercase;">${s.label}</div>
+          <div style="flex:1;height:20px;background:var(--surface-3);border-radius:1px;display:flex;align-items:center;padding-left:8px;">
+            <span style="font-family:var(--mono);font-size:9px;color:var(--red);">NOT DISCLOSED</span>
+          </div>
+        </div>`;
+      }
+      const val = parseFloat(s.data.value.replace(/,/g,''));
+      const pct = maxVal ? (val / maxVal) * 100 : 0;
+      return `<div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--text-muted);width:70px;text-transform:uppercase;">${s.label}</div>
+        <div style="flex:1;height:20px;background:var(--surface-3);border-radius:1px;overflow:hidden;position:relative;">
+          <div style="width:${pct}%;height:100%;background:${s.color};opacity:0.7;transition:width 1s ease;border-radius:1px;"></div>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;font-weight:600;color:${s.color};width:120px;text-align:right;">${s.data.value} ${s.data.unit}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ── Financial Simulation ──────────────────────────────────────────────────
+function renderFinancialSim(sim) {
+  const grid = document.getElementById('scenarioGrid');
+  if (!sim || !sim.scenarios) {
+    grid.innerHTML = '<div class="empty-state full-width" style="grid-column:1/-1;">FINANCIAL SIMULATION UNAVAILABLE — MISSING API KEY</div>';
+    return;
+  }
+
+  const riskCols = { Critical: 'var(--red)', High: 'var(--yellow)', Moderate: 'var(--amber)', Low: 'var(--green)' };
+
+  grid.innerHTML = sim.scenarios.map(s => `
+    <div class="scenario-card" style="border-color:${s.color}22;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${s.color};"></div>
+      <div class="scenario-risk-level" style="color:${riskCols[s.risk_level]||'var(--amber)'};background:${riskCols[s.risk_level]||'var(--amber)'}18;border:1px solid ${riskCols[s.risk_level]||'var(--amber)'}44;">${s.risk_level||'—'}</div>
+      <div class="scenario-icon-badge" style="color:${s.color};background:${s.color}18;border:1px solid ${s.color}44;">${s.icon}</div>
+      <div class="scenario-name">${s.label}</div>
+      <div class="scenario-desc">${s.description.slice(0,80)}...</div>
+      <div class="scenario-metrics">
+        <div class="scenario-metric">
+          <span class="sm-label">Total Exposure</span>
+          <span class="sm-value" style="color:${riskCols[s.risk_level]||'var(--amber)'};">${s.formatted.total_exposure}</span>
+        </div>
+        <div class="scenario-metric">
+          <span class="sm-label">Revenue at Risk</span>
+          <span class="sm-value">${s.formatted.revenue_at_risk} <span style="color:var(--text-muted);font-size:9px;">(${s.metrics.revenue_at_risk_pct}%)</span></span>
+        </div>
+        <div class="scenario-metric">
+          <span class="sm-label">Carbon Tax</span>
+          <span class="sm-value">${s.formatted.carbon_tax_exposure}</span>
+        </div>
+        <div class="scenario-metric">
+          <span class="sm-label">EBITDA Impact</span>
+          <span class="sm-value" style="color:var(--red);">-${s.formatted.ebitda_impact} <span style="font-size:9px;color:var(--text-muted);">(${s.metrics.ebitda_impact_pct}%)</span></span>
+        </div>
+        <div class="scenario-metric">
+          <span class="sm-label">Carbon Price</span>
+          <span class="sm-value">$${s.carbon_price_2030}/tCO₂e</span>
+        </div>
+      </div>
+    </div>`).join('');
+
+  if (sim.summary) {
+    document.getElementById('carbonLiabilityNote').textContent = sim.summary.carbon_liability_note || '—';
+  }
+}
+
+// ── Regulatory Monitor ────────────────────────────────────────────────────
+function renderRegulatoryMonitor(fw) {
+  const pct = fw.coverage_pct || 0;
+  document.getElementById('frameworkCoverTag').textContent = `${pct}% COVERAGE`;
+
+  const breakdown = fw.breakdown || {};
+  const grid = document.getElementById('frameworkGrid');
+
+  if (!Object.keys(breakdown).length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">NO FRAMEWORK DATA</div>';
+    return;
+  }
+
+  grid.innerHTML = Object.entries(breakdown).map(([fw_name, reqs]) => `
+    <div class="framework-group">
+      <div class="framework-name">${fw_name}</div>
+      ${(reqs || []).map(r => `
+        <div class="framework-req">
+          <div class="req-icon ${r.status}" style="font-size:8px;color:#000;">
+            ${r.status === 'met' ? '✓' : '✗'}
+          </div>
+          <div class="req-text ${r.status === 'missing' ? 'missing-text' : ''}">${escHtml(r.description || r.requirement || '—')}</div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// ── Explainability ────────────────────────────────────────────────────────
+function renderExplainability(ex) {
+  const body = document.getElementById('explainBody');
+  const findings = ex.key_findings || [];
+  const rationale = ex.score_rationale || '';
+  const benchmark = ex.benchmark_context || '';
+
+  let html = '';
+
+  if (rationale) {
+    html += `<div class="rationale-box"><div class="rationale-label">Score Rationale</div><div class="rationale-text">${escHtml(rationale)}</div></div>`;
+  }
+
+  if (benchmark) {
+    html += `<div class="rationale-box" style="border-left:2px solid var(--blue);"><div class="rationale-label">Benchmark Context</div><div class="rationale-text">${escHtml(benchmark)}</div></div>`;
+  }
+
+  if (findings.length) {
+    html += findings.map((f, idx) => `
+      <div class="finding-item">
+        <div class="finding-header" onclick="toggleFinding(${idx})">
+          <span class="finding-id">${f.finding_id || `F-${String(idx+1).padStart(3,'0')}`}</span>
+          <span class="finding-cat">${(f.category||'').toUpperCase()}</span>
+          <span class="finding-title">${escHtml(f.title||'—')}</span>
+          <span class="finding-sev sev-${f.severity}" style="font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:0.10em;padding:2px 6px;border-radius:2px;">${f.severity||'—'}</span>
+          <span id="finding-toggle-${idx}" style="font-family:var(--mono);font-size:10px;color:var(--text-muted);">▼</span>
+        </div>
+        <div class="finding-body" id="finding-body-${idx}">
+          <p class="finding-text">${escHtml(f.finding||'—')}</p>
+          ${f.implication ? `<div class="finding-implication">${escHtml(f.implication)}</div>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  body.innerHTML = html || '<div class="empty-state">NO EXPLAINABILITY DATA AVAILABLE</div>';
+}
+
+function toggleFinding(idx) {
+  const body = document.getElementById(`finding-body-${idx}`);
+  const toggle = document.getElementById(`finding-toggle-${idx}`);
+  body.classList.toggle('open');
+  toggle.textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+
+// ── Recommendations ───────────────────────────────────────────────────────
+function renderRecommendations(recos) {
+  const body = document.getElementById('recoBody');
+  if (!recos.length) {
+    body.innerHTML = '<div class="empty-state">NO RECOMMENDATIONS AVAILABLE</div>';
+    return;
+  }
+
+  body.innerHTML = recos.map(r => `
+    <div class="reco-item">
+      <div class="reco-priority priority-${r.priority}">${r.priority||'—'}</div>
+      <div class="reco-body">
+        <div class="reco-title">${escHtml(r.title||'—')}</div>
+        <div class="reco-action">${escHtml(r.action||'—')}</div>
+        <div class="reco-framework">${escHtml(r.framework||'—')}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Export ─────────────────────────────────────────────────────────────────
+function exportJSON() {
+  if (!scanResult) return;
+  const blob = new Blob([JSON.stringify(scanResult, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `climactix-credibility-${(scanResult.company_name||'report').toLowerCase().replace(/\s+/g,'-')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function exportPDF() {
+  if (!scanResult) return;
+  try {
+    const resp = await fetch(`${API_BASE}/api/analyze-esg/export-pdf`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(scanResult),
+    });
+    if (!resp.ok) throw new Error('PDF export failed');
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `climactix-credibility-${(scanResult.company_name||'report').toLowerCase().replace(/\s+/g,'-')}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('PDF export requires running backend server.');
+  }
+}
+
+// ── Utils ──────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  if (typeof str !== 'string') return String(str||'');
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+</body>
+</html>

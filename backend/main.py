@@ -44,6 +44,8 @@ from services.assessment_report import stream_report
 from services.simulation_brief import stream_brief
 from services.greenwashing_scanner import scan_for_greenwashing, extract_data, validate_claims, extract_claims
 from services.esg_framework_intelligence import run_intelligence_analysis, FRAMEWORK_REGISTRY, UNIFIED_ESG_MODEL, CROSS_FRAMEWORK_MAP
+from services.climate_credibility_engine import run_full_credibility_scan
+from services.climate_financial_simulator import simulate_financial_exposure
 from routers.auth import router as auth_router
 from routers.mfa import router as mfa_router
 from routers.api_keys import router as api_keys_router
@@ -817,6 +819,94 @@ async def esg_intelligence_analyze(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Intelligence analysis failed: {str(e)}")
 
     return JSONResponse(content={"success": True, **intel})
+
+
+# ── Climate Credibility Intelligence Engine v2 ─────────────────────────────────
+
+@app.post("/api/v2/credibility/scan")
+async def credibility_scan(
+    file: UploadFile = File(...),
+    company_name: Optional[str] = Form(None),
+):
+    """
+    Full Climate Credibility Intelligence Engine scan.
+
+    Runs the complete 11-stage pipeline:
+      1. Claim Extraction (LLM)
+      2. Data Extraction (regex)
+      3. Risk Flag Validation
+      4. Framework Mapping (GRI / TCFD / ISSB)
+      5. Greenwashing Risk Scoring
+      6. Contradiction Detection (rule + LLM)
+      7. 8 Greenwashing Detection Modules
+      8. 7-Dimension Climate Credibility Scoring
+      9. AI Recommendations
+     10. Key Findings + Explainability (LLM)
+     11. ESG Framework Intelligence Layer
+
+    Returns institutional-grade JSON for the credibility dashboard.
+    File size limit: 25 MB.
+    """
+    MAX_SIZE = 25 * 1024 * 1024
+    content = await file.read()
+
+    if len(content) > MAX_SIZE:
+        raise HTTPException(status_code=413, detail="File exceeds 25 MB limit.")
+
+    try:
+        text = extract_text(content, file.filename or "", file.content_type or "")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    if not text or not text.strip():
+        raise HTTPException(status_code=400, detail="No readable text could be extracted from this file.")
+
+    resolved_name = (
+        company_name
+        or (file.filename or "").rsplit(".", 1)[0].replace("-", " ").replace("_", " ").title()
+        or "The Company"
+    )
+
+    try:
+        result = run_full_credibility_scan(text, resolved_name)
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Credibility scan failed: {str(e)}")
+
+    # Financial simulation overlay
+    try:
+        financial_sim = simulate_financial_exposure(
+            result.get("data_extracted", {}),
+            text,
+            result.get("greenwashing_risk_score", 50),
+            result.get("climate_credibility_score", 50),
+        )
+        result["financial_simulation"] = financial_sim
+    except Exception:
+        result["financial_simulation"] = None
+
+    return JSONResponse(content={"success": True, **result})
+
+
+@app.post("/api/v2/credibility/simulate")
+async def credibility_simulate(payload: dict):
+    """
+    Standalone financial simulation endpoint.
+    Accepts existing scan result data and runs climate financial simulation.
+    """
+    try:
+        data = payload.get("data_extracted", {})
+        text = payload.get("text_sample", "")
+        gw_score = payload.get("greenwashing_risk_score", 50)
+        cred_score = payload.get("climate_credibility_score", 50)
+        result = simulate_financial_exposure(data, text, gw_score, cred_score)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Simulation failed: {str(e)}")
+
+    return JSONResponse(content={"success": True, "simulation": result})
 
 
 def _build_greenwashing_pdf(result: dict) -> bytes:

@@ -10,17 +10,17 @@
    DESIGN TOKENS — NASA Earth Science Palette
    ══════════════════════════════════════════════════════════ */
 :root {
-  /* ── BACKGROUNDS — NASA Deep Space ── */
-  --bg:          #06090F;
-  --bg-alt:      #030508;
-  --surface:     #0C1018;
-  --surface-2:   #111820;
-  --surface-3:   #182030;
-  --surface-4:   #1E2838;
+  /* ── BACKGROUNDS — pure black (NASA.gov style) ── */
+  --bg:          #000000;
+  --bg-alt:      #000000;
+  --surface:     #0D0D0D;
+  --surface-2:   #141414;
+  --surface-3:   #1C1C1C;
+  --surface-4:   #252525;
 
-  /* ── BORDERS — thin light overlay system ── */
-  --border:         rgba(255,255,255,0.07);
-  --border-strong:  rgba(255,255,255,0.13);
+  /* ── BORDERS — neutral overlays on black ── */
+  --border:         rgba(255,255,255,0.09);
+  --border-strong:  rgba(255,255,255,0.16);
   --border-accent:  rgba(27,110,235,0.35);
 
   /* ── PRIMARY ACCENT — NASA Institutional Blue ── */
@@ -44,11 +44,11 @@
   --red:         #E84C4C;
   --red-glow:    rgba(232,76,76,0.10);
 
-  /* ── TEXT HIERARCHY ── */
+  /* ── TEXT HIERARCHY — neutral grays, no blue tint ── */
   --text:        #FFFFFF;
-  --text-2:      #7B9DBF;
-  --text-muted:  #4A6880;
-  --text-faint:  #243444;
+  --text-2:      #A3A3A3;
+  --text-muted:  #636363;
+  --text-faint:  #3D3D3D;
 
   /* ── LEGACY ALIASES (cross-page compat) ── */
   --primary:        var(--blue);
@@ -97,7 +97,7 @@
   --page-px:     clamp(24px, 5vw, 72px);
 
   /* ── SPACE THEME COMPAT ── */
-  --sp-void:     var(--bg);
+  --sp-void:     #000000;
   --sp-dark:     var(--surface);
   --sp-panel:    var(--surface-2);
   --sp-text:     var(--text);
@@ -107,7 +107,7 @@
   --sp-border-2: var(--border-strong);
   --sp-accent:   var(--blue);
   --sp-glow:     var(--blue-glow);
-  --sp-shadow:   0 2px 12px rgba(0,0,0,0.5);
+  --sp-shadow:   0 2px 12px rgba(0,0,0,0.7);
   --sp-glow-btn: none;
 }
 
@@ -229,6 +229,39 @@ a { color: inherit; text-decoration: none; }
 button { cursor: pointer; font-family: inherit; }
 img, canvas, video { display: block; max-width: 100%; }
 input, select, textarea { font-family: inherit; }
+
+/* ── Global heading scale — NASA-style: bold, tight, white ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font);
+  color: var(--text);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+h1 { font-size: clamp(36px, 5.5vw, 72px); }
+h2 { font-size: clamp(28px, 4vw, 52px); }
+h3 { font-size: clamp(20px, 2.8vw, 34px); }
+h4 { font-size: clamp(16px, 2vw, 24px); font-weight: 600; letter-spacing: -0.018em; }
+h5 { font-size: 18px; font-weight: 600; letter-spacing: -0.015em; }
+h6 { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+
+/* ── Global paragraph — clean, readable ── */
+p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-2);
+  max-width: 72ch;
+}
+
+/* ── Section eyebrow labels — IBM Plex Mono uppercase ── */
+.eyebrow, .section-eyebrow, .label-mono {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
 
 /* ── Page wrapper ── */
 .page-wrapper {
@@ -376,27 +409,27 @@ input, select, textarea { font-family: inherit; }
 .nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 14px;
-  font-size: 13.5px;
+  gap: 5px;
+  padding: 6px 15px;
+  font-size: 15px;
   font-weight: 400;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.82);
   border-radius: 0;
-  transition: color 0.2s ease;
+  transition: color 0.18s ease;
   white-space: nowrap;
   text-decoration: none;
   background: none;
   border: none;
   height: 100%;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
 }
 .nav-link:hover,
-.nav-link.active { color: rgba(255,255,255,0.95); }
+.nav-link.active { color: #ffffff; }
 .nav-link.active { color: #fff; }
 
 .nav-chevron {
   flex-shrink: 0;
-  opacity: 0.5;
+  opacity: 0.65;
   transition: transform var(--t);
 }
 .nav-dropdown.open .nav-chevron {
@@ -408,17 +441,17 @@ input, select, textarea { font-family: inherit; }
 
 .nav-dropdown-menu {
   position: absolute;
-  top: calc(100% + 4px);
-  left: -8px;
-  min-width: 240px;
-  background: var(--surface-3);
-  border: 1px solid var(--border-strong);
+  top: calc(100% + 6px);
+  left: -16px;
+  min-width: 210px;
+  background: #000000;
+  border: 1px solid rgba(255,255,255,0.08);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  padding: 6px 0;
+  padding: 10px 0;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-6px);
+  transform: translateY(-8px);
   transition: opacity var(--t), transform var(--t);
   z-index: 99;
 }
@@ -431,22 +464,20 @@ input, select, textarea { font-family: inherit; }
 
 .nav-dropdown-item {
   display: block;
-  padding: 9px 18px;
-  font-size: 12.5px;
+  padding: 10px 24px;
+  font-size: 14.5px;
   font-weight: 400;
-  color: var(--text-2);
-  transition: color var(--t), background var(--t), padding-left var(--t);
+  color: rgba(255,255,255,0.75);
+  transition: color var(--t), background var(--t);
   text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-left: 2px solid transparent;
+  letter-spacing: -0.01em;
 }
 .nav-dropdown-item:hover {
-  color: var(--text);
-  background: rgba(27,110,235,0.08);
-  border-left-color: var(--blue);
-  padding-left: 22px;
+  color: #ffffff;
+  background: rgba(255,255,255,0.05);
 }
 
 /* ── Header right actions ── */
@@ -495,6 +526,222 @@ input, select, textarea { font-family: inherit; }
 body {
   padding-top: calc(var(--util-h) + var(--nav-h));
 }
+
+/* ── Dropdown group label ── */
+.nav-dropdown-group {
+  padding: 14px 24px 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  pointer-events: none;
+}
+
+/* ── Dropdown divider ── */
+.nav-dropdown-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+  margin: 6px 0;
+}
+
+/* ── Wide dropdown (with descriptions) ── */
+.nav-dropdown-menu.wide {
+  min-width: 290px;
+}
+
+/* ── Dropdown item title + description ── */
+.nav-dropdown-item.has-desc {
+  padding: 11px 24px;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+.ddi-title {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.82);
+  transition: color var(--t);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.ddi-desc {
+  display: block;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.35);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+.nav-dropdown-item.has-desc:hover .ddi-title { color: #ffffff; }
+.nav-dropdown-item.has-desc:hover .ddi-desc { color: rgba(255,255,255,0.55); }
+
+/* ── Terminal dropdown: amber top accent ── */
+.nav-dropdown-menu.terminal {
+  border-top: 2px solid var(--amber);
+}
+.nav-terminal-open {
+  font-weight: 500;
+  color: var(--amber) !important;
+  letter-spacing: -0.01em;
+}
+
+/* ── Ghost secondary CTA ── */
+.hdr-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.72);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: color var(--t);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+.hdr-ghost:hover { color: #ffffff; }
+
+/* ── Primary amber CTA ── */
+.hdr-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #000;
+  background: var(--amber);
+  border: none;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: background var(--t);
+  white-space: nowrap;
+}
+.hdr-cta-primary:hover { background: #D06A18; color: #000; }
+
+/* ── Mobile hamburger toggle ── */
+.cx-mob-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+.cx-mob-toggle span {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: var(--text-2);
+  border-radius: 1px;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+.cx-mob-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.cx-mob-toggle.open span:nth-child(2) { opacity: 0; }
+.cx-mob-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* ── Mobile drawer ── */
+.cx-mob-drawer {
+  display: none;
+  position: fixed;
+  top: var(--nav-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  z-index: 199;
+  overflow-y: auto;
+  padding: 20px 24px 56px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+.cx-mob-drawer.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.cx-mob-section {
+  border-bottom: 1px solid var(--border);
+}
+.cx-mob-section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 15px 0;
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+.cx-mob-section-toggle .mob-chev {
+  opacity: 0.45;
+  transition: transform var(--t);
+  flex-shrink: 0;
+}
+.cx-mob-section.open .mob-chev { transform: rotate(180deg); }
+.cx-mob-links {
+  display: none;
+  padding-bottom: 8px;
+}
+.cx-mob-section.open .cx-mob-links { display: block; }
+.cx-mob-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 8px 0 4px 14px;
+}
+.cx-mob-link {
+  display: block;
+  padding: 10px 0 10px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-2);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color var(--t), border-color var(--t), padding-left var(--t);
+}
+.cx-mob-link:hover { color: var(--text); border-left-color: var(--amber); padding-left: 18px; }
+.cx-mob-divider { height: 1px; background: var(--border); margin: 4px 0 4px 14px; }
+.cx-mob-actions {
+  padding: 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cx-mob-link-plain {
+  display: block;
+  padding: 14px 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+.cx-mob-link-plain:hover { color: var(--text); }
 
 /* ══════════════════════════════════════════════════════════
    SECTION TYPOGRAPHY SYSTEM
@@ -778,18 +1025,21 @@ body {
 .cx-hero-tags {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 .cx-hero-tags span {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: rgba(255,255,255,0.36);
-  border: 1px solid rgba(255,255,255,0.14);
-  padding: 3px 7px;
-  border-radius: 1px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.48);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 4px 10px;
+  border-radius: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .cx-hero-cta {
@@ -1841,6 +2091,10 @@ body {
   background: var(--surface-2);
   border: 1px solid var(--border);
   margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 .sol-title {
   font-size: 14px;
@@ -3262,6 +3516,10 @@ body {
   .cx-arch-stat { min-width: 100%; }
   .cx-gbm-stats-row { grid-template-columns: 1fr; }
   .header-nav { display: none; }
+  .cx-mob-toggle { display: flex; }
+  .cx-mob-drawer.open { display: block; }
+  .header-actions .hdr-ghost { display: none; }
+  .header-actions .hdr-cta-primary { display: none; }
   .cx-pipeline { grid-template-columns: 1fr; }
   .cx-ai-grid { grid-template-columns: 1fr; gap: 48px; }
   .newsletter-inner { flex-direction: column; gap: 32px; align-items: flex-start; }

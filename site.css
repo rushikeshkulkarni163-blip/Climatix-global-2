@@ -34,23 +34,23 @@
   --border-strong:  #333333;
   --border-accent:  rgba(14,165,233,0.25);
 
-  /* Primary accent — Institutional Arctic Blue */
-  --accent:       #0EA5E9;
-  --accent-dim:   #0284C7;
-  --accent-glow:  rgba(14,165,233,0.10);
+  /* Primary accent — Institutional Blue */
+  --accent:       #1B6EEB;
+  --accent-dim:   #1452B0;
+  --accent-glow:  rgba(27,110,235,0.10);
   --accent-fg:    #FFFFFF;
 
-  /* Backward-compat aliases — all redirect to arctic blue */
-  --amber:        #0EA5E9;
-  --amber-dim:    #0284C7;
-  --amber-glow:   rgba(14,165,233,0.10);
-  --amber-fg:     #FFFFFF;
-  --primary:      #0EA5E9;
+  /* Amber — primary CTA / brand */
+  --amber:        #E87722;
+  --amber-dim:    #C05C12;
+  --amber-glow:   rgba(232,119,34,0.10);
+  --amber-fg:     #000000;
+  --primary:      #1B6EEB;
 
   /* Data accents */
-  --cyan:        #0EA5E9;   /* arctic blue — primary data highlight */
-  --cyan-glow:   rgba(14,165,233,0.10);
-  --green:       #00CC44;
+  --cyan:        #56CCF2;
+  --cyan-glow:   rgba(86,204,242,0.10);
+  --green:       #2ECC80;
   --green-glow:  rgba(0,204,68,0.10);
   --red:         #FF3333;
   --red-glow:    rgba(255,51,51,0.10);
@@ -360,17 +360,20 @@ a:hover { color: var(--text); }
 
 /* ── .site-header used by assessment.html + climactix-ai.html ── */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 200;
   height: var(--nav-h);
-  background: var(--bg) !important;
-  border-bottom: 1px solid var(--border) !important;
+  background: #000000;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   display: flex;
   align-items: center;
-  padding: 0 var(--page-px);
+  padding: 0 clamp(24px,5vw,72px);
   gap: 0;
   backdrop-filter: none !important;
+  justify-content: space-between;
 }
 .header-brand {
   display: flex;
@@ -413,28 +416,28 @@ a:hover { color: var(--text); }
   display: flex;
   align-items: center;
   gap: 2px;
-  margin: 0 16px;
+  height: 100%;
 }
 .nav-link {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: rgba(255,255,255,0.82);
   text-decoration: none;
-  padding: 5px 10px;
-  border-radius: var(--r-sm);
-  transition: color var(--t), background var(--t);
+  padding: 6px 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color var(--t);
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 100%;
 }
-.nav-link:hover { color: var(--text); background: var(--surface-2); }
-.nav-link.active { color: var(--amber); }
-.nav-link.nav-cta {
-  background: var(--amber-glow);
-  color: var(--amber);
-  border: 1px solid var(--border-accent);
-}
-.nav-link.nav-cta:hover { background: var(--surface-2); }
+.nav-link:hover { color: #ffffff; background: none; }
+.nav-link.active { color: #ffffff; }
 .header-actions {
   display: flex;
   align-items: center;
@@ -442,20 +445,20 @@ a:hover { color: var(--text); }
   flex-shrink: 0;
 }
 .hdr-cta {
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--amber-fg) !important;
+  font-family: var(--font);
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #000 !important;
   background: var(--amber);
   text-decoration: none;
-  padding: 5px 14px;
+  padding: 10px 22px;
   border-radius: var(--r-sm);
   white-space: nowrap;
   transition: background var(--t);
+  border: none;
 }
-.hdr-cta:hover { background: var(--accent-dim); }
+.hdr-cta:hover { background: var(--amber-dim); color: #000 !important; }
 
 /* ═══════════════════════════════════════════════════════════════════
    8. TYPOGRAPHY — headings, data values, labels
@@ -744,3 +747,62 @@ footer,
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
+/* ── Dropdown nav ── */
+.nav-dropdown { position: relative; height: 100%; display: flex; align-items: center; }
+.nav-chevron { flex-shrink: 0; opacity: 0.65; transition: transform var(--t); }
+.nav-dropdown.open .nav-chevron { transform: rotate(180deg); }
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: -16px;
+  min-width: 210px;
+  background: #000000;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity var(--t), transform var(--t);
+  z-index: 99;
+}
+.nav-dropdown.open .nav-dropdown-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.nav-dropdown-item {
+  display: block;
+  padding: 10px 24px;
+  font-size: 14.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.75);
+  transition: color var(--t), background var(--t);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+.nav-dropdown-item:hover { color: #ffffff; background: rgba(255,255,255,0.05); }
+.nav-dropdown-item.active { color: var(--amber); }
+.nav-dropdown-group {
+  padding: 14px 24px 6px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  pointer-events: none;
+}
+.nav-dropdown-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
+.nav-dropdown-menu.wide { min-width: 290px; }
+.nav-dropdown-item.has-desc { padding: 11px 24px; white-space: normal; overflow: visible; text-overflow: unset; }
+.ddi-title { display: block; font-size: 14.5px; font-weight: 400; color: rgba(255,255,255,0.82); letter-spacing: -0.01em; line-height: 1.3; }
+.ddi-desc { display: block; font-size: 11.5px; color: rgba(255,255,255,0.35); margin-top: 3px; line-height: 1.5; }
+.nav-dropdown-item.has-desc:hover .ddi-title { color: #ffffff; }
+.nav-dropdown-item.has-desc:hover .ddi-desc { color: rgba(255,255,255,0.55); }
+.nav-dropdown-menu.terminal { border-top: 2px solid var(--amber); }
+.nav-terminal-open { font-weight: 500; color: var(--amber) !important; letter-spacing: -0.01em; }
