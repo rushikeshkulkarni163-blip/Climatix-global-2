@@ -472,6 +472,18 @@ Financial report / executive presentation aesthetic.
 - Text: `#000000` and `#333333`
 - Accent: Bloomberg Amber `#FF6600` (consistent across themes)
 
+### Fixed-Dark Zones (Do Not Theme)
+
+A small set of "instrument panel" zones stay permanently dark in both modes — they are chrome/masthead/hero elements, not body content, the same way a terminal's title bar never goes white:
+
+- Utility bar, site header/nav, and nav dropdown menus
+- The live alert banner and live metrics ticker strip directly under the nav
+- The hero section (sits on satellite/space imagery — headline text is intentionally pinned white via `!important`)
+- Footer (top and bottom bars) — kept dark as a frame bookending the white body, mirroring the nav at the top
+- Self-contained "device frame" mock UI cards that preview the dark terminal product inside a lighter page (e.g. the "Sample Output" and "AI Output Preview" cards on the homepage) and floating HUD widgets (e.g. the corner globe widget) — these carry their own explicit dark background independent of the page theme, like a screenshot embedded in a document
+
+Everything else (section content, grids, cards, forms, data viz chrome) must use the `--bg`/`--surface`/`--text`/`--border` variables so it flips correctly with the toggle.
+
 ### Theme Persistence
 
 ```javascript
