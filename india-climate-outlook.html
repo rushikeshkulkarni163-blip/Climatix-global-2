@@ -81,6 +81,16 @@ a{text-decoration:none;color:inherit}
 .layer-row.on .layer-opacity{display:block}
 .layer-opacity::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:0;background:var(--amber);cursor:pointer}
 
+/* NITI Aayog ICED panel */
+.niti-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);margin-bottom:8px;border-radius:2px;overflow:hidden}
+.niti-stat-cell{background:var(--bg2);padding:7px 6px;text-align:center}
+.niti-stat-lbl{font-family:var(--mono);font-size:6.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:3px;line-height:1.3}
+.niti-stat-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--amber);line-height:1}
+.niti-chips{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
+.niti-chip{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:2px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2)}
+.niti-link-btn{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:7px;border-radius:2px;background:var(--amber-dim);border:1px solid var(--amber-mid);color:var(--amber);font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background var(--t)}
+.niti-link-btn:hover{background:var(--amber-mid)}
+
 /* Time slider */
 .time-section{padding:10px 12px;border-bottom:1px solid var(--border)}
 .year-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:6px}
@@ -127,6 +137,22 @@ a{text-decoration:none;color:inherit}
 #map-controls{position:absolute;bottom:52px;right:12px;z-index:200;display:flex;flex-direction:column;gap:4px}
 .mc-btn{width:28px;height:28px;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all var(--t)}
 .mc-btn:hover{border-color:var(--amber);color:var(--amber)}
+.mc-btn.on{border-color:var(--amber);color:var(--amber);background:var(--amber-dim)}
+
+/* Basemap switcher */
+#basemap-switch{position:absolute;top:12px;right:12px;z-index:200;display:flex;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;overflow:hidden}
+.bm-btn{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 11px;border:none;background:none;color:var(--text3);cursor:pointer;transition:all var(--t);border-right:1px solid var(--border2)}
+.bm-btn:last-child{border-right:none}
+.bm-btn:hover{color:var(--text2);background:var(--bg3)}
+.bm-btn.on{color:var(--amber);background:var(--amber-dim)}
+
+/* Pitch / 3D control */
+#pitch-controls{position:absolute;bottom:152px;right:12px;z-index:200;display:flex;flex-direction:column;gap:4px}
+
+/* MapLibre chrome — match institutional theme */
+.maplibregl-ctrl-attrib{background:rgba(0,0,0,.55)!important;color:rgba(255,255,255,.3)!important;font-size:9px!important}
+.maplibregl-ctrl-attrib a{color:rgba(255,255,255,.45)!important}
+.maplibregl-canvas{outline:none}
 
 /* AI insight card */
 #insight{position:absolute;bottom:12px;left:12px;z-index:200;background:var(--bg1);border:1px solid var(--border);border-left:2px solid var(--amber);max-width:320px;display:none}
@@ -310,6 +336,21 @@ a{text-decoration:none;color:inherit}
         <div style="font-family:var(--mono);font-size:7px;color:var(--text3)">Source: Climate TRACE · Satellite + ML · 2024</div>
       </div>
 
+      <!-- NITI Aayog ICED -->
+      <div class="lp-section">
+        <div class="lp-head" style="margin-bottom:7px">NITI Aayog ICED <span style="color:var(--green);font-size:7px">● national</span></div>
+        <div class="niti-stat-row">
+          <div class="niti-stat-cell"><div class="niti-stat-lbl">Emission<br/>Intensity</div><div class="niti-stat-val" style="font-size:11px">−47%</div></div>
+          <div class="niti-stat-cell"><div class="niti-stat-lbl">Net-Zero<br/>Target</div><div class="niti-stat-val">2070</div></div>
+          <div class="niti-stat-cell"><div class="niti-stat-lbl">NDC<br/>Progress</div><div class="niti-stat-val" style="color:var(--green)">60%</div></div>
+        </div>
+        <div style="font-family:var(--mono);font-size:7px;color:var(--text3);margin-bottom:7px;line-height:1.5">Updated NDC: 47% reduction vs 2005 baseline by 2035 · Net-zero committed at COP26</div>
+        <div class="niti-chips">
+          <span class="niti-chip">Coal</span><span class="niti-chip">Oil &amp; Gas</span><span class="niti-chip">Solar</span><span class="niti-chip">Wind</span><span class="niti-chip">Hydro</span><span class="niti-chip">Nuclear</span><span class="niti-chip">DISCOM</span>
+        </div>
+        <a class="niti-link-btn" href="https://iced.niti.gov.in" target="_blank" rel="noopener">Open ICED Dashboard →</a>
+      </div>
+
       <!-- Legend -->
       <div class="legend-section">
         <div class="lp-head" style="margin-bottom:2px">Risk Scale</div>
@@ -355,6 +396,18 @@ a{text-decoration:none;color:inherit}
         <span class="ins-label">Climate Intelligence</span>
       </div>
       <div class="ins-body" id="ins-body">Select a state to view AI-generated climate intelligence briefing.</div>
+    </div>
+
+    <!-- Basemap switcher -->
+    <div id="basemap-switch">
+      <button class="bm-btn on" id="bm-dark" onclick="setBasemap('dark')">Intelligence</button>
+      <button class="bm-btn" id="bm-sat" onclick="setBasemap('satellite')">Satellite</button>
+    </div>
+
+    <!-- Pitch / 3D tilt -->
+    <div id="pitch-controls">
+      <button class="mc-btn" id="btn-tilt" title="Toggle 3D tilt" style="font-size:11px">3D</button>
+      <button class="mc-btn" id="btn-compass" title="Reset bearing" style="font-size:13px">⟲</button>
     </div>
 
     <!-- Map controls -->
@@ -948,6 +1001,9 @@ function setYear(btn, yr) {
 }
 
 /* ── MAP INIT */
+let basemapMode = 'dark';
+let mapTilted = false;
+
 async function initMap() {
   map = new maplibregl.Map({
     container: 'the-map',
@@ -955,18 +1011,25 @@ async function initMap() {
     center: [82.5, 22.5],
     zoom: 4.0,
     minZoom: 3.5,
-    maxZoom: 12,
+    maxZoom: 17,
+    pitch: 0,
+    bearing: 0,
+    pitchWithRotate: true,
+    dragRotate: true,
+    touchPitch: true,
     attributionControl: false
   });
 
   map.addControl(new maplibregl.AttributionControl({compact:true}), 'bottom-right');
 
   map.on('load', async () => {
+    addSatelliteLayers();
     try {
       const resp = await fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_state.geojson');
       indiaGJ = await resp.json();
       enrichGeoJSON(indiaGJ, false);
       setupStateLayers();
+      bringLabelsToFront();
     } catch(e) {
       console.warn('GeoJSON load failed, trying fallback', e);
       tryFallbackGeoJSON();
@@ -976,7 +1039,45 @@ async function initMap() {
   // Map controls
   document.getElementById('btn-zoom-in').onclick = () => map.zoomIn();
   document.getElementById('btn-zoom-out').onclick = () => map.zoomOut();
-  document.getElementById('btn-reset-view').onclick = () => { map.flyTo({center:[82.5,22.5],zoom:4.0}); drillReset(); };
+  document.getElementById('btn-reset-view').onclick = () => { map.flyTo({center:[82.5,22.5],zoom:4.0,pitch:0,bearing:0}); mapTilted=false; document.getElementById('btn-tilt').classList.remove('on'); drillReset(); };
+  document.getElementById('btn-tilt').onclick = () => {
+    mapTilted = !mapTilted;
+    document.getElementById('btn-tilt').classList.toggle('on', mapTilted);
+    map.easeTo({pitch: mapTilted?55:0, duration:500});
+  };
+  document.getElementById('btn-compass').onclick = () => map.easeTo({bearing:0, pitch: map.getPitch(), duration:400});
+}
+
+/* ── Satellite imagery layer (toggleable, no API key required) ── */
+function addSatelliteLayers() {
+  if (map.getSource('sat')) return;
+  map.addSource('sat', {type:'raster',
+    tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+    tileSize:256, maxzoom:19,
+    attribution:'Esri, Maxar, Earthstar Geographics'});
+  map.addLayer({id:'sat-layer', type:'raster', source:'sat', paint:{'raster-opacity':0, 'raster-fade-duration':200}});
+
+  map.addSource('sat-labels', {type:'raster',
+    tiles:['https://a.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png','https://b.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png','https://c.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png'],
+    tileSize:256, maxzoom:19});
+  map.addLayer({id:'sat-labels-layer', type:'raster', source:'sat-labels', paint:{'raster-opacity':0, 'raster-fade-duration':200}});
+}
+
+function bringLabelsToFront() {
+  if (map.getLayer('sat-labels-layer')) map.moveLayer('sat-labels-layer');
+}
+
+function setBasemap(mode) {
+  basemapMode = mode;
+  document.getElementById('bm-dark').classList.toggle('on', mode==='dark');
+  document.getElementById('bm-sat').classList.toggle('on', mode==='satellite');
+  if (!map || !map.getLayer('sat-layer')) return;
+  const satOn = mode === 'satellite';
+  map.setPaintProperty('sat-layer','raster-opacity', satOn ? 0.95 : 0);
+  map.setPaintProperty('sat-labels-layer','raster-opacity', satOn ? 0.8 : 0);
+  LAYERS.forEach(l => {
+    if (map.getLayer('fill-'+l.id)) map.setPaintProperty('fill-'+l.id, 'fill-opacity', satOn ? 0.5 : 1);
+  });
 }
 
 async function tryFallbackGeoJSON() {
@@ -985,6 +1086,7 @@ async function tryFallbackGeoJSON() {
     indiaGJ = await r.json();
     enrichGeoJSON(indiaGJ, false);
     setupStateLayers();
+    bringLabelsToFront();
   } catch(e) {
     document.getElementById('the-map').innerHTML = '<div style="color:rgba(255,255,255,0.4);font-family:IBM Plex Mono,monospace;font-size:11px;padding:40px;text-align:center">Map tiles loading — check network connection.<br>Intelligence data available via State Report panel.</div>';
   }
@@ -1314,6 +1416,17 @@ function openDrawer(name) {
             <div class="sector-bar-wrap"><div class="sector-bar" style="width:${pct}%"></div></div>
             <span class="sector-pct">${pct}%</span>
           </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- NITI Aayog ICED state context -->
+    <div class="rp-section">
+      <div class="rp-sec-head"><span class="rp-sec-label">NITI Aayog ICED · Energy Profile</span></div>
+      <div class="rp-sec-body">
+        <div class="rp-kv"><span style="font-family:var(--mono);font-size:9px;color:var(--text2)">Renewable Opportunity Index</span><span style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--amber)">${d.r.ren}/100</span></div>
+        <div class="rp-kv"><span style="font-family:var(--mono);font-size:9px;color:var(--text2)">State GDP</span><span style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text)">$${d.gdp}B</span></div>
+        <div style="font-family:var(--mono);font-size:7px;color:var(--text3);margin:6px 0;line-height:1.5">Opportunity index is a directional GHI-based solar/wind potential score — for verified installed capacity, generation mix, and DISCOM data see NITI Aayog ICED.</div>
+        <a class="niti-link-btn" href="https://iced.niti.gov.in" target="_blank" rel="noopener" style="margin-top:2px">View on ICED →</a>
       </div>
     </div>
 
