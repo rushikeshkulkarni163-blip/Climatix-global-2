@@ -9193,10 +9193,10 @@ function printAIBrief() {
 const VEDAS_STATES = [
   { name: 'Rajasthan',    solar: 92,  wind: 29,  re_gw: 22.4, target: 40.0,  color: '#FFD700' },
   { name: 'Gujarat',      solar: 88,  wind: 30,  re_gw: 18.9, target: 35.0,  color: '#FFD700' },
-  { name: 'Tamil Nadu',   solar: 72,  wind: 90,  re_gw: 21.6, target: 30.0,  color: '#8BBFD4' },
+  { name: 'Tamil Nadu',   solar: 72,  wind: 90,  re_gw: 21.6, target: 30.0,  color: '#57B8FF' },
   { name: 'Karnataka',    solar: 80,  wind: 52,  re_gw: 20.8, target: 28.0,  color: '#FFD700' },
-  { name: 'Maharashtra',  solar: 65,  wind: 72,  re_gw: 16.4, target: 25.0,  color: '#8BBFD4' },
-  { name: 'Andhra Pradesh',solar:78, wind: 65,  re_gw: 14.2, target: 22.0,  color: '#8BBFD4' },
+  { name: 'Maharashtra',  solar: 65,  wind: 72,  re_gw: 16.4, target: 25.0,  color: '#57B8FF' },
+  { name: 'Andhra Pradesh',solar:78, wind: 65,  re_gw: 14.2, target: 22.0,  color: '#57B8FF' },
   { name: 'Madhya Pradesh',solar:76, wind: 38,  re_gw: 11.8, target: 20.0,  color: '#FFD700' },
   { name: 'Telangana',    solar: 75,  wind: 42,  re_gw: 9.6,  target: 18.0,  color: '#FFD700' },
   { name: 'Himachal Pradesh',solar:28,wind:15,  re_gw: 10.5, target: 16.0,  color: '#00E67A' },
@@ -9241,8 +9241,8 @@ function renderVEDASStates() {
     const progress = Math.round((s.re_gw / s.target) * 100);
     return `<div class="vedas-state-card">
       <div class="vedas-state-name">${s.name.toUpperCase()}</div>
-      <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px;color:#4A7A9B;margin-bottom:4px">
-        <span>${s.re_gw} GW installed</span><span style="color:${s.color}">${progress}% of target</span>
+      <div style="display:flex;justify-content:space-between;font-family:'Inter',sans-serif;font-size:8px;color:rgba(255,255,255,0.38);margin-bottom:4px">
+        <span>${s.re_gw} GW installed</span><span style="color:${s.color};font-weight:700">${progress}% of target</span>
       </div>
       <div class="vedas-state-bars">
         <div class="vedas-bar-wrap">
@@ -9251,7 +9251,7 @@ function renderVEDASStates() {
         </div>
         <div class="vedas-bar-wrap">
           <div class="vedas-bar-lbl">WIND</div>
-          <div class="vedas-bar-track"><div class="vedas-bar-fill" style="width:${s.wind}%;background:#8BBFD4"></div></div>
+          <div class="vedas-bar-track"><div class="vedas-bar-fill" style="width:${s.wind}%;background:#57B8FF"></div></div>
         </div>
         <div class="vedas-bar-wrap">
           <div class="vedas-bar-lbl">TARGET</div>
@@ -9268,22 +9268,22 @@ function renderVEDASAssets() {
   const indiaAssets = (S.assets || ASSETS).filter(a => a.country === 'India');
   el.innerHTML = indiaAssets.map(a => {
     const r = calc(a, S.scenario, S.year);
-    return `<div style="padding:7px 0;border-bottom:1px solid rgba(27,108,168,0.10)">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;color:#C5DDEF;margin-bottom:3px">${a.name.toUpperCase()}</div>
-      <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px">
-        <span style="color:#4A7A9B">Physical Risk</span>
-        <span style="color:${r.phys>60?'#FF3333':r.phys>40?'#FF9000':'#00E67A'}">${r.phys.toFixed(1)}</span>
+    return `<div style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+      <div style="font-family:'Inter',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#FFFFFF;margin-bottom:5px">${a.name}</div>
+      <div style="display:flex;justify-content:space-between;font-family:'Inter',sans-serif;font-size:8px;margin-bottom:2px">
+        <span style="color:rgba(255,255,255,0.38)">Physical Risk</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:${r.phys>60?'#FC3D21':r.phys>40?'#FF9100':'#00E676'}">${r.phys.toFixed(1)}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px">
-        <span style="color:#4A7A9B">Energy Exposure</span>
-        <span style="color:#8BBFD4">${a.sector}</span>
+      <div style="display:flex;justify-content:space-between;font-family:'Inter',sans-serif;font-size:8px;margin-bottom:2px">
+        <span style="color:rgba(255,255,255,0.38)">Sector</span>
+        <span style="color:rgba(255,255,255,0.65)">${a.sector}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:7px">
-        <span style="color:#4A7A9B">Scope 1 Emissions</span>
-        <span style="color:#FF9000">${(a.s1/1000).toFixed(0)}k tCO₂</span>
+      <div style="display:flex;justify-content:space-between;font-family:'Inter',sans-serif;font-size:8px">
+        <span style="color:rgba(255,255,255,0.38)">Scope 1</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:#FF9100">${(a.s1/1000).toFixed(0)}k tCO₂</span>
       </div>
     </div>`;
-  }).join('') || '<div style="font-family:IBM Plex Mono,monospace;font-size:7px;color:#4A7A9B">No Indian assets in portfolio</div>';
+  }).join('') || '<div style="font-family:IBM Plex Mono,monospace;font-size:7px;color:rgba(255,255,255,0.38)">No Indian assets in portfolio</div>';
 }
 
 // Add NITI Aayog markers on the map for Indian energy hubs
@@ -9319,7 +9319,7 @@ function addNITIMarkers() {
         id: 'niti-halo', type: 'circle', source: 'niti-hubs',
         paint: {
           'circle-radius': 14,
-          'circle-color': ['case', ['==', ['get', 'type'], 'Solar'], '#FFD700', ['==', ['get', 'type'], 'Wind'], '#8BBFD4', '#00E67A'],
+          'circle-color': ['case', ['==', ['get', 'type'], 'Solar'], '#FFD700', ['==', ['get', 'type'], 'Wind'], '#57B8FF', '#00E67A'],
           'circle-opacity': 0.10,
           'circle-blur': 1,
         }
@@ -9330,7 +9330,7 @@ function addNITIMarkers() {
         id: 'niti-markers', type: 'circle', source: 'niti-hubs',
         paint: {
           'circle-radius': 5,
-          'circle-color': ['case', ['==', ['get', 'type'], 'Solar'], '#FFD700', ['==', ['get', 'type'], 'Wind'], '#8BBFD4', '#00E67A'],
+          'circle-color': ['case', ['==', ['get', 'type'], 'Solar'], '#FFD700', ['==', ['get', 'type'], 'Wind'], '#57B8FF', '#00E67A'],
           'circle-stroke-width': 1.5,
           'circle-stroke-color': '#FFFFFF',
           'circle-opacity': 0.92,
@@ -9341,7 +9341,7 @@ function addNITIMarkers() {
       map.on('mouseenter', 'niti-markers', e => {
         map.getCanvas().style.cursor = 'pointer';
         const p = e.features[0].properties;
-        const color = p.type === 'Solar' ? '#FFD700' : p.type === 'Wind' ? '#8BBFD4' : '#00E67A';
+        const color = p.type === 'Solar' ? '#FFD700' : p.type === 'Wind' ? '#57B8FF' : '#00E67A';
         const tip = document.getElementById('niti-tip') || (() => {
           const d = document.createElement('div');
           d.id = 'niti-tip';
@@ -9350,11 +9350,11 @@ function addNITIMarkers() {
           return d;
         })();
         tip.innerHTML = `
-          <div style="font-size:7px;font-weight:700;letter-spacing:0.12em;color:${color};margin-bottom:5px;text-transform:uppercase">▸ NITI Aayog · ${p.type} Hub</div>
-          <div style="font-size:9px;font-weight:700;color:#FFFFFF;margin-bottom:4px">${p.name}</div>
-          <div style="font-size:7px;color:rgba(255,255,255,0.38)">State: <span style="color:#8BBFD4">${p.state}</span></div>
-          <div style="font-size:7px;color:rgba(255,255,255,0.38)">Capacity: <span style="color:${color}">${p.capacity}</span></div>
-          <div style="font-size:7px;color:rgba(255,255,255,0.20);margin-top:4px">VEDAS · ISRO SAC · MNRE Data</div>`;
+          <div style="font-family:'Inter',sans-serif;font-size:7px;font-weight:700;letter-spacing:0.14em;color:${color};margin-bottom:6px;text-transform:uppercase">◆ NITI AAYOG &nbsp;·&nbsp; ${p.type.toUpperCase()} HUB</div>
+          <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;color:#FFFFFF;margin-bottom:6px;line-height:1.3">${p.name}</div>
+          <div style="font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,0.40);margin-bottom:2px">State &nbsp;<span style="color:rgba(255,255,255,0.75)">${p.state}</span></div>
+          <div style="font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,0.40);margin-bottom:6px">Capacity &nbsp;<span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:${color}">${p.capacity}</span></div>
+          <div style="font-family:'Inter',sans-serif;font-size:7px;font-weight:600;letter-spacing:0.10em;text-transform:uppercase;color:rgba(255,255,255,0.20)">VEDAS · ISRO SAC · MNRE</div>`;
         tip.style.display = 'block';
         tip.style.left = (e.originalEvent.clientX + 14) + 'px';
         tip.style.top = (e.originalEvent.clientY - 20) + 'px';
@@ -9385,7 +9385,7 @@ function addNITIMarkers() {
 ═══════════════════════════════════════════════ -->
 <div id="vedas-panel">
   <div class="vedas-header">
-    <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.14em;color:rgba(27,108,168,0.7)">&#9672;</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:#FC3D21">&#9670;</span>
     <span class="vedas-title">India Energy Intelligence — VEDAS · NITI Aayog · ISRO SAC</span>
     <span style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:rgba(255,255,255,0.30);margin-left:8px">vedas.sac.gov.in/energymap</span>
     <div style="display:flex;gap:8px;margin-left:20px">
@@ -9401,7 +9401,7 @@ function addNITIMarkers() {
       <div class="vedas-stat"><span class="vedas-stat-k">Installed Capacity</span><span class="vedas-stat-v" style="color:#00C8FF">947 GW</span></div>
       <div class="vedas-stat"><span class="vedas-stat-k">Renewable Share</span><span class="vedas-stat-v" style="color:#00E67A">43.8%</span></div>
       <div class="vedas-stat"><span class="vedas-stat-k">Solar Installed</span><span class="vedas-stat-v" style="color:#FFD700">92.7 GW</span></div>
-      <div class="vedas-stat"><span class="vedas-stat-k">Wind Installed</span><span class="vedas-stat-v" style="color:#8BBFD4">46.9 GW</span></div>
+      <div class="vedas-stat"><span class="vedas-stat-k">Wind Installed</span><span class="vedas-stat-v" style="color:rgba(255,255,255,0.70)">46.9 GW</span></div>
       <div class="vedas-stat"><span class="vedas-stat-k">Target 2030</span><span class="vedas-stat-v" style="color:#FF9000">500 GW RE</span></div>
       <div class="vedas-stat"><span class="vedas-stat-k">2023 CO&#x2082; Intensity</span><span class="vedas-stat-v">0.72 kg/kWh</span></div>
       <div class="vedas-stat"><span class="vedas-stat-k">Energy Access</span><span class="vedas-stat-v" style="color:#00E67A">99.9%</span></div>
@@ -9421,10 +9421,10 @@ function addNITIMarkers() {
       <div class="vedas-stat"><span class="vedas-stat-k">Karnataka</span><span class="vedas-stat-v" style="color:#FFD700">5.5 kWh/m&#x00B2;/d</span></div>
 
       <div class="vedas-sec-head" style="margin-top:14px">Wind Resource · Capacity Factor</div>
-      <div class="vedas-stat"><span class="vedas-stat-k">Tamil Nadu (Coastal)</span><span class="vedas-stat-v" style="color:#8BBFD4">32%</span></div>
-      <div class="vedas-stat"><span class="vedas-stat-k">Gujarat (Rann)</span><span class="vedas-stat-v" style="color:#8BBFD4">30%</span></div>
-      <div class="vedas-stat"><span class="vedas-stat-k">Maharashtra (Satara)</span><span class="vedas-stat-v" style="color:#8BBFD4">28%</span></div>
-      <div class="vedas-stat"><span class="vedas-stat-k">Rajasthan (Jaisalmer)</span><span class="vedas-stat-v" style="color:#8BBFD4">29%</span></div>
+      <div class="vedas-stat"><span class="vedas-stat-k">Tamil Nadu (Coastal)</span><span class="vedas-stat-v" style="color:rgba(255,255,255,0.70)">32%</span></div>
+      <div class="vedas-stat"><span class="vedas-stat-k">Gujarat (Rann)</span><span class="vedas-stat-v" style="color:rgba(255,255,255,0.70)">30%</span></div>
+      <div class="vedas-stat"><span class="vedas-stat-k">Maharashtra (Satara)</span><span class="vedas-stat-v" style="color:rgba(255,255,255,0.70)">28%</span></div>
+      <div class="vedas-stat"><span class="vedas-stat-k">Rajasthan (Jaisalmer)</span><span class="vedas-stat-v" style="color:rgba(255,255,255,0.70)">29%</span></div>
     </div>
 
     <!-- Center: VEDAS iframe -->
@@ -9436,17 +9436,17 @@ function addNITIMarkers() {
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
         loading="lazy"
       ></iframe>
-      <div id="vedas-iframe-fallback" style="display:none;position:absolute;inset:0;background:#040D1A;flex-direction:column;align-items:center;justify-content:center;gap:16px">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;color:#1B6CA8">VEDAS ENERGY MAP</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#4A7A9B;text-align:center;max-width:280px;line-height:1.8">
+      <div id="vedas-iframe-fallback" style="display:none;position:absolute;inset:0;background:#000000;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;color:#FC3D21">VEDAS ENERGY MAP</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(255,255,255,0.38);text-align:center;max-width:280px;line-height:1.8">
           The VEDAS portal (vedas.sac.gov.in) restricts embedding.<br>
           Click below to open in a new tab.
         </div>
         <a href="https://vedas.sac.gov.in/energymap/" target="_blank" rel="noopener"
-          style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;color:#FFFFFF;background:#1B6CA8;padding:8px 20px;text-decoration:none;text-transform:uppercase">
+          style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.10em;color:#FFFFFF;background:#FC3D21;padding:8px 20px;text-decoration:none;text-transform:uppercase">
           &#x2192; OPEN VEDAS ENERGY MAP
         </a>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:#2A4A5A;text-align:center">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:rgba(255,255,255,0.20);text-align:center">
           Source: ISRO Space Applications Centre · NITI Aayog ICED Portal
         </div>
       </div>
@@ -9461,7 +9461,7 @@ function addNITIMarkers() {
       <div id="vedas-asset-energy"></div>
 
       <div class="vedas-sec-head" style="margin-top:16px">ISRO SAC Data Sources</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:#4A7A9B;line-height:2.0">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:7px;color:rgba(255,255,255,0.38);line-height:2.0">
         <div>&#x25b8; VEDAS Solar Resource Atlas</div>
         <div>&#x25b8; MODIS Land Surface Temp</div>
         <div>&#x25b8; Cartosat-3 Infrastructure</div>

@@ -1195,6 +1195,18 @@
 /* Section blocks forced to institutional */
 .cx-concerns-section { background: var(--surface) !important; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .cx-heatmap-canvas-wrap { border-radius: 0 !important; }
+
+/* Mobile drawer — never visible on desktop regardless of class or other rules */
+@media screen and (min-width: 769px) {
+  #cx-mob-drawer,
+  #cx-mob-drawer.open {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  #cx-mob-toggle { display: none !important; visibility: hidden !important; }
+}
 </style>
 </head>
 <body data-page="home">
@@ -1367,7 +1379,7 @@
   </header>
 
   <!-- Mobile drawer -->
-  <div class="cx-mob-drawer" id="cx-mob-drawer" aria-hidden="true">
+  <div class="cx-mob-drawer" id="cx-mob-drawer" aria-hidden="true" style="display:none">
 
     <div class="cx-mob-section">
       <button class="cx-mob-section-toggle">
@@ -1489,23 +1501,37 @@
       var toggle = document.getElementById('cx-mob-toggle');
       var drawer = document.getElementById('cx-mob-drawer');
       if (!toggle || !drawer) return;
+
+      var MOBILE_BP = 769;
+
+      function isMobile() { return window.innerWidth < MOBILE_BP; }
+
+      function openDrawer() {
+        if (!isMobile()) return;
+        drawer.style.display = 'block';
+        drawer.classList.add('open');
+        toggle.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDrawer() {
+        drawer.style.display = 'none';
+        drawer.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
       toggle.addEventListener('click', function() {
-        var isOpen = drawer.classList.contains('open');
-        drawer.classList.toggle('open', !isOpen);
-        toggle.classList.toggle('open', !isOpen);
-        toggle.setAttribute('aria-expanded', String(!isOpen));
-        drawer.setAttribute('aria-hidden', String(isOpen));
-        document.body.style.overflow = isOpen ? '' : 'hidden';
+        if (drawer.classList.contains('open')) { closeDrawer(); } else { openDrawer(); }
       });
+
       // Close on nav link click
       drawer.querySelectorAll('a').forEach(function(a) {
-        a.addEventListener('click', function() {
-          drawer.classList.remove('open');
-          toggle.classList.remove('open');
-          toggle.setAttribute('aria-expanded', 'false');
-          drawer.setAttribute('aria-hidden', 'true');
-          document.body.style.overflow = '';
-        });
+        a.addEventListener('click', function() { closeDrawer(); });
       });
       // Mobile accordion sections
       drawer.querySelectorAll('.cx-mob-section-toggle').forEach(function(btn) {
@@ -1513,6 +1539,11 @@
           var section = this.closest('.cx-mob-section');
           section.classList.toggle('open');
         });
+      });
+
+      // Auto-close and hide on desktop resize
+      window.addEventListener('resize', function() {
+        if (!isMobile()) { closeDrawer(); }
       });
     })();
 
