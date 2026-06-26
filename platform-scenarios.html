@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Climate Scenarios — Climactix Enterprise Platform</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+<link rel="stylesheet" href="platform.css" />
+</head>
+<body>
+
+<div id="pf-shell-root" class="pf-shell">
+  <main class="pf-main">
+    <div class="pf-page-head">
+      <h1>Climate Scenario Simulator</h1>
+      <p>NGFS-aligned pathway stress testing — revenue at risk, EBITDA impact, stranded assets, and valuation exposure.</p>
+    </div>
+
+    <div class="pf-card" style="margin-bottom:20px">
+      <div class="pf-grid-3">
+        <div class="pf-field" style="margin-bottom:0">
+          <label class="pf-label">Company</label>
+          <select class="pf-select" id="companySelect"></select>
+        </div>
+        <div class="pf-field" style="margin-bottom:0">
+          <label class="pf-label">Scenario Pathway</label>
+          <select class="pf-select" id="scenarioSelect"></select>
+        </div>
+        <div class="pf-field" style="margin-bottom:0">
+          <label class="pf-label">Target Year</label>
+          <select class="pf-select" id="yearSelect">
+            <option value="2030">2030</option>
+            <option value="2040">2040</option>
+            <option value="2050" selected>2050</option>
+          </select>
+        </div>
+      </div>
+      <button class="pf-btn pf-btn-primary" id="runBtn" style="margin-top:16px">Run Simulation</button>
+    </div>
+
+    <div id="resultArea"></div>
+  </main>
+</div>
+
+<script src="intelligence-engine.js"></script>
+<script src="platform-auth.js"></script>
+<script src="platform-data.js"></script>
+<script src="platform-shell.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+
+function populateSelectors() {
+  const companies = window.PLATFORM.getCompanies('', null);
+  $('companySelect').innerHTML = companies.map(c => `<option value="${c.id}">${c.name} (${c.ticker})</option>`).join('');
+
+  const scenarios = window.PLATFORM.getScenarios();
+  $('scenarioSelect').innerHTML = Object.values(scenarios).map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+}
+
+function fmtMoney(n) {
+  const sign = n < 0 ? '−' : '+';
+  return `${sign}$${Math.abs(n).toLocaleString()}M`;
+}
+function fmtPct(n) {
+  const sign = n < 0 ? '' : '+';
+  return `${sign}${n}%`;
+}
+
+function runSimulation() {
+  const company = window.PLATFORM.getCompany($('companySelect').value);
+  const scenarioId = $('scenarioSelect').value;
+  const year = parseInt($('yearSelect').value, 10);
+  const result = window.PLATFORM.runScenario(company, scenarioId, year);
+  if (!result) { $('resultArea').innerHTML = `<div class="pf-card">No simulation data for this combination.</div>`; return; }
+
+  const tone = v => v < 0 ? 'risk' : 'success';
+
+  $('resultArea').innerHTML = `
+    <div class="pf-card" style="margin-bottom:16px">
+      <div class="pf-card-title">${result.scenario.label} — ${result.company.name} by ${result.targetYear}</div>
+      <p style="font-size:12.5px;color:var(--text-3);margin-bottom:14px">${result.scenario.desc}</p>
+      <div class="pf-grid-4">
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Revenue at Risk</div>
+          <div class="pf-kpi-value ${tone(result.revenueImpact)}">${fmtMoney(result.revenueImpact)}</div>
+          <div class="pf-kpi-sub">${fmtPct(result.revenueImpactPct)} vs baseline</div>
+        </div>
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">EBITDA Impact</div>
+          <div class="pf-kpi-value ${tone(result.ebitdaImpact)}">${fmtMoney(result.ebitdaImpact)}</div>
+          <div class="pf-kpi-sub">${fmtPct(result.ebitdaImpactPct)} vs baseline</div>
+        </div>
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Stranded Assets</div>
+          <div class="pf-kpi-value warning">${result.strandedAssetPct}%</div>
+          <div class="pf-kpi-sub">of asset base at risk</div>
+        </div>
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Valuation Impact</div>
+          <div class="pf-kpi-value ${tone(result.valuationImpact)}">${fmtMoney(result.valuationImpact)}</div>
+          <div class="pf-kpi-sub">${fmtPct(result.valuationImpactPct)} market cap</div>
+        </div>
+      </div>
+    </div>
+    <div class="pf-card">
+      <div class="pf-card-title">Cost Increases</div>
+      <table class="pf-table">
+        <tbody>
+          <tr><td>Carbon cost increase</td><td class="mono" style="text-align:right">$${result.carbonCostIncrease.toLocaleString()}M</td></tr>
+          <tr><td>Sector profile</td><td style="text-align:right">${result.company.industryLabel}</td></tr>
+          <tr><td>Baseline revenue</td><td class="mono" style="text-align:right">$${result.company.revenue.toLocaleString()}M</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+}
+
+$('runBtn').addEventListener('click', runSimulation);
+
+document.addEventListener('pf:session', () => {
+  populateSelectors();
+  runSimulation();
+});
+</script>
+</body>
+</html>

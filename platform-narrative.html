@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Greenwashing Intelligence — Climactix Enterprise Platform</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+<link rel="stylesheet" href="platform.css" />
+</head>
+<body>
+
+<div id="pf-shell-root" class="pf-shell">
+  <main class="pf-main">
+    <div class="pf-page-head">
+      <h1>Greenwashing &amp; Narrative Intelligence</h1>
+      <p>Detect unsupported claims, missing disclosures, and narrative inconsistency across sustainability disclosures.</p>
+    </div>
+
+    <div class="pf-card" style="margin-bottom:16px">
+      <div class="pf-card-title">Run Credibility Scan</div>
+      <div class="pf-grid-2" style="margin-bottom:12px">
+        <div class="pf-field" style="margin-bottom:0">
+          <label class="pf-label">Company Name (optional)</label>
+          <input class="pf-input" type="text" id="companyName" placeholder="e.g. Acme Corp" />
+        </div>
+        <div class="pf-field" style="margin-bottom:0">
+          <label class="pf-label">Report File</label>
+          <input class="pf-input" type="file" id="reportFile" accept=".pdf,.docx,.xlsx,.csv" />
+        </div>
+      </div>
+      <button class="pf-btn pf-btn-secondary" id="scanBtn">Run Scan</button>
+      <div id="scanError" class="pf-auth-error" style="margin-top:12px"></div>
+    </div>
+
+    <div id="scanResult"></div>
+  </main>
+</div>
+
+<script src="intelligence-engine.js"></script>
+<script src="platform-auth.js"></script>
+<script src="platform-data.js"></script>
+<script src="platform-shell.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+
+function toneForGW(score) { return score <= 25 ? 'success' : score <= 50 ? 'warning' : 'risk'; }
+function toneForCred(score) { return score >= 70 ? 'success' : score >= 45 ? 'warning' : 'risk'; }
+
+$('scanBtn').addEventListener('click', async () => {
+  $('scanError').classList.remove('visible');
+  const file = $('reportFile').files[0];
+  if (!file) { $('scanError').textContent = 'Choose a report file first.'; $('scanError').classList.add('visible'); return; }
+  $('scanBtn').disabled = true;
+  $('scanBtn').textContent = 'Scanning…';
+  try {
+    const r = await window.PLATFORM.scanCredibility(file, $('companyName').value.trim());
+    const findings = (r.explainability && r.explainability.key_findings) || [];
+    const dims = r.credibility_breakdown || {};
+
+    $('scanResult').innerHTML = `
+      <div class="pf-grid-3" style="margin-bottom:16px">
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Climate Credibility</div>
+          <div class="pf-kpi-value ${toneForCred(r.climate_credibility_score)}">${r.climate_credibility_score}/100</div>
+          <div class="pf-kpi-sub">${r.climate_credibility_rating || ''}</div>
+        </div>
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Greenwashing Risk</div>
+          <div class="pf-kpi-value ${toneForGW(r.greenwashing_risk_score)}">${r.greenwashing_risk_score}/100</div>
+          <div class="pf-kpi-sub">${r.greenwashing_risk_level || ''}</div>
+        </div>
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Claims Detected</div>
+          <div class="pf-kpi-value" style="color:var(--navy)">${r.claims_count}</div>
+          <div class="pf-kpi-sub">${r.high_risk_claims} unverified high-risk</div>
+        </div>
+      </div>
+
+      <div class="pf-grid-2">
+        <div class="pf-card">
+          <div class="pf-card-title">7-Dimension Credibility Breakdown</div>
+          <table class="pf-table"><tbody>
+            ${Object.entries(dims).map(([dim, val]) => {
+              const score = typeof val === 'object' ? (val.score ?? val.value ?? 0) : val;
+              return `<tr><td>${dim.replace(/_/g, ' ')}</td><td class="mono" style="text-align:right">${score}</td></tr>`;
+            }).join('')}
+          </tbody></table>
+        </div>
+        <div class="pf-card">
+          <div class="pf-card-title">Key Findings</div>
+          ${findings.length ? `<ul style="list-style:none;font-size:12.5px;color:var(--text-2);line-height:1.8">${findings.map(f => `<li>• ${f}</li>`).join('')}</ul>` : '<div style="color:var(--text-3);font-size:12.5px">No explainability output for this scan.</div>'}
+        </div>
+      </div>
+
+      <div class="pf-card" style="margin-top:16px">
+        <div class="pf-card-title">Framework Compliance</div>
+        <p style="font-size:12.5px;color:var(--text-2)">${r.framework_results.met_count}/${r.framework_results.total_count} requirements met (${r.framework_results.coverage_pct}% coverage)</p>
+      </div>`;
+  } catch (err) {
+    $('scanError').textContent = err.message || 'Scan failed.';
+    $('scanError').classList.add('visible');
+  } finally {
+    $('scanBtn').disabled = false;
+    $('scanBtn').textContent = 'Run Scan';
+  }
+});
+</script>
+</body>
+</html>

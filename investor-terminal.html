@@ -283,6 +283,23 @@ input,select,textarea,button{font-family:inherit}
 .scenario-breakdown-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t)}
 .scenario-breakdown-table tbody tr:hover{background:var(--surface-2)}
 .scenario-breakdown-table tbody td{padding:7px 14px;font-size:13px}
+.timeline-chart-wrap{padding:14px 16px;border-bottom:1px solid var(--border)}
+.timeline-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.timeline-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted)}
+.timeline-metric-btns{display:flex;gap:4px}
+.timeline-metric-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 9px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--text-muted);cursor:pointer;transition:all var(--t)}
+.timeline-metric-btn:hover{border-color:var(--border-strong);color:var(--text)}
+.timeline-metric-btn.selected{background:rgba(27,110,235,0.08);border-color:rgba(27,110,235,0.4);color:var(--blue-bright)}
+.timeline-svg{display:block;width:100%;height:auto}
+.timeline-svg circle{cursor:pointer;transition:r var(--t)}
+.timeline-svg circle:hover{r:4.5}
+.timeline-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.timeline-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-2)}
+.timeline-legend-swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+#timeline-tooltip{position:fixed;display:none;background:var(--surface-3);border:1px solid var(--border-strong);border-radius:2px;padding:6px 9px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.5;color:var(--text);pointer-events:none;z-index:500;opacity:0;transition:opacity var(--t)}
+#timeline-tooltip.visible{display:block;opacity:1}
+#timeline-tooltip .tt-scenario{font-weight:700;margin-bottom:2px}
+#timeline-tooltip .tt-meta{color:var(--text-muted);font-size:10px}
 .scenario-comparison-rail{width:260px;flex-shrink:0;border-left:1px solid var(--border)}
 .comparison-matrix{padding:10px 12px}
 .comparison-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
@@ -337,6 +354,8 @@ input,select,textarea,button{font-family:inherit}
 </style>
 </head>
 <body>
+
+<div id="timeline-tooltip"></div>
 
 <!-- ── TOP NAV -->
 <nav class="nav">
@@ -613,6 +632,8 @@ input,select,textarea,button{font-family:inherit}
   let activeEntityType = 'company';
   let portfolioHoldings = []; // [{companyId, weight}]
   let portfolioAnalysis = null;
+  let activeTimelineMetric = 'revenueImpactPct';
+  let timelineCompany = null;
 
   // ── Theme
   window.toggleTheme = function () {
@@ -1251,6 +1272,7 @@ input,select,textarea,button{font-family:inherit}
           <div class="impact-cell-sub">at risk by ${result.targetYear}</div>
         </div>
       </div>
+      <div class="timeline-chart-wrap" id="pathway-timeline-mount"></div>
       <div class="section-label"><span>Pathway Impact by Year — ${c.industryLabel}</span></div>
       <table class="scenario-breakdown-table">
         <thead><tr>
@@ -1275,7 +1297,99 @@ input,select,textarea,button{font-family:inherit}
         </tbody>
       </table>
     `;
+    renderPathwayTimeline(c);
   }
+
+  const TIMELINE_YEARS = [2026, 2027, 2030, 2035, 2040, 2045, 2050];
+  const TIMELINE_SCENARIO_IDS = ['1.5c', '2c', '3c', 'delayed', 'nz2050', 'carbon_shock'];
+  const TIMELINE_METRICS = { revenueImpactPct: 'Revenue %', ebitdaImpactPct: 'EBITDA %', valuationImpactPct: 'Valuation %', strandedAssetPct: 'Stranded %' };
+
+  function buildTimelineChart(c) {
+    const metric = activeTimelineMetric;
+    const series = TIMELINE_SCENARIO_IDS.map(sid => {
+      const sc = I.SCENARIOS[sid];
+      const points = TIMELINE_YEARS.map(yr => {
+        if (yr === 2026) return 0;
+        const r = I.runScenario(c, sid, yr);
+        return r ? r[metric] : 0;
+      });
+      return { sid, sc, points };
+    });
+
+    const W = 760, H = 220, padL = 42, padR = 16, padT = 16, padB = 26;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+
+    const allVals = series.flatMap(s => s.points);
+    let minV = Math.min(0, ...allVals), maxV = Math.max(0, ...allVals);
+    if (minV === maxV) { minV -= 1; maxV += 1; }
+    const pad = (maxV - minV) * 0.1 || 1;
+    minV -= pad; maxV += pad;
+
+    const xFor = i => padL + (i / (TIMELINE_YEARS.length - 1)) * plotW;
+    const yFor = v => padT + (1 - (v - minV) / (maxV - minV)) * plotH;
+    const zeroY = yFor(0);
+
+    const gridLines = [];
+    const gridCount = 4;
+    for (let i = 0; i <= gridCount; i++) {
+      const v = minV + (i / gridCount) * (maxV - minV);
+      const y = yFor(v);
+      gridLines.push(`<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W - padR}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/>`);
+      gridLines.push(`<text x="${padL - 8}" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--text-muted)">${v.toFixed(0)}%</text>`);
+    }
+    gridLines.push(`<line x1="${padL}" y1="${zeroY.toFixed(1)}" x2="${W - padR}" y2="${zeroY.toFixed(1)}" stroke="var(--border-strong)" stroke-width="1" stroke-dasharray="2,2"/>`);
+
+    const yearLabels = TIMELINE_YEARS.map((yr, i) => `<text x="${xFor(i).toFixed(1)}" y="${H - 8}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="var(--text-muted)">${yr}</text>`).join('');
+
+    const lines = series.map(s => {
+      const isActive = s.sid === activeScenario;
+      const pts = s.points.map((v, i) => `${xFor(i).toFixed(1)},${yFor(v).toFixed(1)}`).join(' ');
+      const circles = s.points.map((v, i) => `<circle cx="${xFor(i).toFixed(1)}" cy="${yFor(v).toFixed(1)}" r="3" fill="${s.sc.color}" fill-opacity="${isActive ? 1 : 0.55}" onmouseenter="showTimelineTooltip(event,'${s.sc.shortLabel}',${TIMELINE_YEARS[i]},${v})" onmousemove="moveTimelineTooltip(event)" onmouseleave="hideTimelineTooltip()"></circle>`).join('');
+      return `<polyline points="${pts}" fill="none" stroke="${s.sc.color}" stroke-width="${isActive ? 2 : 1.25}" stroke-opacity="${isActive ? 1 : 0.45}"/>${circles}`;
+    }).join('');
+
+    const legend = series.map(s => `<div class="timeline-legend-item"><span class="timeline-legend-swatch" style="background:${s.sc.color}"></span>${s.sc.shortLabel}</div>`).join('');
+    const metricBtns = Object.keys(TIMELINE_METRICS).map(m => `<button class="timeline-metric-btn${m === metric ? ' selected' : ''}" onclick="selectTimelineMetric('${m}')">${TIMELINE_METRICS[m]}</button>`).join('');
+
+    return `
+      <div class="timeline-hdr">
+        <span class="timeline-title">Risk Pathway Timeline — ${TIMELINE_METRICS[metric]}</span>
+        <div class="timeline-metric-btns">${metricBtns}</div>
+      </div>
+      <svg class="timeline-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+        ${gridLines.join('')}
+        ${yearLabels}
+        ${lines}
+      </svg>
+      <div class="timeline-legend">${legend}</div>
+    `;
+  }
+
+  function renderPathwayTimeline(c) {
+    timelineCompany = c;
+    const mount = document.getElementById('pathway-timeline-mount');
+    if (mount) mount.innerHTML = buildTimelineChart(c);
+  }
+
+  window.selectTimelineMetric = function (metric) {
+    activeTimelineMetric = metric;
+    if (timelineCompany) renderPathwayTimeline(timelineCompany);
+  };
+
+  window.showTimelineTooltip = function (evt, label, year, value) {
+    const tt = document.getElementById('timeline-tooltip');
+    tt.innerHTML = `<div class="tt-scenario">${label}</div><div class="tt-meta">${year} · ${fmtPct(value)}</div>`;
+    tt.classList.add('visible');
+    moveTimelineTooltip(evt);
+  };
+  window.moveTimelineTooltip = function (evt) {
+    const tt = document.getElementById('timeline-tooltip');
+    tt.style.left = (evt.clientX + 14) + 'px';
+    tt.style.top = (evt.clientY + 14) + 'px';
+  };
+  window.hideTimelineTooltip = function () {
+    document.getElementById('timeline-tooltip').classList.remove('visible');
+  };
 
   function renderScenarioResultsPortfolio(result, scenario) {
     document.getElementById('scenario-results').innerHTML = `

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Company Profiles — Climactix Enterprise Platform</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+<link rel="stylesheet" href="platform.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+
+<div id="pf-shell-root" class="pf-shell">
+  <main class="pf-main">
+
+    <!-- List view -->
+    <div id="listView">
+      <div class="pf-page-head">
+        <h1>Company Profiles</h1>
+        <p>Institutional climate-risk profiles across 20 tracked companies, 13 industries.</p>
+      </div>
+      <div class="pf-field" style="max-width:380px">
+        <input class="pf-input" type="text" id="companySearch" placeholder="Search by name, ticker, sector, country…" />
+      </div>
+      <div id="companyList" style="margin-top:16px"></div>
+    </div>
+
+    <!-- Detail view -->
+    <div id="detailView" style="display:none">
+      <a href="platform-company-intel.html" id="backToList" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:16px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        All Companies
+      </a>
+      <div class="pf-page-head" id="detailHead"></div>
+      <div class="pf-grid-4" id="detailKpis" style="margin-bottom:20px"></div>
+      <div class="pf-grid-2">
+        <div class="pf-card">
+          <div class="pf-card-title">Risk Trend — Physical vs Transition</div>
+          <canvas id="riskChart" height="180"></canvas>
+        </div>
+        <div class="pf-card">
+          <div class="pf-card-title">Framework Compliance</div>
+          <table class="pf-table" id="complianceTable"></table>
+        </div>
+      </div>
+      <div class="pf-grid-2" style="margin-top:16px">
+        <div class="pf-card">
+          <div class="pf-card-title">Key Risks</div>
+          <ul id="keyRisksList" style="list-style:none;font-size:12.5px;color:var(--text-2);line-height:1.8"></ul>
+        </div>
+        <div class="pf-card">
+          <div class="pf-card-title">Greenwashing Flags</div>
+          <ul id="gwFlagsList" style="list-style:none;font-size:12.5px;color:var(--text-2);line-height:1.8"></ul>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="intelligence-engine.js"></script>
+<script src="platform-auth.js"></script>
+<script src="platform-data.js"></script>
+<script src="platform-shell.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(window.location.search);
+
+function complianceBadge(status) {
+  const tone = status === 'aligned' ? 'success' : status === 'partial' ? 'warning' : status === 'missing' ? 'risk' : 'neutral';
+  return `<span class="pf-badge ${tone}">${status}</span>`;
+}
+
+function renderList(filterQ) {
+  $('listView').style.display = '';
+  $('detailView').style.display = 'none';
+  const companies = window.PLATFORM.getCompanies(filterQ || '', null);
+  $('companyList').innerHTML = companies.map(c => {
+    const rating = window.PLATFORM.getRating(c.cScore);
+    return `
+    <a class="pf-list-item" href="platform-company-intel.html?company=${c.id}">
+      <div>
+        <div class="pf-list-item-name">${c.name} <span class="mono" style="color:var(--text-3);font-weight:500">${c.ticker}</span></div>
+        <div class="pf-list-item-sub">${c.industryLabel} · ${c.country} · Revenue $${c.revenue.toLocaleString()}M</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <span class="mono" style="font-size:12px;color:var(--text-3)">Transition Risk ${c.transitionRisk.overall}</span>
+        <span class="pf-badge ${rating.grade.startsWith('A') ? 'success' : rating.grade.startsWith('B') ? 'warning' : 'risk'}">${rating.grade}</span>
+      </div>
+    </a>`;
+  }).join('') || `<div class="pf-card" style="text-align:center;color:var(--text-3)">No companies match "${filterQ}".</div>`;
+}
+
+let chartInstance = null;
+function renderDetail(id) {
+  const c = window.PLATFORM.getCompany(id);
+  if (!c) { renderList(''); return; }
+  $('listView').style.display = 'none';
+  $('detailView').style.display = '';
+
+  const rating = window.PLATFORM.getRating(c.cScore);
+  $('detailHead').innerHTML = `
+    <h1>${c.name} <span class="mono" style="font-size:14px;color:var(--text-3);font-weight:500">${c.ticker}</span></h1>
+    <p>${c.industryLabel} · ${c.country} (${c.geography}) · ${c.employees.toLocaleString()} employees</p>`;
+
+  $('detailKpis').innerHTML = [
+    ['Revenue', `$${c.revenue.toLocaleString()}M`, 'navy'],
+    ['Market Cap', `$${c.marketCap.toLocaleString()}M`, 'navy'],
+    ['C-Score', `${c.cScore} · ${rating.grade}`, rating.grade.startsWith('A') ? 'success' : rating.grade.startsWith('B') ? 'warning' : 'risk'],
+    ['Net-Zero Target', c.netZeroTarget, c.sbtiAligned ? 'success' : 'warning'],
+  ].map(([label, val, tone]) => `
+    <div class="pf-kpi">
+      <div class="pf-kpi-label">${label}</div>
+      <div class="pf-kpi-value ${tone === 'navy' ? '' : tone}" style="${tone === 'navy' ? 'color:var(--navy)' : ''}">${val}</div>
+    </div>`).join('');
+
+  $('complianceTable').innerHTML = `<tbody>${Object.entries(c.compliance).map(([fw, status]) =>
+    `<tr><td style="font-weight:700">${fw.replace('_', ' ')}</td><td>${complianceBadge(status)}</td></tr>`).join('')}</tbody>`;
+
+  $('keyRisksList').innerHTML = c.keyRisks.map(r => `<li>• ${r}</li>`).join('');
+  $('gwFlagsList').innerHTML = c.greenwashingFlags.length
+    ? c.greenwashingFlags.map(f => `<li>• ${f}</li>`).join('')
+    : '<li style="color:var(--text-3)">No greenwashing flags detected.</li>';
+
+  if (chartInstance) chartInstance.destroy();
+  const ctx = document.getElementById('riskChart');
+  if (ctx && window.Chart) {
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Flood', 'Heatwave', 'Water Stress', 'Cyclone', 'Sea Level', 'Wildfire'],
+        datasets: [{
+          label: 'Physical Risk',
+          data: [c.physicalRisk.flood, c.physicalRisk.heatwave, c.physicalRisk.waterStress, c.physicalRisk.cyclone, c.physicalRisk.seaLevelRise, c.physicalRisk.wildfire],
+          backgroundColor: '#003366',
+        }]
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { max: 100, ticks: { stepSize: 25 } } } }
+    });
+  } else if (ctx) {
+    setTimeout(() => renderDetail(id), 150);
+  }
+}
+
+function route() {
+  const id = new URLSearchParams(window.location.search).get('company');
+  if (id) renderDetail(id);
+  else renderList(new URLSearchParams(window.location.search).get('q') || '');
+}
+
+$('companySearch')?.addEventListener('input', e => renderList(e.target.value));
+
+document.addEventListener('pf:session', route);
+</script>
+</body>
+</html>

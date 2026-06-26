@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Regulatory Intelligence — Climactix Enterprise Platform</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+<link rel="stylesheet" href="platform.css" />
+</head>
+<body>
+
+<div id="pf-shell-root" class="pf-shell">
+  <main class="pf-main">
+    <div class="pf-page-head">
+      <h1>Regulatory Intelligence</h1>
+      <p>Framework registry and compliance-gap analysis across ISSB, CSRD, TCFD, BRSR, SEC, GRI, and 10 other standards.</p>
+    </div>
+
+    <div class="pf-tabs">
+      <div class="pf-tab active" data-tab="registry">Framework Registry</div>
+      <div class="pf-tab" data-tab="analyze">Analyze a Report</div>
+    </div>
+
+    <div id="registryPane">
+      <div id="registryLoading" class="pf-card" style="text-align:center;color:var(--text-3)">Loading framework registry…</div>
+      <table class="pf-table" id="registryTable" style="display:none">
+        <thead><tr><th>Framework</th><th>Type</th><th>Focus</th><th>Jurisdiction</th><th>Mandatory In</th></tr></thead>
+        <tbody id="registryBody"></tbody>
+      </table>
+    </div>
+
+    <div id="analyzePane" style="display:none">
+      <div class="pf-card" style="margin-bottom:16px">
+        <div class="pf-card-title">Upload ESG / Sustainability Report</div>
+        <p style="font-size:12px;color:var(--text-3);margin-bottom:12px">PDF, DOCX, or XLSX. Runs the Framework Intelligence pipeline: jurisdiction detection, coverage matrix, per-framework compliance, integrity score, and gap analysis.</p>
+        <input type="file" id="reportFile" accept=".pdf,.docx,.xlsx" class="pf-input" style="margin-bottom:12px" />
+        <button class="pf-btn pf-btn-primary" id="analyzeBtn">Run Analysis</button>
+        <div id="analyzeError" class="pf-auth-error" style="margin-top:12px"></div>
+      </div>
+      <div id="analyzeResult"></div>
+    </div>
+  </main>
+</div>
+
+<script src="intelligence-engine.js"></script>
+<script src="platform-auth.js"></script>
+<script src="platform-data.js"></script>
+<script src="platform-shell.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+
+document.querySelectorAll('.pf-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.pf-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const isRegistry = tab.dataset.tab === 'registry';
+    $('registryPane').style.display = isRegistry ? '' : 'none';
+    $('analyzePane').style.display = isRegistry ? 'none' : '';
+  });
+});
+
+async function loadRegistry() {
+  try {
+    const data = await window.PLATFORM.fetchFrameworkRegistry();
+    const rows = Object.entries(data.frameworks).map(([fid, fw]) => `
+      <tr>
+        <td style="font-weight:700">${fid.toUpperCase()}</td>
+        <td>${fw.type}</td>
+        <td>${fw.focus}</td>
+        <td>${fw.jurisdiction}</td>
+        <td class="mono" style="font-size:11px">${(fw.mandatory_in || []).join(', ') || '—'}</td>
+      </tr>`).join('');
+    $('registryBody').innerHTML = rows;
+    $('registryLoading').style.display = 'none';
+    $('registryTable').style.display = '';
+  } catch (err) {
+    $('registryLoading').textContent = `Backend offline — start it with: cd backend && uvicorn main:app --reload --port 8000 (${err.message})`;
+  }
+}
+
+function badgeForStatus(status) {
+  const tone = status === 'aligned' ? 'success' : status === 'partial' ? 'warning' : 'risk';
+  return `<span class="pf-badge ${tone}">${status}</span>`;
+}
+
+$('analyzeBtn').addEventListener('click', async () => {
+  $('analyzeError').classList.remove('visible');
+  const file = $('reportFile').files[0];
+  if (!file) { $('analyzeError').textContent = 'Choose a report file first.'; $('analyzeError').classList.add('visible'); return; }
+  $('analyzeBtn').disabled = true;
+  $('analyzeBtn').textContent = 'Analyzing…';
+  try {
+    const intel = await window.PLATFORM.analyzeReport(file);
+    $('analyzeResult').innerHTML = `
+      <div class="pf-grid-3" style="margin-bottom:16px">
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Integrity Score</div>
+          <div class="pf-kpi-value ${intel.integrity_score >= 65 ? 'success' : intel.integrity_score >= 40 ? 'warning' : 'risk'}">${intel.integrity_score}/100</div>
+        </div>
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Greenwashing Risk</div>
+          <div class="pf-kpi-value ${intel.greenwashing_risk_score <= 35 ? 'success' : intel.greenwashing_risk_score <= 65 ? 'warning' : 'risk'}">${intel.greenwashing_risk_score}/100</div>
+        </div>
+        <div class="pf-kpi">
+          <div class="pf-kpi-label">Jurisdiction · Sector</div>
+          <div class="pf-kpi-value" style="color:var(--navy);font-size:16px">${(intel.jurisdiction && intel.jurisdiction.jurisdictions.join(', ')) || '—'}</div>
+          <div class="pf-kpi-sub">${(intel.jurisdiction && intel.jurisdiction.sector) || ''}</div>
+        </div>
+      </div>
+      <div class="pf-card" style="margin-bottom:16px">
+        <div class="pf-card-title">Per-Framework Coverage</div>
+        <table class="pf-table">
+          <thead><tr><th>Framework</th><th>Status</th><th class="mono">Coverage</th><th class="mono">Met / Total</th></tr></thead>
+          <tbody>${Object.entries(intel.framework_coverage).map(([fid, fw]) => `
+            <tr><td style="font-weight:700">${fid.toUpperCase()}</td><td>${badgeForStatus(fw.status)}</td><td class="mono">${fw.coverage_pct}%</td><td class="mono">${fw.met}/${fw.total}</td></tr>
+          `).join('')}</tbody>
+        </table>
+      </div>
+      <div class="pf-card">
+        <div class="pf-card-title">Compliance Gaps (${intel.gaps.length})</div>
+        ${intel.gaps.length ? intel.gaps.map(g => `
+          <div style="padding:10px 0;border-bottom:1px solid var(--border)">
+            <div style="font-weight:700;font-size:12.5px">${g.concept}</div>
+            <div style="font-size:11.5px;color:var(--text-3)">${g.category} · affects ${g.frameworks_affected.join(', ')}</div>
+          </div>`).join('') : '<div style="color:var(--text-3);font-size:12.5px">No critical gaps detected.</div>'}
+      </div>`;
+  } catch (err) {
+    $('analyzeError').textContent = err.message || 'Analysis failed.';
+    $('analyzeError').classList.add('visible');
+  } finally {
+    $('analyzeBtn').disabled = false;
+    $('analyzeBtn').textContent = 'Run Analysis';
+  }
+});
+
+document.addEventListener('pf:session', loadRegistry);
+</script>
+</body>
+</html>

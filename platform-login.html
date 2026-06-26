@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign In — Climactix Enterprise Platform</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+<link rel="stylesheet" href="platform.css" />
+</head>
+<body>
+
+<div class="pf-auth-wrap">
+  <div class="pf-auth-card">
+    <div class="pf-auth-logo">
+      <img src="Climatix_logo.png" alt="" onerror="this.style.display='none'" />
+      <span>Climactix Platform</span>
+    </div>
+
+    <!-- Sign in -->
+    <div id="loginPane">
+      <div class="pf-auth-title">Sign in</div>
+      <div class="pf-auth-sub">Access the Climate Risk Intelligence Platform.</div>
+      <div class="pf-auth-error" id="loginError"></div>
+      <div class="pf-field">
+        <label class="pf-label">Email</label>
+        <input class="pf-input" type="email" id="loginEmail" autocomplete="username" />
+      </div>
+      <div class="pf-field">
+        <label class="pf-label">Password</label>
+        <input class="pf-input" type="password" id="loginPassword" autocomplete="current-password" />
+      </div>
+      <button class="pf-btn pf-btn-primary" id="loginBtn" style="width:100%;justify-content:center">Sign In</button>
+      <div class="pf-auth-toggle">No account? <a id="showRegister">Create one</a></div>
+    </div>
+
+    <!-- Register -->
+    <div id="registerPane" style="display:none">
+      <div class="pf-auth-title">Create account</div>
+      <div class="pf-auth-sub">Set up access to the Enterprise Platform.</div>
+      <div class="pf-auth-error" id="registerError"></div>
+      <div class="pf-field">
+        <label class="pf-label">Full name</label>
+        <input class="pf-input" type="text" id="regName" />
+      </div>
+      <div class="pf-field">
+        <label class="pf-label">Company</label>
+        <input class="pf-input" type="text" id="regCompany" />
+      </div>
+      <div class="pf-field">
+        <label class="pf-label">Email</label>
+        <input class="pf-input" type="email" id="regEmail" autocomplete="username" />
+      </div>
+      <div class="pf-field">
+        <label class="pf-label">Password</label>
+        <input class="pf-input" type="password" id="regPassword" autocomplete="new-password" />
+        <div style="font-size:11px;color:var(--text-3);margin-top:5px">Min 8 characters, 1 uppercase letter, 1 number.</div>
+      </div>
+      <button class="pf-btn pf-btn-secondary" id="registerBtn" style="width:100%;justify-content:center">Create Account</button>
+      <div class="pf-auth-toggle">Already have an account? <a id="showLogin">Sign in</a></div>
+    </div>
+
+    <!-- Verifying spinner (DEV_MODE auto-verify after register) -->
+    <div id="verifyingPane" style="display:none;text-align:center;padding:30px 0">
+      <div class="pf-loading-spin" style="margin:0 auto 14px"></div>
+      <div style="font-size:13px;color:var(--text-3)">Verifying account…</div>
+    </div>
+  </div>
+</div>
+
+<script src="platform-auth.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(window.location.search);
+const nextUrl = params.get('next') || 'platform-dashboard.html';
+
+function showError(el, msg) { el.textContent = msg; el.classList.add('visible'); }
+function hideError(el) { el.classList.remove('visible'); }
+
+$('showRegister').addEventListener('click', () => { $('loginPane').style.display = 'none'; $('registerPane').style.display = ''; });
+$('showLogin').addEventListener('click', () => { $('registerPane').style.display = 'none'; $('loginPane').style.display = ''; });
+
+$('loginBtn').addEventListener('click', async () => {
+  hideError($('loginError'));
+  const email = $('loginEmail').value.trim();
+  const password = $('loginPassword').value;
+  if (!email || !password) { showError($('loginError'), 'Email and password are required.'); return; }
+  $('loginBtn').disabled = true;
+  try {
+    await window.PLATFORM_AUTH.login({ email, password, remember: true });
+    window.location.href = nextUrl;
+  } catch (err) {
+    showError($('loginError'), err.message || 'Sign in failed.');
+  } finally {
+    $('loginBtn').disabled = false;
+  }
+});
+
+$('registerBtn').addEventListener('click', async () => {
+  hideError($('registerError'));
+  const full_name = $('regName').value.trim();
+  const company_name = $('regCompany').value.trim();
+  const email = $('regEmail').value.trim();
+  const password = $('regPassword').value;
+  if (!full_name || !email || !password) { showError($('registerError'), 'Name, email, and password are required.'); return; }
+  $('registerBtn').disabled = true;
+  try {
+    const result = await window.PLATFORM_AUTH.register({ full_name, email, company_name, password });
+    if (result && result.verify_token) {
+      // DEV_MODE: backend returned the verify token directly — auto-verify for a
+      // frictionless local demo flow instead of requiring a real inbox.
+      $('registerPane').style.display = 'none';
+      $('verifyingPane').style.display = '';
+      await window.PLATFORM_AUTH.verifyEmail({ email, token: result.verify_token });
+      window.location.href = nextUrl;
+    } else {
+      showError($('registerError'), 'Account created. Check your email to verify, then sign in.');
+      $('registerPane').style.display = 'none';
+      $('loginPane').style.display = '';
+    }
+  } catch (err) {
+    showError($('registerError'), err.message || 'Registration failed.');
+  } finally {
+    $('registerBtn').disabled = false;
+  }
+});
+
+// If already signed in, skip straight to the platform
+window.PLATFORM_AUTH.me().then(() => { window.location.href = nextUrl; }).catch(() => {});
+</script>
+</body>
+</html>

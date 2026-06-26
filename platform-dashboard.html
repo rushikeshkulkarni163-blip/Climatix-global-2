@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — Climactix Enterprise Platform</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+<link rel="stylesheet" href="platform.css" />
+</head>
+<body>
+
+<div id="pf-shell-root" class="pf-shell">
+  <main class="pf-main">
+    <div class="pf-page-head">
+      <h1>Executive Summary</h1>
+      <p>Portfolio-level climate risk intelligence across tracked companies. Updated on each session load.</p>
+    </div>
+
+    <div class="pf-grid-4" id="kpiGrid" style="margin-bottom:24px"></div>
+
+    <div class="pf-grid-2">
+      <div class="pf-card">
+        <div class="pf-card-title">Module Shortcuts</div>
+        <div id="shortcutList"></div>
+      </div>
+      <div class="pf-card">
+        <div class="pf-card-title">Highest Transition Risk — Tracked Companies</div>
+        <table class="pf-table">
+          <thead><tr><th>Company</th><th>Sector</th><th class="mono">Transition Risk</th><th class="mono">Rating</th></tr></thead>
+          <tbody id="topRiskBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="intelligence-engine.js"></script>
+<script src="platform-auth.js"></script>
+<script src="platform-data.js"></script>
+<script src="platform-shell.js"></script>
+<script>
+function kpiCard(label, value, suffix, tone, sub, pct) {
+  return `
+    <div class="pf-kpi">
+      <div class="pf-kpi-label">${label}</div>
+      <div class="pf-kpi-value ${tone}">${value}${suffix||''}</div>
+      <div class="pf-kpi-sub">${sub}</div>
+      <div class="pf-kpi-bar"><div class="pf-kpi-bar-fill ${tone}" style="width:${pct}%"></div></div>
+    </div>`;
+}
+
+function toneForRisk(score) { return score >= 65 ? 'risk' : score >= 40 ? 'warning' : 'success'; }
+function toneForGood(score) { return score >= 65 ? 'success' : score >= 40 ? 'warning' : 'risk'; }
+
+function render() {
+  const s = window.PLATFORM.computeExecutiveSummary();
+
+  document.getElementById('kpiGrid').innerHTML = [
+    kpiCard('Climate Risk Score', s.climateRiskScore, '/100', toneForRisk(s.climateRiskScore), `Across ${s.sampleSize} tracked companies`, s.climateRiskScore),
+    kpiCard('Physical Risk Score', s.physicalRiskScore, '/100', toneForRisk(s.physicalRiskScore), 'Flood · heat · drought · cyclone · water stress', s.physicalRiskScore),
+    kpiCard('Transition Risk Score', s.transitionRiskScore, '/100', toneForRisk(s.transitionRiskScore), 'Carbon tax · stranded assets · policy', s.transitionRiskScore),
+    kpiCard('Disclosure Quality', s.disclosureQuality, '/100', toneForGood(s.disclosureQuality), 'Avg. climate credibility score', s.disclosureQuality),
+    kpiCard('Regulatory Exposure', s.regulatoryExposure, '%', toneForRisk(s.regulatoryExposure), 'Partial/missing framework alignment', s.regulatoryExposure),
+    kpiCard('Supply Chain Risk', s.supplyChainRiskProxy, '/100', toneForRisk(s.supplyChainRiskProxy), 'Proxy metric — full module in Phase 2', s.supplyChainRiskProxy),
+    kpiCard('Carbon Exposure', s.carbonExposure, '/100', toneForRisk(s.carbonExposure), 'Normalized avg. carbon intensity', s.carbonExposure),
+    kpiCard('Scenario Readiness', s.scenarioReadiness, '/100', toneForGood(s.scenarioReadiness), 'SBTi alignment + transition resilience', s.scenarioReadiness),
+  ].join('');
+
+  document.getElementById('shortcutList').innerHTML = [
+    ['platform-company-intel.html', 'Company Profiles', 'Bloomberg-style climate profiles for 20 companies'],
+    ['platform-scenarios.html', 'Climate Scenarios', 'NGFS-aligned 1.5°C / 2°C / 3°C pathway simulation'],
+    ['platform-regulatory.html', 'Regulatory Intelligence', '16-framework compliance tracker'],
+    ['platform-narrative.html', 'Greenwashing Intelligence', 'Narrative consistency + disclosure scan'],
+  ].map(([href, title, sub]) => `
+    <a class="pf-list-item" href="${href}">
+      <div><div class="pf-list-item-name">${title}</div><div class="pf-list-item-sub">${sub}</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </a>`).join('');
+
+  const companies = window.PLATFORM.getCompanies('', null);
+  const top = [...companies].sort((a, b) => b.transitionRisk.overall - a.transitionRisk.overall).slice(0, 6);
+  document.getElementById('topRiskBody').innerHTML = top.map(c => {
+    const rating = window.PLATFORM.getRating(c.cScore);
+    return `<tr>
+      <td><a href="platform-company-intel.html?company=${c.id}" style="font-weight:600;color:var(--navy)">${c.name}</a></td>
+      <td>${c.industryLabel}</td>
+      <td class="mono">${c.transitionRisk.overall}</td>
+      <td class="mono" style="color:${rating.color}">${rating.grade}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.addEventListener('pf:session', render);
+</script>
+</body>
+</html>
