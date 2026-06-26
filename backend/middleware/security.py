@@ -58,8 +58,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 "max-age=63072000; includeSubDomains; preload"
             )
         # Remove headers that leak server info
-        response.headers.pop("Server", None)
-        response.headers.pop("X-Powered-By", None)
+        for leaky_header in ("Server", "X-Powered-By"):
+            if leaky_header in response.headers:
+                del response.headers[leaky_header]
         return response
 
 
