@@ -52,14 +52,9 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-11">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 group">
-            <ClimactixLogo />
-            <div className="leading-none">
-              <div className="font-bold text-white text-sm tracking-tight leading-none">CLIMACTIX</div>
-              <div className="text-[#4B5563] text-[9px] font-bold tracking-[0.18em] uppercase leading-none mt-0.5">
-                GLOBAL
-              </div>
-            </div>
+          <Link href="/" className="flex items-center flex-shrink-0 group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Climactix Global" className="h-11 w-auto" />
           </Link>
 
           {/* Desktop nav links */}
@@ -182,18 +177,5 @@ export default function Navbar() {
         </div>
       )}
     </header>
-  );
-}
-
-function ClimactixLogo() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 36 36" fill="none" className="flex-shrink-0">
-      <rect width="36" height="36" fill="#0A1F44" />
-      <circle cx="18" cy="18" r="10" fill="none" stroke="white" strokeWidth="1.5" />
-      <circle cx="18" cy="18" r="5" fill="none" stroke="#4472C4" strokeWidth="1.5" />
-      <path d="M8 18 Q14 14 18 18 Q22 22 28 18" stroke="white" strokeWidth="1" fill="none" />
-      <path d="M18 8 Q14 14 18 18 Q22 22 18 28" stroke="white" strokeWidth="1" fill="none" />
-      <path d="M10 27 Q14 22 18 18 Q22 14 26 10" stroke="#F97316" strokeWidth="2" fill="none" strokeLinecap="round" />
-    </svg>
   );
 }

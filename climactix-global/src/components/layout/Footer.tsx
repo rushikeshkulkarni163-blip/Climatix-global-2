@@ -52,19 +52,9 @@ export default function Footer() {
 
           {/* Brand column */}
           <div className="md:col-span-1">
-            <div className="flex items-center gap-2 mb-5">
-              <svg width="24" height="24" viewBox="0 0 36 36" fill="none" className="flex-shrink-0">
-                <rect width="36" height="36" fill="#0A1F44" />
-                <circle cx="18" cy="18" r="10" fill="none" stroke="white" strokeWidth="1.5" />
-                <circle cx="18" cy="18" r="5" fill="none" stroke="#4472C4" strokeWidth="1.5" />
-                <path d="M8 18 Q14 14 18 18 Q22 22 28 18" stroke="white" strokeWidth="1" fill="none" />
-                <path d="M18 8 Q14 14 18 18 Q22 22 18 28" stroke="white" strokeWidth="1" fill="none" />
-                <path d="M10 27 Q14 22 18 18 Q22 14 26 10" stroke="#F97316" strokeWidth="2" fill="none" strokeLinecap="round" />
-              </svg>
-              <div className="leading-none">
-                <div className="font-bold text-white text-xs tracking-tight">CLIMACTIX</div>
-                <div className="text-[#4B5563] text-[9px] font-bold tracking-[0.16em] uppercase">GLOBAL</div>
-              </div>
+            <div className="flex items-center mb-5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Climactix Global" className="h-10 w-auto" />
             </div>
             <p className="text-gray-500 text-xs leading-relaxed mb-3">
               Measure the Risk.<br />Navigate the Future.

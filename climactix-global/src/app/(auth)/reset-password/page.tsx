@@ -14,7 +14,7 @@ function PasswordStrength({ password }: { password: string }) {
     { label: 'SPECIAL CHAR', met: /[^A-Za-z0-9]/.test(password) },
   ];
   const score = checks.filter((c) => c.met).length;
-  const colors = ['#FF4444', '#FF8844', '#FFCC00', '#FF6600'];
+  const colors = ['#FF5B5B', '#FF8844', '#FFCC00', '#0057FF'];
 
   return (
     <div style={{ marginTop: 10 }}>
@@ -29,7 +29,7 @@ function PasswordStrength({ password }: { password: string }) {
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '4px 12px' }}>
         {checks.map((c) => (
-          <span key={c.label} style={{ fontSize: 9, color: c.met ? '#FF6600' : '#333', letterSpacing: '0.06em' }}>
+          <span key={c.label} style={{ fontSize: 9, color: c.met ? '#0057FF' : '#333', letterSpacing: '0.06em' }}>
             {c.met ? '✓' : '○'} {c.label}
           </span>
         ))}
@@ -49,9 +49,9 @@ export default function ResetPasswordPage() {
   const [success, setSuccess] = useState(false);
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', background: '#0a0a0a', border: '1px solid #2C2C2C',
-    color: '#e0e0e0', padding: '12px 14px', fontSize: 13, borderRadius: 3,
-    fontFamily: 'IBM Plex Mono, monospace', outline: 'none',
+    width: '100%', background: '#1A1A1A', border: '1px solid #262626',
+    color: '#e0e0e0', padding: '12px 14px', fontSize: 13, borderRadius: 8,
+    fontFamily: 'var(--font-body)', outline: 'none',
     transition: 'border-color 0.12s ease',
   };
 
@@ -81,12 +81,12 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: 420, fontFamily: 'IBM Plex Mono, monospace' }}>
-      <div style={{ background: '#080808', border: '1px solid #2C2C2C', padding: '40px 36px' }}>
+    <div style={{ width: '100%', maxWidth: 420, fontFamily: 'var(--font-body)' }}>
+      <div style={{ background: '#111111', border: '1px solid #262626', padding: '40px 36px' }}>
 
         <div style={{ marginBottom: 28, borderBottom: '1px solid #1a1a1a', paddingBottom: 24 }}>
-          <div style={{ fontSize: 10, color: '#FF6600', letterSpacing: '0.18em', marginBottom: 10 }}>CLIMACTIX GLOBAL</div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', letterSpacing: '0.04em', marginBottom: 6 }}>
+          <div style={{ fontSize: 10, color: '#0057FF', letterSpacing: '0.18em', marginBottom: 10 }}>CLIMACTIX GLOBAL</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', letterSpacing: '0.01em', marginBottom: 6, fontFamily: 'var(--font-head)' }}>
             {success ? 'PASSWORD UPDATED' : 'SET NEW PASSWORD'}
           </div>
           <div style={{ fontSize: 11, color: '#555', letterSpacing: '0.06em' }}>
@@ -98,8 +98,8 @@ export default function ResetPasswordPage() {
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
             {!token && (
-              <div style={{ background: '#1a0a00', border: '1px solid #FF660033', padding: '12px 14px',
-                            fontSize: 11, color: '#FF9944', letterSpacing: '0.06em', borderRadius: 2 }}>
+              <div style={{ background: '#1a0000', border: '1px solid #FF5B5B33', padding: '12px 14px',
+                            fontSize: 11, color: '#FF8A8A', letterSpacing: '0.06em', borderRadius: 8 }}>
                 Invalid or missing reset token. Please request a new password reset link.
               </div>
             )}
@@ -112,8 +112,8 @@ export default function ResetPasswordPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Min 12 characters" style={inputStyle}
                 disabled={!token}
-                onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                onBlur={(e) => e.target.style.borderColor = '#262626'}
               />
               {password && <PasswordStrength password={password} />}
             </div>
@@ -126,41 +126,41 @@ export default function ResetPasswordPage() {
                 onChange={(e) => setConfirm(e.target.value)}
                 placeholder="••••••••••••" style={inputStyle}
                 disabled={!token}
-                onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                onBlur={(e) => e.target.style.borderColor = '#262626'}
               />
               {confirm && password !== confirm && (
-                <div style={{ fontSize: 10, color: '#FF4444', marginTop: 6, letterSpacing: '0.06em' }}>
+                <div style={{ fontSize: 10, color: '#FF5B5B', marginTop: 6, letterSpacing: '0.06em' }}>
                   ✗ PASSWORDS DO NOT MATCH
                 </div>
               )}
               {confirm && password === confirm && confirm.length > 0 && (
-                <div style={{ fontSize: 10, color: '#FF6600', marginTop: 6, letterSpacing: '0.06em' }}>
+                <div style={{ fontSize: 10, color: '#0057FF', marginTop: 6, letterSpacing: '0.06em' }}>
                   ✓ PASSWORDS MATCH
                 </div>
               )}
             </div>
 
             {error && (
-              <div style={{ background: '#1a0a00', border: '1px solid #FF660033', padding: '10px 14px',
-                            fontSize: 11, color: '#FF9944', letterSpacing: '0.06em', borderRadius: 2 }}>
+              <div style={{ background: '#1a0000', border: '1px solid #FF5B5B33', padding: '10px 14px',
+                            fontSize: 11, color: '#FF8A8A', letterSpacing: '0.06em', borderRadius: 8 }}>
                 {error}
               </div>
             )}
 
             <button type="submit" disabled={loading || !token} style={{
-              width: '100%', background: (loading || !token) ? '#331a00' : '#FF6600', color: '#000',
+              width: '100%', background: (loading || !token) ? '#1A2C5C' : '#0057FF', color: '#fff',
               border: 'none', padding: '13px 0', fontSize: 11, fontWeight: 700,
               letterSpacing: '0.14em', textTransform: 'uppercase' as const,
               cursor: (loading || !token) ? 'not-allowed' : 'pointer',
-              fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+              fontFamily: 'var(--font-body)', borderRadius: 8,
             }}>
               {loading ? 'UPDATING PASSWORD...' : 'SET NEW PASSWORD'}
             </button>
           </form>
         ) : (
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 40, color: '#FF6600', marginBottom: 20 }}>✓</div>
+            <div style={{ fontSize: 40, color: '#0057FF', marginBottom: 20 }}>✓</div>
             <div style={{ fontSize: 11, color: '#666', letterSpacing: '0.06em', lineHeight: 1.7 }}>
               Your password has been updated and all active sessions have been revoked for security.
               You will be redirected to sign in.
@@ -170,7 +170,7 @@ export default function ResetPasswordPage() {
       </div>
 
       <div style={{ textAlign: 'center', marginTop: 20 }}>
-        <Link href="/login" style={{ fontSize: 11, color: '#FF6600', textDecoration: 'none', letterSpacing: '0.06em' }}>
+        <Link href="/login" style={{ fontSize: 11, color: '#0057FF', textDecoration: 'none', letterSpacing: '0.06em' }}>
           ← BACK TO SIGN IN
         </Link>
       </div>

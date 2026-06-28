@@ -82,48 +82,19 @@ export default function TerminalSidebar() {
       {/* ── Logo ─────────────────────────────────── */}
       <div className="px-4 py-3.5 border-b border-[#1E2C3D]">
         <Link href="/dashboard" className="flex items-center gap-2.5 group">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Climactix Global" className="h-9 w-auto flex-shrink-0" />
           <div
-            className="w-7 h-7 flex-shrink-0 flex items-center justify-center border border-[#253649]"
-            style={{ background: "rgba(77,163,255,0.1)" }}
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "7px",
+              fontWeight: 600,
+              color: "#3D506A",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+            }}
           >
-            {/* CX monogram */}
-            <span
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "9px",
-                fontWeight: 700,
-                color: "#4DA3FF",
-                letterSpacing: "0.05em",
-              }}
-            >
-              CX
-            </span>
-          </div>
-          <div className="leading-none">
-            <div
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "11px",
-                fontWeight: 700,
-                color: "#DDE7F2",
-                letterSpacing: "0.06em",
-              }}
-            >
-              CLIMACTIX
-            </div>
-            <div
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "7px",
-                fontWeight: 600,
-                color: "#3D506A",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                marginTop: "2px",
-              }}
-            >
-              INTELLIGENCE OS
-            </div>
+            INTELLIGENCE OS
           </div>
         </Link>
       </div>

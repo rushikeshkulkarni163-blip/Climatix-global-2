@@ -27,15 +27,15 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', background: '#0a0a0a', border: '1px solid #2C2C2C',
-    color: '#e0e0e0', padding: '12px 14px', fontSize: 13, borderRadius: 3,
-    fontFamily: 'IBM Plex Mono, monospace', outline: 'none',
+    width: '100%', background: '#1A1A1A', border: '1px solid #262626',
+    color: '#e0e0e0', padding: '12px 14px', fontSize: 13, borderRadius: 8,
+    fontFamily: 'var(--font-body)', outline: 'none',
     transition: 'border-color 0.12s ease',
   };
   const labelStyle: React.CSSProperties = {
     display: 'block', fontSize: 10, color: '#666', letterSpacing: '0.12em',
     textTransform: 'uppercase' as const, marginBottom: 8,
-    fontFamily: 'IBM Plex Mono, monospace',
+    fontFamily: 'var(--font-body)',
   };
 
   function validateStep1() {
@@ -88,17 +88,17 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div style={{ width: '100%', maxWidth: 440, fontFamily: 'IBM Plex Mono, monospace' }}>
-        <div style={{ background: '#080808', border: '1px solid #2C2C2C', padding: '40px 36px', textAlign: 'center' }}>
+      <div style={{ width: '100%', maxWidth: 440, fontFamily: 'var(--font-body)' }}>
+        <div style={{ background: '#111111', border: '1px solid #262626', padding: '40px 36px', textAlign: 'center' }}>
           <div style={{ fontSize: 32, marginBottom: 20 }}>✓</div>
           <div style={{ fontSize: 14, color: '#fff', fontWeight: 600, letterSpacing: '0.06em', marginBottom: 12 }}>
             ACCOUNT CREATED
           </div>
           <div style={{ fontSize: 12, color: '#666', lineHeight: 1.7, marginBottom: 24 }}>
-            A verification email has been sent to <span style={{ color: '#FF6600' }}>{form.email}</span>.
+            A verification email has been sent to <span style={{ color: '#0057FF' }}>{form.email}</span>.
             Please verify your email to activate your account.
           </div>
-          <div style={{ background: '#0a0a0a', border: '1px solid #1a1a1a', padding: '14px', fontSize: 11, color: '#555', letterSpacing: '0.06em' }}>
+          <div style={{ background: '#1A1A1A', border: '1px solid #1a1a1a', padding: '14px', fontSize: 11, color: '#555', letterSpacing: '0.06em' }}>
             Check your spam folder if you don't see it within 2 minutes.
           </div>
         </div>
@@ -107,15 +107,15 @@ export default function RegisterPage() {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: 480, fontFamily: 'IBM Plex Mono, monospace' }}>
-      <div style={{ background: '#080808', border: '1px solid #2C2C2C', padding: '40px 36px' }}>
+    <div style={{ width: '100%', maxWidth: 480, fontFamily: 'var(--font-body)' }}>
+      <div style={{ background: '#111111', border: '1px solid #262626', padding: '40px 36px' }}>
 
         {/* Header */}
         <div style={{ marginBottom: 28, borderBottom: '1px solid #1a1a1a', paddingBottom: 24 }}>
-          <div style={{ fontSize: 10, color: '#FF6600', letterSpacing: '0.18em', marginBottom: 10 }}>
+          <div style={{ fontSize: 10, color: '#0057FF', letterSpacing: '0.18em', marginBottom: 10 }}>
             CLIMACTIX GLOBAL
           </div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', letterSpacing: '0.04em', marginBottom: 6 }}>
+          <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', letterSpacing: '0.01em', marginBottom: 6, fontFamily: 'var(--font-head)' }}>
             REQUEST PLATFORM ACCESS
           </div>
           <div style={{ fontSize: 11, color: '#555', letterSpacing: '0.06em' }}>
@@ -128,7 +128,7 @@ export default function RegisterPage() {
           {[1, 2].map((s) => (
             <div key={s} style={{
               flex: 1, height: 2,
-              background: s <= step ? '#FF6600' : '#1a1a1a',
+              background: s <= step ? '#0057FF' : '#1a1a1a',
               transition: 'background 0.12s ease',
             }} />
           ))}
@@ -143,8 +143,8 @@ export default function RegisterPage() {
                 <input type="text" required value={form.firstName}
                   onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                   placeholder="Ishaan" style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                  onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                  onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                  onBlur={(e) => e.target.style.borderColor = '#262626'}
                 />
               </div>
               <div style={{ flex: 1 }}>
@@ -152,8 +152,8 @@ export default function RegisterPage() {
                 <input type="text" required value={form.lastName}
                   onChange={(e) => setForm({ ...form, lastName: e.target.value })}
                   placeholder="Mehta" style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                  onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                  onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                  onBlur={(e) => e.target.style.borderColor = '#262626'}
                 />
               </div>
             </div>
@@ -164,8 +164,8 @@ export default function RegisterPage() {
               <input type="email" required value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder="analyst@institution.com" style={inputStyle}
-                onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                onBlur={(e) => e.target.style.borderColor = '#262626'}
               />
             </div>
 
@@ -175,8 +175,8 @@ export default function RegisterPage() {
               <input type="password" required value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 placeholder="Min 12 chars, uppercase, number, special" style={inputStyle}
-                onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                onBlur={(e) => e.target.style.borderColor = '#262626'}
               />
               {/* Password strength */}
               {form.password && (
@@ -187,7 +187,7 @@ export default function RegisterPage() {
                     /[0-9]/.test(form.password),
                     /[^A-Za-z0-9]/.test(form.password),
                   ].map((met, i) => (
-                    <div key={i} style={{ flex: 1, height: 2, background: met ? '#FF6600' : '#1a1a1a', transition: 'background 0.12s' }} />
+                    <div key={i} style={{ flex: 1, height: 2, background: met ? '#0057FF' : '#1a1a1a', transition: 'background 0.12s' }} />
                   ))}
                 </div>
               )}
@@ -199,23 +199,23 @@ export default function RegisterPage() {
               <input type="password" required value={form.confirmPassword}
                 onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
                 placeholder="••••••••••••" style={inputStyle}
-                onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                onBlur={(e) => e.target.style.borderColor = '#262626'}
               />
             </div>
 
             {error && (
-              <div style={{ background: '#1a0a00', border: '1px solid #FF660033', padding: '10px 14px',
-                            fontSize: 11, color: '#FF9944', letterSpacing: '0.06em', borderRadius: 2 }}>
+              <div style={{ background: '#1a0000', border: '1px solid #FF5B5B33', padding: '10px 14px',
+                            fontSize: 11, color: '#FF8A8A', letterSpacing: '0.06em', borderRadius: 8 }}>
                 {error}
               </div>
             )}
 
             <button onClick={handleNext} style={{
-              width: '100%', background: '#FF6600', color: '#000', border: 'none',
+              width: '100%', background: '#0057FF', color: '#fff', border: 'none',
               padding: '13px 0', fontSize: 11, fontWeight: 700, letterSpacing: '0.14em',
               textTransform: 'uppercase' as const, cursor: 'pointer',
-              fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+              fontFamily: 'var(--font-body)', borderRadius: 8,
             }}>
               CONTINUE →
             </button>
@@ -230,14 +230,14 @@ export default function RegisterPage() {
                 {USER_TYPES.map((type) => (
                   <label key={type.value} style={{
                     display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 14px',
-                    background: form.userType === type.value ? '#1a0d00' : '#0a0a0a',
-                    border: `1px solid ${form.userType === type.value ? '#FF6600' : '#2C2C2C'}`,
-                    cursor: 'pointer', borderRadius: 3, transition: 'all 0.12s ease',
+                    background: form.userType === type.value ? '#0a1a3d' : '#1A1A1A',
+                    border: `1px solid ${form.userType === type.value ? '#0057FF' : '#262626'}`,
+                    cursor: 'pointer', borderRadius: 8, transition: 'all 0.12s ease',
                   }}>
                     <input type="radio" name="userType" value={type.value}
                       checked={form.userType === type.value}
                       onChange={(e) => setForm({ ...form, userType: e.target.value })}
-                      style={{ accentColor: '#FF6600', marginTop: 2 }}
+                      style={{ accentColor: '#0057FF', marginTop: 2 }}
                     />
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#e0e0e0', letterSpacing: '0.06em' }}>
@@ -259,8 +259,8 @@ export default function RegisterPage() {
                 <input type="text" value={form.organizationName}
                   onChange={(e) => setForm({ ...form, organizationName: e.target.value })}
                   placeholder="Reliance Industries Ltd" style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                  onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                  onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                  onBlur={(e) => e.target.style.borderColor = '#262626'}
                 />
               </div>
             )}
@@ -269,37 +269,37 @@ export default function RegisterPage() {
             <label style={{ display: 'flex', gap: 10, cursor: 'pointer', alignItems: 'flex-start' }}>
               <input type="checkbox" checked={form.acceptedTerms}
                 onChange={(e) => setForm({ ...form, acceptedTerms: e.target.checked })}
-                style={{ accentColor: '#FF6600', marginTop: 2, flexShrink: 0 }}
+                style={{ accentColor: '#0057FF', marginTop: 2, flexShrink: 0 }}
               />
               <span style={{ fontSize: 10, color: '#666', letterSpacing: '0.06em', lineHeight: 1.6 }}>
                 I AGREE TO THE{' '}
-                <a href="#" style={{ color: '#FF6600', textDecoration: 'none' }}>TERMS OF SERVICE</a>
+                <a href="#" style={{ color: '#0057FF', textDecoration: 'none' }}>TERMS OF SERVICE</a>
                 {' '}AND{' '}
-                <a href="#" style={{ color: '#FF6600', textDecoration: 'none' }}>PRIVACY POLICY</a>
+                <a href="#" style={{ color: '#0057FF', textDecoration: 'none' }}>PRIVACY POLICY</a>
               </span>
             </label>
 
             {error && (
-              <div style={{ background: '#1a0a00', border: '1px solid #FF660033', padding: '10px 14px',
-                            fontSize: 11, color: '#FF9944', letterSpacing: '0.06em', borderRadius: 2 }}>
+              <div style={{ background: '#1a0000', border: '1px solid #FF5B5B33', padding: '10px 14px',
+                            fontSize: 11, color: '#FF8A8A', letterSpacing: '0.06em', borderRadius: 8 }}>
                 {error}
               </div>
             )}
 
             <div style={{ display: 'flex', gap: 10 }}>
               <button type="button" onClick={() => setStep(1)} style={{
-                flex: '0 0 auto', background: 'none', border: '1px solid #2C2C2C', color: '#666',
+                flex: '0 0 auto', background: 'none', border: '1px solid #262626', color: '#666',
                 padding: '13px 20px', fontSize: 11, letterSpacing: '0.1em', cursor: 'pointer',
-                fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+                fontFamily: 'var(--font-body)', borderRadius: 8,
               }}>
                 ← BACK
               </button>
               <button type="submit" disabled={loading} style={{
-                flex: 1, background: loading ? '#331a00' : '#FF6600', color: '#000',
+                flex: 1, background: loading ? '#1A2C5C' : '#0057FF', color: '#fff',
                 border: 'none', padding: '13px 0', fontSize: 11, fontWeight: 700,
                 letterSpacing: '0.14em', textTransform: 'uppercase' as const,
                 cursor: loading ? 'not-allowed' : 'pointer',
-                fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+                fontFamily: 'var(--font-body)', borderRadius: 8,
               }}>
                 {loading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
               </button>
@@ -310,7 +310,7 @@ export default function RegisterPage() {
 
       <div style={{ textAlign: 'center', marginTop: 20 }}>
         <span style={{ fontSize: 11, color: '#444', letterSpacing: '0.06em' }}>ALREADY HAVE ACCESS? </span>
-        <Link href="/login" style={{ fontSize: 11, color: '#FF6600', textDecoration: 'none', letterSpacing: '0.06em' }}>
+        <Link href="/login" style={{ fontSize: 11, color: '#0057FF', textDecoration: 'none', letterSpacing: '0.06em' }}>
           SIGN IN →
         </Link>
       </div>

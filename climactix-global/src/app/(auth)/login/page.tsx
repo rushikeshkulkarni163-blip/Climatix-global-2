@@ -7,9 +7,8 @@ import { useRouter } from 'next/navigation';
 const IAM_URL = process.env.NEXT_PUBLIC_IAM_URL || 'http://localhost:3100/api/v1';
 
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  input:-webkit-autofill { -webkit-box-shadow: 0 0 0 1000px #0a0a0a inset; -webkit-text-fill-color: #e0e0e0; }
+  input:-webkit-autofill { -webkit-box-shadow: 0 0 0 1000px #1A1A1A inset; -webkit-text-fill-color: #e0e0e0; }
 `;
 
 export default function LoginPage() {
@@ -66,15 +65,15 @@ export default function LoginPage() {
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', background: '#0a0a0a', border: '1px solid #2C2C2C',
+    width: '100%', background: '#1A1A1A', border: '1px solid #262626',
     color: '#e0e0e0', padding: '12px 14px', fontSize: 13,
-    fontFamily: 'IBM Plex Mono, monospace', outline: 'none', borderRadius: 3,
+    fontFamily: 'var(--font-body)', outline: 'none', borderRadius: 8,
     transition: 'border-color 0.12s ease',
   };
 
   const labelStyle: React.CSSProperties = {
     display: 'block', fontSize: 10, color: '#666', letterSpacing: '0.12em',
-    textTransform: 'uppercase' as const, marginBottom: 8, fontFamily: 'IBM Plex Mono, monospace',
+    textTransform: 'uppercase' as const, marginBottom: 8, fontFamily: 'var(--font-body)',
   };
 
   return (
@@ -83,14 +82,14 @@ export default function LoginPage() {
       <div style={{ width: '100%', maxWidth: 440 }}>
 
         {/* Panel */}
-        <div style={{ background: '#080808', border: '1px solid #2C2C2C', padding: '40px 36px' }}>
+        <div style={{ background: '#111111', border: '1px solid #262626', padding: '40px 36px' }}>
 
           {/* Header */}
           <div style={{ marginBottom: 32, borderBottom: '1px solid #1a1a1a', paddingBottom: 24 }}>
-            <div style={{ fontSize: 10, color: '#FF6600', letterSpacing: '0.18em', marginBottom: 10 }}>
+            <div style={{ fontSize: 10, color: '#0057FF', letterSpacing: '0.18em', marginBottom: 10 }}>
               CLIMACTIX GLOBAL
             </div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', letterSpacing: '0.01em', marginBottom: 6, fontFamily: 'var(--font-head)' }}>
               {mfaChallenge ? 'MFA VERIFICATION' : 'PLATFORM ACCESS'}
             </div>
             <div style={{ fontSize: 11, color: '#555', letterSpacing: '0.06em' }}>
@@ -115,8 +114,8 @@ export default function LoginPage() {
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="analyst@institution.com"
                   style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                  onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                  onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                  onBlur={(e) => e.target.style.borderColor = '#262626'}
                 />
               </div>
 
@@ -124,7 +123,7 @@ export default function LoginPage() {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                   <label style={{ ...labelStyle, marginBottom: 0 }}>Password</label>
-                  <Link href="/forgot-password" style={{ fontSize: 10, color: '#FF6600', textDecoration: 'none', letterSpacing: '0.06em' }}>
+                  <Link href="/forgot-password" style={{ fontSize: 10, color: '#0057FF', textDecoration: 'none', letterSpacing: '0.06em' }}>
                     FORGOT?
                   </Link>
                 </div>
@@ -137,8 +136,8 @@ export default function LoginPage() {
                     onChange={(e) => setForm({ ...form, password: e.target.value })}
                     placeholder="••••••••••••"
                     style={{ ...inputStyle, paddingRight: 44 }}
-                    onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                    onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                    onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                    onBlur={(e) => e.target.style.borderColor = '#262626'}
                   />
                   <button
                     type="button"
@@ -157,15 +156,15 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={form.rememberMe}
                   onChange={(e) => setForm({ ...form, rememberMe: e.target.checked })}
-                  style={{ accentColor: '#FF6600', width: 14, height: 14 }}
+                  style={{ accentColor: '#0057FF', width: 14, height: 14 }}
                 />
                 <span style={{ fontSize: 11, color: '#666', letterSpacing: '0.06em' }}>KEEP ME SIGNED IN (30 DAYS)</span>
               </label>
 
               {/* Error */}
               {error && (
-                <div style={{ background: '#1a0a00', border: '1px solid #FF660033', padding: '10px 14px',
-                              fontSize: 11, color: '#FF9944', letterSpacing: '0.06em', borderRadius: 2 }}>
+                <div style={{ background: '#1a0000', border: '1px solid #FF5B5B33', padding: '10px 14px',
+                              fontSize: 11, color: '#FF8A8A', letterSpacing: '0.06em', borderRadius: 8 }}>
                   {error}
                 </div>
               )}
@@ -175,11 +174,11 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 style={{
-                  width: '100%', background: loading ? '#331a00' : '#FF6600',
-                  color: '#000', border: 'none', padding: '13px 0',
+                  width: '100%', background: loading ? '#1A2C5C' : '#0057FF',
+                  color: '#fff', border: 'none', padding: '13px 0',
                   fontSize: 11, fontWeight: 700, letterSpacing: '0.14em',
                   textTransform: 'uppercase' as const, cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+                  fontFamily: 'var(--font-body)', borderRadius: 8,
                   transition: 'background 0.12s ease',
                 }}
               >
@@ -202,13 +201,13 @@ export default function LoginPage() {
                 ].map((sso) => (
                   <a key={sso.label} href={sso.href} style={{
                     flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    gap: 6, padding: '10px 0', background: '#0a0a0a',
-                    border: '1px solid #2C2C2C', color: '#999', textDecoration: 'none',
-                    fontSize: 9, letterSpacing: '0.1em', borderRadius: 3,
+                    gap: 6, padding: '10px 0', background: '#1A1A1A',
+                    border: '1px solid #262626', color: '#999', textDecoration: 'none',
+                    fontSize: 9, letterSpacing: '0.1em', borderRadius: 8,
                     transition: 'border-color 0.12s ease, color 0.12s ease',
                   }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#FF6600'; (e.currentTarget as HTMLElement).style.color = '#FF6600'; }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#2C2C2C'; (e.currentTarget as HTMLElement).style.color = '#999'; }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#0057FF'; (e.currentTarget as HTMLElement).style.color = '#0057FF'; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = '#262626'; (e.currentTarget as HTMLElement).style.color = '#999'; }}
                   >
                     {sso.label}
                   </a>
@@ -225,7 +224,7 @@ export default function LoginPage() {
           ) : (
             /* MFA Form */
             <form onSubmit={handleMfa} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div style={{ background: '#0a0a0a', border: '1px solid #2C2C2C', padding: '16px', borderRadius: 3, textAlign: 'center' }}>
+              <div style={{ background: '#1A1A1A', border: '1px solid #262626', padding: '16px', borderRadius: 8, textAlign: 'center' }}>
                 <div style={{ fontSize: 10, color: '#666', letterSpacing: '0.1em', marginBottom: 8 }}>
                   AUTHENTICATOR CODE
                 </div>
@@ -240,15 +239,15 @@ export default function LoginPage() {
                   placeholder="000000"
                   style={{
                     ...inputStyle, textAlign: 'center', fontSize: 28, letterSpacing: '0.4em',
-                    fontWeight: 700, color: '#FF6600', border: 'none', background: 'transparent',
+                    fontWeight: 700, color: '#0057FF', border: 'none', background: 'transparent',
                     paddingLeft: 0, paddingRight: 0,
                   }}
                 />
               </div>
 
               {error && (
-                <div style={{ background: '#1a0a00', border: '1px solid #FF660033', padding: '10px 14px',
-                              fontSize: 11, color: '#FF9944', letterSpacing: '0.06em', borderRadius: 2 }}>
+                <div style={{ background: '#1a0000', border: '1px solid #FF5B5B33', padding: '10px 14px',
+                              fontSize: 11, color: '#FF8A8A', letterSpacing: '0.06em', borderRadius: 8 }}>
                   {error}
                 </div>
               )}
@@ -257,11 +256,11 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading || mfaCode.length !== 6}
                 style={{
-                  width: '100%', background: (loading || mfaCode.length !== 6) ? '#331a00' : '#FF6600',
-                  color: '#000', border: 'none', padding: '13px 0',
+                  width: '100%', background: (loading || mfaCode.length !== 6) ? '#1A2C5C' : '#0057FF',
+                  color: '#fff', border: 'none', padding: '13px 0',
                   fontSize: 11, fontWeight: 700, letterSpacing: '0.14em',
                   textTransform: 'uppercase' as const, cursor: (loading || mfaCode.length !== 6) ? 'not-allowed' : 'pointer',
-                  fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+                  fontFamily: 'var(--font-body)', borderRadius: 8,
                   transition: 'background 0.12s ease',
                 }}
               >
@@ -283,7 +282,7 @@ export default function LoginPage() {
         {!mfaChallenge && (
           <div style={{ textAlign: 'center', marginTop: 20 }}>
             <span style={{ fontSize: 11, color: '#444', letterSpacing: '0.06em' }}>NEW TO CLIMACTIX? </span>
-            <Link href="/register" style={{ fontSize: 11, color: '#FF6600', textDecoration: 'none', letterSpacing: '0.06em' }}>
+            <Link href="/register" style={{ fontSize: 11, color: '#0057FF', textDecoration: 'none', letterSpacing: '0.06em' }}>
               REQUEST ACCESS →
             </Link>
           </div>

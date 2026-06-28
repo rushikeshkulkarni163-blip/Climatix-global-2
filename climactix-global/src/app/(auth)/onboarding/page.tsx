@@ -27,14 +27,14 @@ export default function OnboardingPage() {
   const [error, setError] = useState('');
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', background: '#0a0a0a', border: '1px solid #2C2C2C',
-    color: '#e0e0e0', padding: '12px 14px', fontSize: 13, borderRadius: 3,
-    fontFamily: 'IBM Plex Mono, monospace', outline: 'none',
+    width: '100%', background: '#1A1A1A', border: '1px solid #262626',
+    color: '#e0e0e0', padding: '12px 14px', fontSize: 13, borderRadius: 8,
+    fontFamily: 'var(--font-body)', outline: 'none',
     transition: 'border-color 0.12s ease',
   };
   const labelStyle: React.CSSProperties = {
     display: 'block', fontSize: 10, color: '#666', letterSpacing: '0.12em',
-    marginBottom: 8, fontFamily: 'IBM Plex Mono, monospace',
+    marginBottom: 8, fontFamily: 'var(--font-body)',
   };
 
   function generateSlug(name: string) {
@@ -59,13 +59,13 @@ export default function OnboardingPage() {
   const EMPLOYEE_RANGES = ['1–50', '51–200', '201–1,000', '1,001–10,000', '10,001–100,000', '100,000+'];
 
   return (
-    <div style={{ width: '100%', maxWidth: 580, fontFamily: 'IBM Plex Mono, monospace' }}>
-      <div style={{ background: '#080808', border: '1px solid #2C2C2C', padding: '40px 36px' }}>
+    <div style={{ width: '100%', maxWidth: 580, fontFamily: 'var(--font-body)' }}>
+      <div style={{ background: '#111111', border: '1px solid #262626', padding: '40px 36px' }}>
 
         {/* Header */}
         <div style={{ marginBottom: 28, borderBottom: '1px solid #1a1a1a', paddingBottom: 24 }}>
-          <div style={{ fontSize: 10, color: '#FF6600', letterSpacing: '0.18em', marginBottom: 10 }}>CLIMACTIX GLOBAL</div>
-          <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', letterSpacing: '0.04em', marginBottom: 6 }}>
+          <div style={{ fontSize: 10, color: '#0057FF', letterSpacing: '0.18em', marginBottom: 10 }}>CLIMACTIX GLOBAL</div>
+          <div style={{ fontSize: 18, fontWeight: 600, color: '#fff', letterSpacing: '0.01em', marginBottom: 6, fontFamily: 'var(--font-head)' }}>
             ORGANIZATION SETUP
           </div>
           <div style={{ fontSize: 11, color: '#555', letterSpacing: '0.06em' }}>
@@ -79,18 +79,18 @@ export default function OnboardingPage() {
             <div key={s} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
               <div style={{
                 width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: i < step ? '#FF6600' : i === step ? '#1a1a1a' : '#0a0a0a',
-                border: `1px solid ${i <= step ? '#FF6600' : '#2C2C2C'}`,
-                fontSize: 10, color: i < step ? '#000' : i === step ? '#FF6600' : '#333',
+                background: i < step ? '#0057FF' : i === step ? '#1a1a1a' : '#1A1A1A',
+                border: `1px solid ${i <= step ? '#0057FF' : '#262626'}`,
+                fontSize: 10, color: i < step ? '#fff' : i === step ? '#0057FF' : '#333',
                 fontWeight: 700,
               }}>
                 {i < step ? '✓' : i + 1}
               </div>
-              <span style={{ fontSize: 8, color: i === step ? '#FF6600' : '#444', letterSpacing: '0.1em' }}>{s}</span>
+              <span style={{ fontSize: 8, color: i === step ? '#0057FF' : '#444', letterSpacing: '0.1em' }}>{s}</span>
               {i < STEPS.length - 1 && (
                 <div style={{
                   position: 'absolute' as const, width: 'calc(25% - 28px)',
-                  height: 1, background: i < step ? '#FF6600' : '#1a1a1a',
+                  height: 1, background: i < step ? '#0057FF' : '#1a1a1a',
                   top: 14, left: `calc(${i * 25}% + 14px)`,
                 }} />
               )}
@@ -106,8 +106,8 @@ export default function OnboardingPage() {
               <input type="text" value={form.orgName}
                 onChange={(e) => { setForm({ ...form, orgName: e.target.value, workspaceSlug: generateSlug(e.target.value) }); }}
                 placeholder="Reliance Industries Ltd" style={inputStyle}
-                onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                onBlur={(e) => e.target.style.borderColor = '#262626'}
               />
             </div>
 
@@ -125,8 +125,8 @@ export default function OnboardingPage() {
                 <input type="text" value={form.country}
                   onChange={(e) => setForm({ ...form, country: e.target.value })}
                   placeholder="India" style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                  onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                  onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                  onBlur={(e) => e.target.style.borderColor = '#262626'}
                 />
               </div>
             </div>
@@ -137,11 +137,11 @@ export default function OnboardingPage() {
                 {EMPLOYEE_RANGES.map((range) => (
                   <button key={range} type="button" onClick={() => setForm({ ...form, employeeRange: range })}
                     style={{
-                      padding: '8px 14px', background: form.employeeRange === range ? '#1a0d00' : '#0a0a0a',
-                      border: `1px solid ${form.employeeRange === range ? '#FF6600' : '#2C2C2C'}`,
-                      color: form.employeeRange === range ? '#FF6600' : '#666',
+                      padding: '8px 14px', background: form.employeeRange === range ? '#0a1a3d' : '#1A1A1A',
+                      border: `1px solid ${form.employeeRange === range ? '#0057FF' : '#262626'}`,
+                      color: form.employeeRange === range ? '#0057FF' : '#666',
                       fontSize: 10, letterSpacing: '0.08em', cursor: 'pointer',
-                      fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+                      fontFamily: 'var(--font-body)', borderRadius: 8,
                     }}>
                     {range}
                   </button>
@@ -156,8 +156,8 @@ export default function OnboardingPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <div>
               <label style={labelStyle}>WORKSPACE IDENTIFIER</label>
-              <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #2C2C2C', borderRadius: 3, overflow: 'hidden' }}>
-                <span style={{ background: '#050505', padding: '12px 14px', fontSize: 12, color: '#444', borderRight: '1px solid #2C2C2C', whiteSpace: 'nowrap' as const }}>
+              <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #262626', borderRadius: 8, overflow: 'hidden' }}>
+                <span style={{ background: '#0A0A0A', padding: '12px 14px', fontSize: 12, color: '#444', borderRight: '1px solid #262626', whiteSpace: 'nowrap' as const }}>
                   climactix.global/
                 </span>
                 <input type="text" value={form.workspaceSlug}
@@ -177,20 +177,20 @@ export default function OnboardingPage() {
                 onChange={(e) => setForm({ ...form, climateNamespace: e.target.value })}
                 placeholder="cx-reliance-industries"
                 style={inputStyle}
-                onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                onBlur={(e) => e.target.style.borderColor = '#262626'}
               />
               <div style={{ fontSize: 10, color: '#444', marginTop: 6, letterSpacing: '0.06em' }}>
                 Unique identifier for your climate intelligence data store.
               </div>
             </div>
 
-            <div style={{ background: '#050505', border: '1px solid #1a1a1a', padding: '16px', borderRadius: 3 }}>
-              <div style={{ fontSize: 10, color: '#FF6600', letterSpacing: '0.12em', marginBottom: 10 }}>ENTERPRISE SSO</div>
+            <div style={{ background: '#0A0A0A', border: '1px solid #1a1a1a', padding: '16px', borderRadius: 8 }}>
+              <div style={{ fontSize: 10, color: '#0057FF', letterSpacing: '0.12em', marginBottom: 10 }}>ENTERPRISE SSO</div>
               <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginBottom: 12 }}>
                 <input type="checkbox" checked={form.enableSso}
                   onChange={(e) => setForm({ ...form, enableSso: e.target.checked })}
-                  style={{ accentColor: '#FF6600' }}
+                  style={{ accentColor: '#0057FF' }}
                 />
                 <span style={{ fontSize: 11, color: '#999', letterSpacing: '0.06em' }}>ENABLE ENTERPRISE SSO / SAML</span>
               </label>
@@ -225,8 +225,8 @@ export default function OnboardingPage() {
                     setForm({ ...form, inviteEmails: newEmails });
                   }}
                   placeholder="analyst@company.com" style={inputStyle}
-                  onFocus={(e) => e.target.style.borderColor = '#FF6600'}
-                  onBlur={(e) => e.target.style.borderColor = '#2C2C2C'}
+                  onFocus={(e) => e.target.style.borderColor = '#0057FF'}
+                  onBlur={(e) => e.target.style.borderColor = '#262626'}
                 />
               </div>
             ))}
@@ -239,8 +239,8 @@ export default function OnboardingPage() {
         {/* Step 3: Activate */}
         {step === 3 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div style={{ background: '#050505', border: '1px solid #1a1a1a', padding: '20px', borderRadius: 3 }}>
-              <div style={{ fontSize: 10, color: '#FF6600', letterSpacing: '0.12em', marginBottom: 14 }}>WORKSPACE SUMMARY</div>
+            <div style={{ background: '#0A0A0A', border: '1px solid #1a1a1a', padding: '20px', borderRadius: 8 }}>
+              <div style={{ fontSize: 10, color: '#0057FF', letterSpacing: '0.12em', marginBottom: 14 }}>WORKSPACE SUMMARY</div>
               {[
                 { label: 'ORGANIZATION', value: form.orgName || '—' },
                 { label: 'INDUSTRY', value: form.industry || '—' },
@@ -256,7 +256,7 @@ export default function OnboardingPage() {
                 </div>
               ))}
             </div>
-            <div style={{ background: '#050505', border: '1px solid #1a1a1a', padding: '14px', borderRadius: 3 }}>
+            <div style={{ background: '#0A0A0A', border: '1px solid #1a1a1a', padding: '14px', borderRadius: 8 }}>
               <div style={{ fontSize: 10, color: '#444', letterSpacing: '0.06em', lineHeight: 1.6 }}>
                 By activating, your organization workspace will be provisioned with a dedicated climate intelligence namespace,
                 isolated data store, and tenant-level access controls. Settings can be modified from the Admin Panel.
@@ -266,8 +266,8 @@ export default function OnboardingPage() {
         )}
 
         {error && (
-          <div style={{ background: '#1a0a00', border: '1px solid #FF660033', padding: '10px 14px',
-                        fontSize: 11, color: '#FF9944', letterSpacing: '0.06em', borderRadius: 2, marginTop: 16 }}>
+          <div style={{ background: '#1a0000', border: '1px solid #FF5B5B33', padding: '10px 14px',
+                        fontSize: 11, color: '#FF8A8A', letterSpacing: '0.06em', borderRadius: 8, marginTop: 16 }}>
             {error}
           </div>
         )}
@@ -276,9 +276,9 @@ export default function OnboardingPage() {
         <div style={{ display: 'flex', gap: 10, marginTop: 28 }}>
           {step > 0 && (
             <button onClick={() => setStep(step - 1 as any)} style={{
-              flex: '0 0 auto', background: 'none', border: '1px solid #2C2C2C', color: '#666',
+              flex: '0 0 auto', background: 'none', border: '1px solid #262626', color: '#666',
               padding: '12px 20px', fontSize: 11, letterSpacing: '0.1em', cursor: 'pointer',
-              fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+              fontFamily: 'var(--font-body)', borderRadius: 8,
             }}>
               ← BACK
             </button>
@@ -287,11 +287,11 @@ export default function OnboardingPage() {
             onClick={step === STEPS.length - 1 ? handleFinish : () => setStep(step + 1 as any)}
             disabled={loading}
             style={{
-              flex: 1, background: loading ? '#331a00' : '#FF6600', color: '#000',
+              flex: 1, background: loading ? '#1A2C5C' : '#0057FF', color: '#fff',
               border: 'none', padding: '13px 0', fontSize: 11, fontWeight: 700,
               letterSpacing: '0.14em', textTransform: 'uppercase' as const,
               cursor: loading ? 'not-allowed' : 'pointer',
-              fontFamily: 'IBM Plex Mono, monospace', borderRadius: 3,
+              fontFamily: 'var(--font-body)', borderRadius: 8,
             }}
           >
             {loading ? 'ACTIVATING...' : step === STEPS.length - 1 ? 'ACTIVATE WORKSPACE →' : 'CONTINUE →'}

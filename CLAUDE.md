@@ -8,30 +8,32 @@ This file provides operational, architectural, and behavioral instructions for C
 
 **ALWAYS read `DESIGN.md` before writing or editing any HTML/CSS.**
 
-The Climactix design system is defined in [`DESIGN.md`](./DESIGN.md). Every UI decision — colors, typography, spacing, borders, elevation, motion — must follow that file exactly. Do not deviate, invent new patterns, or fall back to defaults.
+The Climactix design system is defined in [`DESIGN.md`](./DESIGN.md) — **Design System v3.0**. Every UI decision — colors, typography, spacing, borders, elevation, motion — must follow that file exactly. Do not deviate, invent new patterns, or fall back to the legacy amber/IBM-Plex-Mono system below.
 
-### Non-negotiable design rules (from DESIGN.md):
+### Non-negotiable design rules (from DESIGN.md v3.0):
 
-1. **Background**: `#000000` pure matte black. NEVER warm charcoal or cold navy.
-2. **Primary accent**: `#FF6600` Bloomberg amber. NEVER organic green or neon cyan.
-3. **Borders**: `#2C2C2C` (default), `#333333` (strong). NEVER `rgba` white overlays.
-4. **Typography**: IBM Plex Mono for all data/numbers. Inter for body text.
-5. **Elevation**: Surface ladder only — `--surface` → `--surface-2` → `--surface-3`. NEVER `box-shadow` on cards.
-6. **Nav**: Solid black background. NEVER glassmorphism or `backdrop-filter: blur()`.
-7. **Border-radius**: 3px maximum on all cards, panels, buttons. NEVER rounded pills.
-8. **Motion**: `0.12s ease` for all transitions. NEVER > 1s for UI interactions.
-9. **Section headers**: ALL-CAPS, IBM Plex Mono, letter-spacing. Bloomberg DNA.
-10. **Data values**: Always IBM Plex Mono. Never Inter for prices, scores, metrics.
+1. **Background**: `#000000` pure black, `#111111` charcoal (cards/panels), `#1A1A1A` graphite (inputs/elevated surfaces).
+2. **Primary accent**: `#0057FF` Royal Blue — CTAs, active nav, key metrics, important interactions. NEVER Bloomberg amber, organic green, or any color from the old system.
+3. **Secondary accent**: `#00C2FF` Data Cyan — live indicators, intelligence layers, GIS overlays, climate data visualizations.
+4. **Accent budget**: Royal Blue + Data Cyan combined must never exceed 10% of any screen.
+5. **Typography**: Inter (primary, weights 300–700) for body text and UI. Space Grotesk (secondary) for hero headings, dashboard metrics, and terminal interfaces. Load both via self-hosted `next/font/google` — never a runtime `@import` (unreliable, network-dependent).
+6. **Borders**: thin, neutral graphite/charcoal tones. NEVER `rgba` white overlays.
+7. **Elevation**: flat surfaces only — black → charcoal → graphite. NEVER `box-shadow`, glassmorphism, or neumorphism on panels.
+8. **Nav**: solid black background. NEVER `backdrop-filter: blur()`.
+9. **Border-radius**: `8px` on cards, panels, and buttons (per DESIGN.md "Panel Design"). NEVER sharp 0px corners or full pill shapes.
+10. **Motion**: max `300ms` — fade, slide, counter animations only. NEVER floating/decorative motion or anything > 300ms.
+11. **Data visualization**: heatmaps, network graphs, GIS maps, risk matrices, time-series, Sankey diagrams. NEVER pie/donut charts or decorative infographics.
+12. **Logo**: the real Climactix Global logo asset (`/logo.png` in the Next.js app; `Climatix_logo.png` for legacy static pages) must be used everywhere a brand mark appears — never a text-only substitute or a hand-drawn SVG placeholder.
 
 ### Anti-patterns (absolutely forbidden):
-- Rounded corners > 6px anywhere except avatar circles
-- `backdrop-filter: blur()` on any surface
-- Gradient text or gradient backgrounds on panels
-- `transform: scale()` or `translateY()` on hover
-- Glowing box-shadows on cards or panels
-- Startup-style pill buttons
-- Warm charcoal (`#0C0C0E`) or organic green (`#4ADE80`) — those were the old system
-- Consumer UI spacing (80px+ section padding on analytics pages)
+- Bloomberg amber (`#FF6600`), the old IBM Plex Mono data-font system, or organic green (`#4ADE80`) — those were the v1/v2 systems, fully retired.
+- `backdrop-filter: blur()` on any surface.
+- Gradient text or gradient backgrounds on panels.
+- Glowing box-shadows, glassmorphism, or neumorphism on cards or panels.
+- Generic office photos, handshake stock imagery, leaf/eco icons, or cartoon illustrations.
+- Pie charts, donut charts, or decorative infographics.
+- Animations longer than 300ms or purely decorative motion.
+- More than 5 scroll sections on the marketing homepage.
 
 ---
 
@@ -128,7 +130,7 @@ Bloomberg Terminal · MSCI · BlackRock Aladdin · Moody's Analytics · S&P Glob
 **Rules:**
 - Prioritize dense but readable information layouts
 - Avoid consumer-grade UI patterns
-- Use institutional design language (see `DESIGN.md`)
+- Use institutional design language (see Design System section above)
 - Dark-mode optimized analytics interfaces
 
 ---
@@ -171,7 +173,7 @@ Bloomberg Terminal · MSCI · BlackRock Aladdin · Moody's Analytics · S&P Glob
 | `funding-hub.html` | Platform | VC pitch + Funding Hub |
 | `forum.html` | Platform | Discussion threads |
 | `assessment.html` | Platform | ERI 2.0 climate score assessment |
-| `DESIGN.md` | — | **Design system — read before any UI work** |
+| `style.css` / `institutional.css` | — | **Design system reference implementation — check before any UI work** |
 
 ---
 
@@ -253,8 +255,8 @@ Bloomberg Terminal · MSCI · BlackRock Aladdin · Moody's Analytics · S&P Glob
 - Production-grade only — no placeholder logic
 - Modular architecture, reusable components
 - Never hardcode colors — always use CSS variables from `:root`
-- The `--t` variable = `0.12s ease` — use for all transitions
-- `--amber-fg: #000000` is the text color ON amber buttons
+- The `--t` variable = `0.12s ease` — use for all transitions (DESIGN.md v3.0 caps animation duration at 300ms)
+- `#fff` is the text color on Royal Blue (`#0057FF`) buttons — never black-on-blue (insufficient contrast)
 - Strong typing required in TypeScript modules
 - No monolithic files — split logic from presentation
 

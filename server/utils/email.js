@@ -25,7 +25,7 @@ const brandedEmail = (title, preheader, bodyHTML) => `
         <!-- Header -->
         <tr>
           <td style="background:#0B3D2E;padding:32px 40px;text-align:center;">
-            <img src="${process.env.FRONTEND_URL}/Climatix_logo.png" alt="Climactix Global" style="height:48px;width:auto;filter:brightness(0) invert(1);" />
+            <img src="${process.env.FRONTEND_URL}/Climatix_logo.png" alt="Climactix Global" style="height:48px;width:auto;" />
             <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:8px 0 0;letter-spacing:1.5px;text-transform:uppercase;">ESG Intelligence Platform</p>
           </td>
         </tr>
