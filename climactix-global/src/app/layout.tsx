@@ -1,20 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Source_Sans_3, Merriweather } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/ui/QueryProvider";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
 
-const sourceSansPro = Source_Sans_3({
+const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-source-sans-pro",
-  display: "swap",
-});
-
-const merriweather = Merriweather({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-merriweather",
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-roboto",
   display: "swap",
 });
 
@@ -39,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${sourceSansPro.variable} ${merriweather.variable}`}>
+    <html lang="en" className={`dark ${roboto.variable}`}>
       <body className="bg-[#070B11] text-[#DDE7F2] min-h-screen antialiased">
         <QueryProvider>
           <ConditionalLayout>{children}</ConditionalLayout>

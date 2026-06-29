@@ -8,15 +8,15 @@ This file provides operational, architectural, and behavioral instructions for C
 
 **ALWAYS read `DESIGN.md` before writing or editing any HTML/CSS.**
 
-The Climactix design system is defined in [`DESIGN.md`](./DESIGN.md) — **Design System v3.1**. Every UI decision — colors, typography, spacing, borders, elevation, motion — must follow that file exactly. Do not deviate, invent new patterns, or fall back to the legacy amber/IBM-Plex-Mono system below.
+The Climactix design system is defined in [`DESIGN.md`](./DESIGN.md) — **Design System v3.2**. Every UI decision — colors, typography, spacing, borders, elevation, motion — must follow that file exactly. Do not deviate, invent new patterns, or fall back to the legacy amber/IBM-Plex-Mono system below.
 
-### Non-negotiable design rules (from DESIGN.md v3.1):
+### Non-negotiable design rules (from DESIGN.md v3.2):
 
 1. **Background**: `#000000` pure black, `#111111` charcoal (cards/panels), `#1A1A1A` graphite (inputs/elevated surfaces).
 2. **Primary accent**: `#0057FF` Royal Blue — CTAs, active nav, key metrics, important interactions. NEVER Bloomberg amber, organic green, or any color from the old system.
 3. **Secondary accent**: `#00C2FF` Data Cyan — live indicators, intelligence layers, GIS overlays, climate data visualizations.
 4. **Accent budget**: Royal Blue + Data Cyan combined must never exceed 10% of any screen.
-5. **Typography**: Source Sans Pro (primary UI, weights 400/600/700 only) for body text, nav, forms, dashboard UI, and all interface chrome. Helvetica (bold weights only) for hero/page/section/card headings and KPI titles. Merriweather for long-form editorial content only (reports, articles, whitepapers) — never in the dashboard or terminal UI. Inter and Space Grotesk (the v3.0 typefaces) are retired — do not reintroduce them. Load Source Sans Pro and Merriweather via self-hosted `next/font/google` in the Next.js app — never a runtime `@import` (unreliable, network-dependent). Helvetica is a system font; no web-font loading needed.
+5. **Typography**: Roboto is the single typeface for the entire site — every component (nav, hero, headings, body, cards, tables, forms, buttons, dashboard, terminal, reports). Weights 300/400/500/700 only — never 100/200/600/800/900. Source Sans Pro, Helvetica, Merriweather, Inter, and Space Grotesk (all prior-version typefaces) are retired — do not reintroduce them. Text *color* stays on the existing dark-mode tokens (`--text`, `--text-2`, etc. — white/light-grey on black); do not introduce light-theme text colors even if a future spec lists light-theme hex values — flag the conflict instead. Load Roboto via self-hosted `next/font/google` in the Next.js app — never a runtime `@import`.
 6. **Borders**: thin, neutral graphite/charcoal tones. NEVER `rgba` white overlays.
 7. **Elevation**: flat surfaces only — black → charcoal → graphite. NEVER `box-shadow`, glassmorphism, or neumorphism on panels.
 8. **Nav**: solid black background. NEVER `backdrop-filter: blur()`.

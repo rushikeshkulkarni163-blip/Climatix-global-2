@@ -73,9 +73,9 @@ const config: Config = {
       },
 
       fontFamily: {
-        sans:      ['"Source Sans Pro"', "Helvetica", "Arial", "sans-serif"],
-        heading:   ["Helvetica", "Arial", "sans-serif"],
-        editorial: ["Merriweather", "Georgia", "serif"],
+        sans:      ["Roboto", "Arial", "sans-serif"],
+        heading:   ["Roboto", "Arial", "sans-serif"],
+        editorial: ["Roboto", "Arial", "sans-serif"],
         mono:      ['"IBM Plex Mono"', "Consolas", "monospace"],
         data:      ['"IBM Plex Mono"', "Consolas", "monospace"],
       },
