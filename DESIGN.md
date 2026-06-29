@@ -1,4 +1,4 @@
-# Climactix Global Design System v3.0
+# Climactix Global Design System v3.1
 
 ## Vision
 
@@ -104,27 +104,76 @@ Accent colors must never exceed 10% of the screen.
 
 # Typography
 
-## Primary Font
+Adopted from the NASA Web Design System's typographic principles — clean, authoritative, scientific, institutional. Not a NASA branding copy; a typographic discipline borrowed from it. Inter and Space Grotesk (the v3.0 typefaces) are retired.
 
-Inter
+## Primary UI Font — Source Sans Pro
 
-Weights:
+```css
+--font-ui: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+```
 
-* 300
-* 400
-* 500
-* 600
-* 700
+Weights: 400, 600, 700 only. Never 100, 200, 300, 500, 800, 900.
 
-## Secondary Font
+Apply to: navigation, buttons, forms, cards, labels, menus, footer, dashboard UI, tables, captions, metadata, sidebars, filters, search, tooltips, modals.
 
-Space Grotesk
+## Heading Font — Helvetica
 
-Use for:
+```css
+--font-heading: Helvetica, Arial, sans-serif;
+```
 
-* Hero headings
-* Dashboard metrics
-* Terminal interfaces
+Bold weights only (700; 600 for sub-headings). Apply to: hero titles, section titles, card headings, dashboard titles, KPI titles, terminal headings.
+
+## Editorial Font — Merriweather
+
+```css
+--font-editorial: Merriweather, Georgia, serif;
+```
+
+Apply only to: long-form articles, research papers, climate reports, blog content, publications, whitepapers, documentation. Never inside the dashboard or terminal UI.
+
+## Type Scale
+
+| Role | Size | Weight | Line-height |
+|---|---|---|---|
+| Hero | 64px (52px tablet / 38px mobile) | 700 | 1.05 |
+| Page Heading | 48px | 700 | 1.15 |
+| Section Heading | 36px | 700 | 1.15 |
+| Sub Heading | 28px | 600 | 1.15 |
+| Card Heading | 22px | 600 | 1.15 |
+| Body Large | 18px | 400 | 1.6 |
+| Body | 16px | 400 | 1.6 |
+| Small Text | 14px | 400 | 1.6 |
+| Caption | 12px | 400 | 1.5 |
+
+Scale hero/heading sizes proportionally at tablet and mobile breakpoints; never let body/caption sizes shrink below their listed value.
+
+## Letter Spacing
+
+* Headings: `-0.02em`
+* Body: `0`
+* Buttons: `0.03em`
+* Navigation: `0.04em`
+
+Never exaggerate spacing beyond these values.
+
+## Layout Rules
+
+* Paragraph measure: 720–780px max width. Never full-width text blocks.
+* Alignment: left-aligned everywhere except the hero, which may center.
+
+## Component Specifics
+
+* **Dashboard**: Source Sans Pro throughout. Numbers 700 weight. Tables 14px. Filters 14px. Sidebar 15px. Metrics 18px. Terminal 16px.
+* **Buttons**: Source Sans Pro, 16px, 600 weight, sentence case (no uppercase), letter-spacing `0.03em`.
+* **Navigation**: Source Sans Pro, 18px, 600 weight, letter-spacing `0.04em`.
+* **Forms**: Labels 14px/600. Input 16px/400. Helper text 13px. Placeholder 15px.
+* **Cards**: Title 22px/600 (Helvetica). Body 16px/400 (Source Sans Pro). Metadata 13px.
+* **Footer**: Body 15px/400. Links 15px/600.
+
+## Anti-Patterns (typography)
+
+No gradient text, glow effects, neon typography, shadowed text, decorative or futuristic fonts, oversized marketing headlines, or floating text effects. Typography must read as calm, scientific, and institutional — never as an AI-startup display face.
 
 ---
 

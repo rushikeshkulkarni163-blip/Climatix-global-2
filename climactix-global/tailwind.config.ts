@@ -73,9 +73,11 @@ const config: Config = {
       },
 
       fontFamily: {
-        sans:  ['"IBM Plex Sans"', "Inter", "Arial", "Helvetica Neue", "system-ui", "sans-serif"],
-        mono:  ['"IBM Plex Mono"', "Consolas", "monospace"],
-        data:  ['"IBM Plex Mono"', "Consolas", "monospace"],
+        sans:      ['"Source Sans Pro"', "Helvetica", "Arial", "sans-serif"],
+        heading:   ["Helvetica", "Arial", "sans-serif"],
+        editorial: ["Merriweather", "Georgia", "serif"],
+        mono:      ['"IBM Plex Mono"', "Consolas", "monospace"],
+        data:      ['"IBM Plex Mono"', "Consolas", "monospace"],
       },
 
       fontSize: {

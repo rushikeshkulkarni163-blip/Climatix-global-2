@@ -1,20 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Source_Sans_3, Merriweather } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/ui/QueryProvider";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
 
-const inter = Inter({
+const sourceSansPro = Source_Sans_3({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-inter",
+  weight: ["400", "600", "700"],
+  variable: "--font-source-sans-pro",
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const merriweather = Merriweather({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
+  weight: ["400", "700"],
+  variable: "--font-merriweather",
   display: "swap",
 });
 
@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" className={`dark ${sourceSansPro.variable} ${merriweather.variable}`}>
       <body className="bg-[#070B11] text-[#DDE7F2] min-h-screen antialiased">
         <QueryProvider>
           <ConditionalLayout>{children}</ConditionalLayout>
