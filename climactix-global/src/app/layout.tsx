@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto } from "next/font/google";
+import { Roboto, Source_Sans_3, Merriweather } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/ui/QueryProvider";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
@@ -8,6 +8,21 @@ const roboto = Roboto({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
   variable: "--font-roboto",
+  display: "swap",
+});
+
+// Design System v4.0 (NASA × MSCI light theme) — used by /dashboard only.
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-source-sans",
+  display: "swap",
+});
+
+const merriweather = Merriweather({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-merriweather",
   display: "swap",
 });
 
@@ -32,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${roboto.variable}`}>
+    <html lang="en" className={`dark ${roboto.variable} ${sourceSans.variable} ${merriweather.variable}`}>
       <body className="bg-[#070B11] text-[#DDE7F2] min-h-screen antialiased">
         <QueryProvider>
           <ConditionalLayout>{children}</ConditionalLayout>

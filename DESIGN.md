@@ -1,4 +1,4 @@
-# Climactix Global Design System v3.2
+# Climactix Global Design System v4.0
 
 ## Vision
 
@@ -9,6 +9,14 @@ This is not an ESG platform.
 This is not a sustainability consultancy.
 
 This is a decision intelligence platform that converts climate data into financial, operational, supply-chain, and regulatory insights.
+
+---
+
+## Migration note (v3.2 → v4.0)
+
+v4.0 supersedes v3.2 as the design system of record for all new and rebuilt surfaces, starting with the Enterprise Dashboard. It replaces the v3.2 dark/Royal-Blue/Roboto system with a light, NASA-Earth-Observatory × MSCI-inspired system.
+
+Existing shipped pages built under v3.2 (dark theme, Royal Blue `#0057FF` / Data Cyan `#00C2FF`, Roboto) are **not** retroactively repainted by this change. They keep their current v3.2 styling until they are individually rebuilt. Any net-new page, or any page explicitly brought in for a redesign, must follow v4.0 below. Do not mix v3.2 and v4.0 tokens on the same page.
 
 ---
 
@@ -28,7 +36,7 @@ Enable organizations to understand, quantify, and act on climate-related risks t
 
 ## User Perception
 
-When users visit the website, they should feel:
+When users visit the platform, they should feel:
 
 * Institutional
 * Premium
@@ -38,7 +46,7 @@ When users visit the website, they should feel:
 * Government-ready
 * Investor-ready
 
-The experience should feel closer to Bloomberg, BlackRock Aladdin, Palantir Foundry, and NASA Earth Observatory than a sustainability consultancy.
+The experience should feel closer to NASA's web design system (clarity, precision, scientific communication) and MSCI's structured information density than a sustainability consultancy, AI startup, or Web3 product.
 
 ---
 
@@ -51,462 +59,173 @@ The experience should feel closer to Bloomberg, BlackRock Aladdin, Palantir Foun
 * Data-first
 * Enterprise-grade
 * High-trust
-* Premium
+* Scientific
+* Precise
 
-Avoid startup aesthetics.
-
-Avoid excessive animations.
-
-Avoid generic ESG visuals.
-
-Avoid sustainability clichés.
+Avoid startup aesthetics. Avoid AI-gimmick visuals. Avoid crypto/Web3 styling. Avoid glassmorphism. Avoid neon or glow. Avoid generic ESG visuals. Avoid sustainability clichés.
 
 ---
 
 # Color System
 
-## Primary Colors
+## Primary Colors (Light Theme)
 
 ```css
---black: #000000;
---charcoal: #111111;
---graphite: #1A1A1A;
---white: #FFFFFF;
---off-white: #F7F7F7;
+--bg: #FFFFFF;
+--surface: #FAFAFA;
+--card: #FFFFFF;
+--border: #D9D9D9;
+--text: #111111;       /* primary text */
+--text-2: #4F4F4F;     /* secondary text */
+--text-muted: #6B7280; /* muted/tertiary text */
 ```
 
-## Accent Colors
+## Accent & Status Colors
 
 ```css
---royal-blue: #0057FF;
---data-cyan: #00C2FF;
+--accent: #0B3D91;     /* NASA Blue */
+--success: #1E8E3E;
+--warning: #B45309;
+--critical: #DC2626;
 ```
 
 ## Usage Rules
 
-Royal Blue:
+NASA Blue (`--accent`):
 
-* CTA buttons
-* Active navigation
-* Key metrics
-* Important interactions
+* Primary CTA buttons
+* Active navigation state
+* Key metrics / primary KPI values
+* Links and interactive affordances
+* Selected/focused states
 
-Data Cyan:
+Success / Warning / Critical:
 
-* Live indicators
-* Intelligence layers
-* GIS overlays
-* Climate data visualizations
+* Risk status badges, alert severity, trend indicators, scenario thresholds
+* Never used decoratively — only to encode a real status or risk level
 
-Accent colors must never exceed 10% of the screen.
+Accent + status colors combined must never exceed ~10% of any screen's surface area — color encodes meaning, not decoration.
+
+## Forbidden
+
+* No gradients (text or background)
+* No glowing effects or neon
+* No glassmorphism or `backdrop-filter: blur()`
+* No neumorphism
+* No box-shadow used for decorative depth (elevation is conveyed via flat surface steps and 1px borders — see Elevation below)
+* No Bloomberg amber (`#FF6600`), no organic green (`#4ADE80`), no Royal Blue (`#0057FF`) / Data Cyan (`#00C2FF`) — those are the retired v3.2 dark-theme accents
+
+## Elevation
+
+Flat surfaces only, conveyed by background-step + thin border, never shadow:
+
+`--bg` (white) → `--surface` (`#FAFAFA`) → `--card` (white panel with `1px solid var(--border)`).
 
 ---
 
 # Typography
 
-Single institutional typeface system inspired by MSCI — authoritative, timeless, highly readable. Source Sans Pro, Helvetica, and Merriweather (the v3.1 typefaces) are retired. Never mix multiple font families on one page.
-
-## Font — Roboto (the only typeface)
+NASA-inspired hierarchy. Unlike v3.2 (single Roboto typeface), v4.0 uses **role-based font families** — do not substitute one role's font for another's.
 
 ```css
---font: 'Roboto', Arial, sans-serif;
+--font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-body: 'Source Sans Pro', Arial, sans-serif;
+--font-report: 'Merriweather', Georgia, serif;
+--font-number: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* bold only */
 ```
 
-Used for every component: navigation, hero, headings, body, cards, reports, tables, charts, forms, buttons, sidebars, popups, modals, tooltips, footer, login/registration, assessment portal, company profiles, climate risk maps, investor reports, government portal.
+* **Headings** (nav labels, page titles, section titles, card titles): Helvetica.
+* **Body** (paragraphs, table cells, form inputs, descriptions, tooltips): Source Sans Pro.
+* **Reports** (generated PDF/report bodies — ESG, BRSR, TCFD, CSRD, board summaries): Merriweather, for print-grade readability.
+* **Numbers** (KPI values, dashboard metrics, table numeric columns): Bold Helvetica — always bold, never another weight, set in a tabular/monospaced-numeral style where the font supports it.
 
-Weights: **300, 400, 500, 700 only.** Never 100, 200, 600, 800, 900. Avoid unnecessary weights — most UI should sit at 400 (body) or 500 (labels/nav/buttons), with 700 reserved for headings and KPI numbers and 300 for light/large display accents.
-
-In the Next.js app, load via Next.js Font Optimization (`next/font/google`), not a runtime `@import`. On the vanilla HTML site, load via a single Google Fonts `@import`/`<link>` per page.
-
-Color: typography tokens here are font/size/weight/spacing only. Text *color* stays on the existing dark-mode system (`--text`, `--text-2`, `--text-muted` etc. — white/light-grey on black, per the Color System above). Do not introduce light-theme text colors.
+Load both Helvetica Neue (system font, no load needed — falls back to Arial) and Source Sans Pro / Merriweather via self-hosted `next/font/google` in the Next.js app. Never a runtime `@import`.
 
 ## Type Scale
 
 | Role | Size | Weight | Line-height |
 |---|---|---|---|
-| Display Hero | 56px | 700 | 1.1 |
-| Page Title | 40px | 700 | 1.1 |
-| Section Title | 32px | 700 | 1.1 |
-| Subsection | 24px | 700 | 1.1 |
-| Card Title | 20px | 700 | 1.1 |
-| Large Body | 18px | 400 | 1.6 |
-| Standard Body | 16px | 400 | 1.6 |
-| Small Text | 14px | 400 | 1.6 |
-| Caption | 12px | 400 | 1.5 |
-| Label | 13px | 500 | 1.5 |
-| Navigation | 15px | 500 | 1.5 |
-| Button | 15px | 600→500* | — |
+| Page Title | 32px | 700 | 1.2 |
+| Section Title | 24px | 700 | 1.2 |
+| Card Title | 18px | 700 | 1.3 |
+| Large Body | 16px | 400 | 1.6 |
+| Standard Body | 14px | 400 | 1.6 |
+| Small / Caption | 12px | 400 | 1.5 |
+| Label | 12px | 500 | 1.4 |
+| Nav Item | 14px | 500 | 1.4 |
+| Button | 14px | 500 | 1.4 |
 
-\* The spec calls for button weight 600, but 600 is outside the allowed Roboto weight set (300/400/500/700) — rounded to 500 to keep strictly within the allowed weights. Same resolution applies anywhere "600" appears below: treated as 500.
-
-**Metric numbers** (dashboard KPIs, scores): 56px / 48px / 36px, always weight 700, letter-spacing `-0.03em`.
-
-Responsive: scale Display Hero proportionally down at tablet/mobile; never shrink body/caption below their listed size.
-
-## Line Height
-
-* Headings: 110% (1.1)
-* Paragraphs: 160% (1.6)
-* Tables: 150% (1.5)
-* Lists: 160% (1.6)
-
-## Letter Spacing
-
-* Headings: `-0.02em`
-* Body: `0`
-* Buttons: `0.02em`
-* Tables: `0.03em`
-* Navigation: `0.04em`
+**KPI / metric numbers**: 36px (large), 28px (medium), 20px (small) — always Bold Helvetica, tight letter-spacing (`-0.01em`).
 
 ## Text Rules
 
-* Never use ALL CAPS for headings. Sentence case throughout the interface.
-* Uppercase is permitted only for: small section eyebrow labels, status badges, navigation categories.
-* Avoid excessive bold text — bold is for headings, KPI numbers, and table headers only.
-
-## Component Specifics
-
-* **Tables**: row height 48px. Headers 15px/500. Content 15px/400. Numbers right-aligned, text left-aligned. Line-height 150%.
-* **Cards**: Title 20px/700. Description 16px/400. Metadata 13px/400. KPIs 48–56px/700.
-* **Dashboard metrics**: Large 56px, Medium 40px, Small 28px — always weight 700.
-* **Forms**: Labels 13px/500. Input 16px/400. Helper text 13px/400. Error text 13px/400.
-* **Buttons**: 15px/500 (rounded from spec's 600), sentence case, letter-spacing `0.02em`.
-* **Navigation**: 15px/500, letter-spacing `0.04em`.
-* **Reports**: Executive heading 40px. Section heading 24px. Body 16px. Tables 15px. Footnotes 12px.
-* **Footer**: Body 15px/400. Links 15px/500.
-
-## Layout Rules
-
-* Maintain generous white space; increase readability through spacing, not larger font sizes.
-* Paragraph measure: 720–780px max width. Never full-width text blocks.
-* Alignment: left-aligned everywhere except the hero, which may center.
-
-## Anti-Patterns (typography)
-
-No decorative or futuristic fonts, no gradient text, no glow effects, no shadowed text, no oversized marketing headlines, no floating text effects, no mixing of multiple font families. Typography must read as timeless, authoritative, and institutional — comparable to MSCI, Bloomberg, BlackRock, and Moody's.
+* Sentence case throughout. No ALL CAPS headings.
+* Uppercase reserved for: eyebrow labels, status badges, breadcrumb segments.
+* Generous whitespace and clear hierarchy over decoration — let spacing, not font size, carry readability.
+* Paragraph measure: 720–780px max width.
 
 ---
 
-# Website Structure
+# Layout System
 
-Maximum 5 Scroll Sections
+## Grid
 
----
+12-column responsive grid. Max content width: **1600px**.
 
-# Section 1 — Hero
+## Spacing Scale
 
-## Background
+`8 / 16 / 24 / 32 / 48 / 64` px — no arbitrary spacing values outside this scale.
 
-3D Earth Globe
+## Desktop Shell
 
-Live rotating globe with climate intelligence overlays.
-
-Layers:
-
-* Flood Risk
-* Drought Risk
-* Heat Stress
-* Cyclone Exposure
-* Carbon Exposure
-* Supply Chain Risk
-
-## Headline
-
-Climate Risk Intelligence
-for Capital Allocation
-
-## Subheadline
-
-Transform climate, supply chain, and regulatory data into decision-grade intelligence.
-
-## CTA
-
-Primary:
-Request Enterprise Demo
-
-Secondary:
-Explore Platform
-
----
-
-# Section 2 — The Risk Landscape
-
-## Title
-
-Climate Risk Is Now a Financial Risk
-
-Three Intelligence Cards
-
-### Physical Risk
-
-* Floods
-* Heatwaves
-* Droughts
-* Cyclones
-
-### Transition Risk
-
-* Carbon pricing
-* Regulatory shifts
-* Decarbonization costs
-
-### Disclosure Risk
-
-* ESG reporting gaps
-* Greenwashing exposure
-* Compliance risks
-
-Each card should include:
-
-* Financial impact
-* Business disruption
-* Regulatory exposure
-
----
-
-# Section 3 — Climactix Intelligence Platform
-
-## Visualization
-
-Interactive Intelligence Network
-
-Do not use separate cards.
-
-Display all modules connected together.
-
-Modules:
-
-* Climate Risk Engine
-* Supply Chain Intelligence
-* Narrative Intelligence
-* Regulatory Intelligence
-* Scenario Simulator
-* Greenwashing Risk Scanner
-* Climate Intelligence Reports
-* Climactix Terminal
-
-The network should feel similar to a command center.
-
----
-
-# Section 4 — Intelligence Outputs
-
-## Title
-
-Decision Intelligence Outputs
-
-Display outputs using Bloomberg-style dashboard panels.
-
-### Metrics
-
-* Climate Risk Score
-* Revenue at Risk
-* Transition Exposure Index
-* Supply Chain Risk Score
-* Disclosure Credibility Score
-* Carbon Exposure Index
-* Climate Resilience Score
-
-### Reports
-
-* Climate Risk Report
-* Transition Risk Briefing
-* Supply Chain Exposure Report
-* Climate Scenario Analysis
-* Regulatory Intelligence Note
-* Greenwashing Assessment
-
----
-
-# Section 5 — Trust & Infrastructure
-
-## Title
-
-Powered by Global Climate Intelligence
-
-### Data Sources
-
-* NASA
-* Copernicus
-* NOAA
-* World Bank
-* IPCC
-* NGFS
-* ISSB
-* SASB
-* GRI
-* TCFD
-
-### Closing Statement
-
-Built for Governments.
-Designed for Investors.
-Trusted by Enterprises.
-
-### CTA
-
-Book Enterprise Demo
-
----
-
-# Dashboard Design
-
-## Theme
-
-Default: Dark Mode
-
-Optional: Light Mode
-
----
-
-## Dashboard Colors
-
-```css
-background: #0A0A0A;
-panel: #151515;
-border: #252525;
+```
+--------------------------------------------------------
+Top Navigation
+--------------------------------------------------------
+Left Nav  |  Main Dashboard  |  Right Intelligence Panel
+--------------------------------------------------------
+Footer
 ```
 
----
+* **Left sidebar**: persistent, collapsed/expanded modes, simple line icons only (no gradient icon fills).
+* **Top nav**: logo + search (left), breadcrumb (center), notifications/tasks/messages/user/dark-mode toggle/command palette (right).
+* **Right intelligence panel**: AI insights — top risks, recent changes, data quality, emerging risks, suggested actions, regulatory alerts. Updates dynamically, never static.
 
-## Panel Design
+## Border Radius
 
-* Minimal
-* No shadows
-* No glassmorphism
-* No neumorphism
-* Border radius: 8px
-* Thin borders
+`8px` on cards, panels, buttons, inputs. No sharp 0px corners, no full pill shapes (status badges/chips may use pill shape — that is the one exception).
 
 ---
 
-# Core Dashboard Modules
+# Motion
 
-## Executive Intelligence
-
-* Climate Risk Score
-* Company Summary
-* Key Risks
-* Recommendations
-
-## Climate Risk Engine
-
-* Physical Risk Analysis
-* Hazard Mapping
-* Risk Exposure
-
-## Supply Chain Intelligence
-
-* Vendor Risk
-* Geographic Exposure
-* Logistics Vulnerability
-
-## Scenario Simulator
-
-* 1.5°C Scenario
-* 2°C Scenario
-* 3°C Scenario
-
-Outputs:
-
-* Revenue impact
-* Cost impact
-* Asset impact
-
-## Regulatory Intelligence
-
-Track:
-
-* CSRD
-* ISSB
-* SEC
-* BRSR
-* EU ETS
-* CBAM
-
-## Narrative Intelligence
-
-Analyze:
-
-* Annual Reports
-* Sustainability Reports
-* Earnings Calls
-* Corporate Websites
-
-Generate:
-
-* Trust Index
-* Credibility Score
-* Narrative Risk Score
-
-## Greenwashing Risk Scanner
-
-Identify:
-
-* Unsupported claims
-* Missing disclosures
-* Inconsistencies
-* Regulatory exposure
+* Hover, elevation-step, fade, slide, expand only.
+* Duration: **150–250ms**.
+* No bouncing, no floating/decorative motion, no animation longer than 250ms.
 
 ---
 
 # Data Visualization Guidelines
 
-Preferred:
+Preferred: heatmaps, network graphs, GIS/satellite maps, 5×5 risk matrices, time-series with zoom/hover/compare/export/filter/annotate, Sankey diagrams.
 
-* Heatmaps
-* Network Graphs
-* GIS Maps
-* Risk Matrices
-* Time-Series Analysis
-* Sankey Diagrams
+Forbidden: pie charts, donut charts, decorative infographics, screenshots in place of live chart components.
 
-Avoid:
-
-* Pie Charts
-* Donut Charts
-* Decorative Infographics
+All charts/tables/maps must be data-driven and API-ready — no static images.
 
 ---
 
-# Animation Guidelines
+# Components
 
-Maximum duration:
+One shared design language across: Button, Input, Dropdown/Select, Card, Badge, Table (sticky header, sortable, filterable, pinnable columns, resizable, paginated, CSV/PDF export), Tabs, Accordion, Dialog, Toast/Notification, Tooltip, Progress, Empty State, Loading/Skeleton.
 
-300ms
-
-Allowed:
-
-* Fade
-* Slide
-* Counter animations
-
-Avoid:
-
-* Floating elements
-* Excessive movement
-* Decorative motion effects
+Design tokens (spacing, type, color, radius, elevation) must be defined once as CSS variables / Tailwind theme extensions and consumed everywhere — never hardcoded hex or px values in component files.
 
 ---
 
-# Imagery Guidelines
+# Accessibility
 
-Use:
-
-* Satellite imagery
-* Earth observation imagery
-* Climate hazard maps
-* Financial intelligence dashboards
-* Infrastructure imagery
-* Supply chain networks
-
-Never use:
-
-* Generic office photos
-* People shaking hands
-* Stock sustainability imagery
-* Leaves and eco icons
-* Cartoon illustrations
+WCAG AA minimum. Full keyboard navigation. Visible focus states. ARIA labels on all interactive elements. Semantic HTML. Screen-reader support. Maintain AA contrast ratios on every text/background pairing defined in the Color System above.
 
 ---
 
@@ -519,38 +238,25 @@ Every screen must answer:
 3. What is the financial impact?
 4. What action should be taken?
 
-The user should feel:
+The user should feel: "I am using a climate risk intelligence terminal built for institutional decision-making."
 
-"I am using a Climate Intelligence Terminal."
-
-Not:
-
-"I am browsing a sustainability consultancy website."
+Not: "I am browsing an AI startup dashboard or a marketing demo."
 
 ---
 
 # Competitive Benchmark
 
-Reference Design Inspiration:
+Reference inspiration only — never copy layouts, branding, or proprietary elements:
 
+* NASA web design system / NASA Earth Observatory
+* MSCI
 * Bloomberg Terminal
 * BlackRock Aladdin
-* Palantir Foundry
-* Climate X
 * Moody's Analytics
 * S&P Global
-* NASA Earth Observatory
-
-Do not copy.
-
-Use only as design inspiration.
 
 ---
 
 # Final Design Philosophy
 
-Climactix Global should become the Bloomberg of Climate Risk Intelligence.
-
-Every page, chart, module, report, and interaction should reinforce one message:
-
-"Climate data transformed into decision-grade intelligence."
+Climactix Global should read as institutional decision-support infrastructure for governments, banks, insurers, regulators, and global enterprises — scientific rigor plus financial analysis plus operational usability. Every layout decision, component, and interaction reinforces trust, clarity, and analytical depth.

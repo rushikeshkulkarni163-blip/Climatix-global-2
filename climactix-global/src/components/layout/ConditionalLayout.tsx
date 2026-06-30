@@ -5,8 +5,9 @@ import TerminalSidebar from "@/components/terminal/TerminalSidebar";
 import TerminalTopBar  from "@/components/terminal/TerminalTopBar";
 
 // Routes that use the full Intelligence OS shell
+// NOTE: "/dashboard" intentionally excluded — it has its own v4.0 shell
+// (see src/app/dashboard/layout.tsx) and must not pick up this dark shell.
 const INTEL_SHELL_PREFIXES = [
-  "/dashboard",
   "/terminal",
   "/climate-identity",
   "/risk-propagation",

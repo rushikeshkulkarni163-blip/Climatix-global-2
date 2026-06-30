@@ -244,3 +244,57 @@ export const useAdminStore = create<AdminStore>()((set) => ({
     set((state) => ({ content: state.content.filter((c) => c.id !== id) })),
   setSaving: (isSaving) => set({ isSaving }),
 }));
+
+// ── Dashboard (v4.0) Store ─────────────────────────────────────────────────────
+// Scoped UI state for the rebuilt /dashboard route only — kept separate from
+// useMapStore/useSimulationStore above, which are shared by other Intel-OS pages.
+
+export interface DashboardMapLayer {
+  id: string;
+  label: string;
+  active: boolean;
+}
+
+interface RiskCellSelection {
+  probability: number;
+  impact: number;
+}
+
+interface DashboardStore {
+  sidebarCollapsed: boolean;
+  toggleSidebar: () => void;
+  commandPaletteOpen: boolean;
+  setCommandPaletteOpen: (open: boolean) => void;
+  mapLayers: DashboardMapLayer[];
+  toggleMapLayer: (id: string) => void;
+  selectedAssetId: string | null;
+  setSelectedAssetId: (id: string | null) => void;
+  selectedRiskCell: RiskCellSelection | null;
+  setSelectedRiskCell: (cell: RiskCellSelection | null) => void;
+}
+
+export const useDashboardStore = create<DashboardStore>()((set) => ({
+  sidebarCollapsed: false,
+  toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+  commandPaletteOpen: false,
+  setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+  mapLayers: [
+    { id: "assets", label: "Assets", active: true },
+    { id: "suppliers", label: "Suppliers", active: true },
+    { id: "flood", label: "Flood Risk", active: false },
+    { id: "heat", label: "Heat Risk", active: false },
+    { id: "wildfire", label: "Wildfire", active: false },
+    { id: "cyclone", label: "Cyclones", active: false },
+    { id: "ports", label: "Ports", active: false },
+    { id: "plants", label: "Manufacturing Plants", active: false },
+    { id: "satellite", label: "Satellite Layer", active: false },
+  ],
+  toggleMapLayer: (id) =>
+    set((state) => ({
+      mapLayers: state.mapLayers.map((l) => (l.id === id ? { ...l, active: !l.active } : l)),
+    })),
+  selectedAssetId: null,
+  setSelectedAssetId: (id) => set({ selectedAssetId: id }),
+  selectedRiskCell: null,
+  setSelectedRiskCell: (cell) => set({ selectedRiskCell: cell }),
+}));

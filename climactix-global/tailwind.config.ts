@@ -70,6 +70,28 @@ const config: Config = {
           2: "#111C2B",
           3: "#152235",
         },
+
+        // ── Design System v4.0 — NASA × MSCI light theme ─────────
+        // Scoped to /dashboard and rebuilt surfaces only. Do not use
+        // alongside `intel.*` on the same page (see DESIGN.md v4.0).
+        ds: {
+          bg:       "#FFFFFF",
+          surface:  "#FAFAFA",
+          card:     "#FFFFFF",
+          border:   "#D9D9D9",
+          text:     "#111111",
+          text2:    "#4F4F4F",
+          muted:    "#6B7280",
+          accent:   "#0B3D91",
+          "accent-hi": "#0A2F70",
+          "accent-bg": "#EAF0FA",
+          success:  "#1E8E3E",
+          "success-bg": "#E8F5EA",
+          warning:  "#B45309",
+          "warning-bg": "#FBF1E6",
+          critical: "#DC2626",
+          "critical-bg": "#FCEAEA",
+        },
       },
 
       fontFamily: {
@@ -78,6 +100,12 @@ const config: Config = {
         editorial: ["Roboto", "Arial", "sans-serif"],
         mono:      ['"IBM Plex Mono"', "Consolas", "monospace"],
         data:      ['"IBM Plex Mono"', "Consolas", "monospace"],
+
+        // ── Design System v4.0 — role-based families ─────────────
+        "ds-heading": ["Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+        "ds-body":    ["var(--font-source-sans)", "Helvetica Neue", "Arial", "sans-serif"],
+        "ds-report":  ["var(--font-merriweather)", "Georgia", "serif"],
+        "ds-number":  ["Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
       },
 
       fontSize: {

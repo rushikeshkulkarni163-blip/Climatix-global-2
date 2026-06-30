@@ -8,31 +8,34 @@ This file provides operational, architectural, and behavioral instructions for C
 
 **ALWAYS read `DESIGN.md` before writing or editing any HTML/CSS.**
 
-The Climactix design system is defined in [`DESIGN.md`](./DESIGN.md) — **Design System v3.2**. Every UI decision — colors, typography, spacing, borders, elevation, motion — must follow that file exactly. Do not deviate, invent new patterns, or fall back to the legacy amber/IBM-Plex-Mono system below.
+The Climactix design system is defined in [`DESIGN.md`](./DESIGN.md) — **Design System v4.0**. Every UI decision — colors, typography, spacing, borders, elevation, motion — must follow that file exactly. Do not deviate or invent new patterns.
 
-### Non-negotiable design rules (from DESIGN.md v3.2):
+v4.0 (light, NASA × MSCI-inspired) is the standard for all **new and rebuilt** surfaces, starting with the Enterprise Dashboard. Pages already shipped under the retired v3.2 dark system keep their current styling until individually rebuilt — never mix v3.2 and v4.0 tokens on the same page. See DESIGN.md's "Migration note" for the v3.2 → v4.0 boundary.
 
-1. **Background**: `#000000` pure black, `#111111` charcoal (cards/panels), `#1A1A1A` graphite (inputs/elevated surfaces).
-2. **Primary accent**: `#0057FF` Royal Blue — CTAs, active nav, key metrics, important interactions. NEVER Bloomberg amber, organic green, or any color from the old system.
-3. **Secondary accent**: `#00C2FF` Data Cyan — live indicators, intelligence layers, GIS overlays, climate data visualizations.
-4. **Accent budget**: Royal Blue + Data Cyan combined must never exceed 10% of any screen.
-5. **Typography**: Roboto is the single typeface for the entire site — every component (nav, hero, headings, body, cards, tables, forms, buttons, dashboard, terminal, reports). Weights 300/400/500/700 only — never 100/200/600/800/900. Source Sans Pro, Helvetica, Merriweather, Inter, and Space Grotesk (all prior-version typefaces) are retired — do not reintroduce them. Text *color* stays on the existing dark-mode tokens (`--text`, `--text-2`, etc. — white/light-grey on black); do not introduce light-theme text colors even if a future spec lists light-theme hex values — flag the conflict instead. Load Roboto via self-hosted `next/font/google` in the Next.js app — never a runtime `@import`.
-6. **Borders**: thin, neutral graphite/charcoal tones. NEVER `rgba` white overlays.
-7. **Elevation**: flat surfaces only — black → charcoal → graphite. NEVER `box-shadow`, glassmorphism, or neumorphism on panels.
-8. **Nav**: solid black background. NEVER `backdrop-filter: blur()`.
-9. **Border-radius**: `8px` on cards, panels, and buttons (per DESIGN.md "Panel Design"). NEVER sharp 0px corners or full pill shapes.
-10. **Motion**: max `300ms` — fade, slide, counter animations only. NEVER floating/decorative motion or anything > 300ms.
-11. **Data visualization**: heatmaps, network graphs, GIS maps, risk matrices, time-series, Sankey diagrams. NEVER pie/donut charts or decorative infographics.
+### Non-negotiable design rules (from DESIGN.md v4.0):
+
+1. **Background**: `#FFFFFF` white, `#FAFAFA` surface, white cards with `#D9D9D9` thin borders. NEVER pure black backgrounds on v4.0 surfaces.
+2. **Primary accent**: `#0B3D91` NASA Blue — CTAs, active nav, key metrics, important interactions. NEVER Royal Blue `#0057FF`, Data Cyan `#00C2FF`, Bloomberg amber, or organic green (all retired v1–v3.2 colors).
+3. **Status colors**: success `#1E8E3E`, warning `#B45309`, critical `#DC2626` — used only to encode real risk/status, never decoratively.
+4. **Accent budget**: NASA Blue + status colors combined must never exceed ~10% of any screen.
+5. **Typography**: role-based, not single-typeface — Helvetica for headings/nav, Source Sans Pro for body, Merriweather for generated reports, Bold Helvetica for KPI/numeric values. Roboto (the v3.2 typeface) is retired on v4.0 surfaces. Text color stays on light-theme tokens (`--text: #111111`, `--text-2: #4F4F4F`, `--text-muted: #6B7280`) — never reintroduce white-on-black text on a v4.0 page. Load fonts via self-hosted `next/font/google` in the Next.js app — never a runtime `@import`.
+6. **Borders**: thin `#D9D9D9` neutral borders. NEVER `rgba` white overlays.
+7. **Elevation**: flat surfaces only, conveyed by background-step + 1px border (white → `#FAFAFA` → card). NEVER `box-shadow`, glassmorphism, or neumorphism on panels.
+8. **Nav**: solid white background. NEVER `backdrop-filter: blur()`.
+9. **Border-radius**: `8px` on cards, panels, buttons, inputs. NEVER sharp 0px corners or full pill shapes (status badges/chips are the one pill exception).
+10. **Motion**: `150–250ms` — hover, elevation-step, fade, slide, expand only. NEVER floating/decorative motion or anything > 250ms.
+11. **Data visualization**: heatmaps, network graphs, GIS/satellite maps, 5×5 risk matrices, time-series with zoom/hover/export/filter, Sankey diagrams. NEVER pie/donut charts, decorative infographics, or static screenshots in place of live components.
 12. **Logo**: the real Climactix Global logo asset (`/logo.png` in the Next.js app; `Climatix_logo.png` for legacy static pages) must be used everywhere a brand mark appears — never a text-only substitute or a hand-drawn SVG placeholder.
 
 ### Anti-patterns (absolutely forbidden):
-- Bloomberg amber (`#FF6600`), the old IBM Plex Mono data-font system, or organic green (`#4ADE80`) — those were the v1/v2 systems, fully retired.
+- Royal Blue (`#0057FF`), Data Cyan (`#00C2FF`), Bloomberg amber (`#FF6600`), organic green (`#4ADE80`) — all retired prior-version accents.
 - `backdrop-filter: blur()` on any surface.
 - Gradient text or gradient backgrounds on panels.
 - Glowing box-shadows, glassmorphism, or neumorphism on cards or panels.
 - Generic office photos, handshake stock imagery, leaf/eco icons, or cartoon illustrations.
 - Pie charts, donut charts, or decorative infographics.
-- Animations longer than 300ms or purely decorative motion.
+- Animations longer than 250ms or purely decorative motion.
+- AI-startup, crypto/Web3, or glassmorphism visual styling.
 - More than 5 scroll sections on the marketing homepage.
 
 ---
