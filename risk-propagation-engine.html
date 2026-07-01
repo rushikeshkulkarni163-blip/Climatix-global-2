@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light" />
 <title>Risk Propagation Engine — Climactix Global Intelligence OS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -20,45 +21,45 @@
 ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Backgrounds ── */
-  --bg-0:      #070B11;
-  --bg-1:      #0B1420;
-  --bg-2:      #0E1929;
-  --bg-3:      #111F30;
-  --bg-4:      #152335;
+  /* ── Backgrounds (NASA cool-white zoning) ── */
+  --bg-0:      #FFFFFF;          /* graph canvas — pure white focal area */
+  --bg-1:      #F4F6FA;          /* sidebar + intel panel — cool blue-gray */
+  --bg-2:      #EDF0F5;          /* table head / hover states / KPI insets */
+  --bg-3:      #FFFFFF;          /* node cards — white on cool-gray panels */
+  --bg-4:      #E8ECF2;          /* deepest panel insets */
 
-  /* ── Borders ── */
-  --bd-0:      #1A2B3C;
-  --bd-1:      #223448;
-  --bd-2:      #2C4158;
+  /* ── Borders (cool gray, not warm) ── */
+  --bd-0:      #DDE1E8;
+  --bd-1:      #C8CDD8;
+  --bd-2:      #A8B0BF;
 
-  /* ── Text ── */
-  --tx-0:      #D8E8F5;
-  --tx-1:      #8AAEC9;
-  --tx-2:      #526D87;
-  --tx-3:      #2F4A62;
+  /* ── Text (near-black for NASA scientific authority) ── */
+  --tx-0:      #0D1117;
+  --tx-1:      #3D4756;
+  --tx-2:      #6B7280;
+  --tx-3:      #9CA3AF;
 
-  /* ── Accents ── */
-  --blue:      #4FA3FF;
-  --blue-dim:  rgba(79,163,255,0.12);
-  --cyan:      #6BD6FF;
-  --cyan-dim:  rgba(107,214,255,0.10);
+  /* ── Accents (NASA Blue) ── */
+  --blue:      #0B3D91;
+  --blue-dim:  rgba(11,61,145,0.07);
+  --cyan:      #1B5CC8;
+  --cyan-dim:  rgba(27,92,200,0.07);
 
   /* ── Status ── */
-  --crit:      #F05454;
-  --crit-dim:  rgba(240,84,84,0.12);
-  --warn:      #C9843A;
-  --warn-dim:  rgba(201,132,58,0.12);
-  --ok:        #4DB87A;
-  --ok-dim:    rgba(77,184,122,0.12);
-  --info:      #4FA3FF;
+  --crit:      #DC2626;
+  --crit-dim:  rgba(220,38,38,0.07);
+  --warn:      #B45309;
+  --warn-dim:  rgba(180,83,9,0.07);
+  --ok:        #1E8E3E;
+  --ok-dim:    rgba(30,142,62,0.07);
+  --info:      #0B3D91;
 
-  /* ── Typography ── */
-  --sans:  'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-  --mono:  'IBM Plex Mono', 'Courier New', monospace;
+  /* ── Typography (v4.0 role-based) ── */
+  --sans:  'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+  --mono:  'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   /* ── Motion ── */
-  --t:     0.12s ease;
+  --t:     0.15s ease;
   --t-med: 0.20s ease;
 
   /* ── Layout ── */
@@ -90,10 +91,11 @@ html,body {
 .hdr {
   position:fixed; top:0; left:0; right:0;
   height:var(--hdr-h);
-  background:var(--bg-1);
+  background:#FFFFFF;
   border-bottom:1px solid var(--bd-0);
+  box-shadow:0 1px 0 0 var(--blue);
   display:flex; align-items:center;
-  padding:0 12px;
+  padding:0 16px;
   gap:0;
   z-index:200;
 }
@@ -107,10 +109,10 @@ html,body {
 }
 
 .hdr-logo-mark {
-  width:22px; height:22px;
+  width:24px; height:24px;
   background:var(--blue);
   display:flex; align-items:center; justify-content:center;
-  border-radius:2px;
+  border-radius:4px;
 }
 
 .hdr-logo-txt {
@@ -126,16 +128,16 @@ html,body {
 
 .hdr-chip {
   display:flex; align-items:center; gap:5px;
-  padding:3px 8px;
-  background:var(--bg-2);
+  padding:4px 10px;
+  background:#F4F6FA;
   border:1px solid var(--bd-0);
-  border-radius:2px;
-  font-size:10px;
-  font-family:var(--mono);
+  border-radius:4px;
+  font-size:11px;
+  font-family:var(--sans);
   white-space:nowrap;
 }
-.hdr-chip-lbl { color:var(--tx-2); font-size:9px; letter-spacing:0.06em; text-transform:uppercase; }
-.hdr-chip-val { color:var(--tx-0); font-weight: 500; }
+.hdr-chip-lbl { color:var(--tx-2); font-size:10px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; }
+.hdr-chip-val { color:var(--tx-0); font-weight:600; }
 
 .hdr-sep { width:1px; height:20px; background:var(--bd-0); margin:0 4px; flex-shrink:0; }
 
@@ -170,9 +172,9 @@ html,body {
 .btn-primary {
   background:var(--blue);
   border:1px solid var(--blue);
-  color:#000; font-weight: 500;
+  color:#FFFFFF; font-weight: 500;
 }
-.btn-primary:hover { background:#6BB4FF; }
+.btn-primary:hover { background:#0A3070; }
 
 /* ═══ APP LAYOUT ══════════════════════════════════════════════════ */
 .layout {
@@ -195,27 +197,28 @@ html,body {
   border-bottom:1px solid var(--bd-0);
 }
 .nav-section-lbl {
-  padding:0 12px 5px;
-  font-size:8.5px; font-weight:700;
-  letter-spacing:0.12em; text-transform:uppercase;
+  padding:0 14px 6px;
+  font-size:10px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
   color:var(--tx-2);
 }
 
 .nav-item {
-  display:flex; align-items:center; gap:7px;
-  padding:5px 12px;
+  display:flex; align-items:center; gap:8px;
+  padding:7px 14px;
   cursor:pointer;
   transition:var(--t);
   color:var(--tx-1);
-  font-size:11.5px;
-  border-left:2px solid transparent;
+  font-size:12.5px; font-weight:500;
+  border-left:3px solid transparent;
   user-select:none;
 }
-.nav-item:hover { background:var(--bg-2); color:var(--tx-0); }
+.nav-item:hover { background:var(--bg-2); color:var(--tx-0); border-left-color:var(--bd-1); }
 .nav-item.active {
-  background:var(--bg-2);
+  background:#FFFFFF;
   color:var(--blue);
   border-left-color:var(--blue);
+  font-weight:700;
 }
 .nav-icon { width:13px; height:13px; flex-shrink:0; fill:none; stroke:currentColor; stroke-width:1.5; }
 
@@ -230,24 +233,31 @@ html,body {
 
 /* Sidebar quick metrics */
 .sidebar-kpi-area {
-  padding:12px;
+  padding:14px 12px;
   flex:1; overflow-y:auto;
+  background:var(--bg-1);
 }
 .skpi-lbl {
-  font-size:8.5px; font-weight:700;
-  letter-spacing:0.12em; text-transform:uppercase;
-  color:var(--tx-2); margin-bottom:10px;
+  font-size:10px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--tx-2); margin-bottom:12px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--bd-0);
 }
 .skpi {
-  margin-bottom:13px;
+  margin-bottom:14px;
+  padding:10px 12px;
+  background:#FFFFFF;
+  border:1px solid var(--bd-0);
+  border-radius:8px;
 }
-.skpi-name { font-size:9px; color:var(--tx-2); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:2px; }
+.skpi-name { font-size:10px; font-weight:600; color:var(--tx-2); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }
 .skpi-val {
-  font-family:var(--mono);
-  font-size:17px; font-weight: 500;
-  line-height:1;
+  font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size:22px; font-weight:700;
+  line-height:1; letter-spacing:-0.01em;
 }
-.skpi-sub { font-size:9px; color:var(--tx-2); margin-top:2px; }
+.skpi-sub { font-size:10px; color:var(--tx-2); margin-top:4px; }
 .v-crit { color:var(--crit); }
 .v-warn { color:var(--warn); }
 .v-ok   { color:var(--ok); }
@@ -277,29 +287,29 @@ html,body {
 
 .panel-hdr {
   display:flex; align-items:center; justify-content:space-between;
-  padding:8px 12px;
-  background:var(--bg-1);
-  border-bottom:1px solid var(--bd-0);
+  padding:10px 16px;
+  background:#FFFFFF;
+  border-bottom:2px solid var(--bd-0);
   flex-shrink:0;
 }
 .panel-title {
-  font-size:9.5px; font-weight:700;
-  letter-spacing:0.1em; text-transform:uppercase;
-  color:var(--tx-1);
+  font-size:11px; font-weight:700;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--tx-0);
 }
-.panel-title span { color:var(--tx-2); font-weight:400; }
+.panel-title span { color:var(--tx-2); font-weight:500; letter-spacing:0.04em; }
 
 .panel-ctrls { display:flex; align-items:center; gap:4px; }
 .ctrl-btn {
-  padding:3px 8px;
-  font-size:9.5px; font-family:var(--sans);
+  padding:5px 12px;
+  font-size:11px; font-family:var(--sans); font-weight:500;
   border:1px solid var(--bd-0);
-  background:transparent; color:var(--tx-1);
-  cursor:pointer; border-radius:2px;
+  background:#FFFFFF; color:var(--tx-1);
+  cursor:pointer; border-radius:6px;
   transition:var(--t);
 }
 .ctrl-btn:hover   { border-color:var(--blue); color:var(--blue); background:var(--blue-dim); }
-.ctrl-btn.active  { border-color:var(--blue); color:var(--blue); background:var(--blue-dim); }
+.ctrl-btn.active  { border-color:var(--blue); color:#FFFFFF; background:var(--blue); }
 .ctrl-sep { width:1px; height:14px; background:var(--bd-0); margin:0 2px; }
 
 .graph-wrap {
@@ -314,8 +324,8 @@ html,body {
   content:'';
   position:absolute; inset:0;
   background-image:
-    linear-gradient(rgba(79,163,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79,163,255,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
   background-size:48px 48px;
   pointer-events:none;
 }
@@ -358,34 +368,41 @@ html,body {
   display:flex; flex-direction:column;
   overflow-y:auto;
   background:var(--bg-1);
+  gap:0;
 }
 
 .ip-section {
-  border-bottom:1px solid var(--bd-0);
-  padding:11px 13px;
+  margin:8px 10px;
+  background:#FFFFFF;
+  border:1px solid var(--bd-0);
+  border-radius:8px;
+  padding:12px 14px;
 }
 .ip-title {
-  font-size:8.5px; font-weight:700;
-  letter-spacing:0.12em; text-transform:uppercase;
-  color:var(--tx-2);
-  margin-bottom:9px;
+  font-size:10px; font-weight:700;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--tx-0);
+  margin-bottom:10px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--bd-0);
   display:flex; align-items:center; gap:6px;
 }
 
 /* Risk driver bars */
 .rd-row {
-  display:flex; align-items:center; gap:7px;
-  margin-bottom:7px;
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:8px;
 }
-.rd-name { font-size:10.5px; color:var(--tx-1); flex:1; min-width:0; }
+.rd-name { font-size:11px; font-weight:500; color:var(--tx-1); flex:1; min-width:0; }
 .rd-bar-track {
-  width:52px; height:2px;
-  background:var(--bd-0);
-  border-radius:1px; flex-shrink:0;
+  width:56px; height:3px;
+  background:var(--bg-2);
+  border-radius:2px; flex-shrink:0;
 }
-.rd-bar-fill { height:100%; border-radius:1px; }
+.rd-bar-fill { height:100%; border-radius:2px; }
 .rd-val {
-  font-family:var(--mono); font-size:10.5px;
+  font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size:11px; font-weight:700;
   min-width:28px; text-align:right;
   flex-shrink:0;
 }
@@ -393,12 +410,12 @@ html,body {
 /* Metric rows */
 .met-row {
   display:flex; align-items:baseline; justify-content:space-between;
-  padding:4.5px 0;
-  border-bottom:1px solid var(--bd-0);
+  padding:5px 0;
+  border-bottom:1px solid #F0F2F6;
 }
 .met-row:last-child { border-bottom:none; }
-.met-lbl { font-size:10.5px; color:var(--tx-2); }
-.met-val { font-family:var(--mono); font-size:11px; font-weight: 500; color:var(--tx-0); }
+.met-lbl { font-size:11px; color:var(--tx-2); }
+.met-val { font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:12px; font-weight:700; color:var(--tx-0); }
 .met-val.crit { color:var(--crit); }
 .met-val.warn { color:var(--warn); }
 .met-val.ok   { color:var(--ok); }
@@ -435,35 +452,35 @@ html,body {
 .lower {
   height:var(--tbl-h);
   flex-shrink:0;
-  border-top:1px solid var(--bd-0);
+  border-top:2px solid var(--bd-0);
   display:flex; flex-direction:column;
-  background:var(--bg-1);
+  background:#FFFFFF;
 }
 
 .tbl-bar {
-  display:flex; align-items:center; gap:7px;
-  padding:7px 12px;
-  background:var(--bg-1);
+  display:flex; align-items:center; gap:8px;
+  padding:8px 16px;
+  background:#FFFFFF;
   border-bottom:1px solid var(--bd-0);
   flex-shrink:0;
 }
 .tbl-title {
-  font-size:9.5px; font-weight:700;
-  letter-spacing:0.1em; text-transform:uppercase;
-  color:var(--tx-1);
+  font-size:11px; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--tx-0);
 }
-.tbl-sub { font-size:9px; color:var(--tx-2); font-weight:400; margin-left:6px; }
+.tbl-sub { font-size:11px; color:var(--tx-2); font-weight:400; margin-left:6px; }
 
 .fchip {
-  padding:2px 7px;
+  padding:4px 12px;
   border:1px solid var(--bd-0);
-  border-radius:2px;
-  font-size:9.5px; color:var(--tx-2);
+  border-radius:20px;
+  font-size:11px; font-weight:500; color:var(--tx-2);
   cursor:pointer; transition:var(--t);
-  background:transparent; font-family:var(--sans);
+  background:#FFFFFF; font-family:var(--sans);
 }
 .fchip:hover  { border-color:var(--blue); color:var(--blue); }
-.fchip.active { border-color:var(--blue); color:var(--blue); background:var(--blue-dim); }
+.fchip.active { border-color:var(--blue); color:#FFFFFF; background:var(--blue); }
 
 .tbl-scroll { flex:1; overflow-y:auto; overflow-x:auto; }
 
@@ -473,27 +490,32 @@ html,body {
 }
 .data-tbl thead {
   position:sticky; top:0;
-  background:var(--bg-2); z-index:10;
+  background:var(--bg-1); z-index:10;
 }
 .data-tbl th {
-  padding:5px 10px;
+  padding:7px 12px;
   text-align:left;
-  font-size:8.5px; font-weight:700;
-  letter-spacing:0.1em; text-transform:uppercase;
+  font-size:10px; font-weight:700;
+  letter-spacing:0.07em; text-transform:uppercase;
   color:var(--tx-2);
-  border-bottom:1px solid var(--bd-0);
+  border-bottom:2px solid var(--bd-0);
   white-space:nowrap; cursor:pointer; user-select:none;
 }
-.data-tbl th:hover { color:var(--tx-1); }
+.data-tbl th:hover { color:var(--blue); }
 .data-tbl th.sorted { color:var(--blue); }
-.sort-ico { opacity:0.35; margin-left:3px; font-size:8px; }
+.sort-ico { opacity:0.4; margin-left:3px; font-size:9px; }
 .data-tbl th.sorted .sort-ico { opacity:1; }
 .data-tbl td {
-  padding:6px 10px;
-  border-bottom:1px solid var(--bd-0);
+  padding:8px 12px;
+  border-bottom:1px solid #F0F2F6;
   vertical-align:middle; white-space:nowrap;
 }
-.data-tbl tr:hover td { background:var(--bg-2); }
+.data-tbl tr:hover td { background:#F4F6FA; }
+
+.td-zone   { font-size:12px; color:var(--tx-0); font-weight:600; }
+.td-cntry  { font-size:10px; color:var(--tx-2); }
+.td-hazard { font-size:11px; color:var(--tx-1); }
+.td-score  { font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:13px; font-weight:700; }
 
 .td-zone   { font-size:11px; color:var(--tx-0); font-weight: 500; }
 .td-cntry  { font-size:9px;  color:var(--tx-2); }
@@ -1142,11 +1164,11 @@ function getNodePositions(W, H) {
 }
 
 function edgeColor(type) {
-  return {crit:'#F05454', high:'#C9843A', med:'#4FA3FF'}[type] || '#4FA3FF';
+  return {crit:'#DC2626', high:'#B45309', med:'#0B3D91'}[type] || '#0B3D91';
 }
 
 function sevColor(sev) {
-  return {crit:'#F05454', high:'#C9843A', med:'#4FA3FF'}[sev] || '#4FA3FF';
+  return {crit:'#DC2626', high:'#B45309', med:'#0B3D91'}[sev] || '#0B3D91';
 }
 
 let currentPositions = {};
@@ -1215,8 +1237,8 @@ function buildGraph() {
     const lbg = el('rect');
     lbg.setAttribute('x', mx - 14); lbg.setAttribute('y', my - 7.5);
     lbg.setAttribute('width', 28); lbg.setAttribute('height', 13);
-    lbg.setAttribute('fill','#0E1929');
-    lbg.setAttribute('stroke','#1A2B3C');
+    lbg.setAttribute('fill','#FFFFFF');
+    lbg.setAttribute('stroke','#D9D9D9');
     lbg.setAttribute('stroke-width','1');
     lbg.setAttribute('rx','1');
     eGrp.appendChild(lbg);
@@ -1226,7 +1248,7 @@ function buildGraph() {
     ltxt.setAttribute('text-anchor','middle');
     ltxt.setAttribute('dominant-baseline','middle');
     ltxt.setAttribute('font-size','7.5');
-    ltxt.setAttribute('font-family','IBM Plex Mono, monospace');
+    ltxt.setAttribute('font-family','Helvetica Neue, Helvetica, Arial, sans-serif');
     ltxt.setAttribute('fill', edgeColor(edge.type));
     ltxt.setAttribute('opacity','0.8');
     ltxt.textContent = edge.label;
@@ -1252,38 +1274,38 @@ function buildGraph() {
     g.setAttribute('data-id', node.id);
     g.style.cursor = 'pointer';
 
-    // Shadow / depth rect
+    // Card shadow (subtle, border-step elevation for light theme)
     const shadow = el('rect');
-    shadow.setAttribute('x', nx+2); shadow.setAttribute('y', ny+2);
+    shadow.setAttribute('x', nx+1); shadow.setAttribute('y', ny+2);
     shadow.setAttribute('width', NW); shadow.setAttribute('height', NH);
-    shadow.setAttribute('fill', '#000'); shadow.setAttribute('opacity','0.35');
-    shadow.setAttribute('rx','2');
+    shadow.setAttribute('fill','#DDE1E8'); shadow.setAttribute('opacity','0.55');
+    shadow.setAttribute('rx','8');
     g.appendChild(shadow);
 
     // Background
     const bg = el('rect');
     bg.setAttribute('x', nx); bg.setAttribute('y', ny);
     bg.setAttribute('width', NW); bg.setAttribute('height', NH);
-    bg.setAttribute('fill','#111F30');
+    bg.setAttribute('fill','#FFFFFF');
     bg.setAttribute('stroke', sc);
-    bg.setAttribute('stroke-width','1');
-    bg.setAttribute('stroke-opacity','0.55');
-    bg.setAttribute('rx','2');
+    bg.setAttribute('stroke-width','1.5');
+    bg.setAttribute('stroke-opacity','0.75');
+    bg.setAttribute('rx','8');
     g.appendChild(bg);
 
     // Left accent bar
     const bar = el('rect');
-    bar.setAttribute('x', nx); bar.setAttribute('y', ny);
-    bar.setAttribute('width','3'); bar.setAttribute('height', NH);
-    bar.setAttribute('fill', sc); bar.setAttribute('opacity','0.75');
-    bar.setAttribute('rx','1');
+    bar.setAttribute('x', nx); bar.setAttribute('y', ny+8);
+    bar.setAttribute('width','3'); bar.setAttribute('height', NH-16);
+    bar.setAttribute('fill', sc); bar.setAttribute('opacity','0.9');
+    bar.setAttribute('rx','1.5');
     g.appendChild(bar);
 
     // Confidence indicator (top-right dot)
     const cDot = el('circle');
     cDot.setAttribute('cx', nx + NW - 8); cDot.setAttribute('cy', ny + 9);
     cDot.setAttribute('r','3.5');
-    const confC = node.confidence >= 85 ? '#4DB87A' : node.confidence >= 70 ? '#C9843A' : '#F05454';
+    const confC = node.confidence >= 85 ? '#1E8E3E' : node.confidence >= 70 ? '#B45309' : '#DC2626';
     cDot.setAttribute('fill', confC);
     cDot.setAttribute('opacity','0.9');
     g.appendChild(cDot);
@@ -1292,10 +1314,10 @@ function buildGraph() {
     const nameT = el('text');
     nameT.setAttribute('x', nx+10); nameT.setAttribute('y', ny+16);
     nameT.setAttribute('font-size','8.5');
-    nameT.setAttribute('font-family','IBM Plex Sans, sans-serif');
+    nameT.setAttribute('font-family','Helvetica Neue, Helvetica, Arial, sans-serif');
     nameT.setAttribute('font-weight','700');
-    nameT.setAttribute('letter-spacing','0.07em');
-    nameT.setAttribute('fill','#D8E8F5');
+    nameT.setAttribute('letter-spacing','0.05em');
+    nameT.setAttribute('fill','#0D1117');
     nameT.textContent = node.name;
     g.appendChild(nameT);
 
@@ -1303,8 +1325,8 @@ function buildGraph() {
     const typeT = el('text');
     typeT.setAttribute('x', nx+10); typeT.setAttribute('y', ny+27);
     typeT.setAttribute('font-size','7.5');
-    typeT.setAttribute('font-family','IBM Plex Sans, sans-serif');
-    typeT.setAttribute('fill','#526D87');
+    typeT.setAttribute('font-family','Source Sans Pro, Helvetica Neue, Arial, sans-serif');
+    typeT.setAttribute('fill','#6B7280');
     typeT.textContent = node.type;
     g.appendChild(typeT);
 
@@ -1312,24 +1334,24 @@ function buildGraph() {
     const div = el('line');
     div.setAttribute('x1', nx+6); div.setAttribute('y1', ny+34);
     div.setAttribute('x2', nx+NW-6); div.setAttribute('y2', ny+34);
-    div.setAttribute('stroke','#1A2B3C'); div.setAttribute('stroke-width','1');
+    div.setAttribute('stroke','#D9D9D9'); div.setAttribute('stroke-width','1');
     g.appendChild(div);
 
     // Exposure label
     const expLbl = el('text');
     expLbl.setAttribute('x', nx+10); expLbl.setAttribute('y', ny+46);
     expLbl.setAttribute('font-size','7.5');
-    expLbl.setAttribute('font-family','IBM Plex Sans, sans-serif');
-    expLbl.setAttribute('fill','#526D87');
-    expLbl.textContent = 'EXPOSURE';
+    expLbl.setAttribute('font-family','Helvetica Neue, Helvetica, Arial, sans-serif');
+    expLbl.setAttribute('fill','#6B7280');
+    expLbl.textContent = 'Exposure';
     g.appendChild(expLbl);
 
     // Exposure value
     const expVal = el('text');
     expVal.setAttribute('x', nx+10); expVal.setAttribute('y', ny+60);
     expVal.setAttribute('font-size','15');
-    expVal.setAttribute('font-family','IBM Plex Mono, monospace');
-    expVal.setAttribute('font-weight','600');
+    expVal.setAttribute('font-family','Helvetica Neue, Helvetica, Arial, sans-serif');
+    expVal.setAttribute('font-weight','700');
     expVal.setAttribute('fill', sc);
     expVal.textContent = `${node.exposure}%`;
     g.appendChild(expVal);
@@ -1338,19 +1360,19 @@ function buildGraph() {
     const impLbl = el('text');
     impLbl.setAttribute('x', nx+NW-10); impLbl.setAttribute('y', ny+46);
     impLbl.setAttribute('font-size','7.5');
-    impLbl.setAttribute('font-family','IBM Plex Sans, sans-serif');
-    impLbl.setAttribute('fill','#526D87');
+    impLbl.setAttribute('font-family','Helvetica Neue, Helvetica, Arial, sans-serif');
+    impLbl.setAttribute('fill','#6B7280');
     impLbl.setAttribute('text-anchor','end');
-    impLbl.textContent = 'IMPACT';
+    impLbl.textContent = 'Impact';
     g.appendChild(impLbl);
 
     // Impact value
     const impVal = el('text');
     impVal.setAttribute('x', nx+NW-10); impVal.setAttribute('y', ny+60);
     impVal.setAttribute('font-size','11');
-    impVal.setAttribute('font-family','IBM Plex Mono, monospace');
-    impVal.setAttribute('font-weight','500');
-    impVal.setAttribute('fill','#8AAEC9');
+    impVal.setAttribute('font-family','Helvetica Neue, Helvetica, Arial, sans-serif');
+    impVal.setAttribute('font-weight','700');
+    impVal.setAttribute('fill','#4F4F4F');
     impVal.setAttribute('text-anchor','end');
     impVal.textContent = node.financialImpact;
     g.appendChild(impVal);
@@ -1516,8 +1538,8 @@ function setView(mode, btn) {
     const t = el('text');
     t.setAttribute('x', W/2); t.setAttribute('y', H/2);
     t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
-    t.setAttribute('font-size','11'); t.setAttribute('font-family','IBM Plex Sans, sans-serif');
-    t.setAttribute('fill','#526D87');
+    t.setAttribute('font-size','11'); t.setAttribute('font-family','Source Sans Pro, Helvetica Neue, Arial, sans-serif');
+    t.setAttribute('fill','#6B7280');
     t.textContent = mode.charAt(0).toUpperCase()+mode.slice(1)+' view — select node to populate';
     svg.appendChild(t);
   } else {
