@@ -15,13 +15,13 @@ const { chromium } = require('playwright');
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (msg) => { if (msg.type() === 'error') errors.push(msg.text()); });
 
-  await page.goto('http://localhost:3001/dashboard', { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto('http://localhost:3000/dashboard', { waitUntil: 'networkidle', timeout: 30000 });
   await page.waitForTimeout(2000);
   await page.screenshot({ path: '/tmp/dashboard-full.png', fullPage: true });
   console.log('Saved full dashboard screenshot');
   console.log('Console/page errors:', JSON.stringify(errors, null, 2));
 
-  await page.goto('http://localhost:3001/dashboard/companies/acme-industrial', { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto('http://localhost:3000/dashboard/companies/acme-industrial', { waitUntil: 'networkidle', timeout: 30000 });
   await page.waitForTimeout(1000);
   await page.screenshot({ path: '/tmp/dashboard-company.png', fullPage: true });
   console.log('Saved company profile screenshot');

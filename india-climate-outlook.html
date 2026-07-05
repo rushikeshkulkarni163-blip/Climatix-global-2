@@ -3,33 +3,47 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light dark" />
 <title>India Climate Intelligence Map — Climactix Global</title>
 <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
+<script>(function(){try{var t=localStorage.getItem('cx-theme-v4');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
-<script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})()</script>
 <style>
 /* ═══════════════════════════════════════════════════════════
    CLIMACTIX — INDIA CLIMATE INTELLIGENCE MAP
-   Bloomberg × Palantir × Windy interaction model
+   Design System v4.0 — NASA Earth Observatory × MSCI
    MapLibre GL · 8 layers · District drilldown · Time axis
 ═══════════════════════════════════════════════════════════ */
 :root {
-  --bg:#000000; --bg1:#090909; --bg2:#111111; --bg3:#181818; --bg4:#222222;
-  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13); --border3:rgba(255,255,255,0.22);
-  --amber:#FF6600; --amber-dim:rgba(255,102,0,0.08); --amber-mid:rgba(255,102,0,0.18);
-  --red:#FF3333; --green:#00CC55; --blue:#2B7FE0; --cyan:#0AADCC;
-  --text:#FFFFFF; --text2:rgba(255,255,255,0.55); --text3:rgba(255,255,255,0.28); --text4:rgba(255,255,255,0.10);
-  --t:0.12s ease; --nav-h:48px; --lp-w:252px; --rp-w:368px;
-  --mono:'IBM Plex Mono',monospace; --font:'Roboto',system-ui,sans-serif;
+  /* Backgrounds — light, flat, background-step elevation only */
+  --bg:#FFFFFF; --bg1:#FFFFFF; --bg2:#FAFAFA; --bg3:#F2F2F2;
+  /* Borders — thin neutral, never rgba white overlays */
+  --border:#D9D9D9; --border2:#D9D9D9; --border3:#C4C4C4;
+  /* Accent — NASA Blue (var names kept for compatibility with existing JS references) */
+  --amber:#0B3D91; --amber-dim:rgba(11,61,145,0.07); --amber-mid:rgba(11,61,145,0.16);
+  /* Status colors */
+  --red:#DC2626; --green:#1E8E3E; --blue:#0B3D91; --cyan:#0B3D91; --warn:#B45309; --warn-mid:#C48A2E;
+  /* Text */
+  --text:#111111; --text2:#4F4F4F; --text3:#6B7280;
+  --t:0.15s ease; --nav-h:48px; --lp-w:252px; --rp-w:368px;
+  --mono:'Helvetica Neue',Helvetica,Arial,sans-serif; --font:'Source Sans Pro',Arial,sans-serif;
 }
-[data-theme="light"] {
-  --bg:#F2F2F2; --bg1:#FFFFFF; --bg2:#EBEBEB; --bg3:#E0E0E0; --bg4:#D5D5D5;
-  --border:rgba(0,0,0,0.09); --border2:rgba(0,0,0,0.16); --border3:rgba(0,0,0,0.28);
-  --amber-dim:rgba(255,102,0,0.06); --amber-mid:rgba(255,102,0,0.14);
-  --text:#0A0A0A; --text2:rgba(0,0,0,0.55); --text3:rgba(0,0,0,0.32); --text4:rgba(0,0,0,0.08);
+/* ── DARK MODE (v4.0 companion theme) — DESIGN.md "Dark Mode (v4.0 companion theme)" ──
+   Never pure black. Same NASA Blue / MSCI system on dark-slate surfaces.
+   Elevation stays flat + border-based, same as light mode — no shadows added. */
+[data-theme="dark"] {
+  --bg:#0B0E14; --bg1:#11151C; --bg2:#161B24; --bg3:#1C222C;
+  --border:#232935; --border2:#232935; --border3:#2C3341;
+  /* Accent — lightened NASA Blue for AA text/link/focus contrast on dark surfaces */
+  --amber:#3D7BE0; --amber-dim:rgba(61,123,224,0.10); --amber-mid:rgba(61,123,224,0.22);
+  /* Solid button/badge fills keep base NASA Blue with white text, in both themes */
+  --accent-fill:#0B3D91;
+  /* Status colors — lightened dark-mode variants, same semantic roles */
+  --red:#F87171; --green:#22C55E; --blue:#3D7BE0; --cyan:#3D7BE0; --warn:#F59E0B; --warn-mid:#D9922E;
+  --text:#F4F6F8; --text2:#B8C0CC; --text3:#7C8794;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;font-family:var(--font);font-size:12px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
@@ -39,17 +53,17 @@ a{text-decoration:none;color:inherit}
 
 /* ── NAV */
 .nav{position:relative;z-index:400;height:var(--nav-h);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0}
-.nav-logo{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--text)}
+.nav-logo-img{height:24px;width:auto;display:block}
 .nav-div{width:1px;height:16px;background:var(--border2)}
 .nav-module{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
-.nav-badge{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:1px;background:rgba(255,51,51,.10);color:var(--red);border:1px solid rgba(255,51,51,.20)}
+.nav-badge{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:rgba(220,38,38,.08);color:var(--red);border:1px solid rgba(220,38,38,.25)}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:7px}
-.nav-btn{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:2px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;gap:4px}
+.nav-btn{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;gap:4px}
 .nav-btn:hover{border-color:var(--amber);color:var(--amber)}
 .nav-live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--text3)}
 .live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
-.nav-icon-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:2px;background:none;color:var(--text2);cursor:pointer;font-size:13px;transition:all var(--t)}
+.nav-icon-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:8px;background:none;color:var(--text2);cursor:pointer;font-size:13px;transition:all var(--t)}
 .nav-icon-btn:hover{border-color:var(--border2);color:var(--text)}
 
 /* ── SHELL */
@@ -63,7 +77,7 @@ a{text-decoration:none;color:inherit}
 
 /* Exposure mode */
 .exp-tabs{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:10px 12px;border-bottom:1px solid var(--border)}
-.exp-tab{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 6px;border-radius:2px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all var(--t);text-align:center}
+.exp-tab{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 6px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all var(--t);text-align:center}
 .exp-tab:hover{border-color:var(--border2);color:var(--text2)}
 .exp-tab.on{background:var(--amber-dim);border-color:var(--amber-mid);color:var(--amber)}
 
@@ -73,39 +87,39 @@ a{text-decoration:none;color:inherit}
 .layer-swatch{width:10px;height:10px;border-radius:1px;flex-shrink:0}
 .layer-name{flex:1;font-size:11px;font-weight: 500;color:var(--text2)}
 .layer-row.on .layer-name{color:var(--text)}
-.layer-toggle{width:26px;height:14px;border-radius:0;background:var(--border2);position:relative;cursor:pointer;flex-shrink:0;transition:background var(--t)}
-.layer-toggle::after{content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;background:var(--text3);transition:all var(--t)}
-.layer-row.on .layer-toggle{background:rgba(255,102,0,.35)}
+.layer-toggle{width:26px;height:14px;border-radius:999px;background:var(--border2);position:relative;cursor:pointer;flex-shrink:0;transition:background var(--t)}
+.layer-toggle::after{content:'';position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:var(--text3);transition:all var(--t)}
+.layer-row.on .layer-toggle{background:var(--amber-mid)}
 .layer-row.on .layer-toggle::after{left:14px;background:var(--amber)}
 .layer-opacity{width:100%;height:2px;-webkit-appearance:none;appearance:none;background:var(--border2);outline:none;cursor:pointer;margin-top:4px;display:none}
 .layer-row.on .layer-opacity{display:block}
-.layer-opacity::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:0;background:var(--amber);cursor:pointer}
+.layer-opacity::-webkit-slider-thumb{-webkit-appearance:none;width:8px;height:8px;border-radius:50%;background:var(--amber);cursor:pointer}
 
 /* NITI Aayog ICED panel */
-.niti-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);margin-bottom:8px;border-radius:2px;overflow:hidden}
+.niti-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);margin-bottom:8px;border-radius:8px;overflow:hidden}
 .niti-stat-cell{background:var(--bg2);padding:7px 6px;text-align:center}
 .niti-stat-lbl{font-family:var(--mono);font-size:6.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:3px;line-height:1.3}
 .niti-stat-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--amber);line-height:1}
 .niti-chips{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
-.niti-chip{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:2px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2)}
-.niti-link-btn{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:7px;border-radius:2px;background:var(--amber-dim);border:1px solid var(--amber-mid);color:var(--amber);font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background var(--t)}
+.niti-chip{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2)}
+.niti-link-btn{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;padding:7px;border-radius:8px;background:var(--amber-dim);border:1px solid var(--amber-mid);color:var(--amber);font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:background var(--t)}
 .niti-link-btn:hover{background:var(--amber-mid)}
 
 /* Time slider */
 .time-section{padding:10px 12px;border-bottom:1px solid var(--border)}
 .year-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:6px}
-.yr-btn{font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 4px;border-radius:2px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all var(--t);text-align:center}
+.yr-btn{font-family:var(--mono);font-size:9px;font-weight:700;padding:5px 4px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--text3);cursor:pointer;transition:all var(--t);text-align:center}
 .yr-btn:hover{border-color:var(--border2);color:var(--text2)}
 .yr-btn.on{background:var(--bg3);border-color:var(--border2);color:var(--amber)}
 
 /* Legend */
 .legend-section{padding:10px 12px}
-.legend-gradient{height:6px;border-radius:0;margin:6px 0 3px}
+.legend-gradient{height:6px;border-radius:4px;margin:6px 0 3px}
 .legend-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--text3)}
 
 /* Stats strip */
 .stats-strip{padding:8px 12px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.stat-cell{background:var(--bg2);border:1px solid var(--border);padding:6px 8px;border-radius:1px}
+.stat-cell{background:var(--bg2);border:1px solid var(--border);padding:6px 8px;border-radius:8px}
 .stat-label{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--text3);margin-bottom:2px}
 .stat-val{font-family:var(--mono);font-size:14px;font-weight:700;line-height:1;letter-spacing:-.02em}
 .stat-sub{font-size:9px;color:var(--text3);margin-top:1px}
@@ -115,32 +129,32 @@ a{text-decoration:none;color:inherit}
 #the-map{position:absolute;inset:0}
 
 /* Hover card */
-#hcard{position:absolute;z-index:200;background:var(--bg1);border:1px solid var(--border2);border-top:2px solid var(--amber);pointer-events:none;display:none;min-width:200px;max-width:240px}
+#hcard{position:absolute;z-index:200;background:var(--bg1);border:1px solid var(--border2);border-top:2px solid var(--amber);border-radius:8px;overflow:hidden;pointer-events:none;display:none;min-width:200px;max-width:240px}
 .hc-state{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--amber);padding:8px 10px 5px;border-bottom:1px solid var(--border)}
 .hc-rows{padding:6px 10px 8px}
 .hc-row{display:flex;justify-content:space-between;align-items:center;padding:2px 0}
 .hc-key{font-family:var(--mono);font-size:9px;color:var(--text3)}
 .hc-val{font-family:var(--mono);font-size:10px;font-weight:700}
-.hc-badge{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.08em;padding:1px 5px;border-radius:1px;margin-top:5px;display:inline-block}
+.hc-badge{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:999px;margin-top:5px;display:inline-block}
 .hc-trend{font-size:9px;color:var(--text3);padding:4px 10px 6px;border-top:1px solid var(--border);font-family:var(--mono)}
 
 /* Drill-down breadcrumb */
-#drill-bar{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;background:var(--bg1);border:1px solid var(--border2);padding:5px 12px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;display:none}
+#drill-bar{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:200;background:var(--bg1);border:1px solid var(--border2);border-radius:8px;padding:5px 12px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.06em;display:none}
 .drill-item{color:var(--amber);cursor:pointer}
 .drill-item:hover{text-decoration:underline}
 .drill-sep{color:var(--text3)}
 .drill-current{color:var(--text2)}
-#drill-reset{padding:2px 7px;border:1px solid var(--border2);border-radius:1px;color:var(--text3);cursor:pointer;margin-left:6px;font-size:8px}
+#drill-reset{padding:2px 7px;border:1px solid var(--border2);border-radius:6px;color:var(--text3);cursor:pointer;margin-left:6px;font-size:8px}
 #drill-reset:hover{border-color:var(--amber);color:var(--amber)}
 
 /* Map controls */
 #map-controls{position:absolute;bottom:52px;right:12px;z-index:200;display:flex;flex-direction:column;gap:4px}
-.mc-btn{width:28px;height:28px;background:var(--bg2);border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all var(--t)}
+.mc-btn{width:28px;height:28px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all var(--t)}
 .mc-btn:hover{border-color:var(--amber);color:var(--amber)}
 .mc-btn.on{border-color:var(--amber);color:var(--amber);background:var(--amber-dim)}
 
 /* Basemap switcher */
-#basemap-switch{position:absolute;top:12px;right:12px;z-index:200;display:flex;background:var(--bg2);border:1px solid var(--border2);border-radius:2px;overflow:hidden}
+#basemap-switch{position:absolute;top:12px;right:12px;z-index:200;display:flex;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;overflow:hidden}
 .bm-btn{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:7px 11px;border:none;background:none;color:var(--text3);cursor:pointer;transition:all var(--t);border-right:1px solid var(--border2)}
 .bm-btn:last-child{border-right:none}
 .bm-btn:hover{color:var(--text2);background:var(--bg3)}
@@ -150,12 +164,12 @@ a{text-decoration:none;color:inherit}
 #pitch-controls{position:absolute;bottom:152px;right:12px;z-index:200;display:flex;flex-direction:column;gap:4px}
 
 /* MapLibre chrome — match institutional theme */
-.maplibregl-ctrl-attrib{background:rgba(0,0,0,.55)!important;color:rgba(255,255,255,.3)!important;font-size:9px!important}
-.maplibregl-ctrl-attrib a{color:rgba(255,255,255,.45)!important}
+.maplibregl-ctrl-attrib{background:rgba(255,255,255,.85)!important;color:var(--text3)!important;font-size:9px!important}
+.maplibregl-ctrl-attrib a{color:var(--text2)!important}
 .maplibregl-canvas{outline:none}
 
 /* AI insight card */
-#insight{position:absolute;bottom:12px;left:12px;z-index:200;background:var(--bg1);border:1px solid var(--border);border-left:2px solid var(--amber);max-width:320px;display:none}
+#insight{position:absolute;bottom:12px;left:12px;z-index:200;background:var(--bg1);border:1px solid var(--border);border-left:2px solid var(--amber);border-radius:8px;max-width:320px;display:none}
 .ins-head{display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:1px solid var(--border)}
 .ins-label{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
 .ins-body{padding:7px 10px;font-size:10px;color:var(--text2);line-height:1.65;max-height:80px;overflow:hidden}
@@ -172,7 +186,7 @@ a{text-decoration:none;color:inherit}
 .rp-eyebrow{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
 .rp-state-name{font-size:18px;font-weight: 700;letter-spacing:-.03em;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rp-meta{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
-.rp-close{width:22px;height:22px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all var(--t);border-radius:1px}
+.rp-close{width:22px;height:22px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all var(--t);border-radius:6px}
 .rp-close:hover{border-color:var(--red);color:var(--red)}
 .rp-scroll{flex:1;overflow-y:auto;padding:0}
 
@@ -197,7 +211,7 @@ a{text-decoration:none;color:inherit}
 .risk-bar-wrap{width:70px;height:3px;background:var(--border2);overflow:hidden;flex-shrink:0}
 .risk-bar{height:100%;transition:width .3s ease}
 .risk-score{font-family:var(--mono);font-size:10px;font-weight:700;width:28px;text-align:right;flex-shrink:0}
-.risk-level{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.06em;padding:1px 4px;border-radius:1px;flex-shrink:0}
+.risk-level{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.06em;padding:1px 6px;border-radius:999px;flex-shrink:0}
 
 /* Sector exposure */
 .sector-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border)}
@@ -209,7 +223,7 @@ a{text-decoration:none;color:inherit}
 
 /* Projection timeline */
 .proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding-top:6px}
-.proj-cell{background:var(--bg2);border:1px solid var(--border);padding:7px 8px}
+.proj-cell{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 8px}
 .proj-yr{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.08em;color:var(--text3);margin-bottom:3px}
 .proj-temp{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--red);margin-bottom:1px}
 .proj-rar{font-family:var(--mono);font-size:9px;color:var(--amber)}
@@ -221,13 +235,18 @@ a{text-decoration:none;color:inherit}
 .action-text{font-size:11px;color:var(--text2);line-height:1.55}
 
 /* AI narrative */
-.ai-box{margin:10px 14px;background:var(--amber-dim);border:1px solid var(--amber-mid);padding:10px 12px}
+.ai-box{margin:10px 14px;background:var(--amber-dim);border:1px solid var(--amber-mid);border-radius:8px;padding:10px 12px}
 .ai-box-head{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:5px;display:flex;align-items:center;gap:5px}
 .ai-box p{font-size:11px;color:var(--text2);line-height:1.65}
 
 /* D3 chart container */
 .chart-wrap{padding:6px 0}
 .chart-wrap svg text{font-family:var(--mono)}
+/* D3 trend chart — theme-aware grid/axis/legend colors (CSS-cascade, no re-render needed) */
+.chart-wrap .chart-grid-line{stroke:var(--border3)}
+.chart-wrap .chart-axis-text{fill:var(--text3)}
+.chart-wrap .chart-axis-tick{stroke:var(--border3)}
+.chart-wrap .chart-legend-text{fill:var(--text2)}
 
 /* Sources */
 .sources{padding:8px 14px 14px;border-top:1px solid var(--border)}
@@ -236,34 +255,38 @@ a{text-decoration:none;color:inherit}
 .src-dot{width:3px;height:3px;border-radius:50%;background:var(--text3);flex-shrink:0}
 
 /* Company layer toggle state */
-#co-toggle.co-on{background:rgba(255,102,0,0.35)!important}
+#co-toggle.co-on{background:var(--amber-mid)!important}
 #co-toggle.co-on::after{left:14px!important;background:var(--amber)!important}
 
 /* Company drawer detail rows */
 .rp-section-label{font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
-.rp-kv{display:flex;justify-content:space-between;align-items:center;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
+.rp-kv{display:flex;justify-content:space-between;align-items:center;padding:2px 0;border-bottom:1px solid var(--border)}
 .rp-k{font-family:var(--mono);font-size:8px;color:var(--text3)}
 .rp-v{font-family:var(--mono);font-size:8px;color:var(--text2);text-align:right}
 
 /* MapLibre overrides */
-.maplibregl-ctrl-attrib{background:rgba(0,0,0,0.7)!important;color:rgba(255,255,255,0.25)!important;font-size:8px!important;font-family:var(--mono)!important}
-.maplibregl-ctrl-attrib a{color:rgba(255,255,255,0.3)!important}
+.maplibregl-ctrl-attrib{background:rgba(255,255,255,0.85)!important;color:var(--text3)!important;font-size:8px!important;font-family:var(--mono)!important}
+.maplibregl-ctrl-attrib a{color:var(--text2)!important}
 .maplibregl-ctrl-group{background:transparent!important;box-shadow:none!important;display:none}
+[data-theme="dark"] .maplibregl-ctrl-attrib{background:rgba(17,21,28,0.85)!important}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav class="nav">
-  <span class="nav-logo">CLIMACTIX</span>
+  <img src="Climatix_logo.png" alt="Climactix" class="nav-logo-img" />
   <div class="nav-div"></div>
   <span class="nav-module">India Climate Intelligence</span>
   <span class="nav-badge">HIGH ALERT</span>
   <div class="nav-right">
     <div class="nav-live"><span class="live-dot"></span>28 States · IPCC AR6 · Live</div>
+    <button class="nav-icon-btn" id="themeToggleBtn" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg id="themeIconSun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line></svg>
+      <svg id="themeIconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
     <button class="nav-btn" id="exportBtn">↓ Export</button>
     <a href="research.html" class="nav-btn">← Research Hub</a>
-    <button class="nav-icon-btn" id="themeBtn" title="Toggle theme">◑</button>
   </div>
 </nav>
 
@@ -281,7 +304,7 @@ a{text-decoration:none;color:inherit}
       </div>
       <div class="stat-cell">
         <div class="stat-label">GDP at Risk</div>
-        <div class="stat-val" style="color:var(--amber)">4.5%</div>
+        <div class="stat-val" style="color:var(--warn)">4.5%</div>
         <div class="stat-sub">$140B by 2035</div>
       </div>
       <div class="stat-cell">
@@ -291,7 +314,7 @@ a{text-decoration:none;color:inherit}
       </div>
       <div class="stat-cell">
         <div class="stat-label">Water Stress</div>
-        <div class="stat-val" style="color:var(--amber)">6.8</div>
+        <div class="stat-val" style="color:var(--warn)">6.8</div>
         <div class="stat-sub">/10 · Extreme</div>
       </div>
     </div>
@@ -831,8 +854,8 @@ function updateLiveStatusBar() {
     el = document.createElement('div');
     el.id = 'live-status-bar';
     el.style.cssText = `position:absolute;bottom:12px;right:52px;z-index:300;
-      font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.08em;
-      display:flex;align-items:center;gap:6px;padding:4px 9px;
+      font-family:'Helvetica Neue',Arial,sans-serif;font-size:8px;font-weight:700;letter-spacing:.08em;
+      display:flex;align-items:center;gap:6px;padding:4px 9px;border-radius:8px;
       background:var(--bg1);border:1px solid var(--border2);color:var(--text3)`;
     document.getElementById('map-wrap').appendChild(el);
   }
@@ -854,7 +877,7 @@ function liveDataPill(name) {
   const w = ld.weather?.current;
   const a = ld.air?.current;
   const ts = ld.ts ? ld.ts.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}) : '—';
-  return `<div style="margin:0 14px 10px;background:rgba(0,204,85,.05);border:1px solid rgba(0,204,85,.15);padding:8px 10px">
+  return `<div style="margin:0 14px 10px;background:rgba(30,142,62,.05);border:1px solid rgba(30,142,62,.18);border-radius:8px;padding:8px 10px">
     <div style="font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:5px;display:flex;align-items:center;gap:5px">
       <span class="live-dot"></span> LIVE FEED · ${ts} IST · Open-Meteo + NASA POWER
     </div>
@@ -866,7 +889,7 @@ function liveDataPill(name) {
       </div>
       <div style="background:var(--bg2);padding:4px 6px">
         <div style="font-family:var(--mono);font-size:7px;color:var(--text3)">FEELS</div>
-        <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--amber)">${Math.round(w.apparent_temperature)}°C</div>
+        <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:var(--warn)">${Math.round(w.apparent_temperature)}°C</div>
       </div>
       <div style="background:var(--bg2);padding:4px 6px">
         <div style="font-family:var(--mono);font-size:7px;color:var(--text3)">HUMIDITY</div>
@@ -891,7 +914,7 @@ function liveDataPill(name) {
       </div>
       <div style="background:var(--bg2);padding:4px 6px">
         <div style="font-family:var(--mono);font-size:7px;color:var(--text3)">EU AQI</div>
-        <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:${(a.european_aqi||0)>100?'var(--red)':(a.european_aqi||0)>50?'var(--amber)':'var(--green)'}">${Math.round(a.european_aqi||0)}</div>
+        <div style="font-family:var(--mono);font-size:12px;font-weight:700;color:${(a.european_aqi||0)>100?'var(--red)':(a.european_aqi||0)>50?'var(--warn)':'var(--green)'}">${Math.round(a.european_aqi||0)}</div>
       </div>` : ''}
     </div>
     <div style="font-family:var(--mono);font-size:7px;color:var(--text3);margin-top:5px">
@@ -914,6 +937,7 @@ const LAYERS = [
 
 /* App state */
 let map, indiaGJ, districtGJ;
+let mapInteractionsBound = false; // guards setupHover/setupClick against re-binding on theme-toggle basemap swaps
 let activeLayer = 'heat';
 let currentYear = 2025;
 let currentMode = 'climate';
@@ -1004,10 +1028,22 @@ function setYear(btn, yr) {
 let basemapMode = 'dark';
 let mapTilted = false;
 
+/* Basemap GL style URLs — light (positron) for light theme, dark (dark-matter) for dark theme.
+   Chosen at map-init time and re-applied via map.setStyle() when the UI theme toggles,
+   so the map basemap always matches the current data-theme (no light-map-on-dark-chrome mismatch). */
+function currentUITheme() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+function basemapStyleUrlForTheme(theme) {
+  return theme === 'dark'
+    ? 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+    : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+}
+
 async function initMap() {
   map = new maplibregl.Map({
     container: 'the-map',
-    style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    style: basemapStyleUrlForTheme(currentUITheme()),
     center: [82.5, 22.5],
     zoom: 4.0,
     minZoom: 3.5,
@@ -1048,6 +1084,33 @@ async function initMap() {
   document.getElementById('btn-compass').onclick = () => map.easeTo({bearing:0, pitch: map.getPitch(), duration:400});
 }
 
+/* ── Re-apply basemap style when the UI theme toggles (dark-matter ↔ positron).
+   map.setStyle() replaces the entire style, so every custom source/layer (state fills,
+   district drilldown, company emissions circles) must be rebuilt once the new style loads. */
+function applyBasemapForTheme(theme) {
+  if (!map) return;
+  map.setStyle(basemapStyleUrlForTheme(theme));
+  map.once('style.load', () => {
+    addSatelliteLayers();
+    // setupStateLayers() re-adds the india source/fill/outline/hover/selected layers and
+    // internally calls loadDistricts() to refetch + re-add the district drilldown layer —
+    // reuse it rather than duplicating that logic here. Interaction handlers are guarded
+    // by mapInteractionsBound so they are not re-bound on this pass.
+    if (indiaGJ) {
+      setupStateLayers();
+    }
+    bringLabelsToFront();
+    if (companyData.length) {
+      initCompanyLayer();
+      if (companyLayerVisible) {
+        map.setLayoutProperty('co-circles','visibility','visible');
+        map.setLayoutProperty('co-halos','visibility','visible');
+      }
+    }
+    setBasemap(basemapMode);
+  });
+}
+
 /* ── Satellite imagery layer (toggleable, no API key required) ── */
 function addSatelliteLayers() {
   if (map.getSource('sat')) return;
@@ -1058,7 +1121,7 @@ function addSatelliteLayers() {
   map.addLayer({id:'sat-layer', type:'raster', source:'sat', paint:{'raster-opacity':0, 'raster-fade-duration':200}});
 
   map.addSource('sat-labels', {type:'raster',
-    tiles:['https://a.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png','https://b.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png','https://c.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png'],
+    tiles:['https://a.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png','https://b.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png','https://c.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png'],
     tileSize:256, maxzoom:19});
   map.addLayer({id:'sat-labels-layer', type:'raster', source:'sat-labels', paint:{'raster-opacity':0, 'raster-fade-duration':200}});
 }
@@ -1088,7 +1151,7 @@ async function tryFallbackGeoJSON() {
     setupStateLayers();
     bringLabelsToFront();
   } catch(e) {
-    document.getElementById('the-map').innerHTML = '<div style="color:rgba(255,255,255,0.4);font-family:IBM Plex Mono,monospace;font-size:11px;padding:40px;text-align:center">Map tiles loading — check network connection.<br>Intelligence data available via State Report panel.</div>';
+    document.getElementById('the-map').innerHTML = '<div style="color:var(--text3);font-family:\'Helvetica Neue\',Arial,sans-serif;font-size:11px;padding:40px;text-align:center">Map tiles loading — check network connection.<br>Intelligence data available via State Report panel.</div>';
   }
 }
 
@@ -1145,7 +1208,7 @@ function setupStateLayers() {
     id: 'state-outline',
     type: 'line',
     source: 'india',
-    paint: {'line-color':'rgba(255,255,255,0.14)','line-width':0.8}
+    paint: {'line-color':'rgba(17,17,17,0.14)','line-width':0.8}
   });
 
   // Hover outline
@@ -1153,7 +1216,7 @@ function setupStateLayers() {
     id: 'state-hover',
     type: 'line',
     source: 'india',
-    paint: {'line-color':'#FF6600','line-width':2},
+    paint: {'line-color':'#0B3D91','line-width':2},
     filter: ['==','$id',-1]
   });
 
@@ -1162,12 +1225,18 @@ function setupStateLayers() {
     id: 'state-selected',
     type: 'fill',
     source: 'india',
-    paint: {'fill-color':'rgba(255,102,0,0.06)'},
+    paint: {'fill-color':'rgba(11,61,145,0.08)'},
     filter: ['==','$id',-1]
   });
 
-  setupHover();
-  setupClick();
+  // Interaction handlers (mousemove/click) are bound to the Map instance and survive
+  // map.setStyle() basemap swaps — only bind them once to avoid stacking duplicate listeners
+  // when setupStateLayers() is re-run after a theme toggle.
+  if (!mapInteractionsBound) {
+    setupHover();
+    setupClick();
+    mapInteractionsBound = true;
+  }
   document.getElementById('insight').style.display = 'block';
   loadDistricts();
 }
@@ -1284,10 +1353,10 @@ async function loadDistricts() {
       paint:{'fill-color':'rgba(0,0,0,0)','fill-opacity':1},
       minzoom:6, layout:{visibility:'visible'}});
     map.addLayer({id:'district-outline', type:'line', source:'districts',
-      paint:{'line-color':'rgba(255,255,255,0.08)','line-width':0.5},
+      paint:{'line-color':'rgba(17,17,17,0.10)','line-width':0.5},
       minzoom:6});
     map.addLayer({id:'district-hover', type:'line', source:'districts',
-      paint:{'line-color':'rgba(255,102,0,0.7)','line-width':1.5},
+      paint:{'line-color':'rgba(11,61,145,0.7)','line-width':1.5},
       filter:['==','$id',-1], minzoom:6});
 
     map.on('mousemove','district-fill', e => {
@@ -1319,16 +1388,16 @@ function drillReset() {
 /* ── DRAWER */
 function compositeRisk(d) {
   const avg = Math.round((d.r.heat+d.r.flood+d.r.water+d.r.air)/4);
-  if(avg>=75) return {label:'CRITICAL',color:'var(--red)',bg:'rgba(255,51,51,.12)'};
-  if(avg>=55) return {label:'HIGH',color:'var(--amber)',bg:'rgba(255,102,0,.10)'};
-  if(avg>=35) return {label:'MODERATE',color:'#BBAA00',bg:'rgba(187,170,0,.10)'};
-  return {label:'LOW',color:'var(--green)',bg:'rgba(0,204,85,.10)'};
+  if(avg>=75) return {label:'CRITICAL',color:'var(--red)',bg:'rgba(220,38,38,.10)'};
+  if(avg>=55) return {label:'HIGH',color:'var(--warn)',bg:'rgba(180,83,9,.10)'};
+  if(avg>=35) return {label:'MODERATE',color:'var(--warn-mid)',bg:'rgba(196,138,46,.10)'};
+  return {label:'LOW',color:'var(--green)',bg:'rgba(30,142,62,.10)'};
 }
 
 function riskColor(score) {
   if(score>=75) return 'var(--red)';
-  if(score>=55) return 'var(--amber)';
-  if(score>=35) return '#BBAA00';
+  if(score>=55) return 'var(--warn)';
+  if(score>=35) return 'var(--warn-mid)';
   return 'var(--green)';
 }
 
@@ -1527,9 +1596,10 @@ function drawTrendChart(name, d) {
 
   // Grid lines
   g.selectAll('.grid-line').data([25,50,75]).enter().append('line')
+    .attr('class','chart-grid-line')
     .attr('x1',0).attr('x2',iw)
     .attr('y1',d=>yScale(d)).attr('y2',d=>yScale(d))
-    .attr('stroke','rgba(255,255,255,0.05)').attr('stroke-dasharray','3,3');
+    .attr('stroke-dasharray','3,3');
 
   // Lines + dots
   datasets.forEach(ds => {
@@ -1547,19 +1617,19 @@ function drawTrendChart(name, d) {
   // X axis
   g.append('g').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(xScale).tickSize(0))
     .select('.domain').remove();
-  g.selectAll('.tick text').attr('fill','rgba(255,255,255,0.3)').attr('font-family','IBM Plex Mono,monospace').attr('font-size',8);
+  g.selectAll('.tick text').attr('class','chart-axis-text').attr('font-family',"'Helvetica Neue',Arial,sans-serif").attr('font-size',8);
 
   // Y axis (minimal)
   g.append('g').call(d3.axisLeft(yScale).ticks(3).tickSize(-iw))
     .select('.domain').remove();
-  g.selectAll('.tick text').attr('fill','rgba(255,255,255,0.25)').attr('font-family','IBM Plex Mono,monospace').attr('font-size',7);
-  g.selectAll('.tick line').attr('stroke','rgba(255,255,255,0.04)');
+  g.selectAll('.tick text').attr('class','chart-axis-text').attr('font-family',"'Helvetica Neue',Arial,sans-serif").attr('font-size',7);
+  g.selectAll('.tick line').attr('class','chart-axis-tick');
 
   // Legend
   const leg = svg.append('g').attr('transform',`translate(${margin.left},${h-4})`);
   datasets.forEach((ds,i) => {
     leg.append('rect').attr('x',i*70).attr('y',-10).attr('width',8).attr('height',3).attr('fill',ds.color);
-    leg.append('text').attr('x',i*70+11).attr('y',-7).attr('fill','rgba(255,255,255,0.35)').attr('font-family','IBM Plex Mono,monospace').attr('font-size',7).text(ds.label);
+    leg.append('text').attr('class','chart-legend-text').attr('x',i*70+11).attr('y',-7).attr('font-family',"'Helvetica Neue',Arial,sans-serif").attr('font-size',7).text(ds.label);
   });
 }
 
@@ -1692,7 +1762,7 @@ async function fetchClimateTrace() {
       {id:15,name:'Adani Mundra Port Thermal',     sector:'electricity-generation', assetType:'coal',    mt:14.6, lon:70.03, lat:22.72, owner:'Adani',   capacity:2000},
     ];
     dot.textContent = `● ${companyData.length} facilities (static)`;
-    dot.style.color = '#BBAA00';
+    dot.style.color = 'var(--warn-mid)';
     buildSectorFilters();
     initCompanyLayer();
   }
@@ -1806,7 +1876,7 @@ function refreshCompanyLayer() {
 function openCompanyDrawer(p) {
   const sinfo = CO_SECTORS[p.sector] || {label:p.sector, color:'#888'};
   const eiaScore = p.mt > 20 ? 'HIGH' : p.mt > 10 ? 'SIGNIFICANT' : p.mt > 3 ? 'MODERATE' : 'LOW';
-  const eiaColor = p.mt > 20 ? 'var(--red)' : p.mt > 10 ? 'var(--amber)' : p.mt > 3 ? '#BBAA00' : 'var(--green)';
+  const eiaColor = p.mt > 20 ? 'var(--red)' : p.mt > 10 ? 'var(--warn)' : p.mt > 3 ? 'var(--warn-mid)' : 'var(--green)';
 
   document.getElementById('rp-eyebrow').textContent = `FACILITY EMISSIONS INTELLIGENCE · 2024`;
   document.getElementById('rp-state-name').textContent = p.name;
@@ -1856,7 +1926,7 @@ function openCompanyDrawer(p) {
         <div class="rp-kv"><span class="rp-k">Global rank equiv.</span><span class="rp-v" style="color:${sinfo.color}">${p.mt > 20 ? 'Top 200 facilities' : p.mt > 10 ? 'Top 500 facilities' : 'Significant emitter'}</span></div>
         <div class="rp-kv"><span class="rp-k">India sector rank</span><span class="rp-v">${p.mt > 25 ? '#1–3' : p.mt > 15 ? 'Top 10' : p.mt > 5 ? 'Top 25' : 'Top 50'} ${sinfo.label}</span></div>
         <div class="rp-kv"><span class="rp-k">CO₂e intensity</span><span class="rp-v">${p.capacity ? (p.mt * 1000 / p.capacity).toFixed(0) + ' kg/MWh' : 'N/A'}</span></div>
-        <div class="rp-kv"><span class="rp-k">Paris 1.5°C pathway</span><span class="rp-v" style="color:${p.mt > 10 ? 'var(--red)' : '#BBAA00'}">${p.mt > 10 ? 'Misaligned' : 'Transition needed'}</span></div>
+        <div class="rp-kv"><span class="rp-k">Paris 1.5°C pathway</span><span class="rp-v" style="color:${p.mt > 10 ? 'var(--red)' : 'var(--warn-mid)'}">${p.mt > 10 ? 'Misaligned' : 'Transition needed'}</span></div>
       </div>
     </div>
 
@@ -1879,17 +1949,39 @@ function updateLegend(layerId) {
   document.getElementById('leg-grad').style.background = `linear-gradient(90deg,${colors})`;
 }
 
-/* ── THEME */
-document.getElementById('themeBtn').onclick = () => {
-  const t = document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
-  document.documentElement.setAttribute('data-theme',t);
-  localStorage.setItem('cx-theme',t);
-};
-
 /* ── EXPORT */
 document.getElementById('exportBtn').onclick = () => {
   alert('Export: India Climate Risk PDF · State-wise Intelligence Report · IPCC-aligned Projections\n\nAvailable in full deployment with PDF generation service.');
 };
+
+/* ── DARK / LIGHT THEME TOGGLE (v4.0 companion dark theme, DESIGN.md) ── */
+function updateThemeIcon() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const sun = document.getElementById('themeIconSun');
+  const moon = document.getElementById('themeIconMoon');
+  if (sun) sun.style.display = isDark ? 'none' : 'block';
+  if (moon) moon.style.display = isDark ? 'block' : 'none';
+}
+
+function toggleTheme(){
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (isDark) {
+    document.documentElement.removeAttribute('data-theme');
+    try { localStorage.setItem('cx-theme-v4','light'); } catch(e){}
+  } else {
+    document.documentElement.setAttribute('data-theme','dark');
+    try { localStorage.setItem('cx-theme-v4','dark'); } catch(e){}
+  }
+  updateThemeIcon();
+  // Swap the MapLibre basemap to match (dark-matter ↔ positron) and rebuild custom layers.
+  applyBasemapForTheme(currentUITheme());
+  // D3 trend-chart grid/axis/legend colors are CSS-variable-driven via .chart-grid-line /
+  // .chart-axis-text / .chart-axis-tick / .chart-legend-text classes — the [data-theme="dark"]
+  // cascade re-colors them instantly, no chart re-render required.
+}
+
+document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+updateThemeIcon();
 
 /* ── INIT */
 buildLayerList();

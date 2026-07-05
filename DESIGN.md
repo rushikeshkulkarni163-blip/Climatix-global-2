@@ -123,6 +123,39 @@ Flat surfaces only, conveyed by background-step + thin border, never shadow:
 
 ---
 
+## Dark Mode (v4.0 companion theme)
+
+v4.0 is light-first, but pages may offer a dark companion theme via a `data-theme="dark"` attribute on `<html>`, toggled from the nav (see top-nav dark-mode toggle in Layout System below) and persisted in `localStorage`. Default theme is always light.
+
+The dark variant is **not** a revival of the retired v3.2 matte-black/amber terminal look. It never uses pure black (`#000000`) and never uses Bloomberg amber, Royal Blue, or Data Cyan. It is the same NASA Blue / MSCI system rendered on dark-slate surfaces instead of white, with the same rules for typography, radius, motion, and accent budget.
+
+```css
+[data-theme="dark"] {
+  --bg: #0B0E14;         /* dark slate, never pure black */
+  --surface: #11151C;
+  --card: #161B24;
+  --border: #232935;
+  --text: #F4F6F8;
+  --text-2: #B8C0CC;
+  --text-muted: #7C8794;
+
+  --accent: #3D7BE0;     /* lightened NASA Blue for AA text/link contrast on dark surfaces */
+  --accent-fill: #0B3D91; /* solid NASA Blue still used as button/badge fill; pair with white text */
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --critical: #F87171;
+}
+```
+
+Rules:
+
+* Elevation stays flat + border-based: `--bg` → `--surface` → `--card`, same as light mode — no shadows added for dark mode.
+* `--accent` (the lightened blue) is for text links, active nav labels, and focus rings on dark surfaces, where the base NASA Blue `#0B3D91` would fail contrast against dark backgrounds. `--accent-fill` (base NASA Blue) is for solid button/badge/CTA backgrounds with white text, in both themes.
+* Status colors are lightened for AA contrast on dark surfaces (`--success`/`--warning`/`--critical` above) — same semantic roles as light mode, never decorative.
+* Do not introduce new typography, radius, or motion rules for dark mode — those are theme-agnostic and defined once.
+
+---
+
 # Typography
 
 NASA-inspired hierarchy. Unlike v3.2 (single Roboto typeface), v4.0 uses **role-based font families** — do not substitute one role's font for another's.
