@@ -34,17 +34,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto','IBM Plex 
 @keyframes pulse-g{0%,100%{opacity:1}50%{opacity:0.3}}
 .avatar{width:28px;height:28px;border-radius:2px;background:var(--surface-3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber);cursor:pointer;flex-shrink:0}
 
-/* ── Ticker strip */
-.ticker{height:30px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden;gap:0}
-.ticker-tag{background:var(--amber);color:#000;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0 10px;height:100%;display:flex;align-items:center;flex-shrink:0}
-.ticker-scroll{display:flex;align-items:center;gap:0;overflow:hidden;flex:1}
-.ticker-item{display:flex;align-items:center;gap:6px;padding:0 16px;border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0}
-.ticker-key{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
-.ticker-val{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
-.ticker-val.green{color:var(--green)}
-.ticker-val.red{color:var(--red)}
-.ticker-val.cyan{color:var(--cyan)}
-
 /* ── 3-column workspace */
 .workspace{display:grid;grid-template-columns:220px 1fr 280px;min-height:calc(100vh - 74px);align-items:start}
 
@@ -228,19 +217,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto','IBM Plex 
   </div>
 </header>
 
-<!-- Ticker -->
-<div class="ticker">
-  <div class="ticker-tag mono">ENTERPRISE</div>
-  <div class="ticker-scroll" id="ticker-content">
-    <div class="ticker-item"><span class="ticker-key mono">C-SCORE</span><span class="ticker-val mono" id="tick-score">—</span></div>
-    <div class="ticker-item"><span class="ticker-key mono">RATING</span><span class="ticker-val mono" id="tick-rating">—</span></div>
-    <div class="ticker-item"><span class="ticker-key mono">ASSESSMENT</span><span class="ticker-val cyan mono" id="tick-asm">—</span></div>
-    <div class="ticker-item"><span class="ticker-key mono">INDUSTRY</span><span class="ticker-val mono" id="tick-industry">—</span></div>
-    <div class="ticker-item"><span class="ticker-key mono">REP ID</span><span class="ticker-val mono" id="tick-rep">—</span></div>
-    <div class="ticker-item"><span class="ticker-key mono">RISK TIER</span><span class="ticker-val red mono" id="tick-risk">—</span></div>
-    <div class="ticker-item"><span class="ticker-key mono">LAST ACTIVE</span><span class="ticker-val mono" id="tick-time">—</span></div>
-  </div>
-</div>
 
 <!-- Workspace -->
 <div class="workspace">
@@ -521,7 +497,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto','IBM Plex 
   }
   const rating = getClimateRating(score);
 
-  // ── Populate nav/ticker/sidebar
+  // ── Populate nav/sidebar
   function q(id){return document.getElementById(id)}
   const nameInitials = (rep ? rep.name : 'U').split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();
   q('rep-avatar').textContent = nameInitials;
@@ -534,14 +510,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto','IBM Plex 
   if(rep){q('sb-rep-id').textContent = rep.id; q('sb-rep-name').textContent = rep.name; q('sb-rep-role').textContent = (E.ROLES[rep.role]||{}).label||rep.role;}
   q('main-company-name').textContent = company.name;
   q('main-entity-id').textContent = company.id;
-  q('tick-score').textContent = score ? String(score) : '—';
-  q('tick-rating').textContent = rating.grade;
-  q('tick-rating').style.color = rating.color;
-  q('tick-asm').textContent = assessments.length > 0 ? `${assessments.length} total` : 'No assessments';
-  q('tick-industry').textContent = company.industryLabel;
-  q('tick-rep').textContent = rep ? rep.id : '—';
-  q('tick-risk').textContent = company.riskTier;
-  q('tick-time').textContent = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) + ' UTC';
 
   // ── KPI strip
   const completedCount = assessments.filter(a=>a.status==='submitted'||a.status==='completed').length;
@@ -768,11 +736,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto','IBM Plex 
     if(confirm(`Signed in as: ${rep?rep.name:'Unknown'}\n${rep?rep.id:''}\n\nSign out?`)) doSignOut();
   };
 
-  // ── UTC clock
-  setInterval(()=>{
-    const now=new Date();
-    q('tick-time').textContent=`${String(now.getUTCHours()).padStart(2,'0')}:${String(now.getUTCMinutes()).padStart(2,'0')} UTC`;
-  },60000);
 })();
 </script>
 </body>

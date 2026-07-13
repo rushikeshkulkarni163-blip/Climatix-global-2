@@ -109,7 +109,6 @@
   ::-webkit-scrollbar-thumb { background: var(--br3); border-radius: 3px; }
 
   /* ── ANIMATIONS — minimal, no glow/pulse ────────────────── */
-  @keyframes ticker  { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
   @keyframes fadeUp  { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
 
   /* ── LAYOUT ──────────────────────────────────────────────── */
@@ -154,29 +153,6 @@
     letter-spacing: 0.08em;
   }
   .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--grn); }
-
-  /* ── DATA TICKER ─────────────────────────────────────────── */
-  .ticker-bar {
-    background: var(--bg1); border-bottom: 1px solid var(--br);
-    height: 27px; display: flex; align-items: center; overflow: hidden;
-  }
-  .ticker-tag {
-    flex-shrink: 0; height: 100%;
-    display: flex; align-items: center; padding: 0 12px;
-    font-family: var(--mono); font-size: 8.5px; font-weight: 700;
-    letter-spacing: .14em; text-transform: uppercase;
-    background: var(--g); color: #000000; z-index: 2;
-    white-space: nowrap;
-  }
-  .ticker-scroll { flex: 1; overflow: hidden; }
-  .ticker-inner { display: flex; animation: ticker 50s linear infinite; white-space: nowrap; }
-  .ticker-item {
-    display: flex; align-items: center; gap: 6px;
-    padding: 0 18px; border-right: 1px solid var(--br);
-    font-family: var(--mono); font-size: 10px; color: var(--t2);
-  }
-  .ticker-item strong { color: var(--g); font-weight: 500; }
-  .ticker-item em { font-style: normal; color: var(--t3); font-size: 9px; }
 
   /* ── COMPANY HEADER ──────────────────────────────────────── */
   .co-hd {
@@ -467,11 +443,6 @@ body {
 .tb-k { color: var(--t3) !important; }
 .tb-clock { color: var(--t3) !important; }
 
-/* DATA TICKER */
-.ticker-bar { background: var(--bg1) !important; border-bottom: 1px solid var(--br) !important; }
-.ticker-tag { background: var(--g) !important; color: var(--bg0) !important; }
-.ticker-item strong { color: var(--g) !important; }
-
 /* COMPANY HEADER */
 .co-hd { border-bottom-color: var(--br) !important; }
 .hd-sc-num {
@@ -672,14 +643,6 @@ const D = {
       { fw:'GHG Protocol', de:'Scope 1+2 third-party verified · Scope 3 measurement target FY26',           pct:68,  st:'aligned' },
     ],
   },
-  ticker: [
-    ['SCOPE 1','31,400 tCO₂e'], ['SCOPE 2','16,800 tCO₂e'], ['SCOPE 3','In Progress'],
-    ['ENERGY CONSUMED','148,000 MWh'], ['RENEWABLE OUTPUT','50,320 MWh · 34%'],
-    ['WATER RECYCLED','48,000 kL/yr'], ['WASTE DIVERTED','4,200 MT'],
-    ['EMISSION INTENSITY','2.06 tCO₂e/₹Cr'], ['EMPLOYEES','4,800 headcount'],
-    ['SCORE TREND','↑ +4pts vs FY24'], ['SECTOR RANK','Top 22% globally'],
-    ['PAT CYCLE-8','Target Achieved'], ['CDP RATING','B–'], ['BRSR ALIGN','72%'],
-  ],
 };
 
 /* ════════════════════════════════════════════════════════════
@@ -807,24 +770,6 @@ function KPI({ m }) {
           {m.pos ? '↑' : '↓'} {m.trend}% vs FY24
         </div>
       )}
-    </div>
-  );
-}
-
-function Ticker() {
-  const all = [...D.ticker, ...D.ticker];
-  return (
-    <div className="ticker-bar">
-      <div className="ticker-tag">DATA</div>
-      <div className="ticker-scroll">
-        <div className="ticker-inner">
-          {all.map(([k,v],i) => (
-            <div key={i} className="ticker-item">
-              <em>{k}</em><strong>{v}</strong>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -1000,9 +945,6 @@ function App() {
           >○</button>
         </div>
       </div>
-
-      {/* ── DATA TICKER ── */}
-      <Ticker />
 
       {/* ── MAIN CONTENT ── */}
       <div className="dash">

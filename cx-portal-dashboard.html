@@ -24,14 +24,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
 .analyst-badge{display:flex;align-items:center;gap:6px;padding:3px 8px;background:rgba(255,51,51,0.04);border:1px solid rgba(255,51,51,0.15);border-radius:2px}
 .analyst-badge-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--red);letter-spacing:0.06em}
 .analyst-badge-name{font-size:10px;color:var(--text-2)}
-/* Ticker */
-.ticker{height:30px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center}
-.ticker-tag{background:var(--red);color:#000;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0 10px;height:100%;display:flex;align-items:center;flex-shrink:0}
-.ticker-items{display:flex;align-items:center}
-.ticker-item{display:flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid var(--border);white-space:nowrap}
-.tk{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
-.tv{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
-.tv.red{color:var(--red)}.tv.green{color:var(--green)}.tv.cyan{color:var(--cyan)}
 /* Workspace */
 .workspace{display:grid;grid-template-columns:220px 1fr 280px;min-height:calc(100vh - 74px)}
 /* Sidebar */
@@ -129,18 +121,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
     <button class="nav-btn mono" onclick="doSignOut()">Sign Out</button>
   </div>
 </header>
-<div class="ticker">
-  <div class="ticker-tag mono">INTERNAL</div>
-  <div class="ticker-items" id="ticker-items">
-    <div class="ticker-item"><span class="tk mono">PENDING</span><span class="tv red mono" id="t-pending">—</span></div>
-    <div class="ticker-item"><span class="tk mono">IN REVIEW</span><span class="tv cyan mono" id="t-review">—</span></div>
-    <div class="ticker-item"><span class="tk mono">APPROVED</span><span class="tv green mono" id="t-approved">—</span></div>
-    <div class="ticker-item"><span class="tk mono">COMPANIES</span><span class="tv mono" id="t-companies">—</span></div>
-    <div class="ticker-item"><span class="tk mono">AVG C-SCORE</span><span class="tv mono" id="t-avg-score">—</span></div>
-    <div class="ticker-item"><span class="tk mono">ANALYSTS</span><span class="tv mono" id="t-analysts">—</span></div>
-    <div class="ticker-item"><span class="tk mono">ANALYST</span><span class="tv mono" id="t-analyst-id">—</span></div>
-  </div>
-</div>
 <div class="workspace">
   <!-- Sidebar -->
   <nav class="sidebar">
@@ -257,7 +237,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
   document.getElementById('sb-name').textContent=analyst.name;
   document.getElementById('sb-role').textContent=`${(I.INTERNAL_ROLES[analyst.role]||{}).label||analyst.role} · ${analyst.department||''}`;
   document.getElementById('main-analyst-label').textContent=`${analyst.id} · ${analyst.name}`;
-  document.getElementById('t-analyst-id').textContent=analyst.id;
 
   // Data aggregation
   const companies=E.listCompanies();
@@ -277,13 +256,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
   document.getElementById('kpi-companies').textContent=companies.length;
   document.getElementById('kpi-avg').textContent=avgScore||'—';
   document.getElementById('kpi-clarif').textContent=clarif.length;
-  // Ticker
-  document.getElementById('t-pending').textContent=pending.length;
-  document.getElementById('t-review').textContent=inReview.length;
-  document.getElementById('t-approved').textContent=approved.length;
-  document.getElementById('t-companies').textContent=companies.length;
-  document.getElementById('t-avg-score').textContent=avgScore||'—';
-  document.getElementById('t-analysts').textContent=analysts.length;
   // Sidebar stats
   document.getElementById('sb-pending').textContent=pending.length;
   document.getElementById('sb-approved').textContent=approved.length;

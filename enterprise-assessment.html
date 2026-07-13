@@ -38,17 +38,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto','IBM Plex 
 .save-indicator{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);transition:color var(--t)}
 .save-indicator.saved{color:var(--green)}
 
-/* ── Ticker */
-.ticker{height:28px;display:flex;align-items:center;border-bottom:1px solid var(--border);background:var(--surface);overflow:hidden;position:relative}
-.ticker-tag{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--amber);padding:0 12px;border-right:1px solid var(--border);flex-shrink:0;height:100%;display:flex;align-items:center;background:rgba(255,102,0,0.06)}
-.ticker-inner{display:flex;align-items:center;gap:0;overflow:hidden;flex:1}
-.ticker-scroll{display:flex;gap:0;animation:ticker-move 30s linear infinite;white-space:nowrap}
-.ticker-item{display:flex;align-items:center;gap:8px;padding:0 20px;border-right:1px solid var(--border);height:28px}
-.ticker-key{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted)}
-.ticker-val{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--amber)}
-.ticker-val.green{color:var(--green)}
-@keyframes ticker-move{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-
 /* ── Progress bar */
 .progress-bar-wrap{height:2px;background:var(--border);position:relative}
 .progress-bar-fill{height:100%;background:var(--amber);transition:width 0.4s ease}
@@ -244,34 +233,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto','IBM Plex 
   </div>
 </header>
 <div class="progress-bar-wrap"><div class="progress-bar-fill" id="top-progress-fill" style="width:0%"></div></div>
-
-<!-- Ticker -->
-<div class="ticker">
-  <div class="ticker-tag mono">ASSESSMENT</div>
-  <div class="ticker-inner">
-    <div class="ticker-scroll" id="ticker-content">
-      <div class="ticker-item"><span class="ticker-key mono">C-SCORE</span><span class="ticker-val mono" id="tick-score">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">RATING</span><span class="ticker-val mono" id="tick-rating">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">PROGRESS</span><span class="ticker-val mono" id="tick-progress">0%</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-CORE</span><span class="ticker-val mono" id="tick-core">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-FIN</span><span class="ticker-val mono" id="tick-fin">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-RISK/P</span><span class="ticker-val mono" id="tick-rp">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-RISK/T</span><span class="ticker-val mono" id="tick-rt">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-CAPITAL</span><span class="ticker-val mono" id="tick-cap">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-TRUTH</span><span class="ticker-val mono" id="tick-truth">—</span></div>
-      <!-- duplicate for seamless loop -->
-      <div class="ticker-item"><span class="ticker-key mono">C-SCORE</span><span class="ticker-val mono" id="tick-score2">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">RATING</span><span class="ticker-val mono" id="tick-rating2">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">PROGRESS</span><span class="ticker-val mono" id="tick-progress2">0%</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-CORE</span><span class="ticker-val mono" id="tick-core2">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-FIN</span><span class="ticker-val mono" id="tick-fin2">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-RISK/P</span><span class="ticker-val mono" id="tick-rp2">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-RISK/T</span><span class="ticker-val mono" id="tick-rt2">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-CAPITAL</span><span class="ticker-val mono" id="tick-cap2">—</span></div>
-      <div class="ticker-item"><span class="ticker-key mono">C-TRUTH</span><span class="ticker-val mono" id="tick-truth2">—</span></div>
-    </div>
-  </div>
-</div>
 
 <div class="workspace">
 
@@ -796,54 +757,13 @@ Include relevant metrics, frameworks, and named governance mechanisms." rows="6"
   updateClock();
   setInterval(updateClock, 1000);
 
-  // ── Ticker update
-  function updateTicker(){
-    const scores = computeScores();
-    const rating = getClimateRating(scores.overall);
-    const prog = scores.total > 0 ? Math.round((scores.answered/scores.total)*100) : 0;
-    const clayerScores = {};
-    SECTIONS.forEach(sec => {
-      const cl = C_LAYERS.find(c => c.id === sec.clayer);
-      if(!cl) return;
-      const secAnswered = sec.questions.filter(q => getAnswerValue(q) !== null);
-      if(secAnswered.length === 0) return;
-      const avg = secAnswered.reduce((sum,q) => sum + (getAnswerValue(q)||0),0) / secAnswered.length;
-      if(!clayerScores[sec.clayer]) clayerScores[sec.clayer] = [];
-      clayerScores[sec.clayer].push(avg);
-    });
-    const getClayerAvg = id => {
-      const vals = clayerScores[id];
-      if(!vals || !vals.length) return '—';
-      return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
-    };
-    const pairs = [
-      ['tick-score','tick-score2', scores.overall||'—'],
-      ['tick-rating','tick-rating2', rating.grade||'—'],
-      ['tick-progress','tick-progress2', prog+'%'],
-      ['tick-core','tick-core2', getClayerAvg('c_core')],
-      ['tick-fin','tick-fin2', getClayerAvg('c_fin')],
-      ['tick-rp','tick-rp2', getClayerAvg('c_risk_p')],
-      ['tick-rt','tick-rt2', getClayerAvg('c_risk_t')],
-      ['tick-cap','tick-cap2', getClayerAvg('c_capital')],
-      ['tick-truth','tick-truth2', getClayerAvg('c_truth')]
-    ];
-    pairs.forEach(([id1,id2,val]) => {
-      const e1 = document.getElementById(id1);
-      const e2 = document.getElementById(id2);
-      if(e1) e1.textContent = val;
-      if(e2) e2.textContent = val;
-    });
-  }
-
   // ── Init
   buildSectionNav();
   renderSection(0);
   updateScoreRail();
   updateProgressBar();
-  updateTicker();
   // Auto-save every 30s
   setInterval(saveState, 30000);
-  setInterval(updateTicker, 5000);
 })();
 </script>
 </body>

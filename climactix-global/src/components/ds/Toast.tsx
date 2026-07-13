@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, AlertTriangle, XCircle, Info, X } from "lucide-react";
@@ -36,7 +36,10 @@ const VARIANT_CLASSES: Record<ToastVariant, string> = {
 };
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
   const [items, setItems] = useState<ToastItem[]>([]);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const dismiss = useCallback((id: string) => {
     setItems((prev) => prev.filter((t) => t.id !== id));
@@ -54,7 +57,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      {typeof document !== "undefined" &&
+      {mounted &&
         createPortal(
           <div className="fixed bottom-4 right-4 z-[60] flex w-80 flex-col gap-2">
             <AnimatePresence>

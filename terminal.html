@@ -45,14 +45,6 @@ body{font-family:var(--font);background:var(--bg0);color:var(--tx0);font-size:12
 .tb-logo-text{font-size:11px;font-weight: 700;color:#fff;letter-spacing:.08em}
 .tb-divider{width:1px;height:20px;background:var(--bd0)}
 .tb-title{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.12em;text-transform:uppercase}
-.tb-ticker{flex:1;overflow:hidden;margin:0 16px}
-.ticker-inner{display:flex;gap:24px;animation:ticker-scroll 40s linear infinite;width:max-content}
-@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.tick-item{display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:var(--mono);font-size:10px}
-.tick-lbl{color:var(--tx3);letter-spacing:.04em}
-.tick-val{color:var(--tx1);font-weight: 500}
-.tick-up{color:var(--red)}
-.tick-dn{color:var(--grn)}
 .tb-clock{font-family:var(--mono);font-size:11px;color:var(--cyan);font-weight: 500;letter-spacing:.06em;flex-shrink:0}
 .tb-back{font-size:10px;color:var(--tx3);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--bd1);border-radius:2px;transition:color .15s,border-color .15s;flex-shrink:0}
 .tb-back:hover{color:var(--tx1);border-color:var(--bd2)}
@@ -421,10 +413,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   </a>
   <div class="tb-divider"></div>
   <span class="tb-title">Risk Intelligence Terminal</span>
-
-  <div class="tb-ticker">
-    <div class="ticker-inner" id="tickerInner"></div>
-  </div>
 
   <div class="tb-live"><span class="tb-dot"></span>LIVE</div>
   <div class="tb-clock" id="clock">--:--:--</div>
@@ -1023,21 +1011,6 @@ function updateClock(){
     now.toUTCString().slice(17,25)+' UTC';
 }
 setInterval(updateClock,1000);updateClock();
-
-// ─── Ticker ───────────────────────────────────────────────────
-const TICKS=[
-  {l:'CO₂ Concentration',v:'423 ppm',d:'up'},{l:'Global Temp Anomaly',v:'+1.48°C',d:'up'},
-  {l:'EU ETS Carbon',v:'€98.4/t',d:'up'},{l:'Arctic Ice Loss',v:'-13%/dec',d:'dn'},
-  {l:'Sea Level Rise',v:'+3.7mm/yr',d:'up'},{l:'Renewable Share',v:'30.3%',d:'dn'},
-  {l:'VCM Credit Price',v:'$14.8/t',d:'dn'},{l:'Climate Finance Gap',v:'$4.3T/yr',d:'up'},
-  {l:'Extreme Events',v:'+5× 1970',d:'up'},{l:'Carbon Budget',v:'~380 GtCO₂',d:'dn'},
-];
-function buildTicker(){
-  const inner=document.getElementById('tickerInner');
-  const all=[...TICKS,...TICKS];
-  inner.innerHTML=all.map(t=>`<span class="tick-item"><span class="tick-lbl">${t.l}:</span><span class="${t.d==='up'?'tick-up':'tick-dn'}">${t.d==='up'?'▲':'▼'}</span><span class="tick-val">${t.v}</span></span>`).join('');
-}
-buildTicker();
 
 // ─── Module Tab Switching ─────────────────────────────────────
 document.querySelectorAll('.mod-tab').forEach(btn=>{

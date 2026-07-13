@@ -24,14 +24,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
 .analyst-badge{display:flex;align-items:center;gap:6px;padding:3px 8px;background:rgba(255,51,51,0.04);border:1px solid rgba(255,51,51,0.15);border-radius:2px}
 .analyst-badge-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--red);letter-spacing:0.06em}
 .analyst-badge-name{font-size:10px;color:var(--text-2)}
-/* Ticker */
-.ticker{height:30px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden}
-.ticker-tag{background:var(--red);color:#000;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0 10px;height:100%;display:flex;align-items:center;flex-shrink:0}
-.ticker-items{display:flex;align-items:center;overflow:hidden}
-.ticker-item{display:flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0}
-.tk{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
-.tv{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
-.tv.red{color:var(--red)}.tv.green{color:var(--green)}.tv.cyan{color:var(--cyan)}
 /* Workspace */
 .workspace{display:grid;grid-template-columns:220px 1fr 288px;min-height:calc(100vh - 74px)}
 /* Sidebar */
@@ -232,18 +224,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
     <button class="nav-btn mono" onclick="doSignOut()">Sign Out</button>
   </div>
 </header>
-<div class="ticker">
-  <div class="ticker-tag mono">REVIEW</div>
-  <div class="ticker-items">
-    <div class="ticker-item"><span class="tk mono">Review ID</span><span class="tv red mono" id="t-review-id">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Company</span><span class="tv mono" id="t-company">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Industry</span><span class="tv mono" id="t-industry">—</span></div>
-    <div class="ticker-item"><span class="tk mono">C-Score</span><span class="tv mono" id="t-score">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Rating</span><span class="tv mono" id="t-rating">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Status</span><span class="tv cyan mono" id="t-status">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Due</span><span class="tv mono" id="t-due">—</span></div>
-  </div>
-</div>
 <div class="workspace">
   <!-- Sidebar -->
   <nav class="sidebar">
@@ -394,22 +374,13 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
   const ALL_Q  = [...CORE_Q, ...IND_Q];
 
   function buildPage() {
-    buildTicker();
+    setReportLinks();
     buildSidebar();
     buildMain();
     buildRightPanel();
   }
 
-  function buildTicker() {
-    const rating = I.getClimateRating(assessment.overallScore);
-    document.getElementById('t-review-id').textContent   = review.id;
-    document.getElementById('t-company').textContent     = company.name;
-    document.getElementById('t-industry').textContent    = (E.INDUSTRIES[company.industryKey]||{}).code || company.industryKey;
-    document.getElementById('t-score').textContent       = assessment.overallScore || '—';
-    document.getElementById('t-rating').textContent      = assessment.overallScore ? rating.grade : 'N/R';
-    document.getElementById('t-status').textContent      = review.status.replace(/_/g,' ');
-    document.getElementById('t-due').textContent         = review.dueDate ? new Date(review.dueDate).toLocaleDateString() : '—';
-    // Report link
+  function setReportLinks() {
     document.getElementById('nav-report-link').href = `cx-report-generator.html?company=${company.id}`;
     document.getElementById('sb-report-link').href  = `cx-report-generator.html?company=${company.id}`;
   }
@@ -910,14 +881,12 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
     I.updateReview(review.id, {assignedTo: analyst.id, status: review.status==='pending'?'in_review':review.status});
     review = I.getReview(review.id);
     document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
-    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
     showToast('Assigned to you', 'green');
   };
   window.doStartReview = function() {
     I.updateReview(review.id, {status:'in_review', assignedTo: review.assignedTo||analyst.id});
     review = I.getReview(review.id);
     document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
-    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
     showToast('Review started', 'green');
   };
   window.doApprove = function() {
@@ -925,7 +894,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
     I.approveAssessment(review.id, analyst.id, comment);
     review = I.getReview(review.id);
     document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
-    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
     showToast('Assessment approved', 'green');
   };
   window.doReject = function() {
@@ -934,7 +902,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
     I.updateReview(review.id, {status:'rejected',comments:[...(review.comments||[]),{type:'rejection',text:comment,by:analyst.id,at:new Date().toISOString()}]});
     review = I.getReview(review.id);
     document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
-    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
     showToast('Assessment rejected', 'red');
   };
   window.doClarify = function() {
@@ -943,7 +910,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
     I.requestClarification(review.id, analyst.id, comment);
     review = I.getReview(review.id);
     document.getElementById('rp-status-chip').innerHTML = chipStatus(review.status);
-    document.getElementById('t-status').textContent = review.status.replace(/_/g,' ');
     showToast('Clarification request sent', 'green');
   };
 

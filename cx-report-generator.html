@@ -25,13 +25,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
 .analyst-badge{display:flex;align-items:center;gap:6px;padding:3px 8px;background:rgba(255,51,51,0.04);border:1px solid rgba(255,51,51,0.15);border-radius:2px}
 .analyst-badge-id{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--red)}
 .analyst-badge-name{font-size:10px;color:var(--text-2)}
-/* Ticker */
-.ticker{height:30px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow:hidden}
-.ticker-tag{background:var(--amber);color:#000;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0 10px;height:100%;display:flex;align-items:center;flex-shrink:0}
-.ticker-items{display:flex;align-items:center;overflow:hidden}
-.ticker-item{display:flex;align-items:center;gap:5px;padding:0 14px;border-right:1px solid var(--border);white-space:nowrap;flex-shrink:0}
-.tk{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
-.tv{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber)}
 /* Workspace */
 .workspace{display:grid;grid-template-columns:220px 1fr}
 /* Sidebar */
@@ -157,7 +150,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
 .cm-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red),var(--amber),var(--green));clip-path:inset(0 0 0 0);transition:clip-path 0.4s ease}
 /* Print styles */
 @media print {
-  .nav,.ticker,.sidebar,.print-hide{display:none!important}
+  .nav,.sidebar,.print-hide{display:none!important}
   .workspace{display:block}
   .main{display:block;width:100%}
   body{background:#fff;color:#000;font-size:10pt}
@@ -193,18 +186,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
     <button class="nav-btn mono print-hide" onclick="doSignOut()">Sign Out</button>
   </div>
 </header>
-<div class="ticker">
-  <div class="ticker-tag mono">REPORT</div>
-  <div class="ticker-items">
-    <div class="ticker-item"><span class="tk mono">Report ID</span><span class="tv mono" id="t-report-id">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Entity</span><span class="tv mono" id="t-entity">—</span></div>
-    <div class="ticker-item"><span class="tk mono">CX ID</span><span class="tv mono" id="t-cx-id">—</span></div>
-    <div class="ticker-item"><span class="tk mono">C-Score</span><span class="tv mono" id="t-score">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Rating</span><span class="tv mono" id="t-rating">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Generated</span><span class="tv mono" id="t-generated">—</span></div>
-    <div class="ticker-item"><span class="tk mono">Version</span><span class="tv mono">1.0 · AI-GENERATED</span></div>
-  </div>
-</div>
 <div class="workspace">
   <nav class="sidebar print-hide">
     <div class="sb-report-meta">
@@ -305,14 +286,6 @@ html,body{background:var(--bg);color:var(--text);font-family:'Roboto',system-ui,
   // ── Build page
   function buildPage() {
     const rating = I.getClimateRating(report.cover.overallScore);
-
-    // Ticker
-    document.getElementById('t-report-id').textContent  = report.reportId;
-    document.getElementById('t-entity').textContent     = company.name;
-    document.getElementById('t-cx-id').textContent      = company.id;
-    document.getElementById('t-score').textContent      = report.cover.overallScore || '—';
-    document.getElementById('t-rating').textContent     = report.cover.overallScore ? rating.grade : 'N/R';
-    document.getElementById('t-generated').textContent  = new Date(report.generatedAt).toLocaleDateString();
 
     // Sidebar
     document.getElementById('sb-report-id').textContent   = report.reportId;
