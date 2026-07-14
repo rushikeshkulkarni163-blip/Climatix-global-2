@@ -532,7 +532,7 @@ import {
   getThreads, createThread, voteThread, addReply,
   getJoinedCommunities, toggleJoinCommunity,
   getRoleConfig, getAvatarColor, timeAgo, formatCount,
-  COMMUNITIES, ROLES
+  COMMUNITIES, ROLES, CX, onCommunityDataChanged
 } from './community.js';
 
 let currentUser = null;
@@ -929,6 +929,11 @@ function showToast(msg) {
   clearTimeout(window._tt);
   window._tt = setTimeout(() => t.classList.remove('show'), 2600);
 }
+
+// Live updates (Firebase mode only — no-op in local/demo mode)
+onCommunityDataChanged((key) => {
+  if (key === CX.FORUM) { renderThreads(); renderTrending(); renderTopContributors(); }
+});
 
 // Boot
 renderCommunityList();

@@ -288,7 +288,7 @@ import {
   getLeaderboard, getUserRank, getRankTrend,
   getCurrentUserProfile, getProfile, getProfiles,
   getRoleConfig, getAvatarColor, getInitials,
-  formatCount, SCORE_EVENTS,
+  formatCount, SCORE_EVENTS, CX, onCommunityDataChanged,
 } from './community.js';
 
 initCommunity();
@@ -399,6 +399,11 @@ function escHtml(s) { const d = document.createElement('div'); d.textContent = s
 
 // Auto-refresh
 setInterval(() => renderLeaderboard(), 30000);
+
+// Live updates (Firebase mode only — no-op in local/demo mode)
+onCommunityDataChanged((key) => {
+  if (key === CX.SCORES || key === CX.PROFILES) renderLeaderboard();
+});
 
 setupNav();
 renderLeaderboard();

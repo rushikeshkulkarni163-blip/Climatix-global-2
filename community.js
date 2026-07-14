@@ -1,11 +1,84 @@
 // ── Climactix Global · Community Platform ─────────────────────────────────
-// Full persistence layer. Every mutation writes to localStorage.
-// Auth-aware. Firebase/Supabase upgrade: swap load()/save() for SDK calls.
+// Full persistence layer.
+//
+// LOCAL MODE  (firebase-config.js still has YOUR_* placeholders)
+//   → every mutation writes to localStorage — single browser only, posts
+//     never leave the device that created them.
+//
+// FIREBASE MODE  (real config pasted into firebase-config.js)
+//   → every mutation writes to a Firestore document and every reader
+//     subscribes to it in realtime, so posts/profiles/threads become
+//     visible to every user, on every device, live.
+//   → storage model: one Firestore doc per CX.* key (community_data/{key})
+//     holding the whole array/object as a single `value` field — this
+//     mirrors the flat-array shape all the functions below already assume,
+//     so createPost/toggleLike/addComment/etc. did not need to change.
+//   → known trade-off: writes replace the whole document, so two users
+//     mutating the same key in the same instant can clobber each other
+//     (last write wins). Fine at demo/early scale. If write volume grows,
+//     migrate CX.POSTS to a Firestore subcollection (one doc per post)
+//     with per-field updates instead of whole-array overwrites.
 
 'use strict';
 
+import { firebaseConfig } from './firebase-config.js';
+
+const _USE_FIREBASE = !firebaseConfig.apiKey.startsWith('YOUR_');
+const _FS_APP_URL       = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+const _FS_FIRESTORE_URL = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+let _fsApiPromise = null;
+function _firestore() {
+  if (!_fsApiPromise) {
+    _fsApiPromise = Promise.all([import(_FS_APP_URL), import(_FS_FIRESTORE_URL)])
+      .then(([{ initializeApp, getApps }, fs]) => {
+        const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+        return { db: fs.getFirestore(app), ...fs };
+      });
+  }
+  return _fsApiPromise;
+}
+
+// In-memory mirror so every existing exported function can keep reading
+// synchronously via load(), same as it did against localStorage.
+const _cache = Object.create(null);
+const _subscribed = Object.create(null);
+
+function _emit(key) {
+  window.dispatchEvent(new CustomEvent('cx:data-changed', { detail: { key } }));
+}
+
+// Subscribe to be notified when any community data changes remotely
+// (e.g. another user creates a post) so the UI can re-render live.
+// Returns an unsubscribe function.
+export function onCommunityDataChanged(handler) {
+  const fn = (e) => handler(e.detail.key);
+  window.addEventListener('cx:data-changed', fn);
+  return () => window.removeEventListener('cx:data-changed', fn);
+}
+
+function _subscribe(key, fallback) {
+  if (_subscribed[key]) return;
+  _subscribed[key] = true;
+  _firestore().then(({ db, doc, onSnapshot, setDoc }) => {
+    const ref = doc(db, 'community_data', key);
+    onSnapshot(ref, (snap) => {
+      if (snap.exists()) {
+        _cache[key] = snap.data().value;
+      } else {
+        // Nothing on the server yet for this key — claim the seed/fallback
+        // as canonical. Only fires when the doc truly doesn't exist, so
+        // this never clobbers real data written by another client.
+        _cache[key] = fallback;
+        setDoc(ref, { value: fallback }).catch(err => console.error('[community] seed write failed', key, err));
+      }
+      _emit(key);
+    }, (err) => console.error('[community] Firestore sync failed, staying on last known data', key, err));
+  });
+}
+
 // ── Storage keys ───────────────────────────────────────────────────────────
-const CX = {
+export const CX = {
   POSTS:      'cx_posts_v1',
   PROFILES:   'cx_profiles_v1',
   FOLLOWS:    'cx_follows_v1',
@@ -422,14 +495,38 @@ function todayKey() {
 
 // ── Storage ────────────────────────────────────────────────────────────────
 function load(key, fallback = null) {
+  if (_USE_FIREBASE) {
+    if (!(key in _cache)) { _cache[key] = fallback; _subscribe(key, fallback); }
+    return _cache[key] ?? fallback;
+  }
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
 }
 function save(key, data) {
+  _cache[key] = data;
+  if (_USE_FIREBASE) {
+    _subscribe(key, data);
+    _firestore().then(({ db, doc, setDoc }) =>
+      setDoc(doc(db, 'community_data', key), { value: data })
+        .catch(err => console.error('[community] Firestore write failed', key, err))
+    );
+    _emit(key); // optimistic local notify so the writer's own UI updates instantly
+    return;
+  }
   try { localStorage.setItem(key, JSON.stringify(data)); } catch {}
 }
 
 // ── Init (idempotent) ──────────────────────────────────────────────────────
 export function initCommunity() {
+  if (_USE_FIREBASE) {
+    // Just prime the subscriptions early so data (or seed data, if the
+    // Firestore doc doesn't exist yet) is ready before first render.
+    load(CX.POSTS,     SEED_POSTS);
+    load(CX.PROFILES,  SEED_PROFILES);
+    load(CX.FORUM,     SEED_THREADS);
+    load(CX.SOLUTIONS, SEED_SOLUTIONS);
+    load(CX.BATTLES,   SEED_BATTLES);
+    return;
+  }
   if (!load(CX.POSTS))     save(CX.POSTS,     SEED_POSTS);
   if (!load(CX.PROFILES))  save(CX.PROFILES,  SEED_PROFILES);
   if (!load(CX.FORUM))     save(CX.FORUM,     SEED_THREADS);
@@ -438,8 +535,11 @@ export function initCommunity() {
 }
 
 // ── Auth ───────────────────────────────────────────────────────────────────
+// Session is always device-local (managed by auth.js) — read straight from
+// localStorage, never through the Firestore-synced load() above, otherwise
+// one user's login session would leak into the shared community data.
 export function getCurrentSession() {
-  return load('cx_session_v2', null);
+  try { const v = localStorage.getItem('cx_session_v2'); return v ? JSON.parse(v) : null; } catch { return null; }
 }
 
 export function requireAuth(redirectTo = 'community-login.html') {

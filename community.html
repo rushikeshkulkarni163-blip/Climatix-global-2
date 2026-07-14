@@ -766,6 +766,7 @@ import {
   addReaction, getReactions, getUserReaction,
   getBattles, voteInBattle, getUserBattleVote, getTrendingBattles,
   SCORE_EVENTS, REACTION_TYPES, CHALLENGE_DEFS,
+  CX, onCommunityDataChanged,
 } from './community.js';
 
 // ── BOOT ─────────────────────────────────────────────────────────────
@@ -1578,6 +1579,16 @@ setInterval(() => {
   renderPulseBanner();
   refreshNotifBadge();
 }, 30000);
+
+// ── LIVE UPDATES (Firebase mode only — no-op in local/demo mode) ───────
+// Fires when another user's post/profile/notification change arrives via
+// Firestore, so the feed updates without a manual refresh.
+onCommunityDataChanged((key) => {
+  if (key === CX.POSTS) { renderFeed(false); renderTrendingTags(); renderFundingSnippets(); }
+  if (key === CX.PROFILES) { renderSuggestedPeople(); renderLeaderboardWidget(); }
+  if (key === CX.NOTIFS) { refreshNotifBadge(); }
+  if (key === CX.BATTLES) { renderBattleWidget(); }
+});
 
 // ── BOOT ──────────────────────────────────────────────────────────────
 setupNav();

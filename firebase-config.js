@@ -12,10 +12,10 @@
 // Security is enforced by Firebase Security Rules, not by hiding the config.
 
 export const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey:            "AIzaSyBkneQCAYXNPFQzixfTFAUekOuo5QexXOk", // pragma: allowlist secret
+  authDomain:        "climactixglobal.firebaseapp.com",
+  projectId:         "climactixglobal",
+  storageBucket:     "climactixglobal.firebasestorage.app",
+  messagingSenderId: "117577030740",
+  appId:             "1:117577030740:web:c61796f6702c211d0221c1"
 };

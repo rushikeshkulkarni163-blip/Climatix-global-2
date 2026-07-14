@@ -640,7 +640,7 @@ import {
   getFollowers, getFollowingList, getBookmarkedPosts,
   getPosts, getAllFundingRequests, getSuggestedProfiles,
   getRoleConfig, getAvatarColor, getInitials, timeAgo, formatCount,
-  ROLES
+  ROLES, CX, onCommunityDataChanged
 } from './community.js';
 
 let currentUser = null;
@@ -1059,6 +1059,13 @@ function showToast(msg) {
   clearTimeout(window._tt);
   window._tt = setTimeout(() => t.classList.remove('show'), 2600);
 }
+
+// Live updates (Firebase mode only — no-op in local/demo mode)
+onCommunityDataChanged((key) => {
+  if (key === CX.PROFILES) { renderProfile(); renderNetwork('all'); renderSimilarProfiles(); }
+  if (key === CX.POSTS) renderPosts();
+  if (key === CX.FUNDING) renderFunding();
+});
 
 // Boot
 setupNav();

@@ -442,7 +442,7 @@ import {
   toggleFundingInterest, isFundingInterested,
   toggleFundingSave, isFundingSaved,
   getRoleConfig, getAvatarColor, formatCount, timeAgo,
-  ROLES
+  ROLES, CX, onCommunityDataChanged
 } from './community.js';
 
 let currentUser = null;
@@ -730,6 +730,11 @@ function showToast(msg) {
   clearTimeout(window._tt);
   window._tt = setTimeout(() => t.classList.remove('show'), 3200);
 }
+
+// Live updates (Firebase mode only — no-op in local/demo mode)
+onCommunityDataChanged((key) => {
+  if (key === CX.FUNDING) applyFilters();
+});
 
 // Boot
 applyFilters();
