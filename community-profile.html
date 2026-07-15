@@ -3,47 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light dark" />
   <title>Profile · Climactix Community</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css?v=4" />
+  <script>(function(){if(localStorage.getItem('cx-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── Design System v4.0 (NASA × MSCI) — page-scoped override — see DESIGN.md ── */
     :root {
-      --bg:         #000000;
-      --surface: #080909;
-      --surface-2: #0D0D12;
-      --surface-3: #131318;
-      --border: rgba(255,255,255,0.07);
-      --border-s: rgba(255,255,255,0.11);
-      --amber: #0EA5E9;
-      --amber-dim: #0284C7;
-      --amber-glow: rgba(14,165,233,0.10);
-      --cyan: #4AABFF;
-      --green: #23CF7A;
-      --red: #FF4B4B;
-      --blue: #4AABFF;
-      --text:       #FFFFFF;
-      --text-2: #8A9BB5;
-      --text-m: #4A5A72;
-      --mono:       'IBM Plex Mono', monospace;
-      --nav-h:      44px;
-      --t:          0.12s ease;
+      --bg:#FFFFFF; --nav-bg:#FFFFFF;
+      --surface:#FAFAFA; --surface-2:#F4F4F6; --surface-3:#ECEEF1;
+      --border:#D9D9D9; --border-s:#C4C4C4; --border-strong:#C4C4C4; --border-accent: rgba(11,61,145,0.28);
+      --amber:#0B3D91; --amber-dim:#092C6B; --amber-glow: rgba(11,61,145,0.08);
+      --accent:#0B3D91; --accent-fill:#0B3D91; --accent-dim:#092C6B; --accent-glow: rgba(11,61,145,0.08); --accent-fg:#FFFFFF;
+      --cyan:#0B3D91; --green:#1E8E3E; --red:#DC2626; --blue:#0B3D91;
+      --text:#111111; --text-2:#4F4F4F; --text-m:#6B7280; --text-muted:#6B7280;
+      --primary: var(--accent); --grey-light: var(--surface-2);
+      --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-body: 'Source Sans Pro', Arial, sans-serif;
+      --font: var(--font-body); --mono: var(--font-heading);
+      --r:8px; --r-pill:999px; --nav-h:56px; --t:.18s ease;
+      color-scheme: light;
     }
-    [data-theme="light"] {
-      --bg:        #F5F5F5;
-      --surface:   #FFFFFF;
-      --surface-2: #EBEBEB;
-      --surface-3: #E0E0E0;
-      --border:    #D0D0D0;
-      --border-s:  #BBBBBB;
-      --text:      #000000;
-      --text-2:    #333333;
-      --text-m:    #666666;
+    [data-theme="dark"] {
+      --bg:#0B0E14; --nav-bg:#11151C;
+      --surface:#11151C; --surface-2:#161B24; --surface-3:#1C222D;
+      --border:#232935; --border-s:#2E3646; --border-strong:#2E3646; --border-accent: rgba(61,123,224,0.35);
+      --amber:#3D7BE0; --amber-dim:#2F62B8; --amber-glow: rgba(61,123,224,0.12);
+      --accent:#3D7BE0; --accent-dim:#2F62B8; --accent-glow: rgba(61,123,224,0.12);
+      --green:#22C55E; --red:#F87171;
+      --text:#F4F6F8; --text-2:#B8C0CC; --text-m:#7C8794; --text-muted:#7C8794;
+      --grey-light: var(--surface-2);
+      color-scheme: dark;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
 
 
     a { color: inherit; text-decoration: none; }
@@ -69,7 +66,7 @@
     .cx-nav-link.active { color: var(--amber); }
     .cx-nav-link.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--amber); }
     .cx-nav-link .nav-icon { font-size: 14px; line-height: 1; }
-    .cx-avatar { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; flex-shrink: 0; }
+    .cx-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; flex-shrink: 0; }
     .cx-nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
     .cx-avatar-btn { display: flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; background: none; border: 1px solid var(--border); cursor: pointer; transition: var(--t); }
     .cx-avatar-btn:hover { background: var(--surface-2); }
@@ -81,6 +78,7 @@
     .cx-profile-hero {
       background: var(--surface);
       border: 1px solid var(--border);
+      border-radius: var(--r);
       overflow: hidden;
       margin: 20px 0 16px;
     }
@@ -112,6 +110,7 @@
     .cx-profile-avatar-xl {
       width: 76px; height: 76px;
       border: 3px solid var(--border);
+      border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 24px; font-weight: 700; color: white;
       overflow: hidden;
@@ -121,44 +120,49 @@
     .cx-avatar-edit-btn {
       position: absolute; bottom: 2px; right: 2px;
       width: 22px; height: 22px;
-      background: var(--amber); border: 2px solid var(--surface);
+      background: var(--accent-fill); border: 2px solid var(--surface);
+      border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: #000; font-size: 10px; transition: background var(--t);
+      cursor: pointer; color: var(--accent-fg); font-size: 10px; transition: background var(--t);
     }
     .cx-avatar-edit-btn:hover { background: var(--amber-dim); }
 
     .cx-banner-edit-btn {
       position: absolute; bottom: 8px; right: 12px;
-      display: flex; align-items: center; gap: 5px; padding: 4px 10px;
+      display: flex; align-items: center; gap: 5px; padding: 5px 12px;
       background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.8); font-family: var(--mono);
-      font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: var(--r);
+      color: rgba(255,255,255,0.85); font-family: var(--font-heading);
+      font-size: 12px; font-weight: 500;
       cursor: pointer; transition: background var(--t); z-index: 5;
     }
     .cx-banner-edit-btn:hover { background: rgba(0,0,0,0.8); }
 
     .cx-profile-actions { display: flex; gap: 6px; align-items: center; padding-bottom: 3px; }
     .cx-btn-primary {
-      padding: 6px 16px; background: var(--amber); color: #000;
-      font-family: var(--mono); font-size: 10px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: var(--t);
+      padding: 7px 16px; background: var(--accent-fill); color: var(--accent-fg);
+      border-radius: var(--r);
+      font-family: var(--font-heading); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: var(--t);
     }
     .cx-btn-primary:hover { background: var(--amber-dim); }
-    .cx-btn-primary.following { background: rgba(245,158,11,.08); color: var(--amber); border: 1px solid rgba(245,158,11,.2); }
+    .cx-btn-primary.following { background: var(--accent-glow); color: var(--amber); border: 1px solid var(--border-accent); }
     .cx-btn-outline {
-      padding: 5px 14px; background: none; color: var(--text-2);
+      padding: 6px 14px; background: none; color: var(--text-2);
       border: 1px solid var(--border-s);
-      font-family: var(--mono); font-size: 10px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: var(--t);
+      border-radius: var(--r);
+      font-family: var(--font-heading); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: var(--t);
     }
     .cx-btn-outline:hover { border-color: var(--amber); color: var(--amber); }
     .cx-connect-btn {
-      padding: 5px 14px; background: none; color: var(--amber);
-      border: 1px solid rgba(245,158,11,.3);
-      font-family: var(--mono); font-size: 10px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: var(--t);
+      padding: 6px 14px; background: none; color: var(--amber);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--r);
+      font-family: var(--font-heading); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: var(--t);
     }
-    .cx-connect-btn:hover { background: var(--amber); color: #000; }
+    .cx-connect-btn:hover { background: var(--accent-fill); color: var(--accent-fg); }
 
     .cx-profile-name {
       font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 3px;
@@ -168,9 +172,10 @@
 
     .cx-role-badge {
       display: inline-flex; align-items: center;
-      padding: 2px 8px; border: 1px solid var(--border);
-      font-family: var(--mono); font-size: 9px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-m);
+      padding: 2px 9px; border: 1px solid var(--border);
+      border-radius: var(--r-pill);
+      font-family: var(--font-heading); font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-m);
     }
     .cx-profile-headline { font-size: 13px; color: var(--text-2); margin-bottom: 6px; line-height: 1.5; }
     .cx-profile-meta { font-family: var(--mono); font-size: 10px; color: var(--text-m); display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
@@ -224,12 +229,12 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-bottom: none;
+      border-radius: var(--r) var(--r) 0 0;
       display: flex; overflow: hidden;
     }
     .cx-tab {
-      flex: 1; padding: 10px 8px; text-align: center;
-      font-family: var(--mono); font-size: 10px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase;
+      flex: 1; padding: 11px 8px; text-align: center;
+      font-family: var(--font-heading); font-size: 13px; font-weight: 500;
       color: var(--text-m); cursor: pointer; transition: var(--t);
       border-bottom: 2px solid transparent;
     }
@@ -241,6 +246,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-top: none;
+      border-radius: 0 0 var(--r) var(--r);
       padding: 16px;
       min-height: 200px;
     }
@@ -248,6 +254,7 @@
     /* SIDEBAR CARDS */
     .cx-sidebar-card {
       background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r);
       padding: 14px; margin-bottom: 10px;
     }
     .cx-sidebar-card:last-child { margin-bottom: 0; }
@@ -260,16 +267,17 @@
     /* INTEREST TAGS */
     .cx-interest-tag {
       display: inline-flex; align-items: center;
-      padding: 2px 8px; border: 1px solid var(--border);
+      padding: 2px 9px; border: 1px solid var(--border);
+      border-radius: var(--r-pill);
       background: var(--surface-2); color: var(--text-2);
-      font-family: var(--mono); font-size: 9px; font-weight: 500;
-      letter-spacing: 0.06em; text-transform: uppercase; margin: 2px 2px;
+      font-family: var(--font-heading); font-size: 10.5px; font-weight: 500;
+      margin: 2px 2px;
     }
 
     /* PORTFOLIO */
     .cx-portfolio-item {
       padding: 10px; border: 1px solid var(--border);
-      border-left: 3px solid var(--amber); margin-bottom: 8px;
+      border-left: 3px solid var(--amber); border-radius: var(--r); margin-bottom: 8px;
       transition: background var(--t);
     }
     .cx-portfolio-item:last-child { margin-bottom: 0; }
@@ -288,26 +296,28 @@
     .cx-person-card {
       padding: 14px; text-align: center;
       border: 1px solid var(--border);
+      border-radius: var(--r);
       transition: var(--t); cursor: pointer; background: var(--surface);
     }
-    .cx-person-card:hover { border-color: rgba(245,158,11,.3); background: var(--surface-2); }
+    .cx-person-card:hover { border-color: var(--border-accent); background: var(--surface-2); }
     .cx-person-card-avatar {
       width: 44px; height: 44px;
+      border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 16px; font-weight: 700; color: white;
       margin: 0 auto 8px;
     }
     .cx-person-card-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
-    .cx-person-card-role { font-family: var(--mono); font-size: 10px; color: var(--text-m); text-transform: uppercase; letter-spacing: 0.06em; }
+    .cx-person-card-role { font-family: var(--font-heading); font-size: 11px; color: var(--text-m); }
     .cx-person-card-btn {
-      display: block; margin-top: 8px; padding: 4px;
+      display: block; margin-top: 8px; padding: 5px;
       border: 1px solid var(--border-s);
-      font-family: var(--mono); font-size: 9px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
+      border-radius: var(--r);
+      font-family: var(--font-heading); font-size: 11.5px; font-weight: 500;
       color: var(--text-m); transition: var(--t); cursor: pointer; background: none;
     }
-    .cx-person-card-btn:hover { background: var(--amber); color: #000; border-color: var(--amber); }
-    .cx-person-card-btn.following { background: rgba(245,158,11,.08); color: var(--amber); border-color: rgba(245,158,11,.2); }
+    .cx-person-card-btn:hover { background: var(--accent-fill); color: var(--accent-fg); border-color: var(--accent-fill); }
+    .cx-person-card-btn.following { background: var(--accent-glow); color: var(--amber); border-color: var(--border-accent); }
 
     /* TOAST */
     .cx-toast {
@@ -315,9 +325,10 @@
       transform: translateX(-50%) translateY(80px);
       background: var(--surface-3); color: var(--text);
       border: 1px solid var(--border-s);
+      border-radius: var(--r);
       padding: 10px 18px;
-      font-family: var(--mono); font-size: 11px; font-weight: 500;
-      letter-spacing: 0.04em; z-index: 9999;
+      font-family: var(--font-body); font-size: 13px; font-weight: 500;
+      z-index: 9999;
       transition: transform 0.2s ease; white-space: nowrap;
     }
     .cx-toast.show { transform: translateX(-50%) translateY(0); }
@@ -325,35 +336,39 @@
     /* EDIT MODAL */
     .cx-modal-overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.72); z-index: 1000;
+      background: rgba(0,0,0,0.65); z-index: 1000;
       display: none; align-items: center; justify-content: center; padding: 20px;
     }
     .cx-modal-overlay.open { display: flex; }
     .cx-modal {
       background: var(--surface-2); border: 1px solid var(--border-s);
+      border-radius: var(--r);
       width: 100%; max-width: 480px;
       animation: modalIn 0.18s ease;
+      overflow: hidden;
     }
     @keyframes modalIn { from { opacity:0;transform:translateY(8px); } to { opacity:1;transform:translateY(0); } }
     .cx-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); }
-    .cx-modal-title { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
-    .cx-modal-close { width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-m);cursor:pointer;transition:var(--t); }
+    .cx-modal-title { font-size: 18px; font-weight: 700; color: var(--text); font-family: var(--font-heading); }
+    .cx-modal-close { width:28px;height:28px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-m);cursor:pointer;transition:var(--t); }
     .cx-modal-close:hover { color: var(--text); background: var(--surface-3); }
     .cx-modal-body { padding: 16px 18px; }
     .cx-field { margin-bottom: 14px; }
-    .cx-field label { display:block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m);margin-bottom:5px; }
+    .cx-field label { display:block;font-family:var(--font-body);font-size:11.5px;font-weight:500;color:var(--text-2);margin-bottom:5px; }
     .cx-field input, .cx-field textarea, .cx-field select {
       width:100%; padding:8px 12px; border:1px solid var(--border);
-      font-size:13px; font-family:'Roboto',sans-serif;
+      border-radius: var(--r);
+      font-size:13px; font-family:var(--font-body);
       color:var(--text); background:var(--surface); outline:none; transition:var(--t);
     }
     .cx-field input:focus, .cx-field textarea:focus, .cx-field select:focus { border-color:var(--amber); }
     .cx-field textarea { resize:vertical; min-height:72px; }
     .cx-modal-footer { display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--border); }
     .cx-save-btn {
-      padding:7px 20px;background:var(--amber);color:#000;
-      font-family:var(--mono);font-size:11px;font-weight: 700;
-      letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:none;transition:var(--t);
+      padding:8px 20px;background:var(--accent-fill);color:var(--accent-fg);
+      border-radius: var(--r);
+      font-family:var(--font-heading);font-size:14px;font-weight:500;
+      cursor:pointer;border:none;transition:var(--t);
     }
     .cx-save-btn:hover { background: var(--amber-dim); }
 
@@ -366,7 +381,7 @@
     /* ── Typography normalisation ── */
     .cx-nav-logo-text,
     [class*="brand-text"], [class*="logo-text"] {
-      font-family: 'IBM Plex Mono', monospace !important;
+      font-family: var(--font-heading) !important;
       font-size: 11px !important;
       font-weight: 700 !important;
       letter-spacing: 0.06em !important;
@@ -392,7 +407,7 @@
   </div>
   <div class="cx-nav-right">
     <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
-      <div class="cx-avatar" id="navAvatar" style="background:#1A1A1A">?</div>
+      <div class="cx-avatar" id="navAvatar" style="background:var(--surface-3)">?</div>
       <span style="font-size:13px;font-weight: 500;" id="navName">—</span>
     </button>
   </div>
@@ -418,7 +433,7 @@
     <div class="cx-profile-hero-body">
       <div class="cx-profile-avatar-row">
         <div class="cx-avatar-wrap">
-          <div class="cx-profile-avatar-xl" id="profileAvatar" style="background:#1A1A1A">?</div>
+          <div class="cx-profile-avatar-xl" id="profileAvatar" style="background:var(--surface-3)">?</div>
           <!-- Camera edit button (own profile only) -->
           <button class="cx-avatar-edit-btn" id="avatarEditBtn" style="display:none"
             title="Change profile photo"
@@ -496,9 +511,9 @@
       <!-- Posts Tab -->
       <div class="cx-content-section" id="tab-posts">
         <div id="profilePosts">
-          <div style="text-align:center;padding:40px 20px;color:#888888;">
+          <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">
             <div style="font-size:32px;margin-bottom:12px;"></div>
-            <div style="font-size:15px;font-weight: 500;color:#333333;margin-bottom:4px;">No posts yet</div>
+            <div style="font-size:15px;font-weight: 500;color:var(--text-2);margin-bottom:4px;">No posts yet</div>
             <div style="font-size:13px;">Posts and updates will appear here.</div>
           </div>
         </div>
@@ -506,41 +521,41 @@
 
       <!-- About Tab -->
       <div class="cx-content-section" id="tab-about" style="display:none;">
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;color:#111;">About</h3>
-        <div style="font-size:14px;color:#333333;line-height:1.7;margin-bottom:20px;" id="aboutBio">—</div>
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;color:var(--text);">About</h3>
+        <div style="font-size:14px;color:var(--text-2);line-height:1.7;margin-bottom:20px;" id="aboutBio">—</div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
           <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#888888;margin-bottom:8px;">Location</div>
-            <div style="font-size:13.5px;color:#333333;" id="aboutLocation">—</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Location</div>
+            <div style="font-size:13.5px;color:var(--text-2);" id="aboutLocation">—</div>
           </div>
           <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#888888;margin-bottom:8px;">Organization</div>
-            <div style="font-size:13.5px;color:#333333;" id="aboutCompany">—</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Organization</div>
+            <div style="font-size:13.5px;color:var(--text-2);" id="aboutCompany">—</div>
           </div>
           <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#888888;margin-bottom:8px;">Website</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Website</div>
             <div style="font-size:13.5px;" id="aboutWebsite">—</div>
           </div>
         </div>
 
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#888888;margin-bottom:10px;">Climate Focus Areas</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Climate Focus Areas</div>
         <div id="aboutInterests"></div>
 
-        <div style="margin-top:20px;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#888888;margin-bottom:10px;">Portfolio & Projects</div>
+        <div style="margin-top:20px;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Portfolio & Projects</div>
         <div id="aboutPortfolio"></div>
       </div>
 
       <!-- Network Tab -->
       <div class="cx-content-section" id="tab-network" style="display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
-          <h3 style="font-size:15px;font-weight:700;color:#111;">Climate Network</h3>
+          <h3 style="font-size:15px;font-weight:700;color:var(--text);">Climate Network</h3>
           <div style="display:flex;gap:6px;">
-            <button id="netBtn-all"       onclick="renderNetwork('all')"       style="padding:5px 14px;border-radius:14px;font-size:12.5px;font-weight: 500;background:var(--primary);color:white;border:none;cursor:pointer;">All</button>
-            <button id="netBtn-followers" onclick="renderNetwork('followers')" style="padding:5px 14px;border-radius:14px;font-size:12.5px;font-weight: 500;background:var(--grey-light);color:var(--text-2);border:none;cursor:pointer;">Followers</button>
-            <button id="netBtn-following" onclick="renderNetwork('following')" style="padding:5px 14px;border-radius:14px;font-size:12.5px;font-weight: 500;background:var(--grey-light);color:var(--text-2);border:none;cursor:pointer;">Following</button>
+            <button id="netBtn-all"       onclick="renderNetwork('all')"       style="padding:6px 14px;border-radius:var(--r);font-size:12.5px;font-weight: 500;background:var(--accent-fill);color:var(--accent-fg);border:none;cursor:pointer;">All</button>
+            <button id="netBtn-followers" onclick="renderNetwork('followers')" style="padding:5px 14px;border-radius:var(--r);font-size:12.5px;font-weight: 500;background:var(--grey-light);color:var(--text-2);border:none;cursor:pointer;">Followers</button>
+            <button id="netBtn-following" onclick="renderNetwork('following')" style="padding:5px 14px;border-radius:var(--r);font-size:12.5px;font-weight: 500;background:var(--grey-light);color:var(--text-2);border:none;cursor:pointer;">Following</button>
           </div>
-          <span style="font-size:12.5px;color:#555555;" id="networkCount">0 connections</span>
+          <span style="font-size:12.5px;color:var(--text-muted);" id="networkCount">0 connections</span>
         </div>
         <div class="cx-people-grid" id="networkGrid"></div>
       </div>
@@ -548,8 +563,8 @@
       <!-- Funding Tab -->
       <div class="cx-content-section" id="tab-funding" style="display:none;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-          <h3 style="font-size:15px;font-weight:700;color:#111;">Funding Activity</h3>
-          <a href="funding-hub.html" style="font-size:12.5px;color:#FF6600;font-weight: 500;">View Hub →</a>
+          <h3 style="font-size:15px;font-weight:700;color:var(--text);">Funding Activity</h3>
+          <a href="funding-hub.html" style="font-size:12.5px;color:var(--accent);font-weight: 500;">View Hub →</a>
         </div>
         <div id="fundingContent"></div>
       </div>
@@ -560,7 +575,7 @@
       <!-- Intro Card -->
       <div class="cx-sidebar-card">
         <div class="cx-card-title">Intro</div>
-        <div id="introContent" style="font-size:13.5px;color:#333333;line-height:1.65;"></div>
+        <div id="introContent" style="font-size:13.5px;color:var(--text-2);line-height:1.65;"></div>
       </div>
 
       <!-- Climate Interests -->
@@ -624,7 +639,7 @@
       </div>
     </div>
     <div class="cx-modal-footer">
-      <button class="cx-modal-close" onclick="closeEditModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight: 500;color:#333333;background:#F3F4F6;">Cancel</button>
+      <button class="cx-modal-close" onclick="closeEditModal()" style="padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight: 500;color:var(--text-2);background:var(--surface-2);">Cancel</button>
       <button class="cx-save-btn" onclick="saveProfile()">Save Changes</button>
     </div>
   </div>
@@ -764,7 +779,7 @@ function renderProfile() {
   document.getElementById('aboutLocation').textContent = location || '—';
   document.getElementById('aboutCompany').textContent = company || '—';
   if (website) {
-    document.getElementById('aboutWebsite').innerHTML = `<a href="https://${website}" target="_blank" style="color:#FF6600;">${escHtml(website)} ↗</a>`;
+    document.getElementById('aboutWebsite').innerHTML = `<a href="https://${website}" target="_blank" style="color:var(--accent);">${escHtml(website)} ↗</a>`;
   }
 
   // Interests
@@ -784,7 +799,7 @@ function renderProfile() {
         <div class="cx-portfolio-name">${escHtml(p.name)}</div>
         <div class="cx-portfolio-impact"> ${escHtml(p.impact)}</div>
       </div>`).join('')
-    : '<div style="color:#888888;font-size:13px;">No portfolio items added yet.</div>';
+    : '<div style="color:var(--text-muted);font-size:13px;">No portfolio items added yet.</div>';
 
   // Intro sidebar
   document.getElementById('introContent').innerHTML = `
@@ -797,16 +812,16 @@ function renderProfile() {
   document.getElementById('trustItems').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
-        ${verified ? '' : ''} <span style="color:${verified ? '#FF6600' : '#888888'}">Profile ${verified ? 'Verified' : 'Unverified'}</span>
+        ${verified ? '' : ''} <span style="color:${verified ? 'var(--accent)' : 'var(--text-muted)'}">Profile ${verified ? 'Verified' : 'Unverified'}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
-        ${climateScore > 0 ? '' : ''} <span style="color:${climateScore > 0 ? '#FF6600' : '#888888'}">Climactix Score ${climateScore > 0 ? 'Assessed' : 'Pending'}</span>
+        ${climateScore > 0 ? '' : ''} <span style="color:${climateScore > 0 ? 'var(--accent)' : 'var(--text-muted)'}">Climactix Score ${climateScore > 0 ? 'Assessed' : 'Pending'}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
-        ${company ? '' : ''} <span style="color:${company ? '#FF6600' : '#888888'}">Organisation ${company ? 'Listed' : 'Not Listed'}</span>
+        ${company ? '' : ''} <span style="color:${company ? 'var(--accent)' : 'var(--text-muted)'}">Organisation ${company ? 'Listed' : 'Not Listed'}</span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
-         <span style="color:#888888">Email Verified</span>
+         <span style="color:var(--text-muted)">Email Verified</span>
       </div>
     </div>`;
 }
@@ -815,28 +830,28 @@ function renderPosts() {
   const posts = getPosts().filter(p => p.authorId === viewProfile?.uid);
   const container = document.getElementById('profilePosts');
   if (!posts.length) {
-    container.innerHTML = `<div style="text-align:center;padding:40px 20px;color:#888888;">
+    container.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text-muted);">
       <div style="font-size:32px;margin-bottom:12px;"></div>
-      <div style="font-size:15px;font-weight: 500;color:#333333;margin-bottom:4px;">No posts yet</div>
+      <div style="font-size:15px;font-weight: 500;color:var(--text-2);margin-bottom:4px;">No posts yet</div>
       <div style="font-size:13px;">Start sharing your climate insights.</div>
-      ${isOwnProfile ? '<a href="community.html" style="display:inline-block;margin-top:14px;padding:9px 20px;background:#FF6600;color:#000000;border-radius:20px;font-size:13px;font-weight: 500;">Create Post</a>' : ''}
+      ${isOwnProfile ? '<a href="community.html" style="display:inline-block;margin-top:14px;padding:9px 20px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--r);font-size:13px;font-weight: 500;">Create Post</a>' : ''}
     </div>`;
     return;
   }
   container.innerHTML = posts.map(p => `
     <div class="cx-mini-post">
       <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
-        <span style="font-size:10.5px;padding:2px 7px;border-radius:4px;font-weight:700;background:${p.type==='solution'?'#EEF4FF':p.type==='funding'?'#FEF3C7':p.type==='research'?'#EDE9FE':'#F3F4F6'};color:${p.type==='solution'?'#065F46':p.type==='funding'?'#92400E':p.type==='research'?'#5B21B6':'#333333'}">
+        <span style="font-size:10.5px;padding:2px 8px;border-radius:var(--r-pill);font-weight:700;background:${p.type==='solution'?'rgba(30,142,62,.1)':p.type==='funding'||p.type==='research'?'var(--accent-glow)':'var(--surface-2)'};color:${p.type==='solution'?'var(--green)':p.type==='funding'||p.type==='research'?'var(--accent)':'var(--text-2)'}">
           ${p.type.toUpperCase()}
         </span>
-        <span style="font-size:12px;color:#888888;">${timeAgo(p.timestamp)}</span>
+        <span style="font-size:12px;color:var(--text-muted);">${timeAgo(p.timestamp)}</span>
       </div>
       <div class="cx-mini-post-content">${escHtml(p.content.slice(0, 220))}${p.content.length > 220 ? '…' : ''}</div>
       <div class="cx-mini-post-meta">
         <span> ${p.likes.length}</span>
         <span> ${p.comments.length}</span>
         <span> ${formatCount(p.views)}</span>
-        ${p.tags?.slice(0,3).map(t=>`<span style="color:#FF6600;">#${t}</span>`).join('') || ''}
+        ${p.tags?.slice(0,3).map(t=>`<span style="color:var(--accent);">#${t}</span>`).join('') || ''}
       </div>
     </div>
   `).join('');
@@ -871,9 +886,9 @@ window.renderNetwork = function(mode = 'all') {
 
   if (!people.length) {
     document.getElementById('networkGrid').innerHTML = `
-      <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:#888888;">
+      <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--text-muted);">
         <div style="font-size:32px;margin-bottom:10px;"></div>
-        <div style="font-size:14px;font-weight: 500;color:#333333;">No ${mode === 'followers' ? 'followers' : mode === 'following' ? 'people following' : 'connections'} yet</div>
+        <div style="font-size:14px;font-weight: 500;color:var(--text-2);">No ${mode === 'followers' ? 'followers' : mode === 'following' ? 'people following' : 'connections'} yet</div>
       </div>`;
     return;
   }
@@ -883,7 +898,7 @@ window.renderNetwork = function(mode = 'all') {
       <div class="cx-person-card-avatar" style="background:${getAvatarColor(p.role)}">${p.avatar}</div>
       <div class="cx-person-card-name">${escHtml(p.fullName)}</div>
       <div class="cx-person-card-role">${getRoleConfig(p.role).label}</div>
-      <div style="font-size:11px;color:#888888;margin-top:2px;">${formatCount(p.followersCount)} followers</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${formatCount(p.followersCount)} followers</div>
       <button class="cx-person-card-btn ${isFollowing(p.uid, currentUid) ? 'following' : ''}"
         onclick="event.stopPropagation();handleFollowPerson('${p.uid}', this)">
         ${isFollowing(p.uid, currentUid) ? 'Following' : '+ Follow'}
@@ -898,37 +913,37 @@ function renderFunding() {
     const items = getAllFundingRequests().filter(f => f.founderName === viewProfile.fullName);
     if (items.length) {
       c.innerHTML = items.map(f => `
-        <div style="padding:16px;border:1px solid #E5E7EB;border-radius:12px;margin-bottom:12px;">
+        <div style="padding:16px;border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
             <div>
               <div style="font-size:15px;font-weight:700;">${escHtml(f.startupName)}</div>
-              <div style="font-size:12px;color:#555555;">${escHtml(f.stage)} · ${escHtml(f.sector)}</div>
+              <div style="font-size:12px;color:var(--text-muted);">${escHtml(f.stage)} · ${escHtml(f.sector)}</div>
             </div>
-            <span style="background:rgba(255,102,0,0.10);color:#FF6600;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;">${f.climateScore}</span>
+            <span style="background:var(--accent-glow);color:var(--accent);padding:4px 10px;border-radius:var(--r);font-size:12px;font-weight:700;">${f.climateScore}</span>
           </div>
-          <div style="font-size:14px;color:#333333;margin-bottom:8px;">${escHtml(f.impact)}</div>
+          <div style="font-size:14px;color:var(--text-2);margin-bottom:8px;">${escHtml(f.impact)}</div>
           <div style="display:flex;gap:8px;">
-            <span style="background:#FEF3C7;color:#92400E;padding:4px 12px;border-radius:8px;font-size:13px;font-weight:700;">Ask: ${escHtml(f.ask)}</span>
-            <a href="funding-hub.html" style="padding:4px 12px;border:1px solid #FF6600;border-radius:8px;font-size:13px;font-weight: 500;color:#FF6600;">View Full Pitch →</a>
+            <span style="background:rgba(180,83,9,.1);color:var(--gold,#B45309);padding:4px 12px;border-radius:var(--r);font-size:13px;font-weight:700;">Ask: ${escHtml(f.ask)}</span>
+            <a href="funding-hub.html" style="padding:4px 12px;border:1px solid var(--accent);border-radius:var(--r);font-size:13px;font-weight: 500;color:var(--accent);">View Full Pitch →</a>
           </div>
         </div>`).join('');
     } else {
-      c.innerHTML = `<div style="text-align:center;padding:32px;color:#888888;">
+      c.innerHTML = `<div style="text-align:center;padding:32px;color:var(--text-muted);">
         <div style="font-size:28px;margin-bottom:10px;"></div>
-        <div style="font-size:14px;font-weight: 500;color:#333333;">No funding requests yet</div>
-        <a href="funding-hub.html" style="display:inline-block;margin-top:12px;padding:8px 18px;background:#FF6600;color:#000000;border-radius:16px;font-size:13px;font-weight: 500;">Post Funding Request</a>
+        <div style="font-size:14px;font-weight: 500;color:var(--text-2);">No funding requests yet</div>
+        <a href="funding-hub.html" style="display:inline-block;margin-top:12px;padding:8px 18px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--r);font-size:13px;font-weight: 500;">Post Funding Request</a>
       </div>`;
     }
   } else if (viewProfile?.role === 'investor') {
-    c.innerHTML = `<div style="padding:14px;background:#EEF4FF;border-radius:12px;margin-bottom:16px;">
-      <div style="font-size:13.5px;font-weight: 500;color:#FF6600;margin-bottom:4px;"> Actively Investing</div>
-      <div style="font-size:13px;color:#333333;">Browse startups seeking funding that match this investor's focus areas.</div>
-      <a href="funding-hub.html" style="display:inline-block;margin-top:10px;padding:7px 16px;background:#FF6600;color:#000000;border-radius:14px;font-size:12.5px;font-weight: 500;">Browse Startups →</a>
+    c.innerHTML = `<div style="padding:14px;background:var(--accent-glow);border-radius:var(--r);margin-bottom:16px;">
+      <div style="font-size:13.5px;font-weight: 500;color:var(--accent);margin-bottom:4px;"> Actively Investing</div>
+      <div style="font-size:13px;color:var(--text-2);">Browse startups seeking funding that match this investor's focus areas.</div>
+      <a href="funding-hub.html" style="display:inline-block;margin-top:10px;padding:7px 16px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--r);font-size:12.5px;font-weight: 500;">Browse Startups →</a>
     </div>`;
   } else {
-    c.innerHTML = `<div style="text-align:center;padding:32px;color:#888888;">
+    c.innerHTML = `<div style="text-align:center;padding:32px;color:var(--text-muted);">
       <div style="font-size:28px;margin-bottom:10px;"></div>
-      <div style="font-size:14px;font-weight: 500;color:#333333;">No funding activity</div>
+      <div style="font-size:14px;font-weight: 500;color:var(--text-2);">No funding activity</div>
     </div>`;
   }
 }
@@ -943,9 +958,9 @@ function renderSimilarProfiles() {
       <div style="width:38px;height:38px;border-radius:50%;background:${getAvatarColor(p.role)};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;">${p.avatar}</div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:13px;font-weight: 500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(p.fullName)}</div>
-        <div style="font-size:11.5px;color:#555555;">${getRoleConfig(p.role).label}</div>
+        <div style="font-size:11.5px;color:var(--text-muted);">${getRoleConfig(p.role).label}</div>
       </div>
-      <a href="community-profile.html?uid=${p.uid}" style="font-size:12px;font-weight: 500;color:#FF6600;white-space:nowrap;">View →</a>
+      <a href="community-profile.html?uid=${p.uid}" style="font-size:12px;font-weight: 500;color:var(--accent);white-space:nowrap;">View →</a>
     </div>
   `).join('');
 }

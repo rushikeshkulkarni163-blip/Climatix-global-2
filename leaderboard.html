@@ -3,54 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light dark" />
   <title>Leaderboard · Climactix Global</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css?v=4" />
-  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <script>(function(){if(localStorage.getItem('cx-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── Design System v4.0 (NASA × MSCI) — page-scoped override — see DESIGN.md ── */
     :root {
-      --bg:#000000; --nav-bg:#000000;
-      --surface: #080909; --surface-2: #0D0D12; --surface-3: #131318;
-      --border: rgba(255,255,255,0.07); --border-strong: rgba(255,255,255,0.11);
-      --accent: #1473E6; --accent-dim: #0E5FCC; --accent-fg: #FFFFFF;
-      --green: #23CF7A; --cyan: #4AABFF; --blue: #4AABFF;
-      --gold: #F5C542; --silver: #8A96A8; --bronze: #C17F3B;
-      --danger: #FF4B4B; --warning: #F5C542;
-      --text:#FFFFFF; --text-2: #8A9BB5; --text-muted: #4A5A72;
-      --mono:'IBM Plex Mono',var(--mono);
-      --r:3px; --nav-h:44px; --t:.12s ease;
+      --bg:#FFFFFF; --nav-bg:#FFFFFF;
+      --surface:#FAFAFA; --surface-2:#F4F4F6; --surface-3:#ECEEF1;
+      --border:#D9D9D9; --border-strong:#C4C4C4; --border-accent: rgba(11,61,145,0.28);
+      --accent:#0B3D91; --accent-fill:#0B3D91; --accent-dim:#092C6B; --accent-glow: rgba(11,61,145,0.08); --accent-fg:#FFFFFF;
+      --green:#1E8E3E; --cyan:#0B3D91; --blue:#0B3D91;
+      --gold:#B45309; --silver:#6B7280; --bronze:#92400E;
+      --danger:#DC2626; --warning:#B45309;
+      --text:#111111; --text-2:#4F4F4F; --text-muted:#6B7280;
+      --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-body: 'Source Sans Pro', Arial, sans-serif;
+      --mono: var(--font-heading);
+      --r:8px; --r-pill: 999px; --nav-h:56px; --t:.18s ease;
+      color-scheme: light;
     }
-    [data-theme="light"] {
-      --bg:#F5F5F5; --nav-bg:#FFFFFF;
-      --surface:#FFFFFF; --surface-2:#EBEBEB; --surface-3:#E0E0E0;
-      --border:#E0E0E0; --border-strong:#C8C8C8;
-      --text:#000000; --text-2:#333333; --text-muted: #4A5A72;
+    [data-theme="dark"] {
+      --bg:#0B0E14; --nav-bg:#11151C;
+      --surface:#11151C; --surface-2:#161B24; --surface-3:#1C222D;
+      --border:#232935; --border-strong:#2E3646; --border-accent: rgba(61,123,224,0.35);
+      --accent:#3D7BE0; --accent-dim:#2F62B8; --accent-glow: rgba(61,123,224,0.12);
+      --green:#22C55E; --danger:#F87171; --warning:#F59E0B;
+      --text:#F4F6F8; --text-2:#B8C0CC; --text-muted:#7C8794;
+      color-scheme: dark;
     }
     html { scroll-behavior:smooth; }
-    body { font-family:'Roboto',sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
-
-    /* ── NASA Space Body ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.13) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 230px 230px, 140px 140px, 85px 85px;
-      background-position: 12px 20px, 65px 45px, 30px 100px;
-      pointer-events: none; z-index: 0; opacity: 0.32;
-    }
+    body { font-family: var(--font-body); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
 
     a { color:inherit; text-decoration:none; }
     button { font-family:inherit; cursor:pointer; border:none; background:none; }
     ::-webkit-scrollbar { width:5px; }
     ::-webkit-scrollbar-track { background:var(--surface); }
-    ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
+    ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:var(--r); }
 
     /* NAV */
     .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px; }
@@ -59,20 +53,20 @@
     .cx-nav-logo-text { font-size:11px;font-weight:700;color:var(--text);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase; }
     .cx-nav-logo-sub { font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);line-height:1; }
     .cx-nav-links { display:flex;align-items:center;gap:0;margin-left:auto; }
-    .cx-nav-link { display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:2px;font-size:11px;font-weight: 500;color:var(--text-muted);transition:var(--t);text-decoration:none; }
+    .cx-nav-link { display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r);font-size:11px;font-weight: 500;color:var(--text-muted);transition:var(--t);text-decoration:none; }
     .cx-nav-link:hover { background:var(--surface-2);color:var(--text); }
     .cx-nav-link.active { color:var(--accent);border-bottom:2px solid var(--accent); }
     .cx-nav-link .nav-icon { font-size:13px;line-height:1; }
     .cx-nav-right { display:flex;align-items:center;gap:8px;margin-left:12px; }
-    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:3px 10px 3px 4px;border-radius:2px;background:none;border:1px solid var(--border);cursor:pointer;transition:var(--t); }
+    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:3px 10px 3px 4px;border-radius:var(--r);background:none;border:1px solid var(--border);cursor:pointer;transition:var(--t); }
     .cx-avatar-btn:hover { background:var(--surface-2); }
-    .cx-avatar { width:28px;height:28px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0; }
+    .cx-avatar { width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0; }
 
     /* PAGE */
     .cx-page { max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:1fr 320px;gap:20px; }
 
     /* HERO */
-    .cx-lb-hero { background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:20px 20px;margin-bottom:16px;position:relative;overflow:hidden;border-left:3px solid var(--accent); }
+    .cx-lb-hero { background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 20px;margin-bottom:16px;position:relative;overflow:hidden;border-left:3px solid var(--accent); }
     .cx-lb-hero::before { display:none; }
     .cx-lb-hero-title { font-size:18px;font-weight: 700;color:var(--text);letter-spacing:-0.5px; }
     .cx-lb-hero-sub { font-size:12px;color:var(--text-2);margin-top:4px;max-width:480px;line-height:1.5; }
@@ -83,23 +77,23 @@
     .cx-hero-stat-lbl { font-size:10px;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;margin-top:3px;font-family:var(--mono); }
 
     /* CARD */
-    .cx-card { background:var(--surface);border:1px solid var(--border);border-radius:3px; }
+    .cx-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--r); }
 
     /* Filters */
     .cx-lb-filters { display:flex;gap:2px;margin-bottom:12px; }
-    .cx-lb-filter-btn { padding:5px 14px;border-radius:2px;font-size:11px;font-weight: 500;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);cursor:pointer;transition:var(--t);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase; }
-    .cx-lb-filter-btn.active { background:rgba(245,158,11,.10);border-color:rgba(245,158,11,.25);color:var(--accent); }
+    .cx-lb-filter-btn { padding:6px 14px;border-radius:var(--r);font-size:13px;font-weight: 500;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);cursor:pointer;transition:var(--t);font-family:var(--font-heading); }
+    .cx-lb-filter-btn.active { background:var(--accent-glow);border-color:var(--border-accent);color:var(--accent); }
     .cx-lb-filter-btn:hover:not(.active) { border-color:var(--border-strong);color:var(--text); }
 
     /* Podium */
     .cx-podium { display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;align-items:end; }
-    .cx-podium-slot { display:flex;flex-direction:column;align-items:center;padding:14px 8px;border-radius:2px;border:1px solid var(--border);transition:var(--t);cursor:pointer; }
+    .cx-podium-slot { display:flex;flex-direction:column;align-items:center;padding:14px 8px;border-radius:var(--r);border:1px solid var(--border);transition:var(--t);cursor:pointer; }
     .cx-podium-slot:hover { border-color:var(--border-strong);background:var(--surface-2); }
-    .cx-podium-slot.p1 { border-color:rgba(245,158,11,.25);padding-top:18px;border-top:2px solid var(--gold); }
+    .cx-podium-slot.p1 { border-color:rgba(180,83,9,.3);padding-top:18px;border-top:2px solid var(--gold); }
     .cx-podium-slot.p2 { border-color:rgba(156,163,175,.15); }
     .cx-podium-slot.p3 { border-color:rgba(217,119,6,.15); }
     .cx-podium-medal { font-size:20px;margin-bottom:6px; }
-    .cx-podium-avatar { width:44px;height:44px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;margin-bottom:6px;border:1px solid; }
+    .cx-podium-avatar { width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;margin-bottom:6px;border:1px solid; }
     .cx-podium-slot.p1 .cx-podium-avatar { border-color:var(--gold); }
     .cx-podium-slot.p2 .cx-podium-avatar { border-color:var(--silver); }
     .cx-podium-slot.p3 .cx-podium-avatar { border-color:var(--bronze); }
@@ -116,7 +110,7 @@
     .cx-lb-row { display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);transition:var(--t); }
     .cx-lb-row:last-child { border-bottom:none; }
     .cx-lb-row:hover { background:var(--surface-2); }
-    .cx-lb-row.is-me { background:rgba(245,158,11,.04);border-left:2px solid var(--accent); }
+    .cx-lb-row.is-me { background:var(--accent-glow);border-left:2px solid var(--accent); }
     .cx-lb-row-rank { font-size:11px;font-weight: 700;width:30px;text-align:center;font-family:var(--mono);flex-shrink:0;color:var(--text-muted); }
     .cx-lb-row-info { flex:1;min-width:0; }
     .cx-lb-row-name { font-size:13px;font-weight:700;color:var(--text); }
@@ -126,31 +120,30 @@
     .cx-lb-row-trend.up { color:var(--green); }
     .cx-lb-row-trend.dn { color:var(--danger); }
     .cx-lb-row-trend.st { color:var(--text-muted); }
-    .cx-lb-row-badge { display:inline-flex;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700;margin-left:6px;font-family:var(--mono); }
+    .cx-lb-row-badge { display:inline-flex;padding:2px 7px;border-radius:var(--r-pill);font-size:10px;font-weight:700;margin-left:6px;font-family:var(--font-heading); }
 
     /* Right sidebar */
     .cx-lb-sidebar { display:flex;flex-direction:column;gap:12px; }
     .cx-sb-card { padding:14px; }
     .cx-sb-hdr { font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-2);margin-bottom:10px;font-family:var(--mono); }
-    .cx-my-score-wrap { text-align:center;padding:14px;background:var(--surface-2);border-radius:2px; }
+    .cx-my-score-wrap { text-align:center;padding:14px;background:var(--surface-2);border-radius:var(--r); }
     .cx-my-score-val { font-size:40px;font-weight: 700;color:var(--accent);font-family:var(--mono);line-height:1; }
     .cx-my-score-lbl { font-size:10px;color:var(--text-muted);margin-top:4px;letter-spacing:.5px;text-transform:uppercase;font-family:var(--mono); }
     .cx-my-score-svg { width:90px;height:90px;margin:0 auto 8px; }
     .cx-score-rule-list { display:flex;flex-direction:column;gap:4px; }
-    .cx-score-rule-item { display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--surface-2);border-radius:2px; }
+    .cx-score-rule-item { display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--surface-2);border-radius:var(--r); }
     .cx-rule-lbl { font-size:11px;color:var(--text-2); }
     .cx-rule-pts { font-size:12px;font-weight: 700;font-family:var(--mono); }
     .cx-rule-pts.pos { color:var(--green); }
     .cx-rule-pts.neg { color:var(--danger); }
 
     /* Toast */
-    .cx-toast { position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text);padding:8px 16px;border-radius:2px;font-size:12px;font-weight: 500;z-index:9999;transition:transform .3s ease;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.5); }
+    .cx-toast { position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text);padding:8px 16px;border-radius:var(--r);font-size:12px;font-weight: 500;z-index:9999;transition:transform .3s ease;pointer-events:none; }
     .cx-toast.show { transform:translateX(-50%) translateY(0); }
 
-    /* Refresh indicator */
-    .cx-refresh-badge { display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted);padding:3px 8px;background:var(--surface-2);border-radius:2px;border:1px solid var(--border);font-family:var(--mono); }
-    .cx-refresh-dot { width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:.3;} }
+    /* Refresh indicator — static dot, no decorative motion per DESIGN.md */
+    .cx-refresh-badge { display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted);padding:3px 8px;background:var(--surface-2);border-radius:var(--r);border:1px solid var(--border);font-family:var(--mono); }
+    .cx-refresh-dot { width:5px;height:5px;border-radius:50%;background:var(--green); }
 
     @media(max-width:900px){.cx-page{grid-template-columns:1fr}.cx-lb-sidebar{display:none}}
     @media(max-width:700px){.cx-podium{grid-template-columns:1fr 1fr 1fr;gap:6px}}
@@ -188,15 +181,16 @@
   </nav>
   <div class="cx-nav-right">
     <div id="navGuest" style="display:flex;align-items:center;gap:7px;">
-      <a href="community-login.html" style="padding:4px 12px;font-size:11px;font-weight:700;color:var(--text-muted);border:1px solid var(--border);border-radius:2px;text-decoration:none;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase;">Sign In</a>
+      <a href="community-login.html" style="padding:6px 14px;font-size:13px;font-weight:500;color:var(--text-2);border:1px solid var(--border);border-radius:var(--r);text-decoration:none;font-family:var(--font-heading);">Sign in</a>
     </div>
     <button class="cx-avatar-btn" id="navUserBtn" style="display:none" onclick="window.location.href='community-profile.html'">
-      <div class="cx-avatar" id="navAvatar" style="background:#1A1A1A">?</div>
-      <span style="font-size:11px;font-weight: 500;" id="navUserName">—</span>
+      <div class="cx-avatar" id="navAvatar" style="background:var(--surface-3)">?</div>
+      <span style="font-size:12.5px;font-weight: 500;" id="navUserName">—</span>
     </button>
-    <button onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--border);border-radius:2px;background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
+    <button id="cx-theme-toggle" onclick="(function(){var h=document.documentElement;var dark=h.getAttribute('data-theme')==='dark';if(dark){h.removeAttribute('data-theme');localStorage.setItem('cx-theme','light');}else{h.setAttribute('data-theme','dark');localStorage.setItem('cx-theme','dark');}document.getElementById('cx-theme-toggle').textContent=dark?'○':'◑';})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--border);border-radius:var(--r);background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
   </div>
 </nav>
+<script>document.getElementById('cx-theme-toggle').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '◑' : '○';</script>
 
 <div style="max-width:1100px;margin:24px auto;padding:0 16px;">
   <!-- Hero -->
@@ -260,8 +254,8 @@
         <div class="cx-sb-hdr">My Climate Score</div>
         <div class="cx-my-score-wrap" id="myScoreWrap">
           <svg class="cx-my-score-svg" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="42" fill="none" stroke="#2C2C2C" stroke-width="7"/>
-            <circle cx="50" cy="50" r="42" fill="none" stroke="#FF6600" stroke-width="7"
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#E5E7EB" stroke-width="7"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#0B3D91" stroke-width="7"
               stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9"
               transform="rotate(-90 50 50)" id="myScoreRing"/>
           </svg>
@@ -381,7 +375,7 @@ function renderLeaderboard() {
   if (ring) {
     ring.style.strokeDasharray  = C.toFixed(1);
     ring.style.strokeDashoffset = (C - C * myScore / 100).toFixed(1);
-    ring.style.stroke = myScore >= 80 ? '#00CC44' : myScore >= 50 ? '#FF6600' : '#FF3333';
+    ring.style.stroke = myScore >= 80 ? '#1E8E3E' : myScore >= 50 ? '#B45309' : '#DC2626';
   }
   document.getElementById('myScoreVal').textContent      = myScore;
   document.getElementById('myRankDisplay').textContent   = myRank ? '#' + myRank : '—';

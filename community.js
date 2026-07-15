@@ -29,13 +29,25 @@ import { firebaseConfig } from './firebase-config.js';
 const _USE_FIREBASE = !firebaseConfig.apiKey.startsWith('YOUR_');
 const _FS_APP_URL       = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 const _FS_FIRESTORE_URL = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+const _FS_AUTH_URL      = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 let _fsApiPromise = null;
 function _firestore() {
   if (!_fsApiPromise) {
-    _fsApiPromise = Promise.all([import(_FS_APP_URL), import(_FS_FIRESTORE_URL)])
-      .then(([{ initializeApp, getApps }, fs]) => {
+    _fsApiPromise = Promise.all([import(_FS_APP_URL), import(_FS_FIRESTORE_URL), import(_FS_AUTH_URL)])
+      .then(async ([{ initializeApp, getApps }, fs, authFs]) => {
         const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+        // Firestore's security rules require request.auth != null on every
+        // read/write. auth.js signs in on the login page and Firebase Auth
+        // persists that session (IndexedDB), but this module never attached
+        // to Auth itself, so every request here went out with no ID token
+        // and was silently rejected — even for a genuinely signed-in user.
+        // Wait for the persisted session to resolve before any Firestore
+        // call goes out, so it always carries a real auth token.
+        const auth = authFs.getAuth(app);
+        await new Promise(resolve => {
+          const unsub = authFs.onAuthStateChanged(auth, () => { unsub(); resolve(); });
+        });
         return { db: fs.getFirestore(app), ...fs };
       });
   }

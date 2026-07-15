@@ -3,20 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light dark" />
   <title>Solution Hub · Climactix Global</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css?v=4" />
-  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <script>(function(){if(localStorage.getItem('cx-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
   <style>
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    /* ── Design System v4.0 (NASA × MSCI) — page-scoped override — see DESIGN.md ── */
     :root {
-      /* Canonical tokens from site.css */
+      --bg:#FFFFFF; --nav-bg:#FFFFFF;
+      --surface:#FAFAFA; --surface-2:#F4F4F6; --surface-3:#ECEEF1;
+      --border:#D9D9D9; --border-strong:#C4C4C4; --border-accent: rgba(11,61,145,0.28);
+      --accent:#0B3D91; --accent-fill:#0B3D91; --accent-dim:#092C6B; --accent-glow: rgba(11,61,145,0.08); --accent-fg:#FFFFFF;
+      --blue:#0B3D91; --gold:#B45309; --danger:#DC2626; --warning:#B45309;
+      --text:#111111; --text-2:#4F4F4F; --text-muted:#6B7280;
+      --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-body: 'Source Sans Pro', Arial, sans-serif;
+      --font: var(--font-body); --mono: var(--font-heading);
+      --r:8px; --r-sm:8px; --r-pill:999px; --nav-h:56px; --t:.18s ease; --shadow:none;
+      color-scheme: light;
+    }
+    [data-theme="dark"] {
+      --bg:#0B0E14; --nav-bg:#11151C;
+      --surface:#11151C; --surface-2:#161B24; --surface-3:#1C222D;
+      --border:#232935; --border-strong:#2E3646; --border-accent: rgba(61,123,224,0.35);
+      --accent:#3D7BE0; --accent-dim:#2F62B8; --accent-glow: rgba(61,123,224,0.12);
+      --danger:#F87171; --warning:#F59E0B;
+      --text:#F4F6F8; --text-2:#B8C0CC; --text-muted:#7C8794;
+      color-scheme: dark;
     }
     html { scroll-behavior:smooth; }
-    body { font-family:var(--font); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
+    body { font-family:var(--font-body); background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; }
 
     a { color:inherit; text-decoration:none; }
     button { font-family:inherit; cursor:pointer; border:none; background:none; }
@@ -32,12 +52,12 @@
     .cx-nav-logo-text { font-size:14px;font-weight:700;color:var(--text); }
     .cx-nav-logo-sub { font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);line-height:1; }
     .cx-nav-links { display:flex;align-items:center;gap:1px;margin-left:auto; }
-    .cx-nav-link { display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 11px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--text-muted);transition:var(--t); }
+    .cx-nav-link { display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 11px;border-radius:var(--r);font-size:12px;font-weight:500;color:var(--text-muted);transition:var(--t); }
     .cx-nav-link:hover { background:var(--surface);color:var(--text); }
     .cx-nav-link.active { color:var(--accent); }
     .cx-nav-link .nav-icon { font-size:17px;line-height:1; }
     .cx-nav-right { display:flex;align-items:center;gap:8px;margin-left:16px; }
-    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;border-radius:4px;background:none;border:1px solid var(--border);cursor:pointer;transition:var(--t); }
+    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;border-radius:var(--r);background:none;border:1px solid var(--border);cursor:pointer;transition:var(--t); }
     .cx-avatar-btn:hover { background:var(--surface); }
     .cx-avatar { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0; }
 
@@ -51,15 +71,15 @@
     .cx-hero { background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:22px 22px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px; }
     .cx-hero-left h1 { font-size:22px;font-weight: 700;color:var(--text);letter-spacing:-.5px; }
     .cx-hero-left p { font-size:12.5px;color:var(--text-2);margin-top:5px;max-width:500px;line-height:1.6; }
-    .cx-hero-btn { padding:8px 20px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:var(--t);border:none;white-space:nowrap; }
+    .cx-hero-btn { padding:9px 20px;background:var(--accent-fill);color:var(--accent-fg);font-family:var(--font-heading);font-size:14px;font-weight:500;cursor:pointer;transition:var(--t);border:none;border-radius:var(--r);white-space:nowrap; }
     .cx-hero-btn:hover { background:var(--accent-dim); }
 
     /* Filters row */
     .cx-filter-row { display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap;align-items:center; }
-    .cx-filter-pill { padding:5px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);cursor:pointer;transition:var(--t); }
-    .cx-filter-pill.active { background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);color:var(--accent); }
+    .cx-filter-pill { padding:6px 13px;font-family:var(--font-heading);font-size:13px;font-weight:500;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:var(--t); }
+    .cx-filter-pill.active { background:var(--accent-glow);border-color:var(--border-accent);color:var(--accent); }
     .cx-filter-pill:hover:not(.active) { border-color:var(--border-strong);color:var(--text); }
-    .cx-search-sol { flex:1;max-width:280px;height:32px;padding:0 12px;background:var(--surface);border:1px solid var(--border);font-size:12px;color:var(--text);outline:none;transition:var(--t); }
+    .cx-search-sol { flex:1;max-width:280px;height:32px;padding:0 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text);outline:none;transition:var(--t); }
     .cx-search-sol:focus { border-color:var(--accent); }
     .cx-search-sol::placeholder { color:var(--text-muted); }
 
@@ -80,15 +100,15 @@
     .cx-sol-field { font-size:11.5px;color:var(--text-2);line-height:1.5; }
     .cx-sol-field strong { color:var(--text);font-weight: 500; }
     .cx-sol-tags { display:flex;flex-wrap:wrap;gap:4px; }
-    .cx-sol-tag { padding:2px 7px;border-radius:3px;font-size:10px;font-weight: 500;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border); }
-    .cx-sol-industry { padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700;background:rgba(245,158,11,.1);color:var(--accent);border:1px solid rgba(245,158,11,.2); }
+    .cx-sol-tag { padding:2px 8px;border-radius:var(--r-pill);font-size:10px;font-weight: 500;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border); }
+    .cx-sol-industry { padding:2px 8px;border-radius:var(--r-pill);font-size:10px;font-weight:700;background:var(--accent-glow);color:var(--accent);border:1px solid var(--border-accent); }
     .cx-sol-footer { display:flex;align-items:center;gap:8px;margin-top:auto; }
     .cx-sol-actions { display:flex;gap:6px;flex:1; }
-    .cx-sol-btn { display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:5px;font-size:11px;font-weight: 500;cursor:pointer;transition:var(--t);border:1px solid var(--border);background:none;color:var(--text-muted); }
+    .cx-sol-btn { display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:var(--r);font-size:11px;font-weight: 500;cursor:pointer;transition:var(--t);border:1px solid var(--border);background:none;color:var(--text-muted); }
     .cx-sol-btn:hover { background:var(--surface-2);color:var(--text); }
-    .cx-sol-btn.upvoted { color:var(--accent);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.05); }
-    .cx-sol-btn.bookmarked { color:var(--blue);border-color:rgba(27,117,214,.3);background:rgba(27,117,214,.05); }
-    .cx-collab-badge { display:inline-flex;align-items:center;gap:3px;padding:3px 7px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;font-size:10px;font-weight:700;color:var(--accent);white-space:nowrap; }
+    .cx-sol-btn.upvoted { color:var(--accent);border-color:var(--border-accent);background:var(--accent-glow); }
+    .cx-sol-btn.bookmarked { color:var(--accent);border-color:var(--border-accent);background:var(--accent-glow); }
+    .cx-collab-badge { display:inline-flex;align-items:center;gap:3px;padding:3px 8px;background:var(--accent-glow);border:1px solid var(--border-accent);border-radius:var(--r-pill);font-size:10px;font-weight:700;color:var(--accent);white-space:nowrap; }
 
     /* Right sidebar */
     .cx-sb { padding:14px; }
@@ -106,11 +126,11 @@
     /* Submit form in modal */
     .cx-overlay { position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
     .cx-overlay.open { display:flex; }
-    .cx-modal { background:var(--surface);border:1px solid var(--border-strong);border-radius:12px;width:100%;max-width:640px;box-shadow:0 24px 80px rgba(0,0,0,.6);overflow:hidden;animation:modalIn .2s ease; }
+    .cx-modal { background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--r);width:100%;max-width:640px;overflow:hidden;animation:modalIn .2s ease; }
     @keyframes modalIn { from{opacity:0;transform:scale(.96) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);} }
     .cx-modal-head { display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border); }
     .cx-modal-title { font-size:14px;font-weight:700;color:var(--text); }
-    .cx-close-btn { width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text-muted);cursor:pointer; }
+    .cx-close-btn { width:28px;height:28px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text-muted);cursor:pointer; }
     .cx-close-btn:hover { background:var(--surface-2);color:var(--text); }
     .cx-modal-body { padding:16px;max-height:74vh;overflow-y:auto; }
     .cx-form-step { display:none; }
@@ -121,17 +141,17 @@
     .cx-form-group { margin-bottom:13px; }
     .cx-form-label { font-size:11.5px;font-weight: 500;color:var(--text-2);margin-bottom:5px;display:block; }
     .cx-form-input { width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);background:var(--surface-2);outline:none;transition:var(--t); }
-    .cx-form-input:focus { border-color:var(--blue); }
+    .cx-form-input:focus { border-color:var(--accent); }
     .cx-form-input::placeholder { color:var(--text-muted); }
     .cx-form-textarea { width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);background:var(--surface-2);outline:none;resize:vertical;min-height:80px;transition:var(--t); }
-    .cx-form-textarea:focus { border-color:var(--blue); }
+    .cx-form-textarea:focus { border-color:var(--accent); }
     .cx-form-textarea::placeholder { color:var(--text-muted); }
     .cx-form-select { width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--text);background:var(--surface-2);outline:none;transition:var(--t); }
-    .cx-form-select:focus { border-color:var(--blue); }
+    .cx-form-select:focus { border-color:var(--accent); }
     .cx-modal-foot { display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-top:1px solid var(--border); }
-    .cx-btn-primary { padding:9px 22px;background:var(--accent);color:#050C18;border-radius:18px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:var(--t); }
+    .cx-btn-primary { padding:9px 22px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--r);font-size:14px;font-weight:500;font-family:var(--font-heading);cursor:pointer;border:none;transition:var(--t); }
     .cx-btn-primary:hover { background:var(--accent-dim); }
-    .cx-btn-secondary { padding:9px 18px;background:var(--surface-2);color:var(--text-2);border-radius:18px;font-size:12.5px;font-weight: 500;cursor:pointer;border:1px solid var(--border);transition:var(--t); }
+    .cx-btn-secondary { padding:9px 18px;background:var(--surface-2);color:var(--text-2);border-radius:var(--r);font-size:12.5px;font-weight: 500;cursor:pointer;border:1px solid var(--border);transition:var(--t); }
     .cx-btn-secondary:hover { background:var(--surface-3); }
     .cx-checkbox-row { display:flex;align-items:center;gap:8px;cursor:pointer; }
     .cx-checkbox-row input { width:16px;height:16px;accent-color:var(--accent); }
@@ -177,15 +197,16 @@
   </nav>
   <div class="cx-nav-right">
     <div id="navGuest" style="display:flex;align-items:center;gap:7px;">
-      <a href="community-login.html" style="padding:5px 13px;font-size:12.5px;font-weight: 500;color:var(--text-muted);border:1px solid var(--border);border-radius:4px;">Sign In</a>
+      <a href="community-login.html" style="padding:6px 14px;font-size:13px;font-weight:500;color:var(--text-2);border:1px solid var(--border);border-radius:var(--r);">Sign in</a>
     </div>
     <button class="cx-avatar-btn" id="navUserBtn" style="display:none" onclick="window.location.href='community-profile.html'">
-      <div class="cx-avatar" id="navAvatar" style="background:#1A1A1A">?</div>
-      <span style="font-size:11px;font-weight: 500;" id="navUserName">—</span>
+      <div class="cx-avatar" id="navAvatar" style="background:var(--surface-3)">?</div>
+      <span style="font-size:12.5px;font-weight: 500;" id="navUserName">—</span>
     </button>
-    <button onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--border);border-radius:2px;background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
+    <button id="cx-theme-toggle" onclick="(function(){var h=document.documentElement;var dark=h.getAttribute('data-theme')==='dark';if(dark){h.removeAttribute('data-theme');localStorage.setItem('cx-theme','light');}else{h.setAttribute('data-theme','dark');localStorage.setItem('cx-theme','dark');}document.getElementById('cx-theme-toggle').textContent=dark?'○':'◑';})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--border);border-radius:var(--r);background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
   </div>
 </nav>
+<script>document.getElementById('cx-theme-toggle').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '◑' : '○';</script>
 
 <div style="max-width:1160px;margin:22px auto;padding:0 16px;">
   <!-- Hero -->
@@ -239,7 +260,7 @@
     <div class="cx-card" style="padding:14px;background:var(--surface-2);border-left:2px solid var(--accent);">
       <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;">Share Your Solution</div>
       <div style="font-size:11.5px;color:var(--text-2);line-height:1.6;margin-bottom:12px;">Get upvotes, connect with investors, and find collaborators for your climate solution.</div>
-      <button onclick="openSubmitModal()" style="display:block;width:100%;padding:9px;background:var(--accent);color:#050C18;border-radius:6px;font-size:12.5px;font-weight:700;border:none;cursor:pointer;">Submit a Solution →</button>
+      <button onclick="openSubmitModal()" style="display:block;width:100%;padding:9px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--r);font-size:13px;font-weight:500;border:none;cursor:pointer;">Submit a Solution →</button>
     </div>
   </aside>
 </div>

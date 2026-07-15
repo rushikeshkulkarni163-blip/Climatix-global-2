@@ -3,28 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light dark" />
   <title>Funding Hub · Climactix Community</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css?v=4" />
-  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <script>(function(){if(localStorage.getItem('cx-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── Design System v4.0 (NASA × MSCI) — page-scoped override — see DESIGN.md ── */
     :root {
-      /* Canonical tokens from site.css — local aliases only */
-      --primary:     var(--accent);
-      --primary-tint:var(--accent-glow);
-      --amber-bg:    var(--accent-glow);
-      --radius:      var(--r);
-      --radius-sm:   var(--r-sm);
-      --shadow-sm:   none;
-      --shadow-md:   none;
-      --shadow-lg:   none;
+      --bg:#FFFFFF; --nav-bg:#FFFFFF;
+      --surface:#FAFAFA; --surface-2:#F4F4F6; --surface-3:#ECEEF1;
+      --border:#D9D9D9; --border-strong:#C4C4C4; --border-accent: rgba(11,61,145,0.28);
+      --accent:#0B3D91; --accent-fill:#0B3D91; --accent-dim:#092C6B; --accent-glow: rgba(11,61,145,0.08); --accent-fg:#FFFFFF;
+      --blue:#0B3D91; --cyan:#0B3D91; --gold:#B45309; --green:#1E8E3E; --danger:#DC2626; --warning:#B45309;
+      --text:#111111; --text-2:#4F4F4F; --text-muted:#6B7280;
+      --primary: var(--accent); --primary-tint: var(--accent-glow); --amber-bg: var(--accent-glow);
+      --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-body: 'Source Sans Pro', Arial, sans-serif;
+      --font: var(--font-body); --mono: var(--font-heading);
+      --r:8px; --r-sm:8px; --r-pill:999px; --nav-h:56px; --transition:.18s ease;
+      --radius: var(--r); --radius-sm: var(--r-sm);
+      --shadow-sm:none; --shadow-md:none; --shadow-lg:none;
+      color-scheme: light;
+    }
+    [data-theme="dark"] {
+      --bg:#0B0E14; --nav-bg:#11151C;
+      --surface:#11151C; --surface-2:#161B24; --surface-3:#1C222D;
+      --border:#232935; --border-strong:#2E3646; --border-accent: rgba(61,123,224,0.35);
+      --accent:#3D7BE0; --accent-dim:#2F62B8; --accent-glow: rgba(61,123,224,0.12);
+      --green:#22C55E; --danger:#F87171; --warning:#F59E0B;
+      --text:#F4F6F8; --text-2:#B8C0CC; --text-muted:#7C8794;
+      color-scheme: dark;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: var(--font); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
 
     a { color: inherit; text-decoration: none; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; }
@@ -34,14 +49,14 @@
     .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--nav-bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px; }
     .cx-nav-logo { display:flex;align-items:center;gap:8px;flex-shrink:0; }
     .cx-nav-logo img { height:22px; }
-    .cx-nav-link { display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:2px;font-size:11px;font-weight: 500;color:var(--text-muted);transition:var(--transition);position:relative; }
+    .cx-nav-link { display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--radius);font-size:11px;font-weight: 500;color:var(--text-muted);transition:var(--transition);position:relative; }
     .cx-nav-link:hover { background:var(--surface-2);color:var(--text); }
     .cx-nav-link.active { color:var(--accent); }
     .cx-nav-link.active::after { content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--accent);border-radius:0; }
     .cx-nav-link .nav-icon { font-size:13px;line-height:1; }
-    .cx-avatar { width:28px;height:28px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0; }
+    .cx-avatar { width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0; }
     .cx-nav-right { display:flex;align-items:center;gap:8px;margin-left:auto; }
-    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:3px 10px 3px 4px;border-radius:2px;background:none;border:1px solid var(--border);cursor:pointer;transition:var(--transition); }
+    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:3px 10px 3px 4px;border-radius:var(--radius);background:none;border:1px solid var(--border);cursor:pointer;transition:var(--transition); }
     .cx-avatar-btn:hover { background:var(--surface-2); }
 
     /* HERO BANNER */
@@ -56,9 +71,9 @@
     .cx-hub-hero-stat-val { font-size:20px;font-weight: 700;line-height:1;color:var(--accent);font-family:var(--mono); }
     .cx-hub-hero-stat-label { font-size:10px;color:var(--text-muted);margin-top:3px;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase; }
     .cx-hub-hero-btns { display:flex;gap:8px;justify-content:center;margin-bottom:18px; }
-    .cx-hero-btn-primary { padding:7px 20px;background:var(--accent);color:var(--accent-fg);border-radius:2px;font-size:11px;font-weight:700;cursor:pointer;transition:var(--transition);border:none;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase; }
+    .cx-hero-btn-primary { padding:8px 20px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;transition:var(--transition);border:none;font-family:var(--font-heading); }
     .cx-hero-btn-primary:hover { background:var(--accent-dim); }
-    .cx-hero-btn-outline { padding:6px 18px;background:none;color:var(--text-2);border:1px solid var(--border-strong);border-radius:2px;font-size:11px;font-weight: 500;cursor:pointer;transition:var(--transition);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase; }
+    .cx-hero-btn-outline { padding:7px 18px;background:none;color:var(--text-2);border:1px solid var(--border-strong);border-radius:var(--radius);font-size:14px;font-weight: 500;cursor:pointer;transition:var(--transition);font-family:var(--font-heading); }
     .cx-hero-btn-outline:hover { border-color:var(--accent);color:var(--accent); }
 
     /* LAYOUT */
@@ -66,16 +81,16 @@
 
     /* FILTER SIDEBAR */
     .cx-filter-sidebar { position:sticky;top:calc(var(--nav-h) + 12px);display:flex;flex-direction:column;gap:10px; }
-    .cx-filter-card { background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:14px; }
+    .cx-filter-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px; }
     .cx-filter-title { font-size:10px;font-weight:700;color:var(--text-2);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase; }
     .cx-filter-reset { font-size:10px;color:var(--accent);cursor:pointer;font-weight: 500; }
     .cx-filter-reset:hover { text-decoration:underline; }
     .cx-filter-group { margin-bottom:12px; }
     .cx-filter-group:last-child { margin-bottom:0; }
     .cx-filter-group-label { font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;font-family:var(--mono); }
-    .cx-filter-option { display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:2px;font-size:11px;color:var(--text-2);cursor:pointer;transition:var(--transition);border:1px solid transparent; }
+    .cx-filter-option { display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:var(--radius);font-size:11px;color:var(--text-2);cursor:pointer;transition:var(--transition);border:1px solid transparent; }
     .cx-filter-option:hover { background:var(--surface-2);color:var(--text); }
-    .cx-filter-option.active { background:rgba(245,158,11,.07);border-color:rgba(245,158,11,.20);color:var(--accent);font-weight: 500; }
+    .cx-filter-option.active { background:var(--accent-glow);border-color:var(--border-accent);color:var(--accent);font-weight: 500; }
     .cx-filter-option input[type="radio"],.cx-filter-option input[type="checkbox"] { accent-color:var(--accent); }
     .cx-range-input { width:100%;accent-color:var(--accent); }
     .cx-score-range-labels { display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:3px;font-family:var(--mono); }
@@ -84,19 +99,19 @@
     .cx-hub-main { display:flex;flex-direction:column;gap:10px; }
 
     /* TOOLBAR */
-    .cx-hub-toolbar { background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:8px 12px;display:flex;align-items:center;gap:8px; }
+    .cx-hub-toolbar { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;display:flex;align-items:center;gap:8px; }
     .cx-search-bar { flex:1;position:relative; }
-    .cx-search-bar input { width:100%;height:32px;padding:0 10px 0 32px;border:1px solid var(--border);border-radius:2px;font-size:11px;outline:none;transition:var(--transition);background:var(--surface-2);color:var(--text); }
+    .cx-search-bar input { width:100%;height:32px;padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius);font-size:11px;outline:none;transition:var(--transition);background:var(--surface-2);color:var(--text); }
     .cx-search-bar input:focus { border-color:var(--accent); }
     .cx-search-bar input::placeholder { color:var(--text-muted); }
     .cx-search-icon { position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;font-size:13px; }
-    .cx-sort-select { padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:'Roboto',sans-serif;color:var(--text);outline:none;cursor:pointer;background:var(--surface-2); }
-    .cx-sort-select:focus { border-color:var(--blue); }
+    .cx-sort-select { padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:var(--font-body);color:var(--text);outline:none;cursor:pointer;background:var(--surface-2); }
+    .cx-sort-select:focus { border-color:var(--accent); }
     .cx-result-count { font-size:12.5px;color:var(--text-muted);white-space:nowrap; }
     .cx-view-toggle { display:flex;gap:2px; }
     .cx-view-btn { padding:6px 9px;border-radius:5px;font-size:15px;color:var(--text-muted);cursor:pointer;transition:var(--transition); }
     .cx-view-btn:hover { background:var(--surface-2);color:var(--text); }
-    .cx-view-btn.active { background:rgba(0,200,150,.08);color:var(--accent); }
+    .cx-view-btn.active { background:var(--accent-glow);color:var(--accent); }
 
     /* FUNDING CARDS */
     .cx-funding-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color var(--transition); }
@@ -108,8 +123,8 @@
     .cx-startup-tagline { font-size:12.5px;color:var(--text-muted);margin-bottom:7px;line-height:1.4; }
     .cx-startup-tags { display:flex;flex-wrap:wrap;gap:4px; }
     .cx-tag { display:inline-flex;padding:2px 8px;border-radius:9px;font-size:11px;font-weight: 500;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border); }
-    .cx-tag-green { background:rgba(16,185,129,.08);color:var(--green);border-color:rgba(16,185,129,.20); }
-    .cx-funding-ready-badge { display:inline-flex;align-items:center;gap:3px;padding:2px 8px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.20);border-radius:2px;font-size:10px;font-weight:700;color:var(--green);font-family:var(--mono); }
+    .cx-tag-green { background:rgba(30,142,62,.08);color:var(--green);border-color:rgba(30,142,62,.25); }
+    .cx-funding-ready-badge { display:inline-flex;align-items:center;gap:3px;padding:2px 8px;background:rgba(30,142,62,.08);border:1px solid rgba(30,142,62,.25);border-radius:var(--r-pill);font-size:10px;font-weight:700;color:var(--green);font-family:var(--font-heading); }
     .cx-funding-card-stats { padding:10px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border-bottom:1px solid var(--border); }
     .cx-stat-block { text-align:center; }
     .cx-stat-block-val { font-size:13px;font-weight: 700;color:var(--text);margin-bottom:2px;font-family:var(--mono); }
@@ -121,20 +136,20 @@
     .cx-pitch-label { font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px;font-family:var(--mono); }
     .cx-pitch-value { font-size:12px;color:var(--text-2);line-height:1.5; }
     .cx-pitch-value.green { color:var(--green);font-weight: 500; }
-    .cx-impact-highlight { background:rgba(245,158,11,.05);border-left:2px solid var(--accent);padding:8px 12px;border-radius:0;margin-bottom:10px;font-size:12px;color:var(--text-2);line-height:1.55; }
+    .cx-impact-highlight { background:var(--accent-glow);border-left:2px solid var(--accent);padding:8px 12px;border-radius:var(--radius);margin-bottom:10px;font-size:12px;color:var(--text-2);line-height:1.55; }
     .cx-sdg-badges { display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px; }
-    .cx-sdg { padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border);font-family:var(--mono); }
+    .cx-sdg { padding:2px 6px;border-radius:var(--radius);font-size:10px;font-weight:700;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border);font-family:var(--mono); }
     .cx-funding-card-footer { padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center; }
-    .cx-interest-btn { flex:1;padding:7px;border-radius:2px;background:var(--accent);color:var(--accent-fg);font-size:11px;font-weight:700;cursor:pointer;transition:var(--transition);border:none;text-align:center;font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase; }
+    .cx-interest-btn { flex:1;padding:7px;border-radius:var(--radius);background:var(--accent-fill);color:var(--accent-fg);font-size:12px;font-weight:500;cursor:pointer;transition:var(--transition);border:none;text-align:center;font-family:var(--font-heading); }
     .cx-interest-btn:hover { background:var(--accent-dim); }
-    .cx-interest-btn.interested { background:rgba(245,158,11,.08);color:var(--accent);border:1px solid rgba(245,158,11,.25); }
-    .cx-save-btn { padding:6px 14px;border-radius:2px;background:none;border:1px solid var(--border-strong);color:var(--text-2);font-size:11px;font-weight: 500;cursor:pointer;transition:var(--transition); }
+    .cx-interest-btn.interested { background:var(--accent-glow);color:var(--accent);border:1px solid var(--border-accent); }
+    .cx-save-btn { padding:6px 14px;border-radius:var(--radius);background:none;border:1px solid var(--border-strong);color:var(--text-2);font-size:11px;font-weight: 500;cursor:pointer;transition:var(--transition); }
     .cx-save-btn:hover { border-color:var(--text-2);background:var(--surface-2); }
-    .cx-save-btn.saved { border-color:rgba(59,130,246,.35);color:var(--blue);background:rgba(59,130,246,.05); }
-    .cx-deck-btn { padding:6px 12px;border-radius:2px;background:none;border:1px solid var(--border-strong);color:var(--text-2);font-size:11px;font-weight: 500;cursor:pointer;transition:var(--transition); }
+    .cx-save-btn.saved { border-color:var(--border-accent);color:var(--accent);background:var(--accent-glow); }
+    .cx-deck-btn { padding:6px 12px;border-radius:var(--radius);background:none;border:1px solid var(--border-strong);color:var(--text-2);font-size:11px;font-weight: 500;cursor:pointer;transition:var(--transition); }
     .cx-deck-btn:hover { border-color:var(--cyan);color:var(--cyan); }
     .cx-founder-chip { display:flex;align-items:center;gap:7px;margin-left:auto;font-size:11px;color:var(--text-muted); }
-    .cx-founder-avatar { width:24px;height:24px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;background:var(--blue); }
+    .cx-founder-avatar { width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;background:var(--blue); }
     .cx-investor-views { font-size:10px;color:var(--text-muted);white-space:nowrap;font-family:var(--mono); }
 
     /* SCORE RING */
@@ -144,40 +159,40 @@
     .cx-score-ring-label { font-size:6px;color:var(--text-muted);font-weight: 500;letter-spacing:.5px;text-transform:uppercase; }
 
     /* INVESTORS SECTION */
-    .cx-investors-section { background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:16px; }
+    .cx-investors-section { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px; }
     .cx-investors-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:12px; }
-    .cx-investor-card { padding:12px;border:1px solid var(--border);border-radius:2px;transition:var(--transition);cursor:pointer;background:var(--surface-2); }
-    .cx-investor-card:hover { border-color:var(--accent);background:rgba(245,158,11,.03); }
+    .cx-investor-card { padding:12px;border:1px solid var(--border);border-radius:var(--radius);transition:var(--transition);cursor:pointer;background:var(--surface-2); }
+    .cx-investor-card:hover { border-color:var(--accent);background:var(--accent-glow); }
     .cx-investor-name { font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px; }
     .cx-investor-meta { font-size:11px;color:var(--text-muted);margin-bottom:6px; }
     .cx-investor-focus { display:flex;flex-wrap:wrap;gap:4px; }
-    .cx-investor-focus span { font-size:9.5px;padding:2px 6px;border-radius:2px;background:var(--surface-3);color:var(--text-2);border:1px solid var(--border);font-family:var(--mono); }
-    .cx-investor-btn { display:block;margin-top:8px;text-align:center;padding:5px;border:1px solid var(--border-strong);border-radius:2px;font-size:10.5px;font-weight: 500;color:var(--text-2);transition:var(--transition);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase; }
+    .cx-investor-focus span { font-size:9.5px;padding:2px 6px;border-radius:var(--radius);background:var(--surface-3);color:var(--text-2);border:1px solid var(--border);font-family:var(--mono); }
+    .cx-investor-btn { display:block;margin-top:8px;text-align:center;padding:6px;border:1px solid var(--border-strong);border-radius:var(--radius);font-size:12.5px;font-weight: 500;color:var(--text-2);transition:var(--transition);font-family:var(--font-heading); }
     .cx-investor-btn:hover { background:var(--accent);border-color:var(--accent);color:var(--accent-fg); }
 
     /* TOAST */
-    .cx-toast { position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text);padding:8px 16px;border-radius:2px;font-size:11.5px;font-weight: 500;z-index:9999;transition:transform .3s ease;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.5); }
+    .cx-toast { position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface-2);border:1px solid var(--border-strong);color:var(--text);padding:8px 16px;border-radius:var(--radius);font-size:11.5px;font-weight: 500;z-index:9999;transition:transform .3s ease;white-space:nowrap; }
     .cx-toast.show { transform:translateX(-50%) translateY(0); }
 
     /* SUBMIT MODAL */
     .cx-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
     .cx-modal-overlay.open { display:flex; }
-    .cx-modal { background:var(--surface);border:1px solid var(--border-strong);border-radius:3px;width:100%;max-width:580px;box-shadow:0 16px 48px rgba(0,0,0,.6);overflow:hidden;max-height:90vh;display:flex;flex-direction:column;animation:modalIn .15s ease; }
+    .cx-modal { background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--radius);width:100%;max-width:580px;overflow:hidden;max-height:90vh;display:flex;flex-direction:column;animation:modalIn .18s ease; }
     @keyframes modalIn { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
     .cx-modal-header { display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0; }
-    .cx-modal-title { font-size:12px;font-weight:700;color:var(--text);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase; }
-    .cx-modal-close { width:26px;height:26px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-muted);cursor:pointer; }
+    .cx-modal-title { font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-heading); }
+    .cx-modal-close { width:26px;height:26px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-muted);cursor:pointer; }
     .cx-modal-close:hover { background:var(--surface-2);color:var(--text); }
     .cx-modal-body { padding:18px;overflow-y:auto; }
     .cx-field { margin-bottom:10px; }
     .cx-field label { display:block;font-size:10px;font-weight:700;color:var(--text-2);margin-bottom:4px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase; }
-    .cx-field input,.cx-field textarea,.cx-field select { width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:2px;font-size:12px;font-family:'Roboto',sans-serif;color:var(--text);background:var(--surface-2);outline:none;transition:var(--transition); }
+    .cx-field input,.cx-field textarea,.cx-field select { width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px;font-family:var(--font-body);color:var(--text);background:var(--surface-2);outline:none;transition:var(--transition); }
     .cx-field input:focus,.cx-field textarea:focus,.cx-field select:focus { border-color:var(--accent); }
     .cx-field input::placeholder,.cx-field textarea::placeholder { color:var(--text-muted); }
     .cx-field textarea { resize:vertical;min-height:68px; }
     .cx-field-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
     .cx-modal-footer { display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--border);flex-shrink:0; }
-    .cx-submit-btn { padding:7px 22px;background:var(--accent);color:var(--accent-fg);border-radius:2px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:var(--transition);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase; }
+    .cx-submit-btn { padding:8px 22px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:none;transition:var(--transition);font-family:var(--font-heading); }
     .cx-submit-btn:hover { background:var(--accent-dim); }
 
     @media(max-width:900px){.cx-hub-layout{grid-template-columns:1fr}.cx-filter-sidebar{display:none}}
@@ -213,12 +228,13 @@
   </div>
   <div class="cx-nav-right">
     <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
-      <div class="cx-avatar" id="navAvatar" style="background:#1A1A1A">?</div>
-      <span style="font-size:11px;font-weight: 500;color:var(--text);" id="navName">—</span>
+      <div class="cx-avatar" id="navAvatar" style="background:var(--surface-3)">?</div>
+      <span style="font-size:12.5px;font-weight: 500;color:var(--text);" id="navName">—</span>
     </button>
-    <button onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--border);border-radius:2px;background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
+    <button id="cx-theme-toggle" onclick="(function(){var h=document.documentElement;var dark=h.getAttribute('data-theme')==='dark';if(dark){h.removeAttribute('data-theme');localStorage.setItem('cx-theme','light');}else{h.setAttribute('data-theme','dark');localStorage.setItem('cx-theme','dark');}document.getElementById('cx-theme-toggle').textContent=dark?'○':'◑';})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--border);border-radius:var(--radius);background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
   </div>
 </nav>
+<script>document.getElementById('cx-theme-toggle').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '◑' : '○';</script>
 
 <!-- HERO BANNER -->
 <div class="cx-hub-hero">
@@ -317,7 +333,7 @@
           <input type="checkbox" /> Revenue-based financing
         </label>
       </div>
-      <button style="width:100%;margin-top:12px;padding:10px;background:var(--primary);color:white;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;" onclick="showToast('Investor profile coming soon — join the waitlist!')">
+      <button style="width:100%;margin-top:12px;padding:10px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:none;" onclick="showToast('Investor profile coming soon — join the waitlist!')">
         Set Investor Profile →
       </button>
     </div>
@@ -426,7 +442,7 @@
       </div>
     </div>
     <div class="cx-modal-footer">
-      <button class="cx-modal-close" onclick="closeSubmitModal()" style="padding:6px 16px;border-radius:2px;font-size:11px;font-weight: 500;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);">Cancel</button>
+      <button class="cx-modal-close" onclick="closeSubmitModal()" style="padding:6px 16px;border-radius:var(--radius);font-size:11px;font-weight: 500;color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);">Cancel</button>
       <button class="cx-submit-btn" onclick="submitFundingRequest()">Submit for Review</button>
     </div>
   </div>
@@ -464,11 +480,11 @@ function scoreRing(score, size = 64) {
   const r = (size/2) - 6;
   const circ = 2 * Math.PI * r;
   const fill = (score / 100) * circ;
-  const color = score >= 80 ? '#00CC44' : score >= 60 ? '#FF6600' : '#FF3333';
+  const color = score >= 80 ? '#1E8E3E' : score >= 60 ? '#B45309' : '#DC2626';
   return `
     <div class="cx-score-ring" style="width:${size}px;height:${size}px;">
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-        <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#2C2C2C" stroke-width="6"/>
+        <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#E5E7EB" stroke-width="6"/>
         <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="6"
           stroke-dasharray="${fill} ${circ}" stroke-linecap="round"/>
       </svg>
@@ -482,7 +498,7 @@ function scoreRing(score, size = 64) {
 function renderFundingCard(f, index) {
   const saved      = isFundingSaved(f.id, currentUser.uid);
   const interested = isFundingInterested(f.id, currentUser.uid);
-  const logoColor  = ['#FF6600','#1D4ED8','#5B21B6','#92400E','#065F46'][index % 5];
+  const logoColor  = ['#0B3D2E','#1D4ED8','#5B21B6','#92400E','#374151'][index % 5];
 
   return `
   <div class="cx-funding-card" id="card-${f.id}">
@@ -492,7 +508,7 @@ function renderFundingCard(f, index) {
         <div class="cx-startup-name">${escHtml(f.startupName)}</div>
         <div class="cx-startup-tagline">${escHtml(f.problem.slice(0, 80))}…</div>
         <div class="cx-startup-tags">
-          <span class="cx-tag" style="background:rgba(232,160,32,.12);color:var(--gold);border-color:rgba(232,160,32,.25);font-weight:700;">${escHtml(f.stage)}</span>
+          <span class="cx-tag" style="background:rgba(180,83,9,.1);color:var(--gold);border-color:rgba(180,83,9,.25);font-weight:700;">${escHtml(f.stage)}</span>
           <span class="cx-tag cx-tag-green">${escHtml(f.sector)}</span>
           <span class="cx-tag"> ${escHtml(f.geography.split('–')[0].trim())}</span>
           ${f.climateScore >= 80 ? `<span class="cx-funding-ready-badge"> Funding Ready</span>` : ''}
@@ -546,7 +562,7 @@ function renderFundingCard(f, index) {
 
       <div class="cx-sdg-badges">
         ${(f.sdgAlignment || []).map(s => `<span class="cx-sdg">${escHtml(s)}</span>`).join('')}
-        ${(f.tags || []).slice(0,4).map(t => `<span class="cx-sdg" style="background:rgba(0,200,150,.07);color:var(--accent);border-color:rgba(0,200,150,.2);">#${escHtml(t)}</span>`).join('')}
+        ${(f.tags || []).slice(0,4).map(t => `<span class="cx-sdg" style="background:var(--accent-glow);color:var(--accent);border-color:var(--border-accent);">#${escHtml(t)}</span>`).join('')}
       </div>
     </div>
 
@@ -598,11 +614,11 @@ window.applyFilters = function() {
   const container = document.getElementById('fundingContainer');
 
   if (!results.length) {
-    container.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:32px;text-align:center;color:var(--text-muted);">
+    container.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;text-align:center;color:var(--text-muted);">
       <div style="font-size:28px;margin-bottom:10px;"></div>
       <div style="font-size:13px;font-weight:700;color:var(--text-2);margin-bottom:5px;">No startups found</div>
       <div style="font-size:11px;">Try adjusting your filters or search term.</div>
-      <button onclick="resetFilters()" style="margin-top:12px;padding:6px 18px;background:var(--accent);color:var(--accent-fg);border-radius:2px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'IBM Plex Mono',monospace;letter-spacing:.05em;text-transform:uppercase;">Reset Filters</button>
+      <button onclick="resetFilters()" style="margin-top:12px;padding:7px 18px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--font-heading);">Reset Filters</button>
     </div>`;
     return;
   }
@@ -672,7 +688,7 @@ function renderInvestors() {
           <div class="cx-investor-meta">${escHtml(inv.firm)}</div>
         </div>
       </div>
-      <div style="font-size:11.5px;color:#555555;margin-bottom:6px;">Ticket: <strong style="color:#333333;">${escHtml(inv.ticket)}</strong></div>
+      <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:6px;">Ticket: <strong style="color:var(--text-2);">${escHtml(inv.ticket)}</strong></div>
       <div class="cx-investor-focus">${inv.focus.map(f=>`<span>${escHtml(f)}</span>`).join('')}</div>
       <button class="cx-investor-btn" onclick="showToast('Connect request sent to ${escHtml(inv.name)}')">Connect →</button>
     </div>

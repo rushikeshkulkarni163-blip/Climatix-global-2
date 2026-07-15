@@ -3,36 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light dark" />
   <title>Forum · Climactix Community</title>
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="site.css?v=4" />
-  <script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
+  <script>(function(){if(localStorage.getItem('cx-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── Design System v4.0 (NASA × MSCI) — page-scoped override — see DESIGN.md ── */
     :root {
-      /* Canonical tokens from site.css — local aliases only */
-      --primary:      var(--accent);
-      --primary-mid:  var(--accent-dim);
-      --primary-tint: var(--accent-glow);
-      --primary-pale: var(--accent-glow);
-      --white:        var(--surface);
-      --off-white:    var(--bg);
-      --grey-light:   var(--surface-2);
-      --grey-mid:     var(--border);
-      --radius:       var(--r);
-      --radius-sm:    var(--r-sm);
+      --bg:#FFFFFF; --nav-bg:#FFFFFF;
+      --surface:#FAFAFA; --surface-2:#F4F4F6; --surface-3:#ECEEF1;
+      --border:#D9D9D9; --border-strong:#C4C4C4; --border-accent: rgba(11,61,145,0.28);
+      --accent:#0B3D91; --accent-fill:#0B3D91; --accent-dim:#092C6B; --accent-glow: rgba(11,61,145,0.08); --accent-fg:#FFFFFF;
+      --red:#DC2626; --green:#1E8E3E; --gold:#B45309; --danger:#DC2626; --warning:#B45309;
+      --text:#111111; --text-2:#4F4F4F; --text-muted:#6B7280; --text-faint:#9CA3AF;
+      --primary: var(--accent); --primary-mid: var(--accent-dim); --primary-tint: var(--accent-glow); --primary-pale: var(--accent-glow);
+      --white: var(--surface); --off-white: var(--bg); --grey-light: var(--surface-2); --grey-mid: var(--border);
+      --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-body: 'Source Sans Pro', Arial, sans-serif;
+      --font: var(--font-body); --mono: var(--font-heading);
+      --r:8px; --r-sm:8px; --r-pill:999px; --nav-h:56px; --transition:.18s ease;
+      --radius: var(--r); --radius-sm: var(--r-sm);
+      --shadow-sm:none; --shadow-md:none;
+      color-scheme: light;
     }
-    [data-theme="light"] {
-      --white:        var(--surface);
-      --off-white:    var(--bg);
-      --grey-light:   var(--surface-2);
-      --grey-mid:     var(--border);
+    [data-theme="dark"] {
+      --bg:#0B0E14; --nav-bg:#11151C;
+      --surface:#11151C; --surface-2:#161B24; --surface-3:#1C222D;
+      --border:#232935; --border-strong:#2E3646; --border-accent: rgba(61,123,224,0.35);
+      --accent:#3D7BE0; --accent-dim:#2F62B8; --accent-glow: rgba(61,123,224,0.12);
+      --red:#F87171; --green:#22C55E; --danger:#F87171; --warning:#F59E0B;
+      --text:#F4F6F8; --text-2:#B8C0CC; --text-muted:#7C8794; --text-faint:#5C6672;
+      --white: var(--surface); --off-white: var(--bg); --grey-light: var(--surface-2); --grey-mid: var(--border);
+      color-scheme: dark;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: var(--font); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
 
     a { color: inherit; text-decoration: none; }
     button { font-family: inherit; cursor: pointer; border: none; background: none; }
@@ -41,54 +50,52 @@
     .cx-nav { position:sticky;top:0;z-index:200;height:var(--nav-h);background:var(--white);border-bottom:1px solid var(--grey-mid);display:flex;align-items:center;padding:0 20px;gap:12px; }
     .cx-nav-logo { display:flex;align-items:center;gap:8px;flex-shrink:0; }
     .cx-nav-logo img { height:22px; }
-    .cx-nav-link { display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:2px;font-size:11px;font-weight: 500;color:var(--text-muted);transition:var(--transition);position:relative; }
+    .cx-nav-link { display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--radius);font-size:11px;font-weight: 500;color:var(--text-muted);transition:var(--transition);position:relative; }
     .cx-nav-link:hover { background:var(--grey-light);color:var(--text); }
     .cx-nav-link.active { color:var(--accent); }
     .cx-nav-link.active::after { content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--accent);border-radius:0; }
     .cx-nav-link .nav-icon { font-size:13px;line-height:1; }
-    .cx-avatar { width:28px;height:28px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0; }
+    .cx-avatar { width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;flex-shrink:0; }
     .cx-nav-right { display:flex;align-items:center;gap:8px;margin-left:auto; }
-    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:3px 10px 3px 4px;border-radius:2px;background:none;border:1px solid var(--grey-mid);cursor:pointer;transition:var(--transition); }
+    .cx-avatar-btn { display:flex;align-items:center;gap:7px;padding:3px 10px 3px 4px;border-radius:var(--radius);background:none;border:1px solid var(--grey-mid);cursor:pointer;transition:var(--transition); }
     .cx-avatar-btn:hover { background:var(--grey-light); }
 
     /* PAGE LAYOUT */
     .cx-forum-layout { max-width: 1160px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 260px 1fr 280px; gap: 20px; }
 
     /* SIDEBAR */
-    .cx-sidebar-card { background:var(--white);border:1px solid var(--grey-mid);border-radius:2px;padding:14px;margin-bottom:10px; }
+    .cx-sidebar-card { background:var(--white);border:1px solid var(--grey-mid);border-radius:var(--radius);padding:14px;margin-bottom:10px; }
     .cx-sidebar-card:last-child { margin-bottom:0; }
     .cx-sidebar-title { font-size:10px;font-weight:700;color:var(--text-2);margin-bottom:10px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase; }
 
     .cx-community-list { display:flex;flex-direction:column;gap:1px; }
     .cx-community-item {
       display: flex; align-items: center; gap: 8px;
-      padding: 7px 8px; border-radius: 2px;
+      padding: 7px 8px; border-radius:var(--radius);
       font-size: 12px; font-weight: 500; color: var(--text-2);
       cursor: pointer; transition: var(--transition);
       border: 1px solid transparent;
     }
     .cx-community-item:hover { background: var(--grey-light); }
-    .cx-community-item.active { background: var(--primary-tint); border-color: rgba(245,158,11,0.20); color: var(--accent); font-weight: 700; }
+    .cx-community-item.active { background: var(--primary-tint); border-color: var(--border-accent); color: var(--accent); font-weight: 700; }
     .cx-community-icon { font-size: 14px; width: 18px; text-align: center; }
     .cx-community-name { flex: 1; }
     .cx-community-count { font-size: 10px; color: var(--text-faint); font-weight: 500; font-family: var(--mono); }
-    .cx-community-badge { font-size: 9px; font-weight: 700; background: var(--red); color: white; padding: 1px 5px; border-radius: 2px; font-family: var(--mono); }
+    .cx-community-badge { font-size: 9px; font-weight: 700; background: var(--red); color: white; padding: 1px 5px; border-radius:var(--radius); font-family: var(--mono); }
 
     .cx-create-thread-btn {
       width: 100%;
-      padding: 8px;
-      background: var(--accent);
+      padding: 9px;
+      background: var(--accent-fill);
       color: var(--accent-fg);
-      border-radius: 2px;
-      font-size: 11px;
-      font-weight: 700;
+      border-radius:var(--radius);
+      font-size: 13px;
+      font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
       border: none;
       margin-top: 10px;
-      font-family: var(--mono);
-      letter-spacing: .06em;
-      text-transform: uppercase;
+      font-family: var(--font-heading);
     }
     .cx-create-thread-btn:hover { background: var(--primary-mid); }
 
@@ -99,7 +106,7 @@
     .cx-forum-header {
       background: var(--white);
       border: 1px solid var(--grey-mid);
-      border-radius: 2px;
+      border-radius:var(--radius);
       padding: 16px 18px;
       border-left: 3px solid var(--accent);
     }
@@ -108,15 +115,15 @@
     .cx-forum-header-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
     .cx-forum-header-stats { display: flex; gap: 16px; margin-top: 10px; font-size: 11px; color: var(--text-muted); }
     .cx-forum-header-stat { display: flex; align-items: center; gap: 4px; }
-    .cx-join-btn { padding: 6px 16px; background: var(--accent); color: var(--accent-fg); border-radius: 2px; font-size: 11px; font-weight: 700; cursor: pointer; border: none; transition: var(--transition); flex-shrink: 0; font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+    .cx-join-btn { padding: 7px 16px; background: var(--accent-fill); color: var(--accent-fg); border-radius:var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: var(--transition); flex-shrink: 0; font-family: var(--font-heading); }
     .cx-join-btn:hover { background: var(--primary-mid); }
-    .cx-join-btn.joined { background: var(--primary-tint); color: var(--accent); border: 1px solid rgba(245,158,11,.25); }
+    .cx-join-btn.joined { background: var(--primary-tint); color: var(--accent); border: 1px solid var(--border-accent); }
 
     /* SORT BAR */
     .cx-sort-bar {
       background: var(--white);
       border: 1px solid var(--grey-mid);
-      border-radius: 2px;
+      border-radius:var(--radius);
       padding: 6px 10px;
       display: flex;
       gap: 2px;
@@ -124,7 +131,7 @@
     }
     .cx-sort-btn {
       padding: 7px 14px;
-      border-radius: 20px;
+      border-radius: var(--radius);
       font-size: 13px;
       font-weight: 500;
       color: var(--text-muted);
@@ -145,13 +152,13 @@
     .cx-search-thread input {
       padding: 7px 12px 7px 34px;
       border: 1.5px solid var(--grey-mid);
-      border-radius: 20px;
+      border-radius: var(--radius);
       font-size: 13px;
       outline: none;
       width: 200px;
       transition: var(--transition);
     }
-    .cx-search-thread input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(11,61,46,0.07); }
+    .cx-search-thread input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--accent-glow); }
     .cx-search-thread-icon { position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);pointer-events:none; }
 
     /* THREAD CARD */
@@ -165,7 +172,7 @@
       overflow: hidden;
       transition: box-shadow var(--transition), border-color var(--transition);
     }
-    .cx-thread-card:hover { box-shadow: var(--shadow-md); border-color: #B0D4C6; }
+    .cx-thread-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); }
     .cx-thread-card.pinned { border-left: 3px solid var(--primary); }
 
     /* VOTE COLUMN */
@@ -189,7 +196,7 @@
     }
     .cx-vote-btn:hover { background: var(--primary-tint); }
     .cx-vote-btn.upvoted { color: var(--accent); background: var(--primary-tint); }
-    .cx-vote-btn.downvoted { color: var(--red); background: rgba(239,68,68,.08); }
+    .cx-vote-btn.downvoted { color: var(--red); background: rgba(220,38,38,.08); }
     .cx-vote-score {
       font-size: 14px;
       font-weight: 700;
@@ -214,7 +221,7 @@
       cursor: pointer;
     }
     .cx-thread-author { font-size: 12px; color: var(--text-muted); }
-    .cx-pinned-badge { font-size: 10px; font-weight: 700; color: var(--accent); background: var(--primary-tint); padding: 2px 6px; border-radius: 2px; font-family: var(--mono); }
+    .cx-pinned-badge { font-size: 10px; font-weight: 700; color: var(--accent); background: var(--primary-tint); padding: 2px 6px; border-radius:var(--radius); font-family: var(--mono); }
 
     .cx-thread-title {
       font-size: 14px;
@@ -239,7 +246,7 @@
 
     .cx-thread-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
     .cx-thread-tag {
-      display: inline-flex; padding: 2px 7px; border-radius: 2px;
+      display: inline-flex; padding: 2px 7px; border-radius:var(--radius);
       font-size: 10px; font-weight: 500;
       background: var(--grey-light); color: var(--text-2);
       cursor: pointer; font-family: var(--mono);
@@ -255,7 +262,7 @@
     }
     .cx-thread-footer-btn {
       display: flex; align-items: center; gap: 4px;
-      cursor: pointer; padding: 3px 7px; border-radius: 2px;
+      cursor: pointer; padding: 3px 7px; border-radius:var(--radius);
       transition: var(--transition);
       background: none; border: none; font-size: 11px; color: var(--text-faint);
     }
@@ -273,14 +280,14 @@
     .cx-reply-bubble {
       flex: 1;
       background: var(--grey-light);
-      border-radius: 2px;
+      border-radius:var(--radius);
       border-left: 2px solid var(--grey-mid);
       padding: 10px 12px;
     }
     .cx-reply-author { font-size: 12px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
     .cx-reply-text { font-size: 12px; color: var(--text-2); line-height: 1.6; }
     .cx-reply-meta { font-size: 10px; color: var(--text-faint); margin-top: 5px; display: flex; gap: 10px; font-family: var(--mono); }
-    .cx-role-badge { display:inline-flex;align-items:center;padding:2px 6px;border-radius:2px;font-size:9.5px;font-weight:700;font-family:var(--mono); }
+    .cx-role-badge { display:inline-flex;align-items:center;padding:2px 6px;border-radius:var(--radius);font-size:9.5px;font-weight:700;font-family:var(--mono); }
 
     .cx-add-reply {
       display: flex; gap: 8px; align-items: flex-start;
@@ -290,16 +297,16 @@
       flex: 1;
       padding: 8px 12px;
       border: 1px solid var(--grey-mid);
-      border-radius: 2px;
+      border-radius:var(--radius);
       font-size: 12px;
       background: var(--off-white);
       color: var(--text);
       outline: none;
       transition: var(--transition);
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-body);
     }
     .cx-reply-input:focus { border-color: var(--accent); }
-    .cx-reply-submit { padding: 8px 16px; background: var(--accent); color: var(--accent-fg); border-radius: 2px; font-size: 11px; font-weight: 700; cursor: pointer; transition: var(--transition); border: none; font-family: var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+    .cx-reply-submit { padding: 8px 16px; background: var(--accent-fill); color: var(--accent-fg); border-radius:var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--transition); border: none; font-family: var(--font-heading); }
     .cx-reply-submit:hover { background: var(--primary-mid); }
 
     /* RIGHT SIDEBAR */
@@ -312,26 +319,26 @@
     .cx-trending-thread-meta { font-size: 10px; color: var(--text-faint); font-family: var(--mono); }
 
     /* TOAST */
-    .cx-toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--white);border:1px solid var(--grey-mid);color:var(--text);padding:8px 16px;border-radius:2px;font-size:12px;font-weight: 500;z-index:9999;transition:transform 0.3s ease;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.4); }
+    .cx-toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--white);border:1px solid var(--grey-mid);color:var(--text);padding:8px 16px;border-radius:var(--radius);font-size:12px;font-weight: 500;z-index:9999;transition:transform 0.3s ease;white-space:nowrap; }
     .cx-toast.show { transform:translateX(-50%) translateY(0); }
 
     /* CREATE THREAD MODAL */
     .cx-modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px; }
     .cx-modal-overlay.open { display:flex; }
-    .cx-modal { background:var(--white);border-radius:3px;border:1px solid var(--grey-mid);width:100%;max-width:580px;box-shadow:0 16px 48px rgba(0,0,0,.5);overflow:hidden;animation:modalIn 0.15s ease; }
+    .cx-modal { background:var(--white);border-radius:var(--radius);border:1px solid var(--grey-mid);width:100%;max-width:580px;overflow:hidden;animation:modalIn 0.18s ease; }
     @keyframes modalIn { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
     .cx-modal-header { display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--grey-mid); }
-    .cx-modal-title { font-size:13px;font-weight:700;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase; }
-    .cx-modal-close { width:26px;height:26px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-muted);cursor:pointer; }
+    .cx-modal-title { font-size:18px;font-weight:700;font-family:var(--font-heading);color:var(--text); }
+    .cx-modal-close { width:26px;height:26px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text-muted);cursor:pointer; }
     .cx-modal-close:hover { background:var(--grey-light); }
     .cx-modal-body { padding:18px; }
     .cx-field { margin-bottom:12px; }
-    .cx-field label { display:block;font-size:10px;font-weight:700;color:var(--text-2);margin-bottom:4px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase; }
-    .cx-field input, .cx-field textarea, .cx-field select { width:100%;padding:8px 12px;border:1px solid var(--grey-mid);border-radius:2px;font-size:12px;font-family:'Roboto',sans-serif;background:var(--off-white);color:var(--text);outline:none;transition:var(--transition); }
+    .cx-field label { display:block;font-size:11.5px;font-weight:500;color:var(--text-2);margin-bottom:4px;font-family:var(--font-body); }
+    .cx-field input, .cx-field textarea, .cx-field select { width:100%;padding:8px 12px;border:1px solid var(--grey-mid);border-radius:var(--radius);font-size:12px;font-family:var(--font-body);background:var(--off-white);color:var(--text);outline:none;transition:var(--transition); }
     .cx-field input:focus, .cx-field textarea:focus, .cx-field select:focus { border-color:var(--accent); }
     .cx-field textarea { resize:vertical;min-height:90px; }
     .cx-modal-footer { display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--grey-mid); }
-    .cx-post-btn { padding:8px 22px;background:var(--accent);color:var(--accent-fg);border-radius:2px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:var(--transition);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase; }
+    .cx-post-btn { padding:9px 22px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:none;transition:var(--transition);font-family:var(--font-heading); }
     .cx-post-btn:hover { background:var(--primary-mid); }
 
     @media (max-width: 1024px) { .cx-forum-layout { grid-template-columns: 220px 1fr; } .cx-right-sidebar { display:none; } }
@@ -366,12 +373,13 @@
   </div>
   <div class="cx-nav-right">
     <button class="cx-avatar-btn" onclick="window.location.href='community-profile.html'">
-      <div class="cx-avatar" id="navAvatar" style="background:#1A1A1A">?</div>
-      <span style="font-size:11px;font-weight: 500;" id="navName">—</span>
+      <div class="cx-avatar" id="navAvatar" style="background:var(--surface-3)">?</div>
+      <span style="font-size:12.5px;font-weight: 500;" id="navName">—</span>
     </button>
-    <button onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--grey-mid);border-radius:2px;background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
+    <button id="cx-theme-toggle" onclick="(function(){var h=document.documentElement;var dark=h.getAttribute('data-theme')==='dark';if(dark){h.removeAttribute('data-theme');localStorage.setItem('cx-theme','light');}else{h.setAttribute('data-theme','dark');localStorage.setItem('cx-theme','dark');}document.getElementById('cx-theme-toggle').textContent=dark?'○':'◑';})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--grey-mid);border-radius:var(--radius);background:none;cursor:pointer;color:var(--text-muted);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
   </div>
 </nav>
+<script>document.getElementById('cx-theme-toggle').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '◑' : '○';</script>
 
 <div class="cx-forum-layout">
 
@@ -456,12 +464,12 @@
       <div id="topContributors"></div>
     </div>
 
-    <div class="cx-sidebar-card" style="background:#0F0F0F;border-color:transparent;padding:18px;">
-      <div style="color:white;font-size:14px;font-weight:700;margin-bottom:6px;">Start a Discussion</div>
-      <div style="color:rgba(255,255,255,0.78);font-size:12.5px;margin-bottom:14px;line-height:1.6;">
+    <div class="cx-sidebar-card" style="background:var(--accent-fill);border-color:transparent;padding:18px;">
+      <div style="color:#fff;font-size:14px;font-weight:700;margin-bottom:6px;">Start a Discussion</div>
+      <div style="color:rgba(255,255,255,0.82);font-size:12.5px;margin-bottom:14px;line-height:1.6;">
         Share insights, ask questions, and spark conversations with 78K+ climate professionals.
       </div>
-      <button onclick="openCreateModal()" style="width:100%;padding:10px;background:white;color:var(--primary);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;">
+      <button onclick="openCreateModal()" style="width:100%;padding:10px;background:#fff;color:var(--accent-fill);border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:none;">
         + New Thread
       </button>
     </div>
@@ -517,7 +525,7 @@
       </div>
     </div>
     <div class="cx-modal-footer">
-      <button class="cx-modal-close" onclick="closeCreateModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight: 500;color:#333333;background:#F3F4F6;">Cancel</button>
+      <button class="cx-modal-close" onclick="closeCreateModal()" style="padding:9px 18px;border-radius:20px;font-size:13px;font-weight: 500;color:var(--text-2);background:var(--surface-2);">Cancel</button>
       <button class="cx-post-btn" onclick="submitThread()">Post Discussion</button>
     </div>
   </div>
@@ -554,7 +562,7 @@ function updateStanding() {
   const joined = getJoinedCommunities(currentUser.uid);
   const karma = currentUser.postsCount * 47 + (currentUser.followersCount || 0) * 12;
   document.getElementById('userStanding').innerHTML = `
-    <div>Karma: <strong style="color:#FF6600;">${formatCount(karma)}</strong></div>
+    <div>Karma: <strong style="color:#0B3D91;">${formatCount(karma)}</strong></div>
     <div>Posts: <strong>${currentUser.postsCount}</strong></div>
     <div>Communities: <strong>${joined.length}</strong></div>`;
 }
@@ -660,11 +668,11 @@ window.renderThreads = function() {
   const container = document.getElementById('threadsContainer');
 
   if (!threads.length) {
-    container.innerHTML = `<div style="background:white;border:1px solid #E5E7EB;border-radius:12px;padding:40px;text-align:center;color:#888888;">
+    container.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;text-align:center;color:var(--text-muted);">
       <div style="font-size:32px;margin-bottom:12px;"></div>
-      <div style="font-size:15px;font-weight: 500;color:#333333;margin-bottom:6px;">No discussions yet</div>
+      <div style="font-size:15px;font-weight: 500;color:var(--text-2);margin-bottom:6px;">No discussions yet</div>
       <div style="font-size:13px;">Be the first to start a conversation in this community!</div>
-      <button onclick="openCreateModal()" style="margin-top:14px;padding:9px 20px;background:#FF6600;color:white;border-radius:16px;font-size:13px;font-weight: 500;cursor:pointer;border:none;">Start Discussion</button>
+      <button onclick="openCreateModal()" style="margin-top:14px;padding:9px 20px;background:var(--accent-fill);color:var(--accent-fg);border-radius:var(--radius);font-size:13px;font-weight: 500;cursor:pointer;border:none;">Start Discussion</button>
     </div>`;
     return;
   }
@@ -748,7 +756,7 @@ function renderThread(t) {
         <button class="cx-thread-footer-btn" onclick="shareThread('${t.id}')">↗ Share</button>
         <button class="cx-thread-footer-btn" onclick="showToast('Thread saved to bookmarks')"> Save</button>
         <button class="cx-thread-footer-btn" onclick="showToast('Report submitted for review')"> Report</button>
-        <span style="margin-left:auto;font-size:11.5px;color:#888888;"> ${formatCount(t.replyCount * 12 + 84)} views</span>
+        <span style="margin-left:auto;font-size:11.5px;color:var(--text-muted);"> ${formatCount(t.replyCount * 12 + 84)} views</span>
       </div>
 
       <div class="cx-thread-replies" id="replies-${t.id}">
@@ -867,7 +875,7 @@ window.submitThread = function() {
   createThread({
     community:     commId,
     communityName: comm?.name  || '',
-    communityColor: comm?.color || '#FF6600',
+    communityColor: comm?.color || '#0B3D91',
     title,
     body:  document.getElementById('thread-body').value.trim(),
     tags:  document.getElementById('thread-tags').value.split(',').map(t => t.trim()).filter(Boolean),
@@ -913,11 +921,11 @@ function renderTopContributors() {
   ];
   document.getElementById('topContributors').innerHTML = contribs.map((c, i) => `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <span style="font-size:13px;font-weight:700;color:#888888;width:18px;">#${i+1}</span>
+      <span style="font-size:13px;font-weight:700;color:var(--text-muted);width:18px;">#${i+1}</span>
       <div style="width:32px;height:32px;border-radius:50%;background:${getAvatarColor(c.role)};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;">${c.avatar}</div>
       <div style="flex:1;min-width:0;">
         <div style="font-size:13px;font-weight: 500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(c.name)}</div>
-        <div style="font-size:11px;color:#888888;">${formatCount(c.karma)} karma</div>
+        <div style="font-size:11px;color:var(--text-muted);">${formatCount(c.karma)} karma</div>
       </div>
     </div>`).join('');
 }
@@ -949,7 +957,7 @@ if (urlThread) {
     const el = document.getElementById(`thread-${urlThread}`);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      el.style.outline = '2px solid #FF6600';
+      el.style.outline = '2px solid #0B3D91';
       document.getElementById(`replies-${urlThread}`)?.classList.add('open');
     }
   }, 500);
