@@ -330,6 +330,7 @@ import {
   getCurrentUserProfile, getProfile,
   getRoleConfig, getAvatarColor, getInitials,
   timeAgo, formatCount, updateChallengeProgress,
+  CX, onCommunityDataChanged,
 } from './community.js';
 
 initCommunity();
@@ -537,6 +538,10 @@ function escHtml(s) { const d = document.createElement('div'); d.textContent = s
 
 render();
 renderTopThisWeek();
+
+onCommunityDataChanged((key) => {
+  if (key === CX.SOLUTIONS) { render(); renderTopThisWeek(); }
+});
 </script>
 </body>
 </html>

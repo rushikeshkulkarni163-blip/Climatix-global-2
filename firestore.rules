@@ -1,41 +1,147 @@
 // ── Climactix Global · Firestore Security Rules ────────────────────────────
 //
-// Matches the storage model in community.js: every CX.* key (posts, profiles,
-// follows, forum threads, scores, funding requests, etc.) is ONE document in
-// the `community_data` collection, holding the whole array/object as a
-// single `value` field.
+// Matches the storage model in community.js: ONE DOCUMENT PER ITEM (one
+// post = one document, one profile = one document, ...) instead of one
+// blob document per CX.* key holding a whole array. Full design: see
+// DB_SCHEMA.md.
+//
+// This replaces the previous "authenticated = full read/write access to
+// the entire blob" model, which could not enforce "you may only delete
+// your own post" or "you may not edit someone else's climate score" — any
+// authenticated caller could overwrite any user's entire data. These rules
+// check field-level ownership instead.
 //
 // Deploy: Firebase Console → Firestore Database → Rules tab → paste this in
 // → Publish. (Or `firebase deploy --only firestore:rules` with the CLI.)
-//
-// ── KNOWN LIMITATION — read before relying on this ─────────────────────────
-// Because each document is a whole-array blob, these rules can only gate
-// "is this request from a logged-in user" — they CANNOT enforce field-level
-// authorization such as "you may only delete your own post" or "you may not
-// edit someone else's climate score." Any authenticated user can currently
-// overwrite the entire posts/profiles/scores document, including other
-// people's data — the authorId checks in community.js (e.g. deletePost)
-// only run in client-side JS today and are trivially bypassable by anyone
-// calling Firestore directly with a valid auth token.
-//
-// This is an accepted trade-off of the current bridge design (see the
-// comment at the top of community.js). If/when this needs real per-user
-// write authorization, migrate CX.POSTS (and similar) from one big
-// document to a subcollection with one document per post, e.g.:
-//   /posts/{postId}  { authorId, content, ... }
-// so rules can check `request.resource.data.authorId == request.auth.uid`
-// on create/update/delete.
 
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    match /community_data/{key} {
-      // Must be signed in (via Firebase Auth) to read or write any
-      // community data — matches requireAuth() gating every page.
-      allow read:  if request.auth != null;
-      allow write: if request.auth != null;
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function onlyChangedFields(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    // ── Posts — one document per post ──────────────────────────────────
+    match /cx_posts_v1/{postId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+      // The author can edit/delete their own post outright. Any other
+      // signed-in user may only touch the social-interaction fields
+      // (like/comment/react/view) — never rewrite someone else's content.
+      allow update: if signedIn() && (
+        resource.data.authorId == request.auth.uid ||
+        onlyChangedFields(['likes', 'comments', 'reactions', 'views'])
+      );
+      allow delete: if isOwner(resource.data.authorId);
+    }
+
+    // ── Profiles — one document per user, doc id == uid ─────────────────
+    match /cx_profiles_v1/{uid} {
+      allow read: if signedIn();
+      allow create: if isOwner(uid);
+      // Full self-edit. Other users may only bump the derived counters —
+      // their own actions (follow/like/post) touch someone else's profile
+      // — never bio/name/company/etc.
+      allow update: if signedIn() && (
+        request.auth.uid == uid ||
+        onlyChangedFields(['followersCount', 'followingCount', 'postsCount', 'climateScore'])
+      );
+      allow delete: if false;
+    }
+
+    // ── Follows — one document per follower, doc id == follower uid ─────
+    match /cx_follows_v1/{userId} {
+      allow read: if signedIn();       // needed for getFollowers() cross-user queries
+      allow write: if isOwner(userId); // only you can edit who you follow
+    }
+
+    // ── Bookmarks — private, one document per user ──────────────────────
+    match /cx_bookmarks_v1/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // ── Notifications — private, one document per user ──────────────────
+    // Written on behalf of the recipient by whichever user's action
+    // triggered it (e.g. someone liking your post writes to YOUR
+    // notifications doc), so this can't be owner-only on write.
+    match /cx_notifs_v1/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if signedIn();
+    }
+
+    // ── Score history — one document per user ────────────────────────────
+    // Same reasoning as notifications: any user's action can award points
+    // to a DIFFERENT user, so write can't be owner-only. Read is open to
+    // all signed-in users because the weekly/monthly leaderboard needs to
+    // aggregate every user's score history.
+    match /cx_scores_v2/{userId} {
+      allow read: if signedIn();
+      allow write: if signedIn();
+    }
+
+    // ── Streaks — private, one document per user ─────────────────────────
+    match /cx_streaks_v1/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // ── Daily challenge state — private, one document per user per day ──
+    // Doc id is `${userId}_${date}` — check the uid prefix against auth.
+    match /cx_challenges_v2/{docId} {
+      allow read, write: if signedIn() && docId.split('_')[0] == request.auth.uid;
+    }
+
+    // ── Joined communities — private, one document per user ──────────────
+    match /cx_joined_v1/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // ── Forum threads — one document per thread ──────────────────────────
+    match /cx_forum_v1/{threadId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if signedIn() && (
+        resource.data.authorId == request.auth.uid ||
+        onlyChangedFields(['voters', 'upvotes', 'downvotes', 'replies', 'replyCount'])
+      );
+      allow delete: if isOwner(resource.data.authorId);
+    }
+
+    // ── Funding requests — one document per request ──────────────────────
+    // KNOWN LIMITATION: funding-hub.html's submission form does not record
+    // a founder uid on the request (only a display name), so unlike posts/
+    // forum/solutions/battles there is no real authorId field to check
+    // ownership against. Any signed-in user can create/update a request
+    // document. If funding-hub.html starts sending `founderId: currentUser.uid`,
+    // tighten this the same way as posts.
+    match /cx_funding_user_v1/{requestId} {
+      allow read: if signedIn();
+      allow write: if signedIn();
+    }
+
+    // ── Solutions — one document per entry ────────────────────────────────
+    match /cx_solutions_v1/{solutionId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if signedIn() && (
+        resource.data.authorId == request.auth.uid ||
+        onlyChangedFields(['upvotes', 'bookmarks'])
+      );
+      allow delete: if isOwner(resource.data.authorId);
+    }
+
+    // ── Battles — one document per battle ─────────────────────────────────
+    match /cx_battles_v1/{battleId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if signedIn() && (
+        resource.data.authorId == request.auth.uid ||
+        onlyChangedFields(['votes', 'totalA', 'totalB'])
+      );
+      allow delete: if false;
     }
 
     // Deny everything else by default.

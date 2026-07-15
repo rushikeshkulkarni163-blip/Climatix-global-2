@@ -6,18 +6,21 @@
 //     never leave the device that created them.
 //
 // FIREBASE MODE  (real config pasted into firebase-config.js)
-//   → every mutation writes to a Firestore document and every reader
+//   → every mutation writes to a real Firestore document and every reader
 //     subscribes to it in realtime, so posts/profiles/threads become
 //     visible to every user, on every device, live.
-//   → storage model: one Firestore doc per CX.* key (community_data/{key})
-//     holding the whole array/object as a single `value` field — this
-//     mirrors the flat-array shape all the functions below already assume,
-//     so createPost/toggleLike/addComment/etc. did not need to change.
-//   → known trade-off: writes replace the whole document, so two users
-//     mutating the same key in the same instant can clobber each other
-//     (last write wins). Fine at demo/early scale. If write volume grows,
-//     migrate CX.POSTS to a Firestore subcollection (one doc per post)
-//     with per-field updates instead of whole-array overwrites.
+//   → storage model: ONE DOCUMENT PER ITEM (one post = one document, one
+//     profile = one document, ...) instead of one blob document per
+//     CX.* key holding the whole array. Mutations use Firestore's atomic
+//     operators (arrayUnion/arrayRemove/increment/dot-path field updates/
+//     runTransaction) so two different users writing to the SAME item at
+//     the same instant merge instead of clobbering each other's write.
+//     Full design + collection list: see DB_SCHEMA.md.
+//   → every exported function below stays SYNCHRONOUS regardless of mode —
+//     Firebase-mode reads come from an in-memory cache kept live via
+//     onSnapshot, so no calling page needs to change.
+//   → seed/demo data is NOT written by the client (see DB_SCHEMA.md) — run
+//     `node scripts/seed-firestore.js` once to populate a fresh project.
 
 'use strict';
 
@@ -39,10 +42,13 @@ function _firestore() {
   return _fsApiPromise;
 }
 
-// In-memory mirror so every existing exported function can keep reading
-// synchronously via load(), same as it did against localStorage.
+function _fsWrite(fn, label) {
+  _firestore().then(fn).catch(err => console.error(`[community] ${label} write failed`, err));
+}
+
+// In-memory mirror so every exported function can keep reading
+// synchronously, same contract as before this migration.
 const _cache = Object.create(null);
-const _subscribed = Object.create(null);
 
 function _emit(key) {
   window.dispatchEvent(new CustomEvent('cx:data-changed', { detail: { key } }));
@@ -57,27 +63,63 @@ export function onCommunityDataChanged(handler) {
   return () => window.removeEventListener('cx:data-changed', fn);
 }
 
-function _subscribe(key, fallback) {
-  if (_subscribed[key]) return;
-  _subscribed[key] = true;
-  _firestore().then(({ db, doc, onSnapshot, setDoc }) => {
-    const ref = doc(db, 'community_data', key);
+// ── Collection-level live cache ────────────────────────────────────────────
+// For "multi-writer" data (posts, profiles, forum threads, funding
+// requests, solutions, battles, follows, score history) — many different
+// users can write to the SAME item, so every item is its own document and
+// we subscribe to the whole collection to keep an ordered array live.
+const _colLive = Object.create(null);
+
+function _subscribeCollection(name, orderField) {
+  if (_colLive[name]) return;
+  _colLive[name] = true;
+  _firestore().then(({ db, collection, onSnapshot, query, orderBy }) => {
+    const colRef = collection(db, name);
+    const ref = orderField ? query(colRef, orderBy(orderField, 'desc')) : colRef;
     onSnapshot(ref, (snap) => {
-      if (snap.exists()) {
-        _cache[key] = snap.data().value;
-      } else {
-        // Nothing on the server yet for this key — claim the seed/fallback
-        // as canonical. Only fires when the doc truly doesn't exist, so
-        // this never clobbers real data written by another client.
-        _cache[key] = fallback;
-        setDoc(ref, { value: fallback }).catch(err => console.error('[community] seed write failed', key, err));
-      }
-      _emit(key);
-    }, (err) => console.error('[community] Firestore sync failed, staying on last known data', key, err));
+      _cache[name] = snap.docs.map(d => d.data());
+      _emit(name);
+    }, err => console.error(`[community] ${name} collection sync failed`, err));
   });
 }
 
-// ── Storage keys ───────────────────────────────────────────────────────────
+// Reads the live collection cache (Firebase mode) or the localStorage blob
+// (local mode). `seed` is returned as a placeholder until the first real
+// Firestore snapshot arrives (see DB_SCHEMA.md's seeding note).
+function getCollection(name, seed, orderField = 'timestamp') {
+  if (_USE_FIREBASE) {
+    if (!(name in _cache)) { _cache[name] = seed; _subscribeCollection(name, orderField); }
+    return _cache[name];
+  }
+  return load(name, seed);
+}
+
+// ── Per-user document live cache ───────────────────────────────────────────
+// For "single-writer" data (notifications, bookmarks, streaks, daily
+// challenge state, joined communities) — only the owning user ever writes
+// their own document, so each is subscribed to individually on demand.
+const _docLive = Object.create(null);
+function _cacheKey(name, id) { return `${name}/${id}`; }
+
+function _subscribeDoc(name, id, fallback, emitKey) {
+  const key = _cacheKey(name, id);
+  if (_docLive[key]) return;
+  _docLive[key] = true;
+  _firestore().then(({ db, doc, onSnapshot }) => {
+    onSnapshot(doc(db, name, id), (snap) => {
+      _cache[key] = snap.exists() ? snap.data() : (fallback ?? null);
+      _emit(emitKey);
+    }, err => console.error(`[community] ${key} doc sync failed`, err));
+  });
+}
+
+function getUserDoc(name, id, fallback, emitKey = name) {
+  const key = _cacheKey(name, id);
+  if (!(key in _cache)) { _cache[key] = fallback; _subscribeDoc(name, id, fallback, emitKey); }
+  return _cache[key];
+}
+
+// ── Storage keys (also used as real Firestore collection names in Firebase mode) ──
 export const CX = {
   POSTS:      'cx_posts_v1',
   PROFILES:   'cx_profiles_v1',
@@ -86,15 +128,13 @@ export const CX = {
   FORUM:      'cx_forum_v1',
   NOTIFS:     'cx_notifs_v1',
   FUNDING:    'cx_funding_user_v1',
-  INTERESTS:  'cx_interests_v1',
-  // ── New engines ──
-  SCORES:     'cx_scores_v2',       // Score history per user
-  CHALLENGES: 'cx_challenges_v2',   // Daily challenge state
-  REACTIONS:  'cx_reactions_v2',    // Post reactions (replaces plain likes)
-  SOLUTIONS:  'cx_solutions_v1',    // Solution Hub entries
-  PITCHES:    'cx_pitches_v1',      // VC Pitch Cards
-  BATTLES:    'cx_battles_v1',      // Battle mode
-  STREAKS:    'cx_streaks_v1',      // Daily streaks
+  SCORES:     'cx_scores_v2',
+  CHALLENGES: 'cx_challenges_v2',
+  REACTIONS:  'cx_reactions_v2',   // local-mode only — Firebase mode folds reactions into the post doc itself
+  SOLUTIONS:  'cx_solutions_v1',
+  BATTLES:    'cx_battles_v1',
+  STREAKS:    'cx_streaks_v1',
+  JOINED:     'cx_joined_v1',
 };
 
 // ── Role configuration ─────────────────────────────────────────────────────
@@ -144,7 +184,9 @@ export const CHALLENGE_DEFS = [
 ];
 
 // ── Seed profiles ──────────────────────────────────────────────────────────
-const SEED_PROFILES = [
+// Exported (not just used internally) so scripts/seed-firestore.js can seed
+// a fresh Firestore project from this single source of truth.
+export const SEED_PROFILES = [
   {
     uid: 'seed_priya', fullName: 'Priya Sharma', email: 'priya@greenfuture.in',
     role: 'startup', bio: 'Founder & CEO @ GreenFuture Energy · Solar micro-grids for rural India · Forbes 30U30 · UNDP Climate Champion · IIT Bombay',
@@ -198,7 +240,7 @@ const SEED_PROFILES = [
 ];
 
 // ── Seed posts ─────────────────────────────────────────────────────────────
-const SEED_POSTS = [
+export const SEED_POSTS = [
   {
     id: 'p001', authorId: 'seed_priya', authorName: 'Priya Sharma', authorRole: 'startup',
     authorAvatar: 'PS', authorVerified: true, authorCompany: 'GreenFuture Energy', type: 'solution',
@@ -211,7 +253,7 @@ const SEED_POSTS = [
       { id: 'c002', authorId: 'seed_meera', authorName: 'Dr. Meera Nair', authorRole: 'researcher', authorAvatar: 'MN',
         content: '18,000 tCO₂e avoidance is significant at this scale. Would love to co-author a paper on methodology. Are you open to sharing operational data for our rural energy research at IIT Delhi?', timestamp: Date.now() - 2700000, likes: ['seed_priya'] },
     ],
-    views: 4821, timestamp: Date.now() - 10800000,
+    reactions: {}, views: 4821, timestamp: Date.now() - 10800000,
   },
   {
     id: 'p002', authorId: 'seed_arjun', authorName: 'Arjun Kapoor', authorRole: 'investor',
@@ -223,7 +265,7 @@ const SEED_POSTS = [
       { id: 'c003', authorId: 'seed_dev', authorName: 'Dev Krishnan', authorRole: 'startup', authorAvatar: 'DK',
         content: 'CarbonTrace AI checks a few of these boxes — AI-powered MRV for voluntary carbon markets. We just closed Techstars Climate. DM sent!', timestamp: Date.now() - 7200000, likes: ['seed_arjun'] },
     ],
-    views: 9234, timestamp: Date.now() - 18000000,
+    reactions: {}, views: 9234, timestamp: Date.now() - 18000000,
   },
   {
     id: 'p003', authorId: 'seed_meera', authorName: 'Dr. Meera Nair', authorRole: 'researcher',
@@ -232,7 +274,7 @@ const SEED_POSTS = [
     tags: ['CarbonRemoval', 'EnhancedWeathering', 'ClimateScience', 'CarbonMarkets', 'IPCC'],
     likes: ['seed_arjun', 'seed_rahul', 'seed_priya'],
     comments: [],
-    views: 6102, timestamp: Date.now() - 28800000,
+    reactions: {}, views: 6102, timestamp: Date.now() - 28800000,
   },
   {
     id: 'p004', authorId: 'seed_rahul', authorName: 'Rahul Menon', authorRole: 'corporate',
@@ -241,7 +283,7 @@ const SEED_POSTS = [
     tags: ['ESG', 'CSRDCompliance', 'SustainabilityReporting', 'ISSB', 'NetZero', 'SEBI'],
     likes: ['seed_meera', 'seed_aisha', 'seed_arjun'],
     comments: [],
-    views: 12450, timestamp: Date.now() - 43200000,
+    reactions: {}, views: 12450, timestamp: Date.now() - 43200000,
   },
   {
     id: 'p005', authorId: 'seed_dev', authorName: 'Dev Krishnan', authorRole: 'startup',
@@ -250,12 +292,12 @@ const SEED_POSTS = [
     tags: ['CarbonMarkets', 'MRV', 'AITech', 'VoluntaryCarbonMarket', 'ClimateStartup'],
     likes: ['seed_meera', 'seed_priya'],
     comments: [],
-    views: 2341, timestamp: Date.now() - 64800000,
+    reactions: {}, views: 2341, timestamp: Date.now() - 64800000,
   },
 ];
 
 // ── Seed forum threads ─────────────────────────────────────────────────────
-const SEED_THREADS = [
+export const SEED_THREADS = [
   {
     id: 'f001', community: 'renewable-energy', communityName: 'Renewable Energy', communityColor: '#0B3D2E',
     title: 'Battery storage economics: Has the tipping point arrived for grid-scale storage in India?',
@@ -377,7 +419,7 @@ export const SEED_FUNDING = [
 ];
 
 // ── Seed Solutions Hub ─────────────────────────────────────────────────────
-const SEED_SOLUTIONS = [
+export const SEED_SOLUTIONS = [
   {
     id: 'sol001', authorId: 'seed_priya', authorName: 'Priya Sharma', authorAvatar: 'PS', authorRole: 'startup',
     title: 'Pay-as-you-go Solar Micro-grids for Rural India',
@@ -414,7 +456,7 @@ const SEED_SOLUTIONS = [
 ];
 
 // ── Seed Battles ───────────────────────────────────────────────────────────
-const SEED_BATTLES = [
+export const SEED_BATTLES = [
   {
     id: 'bat001',
     title: 'Solar vs Wind: Best renewable for India 2030?',
@@ -422,7 +464,7 @@ const SEED_BATTLES = [
     sideB: { label: 'Offshore Wind',       desc: 'Higher capacity factor (40%+), 24/7 power, 70GW coastal potential', icon: '💨' },
     criteria: ['Impact', 'Innovation', 'Scalability'],
     votes: { sideA: { seed_priya: true, seed_dev: true }, sideB: { seed_arjun: true, seed_meera: true } },
-    totalA: 2, totalB: 2, status: 'active',
+    totalA: 2, totalB: 2, status: 'active', authorId: 'seed_priya',
     timestamp: Date.now() - 3600000,
   },
   {
@@ -432,7 +474,7 @@ const SEED_BATTLES = [
     sideB: { label: 'Direct Clean Investment',   desc: 'No additionality risk, builds assets, scales proven tech faster', icon: '⚡' },
     criteria: ['Impact', 'Innovation', 'Scalability'],
     votes: { sideA: { seed_meera: true }, sideB: { seed_rahul: true, seed_arjun: true, seed_priya: true } },
-    totalA: 1, totalB: 3, status: 'active',
+    totalA: 1, totalB: 3, status: 'active', authorId: 'seed_meera',
     timestamp: Date.now() - 7200000,
   },
 ];
@@ -493,50 +535,42 @@ function todayKey() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-// ── Storage ────────────────────────────────────────────────────────────────
+// ── Local-mode storage (unchanged — localStorage blobs, single browser only) ──
 function load(key, fallback = null) {
-  if (_USE_FIREBASE) {
-    if (!(key in _cache)) { _cache[key] = fallback; _subscribe(key, fallback); }
-    return _cache[key] ?? fallback;
-  }
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
 }
 function save(key, data) {
-  _cache[key] = data;
-  if (_USE_FIREBASE) {
-    _subscribe(key, data);
-    _firestore().then(({ db, doc, setDoc }) =>
-      setDoc(doc(db, 'community_data', key), { value: data })
-        .catch(err => console.error('[community] Firestore write failed', key, err))
-    );
-    _emit(key); // optimistic local notify so the writer's own UI updates instantly
-    return;
-  }
   try { localStorage.setItem(key, JSON.stringify(data)); } catch {}
 }
 
 // ── Init (idempotent) ──────────────────────────────────────────────────────
 export function initCommunity() {
   if (_USE_FIREBASE) {
-    // Just prime the subscriptions early so data (or seed data, if the
-    // Firestore doc doesn't exist yet) is ready before first render.
-    load(CX.POSTS,     SEED_POSTS);
-    load(CX.PROFILES,  SEED_PROFILES);
-    load(CX.FORUM,     SEED_THREADS);
-    load(CX.SOLUTIONS, SEED_SOLUTIONS);
-    load(CX.BATTLES,   SEED_BATTLES);
+    // Prime collection subscriptions early so data (real, or the seed
+    // placeholder while the first snapshot is in flight) is ready before
+    // first render. Real seed data is written by scripts/seed-firestore.js,
+    // not the client — see DB_SCHEMA.md.
+    getCollection(CX.POSTS,     SEED_POSTS);
+    getCollection(CX.PROFILES,  SEED_PROFILES, null);
+    getCollection(CX.FORUM,     SEED_THREADS);
+    getCollection(CX.FUNDING,   SEED_FUNDING);
+    getCollection(CX.SOLUTIONS, SEED_SOLUTIONS);
+    getCollection(CX.BATTLES,   SEED_BATTLES);
+    getCollection(CX.FOLLOWS,   [], null);
+    getCollection(CX.SCORES,    [], null);
     return;
   }
   if (!load(CX.POSTS))     save(CX.POSTS,     SEED_POSTS);
   if (!load(CX.PROFILES))  save(CX.PROFILES,  SEED_PROFILES);
   if (!load(CX.FORUM))     save(CX.FORUM,     SEED_THREADS);
+  if (!load(CX.FUNDING))   save(CX.FUNDING,   SEED_FUNDING);
   if (!load(CX.SOLUTIONS)) save(CX.SOLUTIONS, SEED_SOLUTIONS);
   if (!load(CX.BATTLES))   save(CX.BATTLES,   SEED_BATTLES);
 }
 
 // ── Auth ───────────────────────────────────────────────────────────────────
 // Session is always device-local (managed by auth.js) — read straight from
-// localStorage, never through the Firestore-synced load() above, otherwise
+// localStorage, never through the Firestore-synced getters above, otherwise
 // one user's login session would leak into the shared community data.
 export function getCurrentSession() {
   try { const v = localStorage.getItem('cx_session_v2'); return v ? JSON.parse(v) : null; } catch { return null; }
@@ -554,7 +588,7 @@ export function isProfileComplete(profile) {
 
 // ── Profile CRUD ───────────────────────────────────────────────────────────
 export function getProfiles() {
-  return load(CX.PROFILES, SEED_PROFILES);
+  return getCollection(CX.PROFILES, SEED_PROFILES, null);
 }
 
 export function getProfile(uid) {
@@ -579,7 +613,13 @@ export function getCurrentUserProfile() {
     company: session.companyName || '',
     portfolio: [],
   };
-  save(CX.PROFILES, [...profiles, newProfile]);
+  if (_USE_FIREBASE) {
+    _cache[CX.PROFILES] = [...profiles, newProfile];
+    _emit(CX.PROFILES);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.PROFILES, uid), newProfile), 'create profile');
+  } else {
+    save(CX.PROFILES, [...profiles, newProfile]);
+  }
   return newProfile;
 }
 
@@ -588,14 +628,33 @@ export function updateProfile(uid, updates) {
   const idx = profiles.findIndex(p => p.uid === uid || p.email === uid);
   if (idx === -1) return false;
   profiles[idx] = { ...profiles[idx], ...updates };
-  save(CX.PROFILES, profiles);
+  if (_USE_FIREBASE) {
+    _cache[CX.PROFILES] = profiles;
+    _emit(CX.PROFILES);
+    _fsWrite(({ db, doc, updateDoc }) => updateDoc(doc(db, CX.PROFILES, profiles[idx].uid), updates), 'update profile');
+  } else {
+    save(CX.PROFILES, profiles);
+  }
   return profiles[idx];
 }
 
+// NOTE: increment() is not clamped server-side, so a decrement racing ahead
+// of its matching increment could in theory dip a counter below 0 under
+// concurrent writes. In practice decrements always follow a prior increment
+// for the same relation (unfollow after follow, etc.), so this is a
+// documented trade-off, not a correctness bug — same class of trade-off the
+// rest of this file already accepts at current scale.
 function _bumpProfile(uid, field, delta) {
   const profiles = getProfiles();
   const idx = profiles.findIndex(p => p.uid === uid || p.email === uid);
-  if (idx > -1) {
+  if (idx === -1) return;
+  if (_USE_FIREBASE) {
+    profiles[idx] = { ...profiles[idx], [field]: Math.max(0, (profiles[idx][field] || 0) + delta) };
+    _cache[CX.PROFILES] = profiles;
+    _emit(CX.PROFILES);
+    _fsWrite(({ db, doc, updateDoc, increment }) =>
+      updateDoc(doc(db, CX.PROFILES, profiles[idx].uid), { [field]: increment(delta) }), `bump ${field}`);
+  } else {
     profiles[idx][field] = Math.max(0, (profiles[idx][field] || 0) + delta);
     save(CX.PROFILES, profiles);
   }
@@ -603,7 +662,7 @@ function _bumpProfile(uid, field, delta) {
 
 // ── Post CRUD ──────────────────────────────────────────────────────────────
 export function getPosts() {
-  return load(CX.POSTS, SEED_POSTS);
+  return getCollection(CX.POSTS, SEED_POSTS);
 }
 
 export function createPost({ authorId, authorName, authorRole, authorAvatar, authorVerified, authorCompany, type, content, tags }) {
@@ -616,22 +675,34 @@ export function createPost({ authorId, authorName, authorRole, authorAvatar, aut
     authorCompany: authorCompany || '',
     type: type || 'update',
     content: content.trim(), tags: tags || [],
-    likes: [], comments: [], views: Math.floor(Math.random() * 40) + 5,
+    likes: [], comments: [], reactions: {}, views: Math.floor(Math.random() * 40) + 5,
     timestamp: Date.now(),
   };
-  save(CX.POSTS, [post, ...posts]);
+  if (_USE_FIREBASE) {
+    _cache[CX.POSTS] = [post, ...posts];
+    _emit(CX.POSTS);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.POSTS, post.id), post), 'create post');
+  } else {
+    save(CX.POSTS, [post, ...posts]);
+  }
   _bumpProfile(authorId, 'postsCount', 1);
-  // Score event
   updateClimateScore(authorId, SCORE_EVENTS.POST_CREATED.delta, SCORE_EVENTS.POST_CREATED.label);
-  // Challenge progress
   updateChallengeProgress(authorId, 'post_today');
   return post;
 }
 
 export function deletePost(postId, authorId) {
-  const posts = getPosts().filter(p => !(p.id === postId && p.authorId === authorId));
-  save(CX.POSTS, posts);
-  _bumpProfile(authorId, 'postsCount', -1);
+  const posts = getPosts();
+  const remaining = posts.filter(p => !(p.id === postId && p.authorId === authorId));
+  const deleted = remaining.length !== posts.length;
+  if (_USE_FIREBASE) {
+    _cache[CX.POSTS] = remaining;
+    _emit(CX.POSTS);
+    if (deleted) _fsWrite(({ db, doc, deleteDoc }) => deleteDoc(doc(db, CX.POSTS, postId)), 'delete post');
+  } else {
+    save(CX.POSTS, remaining);
+  }
+  if (deleted) _bumpProfile(authorId, 'postsCount', -1);
 }
 
 export function toggleLike(postId, userId) {
@@ -640,9 +711,15 @@ export function toggleLike(postId, userId) {
   if (!post) return null;
   const idx = post.likes.indexOf(userId);
   const liked = idx === -1;
-  if (liked) post.likes.push(userId);
-  else post.likes.splice(idx, 1);
-  save(CX.POSTS, posts);
+  if (liked) post.likes.push(userId); else post.likes.splice(idx, 1);
+  if (_USE_FIREBASE) {
+    _cache[CX.POSTS] = posts;
+    _emit(CX.POSTS);
+    _fsWrite(({ db, doc, updateDoc, arrayUnion, arrayRemove }) =>
+      updateDoc(doc(db, CX.POSTS, postId), { likes: liked ? arrayUnion(userId) : arrayRemove(userId) }), 'toggle like');
+  } else {
+    save(CX.POSTS, posts);
+  }
   if (liked && post.authorId !== userId) {
     const byProfile = getProfile(userId);
     addNotification(post.authorId, {
@@ -661,7 +738,15 @@ export function isLiked(postId, userId) {
 export function incrementPostViews(postId) {
   const posts = getPosts();
   const post = posts.find(p => p.id === postId);
-  if (post) { post.views = (post.views || 0) + 1; save(CX.POSTS, posts); }
+  if (!post) return;
+  post.views = (post.views || 0) + 1;
+  if (_USE_FIREBASE) {
+    _cache[CX.POSTS] = posts;
+    _emit(CX.POSTS);
+    _fsWrite(({ db, doc, updateDoc, increment }) => updateDoc(doc(db, CX.POSTS, postId), { views: increment(1) }), 'increment views');
+  } else {
+    save(CX.POSTS, posts);
+  }
 }
 
 export function addComment(postId, { authorId, authorName, authorRole, authorAvatar, content }) {
@@ -674,7 +759,13 @@ export function addComment(postId, { authorId, authorName, authorRole, authorAva
     content: content.trim(), timestamp: Date.now(), likes: [],
   };
   post.comments.push(comment);
-  save(CX.POSTS, posts);
+  if (_USE_FIREBASE) {
+    _cache[CX.POSTS] = posts;
+    _emit(CX.POSTS);
+    _fsWrite(({ db, doc, updateDoc, arrayUnion }) => updateDoc(doc(db, CX.POSTS, postId), { comments: arrayUnion(comment) }), 'add comment');
+  } else {
+    save(CX.POSTS, posts);
+  }
   if (post.authorId !== authorId) {
     const byProfile = getProfile(authorId);
     addNotification(post.authorId, {
@@ -683,10 +774,8 @@ export function addComment(postId, { authorId, authorName, authorRole, authorAva
       postId, message: `commented on your post`,
       priority: 'normal',
     });
-    // Score event for post author
     updateClimateScore(post.authorId, SCORE_EVENTS.COMMENT_RECEIVED.delta, SCORE_EVENTS.COMMENT_RECEIVED.label);
   }
-  // Challenge progress for commenter
   updateChallengeProgress(authorId, 'engage_three');
   return comment;
 }
@@ -700,12 +789,33 @@ export function toggleCommentLike(postId, commentId, userId) {
   const idx = comment.likes.indexOf(userId);
   if (idx > -1) comment.likes.splice(idx, 1);
   else comment.likes.push(userId);
-  save(CX.POSTS, posts);
+  if (_USE_FIREBASE) {
+    _cache[CX.POSTS] = posts;
+    _emit(CX.POSTS);
+    // Comment likes live inside the post's `comments` array, so this writes
+    // that whole array — scoped to this one post's document only (never
+    // the whole platform). Two users liking two *different* comments on
+    // the same post at the same instant can still clobber each other;
+    // accepted at current scale, same trade-off class as the rest of this
+    // file (see the header comment).
+    _fsWrite(({ db, doc, updateDoc }) => updateDoc(doc(db, CX.POSTS, postId), { comments: post.comments }), 'comment like');
+  } else {
+    save(CX.POSTS, posts);
+  }
   return comment.likes.length;
 }
 
 // ── Bookmarks ──────────────────────────────────────────────────────────────
 export function toggleBookmark(postId, userId) {
+  if (_USE_FIREBASE) {
+    const current = getUserDoc(CX.BOOKMARKS, userId, { postIds: [] });
+    const has = (current.postIds || []).includes(postId);
+    const postIds = has ? current.postIds.filter(id => id !== postId) : [...(current.postIds || []), postId];
+    _cache[_cacheKey(CX.BOOKMARKS, userId)] = { postIds };
+    _emit(CX.BOOKMARKS);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.BOOKMARKS, userId), { postIds }, { merge: true }), 'bookmark');
+    return !has;
+  }
   const bm = load(CX.BOOKMARKS, []);
   const key = `${userId}:${postId}`;
   const idx = bm.indexOf(key);
@@ -716,25 +826,43 @@ export function toggleBookmark(postId, userId) {
 }
 
 export function isBookmarked(postId, userId) {
+  if (_USE_FIREBASE) return (getUserDoc(CX.BOOKMARKS, userId, { postIds: [] }).postIds || []).includes(postId);
   return load(CX.BOOKMARKS, []).includes(`${userId}:${postId}`);
 }
 
 export function getBookmarkedPosts(userId) {
-  const bm = load(CX.BOOKMARKS, []);
-  const ids = bm.filter(k => k.startsWith(userId + ':')).map(k => k.split(':')[1]);
+  const ids = _USE_FIREBASE
+    ? (getUserDoc(CX.BOOKMARKS, userId, { postIds: [] }).postIds || [])
+    : load(CX.BOOKMARKS, []).filter(k => k.startsWith(userId + ':')).map(k => k.split(':')[1]);
   return getPosts().filter(p => ids.includes(p.id));
 }
 
 // ── Follows ────────────────────────────────────────────────────────────────
 export function toggleFollow(targetId, currentUserId) {
   if (!targetId || !currentUserId || targetId === currentUserId) return null;
-  const follows = load(CX.FOLLOWS, {});
-  if (!follows[currentUserId]) follows[currentUserId] = [];
-  const idx = follows[currentUserId].indexOf(targetId);
-  const nowFollowing = idx === -1;
-  if (nowFollowing) follows[currentUserId].push(targetId);
-  else follows[currentUserId].splice(idx, 1);
-  save(CX.FOLLOWS, follows);
+  let nowFollowing;
+  if (_USE_FIREBASE) {
+    const all = getCollection(CX.FOLLOWS, [], null);
+    const mine = all.find(f => f.userId === currentUserId);
+    const followingList = mine ? mine.following : [];
+    const idx = followingList.indexOf(targetId);
+    nowFollowing = idx === -1;
+    const nextFollowing = nowFollowing ? [...followingList, targetId] : followingList.filter(id => id !== targetId);
+    _cache[CX.FOLLOWS] = mine
+      ? all.map(f => f.userId === currentUserId ? { userId: currentUserId, following: nextFollowing } : f)
+      : [...all, { userId: currentUserId, following: nextFollowing }];
+    _emit(CX.FOLLOWS);
+    _fsWrite(({ db, doc, setDoc }) =>
+      setDoc(doc(db, CX.FOLLOWS, currentUserId), { userId: currentUserId, following: nextFollowing }, { merge: true }), 'follow');
+  } else {
+    const follows = load(CX.FOLLOWS, {});
+    if (!follows[currentUserId]) follows[currentUserId] = [];
+    const idx = follows[currentUserId].indexOf(targetId);
+    nowFollowing = idx === -1;
+    if (nowFollowing) follows[currentUserId].push(targetId);
+    else follows[currentUserId].splice(idx, 1);
+    save(CX.FOLLOWS, follows);
+  }
   _bumpProfile(targetId,      'followersCount',  nowFollowing ? 1 : -1);
   _bumpProfile(currentUserId, 'followingCount',  nowFollowing ? 1 : -1);
   if (nowFollowing) {
@@ -750,10 +878,20 @@ export function toggleFollow(targetId, currentUserId) {
 }
 
 export function isFollowing(targetId, currentUserId) {
+  if (_USE_FIREBASE) {
+    const mine = getCollection(CX.FOLLOWS, [], null).find(f => f.userId === currentUserId);
+    return (mine?.following || []).includes(targetId);
+  }
   return (load(CX.FOLLOWS, {})[currentUserId] || []).includes(targetId);
 }
 
 export function getFollowers(uid) {
+  if (_USE_FIREBASE) {
+    return getCollection(CX.FOLLOWS, [], null)
+      .filter(f => (f.following || []).includes(uid))
+      .map(f => getProfile(f.userId))
+      .filter(Boolean);
+  }
   const follows = load(CX.FOLLOWS, {});
   return Object.entries(follows)
     .filter(([, list]) => list.includes(uid))
@@ -762,18 +900,29 @@ export function getFollowers(uid) {
 }
 
 export function getFollowingList(uid) {
-  const ids = (load(CX.FOLLOWS, {})[uid] || []);
+  const ids = _USE_FIREBASE
+    ? (getCollection(CX.FOLLOWS, [], null).find(f => f.userId === uid)?.following || [])
+    : (load(CX.FOLLOWS, {})[uid] || []);
   return ids.map(id => getProfile(id)).filter(Boolean);
 }
 
-// ── Notifications (enhanced) ───────────────────────────────────────────────
+// ── Notifications ────────────────────────────────────────────────────────
 export function addNotification(userId, { type, fromId, fromName, postId, message, priority = 'normal' }) {
-  const notifs = load(CX.NOTIFS, {});
-  if (!notifs[userId]) notifs[userId] = [];
-  notifs[userId].unshift({
+  const entry = {
     id: 'n' + Date.now(), type, fromId, fromName, postId,
     message, priority, read: false, timestamp: Date.now(),
-  });
+  };
+  if (_USE_FIREBASE) {
+    const current = getUserDoc(CX.NOTIFS, userId, { items: [] });
+    const items = [entry, ...(current.items || [])].slice(0, 50);
+    _cache[_cacheKey(CX.NOTIFS, userId)] = { items };
+    _emit(CX.NOTIFS);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.NOTIFS, userId), { items }, { merge: true }), 'notification');
+    return;
+  }
+  const notifs = load(CX.NOTIFS, {});
+  if (!notifs[userId]) notifs[userId] = [];
+  notifs[userId].unshift(entry);
   notifs[userId] = notifs[userId].slice(0, 50);
   save(CX.NOTIFS, notifs);
 }
@@ -783,6 +932,7 @@ export function addSystemNotification(userId, { type, message, priority = 'impor
 }
 
 export function getNotifications(userId) {
+  if (_USE_FIREBASE) return getUserDoc(CX.NOTIFS, userId, { items: [] }).items || [];
   return (load(CX.NOTIFS, {})[userId] || []);
 }
 
@@ -791,6 +941,14 @@ export function getUnreadCount(userId) {
 }
 
 export function markNotifsRead(userId) {
+  if (_USE_FIREBASE) {
+    const current = getUserDoc(CX.NOTIFS, userId, { items: [] });
+    const items = (current.items || []).map(n => n.read ? n : { ...n, read: true });
+    _cache[_cacheKey(CX.NOTIFS, userId)] = { items };
+    _emit(CX.NOTIFS);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.NOTIFS, userId), { items }, { merge: true }), 'mark notifs read');
+    return;
+  }
   const notifs = load(CX.NOTIFS, {});
   (notifs[userId] || []).forEach(n => { n.read = true; });
   save(CX.NOTIFS, notifs);
@@ -798,13 +956,13 @@ export function markNotifsRead(userId) {
 
 // ── Forum CRUD ─────────────────────────────────────────────────────────────
 export function getThreads(communityId = null) {
-  const threads = load(CX.FORUM, SEED_THREADS);
+  const threads = getCollection(CX.FORUM, SEED_THREADS);
   if (communityId) return threads.filter(t => t.community === communityId);
   return threads;
 }
 
 export function createThread({ community, communityName, communityColor, title, body, tags, authorId, authorName, authorAvatar, authorRole }) {
-  const threads = load(CX.FORUM, SEED_THREADS);
+  const threads = getCollection(CX.FORUM, SEED_THREADS);
   const thread = {
     id: 'f' + Date.now(), community, communityName, communityColor: communityColor || '#0B3D2E',
     title: title.trim(), body: (body || '').trim(), tags: tags || [],
@@ -813,18 +971,26 @@ export function createThread({ community, communityName, communityColor, title, 
     voters: { [authorId]: 'up' }, replies: [],
     timestamp: Date.now(), pinned: false,
   };
-  save(CX.FORUM, [thread, ...threads]);
+  if (_USE_FIREBASE) {
+    _cache[CX.FORUM] = [thread, ...threads];
+    _emit(CX.FORUM);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.FORUM, thread.id), thread), 'create thread');
+  } else {
+    save(CX.FORUM, [thread, ...threads]);
+  }
   return thread;
 }
 
 export function voteThread(threadId, userId, direction) {
-  const threads = load(CX.FORUM, SEED_THREADS);
+  const threads = getCollection(CX.FORUM, SEED_THREADS);
   const thread = threads.find(t => t.id === threadId);
   if (!thread) return null;
   if (!thread.voters) thread.voters = {};
   const prev = thread.voters[userId];
+  let cleared = false;
   if (prev === direction) {
     delete thread.voters[userId];
+    cleared = true;
     if (direction === 'up') thread.upvotes = Math.max(0, thread.upvotes - 1);
     else thread.downvotes = Math.max(0, thread.downvotes - 1);
   } else {
@@ -834,12 +1000,21 @@ export function voteThread(threadId, userId, direction) {
     if (direction === 'up')   thread.upvotes++;
     else thread.downvotes++;
   }
-  save(CX.FORUM, threads);
+  if (_USE_FIREBASE) {
+    _cache[CX.FORUM] = threads;
+    _emit(CX.FORUM);
+    _fsWrite(({ db, doc, updateDoc, deleteField }) => updateDoc(doc(db, CX.FORUM, threadId), {
+      upvotes: thread.upvotes, downvotes: thread.downvotes,
+      [`voters.${userId}`]: cleared ? deleteField() : thread.voters[userId],
+    }), 'vote thread');
+  } else {
+    save(CX.FORUM, threads);
+  }
   return { upvotes: thread.upvotes, downvotes: thread.downvotes, userVote: thread.voters[userId] || null };
 }
 
 export function addReply(threadId, { authorId, authorName, authorAvatar, authorRole, content }) {
-  const threads = load(CX.FORUM, SEED_THREADS);
+  const threads = getCollection(CX.FORUM, SEED_THREADS);
   const thread = threads.find(t => t.id === threadId);
   if (!thread) return null;
   if (!thread.replies) thread.replies = [];
@@ -850,22 +1025,31 @@ export function addReply(threadId, { authorId, authorName, authorAvatar, authorR
   };
   thread.replies.push(reply);
   thread.replyCount = thread.replies.length;
-  save(CX.FORUM, threads);
+  if (_USE_FIREBASE) {
+    _cache[CX.FORUM] = threads;
+    _emit(CX.FORUM);
+    _fsWrite(({ db, doc, updateDoc, arrayUnion, increment }) =>
+      updateDoc(doc(db, CX.FORUM, threadId), { replies: arrayUnion(reply), replyCount: increment(1) }), 'add reply');
+  } else {
+    save(CX.FORUM, threads);
+  }
   return reply;
 }
 
 export function getThread(threadId) {
-  return (load(CX.FORUM, SEED_THREADS)).find(t => t.id === threadId) || null;
+  return getCollection(CX.FORUM, SEED_THREADS).find(t => t.id === threadId) || null;
 }
 
 // ── Funding CRUD ───────────────────────────────────────────────────────────
+// Seed requests and user-created requests now live in the same collection
+// (see DB_SCHEMA.md) — no more special-cased dynamic keys for interest/save
+// toggles on seed items.
 export function getAllFundingRequests() {
-  const userCreated = load(CX.FUNDING, []);
-  return [...userCreated, ...SEED_FUNDING];
+  return getCollection(CX.FUNDING, SEED_FUNDING);
 }
 
 export function createFundingRequest(data) {
-  const existing = load(CX.FUNDING, []);
+  const existing = getCollection(CX.FUNDING, SEED_FUNDING);
   const req = {
     id: 'fr' + Date.now(), ...data,
     expressedInterest: 0, savedBy: 0,
@@ -873,55 +1057,79 @@ export function createFundingRequest(data) {
     fundingReady: false, investorViews: 0,
     timestamp: Date.now(),
   };
-  save(CX.FUNDING, [req, ...existing]);
+  if (_USE_FIREBASE) {
+    _cache[CX.FUNDING] = [req, ...existing];
+    _emit(CX.FUNDING);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.FUNDING, req.id), req), 'create funding request');
+  } else {
+    save(CX.FUNDING, [req, ...existing]);
+  }
   return req;
 }
 
 export function toggleFundingInterest(fundingId, userId) {
-  const userCreated = load(CX.FUNDING, []);
-  const uc = userCreated.find(f => f.id === fundingId);
-  if (uc) {
-    if (!uc.interestedUsers) uc.interestedUsers = [];
-    const idx = uc.interestedUsers.indexOf(userId);
-    if (idx > -1) { uc.interestedUsers.splice(idx, 1); uc.expressedInterest--; }
-    else { uc.interestedUsers.push(userId); uc.expressedInterest++; }
-    save(CX.FUNDING, userCreated);
-    return idx === -1;
+  const all = getCollection(CX.FUNDING, SEED_FUNDING);
+  const item = all.find(f => f.id === fundingId);
+  if (!item) return false;
+  if (!item.interestedUsers) item.interestedUsers = [];
+  const idx = item.interestedUsers.indexOf(userId);
+  const has = idx > -1;
+  if (has) item.interestedUsers.splice(idx, 1); else item.interestedUsers.push(userId);
+  item.expressedInterest = item.interestedUsers.length;
+  if (_USE_FIREBASE) {
+    _cache[CX.FUNDING] = all;
+    _emit(CX.FUNDING);
+    _fsWrite(({ db, doc, updateDoc, arrayUnion, arrayRemove, increment }) =>
+      updateDoc(doc(db, CX.FUNDING, fundingId), {
+        interestedUsers: has ? arrayRemove(userId) : arrayUnion(userId),
+        expressedInterest: increment(has ? -1 : 1),
+      }), 'funding interest');
+  } else {
+    save(CX.FUNDING, all);
   }
-  const key = 'cx_fi_' + fundingId;
-  const users = load(key, []);
-  const idx = users.indexOf(userId);
-  if (idx > -1) users.splice(idx, 1);
-  else users.push(userId);
-  save(key, users);
-  return idx === -1;
+  return !has;
 }
 
 export function isFundingInterested(fundingId, userId) {
-  const uc = load(CX.FUNDING, []).find(f => f.id === fundingId);
-  if (uc) return (uc.interestedUsers || []).includes(userId);
-  return (load('cx_fi_' + fundingId, [])).includes(userId);
+  const item = getCollection(CX.FUNDING, SEED_FUNDING).find(f => f.id === fundingId);
+  return (item?.interestedUsers || []).includes(userId);
 }
 
 export function toggleFundingSave(fundingId, userId) {
-  const key = 'cx_fs_' + fundingId;
-  const users = load(key, []);
-  const idx = users.indexOf(userId);
-  if (idx > -1) users.splice(idx, 1);
-  else users.push(userId);
-  save(key, users);
-  return idx === -1;
+  const all = getCollection(CX.FUNDING, SEED_FUNDING);
+  const item = all.find(f => f.id === fundingId);
+  if (!item) return false;
+  if (!item.savedByUsers) item.savedByUsers = [];
+  const idx = item.savedByUsers.indexOf(userId);
+  const has = idx > -1;
+  if (has) item.savedByUsers.splice(idx, 1); else item.savedByUsers.push(userId);
+  item.savedBy = item.savedByUsers.length;
+  if (_USE_FIREBASE) {
+    _cache[CX.FUNDING] = all;
+    _emit(CX.FUNDING);
+    _fsWrite(({ db, doc, updateDoc, arrayUnion, arrayRemove, increment }) =>
+      updateDoc(doc(db, CX.FUNDING, fundingId), {
+        savedByUsers: has ? arrayRemove(userId) : arrayUnion(userId),
+        savedBy: increment(has ? -1 : 1),
+      }), 'funding save');
+  } else {
+    save(CX.FUNDING, all);
+  }
+  return !has;
 }
 
 export function isFundingSaved(fundingId, userId) {
-  return (load('cx_fs_' + fundingId, [])).includes(userId);
+  const item = getCollection(CX.FUNDING, SEED_FUNDING).find(f => f.id === fundingId);
+  return (item?.savedByUsers || []).includes(userId);
 }
 
 // ── Discovery ──────────────────────────────────────────────────────────────
 export function getSuggestedProfiles(currentUserId, limit = 5) {
-  const following = (load(CX.FOLLOWS, {})[currentUserId] || []);
+  const followingIds = _USE_FIREBASE
+    ? (getCollection(CX.FOLLOWS, [], null).find(f => f.userId === currentUserId)?.following || [])
+    : (load(CX.FOLLOWS, {})[currentUserId] || []);
   return getProfiles()
-    .filter(p => p.uid !== currentUserId && !following.includes(p.uid))
+    .filter(p => p.uid !== currentUserId && !followingIds.includes(p.uid))
     .sort((a, b) => b.followersCount - a.followersCount)
     .slice(0, limit);
 }
@@ -933,10 +1141,20 @@ export function getTrendingTags(limit = 8) {
 }
 
 export function getJoinedCommunities(userId) {
+  if (_USE_FIREBASE) return getUserDoc(CX.JOINED, userId, { communityIds: [] }).communityIds || [];
   return load('cx_joined_' + userId, []);
 }
 
 export function toggleJoinCommunity(communityId, userId) {
+  if (_USE_FIREBASE) {
+    const current = getUserDoc(CX.JOINED, userId, { communityIds: [] });
+    const has = (current.communityIds || []).includes(communityId);
+    const communityIds = has ? current.communityIds.filter(id => id !== communityId) : [...(current.communityIds || []), communityId];
+    _cache[_cacheKey(CX.JOINED, userId)] = { communityIds };
+    _emit(CX.JOINED);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.JOINED, userId), { communityIds }, { merge: true }), 'join community');
+    return !has;
+  }
   const key = 'cx_joined_' + userId;
   const joined = load(key, []);
   const idx = joined.indexOf(communityId);
@@ -951,29 +1169,47 @@ export function toggleJoinCommunity(communityId, userId) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function updateClimateScore(userId, delta, reason) {
-  // Update profile score (clamped 0–100)
   const profiles = getProfiles();
   const idx = profiles.findIndex(p => p.uid === userId || p.email === userId);
   if (idx === -1) return null;
   const prev = profiles[idx].climateScore || 0;
   const next = Math.min(100, Math.max(0, prev + delta));
-  profiles[idx].climateScore = next;
-  save(CX.PROFILES, profiles);
 
-  // Append to score history
-  const history = load(CX.SCORES, {});
-  if (!history[userId]) history[userId] = [];
-  history[userId].unshift({
-    timestamp: Date.now(),
-    delta,
-    reason,
-    scoreBefore: prev,
-    scoreAfter: next,
-  });
-  history[userId] = history[userId].slice(0, 100);
-  save(CX.SCORES, history);
+  if (_USE_FIREBASE) {
+    profiles[idx] = { ...profiles[idx], climateScore: next };
+    _cache[CX.PROFILES] = profiles;
+    _emit(CX.PROFILES);
+    const profileUid = profiles[idx].uid;
+    // Clamped 0-100, so a plain increment() isn't safe under concurrent
+    // score events — read-clamp-write inside a transaction instead.
+    _firestore().then(({ db, doc, runTransaction }) =>
+      runTransaction(db, async (tx) => {
+        const ref = doc(db, CX.PROFILES, profileUid);
+        const snap = await tx.get(ref);
+        const current = snap.exists() ? (snap.data().climateScore || 0) : 0;
+        tx.update(ref, { climateScore: Math.min(100, Math.max(0, current + delta)) });
+      })
+    ).catch(err => console.error('[community] score transaction failed', err));
 
-  // Rank change notification
+    const allScores = getCollection(CX.SCORES, [], null);
+    const mine = allScores.find(s => s.userId === userId);
+    const entries = [{ timestamp: Date.now(), delta, reason, scoreBefore: prev, scoreAfter: next }, ...(mine?.entries || [])].slice(0, 100);
+    _cache[CX.SCORES] = mine
+      ? allScores.map(s => s.userId === userId ? { userId, entries } : s)
+      : [...allScores, { userId, entries }];
+    _emit(CX.SCORES);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.SCORES, userId), { userId, entries }, { merge: true }), 'score history');
+  } else {
+    profiles[idx].climateScore = next;
+    save(CX.PROFILES, profiles);
+
+    const history = load(CX.SCORES, {});
+    if (!history[userId]) history[userId] = [];
+    history[userId].unshift({ timestamp: Date.now(), delta, reason, scoreBefore: prev, scoreAfter: next });
+    history[userId] = history[userId].slice(0, 100);
+    save(CX.SCORES, history);
+  }
+
   const prevRank = getUserRank(userId);
   if (prevRank <= 10 && delta > 0) {
     addSystemNotification(userId, {
@@ -987,6 +1223,7 @@ export function updateClimateScore(userId, delta, reason) {
 }
 
 export function getScoreHistory(userId) {
+  if (_USE_FIREBASE) return getCollection(CX.SCORES, [], null).find(s => s.userId === userId)?.entries || [];
   return (load(CX.SCORES, {})[userId] || []);
 }
 
@@ -1031,9 +1268,8 @@ export function getLeaderboard(filter = 'all-time', limit = 20) {
   if (filter === 'all-time') {
     ranked = profiles.map(p => ({ ...p, displayScore: p.climateScore || 0 }));
   } else {
-    const scoreMap = load(CX.SCORES, {});
     ranked = profiles.map(p => {
-      const history = (scoreMap[p.uid] || []).filter(h => h.timestamp >= cutoff);
+      const history = getScoreHistory(p.uid).filter(h => h.timestamp >= cutoff);
       const periodDelta = history.reduce((s, h) => s + h.delta, 0);
       return { ...p, displayScore: Math.max(0, (p.climateScore || 0) + periodDelta), periodDelta };
     });
@@ -1064,25 +1300,39 @@ export function getRankTrend(userId) {
 // ── DAILY CHALLENGES & STREAKS ────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════
 
-export function getDailyState(userId) {
-  const key = `cx_chal_${userId}_${todayKey()}`;
-  const existing = load(key, null);
-  if (existing) return existing;
-
-  const fresh = {
-    date: todayKey(), userId,
+function _freshDailyState(userId, dateKey) {
+  return {
+    date: dateKey, userId,
     challenges: CHALLENGE_DEFS.map(c => ({
       id: c.id, label: c.label, desc: c.desc, icon: c.icon, points: c.points,
       progress: 0, target: c.id === 'engage_three' ? 3 : 1, completed: false,
     })),
     allCompleted: false, bonusAwarded: false,
   };
+}
+
+export function getDailyState(userId) {
+  const dateKey = todayKey();
+  if (_USE_FIREBASE) {
+    const docId = `${userId}_${dateKey}`;
+    const existing = getUserDoc(CX.CHALLENGES, docId, null);
+    if (existing) return existing;
+    const fresh = _freshDailyState(userId, dateKey);
+    _cache[_cacheKey(CX.CHALLENGES, docId)] = fresh;
+    _emit(CX.CHALLENGES);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.CHALLENGES, docId), fresh), 'daily challenge init');
+    return fresh;
+  }
+  const key = `cx_chal_${userId}_${dateKey}`;
+  const existing = load(key, null);
+  if (existing) return existing;
+  const fresh = _freshDailyState(userId, dateKey);
   save(key, fresh);
   return fresh;
 }
 
 export function updateChallengeProgress(userId, challengeId) {
-  const key = `cx_chal_${userId}_${todayKey()}`;
+  const dateKey = todayKey();
   const state = getDailyState(userId);
   const ch = state.challenges.find(c => c.id === challengeId);
   if (!ch || ch.completed) return state;
@@ -1104,30 +1354,45 @@ export function updateChallengeProgress(userId, challengeId) {
     _incrementStreak(userId);
   }
 
-  save(key, state);
+  if (_USE_FIREBASE) {
+    const docId = `${userId}_${dateKey}`;
+    _cache[_cacheKey(CX.CHALLENGES, docId)] = state;
+    _emit(CX.CHALLENGES);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.CHALLENGES, docId), state), 'update challenge');
+  } else {
+    save(`cx_chal_${userId}_${dateKey}`, state);
+  }
   return state;
 }
 
-function _incrementStreak(userId) {
+export function getStreak(userId) {
+  if (_USE_FIREBASE) return getUserDoc(CX.STREAKS, userId, { current: 0, longest: 0, lastDay: null });
   const streaks = load(CX.STREAKS, {});
+  return streaks[userId] || { current: 0, longest: 0, lastDay: null };
+}
+
+function _incrementStreak(userId) {
   const today = todayKey();
   const yesterday = (() => {
     const d = new Date(); d.setDate(d.getDate() - 1);
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   })();
 
-  if (!streaks[userId]) streaks[userId] = { current: 0, longest: 0, lastDay: null };
-  const s = streaks[userId];
-
+  const s = { ...getStreak(userId) };
   if (s.lastDay === today) return;
-  if (s.lastDay === yesterday) {
-    s.current++;
-  } else {
-    s.current = 1;
-  }
+  s.current = s.lastDay === yesterday ? s.current + 1 : 1;
   s.lastDay = today;
   s.longest = Math.max(s.longest, s.current);
-  save(CX.STREAKS, streaks);
+
+  if (_USE_FIREBASE) {
+    _cache[_cacheKey(CX.STREAKS, userId)] = s;
+    _emit(CX.STREAKS);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.STREAKS, userId), s, { merge: true }), 'streak');
+  } else {
+    const streaks = load(CX.STREAKS, {});
+    streaks[userId] = s;
+    save(CX.STREAKS, streaks);
+  }
 
   addSystemNotification(userId, {
     type: 'streak',
@@ -1136,49 +1401,57 @@ function _incrementStreak(userId) {
   });
 }
 
-export function getStreak(userId) {
-  const streaks = load(CX.STREAKS, {});
-  return streaks[userId] || { current: 0, longest: 0, lastDay: null };
-}
-
 // ═══════════════════════════════════════════════════════════════════════════
 // ── REACTIONS (replaces plain likes) ─────────────────────────────────────
+// Firebase mode: folded into the post document's own `reactions` field
+// (dot-path per-user update) instead of a separate global blob — see
+// DB_SCHEMA.md.
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function addReaction(postId, userId, reactionType) {
   if (!REACTION_TYPES[reactionType]) return null;
-  const reactions = load(CX.REACTIONS, {});
-  if (!reactions[postId]) reactions[postId] = {};
+  const posts = getPosts();
+  const post = posts.find(p => p.id === postId);
+  if (!post) return null;
+  if (!post.reactions) post.reactions = {};
+  const prev = post.reactions[userId];
+  const removing = prev === reactionType;
 
-  const prev = reactions[postId][userId];
-  if (prev === reactionType) {
-    delete reactions[postId][userId];
+  if (removing) delete post.reactions[userId];
+  else post.reactions[userId] = reactionType;
+
+  if (_USE_FIREBASE) {
+    _cache[CX.POSTS] = posts;
+    _emit(CX.POSTS);
+    _fsWrite(({ db, doc, updateDoc, deleteField }) =>
+      updateDoc(doc(db, CX.POSTS, postId), { [`reactions.${userId}`]: removing ? deleteField() : reactionType }), 'reaction');
   } else {
-    reactions[postId][userId] = reactionType;
-    // Notify post author
-    const post = getPosts().find(p => p.id === postId);
-    if (post && post.authorId !== userId) {
-      const by = getProfile(userId);
-      const rt = REACTION_TYPES[reactionType];
-      addNotification(post.authorId, {
-        type: 'reaction', fromId: userId,
-        fromName: by?.fullName || 'Someone',
-        postId, message: `reacted ${rt.emoji} ${rt.label} to your post`,
-        priority: 'normal',
-      });
-      updateClimateScore(post.authorId, SCORE_EVENTS.REACTION_RECEIVED.delta, SCORE_EVENTS.REACTION_RECEIVED.label);
-    }
-    // Challenge progress
-    updateChallengeProgress(userId, 'engage_three');
+    const reactions = load(CX.REACTIONS, {});
+    if (!reactions[postId]) reactions[postId] = {};
+    if (removing) delete reactions[postId][userId]; else reactions[postId][userId] = reactionType;
+    save(CX.REACTIONS, reactions);
   }
 
-  save(CX.REACTIONS, reactions);
+  if (!removing && post.authorId !== userId) {
+    const by = getProfile(userId);
+    const rt = REACTION_TYPES[reactionType];
+    addNotification(post.authorId, {
+      type: 'reaction', fromId: userId,
+      fromName: by?.fullName || 'Someone',
+      postId, message: `reacted ${rt.emoji} ${rt.label} to your post`,
+      priority: 'normal',
+    });
+    updateClimateScore(post.authorId, SCORE_EVENTS.REACTION_RECEIVED.delta, SCORE_EVENTS.REACTION_RECEIVED.label);
+  }
+  updateChallengeProgress(userId, 'engage_three');
+
   return getReactions(postId);
 }
 
 export function getReactions(postId) {
-  const reactions = load(CX.REACTIONS, {});
-  const map = reactions[postId] || {};
+  const map = _USE_FIREBASE
+    ? (getPosts().find(p => p.id === postId)?.reactions || {})
+    : (load(CX.REACTIONS, {})[postId] || {});
   const counts = {};
   Object.values(map).forEach(t => { counts[t] = (counts[t] || 0) + 1; });
   const total = Object.values(counts).reduce((s, v) => s + v, 0);
@@ -1186,7 +1459,7 @@ export function getReactions(postId) {
 }
 
 export function getUserReaction(postId, userId) {
-  return (load(CX.REACTIONS, {})[postId] || {})[userId] || null;
+  return getReactions(postId).byUser[userId] || null;
 }
 
 export function getTotalReactions(postId) {
@@ -1198,7 +1471,7 @@ export function getTotalReactions(postId) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function getSolutions(filter = 'all') {
-  const all = load(CX.SOLUTIONS, SEED_SOLUTIONS);
+  const all = getCollection(CX.SOLUTIONS, SEED_SOLUTIONS);
   if (filter === 'top') {
     const weekAgo = Date.now() - 7 * 86400000;
     return [...all].sort((a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0))
@@ -1209,7 +1482,7 @@ export function getSolutions(filter = 'all') {
 }
 
 export function createSolution({ authorId, authorName, authorAvatar, authorRole, title, problem, solution, impact, industry, fundingRequired, tags, collaborationOpen }) {
-  const all = load(CX.SOLUTIONS, SEED_SOLUTIONS);
+  const all = getCollection(CX.SOLUTIONS, SEED_SOLUTIONS);
   const entry = {
     id: 'sol' + Date.now(), authorId, authorName,
     authorAvatar: authorAvatar || getInitials(authorName),
@@ -1220,38 +1493,58 @@ export function createSolution({ authorId, authorName, authorAvatar, authorRole,
     tags: tags || [], upvotes: [], bookmarks: [],
     timestamp: Date.now(), verified: false,
   };
-  save(CX.SOLUTIONS, [entry, ...all]);
+  if (_USE_FIREBASE) {
+    _cache[CX.SOLUTIONS] = [entry, ...all];
+    _emit(CX.SOLUTIONS);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.SOLUTIONS, entry.id), entry), 'create solution');
+  } else {
+    save(CX.SOLUTIONS, [entry, ...all]);
+  }
   updateClimateScore(authorId, SCORE_EVENTS.SOLUTION_CREATED.delta, SCORE_EVENTS.SOLUTION_CREATED.label);
   updateChallengeProgress(authorId, 'upload_init');
   return entry;
 }
 
 export function toggleSolutionUpvote(solutionId, userId) {
-  const all = load(CX.SOLUTIONS, SEED_SOLUTIONS);
+  const all = getCollection(CX.SOLUTIONS, SEED_SOLUTIONS);
   const sol = all.find(s => s.id === solutionId);
   if (!sol) return null;
   if (!sol.upvotes) sol.upvotes = [];
   const idx = sol.upvotes.indexOf(userId);
-  if (idx > -1) sol.upvotes.splice(idx, 1);
-  else sol.upvotes.push(userId);
-  save(CX.SOLUTIONS, all);
-  return idx === -1;
+  const upvoted = idx === -1;
+  if (upvoted) sol.upvotes.push(userId); else sol.upvotes.splice(idx, 1);
+  if (_USE_FIREBASE) {
+    _cache[CX.SOLUTIONS] = all;
+    _emit(CX.SOLUTIONS);
+    _fsWrite(({ db, doc, updateDoc, arrayUnion, arrayRemove }) =>
+      updateDoc(doc(db, CX.SOLUTIONS, solutionId), { upvotes: upvoted ? arrayUnion(userId) : arrayRemove(userId) }), 'solution upvote');
+  } else {
+    save(CX.SOLUTIONS, all);
+  }
+  return upvoted;
 }
 
 export function toggleSolutionBookmark(solutionId, userId) {
-  const all = load(CX.SOLUTIONS, SEED_SOLUTIONS);
+  const all = getCollection(CX.SOLUTIONS, SEED_SOLUTIONS);
   const sol = all.find(s => s.id === solutionId);
   if (!sol) return null;
   if (!sol.bookmarks) sol.bookmarks = [];
   const idx = sol.bookmarks.indexOf(userId);
-  if (idx > -1) sol.bookmarks.splice(idx, 1);
-  else sol.bookmarks.push(userId);
-  save(CX.SOLUTIONS, all);
-  return idx === -1;
+  const bookmarked = idx === -1;
+  if (bookmarked) sol.bookmarks.push(userId); else sol.bookmarks.splice(idx, 1);
+  if (_USE_FIREBASE) {
+    _cache[CX.SOLUTIONS] = all;
+    _emit(CX.SOLUTIONS);
+    _fsWrite(({ db, doc, updateDoc, arrayUnion, arrayRemove }) =>
+      updateDoc(doc(db, CX.SOLUTIONS, solutionId), { bookmarks: bookmarked ? arrayUnion(userId) : arrayRemove(userId) }), 'solution bookmark');
+  } else {
+    save(CX.SOLUTIONS, all);
+  }
+  return bookmarked;
 }
 
 export function isSolutionUpvoted(solutionId, userId) {
-  const sol = (load(CX.SOLUTIONS, SEED_SOLUTIONS)).find(s => s.id === solutionId);
+  const sol = getCollection(CX.SOLUTIONS, SEED_SOLUTIONS).find(s => s.id === solutionId);
   return (sol?.upvotes || []).includes(userId);
 }
 
@@ -1260,11 +1553,11 @@ export function isSolutionUpvoted(solutionId, userId) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function getBattles() {
-  return load(CX.BATTLES, SEED_BATTLES);
+  return getCollection(CX.BATTLES, SEED_BATTLES);
 }
 
 export function createBattle({ title, sideA, sideB, authorId }) {
-  const battles = load(CX.BATTLES, SEED_BATTLES);
+  const battles = getCollection(CX.BATTLES, SEED_BATTLES);
   const battle = {
     id: 'bat' + Date.now(),
     title, sideA, sideB,
@@ -1274,39 +1567,60 @@ export function createBattle({ title, sideA, sideB, authorId }) {
     status: 'active', authorId,
     timestamp: Date.now(),
   };
-  save(CX.BATTLES, [battle, ...battles]);
+  if (_USE_FIREBASE) {
+    _cache[CX.BATTLES] = [battle, ...battles];
+    _emit(CX.BATTLES);
+    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.BATTLES, battle.id), battle), 'create battle');
+  } else {
+    save(CX.BATTLES, [battle, ...battles]);
+  }
   return battle;
 }
 
 export function voteInBattle(battleId, userId, side) {
-  const battles = load(CX.BATTLES, SEED_BATTLES);
+  const battles = getCollection(CX.BATTLES, SEED_BATTLES);
   const battle = battles.find(b => b.id === battleId);
   if (!battle) return null;
   if (!battle.votes) battle.votes = { sideA: {}, sideB: {} };
 
   const otherSide = side === 'sideA' ? 'sideB' : 'sideA';
   const alreadyVoted = battle.votes[side][userId] || battle.votes[otherSide][userId];
+  let clearSide = null, setSide = null;
 
   if (alreadyVoted) {
-    // Toggle off same side, or switch
     if (battle.votes[side][userId]) {
       delete battle.votes[side][userId];
+      clearSide = side;
     } else {
       delete battle.votes[otherSide][userId];
       battle.votes[side][userId] = true;
+      clearSide = otherSide; setSide = side;
     }
   } else {
     battle.votes[side][userId] = true;
+    setSide = side;
   }
 
   battle.totalA = Object.keys(battle.votes.sideA).length;
   battle.totalB = Object.keys(battle.votes.sideB).length;
-  save(CX.BATTLES, battles);
+
+  if (_USE_FIREBASE) {
+    _cache[CX.BATTLES] = battles;
+    _emit(CX.BATTLES);
+    _fsWrite(({ db, doc, updateDoc, deleteField }) => {
+      const fields = { totalA: battle.totalA, totalB: battle.totalB };
+      if (clearSide) fields[`votes.${clearSide}.${userId}`] = deleteField();
+      if (setSide)   fields[`votes.${setSide}.${userId}`]   = true;
+      return updateDoc(doc(db, CX.BATTLES, battleId), fields);
+    }, 'battle vote');
+  } else {
+    save(CX.BATTLES, battles);
+  }
   return { totalA: battle.totalA, totalB: battle.totalB, userVote: battle.votes[side][userId] ? side : null };
 }
 
 export function getUserBattleVote(battleId, userId) {
-  const battle = (load(CX.BATTLES, SEED_BATTLES)).find(b => b.id === battleId);
+  const battle = getCollection(CX.BATTLES, SEED_BATTLES).find(b => b.id === battleId);
   if (!battle?.votes) return null;
   if (battle.votes.sideA?.[userId]) return 'sideA';
   if (battle.votes.sideB?.[userId]) return 'sideB';
