@@ -31,10 +31,24 @@ const _FS_APP_URL       = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-a
 const _FS_FIRESTORE_URL = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 const _FS_AUTH_URL      = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
+// Dynamic import() of the Firebase SDK from Google's CDN has no built-in
+// timeout — if that request is ever blocked or dropped (ad-blocker,
+// firewall, flaky connection), a bare `import(...)` hangs forever with no
+// error, silently stalling every read/write on the page. Race it against a
+// timeout so this reliably rejects instead.
+function _fsImport(url, ms = 8000) {
+  return Promise.race([
+    import(url),
+    new Promise((_, reject) => setTimeout(
+      () => reject(new Error(`Timed out loading ${url}`)), ms
+    )),
+  ]);
+}
+
 let _fsApiPromise = null;
 function _firestore() {
   if (!_fsApiPromise) {
-    _fsApiPromise = Promise.all([import(_FS_APP_URL), import(_FS_FIRESTORE_URL), import(_FS_AUTH_URL)])
+    _fsApiPromise = Promise.all([_fsImport(_FS_APP_URL), _fsImport(_FS_FIRESTORE_URL), _fsImport(_FS_AUTH_URL)])
       .then(async ([{ initializeApp, getApps }, fs, authFs]) => {
         const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
         // Firestore's security rules require request.auth != null on every
@@ -43,11 +57,16 @@ function _firestore() {
         // to Auth itself, so every request here went out with no ID token
         // and was silently rejected — even for a genuinely signed-in user.
         // Wait for the persisted session to resolve before any Firestore
-        // call goes out, so it always carries a real auth token.
+        // call goes out, so it always carries a real auth token. Bounded by
+        // the same timeout logic — an auth state that never fires shouldn't
+        // stall every Firestore read on the page forever.
         const auth = authFs.getAuth(app);
-        await new Promise(resolve => {
-          const unsub = authFs.onAuthStateChanged(auth, () => { unsub(); resolve(); });
-        });
+        await Promise.race([
+          new Promise(resolve => {
+            const unsub = authFs.onAuthStateChanged(auth, () => { unsub(); resolve(); });
+          }),
+          new Promise(resolve => setTimeout(resolve, 8000)),
+        ]);
         return { db: fs.getFirestore(app), ...fs };
       });
   }

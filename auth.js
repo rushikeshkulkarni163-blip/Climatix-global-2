@@ -60,11 +60,26 @@ function _cache(user, remember) {
 // ─────────────────────────────────────────────────────────────────────────────
 let _fb; // lazily initialised Firebase auth instance
 
+// Dynamic import() of the Firebase SDK from Google's CDN has no built-in
+// timeout — if that network request is ever blocked or dropped (ad-blocker,
+// firewall, flaky connection), a bare `await import(...)` hangs forever with
+// no error, which is exactly what makes sign-in/sign-up look like it's doing
+// nothing. Race it against a timeout so callers reliably get a `network-error`
+// they can fall back on instead of hanging indefinitely.
+function _fsImport(url, ms = 8000) {
+  return Promise.race([
+    import(url),
+    new Promise((_, reject) => setTimeout(
+      () => reject({ code: 'network-error', message: 'Could not reach Firebase — check your connection.' }), ms
+    )),
+  ]);
+}
+
 async function _fbAuth() {
   if (_fb) return _fb;
   const [{ initializeApp }, { getAuth }] = await Promise.all([
-    import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
-    import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),
+    _fsImport('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+    _fsImport('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),
   ]);
   _fb = getAuth(initializeApp(firebaseConfig));
   return _fb;
@@ -72,7 +87,7 @@ async function _fbAuth() {
 
 async function _fbSignUp({ fullName, email, companyName, password }) {
   const { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } =
-    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    await _fsImport('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
   const auth = await _fbAuth();
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
@@ -97,7 +112,7 @@ async function _fbVerifyEmail(_email, _token) {
 async function _fbSignIn({ email, password, remember }) {
   const { signInWithEmailAndPassword, setPersistence,
           browserLocalPersistence, browserSessionPersistence } =
-    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    await _fsImport('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
   const auth = await _fbAuth();
   try {
     await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
@@ -110,14 +125,14 @@ async function _fbSignIn({ email, password, remember }) {
 
 async function _fbSignOut() {
   clearSession();
-  const { signOut } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+  const { signOut } = await _fsImport('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
   const auth = await _fbAuth();
   try { await signOut(auth); } catch { /* best-effort */ }
 }
 
 async function _fbForgotPassword(email) {
   const { sendPasswordResetEmail } =
-    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    await _fsImport('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
   const auth = await _fbAuth();
   try {
     await sendPasswordResetEmail(auth, email);
@@ -127,7 +142,7 @@ async function _fbForgotPassword(email) {
 
 async function _fbResetPassword(_email, oobCode, newPassword) {
   const { confirmPasswordReset } =
-    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    await _fsImport('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
   const auth = await _fbAuth();
   try {
     await confirmPasswordReset(auth, oobCode, newPassword);
@@ -137,7 +152,7 @@ async function _fbResetPassword(_email, oobCode, newPassword) {
 
 async function _fbSyncSession() {
   const { onAuthStateChanged } =
-    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    await _fsImport('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
   const auth = await _fbAuth();
   return new Promise(resolve => {
     const unsub = onAuthStateChanged(auth, user => {
