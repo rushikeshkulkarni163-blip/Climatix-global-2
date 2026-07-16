@@ -1362,9 +1362,9 @@ function bindPostEvents(container) {
   container.querySelectorAll('[data-ctoggle]').forEach(btn =>
     btn.addEventListener('click', () => toggleComments(btn.dataset.ctoggle)));
   container.querySelectorAll('[data-bookmark]').forEach(btn =>
-    btn.addEventListener('click', () => handleBookmark(btn.dataset.bookmark)));
+    btn.addEventListener('click', () => window.handleBookmark(btn.dataset.bookmark)));
   container.querySelectorAll('[data-csub]').forEach(btn =>
-    btn.addEventListener('click', () => handleCommentSubmit(btn.dataset.csub)));
+    btn.addEventListener('click', () => window.handleCommentSubmit(btn.dataset.csub)));
   container.querySelectorAll('[data-seem]').forEach(btn =>
     btn.addEventListener('click', () => toggleSeeMore(btn.dataset.seem, btn)));
   container.querySelectorAll('[data-clikes]').forEach(btn =>
@@ -1379,7 +1379,7 @@ function toggleComments(postId) {
   document.getElementById(`comments-${postId}`)?.classList.toggle('open');
 }
 
-function handleBookmark(postId) {
+window.handleBookmark = function(postId) {
   const saved = toggleBookmark(postId, currentUser.uid);
   const btns  = document.querySelectorAll(`[data-bookmark="${postId}"]`);
   btns.forEach(btn => {
@@ -1390,9 +1390,9 @@ function handleBookmark(postId) {
   const mi = document.querySelector(`#menu-${postId} .cx-post-menu-item:first-child`);
   if (mi) mi.textContent = saved ? ' Remove bookmark' : ' Save post';
   showToast(saved ? 'Saved to bookmarks' : 'Removed from bookmarks');
-}
+};
 
-function handleCommentSubmit(postId) {
+window.handleCommentSubmit = function(postId) {
   const input   = document.getElementById(`cinput-${postId}`);
   const content = input?.value.trim();
   if (!content) return;
@@ -1632,9 +1632,18 @@ setInterval(() => {
 // ── LIVE UPDATES (Firebase mode only — no-op in local/demo mode) ───────
 // Fires when another user's post/profile/notification change arrives via
 // Firestore, so the feed updates without a manual refresh.
+// Re-fetch currentUser fresh before re-rendering anything that reads it —
+// the cache may only get its first real Firestore snapshot (replacing the
+// seed/placeholder data) *after* boot already captured a stale reference,
+// so nav/score/stats would otherwise keep showing blank defaults forever
+// even once the real profile data arrives.
 onCommunityDataChanged((key) => {
   if (key === CX.POSTS) { renderFeed(false); renderTrendingTags(); renderFundingSnippets(); }
-  if (key === CX.PROFILES) { renderSuggestedPeople(); renderLeaderboardWidget(); }
+  if (key === CX.PROFILES) {
+    currentUser = getProfile(currentUser.uid) || currentUser;
+    setupNav(); renderPulseBanner();
+    renderSuggestedPeople(); renderLeaderboardWidget();
+  }
   if (key === CX.NOTIFS) { refreshNotifBadge(); }
   if (key === CX.BATTLES) { renderBattleWidget(); }
 });

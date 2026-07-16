@@ -1076,8 +1076,17 @@ function showToast(msg) {
 }
 
 // Live updates (Firebase mode only — no-op in local/demo mode)
+// Re-fetch viewProfile/currentUser fresh from the cache before re-rendering —
+// the cache may only get its first real Firestore snapshot (replacing the
+// seed/placeholder data) *after* boot already captured a stale reference,
+// so re-rendering with the old captured object would never pick up the
+// real data (e.g. a just-saved bio) even once it arrives.
 onCommunityDataChanged((key) => {
-  if (key === CX.PROFILES) { renderProfile(); renderNetwork('all'); renderSimilarProfiles(); }
+  if (key === CX.PROFILES) {
+    if (currentUser) currentUser = getProfile(currentUser.uid) || currentUser;
+    viewProfile = uidParam ? (getProfile(uidParam) || viewProfile) : currentUser;
+    renderProfile(); renderNetwork('all'); renderSimilarProfiles();
+  }
   if (key === CX.POSTS) renderPosts();
   if (key === CX.FUNDING) renderFunding();
 });

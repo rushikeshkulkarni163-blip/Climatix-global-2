@@ -395,7 +395,11 @@ function escHtml(s) { const d = document.createElement('div'); d.textContent = s
 setInterval(() => renderLeaderboard(), 30000);
 
 // Live updates (Firebase mode only — no-op in local/demo mode)
+// Re-fetch currentUser fresh — renderLeaderboard() reads it directly for the
+// "My Climate Score" widget, so a stale reference captured before the first
+// real Firestore snapshot arrives would keep showing 0/blank forever.
 onCommunityDataChanged((key) => {
+  if (key === CX.PROFILES) currentUser = getProfile(currentUser.uid) || currentUser;
   if (key === CX.SCORES || key === CX.PROFILES) renderLeaderboard();
 });
 

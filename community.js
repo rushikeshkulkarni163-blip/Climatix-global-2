@@ -645,9 +645,22 @@ export function getCurrentUserProfile() {
     portfolio: [],
   };
   if (_USE_FIREBASE) {
+    // Optimistic local placeholder only — the real Firestore collection
+    // listener may not have delivered its first snapshot yet, so "not found
+    // in the cache" doesn't reliably mean "doesn't exist in Firestore" (the
+    // cache could just be showing the seed fallback). Blindly setDoc()-ing
+    // here would overwrite a real, already-saved profile with these blank
+    // defaults every time this runs before that first snapshot arrives —
+    // wiping out a user's saved bio/role/interests on every fresh page
+    // load. Do a one-time server check first; only create if it's genuinely
+    // absent. If it does exist, the live listener already subscribed will
+    // deliver the real data moments later and correct the cache.
     _cache[CX.PROFILES] = [...profiles, newProfile];
     _emit(CX.PROFILES);
-    _fsWrite(({ db, doc, setDoc }) => setDoc(doc(db, CX.PROFILES, uid), newProfile), 'create profile');
+    _firestore().then(({ db, doc, setDoc, getDoc }) => {
+      const ref = doc(db, CX.PROFILES, uid);
+      return getDoc(ref).then(snap => { if (!snap.exists()) return setDoc(ref, newProfile); });
+    }).catch(err => console.error('[community] create profile write failed', err));
   } else {
     save(CX.PROFILES, [...profiles, newProfile]);
   }

@@ -937,6 +937,9 @@ function showToast(msg) {
   clearTimeout(window._tt);
   window._tt = setTimeout(() => t.classList.remove('show'), 2600);
 }
+// Referenced from inline onclick="showToast(...)" attributes (e.g. Save/Report
+// buttons), which only resolve window-scoped functions, not module-scoped ones.
+window.showToast = showToast;
 
 // Live updates (Firebase mode only — no-op in local/demo mode)
 onCommunityDataChanged((key) => {
