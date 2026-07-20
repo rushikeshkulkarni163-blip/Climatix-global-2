@@ -3,53 +3,63 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="light" />
 <title>Climate Risk Terminal — Climactix Global</title>
-<meta name="description" content="Bloomberg-grade Climate Risk Intelligence Terminal. Physical risk, NGFS simulation, disclosure studio, investor screening, supply chain, climate finance."/>
+<meta name="description" content="Institutional-grade Climate Risk Intelligence Terminal. Physical risk, NGFS simulation, disclosure studio, investor screening, supply chain, climate finance."/>
 <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"/>
-<script>(function(){var t=localStorage.getItem('cx-theme')||'dark';if(t==='light')document.documentElement.setAttribute('data-theme','light');})();</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  /* Institutional Matte Black */
-  --bg0:#000000;--bg1:#0F0F0F;--bg2:#1A1A1A;--bg3:#242424;--bg4:#2E2E2E;
-  --bd0:#2C2C2C;--bd1:#333333;--bd2:rgba(255,255,255,0.14);
-  --tx0:#FFFFFF;--tx1:#CBD5E1;--tx2:#888888;--tx3:#555555;
-  --acc:#FF6600;--acc2:rgba(255,102,0,0.10);  /* Bloomberg Amber */
-  --cyan:#0099CC;--cyan2:rgba(0,153,204,0.10);  /* Professional Cyan */
-  --grn:#00CC44;--red:#FF3333;--amb:#F59E0B;--blu:#3399FF;
-  --nav-h:44px;--tab-h:38px;
-  --font:'Roboto',system-ui,sans-serif;--mono:'IBM Plex Mono',var(--mono);
-}
-[data-theme="light"]{
-  --bg0:#F8FAFC;--bg1:#FFFFFF;--bg2:#FFFFFF;--bg3:#FFFFFF;--bg4:#CBD5E1;
-  --bd0:#E0E0E0;--bd1:#C8C8C8;--bd2:rgba(0,0,0,0.18);
-  --tx0:#0F172A;--tx1:#1E293B;--tx2:#334155;--tx3:#64748B;
+  /* Climactix Design System v4.0 — NASA × MSCI light system */
+  --bg:#FFFFFF;--surface:#FAFAFA;--card:#FFFFFF;--card-2:#F3F4F6;
+  --border:#D9D9D9;--border-2:#C7C7C7;
+  --text:#111111;--text-2:#4F4F4F;--text-muted:#6B7280;--text-faint:#9CA3AF;
+  --accent:#0B3D91;--accent-tint:rgba(11,61,145,0.08);--accent-border:rgba(11,61,145,0.28);
+  --success:#1E8E3E;--success-tint:rgba(30,142,62,0.10);--success-border:rgba(30,142,62,0.30);
+  --warning:#B45309;--warning-tint:rgba(180,83,9,0.10);--warning-border:rgba(180,83,9,0.30);
+  --warning-deep:#92400E;--warning-deep-tint:rgba(146,64,14,0.10);--warning-deep-border:rgba(146,64,14,0.30);
+  --critical:#DC2626;--critical-tint:rgba(220,38,38,0.10);--critical-border:rgba(220,38,38,0.30);
+  --critical-deep:#991B1B;--critical-deep-tint:rgba(153,27,27,0.14);--critical-deep-border:rgba(153,27,27,0.35);
+  --nav-h:52px;--tab-h:42px;--radius:8px;--t:180ms ease;
+  --font-heading:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-body:'Source Sans 3','Source Sans Pro',Arial,sans-serif;
+  --font-number:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-code:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  /* legacy aliases used throughout markup below */
+  --bg0:var(--bg);--bg1:var(--card);--bg2:var(--surface);--bg3:var(--card-2);--bg4:var(--border-2);
+  --bd0:var(--border);--bd1:var(--border-2);--bd2:rgba(17,17,17,0.16);
+  --tx0:var(--text);--tx1:var(--text-2);--tx2:var(--text-muted);--tx3:var(--text-faint);
+  --acc:var(--accent);--acc2:var(--accent-tint);
+  --cyan:var(--accent);--cyan2:var(--accent-tint);
+  --grn:var(--success);--red:var(--critical);--amb:var(--warning);--blu:var(--accent);
+  --font:var(--font-body);--mono:var(--font-code);
 }
 html,body{height:100%;overflow:hidden}
-body{font-family:var(--font);background:var(--bg0);color:var(--tx0);font-size:12px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:12px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.cre-title,.exp-entity-name{font-family:var(--font-heading)}
 
 /* ── Topbar ── */
 #topbar{
-  height:var(--nav-h);background:#000;border-bottom:1px solid var(--bd0);
+  height:var(--nav-h);background:var(--bg);border-bottom:1px solid var(--bd0);
   display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;
   position:relative;z-index:100;
 }
-.tb-logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
-.tb-logo-icon{width:26px;height:26px;background:#FF6600;border-radius:2px;display:flex;align-items:center;justify-content:center}
-.tb-logo-text{font-size:11px;font-weight: 700;color:#fff;letter-spacing:.08em}
+.tb-logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+.tb-logo-icon{height:24px;width:auto;display:block;object-fit:contain}
+.tb-logo-text{font-family:var(--font-heading);font-size:13px;font-weight:700;color:var(--text);letter-spacing:.06em}
 .tb-divider{width:1px;height:20px;background:var(--bd0)}
-.tb-title{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.12em;text-transform:uppercase}
-.tb-clock{font-family:var(--mono);font-size:11px;color:var(--cyan);font-weight: 500;letter-spacing:.06em;flex-shrink:0}
-.tb-back{font-size:10px;color:var(--tx3);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--bd1);border-radius:2px;transition:color .15s,border-color .15s;flex-shrink:0}
+.tb-title{font-family:var(--font-heading);font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.12em;text-transform:uppercase}
+.tb-clock{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.02em;flex-shrink:0}
+.tb-back{font-size:10px;color:var(--tx3);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border:1px solid var(--bd1);border-radius:var(--radius);transition:color var(--t),border-color var(--t);flex-shrink:0}
 .tb-back:hover{color:var(--tx1);border-color:var(--bd2)}
-.tb-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--grn);font-weight:700;letter-spacing:.08em;flex-shrink:0}
-.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:pulse 1.5s infinite}
+.tb-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--success);font-weight:700;letter-spacing:.08em;flex-shrink:0}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* ── Module Tabs ── */
@@ -60,12 +70,12 @@ body{font-family:var(--font);background:var(--bg0);color:var(--tx0);font-size:12
 #module-tabs::-webkit-scrollbar{display:none}
 .mod-tab{
   display:inline-flex;align-items:center;gap:6px;padding:0 14px;
-  font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  font-family:var(--font-heading);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--tx3);cursor:pointer;border:none;background:none;
-  border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:color var(--t),border-color var(--t);white-space:nowrap;
 }
 .mod-tab:hover{color:var(--tx1)}
-.mod-tab.active{color:var(--tx0);border-bottom-color:var(--acc)}
+.mod-tab.active{color:var(--accent);border-bottom-color:var(--acc)}
 .mod-tab .tab-icon{font-size:11px}
 
 /* ── Layout ── */
@@ -84,93 +94,94 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .mod-tab:focus-visible,.sub-tab:focus-visible,.exp-tab-btn:focus-visible,.ent-btn:focus-visible,
 .fchip:focus-visible,.sc-pill:focus-visible,.fw-card:focus-visible,.rbadge:focus-visible,
 [tabindex]:focus-visible{
-  outline:2px solid var(--acc);outline-offset:2px;border-radius:1px;
+  outline:2px solid var(--acc);outline-offset:2px;border-radius:2px;
 }
 button:focus-visible,.ent-btn:focus-visible{outline-offset:-1px}
 :focus:not(:focus-visible){outline:none}
 
 /* ── Grid helpers ── */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
 .col-span-2{grid-column:span 2}
 .col-span-3{grid-column:span 3}
 
 /* ── Panel ── */
-.panel{background:var(--bg1);border:1px solid var(--bd0);border-radius:3px;overflow:hidden}
+.panel{background:var(--bg1);border:1px solid var(--bd0);border-radius:var(--radius);overflow:hidden}
 .panel-hd{
   display:flex;align-items:center;justify-content:space-between;
-  padding:9px 14px;border-bottom:1px solid var(--bd0);
+  padding:10px 14px;border-bottom:1px solid var(--bd0);background:var(--bg2);
 }
-.panel-title{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2)}
+.panel-title{font-family:var(--font-heading);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx2)}
 .panel-action{font-size:9px;color:var(--acc);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;font-weight:700;background:none;border:none;padding:0}
-.panel-body{padding:14px}
+.panel-body{padding:16px}
 .panel-body.no-pad{padding:0}
 
 /* ── KPI Card ── */
-.kpi{background:var(--bg1);border:1px solid var(--bd0);border-radius:3px;padding:12px 14px}
+.kpi{background:var(--bg1);border:1px solid var(--bd0);border-radius:var(--radius);padding:14px 16px}
 .kpi-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px}
-.kpi-value{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--tx0);line-height:1}
-.kpi-change{display:inline-flex;align-items:center;gap:3px;margin-top:5px;font-size:10px;font-weight: 500}
+.kpi-value{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:22px;font-weight:700;color:var(--tx0);line-height:1}
+.kpi-change{display:inline-flex;align-items:center;gap:3px;margin-top:5px;font-size:10px;font-weight:600}
 .kpi-change.up{color:var(--red)}
 .kpi-change.dn{color:var(--grn)}
 .kpi-change.neu{color:var(--cyan)}
 .kpi-sub{font-size:9px;color:var(--tx3);margin-top:3px}
 
 /* ── Risk Badge ── */
-.rbadge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-.rb-critical{background:rgba(255,51,51,.15);color:#FF3333;border:1px solid rgba(255,51,51,.25)}
-.rb-high{background:rgba(255,102,0,.15);color:#FF6600;border:1px solid rgba(255,102,0,.25)}
-.rb-medium{background:rgba(201,132,58,.18);color:#C9843A;border:1px solid rgba(201,132,58,.32)}
-.rb-low{background:rgba(0,204,68,.15);color:#00CC44;border:1px solid rgba(0,204,68,.25)}
-.rb-minimal{background:rgba(51,153,255,.15);color:#3399FF;border:1px solid rgba(51,153,255,.25)}
+.rbadge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:100px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.rb-critical{background:var(--critical-tint);color:var(--critical);border:1px solid var(--critical-border)}
+.rb-high{background:var(--warning-tint);color:var(--warning);border:1px solid var(--warning-border)}
+.rb-medium{background:var(--warning-deep-tint);color:var(--warning-deep);border:1px solid var(--warning-deep-border)}
+.rb-low{background:var(--success-tint);color:var(--success);border:1px solid var(--success-border)}
+.rb-minimal{background:var(--card-2);color:var(--text-muted);border:1px solid var(--border)}
 .rb-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
 
 /* ── Table ── */
 .t-table{width:100%;border-collapse:collapse}
-.t-table th{padding:6px 12px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd0);text-align:left;background:var(--bg2)}
-.t-table td{padding:8px 12px;font-size:11px;color:var(--tx1);border-bottom:1px solid var(--bd0)}
+.t-table th{padding:8px 12px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd0);text-align:left;background:var(--bg2)}
+.t-table td{padding:10px 12px;font-size:11px;color:var(--tx1);border-bottom:1px solid var(--bd0)}
 .t-table tr:last-child td{border-bottom:none}
 .t-table tr:hover td{background:var(--bg2)}
-.t-mono{font-family:var(--mono);font-size:10px}
+.t-mono{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:10px}
 
 /* ── Chart container ── */
 .chart-wrap{position:relative;width:100%}
 .chart-wrap canvas{display:block}
 
 /* ── Section label ── */
-.sec-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-label{font-family:var(--font-heading);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .sec-label::before{content:'';display:block;width:16px;height:1px;background:var(--acc)}
 
 /* ── Tab set (sub-tabs) ── */
-.sub-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd0);margin-bottom:14px}
-.sub-tab{padding:7px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.sub-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd0);margin-bottom:16px}
+.sub-tab{padding:8px 14px;font-family:var(--font-heading);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color var(--t),border-color var(--t)}
 .sub-tab:hover{color:var(--tx1)}
-.sub-tab.active{color:var(--tx0);border-bottom-color:var(--cyan)}
+.sub-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 
 /* ── Scenario pill ── */
-.sc-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;border:1px solid transparent;transition:all .15s}
-.sc-nz{background:rgba(16,185,129,.12);color:#00CC44;border-color:rgba(16,185,129,.25)}
-.sc-dt{background:rgba(245,158,11,.12);color:#FF6600;border-color:rgba(245,158,11,.25)}
-.sc-b2{background:rgba(59,130,246,.12);color:#3399FF;border-color:rgba(59,130,246,.25)}
-.sc-cp{background:rgba(239,68,68,.12);color:#FF3333;border-color:rgba(239,68,68,.25)}
-.sc-hh{background:rgba(220,38,38,.2);color:#CC0000;border-color:rgba(220,38,38,.35)}
+.sc-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:100px;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;border:1px solid transparent;transition:all var(--t)}
+.sc-nz{background:var(--success-tint);color:var(--success);border-color:var(--success-border)}
+.sc-dt{background:var(--warning-tint);color:var(--warning);border-color:var(--warning-border)}
+.sc-b2{background:var(--accent-tint);color:var(--accent);border-color:var(--accent-border)}
+.sc-cp{background:var(--critical-tint);color:var(--critical);border-color:var(--critical-border)}
+.sc-hh{background:var(--critical-deep-tint);color:var(--critical-deep);border-color:var(--critical-deep-border)}
 
 /* ── Slider ── */
-.slider-group{margin-bottom:14px}
-.slider-lbl{display:flex;justify-content:space-between;margin-bottom:5px}
+.slider-group{margin-bottom:16px}
+.slider-lbl{display:flex;justify-content:space-between;margin-bottom:6px}
 .slider-name{font-size:10px;color:var(--tx2)}
-.slider-val{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--acc)}
+.slider-val{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:10px;font-weight:700;color:var(--acc)}
 input[type=range]{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:var(--bd1);outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg0)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg0)}
 
 /* ── Framework card ── */
-.fw-card{background:var(--bg2);border:1px solid var(--bd0);border-radius:3px;padding:12px;cursor:pointer;transition:border-color .15s}
+.fw-card{background:var(--bg2);border:1px solid var(--bd0);border-radius:var(--radius);padding:14px;cursor:pointer;transition:border-color var(--t)}
 .fw-card:hover,.fw-card.sel{border-color:var(--acc)}
-.fw-name{font-size:11px;font-weight:700;color:var(--tx0);margin-bottom:3px}
+.fw-card.sel{background:var(--accent-tint)}
+.fw-name{font-family:var(--font-heading);font-size:11px;font-weight:700;color:var(--tx0);margin-bottom:3px}
 .fw-desc{font-size:9px;color:var(--tx3)}
-.fw-tag{display:inline-block;padding:1px 6px;background:var(--acc2);color:var(--acc);font-size:9px;font-weight:700;border-radius:1px;margin-top:5px}
+.fw-tag{display:inline-block;padding:2px 7px;background:var(--acc2);color:var(--acc);font-size:9px;font-weight:700;border-radius:100px;margin-top:6px}
 
 /* ── Progress bar ── */
 .prog-bar{height:4px;background:var(--bd1);border-radius:2px;overflow:hidden;margin-top:4px}
@@ -178,113 +189,113 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
 /* ── Hotspot map placeholder ── */
 .geo-map{
-  background:#0F0F0F;
-  border:1px solid var(--bd0);border-radius:3px;position:relative;overflow:hidden;
+  background:var(--bg2);
+  border:1px solid var(--bd0);border-radius:var(--radius);position:relative;overflow:hidden;
   min-height:260px;display:flex;align-items:center;justify-content:center;
 }
 .geo-map-inner{position:relative;width:100%;height:260px}
 .geo-dot{position:absolute;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%)}
 .geo-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid currentColor;opacity:.4;animation:ripple 2s infinite}
 @keyframes ripple{0%{transform:scale(1);opacity:.4}100%{transform:scale(2.2);opacity:0}}
-.geo-label{position:absolute;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.75);padding:2px 5px;border-radius:1px;white-space:nowrap;transform:translateY(-140%)}
+.geo-label{position:absolute;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--text);color:var(--bg);padding:2px 6px;border-radius:3px;white-space:nowrap;transform:translateY(-140%)}
 
 /* ═══════════════════════════════════════════════════════════
    CLIMATE RISK INTELLIGENCE ENGINE
    Multi-layer institutional cascade: signals → exposure → financial → capital
 ═══════════════════════════════════════════════════════════ */
-.cre-hd{margin-bottom:14px}
-.cre-title{font-size:16px;font-weight:700;letter-spacing:-.015em;color:var(--tx0)}
+.cre-hd{margin-bottom:16px}
+.cre-title{font-size:18px;font-weight:700;letter-spacing:-.015em;color:var(--tx0)}
 .cre-sub{font-size:11px;color:var(--tx2);margin-top:2px}
-.cre-live{font-size:9px;font-weight:700;color:var(--grn);letter-spacing:.06em;display:flex;align-items:center;gap:5px;flex-shrink:0}
-.cre-live-dot{width:5px;height:5px;border-radius:50%;background:var(--grn);display:inline-block;animation:pulse 1.5s infinite}
+.cre-live{font-size:9px;font-weight:700;color:var(--success);letter-spacing:.06em;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.cre-live-dot{width:5px;height:5px;border-radius:50%;background:var(--success);display:inline-block;animation:pulse 1.5s infinite}
 
 /* Sticky executive panel */
-.cre-exec{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:repeat(8,1fr);gap:0;background:var(--bg1);border:1px solid var(--bd0);border-radius:3px;margin-bottom:14px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
-.cre-exec-cell{padding:9px 12px;border-right:1px solid var(--bd0)}
+.cre-exec{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:repeat(8,1fr);gap:0;background:var(--bg1);border:1px solid var(--bd0);border-radius:var(--radius);margin-bottom:16px}
+.cre-exec-cell{padding:10px 12px;border-right:1px solid var(--bd0)}
 .cre-exec-cell:last-child{border-right:none}
 .cre-exec-lbl{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:4px;white-space:nowrap}
-.cre-exec-val{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--tx0);line-height:1}
-.cre-exec-action{display:inline-flex;align-items:center;padding:3px 8px;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:.04em;background:rgba(255,102,0,.14);color:#FF6600;border:1px solid rgba(255,102,0,.3)}
+.cre-exec-val{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:14px;font-weight:700;color:var(--tx0);line-height:1}
+.cre-exec-action{display:inline-flex;align-items:center;padding:3px 9px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.04em;background:var(--warning-tint);color:var(--warning);border:1px solid var(--warning-border)}
 
 /* Layer eyebrow label */
-.cre-layer{margin-bottom:18px}
-.cre-layer-lbl{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px}
+.cre-layer{margin-bottom:24px}
+.cre-layer-lbl{display:flex;align-items:center;gap:8px;font-family:var(--font-heading);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px}
 .cre-layer-lbl .ln{display:block;width:14px;height:1px;background:var(--acc);flex-shrink:0}
 .cre-layer-lbl .lt{color:var(--tx0)}
 
 /* Scenario selector */
 .cre-scn-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
 .cre-scn-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-right:4px}
-.cre-scn-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:2px;font-size:10px;font-weight: 500;letter-spacing:.02em;cursor:pointer;border:1px solid var(--bd1);background:var(--bg2);color:var(--tx2);transition:background .12s,border-color .12s,color .12s}
+.cre-scn-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius);font-size:10px;font-weight:600;letter-spacing:.02em;cursor:pointer;border:1px solid var(--bd1);background:var(--bg2);color:var(--tx2);transition:background var(--t),border-color var(--t),color var(--t)}
 .cre-scn-btn:hover{border-color:var(--bd2);color:var(--tx1)}
-.cre-scn-btn.active{background:rgba(255,102,0,.12);border-color:#FF6600;color:#FF6600}
+.cre-scn-btn.active{background:var(--accent-tint);border-color:var(--accent);color:var(--accent)}
 
 /* Layer 1 — Climate Signal cards */
-.cre-sig-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
-.cre-sig-card{background:var(--bg1);border:1px solid var(--bd0);border-radius:3px;padding:11px 12px;transition:border-color .12s,background .2s}
+.cre-sig-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.cre-sig-card{background:var(--bg1);border:1px solid var(--bd0);border-radius:var(--radius);padding:12px 13px;transition:border-color var(--t),background var(--t)}
 .cre-sig-card.flash{background:var(--bg3)}
 .cre-sig-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .cre-sig-name{font-size:11px;font-weight:700;color:var(--tx0);margin-bottom:9px;letter-spacing:-.01em}
 .cre-sig-meta{font-size:9.5px;color:var(--tx3);margin-bottom:9px;line-height:1.4;min-height:26px}
-.cre-sig-foot{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:9.5px;padding-top:8px;border-top:1px solid var(--bd0)}
+.cre-sig-foot{display:flex;align-items:center;justify-content:space-between;font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:9.5px;padding-top:8px;border-top:1px solid var(--bd0)}
 .cre-sig-conf{color:var(--tx2)}
 
 /* Layer 2 — Exposure mapping */
-.cre-exp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
-.cre-exp-card{background:var(--bg1);border:1px solid var(--bd0);border-radius:3px;padding:11px 12px;transition:background .2s}
+.cre-exp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.cre-exp-card{background:var(--bg1);border:1px solid var(--bd0);border-radius:var(--radius);padding:12px 13px;transition:background var(--t)}
 .cre-exp-card.flash{background:var(--bg3)}
 .cre-exp-name{font-size:10.5px;font-weight:700;color:var(--tx0);margin-bottom:8px}
-.cre-exp-pct{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--tx0);line-height:1;margin-bottom:7px}
-.cre-exp-track{height:3px;background:var(--bd0);border-radius:0;overflow:hidden}
-.cre-exp-fill{height:100%;background:#FF6600;transition:width .5s ease}
+.cre-exp-pct{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:17px;font-weight:700;color:var(--tx0);line-height:1;margin-bottom:7px}
+.cre-exp-track{height:4px;background:var(--bd0);border-radius:2px;overflow:hidden}
+.cre-exp-fill{height:100%;background:var(--warning);transition:width .5s ease}
 
 /* Layer 3 — Financial impact engine */
 .cre-fin-grid{display:grid;grid-template-columns:repeat(3,1fr)}
-.cre-fin-cell{padding:14px 16px;border-right:1px solid var(--bd0);border-bottom:1px solid var(--bd0)}
+.cre-fin-cell{padding:16px;border-right:1px solid var(--bd0);border-bottom:1px solid var(--bd0)}
 .cre-fin-cell:nth-child(3n){border-right:none}
 .cre-fin-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px}
-.cre-fin-val{font-family:var(--mono);font-size:21px;font-weight:700;line-height:1;transition:color .2s}
+.cre-fin-val{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:21px;font-weight:700;line-height:1;transition:color var(--t)}
 
 /* Layer 4 — Capital allocation */
-.cre-cap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--bd0);border-radius:3px;overflow:hidden;background:var(--bg1)}
+.cre-cap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--bd0);border-radius:var(--radius);overflow:hidden;background:var(--bg1)}
 .cre-cap-cell{padding:16px;border-right:1px solid var(--bd0);text-align:center}
 .cre-cap-cell:last-child{border-right:none}
 .cre-cap-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
-.cre-cap-val{font-family:var(--mono);font-size:26px;font-weight: 700;letter-spacing:-.02em;line-height:1}
-.cre-cap-sub{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:2px}
+.cre-cap-val{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.cre-cap-sub{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:10px;color:var(--tx3);margin-top:2px}
 .cre-cap-action-row{grid-column:1/-1;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-top:1px solid var(--bd0)}
 .cre-cap-action-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3)}
-.cre-cap-action-val{font-size:13px;font-weight:700;color:#FF6600;letter-spacing:-.01em}
+.cre-cap-action-val{font-size:13px;font-weight:700;color:var(--warning);letter-spacing:-.01em}
 
 /* Risk journey timeline */
 .cre-tl{display:flex;align-items:stretch;overflow-x:auto;padding-bottom:4px}
 .cre-tl::-webkit-scrollbar{height:3px}
 .cre-tl::-webkit-scrollbar-thumb{background:var(--bd2)}
-.cre-tl-step{flex:1;min-width:118px;background:var(--bg1);border:1px solid var(--bd0);border-radius:3px;padding:10px 11px;position:relative}
+.cre-tl-step{flex:1;min-width:118px;background:var(--bg1);border:1px solid var(--bd0);border-radius:var(--radius);padding:11px 12px;position:relative}
 .cre-tl-step.flash{background:var(--bg3)}
-.cre-tl-idx{font-family:var(--mono);font-size:8px;color:var(--tx3);margin-bottom:6px}
-.cre-tl-txt{font-size:10px;font-weight: 500;color:var(--tx1);line-height:1.35}
+.cre-tl-idx{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:8px;color:var(--tx3);margin-bottom:6px}
+.cre-tl-txt{font-size:10px;font-weight:600;color:var(--tx1);line-height:1.35}
 .cre-tl-arrow{flex-shrink:0;width:22px;display:flex;align-items:center;justify-content:center;color:var(--bd2);font-size:12px}
 
 /* Geographic intelligence map */
-.cre-geo-map{background:#0B0E13;border:1px solid var(--bd0);border-radius:3px;position:relative;overflow:hidden;height:400px}
+.cre-geo-map{background:var(--bg2);border:1px solid var(--bd0);border-radius:var(--radius);position:relative;overflow:hidden;height:400px}
 .cre-geo-map .maplibregl-canvas{outline:none}
-.cre-geo-map .maplibregl-ctrl-attrib{background:rgba(0,0,0,.6)!important;color:rgba(255,255,255,.35)!important;font-size:9px!important}
-.cre-geo-map .maplibregl-ctrl-attrib a{color:rgba(255,255,255,.5)!important}
-.cre-geo-map .maplibregl-ctrl-group{background:var(--bg2)!important;border:1px solid var(--bd1)!important;border-radius:2px!important;box-shadow:none!important}
+.cre-geo-map .maplibregl-ctrl-attrib{background:rgba(255,255,255,.85)!important;color:var(--text-muted)!important;font-size:9px!important}
+.cre-geo-map .maplibregl-ctrl-attrib a{color:var(--text-2)!important}
+.cre-geo-map .maplibregl-ctrl-group{background:var(--bg1)!important;border:1px solid var(--bd1)!important;border-radius:6px!important;box-shadow:none!important}
 .cre-geo-map .maplibregl-ctrl-group button{background:transparent!important}
-.cre-geo-map .maplibregl-ctrl-group button:hover{background:var(--bg3)!important}
+.cre-geo-map .maplibregl-ctrl-group button:hover{background:var(--bg2)!important}
 .cre-geo-map .maplibregl-ctrl-group button+button{border-top:1px solid var(--bd0)!important}
-.cre-geo-legend{position:absolute;bottom:8px;left:8px;z-index:5;display:flex;gap:10px;background:rgba(0,0,0,.65);border:1px solid var(--bd0);border-radius:2px;padding:5px 9px}
+.cre-geo-legend{position:absolute;bottom:10px;left:10px;z-index:5;display:flex;gap:10px;background:var(--bg1);border:1px solid var(--bd0);border-radius:var(--radius);padding:6px 10px}
 .cre-geo-legend-item{display:flex;align-items:center;gap:5px;font-size:8.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--tx2)}
 .cre-geo-legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.cre-geo-tip{position:fixed;z-index:300;background:var(--bg3);border:1px solid var(--bd2);border-radius:3px;padding:10px 12px;min-width:200px;font-size:10px;pointer-events:none;display:none;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.cre-geo-tip{position:fixed;z-index:300;background:var(--bg1);border:1px solid var(--bd1);border-radius:var(--radius);padding:10px 12px;min-width:200px;font-size:10px;pointer-events:none;display:none}
 .cre-geo-tip-name{font-size:11px;font-weight:700;color:var(--tx0);margin-bottom:6px}
 .cre-geo-tip-row{display:flex;justify-content:space-between;padding:2px 0;color:var(--tx2)}
-.cre-geo-tip-row span:last-child{font-family:var(--mono);color:var(--tx0);font-weight: 500}
+.cre-geo-tip-row span:last-child{font-family:var(--font-number);font-variant-numeric:tabular-nums;color:var(--tx0);font-weight:600}
 
 /* ── Code block ── */
-.code-block{background:#0D1117;border:1px solid var(--bd0);border-radius:3px;padding:12px;font-family:var(--mono);font-size:11px;color:#A5F3FC;overflow-x:auto;line-height:1.6}
+.code-block{background:var(--bg2);border:1px solid var(--bd0);border-radius:var(--radius);padding:14px;font-family:var(--font-code);font-size:11px;color:var(--text-2);overflow-x:auto;line-height:1.7}
 
 /* ── Uptime bar ── */
 .uptime-bar{display:flex;gap:2px;margin-top:4px}
@@ -317,83 +328,83 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 ═══════════════════════════════════════════════════ */
 #mod-risk.active{
   display:grid !important;
-  grid-template-columns:220px 1fr 260px;
+  grid-template-columns:232px 1fr 272px;
   height:calc(100vh - var(--nav-h) - var(--tab-h));
   padding:0;overflow:hidden;gap:0;
 }
 
 /* ── Left: Entity Database ── */
 .col-entities{border-right:1px solid var(--bd0);display:flex;flex-direction:column;overflow:hidden;background:var(--bg1)}
-.ent-col-hd{padding:10px 12px 8px;border-bottom:1px solid var(--bd0);flex-shrink:0}
-.ent-col-title{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px}
-.ent-search{width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:5px 8px;color:var(--tx0);font-size:10px;font-family:var(--mono);outline:none}
+.ent-col-hd{padding:12px 14px 10px;border-bottom:1px solid var(--bd0);flex-shrink:0}
+.ent-col-title{font-family:var(--font-heading);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
+.ent-search{width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:var(--radius);padding:6px 9px;color:var(--tx0);font-size:11px;font-family:var(--font-body);outline:none}
 .ent-search::placeholder{color:var(--tx3)}
 .entity-list{flex:1;overflow-y:auto}
 .entity-list::-webkit-scrollbar{width:3px}
 .entity-list::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
-.ent-btn{display:flex;align-items:center;padding:8px 10px;border-bottom:1px solid var(--bd0);cursor:pointer;border-left:2px solid transparent;transition:background .12s;gap:7px}
-.ent-btn:hover{background:rgba(255,255,255,.03)}
-.ent-btn.active{background:rgba(255,102,0,.07);border-left-color:var(--acc)}
+.ent-btn{display:flex;align-items:center;padding:9px 11px;border-bottom:1px solid var(--bd0);cursor:pointer;border-left:2px solid transparent;transition:background var(--t);gap:7px}
+.ent-btn:hover{background:var(--bg2)}
+.ent-btn.active{background:var(--accent-tint);border-left-color:var(--acc)}
 .ent-info{flex:1;min-width:0}
-.ent-name{font-size:10px;font-weight: 500;color:var(--tx0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ent-sector{font-size:8px;color:var(--tx3);margin-top:1px}
-.ent-score{font-family:var(--mono);font-size:12px;font-weight:700;flex-shrink:0;text-align:right}
-.ent-ticker-sm{font-size:8px;color:var(--tx3);font-family:var(--mono);text-align:right}
-.ent-col-foot{border-top:1px solid var(--bd0);padding:8px 12px;flex-shrink:0}
-.ent-stat{display:flex;justify-content:space-between;font-size:9px;color:var(--tx3);margin-bottom:3px;font-family:var(--mono)}
+.ent-name{font-size:11px;font-weight:600;color:var(--tx0);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ent-sector{font-size:9px;color:var(--tx3);margin-top:1px}
+.ent-score{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;flex-shrink:0;text-align:right}
+.ent-ticker-sm{font-size:8px;color:var(--tx3);font-family:var(--font-number);text-align:right}
+.ent-col-foot{border-top:1px solid var(--bd0);padding:10px 14px;flex-shrink:0}
+.ent-stat{display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-bottom:4px;font-family:var(--font-number);font-variant-numeric:tabular-nums}
 
 /* ── Center ── */
 .col-center{display:flex;flex-direction:column;overflow:hidden}
-.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--bd0);flex-shrink:0}
-.kpi-cell{padding:10px 14px;border-right:1px solid var(--bd0)}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--bd0);flex-shrink:0;background:var(--bg2)}
+.kpi-cell{padding:12px 16px;border-right:1px solid var(--bd0)}
 .kpi-cell:last-child{border-right:none}
-.kpi-cell-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:4px}
-.kpi-cell-val{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--tx0);line-height:1}
-.kpi-cell-chg{display:flex;align-items:center;gap:3px;margin-top:3px;font-size:9px;font-weight: 500;font-family:var(--mono)}
-.center-body{flex:1;overflow-y:auto;padding:14px}
+.kpi-cell-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
+.kpi-cell-val{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:20px;font-weight:700;color:var(--tx0);line-height:1}
+.kpi-cell-chg{display:flex;align-items:center;gap:3px;margin-top:4px;font-size:9px;font-weight:600;font-family:var(--font-number)}
+.center-body{flex:1;overflow-y:auto;padding:16px}
 .center-body::-webkit-scrollbar{width:3px}
 .center-body::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
 
 
 /* Exposure panel */
-.exp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd0)}
-.exp-entity-name{font-size:14px;font-weight: 700;color:var(--tx0);letter-spacing:-.01em}
-.exp-entity-sub{display:flex;align-items:center;gap:10px;margin-top:3px;flex-wrap:wrap}
-.exp-sub-item{font-size:9px;color:var(--tx3);font-family:var(--mono)}
-.exp-back{font-size:9px;color:var(--tx3);background:none;border:1px solid var(--bd1);border-radius:2px;padding:4px 10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);transition:color .15s,border-color .15s;flex-shrink:0}
+.exp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bd0)}
+.exp-entity-name{font-size:16px;font-weight:700;color:var(--tx0);letter-spacing:-.01em}
+.exp-entity-sub{display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap}
+.exp-sub-item{font-size:9px;color:var(--tx3);font-family:var(--font-number)}
+.exp-back{font-size:9px;color:var(--tx3);background:none;border:1px solid var(--bd1);border-radius:var(--radius);padding:5px 10px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;font-family:var(--font-heading);font-weight:600;transition:color var(--t),border-color var(--t);flex-shrink:0}
 .exp-back:hover{color:var(--tx1);border-color:var(--bd2)}
-.exp-tab-bar{display:flex;border-bottom:1px solid var(--bd0);margin-bottom:14px}
-.exp-tab-btn{padding:7px 14px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.exp-tab-bar{display:flex;border-bottom:1px solid var(--bd0);margin-bottom:16px}
+.exp-tab-btn{padding:8px 14px;font-family:var(--font-heading);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color var(--t),border-color var(--t)}
 .exp-tab-btn:hover{color:var(--tx1)}
-.exp-tab-btn.active{color:var(--tx0);border-bottom-color:var(--acc)}
+.exp-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 
 /* ── Right: Signals ── */
 .col-signals{border-left:1px solid var(--bd0);display:flex;flex-direction:column;overflow:hidden;background:var(--bg1)}
-.sig-hd{padding:8px 12px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd0);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sig-hd{padding:9px 14px;font-family:var(--font-heading);font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd0);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2)}
 .sig-live-dot{width:5px;height:5px;border-radius:50%;background:var(--grn);animation:pulse 1.5s infinite}
 .signals-feed{flex:1;overflow-y:auto;min-height:0}
 .signals-feed::-webkit-scrollbar{width:3px}
 .signals-feed::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
-.ai-sig{padding:8px 12px;border-bottom:1px solid var(--bd0);animation:sig-in .3s ease forwards}
+.ai-sig{padding:9px 14px;border-bottom:1px solid var(--bd0);animation:sig-in .25s ease forwards}
 @keyframes sig-in{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
-.ai-sig-type{font-size:8px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:1px 5px;border-radius:1px;display:inline-block;margin-bottom:3px}
-.st-phys{background:rgba(255,51,51,.15);color:#FF3333}
-.st-trans{background:rgba(255,102,0,.15);color:#FF6600}
-.st-reg{background:rgba(51,153,255,.15);color:#3399FF}
-.st-mkt{background:rgba(0,204,68,.15);color:#00CC44}
-.st-ai{background:rgba(0,153,204,.15);color:#0099CC}
-.ai-sig-text{font-size:10px;color:var(--tx1);line-height:1.5}
-.ai-sig-time{font-size:9px;color:var(--tx3);font-family:var(--mono);margin-top:2px}
+.ai-sig-type{font-size:8px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:2px 6px;border-radius:100px;display:inline-block;margin-bottom:4px}
+.st-phys{background:var(--critical-tint);color:var(--critical)}
+.st-trans{background:var(--warning-tint);color:var(--warning)}
+.st-reg{background:var(--accent-tint);color:var(--accent)}
+.st-mkt{background:var(--success-tint);color:var(--success)}
+.st-ai{background:var(--accent-tint);color:var(--accent)}
+.ai-sig-text{font-size:10.5px;color:var(--tx1);line-height:1.5}
+.ai-sig-time{font-size:9px;color:var(--tx3);font-family:var(--font-number);margin-top:3px}
 .alerts-panel{flex-shrink:0;max-height:158px;overflow-y:auto}
-.alert-c{display:flex;align-items:flex-start;gap:8px;padding:7px 12px;border-bottom:1px solid var(--bd0)}
+.alert-c{display:flex;align-items:flex-start;gap:8px;padding:8px 14px;border-bottom:1px solid var(--bd0)}
 .alert-c-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:3px}
-.alert-c-text{font-size:10px;color:var(--tx1);line-height:1.4}
-.alert-c-meta{font-size:9px;color:var(--tx3);font-family:var(--mono);margin-top:2px}
+.alert-c-text{font-size:10.5px;color:var(--tx1);line-height:1.4}
+.alert-c-meta{font-size:9px;color:var(--tx3);font-family:var(--font-number);margin-top:2px}
 .carbon-mkt{flex-shrink:0}
-.cmkt-row{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:1px solid var(--bd0)}
-.cmkt-label{font-size:10px;color:var(--tx2);font-family:var(--mono)}
-.cmkt-val{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--cyan)}
-.cmkt-chg{font-size:9px;font-weight: 500;font-family:var(--mono)}
+.cmkt-row{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-bottom:1px solid var(--bd0)}
+.cmkt-label{font-size:10px;color:var(--tx2);font-family:var(--font-body)}
+.cmkt-val{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:11px;font-weight:700;color:var(--accent)}
+.cmkt-chg{font-size:9px;font-weight:600;font-family:var(--font-number)}
 </style>
 </head>
 <body>
@@ -403,12 +414,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 ═══════════════════════════════════════════════ -->
 <div id="topbar">
   <a href="index.html" class="tb-logo">
-    <div class="tb-logo-icon">
-      <svg width="16" height="16" viewBox="0 0 36 36" fill="none">
-        <circle cx="18" cy="18" r="10" fill="none" stroke="white" stroke-width="1.5"/>
-        <path d="M10 27 Q14 22 18 18 Q22 14 26 10" stroke="#FF6600" stroke-width="2" fill="none" stroke-linecap="round"/>
-      </svg>
-    </div>
+    <img class="tb-logo-icon" src="Climatix_logo.png" alt="Climactix Global"/>
     <span class="tb-logo-text">CLIMACTIX</span>
   </a>
   <div class="tb-divider"></div>
@@ -416,7 +422,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
   <div class="tb-live"><span class="tb-dot"></span>LIVE</div>
   <div class="tb-clock" id="clock">--:--:--</div>
-  <button onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);})();" title="Toggle theme" style="width:26px;height:26px;border:1px solid var(--bd1);border-radius:2px;background:none;cursor:pointer;color:var(--tx3);font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">○</button>
   <a href="index.html" class="tb-back">← Back to Site</a>
 </div>
 
@@ -453,20 +458,20 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     <div class="entity-list" id="entityList"><!-- built by JS --></div>
     <div class="ent-col-foot">
       <div class="ent-stat"><span>Total Entities</span><span style="color:var(--tx1)">8</span></div>
-      <div class="ent-stat"><span>Critical Risk</span><span style="color:#FF3333">1</span></div>
-      <div class="ent-stat"><span>High Risk</span><span style="color:#FF6600">3</span></div>
-      <div class="ent-stat"><span>Avg Score</span><span style="color:#FF6600">61.6</span></div>
+      <div class="ent-stat"><span>Critical Risk</span><span style="color:#DC2626">1</span></div>
+      <div class="ent-stat"><span>High Risk</span><span style="color:#B45309">3</span></div>
+      <div class="ent-stat"><span>Avg Score</span><span style="color:#B45309">61.6</span></div>
     </div>
   </div>
 
   <!-- ══ CENTER: Intelligence Center ══ -->
   <div class="col-center">
     <div class="kpi-strip">
-      <div class="kpi-cell"><div class="kpi-cell-lbl">Global Risk Index</div><div class="kpi-cell-val" style="color:#FF6600">72.4</div><div class="kpi-cell-chg" style="color:#FF3333">▲ +3.2 <span style="color:var(--tx3);font-weight:400">qtr</span></div></div>
-      <div class="kpi-cell"><div class="kpi-cell-lbl">Physical Risk</div><div class="kpi-cell-val" style="color:#FF6600">68.1</div><div class="kpi-cell-chg" style="color:#FF3333">▲ +1.8</div></div>
-      <div class="kpi-cell"><div class="kpi-cell-lbl">Transition Risk</div><div class="kpi-cell-val" style="color:#92400E">54.7</div><div class="kpi-cell-chg" style="color:#FF3333">▲ +4.1</div></div>
-      <div class="kpi-cell"><div class="kpi-cell-lbl">Temp Anomaly</div><div class="kpi-cell-val" style="color:#0099CC">+1.48°</div><div class="kpi-cell-chg" style="color:#FF3333">▲ +0.06 YoY</div></div>
-      <div class="kpi-cell"><div class="kpi-cell-lbl">Active Alerts</div><div class="kpi-cell-val" style="color:#FF3333">23</div><div class="kpi-cell-chg" style="color:#FF3333">▲ +5 today</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Global Risk Index</div><div class="kpi-cell-val" style="color:#B45309">72.4</div><div class="kpi-cell-chg" style="color:#DC2626">▲ +3.2 <span style="color:var(--tx3);font-weight:400">qtr</span></div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Physical Risk</div><div class="kpi-cell-val" style="color:#B45309">68.1</div><div class="kpi-cell-chg" style="color:#DC2626">▲ +1.8</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Transition Risk</div><div class="kpi-cell-val" style="color:#92400E">54.7</div><div class="kpi-cell-chg" style="color:#DC2626">▲ +4.1</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Temp Anomaly</div><div class="kpi-cell-val" style="color:#0B3D91">+1.48°</div><div class="kpi-cell-chg" style="color:#DC2626">▲ +0.06 YoY</div></div>
+      <div class="kpi-cell"><div class="kpi-cell-lbl">Active Alerts</div><div class="kpi-cell-val" style="color:#DC2626">23</div><div class="kpi-cell-chg" style="color:#DC2626">▲ +5 today</div></div>
     </div>
     <div class="center-body">
 
@@ -525,10 +530,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <div class="cre-layer-lbl"><span class="ln"></span>Global Climate Exposure Map — Click an entity in the left panel for company-level exposure</div>
           <div class="cre-geo-map" id="creGeoMap">
             <div class="cre-geo-legend">
-              <div class="cre-geo-legend-item"><span class="cre-geo-legend-dot" style="background:#FF3333"></span>Critical</div>
-              <div class="cre-geo-legend-item"><span class="cre-geo-legend-dot" style="background:#FF6600"></span>High</div>
-              <div class="cre-geo-legend-item"><span class="cre-geo-legend-dot" style="background:#C9843A"></span>Medium</div>
-              <div class="cre-geo-legend-item"><span class="cre-geo-legend-dot" style="background:#00CC44"></span>Low</div>
+              <div class="cre-geo-legend-item"><span class="cre-geo-legend-dot" style="background:#DC2626"></span>Critical</div>
+              <div class="cre-geo-legend-item"><span class="cre-geo-legend-dot" style="background:#B45309"></span>High</div>
+              <div class="cre-geo-legend-item"><span class="cre-geo-legend-dot" style="background:#92400E"></span>Medium</div>
+              <div class="cre-geo-legend-item"><span class="cre-geo-legend-dot" style="background:#1E8E3E"></span>Low</div>
             </div>
           </div>
           <div class="panel" style="margin-top:8px">
@@ -579,17 +584,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     <div class="signals-feed" id="signalsFeed"><!-- built by JS --></div>
     <div class="sig-hd" style="border-top:1px solid var(--bd0)"><span>Live Risk Alerts</span></div>
     <div class="alerts-panel">
-      <div class="alert-c"><div class="alert-c-dot" style="background:#FF3333"></div><div><div class="alert-c-text">Extreme heat forecast — South Asia Q3 2025</div><div class="alert-c-meta">PHYSICAL · CRITICAL · 2h ago</div></div></div>
-      <div class="alert-c"><div class="alert-c-dot" style="background:#FF6600"></div><div><div class="alert-c-text">EU ETS floor revision +€18/tCO₂</div><div class="alert-c-meta">TRANSITION · HIGH · 5h ago</div></div></div>
-      <div class="alert-c"><div class="alert-c-dot" style="background:#FF6600"></div><div><div class="alert-c-text">Bangladesh flood probability +32%</div><div class="alert-c-meta">PHYSICAL · MEDIUM · 8h ago</div></div></div>
-      <div class="alert-c"><div class="alert-c-dot" style="background:#00CC44"></div><div><div class="alert-c-text">ISSB S2 compliance window Jan 2026</div><div class="alert-c-meta">REGULATORY · LOW · 1d ago</div></div></div>
+      <div class="alert-c"><div class="alert-c-dot" style="background:#DC2626"></div><div><div class="alert-c-text">Extreme heat forecast — South Asia Q3 2025</div><div class="alert-c-meta">PHYSICAL · CRITICAL · 2h ago</div></div></div>
+      <div class="alert-c"><div class="alert-c-dot" style="background:#B45309"></div><div><div class="alert-c-text">EU ETS floor revision +€18/tCO₂</div><div class="alert-c-meta">TRANSITION · HIGH · 5h ago</div></div></div>
+      <div class="alert-c"><div class="alert-c-dot" style="background:#B45309"></div><div><div class="alert-c-text">Bangladesh flood probability +32%</div><div class="alert-c-meta">PHYSICAL · MEDIUM · 8h ago</div></div></div>
+      <div class="alert-c"><div class="alert-c-dot" style="background:#1E8E3E"></div><div><div class="alert-c-text">ISSB S2 compliance window Jan 2026</div><div class="alert-c-meta">REGULATORY · LOW · 1d ago</div></div></div>
     </div>
     <div class="sig-hd" style="border-top:1px solid var(--bd0)"><span>Carbon Markets</span><span style="font-size:9px;color:var(--tx3);font-family:var(--mono)">LIVE</span></div>
     <div class="carbon-mkt">
-      <div class="cmkt-row"><span class="cmkt-label">EU ETS</span><span class="cmkt-val">€98.4</span><span class="cmkt-chg" style="color:#FF3333">▲ +2.1%</span></div>
-      <div class="cmkt-row"><span class="cmkt-label">UK ETS</span><span class="cmkt-val">£42.7</span><span class="cmkt-chg" style="color:#00CC44">▼ -0.8%</span></div>
-      <div class="cmkt-row"><span class="cmkt-label">CA CCA</span><span class="cmkt-val">$38.2</span><span class="cmkt-chg" style="color:#FF3333">▲ +1.4%</span></div>
-      <div class="cmkt-row"><span class="cmkt-label">VCM</span><span class="cmkt-val">$14.8</span><span class="cmkt-chg" style="color:#00CC44">▼ -3.2%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">EU ETS</span><span class="cmkt-val">€98.4</span><span class="cmkt-chg" style="color:#DC2626">▲ +2.1%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">UK ETS</span><span class="cmkt-val">£42.7</span><span class="cmkt-chg" style="color:#1E8E3E">▼ -0.8%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">CA CCA</span><span class="cmkt-val">$38.2</span><span class="cmkt-chg" style="color:#DC2626">▲ +1.4%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">VCM</span><span class="cmkt-val">$14.8</span><span class="cmkt-chg" style="color:#1E8E3E">▼ -3.2%</span></div>
     </div>
   </div>
 
@@ -611,7 +616,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <span class="sc-pill sc-cp" onclick="selectScenario(this,'cp')">● Current Policy</span>
           <span class="sc-pill sc-hh" onclick="selectScenario(this,'hh')">● Hot House World</span>
         </div>
-        <div id="sc-desc" style="font-size:10px;color:var(--tx2);padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:2px;line-height:1.6">
+        <div id="sc-desc" style="font-size:10px;color:var(--tx2);padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:8px;line-height:1.6">
           Select a scenario to see details and projected financial impacts.
         </div>
       </div>
@@ -659,11 +664,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <table class="t-table">
         <thead><tr><th>Scenario</th><th>Warming (2100)</th><th>Carbon Price 2030</th><th>Revenue Risk</th><th>EBITDA Impact</th><th>Stranded Asset Risk</th><th>Paris Alignment</th></tr></thead>
         <tbody>
-          <tr><td><span class="sc-pill sc-nz" style="cursor:default">Net Zero 2050</span></td><td class="t-mono">1.5°C</td><td class="t-mono">$147/t</td><td class="t-mono" style="color:#00CC44">-8%</td><td class="t-mono" style="color:#00CC44">-5%</td><td><span class="rbadge rb-low">LOW</span></td><td style="color:#00CC44"> Aligned</td></tr>
-          <tr><td><span class="sc-pill sc-b2" style="cursor:default">Below 2°C</span></td><td class="t-mono">1.8°C</td><td class="t-mono">$95/t</td><td class="t-mono" style="color:#FF6600">-14%</td><td class="t-mono" style="color:#FF6600">-9%</td><td><span class="rbadge rb-medium">MEDIUM</span></td><td style="color:#FF6600">~ Partial</td></tr>
-          <tr><td><span class="sc-pill sc-dt" style="cursor:default">Delayed Transition</span></td><td class="t-mono">2.5°C</td><td class="t-mono">$220/t</td><td class="t-mono" style="color:#FF6600">-22%</td><td class="t-mono" style="color:#FF6600">-16%</td><td><span class="rbadge rb-high">HIGH</span></td><td style="color:#FF3333"> Misaligned</td></tr>
-          <tr><td><span class="sc-pill sc-cp" style="cursor:default">Current Policy</span></td><td class="t-mono">3.2°C</td><td class="t-mono">$38/t</td><td class="t-mono" style="color:#FF3333">-31%</td><td class="t-mono" style="color:#FF3333">-24%</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td style="color:#FF3333"> Misaligned</td></tr>
-          <tr><td><span class="sc-pill sc-hh" style="cursor:default">Hot House World</span></td><td class="t-mono">4.3°C</td><td class="t-mono">$18/t</td><td class="t-mono" style="color:#CC0000">-44%</td><td class="t-mono" style="color:#CC0000">-38%</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td style="color:#FF3333"> Misaligned</td></tr>
+          <tr><td><span class="sc-pill sc-nz" style="cursor:default">Net Zero 2050</span></td><td class="t-mono">1.5°C</td><td class="t-mono">$147/t</td><td class="t-mono" style="color:#1E8E3E">-8%</td><td class="t-mono" style="color:#1E8E3E">-5%</td><td><span class="rbadge rb-low">LOW</span></td><td style="color:#1E8E3E"> Aligned</td></tr>
+          <tr><td><span class="sc-pill sc-b2" style="cursor:default">Below 2°C</span></td><td class="t-mono">1.8°C</td><td class="t-mono">$95/t</td><td class="t-mono" style="color:#B45309">-14%</td><td class="t-mono" style="color:#B45309">-9%</td><td><span class="rbadge rb-medium">MEDIUM</span></td><td style="color:#B45309">~ Partial</td></tr>
+          <tr><td><span class="sc-pill sc-dt" style="cursor:default">Delayed Transition</span></td><td class="t-mono">2.5°C</td><td class="t-mono">$220/t</td><td class="t-mono" style="color:#B45309">-22%</td><td class="t-mono" style="color:#B45309">-16%</td><td><span class="rbadge rb-high">HIGH</span></td><td style="color:#DC2626"> Misaligned</td></tr>
+          <tr><td><span class="sc-pill sc-cp" style="cursor:default">Current Policy</span></td><td class="t-mono">3.2°C</td><td class="t-mono">$38/t</td><td class="t-mono" style="color:#DC2626">-31%</td><td class="t-mono" style="color:#DC2626">-24%</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td style="color:#DC2626"> Misaligned</td></tr>
+          <tr><td><span class="sc-pill sc-hh" style="cursor:default">Hot House World</span></td><td class="t-mono">4.3°C</td><td class="t-mono">$18/t</td><td class="t-mono" style="color:#991B1B">-44%</td><td class="t-mono" style="color:#991B1B">-38%</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td style="color:#DC2626"> Misaligned</td></tr>
         </tbody>
       </table>
     </div>
@@ -698,11 +703,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="sec-label">Report Configuration</div>
         <div class="panel">
           <div class="panel-body">
-            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Company Name</label><input type="text" placeholder="Enter company name..." style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"></div>
-            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Fiscal Year</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>2024</option><option>2023</option><option>2022</option></select></div>
-            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Report Type</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>Full Disclosure Report</option><option>Executive Summary</option><option>Investor Brief</option><option>Regulatory Filing</option></select></div>
-            <div style="margin-bottom:14px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Sector</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>Energy &amp; Utilities</option><option>Manufacturing</option><option>Financial Services</option><option>Real Estate</option><option>Technology</option><option>Agriculture</option></select></div>
-            <button onclick="generateReport()" style="width:100%;padding:9px;background:var(--acc);color:#000;border:none;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;text-transform:uppercase">Generate Report</button>
+            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Company Name</label><input type="text" placeholder="Enter company name..." style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:8px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"></div>
+            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Fiscal Year</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:8px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>2024</option><option>2023</option><option>2022</option></select></div>
+            <div style="margin-bottom:10px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Report Type</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:8px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>Full Disclosure Report</option><option>Executive Summary</option><option>Investor Brief</option><option>Regulatory Filing</option></select></div>
+            <div style="margin-bottom:14px"><label style="font-size:10px;color:var(--tx2);display:block;margin-bottom:4px">Sector</label><select style="width:100%;background:var(--bg2);border:1px solid var(--bd1);border-radius:8px;padding:6px 10px;color:var(--tx0);font-size:11px;outline:none"><option>Energy &amp; Utilities</option><option>Manufacturing</option><option>Financial Services</option><option>Real Estate</option><option>Technology</option><option>Agriculture</option></select></div>
+            <button onclick="generateReport()" style="width:100%;padding:10px;background:var(--acc);color:#fff;border:none;border-radius:var(--radius);font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;text-transform:uppercase">Generate Report</button>
           </div>
         </div>
       </div>
@@ -728,22 +733,22 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <div class="panel">
         <div class="panel-hd"><span class="panel-title">Claim Analysis</span></div>
         <div class="panel-body">
-          <textarea placeholder="Paste sustainability claims here to scan for greenwashing risk..." style="width:100%;height:100px;background:var(--bg2);border:1px solid var(--bd1);border-radius:2px;padding:8px;color:var(--tx0);font-size:11px;resize:none;outline:none;margin-bottom:10px"></textarea>
-          <button style="padding:7px 16px;background:var(--acc);color:#000;border:none;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:.06em;cursor:pointer;text-transform:uppercase">Analyse Claims</button>
+          <textarea placeholder="Paste sustainability claims here to scan for greenwashing risk..." style="width:100%;height:100px;background:var(--bg2);border:1px solid var(--bd1);border-radius:8px;padding:8px;color:var(--tx0);font-size:11px;resize:none;outline:none;margin-bottom:10px"></textarea>
+          <button style="padding:8px 16px;background:var(--acc);color:#fff;border:none;border-radius:var(--radius);font-size:10px;font-weight:700;letter-spacing:.06em;cursor:pointer;text-transform:uppercase">Analyse Claims</button>
         </div>
       </div>
       <div class="panel">
         <div class="panel-hd"><span class="panel-title">ESG Integrity Score</span></div>
         <div class="panel-body">
           <div style="text-align:center;padding:10px 0">
-            <div style="font-family:var(--mono);font-size:48px;font-weight:700;color:#00CC44;line-height:1">76</div>
+            <div style="font-family:var(--mono);font-size:48px;font-weight:700;color:#1E8E3E;line-height:1">76</div>
             <div style="font-size:10px;color:var(--tx2);margin-top:4px;letter-spacing:.06em">/ 100 — GOOD STANDING</div>
           </div>
           <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Claim Substantiation</span><span class="t-mono" style="color:#00CC44">82%</span></div><div class="prog-bar"><div class="prog-fill" style="width:82%;background:#00CC44"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Data Transparency</span><span class="t-mono" style="color:#00CC44">78%</span></div><div class="prog-bar"><div class="prog-fill" style="width:78%;background:#00CC44"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Target Credibility</span><span class="t-mono" style="color:#FF6600">64%</span></div><div class="prog-bar"><div class="prog-fill" style="width:64%;background:#FF6600"></div></div></div>
-            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Scope Coverage</span><span class="t-mono" style="color:#FF6600">55%</span></div><div class="prog-bar"><div class="prog-fill" style="width:55%;background:#FF6600"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Claim Substantiation</span><span class="t-mono" style="color:#1E8E3E">82%</span></div><div class="prog-bar"><div class="prog-fill" style="width:82%;background:#1E8E3E"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Data Transparency</span><span class="t-mono" style="color:#1E8E3E">78%</span></div><div class="prog-bar"><div class="prog-fill" style="width:78%;background:#1E8E3E"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Target Credibility</span><span class="t-mono" style="color:#B45309">64%</span></div><div class="prog-bar"><div class="prog-fill" style="width:64%;background:#B45309"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--tx2)">Scope Coverage</span><span class="t-mono" style="color:#B45309">55%</span></div><div class="prog-bar"><div class="prog-fill" style="width:55%;background:#B45309"></div></div></div>
           </div>
         </div>
       </div>
@@ -781,12 +786,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <table class="t-table">
         <thead><tr><th>Company</th><th>Ticker</th><th>Sector</th><th>Weight</th><th>ESG Score</th><th>Climate VaR</th><th>Paris Alignment</th><th>Rating</th></tr></thead>
         <tbody>
-          <tr><td>NextEra Energy</td><td class="t-mono">NEE</td><td>Utilities</td><td class="t-mono">8.2%</td><td class="t-mono" style="color:#00CC44">78.4</td><td class="t-mono" style="color:#00CC44">-4.1%</td><td style="color:#00CC44"> Aligned</td><td><span class="rbadge rb-low">LOW</span></td></tr>
-          <tr><td>Microsoft Corp</td><td class="t-mono">MSFT</td><td>Technology</td><td class="t-mono">7.6%</td><td class="t-mono" style="color:#00CC44">82.1</td><td class="t-mono" style="color:#00CC44">-2.8%</td><td style="color:#00CC44"> Aligned</td><td><span class="rbadge rb-minimal">MINIMAL</span></td></tr>
-          <tr><td>TotalEnergies SE</td><td class="t-mono">TTE</td><td>Oil &amp; Gas</td><td class="t-mono">6.4%</td><td class="t-mono" style="color:#FF6600">51.3</td><td class="t-mono" style="color:#FF3333">-18.4%</td><td style="color:#FF3333"> Misaligned</td><td><span class="rbadge rb-high">HIGH</span></td></tr>
-          <tr><td>Vestas Wind Sys.</td><td class="t-mono">VWS</td><td>Renewables</td><td class="t-mono">5.8%</td><td class="t-mono" style="color:#00CC44">88.6</td><td class="t-mono" style="color:#00CC44">-1.2%</td><td style="color:#00CC44"> Aligned</td><td><span class="rbadge rb-minimal">MINIMAL</span></td></tr>
-          <tr><td>Rio Tinto PLC</td><td class="t-mono">RIO</td><td>Mining</td><td class="t-mono">4.9%</td><td class="t-mono" style="color:#FF6600">44.8</td><td class="t-mono" style="color:#FF3333">-22.1%</td><td style="color:#FF3333"> Misaligned</td><td><span class="rbadge rb-critical">CRITICAL</span></td></tr>
-          <tr><td>Schneider Electric</td><td class="t-mono">SU</td><td>Industrials</td><td class="t-mono">4.2%</td><td class="t-mono" style="color:#00CC44">74.2</td><td class="t-mono" style="color:#00CC44">-6.8%</td><td style="color:#00CC44"> Aligned</td><td><span class="rbadge rb-low">LOW</span></td></tr>
+          <tr><td>NextEra Energy</td><td class="t-mono">NEE</td><td>Utilities</td><td class="t-mono">8.2%</td><td class="t-mono" style="color:#1E8E3E">78.4</td><td class="t-mono" style="color:#1E8E3E">-4.1%</td><td style="color:#1E8E3E"> Aligned</td><td><span class="rbadge rb-low">LOW</span></td></tr>
+          <tr><td>Microsoft Corp</td><td class="t-mono">MSFT</td><td>Technology</td><td class="t-mono">7.6%</td><td class="t-mono" style="color:#1E8E3E">82.1</td><td class="t-mono" style="color:#1E8E3E">-2.8%</td><td style="color:#1E8E3E"> Aligned</td><td><span class="rbadge rb-minimal">MINIMAL</span></td></tr>
+          <tr><td>TotalEnergies SE</td><td class="t-mono">TTE</td><td>Oil &amp; Gas</td><td class="t-mono">6.4%</td><td class="t-mono" style="color:#B45309">51.3</td><td class="t-mono" style="color:#DC2626">-18.4%</td><td style="color:#DC2626"> Misaligned</td><td><span class="rbadge rb-high">HIGH</span></td></tr>
+          <tr><td>Vestas Wind Sys.</td><td class="t-mono">VWS</td><td>Renewables</td><td class="t-mono">5.8%</td><td class="t-mono" style="color:#1E8E3E">88.6</td><td class="t-mono" style="color:#1E8E3E">-1.2%</td><td style="color:#1E8E3E"> Aligned</td><td><span class="rbadge rb-minimal">MINIMAL</span></td></tr>
+          <tr><td>Rio Tinto PLC</td><td class="t-mono">RIO</td><td>Mining</td><td class="t-mono">4.9%</td><td class="t-mono" style="color:#B45309">44.8</td><td class="t-mono" style="color:#DC2626">-22.1%</td><td style="color:#DC2626"> Misaligned</td><td><span class="rbadge rb-critical">CRITICAL</span></td></tr>
+          <tr><td>Schneider Electric</td><td class="t-mono">SU</td><td>Industrials</td><td class="t-mono">4.2%</td><td class="t-mono" style="color:#1E8E3E">74.2</td><td class="t-mono" style="color:#1E8E3E">-6.8%</td><td style="color:#1E8E3E"> Aligned</td><td><span class="rbadge rb-low">LOW</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -815,11 +820,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <table class="t-table">
           <thead><tr><th>Supplier</th><th>Country</th><th>Tier</th><th>Annual Spend ($M)</th><th>Scope 1 (tCO₂)</th><th>Climate Risk</th><th>SBTi</th><th>Verified</th></tr></thead>
           <tbody>
-            <tr><td>Alpha Materials Ltd</td><td>China</td><td class="t-mono">1</td><td class="t-mono">$42.1M</td><td class="t-mono">18,400</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td><td style="color:#FF6600">Committed</td><td style="color:#FF3333"></td></tr>
-            <tr><td>GreenSteel Europe</td><td>Germany</td><td class="t-mono">1</td><td class="t-mono">$38.6M</td><td class="t-mono">9,200</td><td><span class="rbadge rb-medium"><span class="rb-dot"></span>MEDIUM</span></td><td style="color:#00CC44">Approved</td><td style="color:#00CC44"></td></tr>
-            <tr><td>Pacific Logistics Co.</td><td>Singapore</td><td class="t-mono">1</td><td class="t-mono">$24.3M</td><td class="t-mono">31,600</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td><td style="color:#FF3333">None</td><td style="color:#FF3333"></td></tr>
-            <tr><td>Nordic Paper Mills</td><td>Sweden</td><td class="t-mono">2</td><td class="t-mono">$18.8M</td><td class="t-mono">4,100</td><td><span class="rbadge rb-low"><span class="rb-dot"></span>LOW</span></td><td style="color:#00CC44">Approved</td><td style="color:#00CC44"></td></tr>
-            <tr><td>IndoChem Pvt Ltd</td><td>India</td><td class="t-mono">2</td><td class="t-mono">$15.4M</td><td class="t-mono">22,800</td><td><span class="rbadge rb-critical"><span class="rb-dot"></span>CRITICAL</span></td><td style="color:#FF3333">None</td><td style="color:#FF3333"></td></tr>
+            <tr><td>Alpha Materials Ltd</td><td>China</td><td class="t-mono">1</td><td class="t-mono">$42.1M</td><td class="t-mono">18,400</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td><td style="color:#B45309">Committed</td><td style="color:#DC2626"></td></tr>
+            <tr><td>GreenSteel Europe</td><td>Germany</td><td class="t-mono">1</td><td class="t-mono">$38.6M</td><td class="t-mono">9,200</td><td><span class="rbadge rb-medium"><span class="rb-dot"></span>MEDIUM</span></td><td style="color:#1E8E3E">Approved</td><td style="color:#1E8E3E"></td></tr>
+            <tr><td>Pacific Logistics Co.</td><td>Singapore</td><td class="t-mono">1</td><td class="t-mono">$24.3M</td><td class="t-mono">31,600</td><td><span class="rbadge rb-high"><span class="rb-dot"></span>HIGH</span></td><td style="color:#DC2626">None</td><td style="color:#DC2626"></td></tr>
+            <tr><td>Nordic Paper Mills</td><td>Sweden</td><td class="t-mono">2</td><td class="t-mono">$18.8M</td><td class="t-mono">4,100</td><td><span class="rbadge rb-low"><span class="rb-dot"></span>LOW</span></td><td style="color:#1E8E3E">Approved</td><td style="color:#1E8E3E"></td></tr>
+            <tr><td>IndoChem Pvt Ltd</td><td>India</td><td class="t-mono">2</td><td class="t-mono">$15.4M</td><td class="t-mono">22,800</td><td><span class="rbadge rb-critical"><span class="rb-dot"></span>CRITICAL</span></td><td style="color:#DC2626">None</td><td style="color:#DC2626"></td></tr>
           </tbody>
         </table>
       </div>
@@ -832,10 +837,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <table class="t-table">
           <thead><tr><th>Route</th><th>Mode</th><th>Distance (km)</th><th>Volume (TEU)</th><th>tCO₂e/yr</th><th>Intensity</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td>Shanghai → Rotterdam</td><td>Sea Freight</td><td class="t-mono">19,550</td><td class="t-mono">4,200</td><td class="t-mono" style="color:#FF6600">42,800</td><td><span class="rbadge rb-high">HIGH</span></td><td><button class="panel-action">Optimise</button></td></tr>
-            <tr><td>Mumbai → Hamburg</td><td>Sea Freight</td><td class="t-mono">11,240</td><td class="t-mono">2,800</td><td class="t-mono" style="color:#FF6600">24,600</td><td><span class="rbadge rb-medium">MEDIUM</span></td><td><button class="panel-action">Optimise</button></td></tr>
-            <tr><td>Chicago → London</td><td>Air Freight</td><td class="t-mono">6,350</td><td class="t-mono">120</td><td class="t-mono" style="color:#FF3333">38,400</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td><button class="panel-action">Shift Mode</button></td></tr>
-            <tr><td>Berlin → Paris</td><td>Road</td><td class="t-mono">1,050</td><td class="t-mono">850</td><td class="t-mono" style="color:#00CC44">3,200</td><td><span class="rbadge rb-low">LOW</span></td><td><button class="panel-action">View</button></td></tr>
+            <tr><td>Shanghai → Rotterdam</td><td>Sea Freight</td><td class="t-mono">19,550</td><td class="t-mono">4,200</td><td class="t-mono" style="color:#B45309">42,800</td><td><span class="rbadge rb-high">HIGH</span></td><td><button class="panel-action">Optimise</button></td></tr>
+            <tr><td>Mumbai → Hamburg</td><td>Sea Freight</td><td class="t-mono">11,240</td><td class="t-mono">2,800</td><td class="t-mono" style="color:#B45309">24,600</td><td><span class="rbadge rb-medium">MEDIUM</span></td><td><button class="panel-action">Optimise</button></td></tr>
+            <tr><td>Chicago → London</td><td>Air Freight</td><td class="t-mono">6,350</td><td class="t-mono">120</td><td class="t-mono" style="color:#DC2626">38,400</td><td><span class="rbadge rb-critical">CRITICAL</span></td><td><button class="panel-action">Shift Mode</button></td></tr>
+            <tr><td>Berlin → Paris</td><td>Road</td><td class="t-mono">1,050</td><td class="t-mono">850</td><td class="t-mono" style="color:#1E8E3E">3,200</td><td><span class="rbadge rb-low">LOW</span></td><td><button class="panel-action">View</button></td></tr>
           </tbody>
         </table>
       </div>
@@ -933,10 +938,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <table class="t-table">
           <thead><tr><th>Fund Name</th><th>Manager</th><th>AUM ($B)</th><th>Strategy</th><th>Paris Aligned</th><th>1Y Return</th></tr></thead>
           <tbody>
-            <tr><td>iShares Global Clean Energy ETF</td><td>BlackRock</td><td class="t-mono">$6.2B</td><td>Clean Energy</td><td style="color:#00CC44"> PAB</td><td class="t-mono" style="color:#00CC44">+18.4%</td></tr>
-            <tr><td>Xtrackers MSCI World ESG</td><td>DWS</td><td class="t-mono">$4.8B</td><td>ESG Screening</td><td style="color:#00CC44"> CTB</td><td class="t-mono" style="color:#00CC44">+12.1%</td></tr>
-            <tr><td>Vanguard ESG U.S. Stock ETF</td><td>Vanguard</td><td class="t-mono">$11.4B</td><td>ESG Exclusions</td><td style="color:#FF6600">~ Partial</td><td class="t-mono" style="color:#00CC44">+14.8%</td></tr>
-            <tr><td>Pimco Climate Bond Fund</td><td>Pimco</td><td class="t-mono">$2.1B</td><td>Green Bonds</td><td style="color:#00CC44"> PAB</td><td class="t-mono" style="color:#FF6600">+4.2%</td></tr>
+            <tr><td>iShares Global Clean Energy ETF</td><td>BlackRock</td><td class="t-mono">$6.2B</td><td>Clean Energy</td><td style="color:#1E8E3E"> PAB</td><td class="t-mono" style="color:#1E8E3E">+18.4%</td></tr>
+            <tr><td>Xtrackers MSCI World ESG</td><td>DWS</td><td class="t-mono">$4.8B</td><td>ESG Screening</td><td style="color:#1E8E3E"> CTB</td><td class="t-mono" style="color:#1E8E3E">+12.1%</td></tr>
+            <tr><td>Vanguard ESG U.S. Stock ETF</td><td>Vanguard</td><td class="t-mono">$11.4B</td><td>ESG Exclusions</td><td style="color:#B45309">~ Partial</td><td class="t-mono" style="color:#1E8E3E">+14.8%</td></tr>
+            <tr><td>Pimco Climate Bond Fund</td><td>Pimco</td><td class="t-mono">$2.1B</td><td>Green Bonds</td><td style="color:#1E8E3E"> PAB</td><td class="t-mono" style="color:#B45309">+4.2%</td></tr>
           </tbody>
         </table>
       </div>
@@ -953,11 +958,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <div class="panel" style="margin-bottom:12px">
         <div class="panel-hd"><span class="panel-title">API Keys</span><button class="panel-action">+ Generate</button></div>
         <div class="panel-body">
-          <div style="margin-bottom:10px;padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:2px;display:flex;align-items:center;justify-content:space-between">
+          <div style="margin-bottom:10px;padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:8px;display:flex;align-items:center;justify-content:space-between">
             <div><div style="font-size:10px;font-weight:700;color:var(--tx0)">Production Key</div><div class="t-mono" style="color:var(--tx3);margin-top:3px">cx_prod_••••••••••••••••••4a2f</div></div>
             <span class="rbadge rb-low">ACTIVE</span>
           </div>
-          <div style="margin-bottom:10px;padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:2px;display:flex;align-items:center;justify-content:space-between">
+          <div style="margin-bottom:10px;padding:10px;background:var(--bg2);border:1px solid var(--bd0);border-radius:8px;display:flex;align-items:center;justify-content:space-between">
             <div><div style="font-size:10px;font-weight:700;color:var(--tx0)">Staging Key</div><div class="t-mono" style="color:var(--tx3);margin-top:3px">cx_stg_••••••••••••••••••9c1e</div></div>
             <span class="rbadge rb-low">ACTIVE</span>
           </div>
@@ -1054,11 +1059,11 @@ function generateReport(){
 
 // ─── Scenario descriptions ────────────────────────────────────
 const SC_DESC={
-  nz:'<strong style="color:#00CC44">Net Zero 2050</strong> — Aggressive decarbonisation. Carbon price reaches $147/t by 2030. Revenue at risk: 8%. Aligned with 1.5°C Paris target.',
-  dt:'<strong style="color:#FF6600">Delayed Transition</strong> — Late policy action causes abrupt adjustments post-2030. Carbon price spikes to $220/t. EBITDA impact: -16%.',
-  b2:'<strong style="color:#3399FF">Below 2°C</strong> — Moderate transition. Carbon price $95/t by 2030. Revenue at risk: 14%. Broadly aligned with Paris goals.',
-  cp:'<strong style="color:#FF3333">Current Policy</strong> — Insufficient action. Low carbon price $38/t but high physical risk. Revenue at risk: 31% by 2050.',
-  hh:'<strong style="color:#CC0000">Hot House World</strong> — No new policies. Catastrophic physical risk. 4.3°C warming. Revenue at risk: 44%. Stranded asset probability: CRITICAL.',
+  nz:'<strong style="color:#1E8E3E">Net Zero 2050</strong> — Aggressive decarbonisation. Carbon price reaches $147/t by 2030. Revenue at risk: 8%. Aligned with 1.5°C Paris target.',
+  dt:'<strong style="color:#B45309">Delayed Transition</strong> — Late policy action causes abrupt adjustments post-2030. Carbon price spikes to $220/t. EBITDA impact: -16%.',
+  b2:'<strong style="color:#0B3D91">Below 2°C</strong> — Moderate transition. Carbon price $95/t by 2030. Revenue at risk: 14%. Broadly aligned with Paris goals.',
+  cp:'<strong style="color:#DC2626">Current Policy</strong> — Insufficient action. Low carbon price $38/t but high physical risk. Revenue at risk: 31% by 2050.',
+  hh:'<strong style="color:#991B1B">Hot House World</strong> — No new policies. Catastrophic physical risk. 4.3°C warming. Revenue at risk: 44%. Stranded asset probability: CRITICAL.',
 };
 function selectScenario(el,sc){
   document.querySelectorAll('.sc-pill').forEach(p=>p.style.opacity='0.5');
@@ -1084,8 +1089,8 @@ buildUptimeBars();
 // ─── Charts ───────────────────────────────────────────────────
 const CHART_DEFAULTS={
   responsive:true,maintainAspectRatio:false,
-  plugins:{legend:{display:false},tooltip:{backgroundColor:'#111',titleColor:'#888888',bodyColor:'#F9FAFB',borderColor:'#2A2A2A',borderWidth:1}},
-  scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#555555',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#555555',font:{size:10}}}},
+  plugins:{legend:{display:false},tooltip:{backgroundColor:'#FFFFFF',titleColor:'#111111',bodyColor:'#4F4F4F',borderColor:'#D9D9D9',borderWidth:1,padding:10,titleFont:{weight:700,size:11},bodyFont:{size:10.5},boxPadding:4}},
+  scales:{x:{grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:10}}},y:{grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:10}}}},
 };
 const charts={};
 function makeChart(id,cfg){
@@ -1114,14 +1119,14 @@ function initRiskCharts(){
 
 // ─── Entity Database ─────────────────────────────────
 const ENTITIES=[
-  {id:'tesla',    name:'Tesla, Inc.',         ticker:'TSLA',    sector:'Auto / EV',          region:'USA',    risk:'MEDIUM',  rc:'rb-medium',  score:58,sc:'#FF6600'},
-  {id:'shell',    name:'Shell PLC',            ticker:'SHEL',    sector:'Oil & Gas',           region:'UK',     risk:'CRITICAL',rc:'rb-critical',score:82,sc:'#FF3333'},
-  {id:'adani',    name:'Adani Group',          ticker:'ADANIENT',sector:'Energy / Infra',      region:'India',  risk:'HIGH',    rc:'rb-high',    score:71,sc:'#FF6600'},
-  {id:'maersk',   name:'A.P. Møller-Mærsk',   ticker:'MAERSK',  sector:'Shipping',            region:'Denmark',risk:'HIGH',    rc:'rb-high',    score:68,sc:'#FF6600'},
-  {id:'reliance', name:'Reliance Industries',  ticker:'RELIANCE',sector:'Energy / Retail',     region:'India',  risk:'HIGH',    rc:'rb-high',    score:76,sc:'#FF6600'},
-  {id:'amazon',   name:'Amazon.com, Inc.',     ticker:'AMZN',    sector:'E-Commerce / Cloud',  region:'USA',    risk:'MEDIUM',  rc:'rb-medium',  score:48,sc:'#FF6600'},
-  {id:'tata',     name:'Tata Group',           ticker:'TATASTL', sector:'Conglomerate',        region:'India',  risk:'MEDIUM',  rc:'rb-medium',  score:62,sc:'#FF6600'},
-  {id:'blackrock',name:'BlackRock, Inc.',      ticker:'BLK',     sector:'Asset Management',    region:'USA',    risk:'LOW',     rc:'rb-low',     score:28,sc:'#00CC44'},
+  {id:'tesla',    name:'Tesla, Inc.',         ticker:'TSLA',    sector:'Auto / EV',          region:'USA',    risk:'MEDIUM',  rc:'rb-medium',  score:58,sc:'#B45309'},
+  {id:'shell',    name:'Shell PLC',            ticker:'SHEL',    sector:'Oil & Gas',           region:'UK',     risk:'CRITICAL',rc:'rb-critical',score:82,sc:'#DC2626'},
+  {id:'adani',    name:'Adani Group',          ticker:'ADANIENT',sector:'Energy / Infra',      region:'India',  risk:'HIGH',    rc:'rb-high',    score:71,sc:'#B45309'},
+  {id:'maersk',   name:'A.P. Møller-Mærsk',   ticker:'MAERSK',  sector:'Shipping',            region:'Denmark',risk:'HIGH',    rc:'rb-high',    score:68,sc:'#B45309'},
+  {id:'reliance', name:'Reliance Industries',  ticker:'RELIANCE',sector:'Energy / Retail',     region:'India',  risk:'HIGH',    rc:'rb-high',    score:76,sc:'#B45309'},
+  {id:'amazon',   name:'Amazon.com, Inc.',     ticker:'AMZN',    sector:'E-Commerce / Cloud',  region:'USA',    risk:'MEDIUM',  rc:'rb-medium',  score:48,sc:'#B45309'},
+  {id:'tata',     name:'Tata Group',           ticker:'TATASTL', sector:'Conglomerate',        region:'India',  risk:'MEDIUM',  rc:'rb-medium',  score:62,sc:'#B45309'},
+  {id:'blackrock',name:'BlackRock, Inc.',      ticker:'BLK',     sector:'Asset Management',    region:'USA',    risk:'LOW',     rc:'rb-low',     score:28,sc:'#1E8E3E'},
 ];
 const EDATA={
   tesla:{
@@ -1211,23 +1216,23 @@ function switchExpTab(tab,btn){
 
 function renderExpPhysical(id){
   const d=EDATA[id];if(!d)return;
-  document.getElementById('exp-physical').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">Physical Asset Exposure</span><span style="font-size:9px;color:var(--tx3)">TCFD PHYSICAL RISK</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Asset / Site</th><th>Primary Hazard</th><th>Exposure</th><th>Rating</th></tr></thead><tbody>${d.physical.map(a=>`<tr><td>${a.site}</td><td style="font-size:10px;color:var(--tx2)">${a.hazard}</td><td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;background:var(--bd1);border-radius:2px;overflow:hidden"><div style="height:100%;width:${a.pct}%;background:${a.pct>75?'#FF3333':a.pct>60?'#FF6600':'#FF6600'};border-radius:2px"></div></div><span class="t-mono" style="font-size:10px;color:${a.pct>75?'#FF3333':a.pct>60?'#FF6600':'#FF6600'};flex-shrink:0">${a.pct}</span></div></td><td><span class="rbadge ${a.rc}">${a.rc.replace('rb-','').toUpperCase()}</span></td></tr>`).join('')}</tbody></table></div></div>`;
+  document.getElementById('exp-physical').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">Physical Asset Exposure</span><span style="font-size:9px;color:var(--tx3)">TCFD PHYSICAL RISK</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Asset / Site</th><th>Primary Hazard</th><th>Exposure</th><th>Rating</th></tr></thead><tbody>${d.physical.map(a=>`<tr><td>${a.site}</td><td style="font-size:10px;color:var(--tx2)">${a.hazard}</td><td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:4px;background:var(--bd1);border-radius:2px;overflow:hidden"><div style="height:100%;width:${a.pct}%;background:${a.pct>75?'#DC2626':a.pct>60?'#B45309':'#B45309'};border-radius:2px"></div></div><span class="t-mono" style="font-size:10px;color:${a.pct>75?'#DC2626':a.pct>60?'#B45309':'#B45309'};flex-shrink:0">${a.pct}</span></div></td><td><span class="rbadge ${a.rc}">${a.rc.replace('rb-','').toUpperCase()}</span></td></tr>`).join('')}</tbody></table></div></div>`;
 }
 function renderExpCarbon(id){
   const d=EDATA[id];if(!d)return;const c=d.carbon;
-  document.getElementById('exp-carbon').innerHTML=`<div class="grid-4" style="margin-bottom:12px"><div class="kpi"><div class="kpi-label">Scope 1</div><div class="kpi-value" style="font-size:17px;color:#FF3333">${(c.s1/1000).toFixed(1)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">Scope 2</div><div class="kpi-value" style="font-size:17px;color:#FF6600">${(c.s2/1000).toFixed(1)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">Scope 3</div><div class="kpi-value" style="font-size:17px;color:#FF6600">${(c.s3/1000).toFixed(0)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">EU ETS Cost</div><div class="kpi-value" style="font-size:17px;color:var(--cyan)">${c.eu}</div><div class="kpi-sub">annual</div></div></div><div class="panel"><div class="panel-body"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px"><div><div class="kpi-label">Carbon Intensity</div><div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--tx0);margin-top:4px">${c.int}</div></div><div><div class="kpi-label">SBTi Status</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:${c.sbti==='None'?'#FF3333':c.sbti.includes('Approved')||c.sbti.includes('Committed')?'#00CC44':'#FF6600'}">${c.sbti}</div></div><div><div class="kpi-label">Net Zero Target</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:var(--tx1)">${c.tgt}</div></div></div></div></div>`;
+  document.getElementById('exp-carbon').innerHTML=`<div class="grid-4" style="margin-bottom:12px"><div class="kpi"><div class="kpi-label">Scope 1</div><div class="kpi-value" style="font-size:17px;color:#DC2626">${(c.s1/1000).toFixed(1)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">Scope 2</div><div class="kpi-value" style="font-size:17px;color:#B45309">${(c.s2/1000).toFixed(1)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">Scope 3</div><div class="kpi-value" style="font-size:17px;color:#B45309">${(c.s3/1000).toFixed(0)}K</div><div class="kpi-sub">tCO₂e/yr</div></div><div class="kpi"><div class="kpi-label">EU ETS Cost</div><div class="kpi-value" style="font-size:17px;color:var(--cyan)">${c.eu}</div><div class="kpi-sub">annual</div></div></div><div class="panel"><div class="panel-body"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px"><div><div class="kpi-label">Carbon Intensity</div><div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--tx0);margin-top:4px">${c.int}</div></div><div><div class="kpi-label">SBTi Status</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:${c.sbti==='None'?'#DC2626':c.sbti.includes('Approved')||c.sbti.includes('Committed')?'#1E8E3E':'#B45309'}">${c.sbti}</div></div><div><div class="kpi-label">Net Zero Target</div><div style="font-size:13px;font-weight:700;margin-top:4px;color:var(--tx1)">${c.tgt}</div></div></div></div></div>`;
 }
 function renderExpStress(id){
   const d=EDATA[id];if(!d)return;const s=d.stress;
-  const col=(v)=>v<-25?'#FF3333':v<-15?'#FF6600':'#FF6600';
+  const col=(v)=>v<-25?'#DC2626':v<-15?'#B45309':'#B45309';
   const rc=(v)=>v>-10?'rb-low':v>-20?'rb-medium':v>-30?'rb-high':'rb-critical';
   const rl=(v)=>v>-10?'LOW':v>-20?'MEDIUM':v>-30?'HIGH':'CRITICAL';
-  document.getElementById('exp-stress').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">NGFS Scenario Stress Test</span><span style="font-size:9px;color:var(--tx3)">3 PATHWAYS</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Scenario</th><th>Revenue Impact</th><th>EBITDA Impact</th><th>Climate VaR</th><th>Rating</th></tr></thead><tbody><tr><td><span class="sc-pill sc-nz" style="cursor:default">Net Zero 2050</span></td><td class="t-mono" style="color:#00CC44">${s.nz[0]}%</td><td class="t-mono" style="color:#00CC44">${s.nz[1]}%</td><td class="t-mono" style="color:#00CC44">${s.nz[2]}</td><td><span class="rbadge ${rc(s.nz[0])}">${rl(s.nz[0])}</span></td></tr><tr><td><span class="sc-pill sc-dt" style="cursor:default">Delayed Transition</span></td><td class="t-mono" style="color:${col(s.dt[0])}">${s.dt[0]}%</td><td class="t-mono" style="color:${col(s.dt[1])}">${s.dt[1]}%</td><td class="t-mono" style="color:#FF6600">${s.dt[2]}</td><td><span class="rbadge ${rc(s.dt[0])}">${rl(s.dt[0])}</span></td></tr><tr><td><span class="sc-pill sc-cp" style="cursor:default">Current Policy</span></td><td class="t-mono" style="color:#FF3333">${s.cp[0]}%</td><td class="t-mono" style="color:#FF3333">${s.cp[1]}%</td><td class="t-mono" style="color:#FF3333">${s.cp[2]}</td><td><span class="rbadge ${rc(s.cp[0])}">${rl(s.cp[0])}</span></td></tr></tbody></table></div></div>`;
+  document.getElementById('exp-stress').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">NGFS Scenario Stress Test</span><span style="font-size:9px;color:var(--tx3)">3 PATHWAYS</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Scenario</th><th>Revenue Impact</th><th>EBITDA Impact</th><th>Climate VaR</th><th>Rating</th></tr></thead><tbody><tr><td><span class="sc-pill sc-nz" style="cursor:default">Net Zero 2050</span></td><td class="t-mono" style="color:#1E8E3E">${s.nz[0]}%</td><td class="t-mono" style="color:#1E8E3E">${s.nz[1]}%</td><td class="t-mono" style="color:#1E8E3E">${s.nz[2]}</td><td><span class="rbadge ${rc(s.nz[0])}">${rl(s.nz[0])}</span></td></tr><tr><td><span class="sc-pill sc-dt" style="cursor:default">Delayed Transition</span></td><td class="t-mono" style="color:${col(s.dt[0])}">${s.dt[0]}%</td><td class="t-mono" style="color:${col(s.dt[1])}">${s.dt[1]}%</td><td class="t-mono" style="color:#B45309">${s.dt[2]}</td><td><span class="rbadge ${rc(s.dt[0])}">${rl(s.dt[0])}</span></td></tr><tr><td><span class="sc-pill sc-cp" style="cursor:default">Current Policy</span></td><td class="t-mono" style="color:#DC2626">${s.cp[0]}%</td><td class="t-mono" style="color:#DC2626">${s.cp[1]}%</td><td class="t-mono" style="color:#DC2626">${s.cp[2]}</td><td><span class="rbadge ${rc(s.cp[0])}">${rl(s.cp[0])}</span></td></tr></tbody></table></div></div>`;
 }
 function renderExpPolicy(id){
   const d=EDATA[id];if(!d)return;
-  const cm={CRITICAL:'#FF3333',HIGH:'#FF6600',MEDIUM:'#FF6600',LOW:'#3399FF',POSITIVE:'#00CC44',NEUTRAL:'#888888'};
-  document.getElementById('exp-policy').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">Policy Sensitivity Analysis</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Regulation</th><th>Impact</th><th>Financial Delta</th><th>Confidence</th></tr></thead><tbody>${d.policy.map(p=>`<tr><td>${p.reg}</td><td><span style="font-size:9px;font-weight:700;color:${cm[p.impact]||'#888'}">${p.impact}</span></td><td class="t-mono" style="font-size:10px">${p.delta}</td><td><span class="rbadge ${p.conf==='HIGH'?'rb-low':p.conf==='MEDIUM'?'rb-medium':'rb-high'}">${p.conf}</span></td></tr>`).join('')}</tbody></table></div></div>`;
+  const cm={CRITICAL:'#DC2626',HIGH:'#B45309',MEDIUM:'#B45309',LOW:'#0B3D91',POSITIVE:'#1E8E3E',NEUTRAL:'#6B7280'};
+  document.getElementById('exp-policy').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">Policy Sensitivity Analysis</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Regulation</th><th>Impact</th><th>Financial Delta</th><th>Confidence</th></tr></thead><tbody>${d.policy.map(p=>`<tr><td>${p.reg}</td><td><span style="font-size:9px;font-weight:700;color:${cm[p.impact]||'#6B7280'}">${p.impact}</span></td><td class="t-mono" style="font-size:10px">${p.delta}</td><td><span class="rbadge ${p.conf==='HIGH'?'rb-low':p.conf==='MEDIUM'?'rb-medium':'rb-high'}">${p.conf}</span></td></tr>`).join('')}</tbody></table></div></div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1334,7 +1339,7 @@ const CRE_ZONES=[
 let _creScenario='flood';
 
 function _creRatingFor(score){return score>80?'critical':score>60?'high':score>40?'medium':'low';}
-function _creSevColor(sev){return {critical:'#FF3333',high:'#FF6600',medium:'#C9843A',low:'#00CC44'}[sev]||'#888888';}
+function _creSevColor(sev){return {critical:'#DC2626',high:'#B45309',medium:'#92400E',low:'#1E8E3E'}[sev]||'#6B7280';}
 
 function _creAnimateValue(el,from,to,suffix,decimals){
   const dur=600,t0=performance.now();
@@ -1351,12 +1356,12 @@ function renderCREExec(s){
   const el=document.getElementById('creExec');if(!el)return;
   el.innerHTML=`
     <div class="cre-exec-cell"><div class="cre-exec-lbl">Climate Risk Score</div><div class="cre-exec-val" style="color:${_creSevColor(_creRatingFor(s.exec.crs))}">${s.exec.crs}/100</div></div>
-    <div class="cre-exec-cell"><div class="cre-exec-lbl">ESG Score</div><div class="cre-exec-val" style="color:#0099CC">${s.exec.esg}/100</div></div>
+    <div class="cre-exec-cell"><div class="cre-exec-lbl">ESG Score</div><div class="cre-exec-val" style="color:#0B3D91">${s.exec.esg}/100</div></div>
     <div class="cre-exec-cell"><div class="cre-exec-lbl">Asset Climate Score</div><div class="cre-exec-val" style="color:${_creSevColor(_creRatingFor(s.exec.acs))}">${s.exec.acs}/100</div></div>
     <div class="cre-exec-cell"><div class="cre-exec-lbl">Expected Annual Loss</div><div class="cre-exec-val">${s.exec.eal}</div></div>
-    <div class="cre-exec-cell"><div class="cre-exec-lbl">Financial Exposure</div><div class="cre-exec-val" style="color:#FF6600">${s.exec.fex}</div></div>
+    <div class="cre-exec-cell"><div class="cre-exec-lbl">Financial Exposure</div><div class="cre-exec-val" style="color:#B45309">${s.exec.fex}</div></div>
     <div class="cre-exec-cell"><div class="cre-exec-lbl">Top Risk Driver</div><div class="cre-exec-val" style="font-size:11px;font-weight: 500;line-height:1.3">${s.exec.drv}</div></div>
-    <div class="cre-exec-cell"><div class="cre-exec-lbl">Confidence Level</div><div class="cre-exec-val" style="color:#00CC44">${s.exec.conf}%</div></div>
+    <div class="cre-exec-cell"><div class="cre-exec-lbl">Confidence Level</div><div class="cre-exec-val" style="color:#1E8E3E">${s.exec.conf}%</div></div>
     <div class="cre-exec-cell"><div class="cre-exec-lbl">Recommended Action</div><span class="cre-exec-action">${s.exec.act}</span></div>`;
 }
 
@@ -1370,7 +1375,7 @@ function renderCRESignals(s){
   el.innerHTML=s.signals.map(sig=>{
     const c=_creSevColor(sig.sev);
     const trArrow=sig.tr>0?'▲':sig.tr<0?'▼':'—';
-    const trColor=sig.tr>0?'#FF3333':sig.tr<0?'#00CC44':'var(--tx3)';
+    const trColor=sig.tr>0?'#DC2626':sig.tr<0?'#1E8E3E':'var(--tx3)';
     return `<div class="cre-sig-card flash">
       <div class="cre-sig-top"><span class="rbadge rb-${sig.sev}">${sig.sev}</span></div>
       <div class="cre-sig-name">${sig.n}</div>
@@ -1395,11 +1400,11 @@ function renderCREExposure(s){
 function renderCREFinancial(s){
   const el=document.getElementById('creFinancial');if(!el)return;
   const items=[
-    {l:'Revenue at Risk',v:s.financial.rev,c:'#FF3333'},
-    {l:'Operating Cost Increase',v:s.financial.opc,c:'#FF6600'},
-    {l:'Asset Value Erosion',v:s.financial.ast,c:'#FF6600'},
-    {l:'Insurance Cost Impact',v:s.financial.ins,c:'#FF6600'},
-    {l:'Supply Chain Disruption Cost',v:s.financial.sc,c:'#FF3333'},
+    {l:'Revenue at Risk',v:s.financial.rev,c:'#DC2626'},
+    {l:'Operating Cost Increase',v:s.financial.opc,c:'#B45309'},
+    {l:'Asset Value Erosion',v:s.financial.ast,c:'#B45309'},
+    {l:'Insurance Cost Impact',v:s.financial.ins,c:'#B45309'},
+    {l:'Supply Chain Disruption Cost',v:s.financial.sc,c:'#DC2626'},
     {l:'Regulatory Exposure',v:s.financial.reg,c:_creSevColor(s.financial.reg.toLowerCase())},
   ];
   el.innerHTML=items.map(it=>`<div class="cre-fin-cell"><div class="cre-fin-lbl">${it.l}</div><div class="cre-fin-val" style="color:${it.c}">${it.v}</div></div>`).join('');
@@ -1411,7 +1416,7 @@ function renderCRECapital(s){
     <div class="cre-cap-cell"><div class="cre-cap-lbl">Climate Risk Score</div><div class="cre-cap-val" style="color:${_creSevColor(_creRatingFor(s.capital.crs))}">${s.capital.crs}</div><div class="cre-cap-sub">/ 100</div></div>
     <div class="cre-cap-cell"><div class="cre-cap-lbl">Asset Climate Risk Score</div><div class="cre-cap-val" style="color:${_creSevColor(_creRatingFor(s.capital.acs))}">${s.capital.acs}</div><div class="cre-cap-sub">/ 100</div></div>
     <div class="cre-cap-cell"><div class="cre-cap-lbl">Transition Risk Score</div><div class="cre-cap-val" style="color:${_creSevColor(_creRatingFor(s.capital.trs))}">${s.capital.trs}</div><div class="cre-cap-sub">/ 100</div></div>
-    <div class="cre-cap-cell"><div class="cre-cap-lbl">Portfolio Exposure</div><div class="cre-cap-val" style="color:#FF6600">${s.capital.pex}</div><div class="cre-cap-sub">total AUM</div></div>
+    <div class="cre-cap-cell"><div class="cre-cap-lbl">Portfolio Exposure</div><div class="cre-cap-val" style="color:#B45309">${s.capital.pex}</div><div class="cre-cap-sub">total AUM</div></div>
     <div class="cre-cap-action-row"><span class="cre-cap-action-lbl">Recommended Action</span><span class="cre-cap-action-val">${s.capital.act}</span></div>`;
 }
 
@@ -1433,7 +1438,7 @@ function initCREMap(){
   const el=document.getElementById('creGeoMap');if(!el)return;
   _creMap=new maplibregl.Map({
     container:el,
-    style:'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    style:'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
     projection:'globe',
     center:[40,20],zoom:1.6,minZoom:1,maxZoom:10,
     attributionControl:false,
@@ -1444,7 +1449,7 @@ function initCREMap(){
   _creMap.addControl(new maplibregl.NavigationControl({showCompass:true,visualizePitch:true}),'top-right');
   _creMap.scrollZoom.setWheelZoomRate(1/300);
   _creMap.on('load',()=>{
-    _creMap.setFog({color:'rgb(8,10,14)','high-color':'rgb(18,22,30)','horizon-blend':0.04,'star-intensity':0.15,'space-color':'rgb(0,0,0)'});
+    if(typeof _creMap.setFog==='function') _creMap.setFog({color:'rgb(255,255,255)','high-color':'rgb(224,228,234)','horizon-blend':0.02,'star-intensity':0,'space-color':'rgb(255,255,255)'});
     _creMap.addSource('cre-zones',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
     _creMap.addLayer({id:'cre-zones-halo',type:'circle',source:'cre-zones',
       paint:{'circle-radius':['interpolate',['linear'],['get','score'],0,8,100,16],'circle-color':['get','color'],'circle-opacity':.16}});
@@ -1556,67 +1561,67 @@ function rotateSignal(){
 
 function initSimCharts(){
   makeChart('chartRevTrajectory',{type:'line',data:{labels:YEARS,datasets:[
-    {label:'Net Zero',data:[100,96,91,88,85,84],borderColor:'#00CC44',tension:0.4,pointRadius:2,borderWidth:2},
-    {label:'Below 2°C',data:[100,94,87,81,76,72],borderColor:'#3399FF',tension:0.4,pointRadius:2,borderWidth:2},
-    {label:'Delayed',data:[100,97,90,80,70,63],borderColor:'#FF6600',tension:0.4,pointRadius:2,borderWidth:2,borderDash:[4,4]},
-    {label:'Current Policy',data:[100,96,88,76,62,52],borderColor:'#FF3333',tension:0.4,pointRadius:2,borderWidth:2,borderDash:[4,4]},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#888888',font:{size:10},boxWidth:12}}}}});
+    {label:'Net Zero',data:[100,96,91,88,85,84],borderColor:'#1E8E3E',tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Below 2°C',data:[100,94,87,81,76,72],borderColor:'#0B3D91',tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Delayed',data:[100,97,90,80,70,63],borderColor:'#B45309',tension:0.4,pointRadius:2,borderWidth:2,borderDash:[4,4]},
+    {label:'Current Policy',data:[100,96,88,76,62,52],borderColor:'#DC2626',tension:0.4,pointRadius:2,borderWidth:2,borderDash:[4,4]},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:12}}}}});
   makeChart('chartCarbonPrice',{type:'line',data:{labels:YEARS,datasets:[
-    {label:'Net Zero',data:[40,147,180,210,250,280],borderColor:'#00CC44',tension:0.4,pointRadius:2,borderWidth:2},
-    {label:'Current Policy',data:[28,38,42,48,52,55],borderColor:'#FF3333',tension:0.4,pointRadius:2,borderWidth:2},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#888888',font:{size:10},boxWidth:12}}}}});
+    {label:'Net Zero',data:[40,147,180,210,250,280],borderColor:'#1E8E3E',tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Current Policy',data:[28,38,42,48,52,55],borderColor:'#DC2626',tension:0.4,pointRadius:2,borderWidth:2},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:12}}}}});
 }
 
 function updateSimCharts(){initSimCharts();}
 
 function initInvestorCharts(){
   makeChart('chartESGRadar',{type:'radar',data:{labels:['Climate','Energy','Water','Waste','Social','Governance'],datasets:[
-    {label:'Portfolio',data:[72,68,61,75,64,80],borderColor:'#FF6600',backgroundColor:'rgba(249,115,22,0.08)',pointRadius:3,borderWidth:2},
-    {label:'Benchmark',data:[60,55,58,62,60,70],borderColor:'#3399FF',backgroundColor:'rgba(59,130,246,0.05)',pointRadius:3,borderWidth:1.5,borderDash:[4,4]},
-  ]},options:{...CHART_DEFAULTS,scales:{r:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'#555555',font:{size:9},backdropColor:'transparent'},pointLabels:{color:'#888888',font:{size:10}}}},plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#888888',font:{size:10},boxWidth:10}}}}});
+    {label:'Portfolio',data:[72,68,61,75,64,80],borderColor:'#0B3D91',backgroundColor:'rgba(11,61,145,0.10)',pointRadius:3,borderWidth:2},
+    {label:'Benchmark',data:[60,55,58,62,60,70],borderColor:'#9CA3AF',backgroundColor:'rgba(107,114,128,0.06)',pointRadius:3,borderWidth:1.5,borderDash:[4,4]},
+  ]},options:{...CHART_DEFAULTS,scales:{r:{grid:{color:'rgba(17,17,17,0.08)'},ticks:{color:'#6B7280',font:{size:9},backdropColor:'transparent'},pointLabels:{color:'#6B7280',font:{size:10}}}},plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}}}});
   makeChart('chartClimateVar',{type:'line',data:{labels:YEARS,datasets:[
-    {label:'Net Zero VaR',data:[-2,-3,-4,-5,-5.5,-6],borderColor:'#00CC44',backgroundColor:'rgba(16,185,129,0.05)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
-    {label:'Current Policy VaR',data:[-4,-8,-13,-19,-26,-32],borderColor:'#FF3333',backgroundColor:'rgba(239,68,68,0.05)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#888888',font:{size:10},boxWidth:12}}}}});
+    {label:'Net Zero VaR',data:[-2,-3,-4,-5,-5.5,-6],borderColor:'#1E8E3E',backgroundColor:'rgba(30,142,62,0.05)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Current Policy VaR',data:[-4,-8,-13,-19,-26,-32],borderColor:'#DC2626',backgroundColor:'rgba(220,38,38,0.05)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:12}}}}});
 }
 
 function initSCCharts(){
   const cats=['Purchased Goods','Capital Goods','Fuel & Energy','Transport (Up)','Waste','Business Travel','Employee Commute','Transport (Down)','Processing','Use of Product'];
   const vals=[82400,24100,18600,31200,8400,12800,9600,28400,14200,46800];
-  const colors=vals.map(v=>v>40000?'#FF3333':v>20000?'#FF6600':'#00CC44');
-  makeChart('chartScope3',{type:'bar',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors}]},options:{...CHART_DEFAULTS,indexAxis:'y',plugins:{...CHART_DEFAULTS.plugins},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#555555',font:{size:9}}},y:{grid:{color:'rgba(255,255,255,0.02)'},ticks:{color:'#888888',font:{size:9}}}}}});
+  const colors=vals.map(v=>v>40000?'#DC2626':v>20000?'#B45309':'#1E8E3E');
+  makeChart('chartScope3',{type:'bar',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors}]},options:{...CHART_DEFAULTS,indexAxis:'y',plugins:{...CHART_DEFAULTS.plugins},scales:{x:{grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:9}}},y:{grid:{color:'rgba(17,17,17,0.04)'},ticks:{color:'#6B7280',font:{size:9}}}}}});
 }
 
 function initNarrativeCharts(){
   const days=Array.from({length:14},(_,i)=>`May ${i+1}`);
   makeChart('chartSentiment',{type:'line',data:{labels:days,datasets:[
-    {label:'Positive',data:[42,38,45,40,36,42,48,44,46,50,47,52,48,54],borderColor:'#00CC44',backgroundColor:'rgba(16,185,129,0.06)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
-    {label:'Negative',data:[28,32,26,30,34,28,24,26,22,20,23,18,22,18],borderColor:'#FF3333',backgroundColor:'rgba(239,68,68,0.04)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#888888',font:{size:10},boxWidth:10}}}}});
+    {label:'Positive',data:[42,38,45,40,36,42,48,44,46,50,47,52,48,54],borderColor:'#1E8E3E',backgroundColor:'rgba(30,142,62,0.06)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'Negative',data:[28,32,26,30,34,28,24,26,22,20,23,18,22,18],borderColor:'#DC2626',backgroundColor:'rgba(220,38,38,0.04)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}}}});
   const topics=['Carbon Pricing','Net Zero','ESG Disclosure','Physical Risk','Green Finance','Biodiversity'];
-  makeChart('chartTopicPulse',{type:'bar',data:{labels:topics,datasets:[{data:[284,218,196,162,138,94],backgroundColor:'#0099CC'}]},options:{...CHART_DEFAULTS}});
+  makeChart('chartTopicPulse',{type:'bar',data:{labels:topics,datasets:[{data:[284,218,196,162,138,94],backgroundColor:'#0B3D91'}]},options:{...CHART_DEFAULTS}});
 }
 
 function initDiscQuality(){
   const sections=['Governance','Strategy','Risk Mgmt','Metrics','Targets'];
   makeChart('chartTcfdQuality',{type:'bar',data:{labels:sections,datasets:[
-    {label:'Your Score',data:[82,74,68,85,71],backgroundColor:'#FF6600'},
-    {label:'Peer Average',data:[65,60,58,70,62],backgroundColor:'rgba(59,130,246,0.5)'},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#888888',font:{size:10},boxWidth:10}}}}});
+    {label:'Your Score',data:[82,74,68,85,71],backgroundColor:'#0B3D91',borderRadius:3},
+    {label:'Peer Average',data:[65,60,58,70,62],backgroundColor:'#D1D5DB',borderRadius:3},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}}}});
 }
 
 function initFinanceCharts(){
   const yrs=['2018','2019','2020','2021','2022','2023','2024'];
   makeChart('chartGreenBond',{type:'bar',data:{labels:yrs,datasets:[
-    {label:'Green',data:[167,258,270,522,487,576,620],backgroundColor:'#00CC44'},
-    {label:'Social',data:[8,22,148,214,186,178,155],backgroundColor:'#3399FF'},
-    {label:'Sustainability',data:[4,18,68,152,184,206,230],backgroundColor:'#FF6600'},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#888888',font:{size:10},boxWidth:10}}},scales:{x:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#555555',font:{size:10}}},y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#555555',font:{size:10}}}}}});
-  makeChart('chartGBSector',{type:'doughnut',data:{labels:['Energy','Buildings','Transport','Water','Waste','Other'],datasets:[{data:[38,24,18,12,5,3],backgroundColor:['#00CC44','#3399FF','#FF6600','#0099CC','#FF6600','#555555'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#888888',font:{size:10},boxWidth:10}}}}});
+    {label:'Green',data:[167,258,270,522,487,576,620],backgroundColor:'#1E8E3E'},
+    {label:'Social',data:[8,22,148,214,186,178,155],backgroundColor:'#0B3D91'},
+    {label:'Sustainability',data:[4,18,68,152,184,206,230],backgroundColor:'#B45309'},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}},scales:{x:{stacked:true,grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:10}}},y:{stacked:true,grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:10}}}}}});
+  makeChart('chartGBSector',{type:'bar',data:{labels:['Energy','Buildings','Transport','Water','Waste','Other'],datasets:[{data:[38,24,18,12,5,3],backgroundColor:['#0B3D91','#3D7BE0','#7FA8E8','#173F73','#9CA3AF','#D1D5DB'],borderRadius:4,maxBarThickness:22}]},options:{...CHART_DEFAULTS,indexAxis:'y',plugins:{...CHART_DEFAULTS.plugins},scales:{x:{grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#4F4F4F',font:{size:10}}}}}});
   makeChart('chartCarbonMkt',{type:'line',data:{labels:['2020','2021','2022','2023','2024','2025E','2026E','2027E','2028E','2029E','2030E'],datasets:[
-    {label:'EU ETS',data:[25,54,80,88,65,98,104,112,118,126,134],borderColor:'#0099CC',tension:0.4,pointRadius:2,borderWidth:2},
-    {label:'UK ETS',data:[null,48,70,55,35,43,48,54,60,66,72],borderColor:'#FF6600',tension:0.4,pointRadius:2,borderWidth:2},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#888888',font:{size:10},boxWidth:10}}}}});
+    {label:'EU ETS',data:[25,54,80,88,65,98,104,112,118,126,134],borderColor:'#0B3D91',tension:0.4,pointRadius:2,borderWidth:2},
+    {label:'UK ETS',data:[null,48,70,55,35,43,48,54,60,66,72],borderColor:'#B45309',tension:0.4,pointRadius:2,borderWidth:2},
+  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}}}});
 }
 
 // ─── Init first module ────────────────────────────────────────
