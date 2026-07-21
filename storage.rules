@@ -1,0 +1,52 @@
+// ── Climactix Global · Firebase Storage Security Rules ──────────────────────
+//
+// Risk OS evidence files. Metadata lives in Firestore (ros_evidence_v1);
+// this only gates the file bytes themselves. Membership is checked by
+// reading the same ros_members_v1 collection Firestore rules use — Storage
+// rules can read Firestore via the `firestore` cross-service functions.
+//
+// Path convention: evidence/{companyId}/{assessmentId}/{fileId}_{filename}
+// Client uploads directly to this path (no backend round-trip for bytes);
+// the Firestore ros_evidence_v1 document it corresponds to records the
+// same path as `storagePath`.
+//
+// Deploy: `firebase deploy --only storage`.
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function signedIn() { return request.auth != null; }
+
+    function isCompanyMember(companyId) {
+      return signedIn() &&
+        firestore.exists(/databases/(default)/documents/ros_members_v1/$(companyId + '_' + request.auth.uid));
+    }
+
+    // Accepted evidence formats per the Risk OS brief: documents, sheets,
+    // slides, images, archives, and common GIS formats.
+    function acceptedType() {
+      return request.resource.contentType.matches('application/pdf')
+          || request.resource.contentType.matches('application/vnd\\..*')
+          || request.resource.contentType.matches('application/msword')
+          || request.resource.contentType.matches('application/zip')
+          || request.resource.contentType.matches('image/.*')
+          || request.resource.contentType.matches('text/.*')
+          || request.resource.contentType.matches('application/json'); // geojson
+    }
+
+    match /evidence/{companyId}/{assessmentId}/{fileName} {
+      allow read: if isCompanyMember(companyId);
+      allow write: if isCompanyMember(companyId)
+                    && request.resource.size < 20 * 1024 * 1024
+                    && acceptedType();
+      allow delete: if false; // evidence is superseded (new version), never deleted
+    }
+
+    // Deny everything else by default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -25,6 +25,41 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
     }
 
+    // ── Risk OS — company-membership helpers ────────────────────────────
+    // Membership doc id is `${companyId}_${uid}` in ros_members_v1 — the
+    // Firestore equivalent of the Postgres RLS company-isolation policy
+    // this replaced. See RISK_OS_COLLABORATION_ARCHITECTURE.md.
+    function rosMemberId(companyId) { return companyId + '_' + request.auth.uid; }
+    function isCompanyMember(companyId) {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/ros_members_v1/$(rosMemberId(companyId)));
+    }
+    function memberRole(companyId) {
+      return get(/databases/$(database)/documents/ros_members_v1/$(rosMemberId(companyId))).data.role;
+    }
+    function hasAnyRole(companyId, roles) {
+      return isCompanyMember(companyId) && memberRole(companyId) in roles;
+    }
+    function rosWriteRoles()    { return ['administrator', 'assessment_owner', 'contributor']; }
+    function rosReviewRoles()   { return ['reviewer', 'approver', 'administrator']; }
+    function rosAdminRoles()    { return ['administrator', 'assessment_owner']; }
+
+    function companyOfAssessment(assessmentId) {
+      return get(/databases/$(database)/documents/ros_assessments_v1/$(assessmentId)).data.companyId;
+    }
+    // Assessment status state machine — mirrors the FastAPI design this
+    // replaced, enforced declaratively since there's no server code here.
+    function rosTransitionAllowed(from, to) {
+      return (from == 'draft' && to == 'in_progress')
+          || (from == 'in_progress' && to == 'submitted')
+          || (from == 'submitted' && to == 'under_review')
+          || (from == 'under_review' && (to == 'evidence_requested' || to == 'validated' || to == 'rejected'))
+          || (from == 'evidence_requested' && to == 'under_review')
+          || (from == 'validated' && (to == 'approved' || to == 'rejected'))
+          || (from == 'approved' && to == 'archived')
+          || (from == 'rejected' && (to == 'in_progress' || to == 'archived'));
+    }
+
     // ── Posts — one document per post ──────────────────────────────────
     match /cx_posts_v1/{postId} {
       allow read: if signedIn();
@@ -143,6 +178,192 @@ service cloud.firestore {
       );
       allow delete: if false;
     }
+
+    // ══════════════════════════════════════════════════════════════════
+    // RISK OS — Climate Intelligence Due Diligence Workspace
+    // Full design: RISK_OS_COLLABORATION_ARCHITECTURE.md
+    // ══════════════════════════════════════════════════════════════════
+
+    // ── Companies — one document per assessed entity ────────────────────
+    match /ros_companies_v1/{companyId} {
+      allow read: if isCompanyMember(companyId);
+      allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid;
+      allow update: if hasAnyRole(companyId, rosAdminRoles());
+      allow delete: if false;
+    }
+
+    // ── Company membership — doc id `${companyId}_${uid}` ───────────────
+    // System `role` (access level) and `department` (who to @mention/
+    // assign to) are separate fields — see architecture doc §3.
+    match /ros_members_v1/{memberId} {
+      allow read: if isCompanyMember(resource.data.companyId);
+      allow create: if signedIn() && (
+        // Founding administrator, self-onboarding immediately after creating
+        // the company — verified against the company doc's own createdBy,
+        // not just a client-asserted field on this membership doc, so a
+        // stranger can't self-appoint administrator on someone ELSE's company.
+        (
+          request.resource.data.userId == request.auth.uid &&
+          request.resource.data.role == 'administrator' &&
+          get(/databases/$(database)/documents/ros_companies_v1/$(request.resource.data.companyId)).data.createdBy == request.auth.uid
+        ) ||
+        // An existing admin/owner adding someone else.
+        hasAnyRole(request.resource.data.companyId, rosAdminRoles())
+      );
+      allow update: if hasAnyRole(resource.data.companyId, rosAdminRoles());
+      allow delete: if hasAnyRole(resource.data.companyId, ['administrator']);
+    }
+
+    // ── Assessments ───────────────────────────────────────────────────────
+    match /ros_assessments_v1/{assessmentId} {
+      allow read: if isCompanyMember(resource.data.companyId);
+      allow create: if hasAnyRole(request.resource.data.companyId, rosWriteRoles())
+                     && request.resource.data.status == 'draft';
+      allow update: if isCompanyMember(resource.data.companyId) && (
+        (
+          // Content edit, no status change.
+          request.resource.data.status == resource.data.status &&
+          hasAnyRole(resource.data.companyId, rosWriteRoles())
+        ) || (
+          // Status transition — must follow the state machine, and the
+          // heavier review-tier states require reviewer/approver/admin.
+          request.resource.data.status != resource.data.status &&
+          rosTransitionAllowed(resource.data.status, request.resource.data.status) &&
+          (
+            (request.resource.data.status in ['in_progress', 'submitted']
+              && hasAnyRole(resource.data.companyId, rosWriteRoles())) ||
+            (request.resource.data.status in
+              ['under_review', 'evidence_requested', 'validated', 'approved', 'rejected', 'archived']
+              && hasAnyRole(resource.data.companyId, rosReviewRoles()))
+          )
+        )
+      );
+      allow delete: if false;
+    }
+
+    // ── Answers — doc id `${assessmentId}_${questionId}` ─────────────────
+    match /ros_answers_v1/{answerId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create, update: if
+        hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
+      allow delete: if false;
+    }
+
+    // ── Answer version history — append-only ─────────────────────────────
+    match /ros_answer_versions_v1/{versionId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
+      allow update, delete: if false;
+    }
+
+    // ── C-LAYER scores — doc id `${assessmentId}_${clayerId}` ────────────
+    match /ros_clayer_scores_v1/{scoreId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow write: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
+    }
+
+    // ── Evidence — file bytes live in Storage; this is metadata ──────────
+    match /ros_evidence_v1/{evidenceId} {
+      allow read: if isCompanyMember(resource.data.companyId);
+      allow create: if hasAnyRole(request.resource.data.companyId, rosWriteRoles());
+      // Only the review/verification fields may change after upload — the
+      // uploaded file record itself (filename/storagePath/hash) is immutable.
+      allow update: if hasAnyRole(resource.data.companyId, rosReviewRoles())
+                     && onlyChangedFields(['reviewStatus', 'verifiedBy', 'verifiedAt', 'tags', 'description']);
+      allow delete: if false;
+    }
+
+    // ── AI evidence reviews — written ONLY by the Cloud Function ─────────
+    // (Admin SDK bypasses rules; clients can read results but never write
+    // or spoof them — see functions/main.py: request_evidence_ai_review.)
+    match /ros_ai_reviews_v1/{reviewId} {
+      allow read: if isCompanyMember(resource.data.companyId);
+      allow write: if false;
+    }
+
+    // ── Comments — threaded, per-question ─────────────────────────────────
+    match /ros_comments_v1/{commentId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create: if isCompanyMember(companyOfAssessment(request.resource.data.assessmentId))
+                     && request.resource.data.authorId == request.auth.uid;
+      allow update: if isCompanyMember(companyOfAssessment(resource.data.assessmentId)) && (
+        resource.data.authorId == request.auth.uid ||
+        onlyChangedFields(['resolved', 'resolvedBy', 'resolvedAt', 'pinned', 'updatedAt'])
+      );
+      allow delete: if false; // soft-delete via deletedAt, not a real delete
+    }
+
+    // ── Tasks ───────────────────────────────────────────────────────────
+    match /ros_tasks_v1/{taskId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
+                                   rosWriteRoles().concat(rosReviewRoles()));
+      // The assignee may update their own task's status/progress; write
+      // roles and reviewers may reassign/reprioritize.
+      allow update: if isCompanyMember(companyOfAssessment(resource.data.assessmentId)) && (
+        resource.data.assignedToUser == request.auth.uid ||
+        hasAnyRole(companyOfAssessment(resource.data.assessmentId), rosWriteRoles().concat(rosReviewRoles()))
+      );
+      allow delete: if false;
+    }
+
+    // ── Risk notes ──────────────────────────────────────────────────────
+    match /ros_risk_notes_v1/{noteId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create, update: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
+                                           rosWriteRoles().concat(rosReviewRoles()));
+      allow delete: if false;
+    }
+
+    // ── Facilities — geospatial anchors ──────────────────────────────────
+    match /ros_facilities_v1/{facilityId} {
+      allow read: if isCompanyMember(resource.data.companyId);
+      allow create, update: if hasAnyRole(request.resource.data.companyId, rosWriteRoles());
+      allow delete: if false;
+    }
+
+    // ── Financial materiality ─────────────────────────────────────────────
+    match /ros_financial_materiality_v1/{recordId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create, update: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
+      allow delete: if false;
+    }
+
+    // ── Framework mappings — doc id `${assessmentId}_${frameworkCode}` ───
+    match /ros_framework_mappings_v1/{mappingId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow write: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
+    }
+
+    // ── Review actions — return/request-evidence/approve/reject/close ────
+    match /ros_review_actions_v1/{actionId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosReviewRoles())
+                     && request.resource.data.reviewerId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ── Organization notebook — persistent, lifecycle-spanning notes ─────
+    match /ros_notebook_v1/{entryId} {
+      allow read: if isCompanyMember(resource.data.companyId);
+      allow create: if isCompanyMember(request.resource.data.companyId)
+                     && request.resource.data.authorId == request.auth.uid;
+      allow update: if resource.data.authorId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    // ── Audit log — append-only, immutable once written ───────────────────
+    match /ros_audit_log_v1/{logId} {
+      allow read: if hasAnyRole(companyOfAssessment(resource.data.assessmentId),
+                                 rosReviewRoles().concat(['assessment_owner', 'auditor']));
+      allow create: if isCompanyMember(companyOfAssessment(request.resource.data.assessmentId))
+                     && request.resource.data.actorUserId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Risk OS notifications reuse the existing cx_notifs_v1 collection and
+    // rules above (per-user, write-on-behalf-of pattern) — just new `type`
+    // values (assignment/mention/deadline/...), no schema or rule change.
 
     // Deny everything else by default.
     match /{document=**} {
