@@ -7,6 +7,7 @@
   <title>Climactix Global — Climate Risk Intelligence for Capital and Risk Decisions</title>
   <meta name="description" content="Climactix Global: Climate risk intelligence infrastructure for capital allocation and enterprise risk management. Physical risk, transition exposure, disclosure intelligence, and scenario-based financial analysis." />
   <link rel="stylesheet" href="style.css?v=6" />
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png">
   <script>
     (function(){
@@ -218,6 +219,75 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .glo-label { font-size: 9px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
 
+  /* ── EARTH OBSERVATION CINEMATIC BANNER ── */
+  .cx-eo-banner {
+    position: relative;
+    height: 420px;
+    overflow: hidden;
+    background: #050810;
+    border-bottom: 1px solid var(--border);
+  }
+  .cx-eo-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+  .cx-eo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(2,6,14,0.50) 0%, rgba(2,6,14,0.72) 55%, rgba(2,6,14,0.95) 100%);
+    z-index: 1;
+  }
+  .cx-eo-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 720px;
+  }
+  .cx-eo-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    margin-bottom: 16px;
+  }
+  .cx-eo-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: gsbPulse 2.4s ease-in-out infinite;
+  }
+  .cx-eo-heading {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin-bottom: 14px;
+  }
+  .cx-eo-sub {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.72);
+    max-width: 560px;
+  }
+  @media (max-width: 680px) {
+    .cx-eo-banner { height: 340px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cx-eo-video { display: none; }
+  }
+
   /* ── 2. TEMPERATURE HEATMAP SECTION ── */
   .cx-heatmap-section {
     background: var(--bg);
@@ -231,12 +301,148 @@
     border: 1px solid var(--border);
     background: var(--surface);
     margin-top: 40px;
-    
+    isolation: isolate;
   }
-  #heatmapCanvas {
-    display: block;
+  #hmMap {
     width: 100%;
-    height: auto;
+    aspect-ratio: 1000 / 460;
+    position: relative;
+    z-index: 1;
+    background: #020a14;
+    cursor: grab;
+  }
+  #hmMap:active { cursor: grabbing; }
+  #hmMap .maplibregl-ctrl-attrib { background: rgba(2,10,20,0.75) !important; color: rgba(255,255,255,0.35) !important; font-size: 8px !important; }
+  #hmMap .maplibregl-ctrl-attrib a { color: rgba(255,255,255,0.45) !important; }
+  #hmMap .maplibregl-ctrl-bottom-right { z-index: 4; }
+  #hmMap .maplibregl-canvas { outline: none; }
+
+  /* ── Drill-down breadcrumb — persistent "you are here" strip ── */
+  #hmCrumb {
+    position: absolute;
+    top: 12px; left: 12px;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    max-width: calc(100% - 24px);
+    pointer-events: none;
+  }
+  .hmc-crumb {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    background: rgba(10,15,20,0.85);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: var(--t);
+    white-space: nowrap;
+  }
+  .hmc-crumb:hover { color: var(--text); border-color: var(--border-strong); }
+  .hmc-crumb.current { color: var(--blue-bright); border-color: rgba(91,163,245,0.5); cursor: default; }
+  .hmc-sep { color: var(--text-muted); font-size: 9px; pointer-events: none; }
+
+  /* ── Drill intelligence side panel — reuses .hm-tt-* visual language ── */
+  #hmDrillPanel {
+    position: absolute;
+    top: 0; right: 0;
+    height: 100%;
+    width: 0;
+    overflow-y: auto;
+    background: rgba(8,12,18,0.97);
+    border-left: 1px solid var(--border);
+    z-index: 8;
+    transition: width 0.32s cubic-bezier(0.4,0,0.2,1);
+  }
+  #hmDrillPanel.on { width: min(300px, 82%); }
+  #hmDrillPanel .hdp-inner { padding: 16px; opacity: 0; transition: opacity 0.2s ease 0.12s; }
+  #hmDrillPanel.on .hdp-inner { opacity: 1; }
+  .hdp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .hdp-eyebrow { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 5px; }
+  .hdp-name { font-family: 'Roboto', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .hdp-loc { font-family: var(--mono); font-size: 9.5px; color: var(--text-muted); margin-top: 4px; }
+  .hdp-close { background: transparent; border: 1px solid var(--border-strong); color: var(--text-2); width: 22px; height: 22px; border-radius: 2px; cursor: pointer; flex-shrink: 0; font-size: 12px; line-height: 1; transition: var(--t); }
+  .hdp-close:hover { color: var(--text); border-color: var(--red); }
+  .hdp-sec { margin-bottom: 16px; }
+  .hdp-sec-title { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .hdp-narrative { font-family: 'Roboto', sans-serif; font-size: 11.5px; color: var(--text-2); line-height: 1.6; }
+  .hdp-placeholder { font-family: 'Roboto', sans-serif; font-size: 10.5px; color: var(--text-muted); font-style: italic; line-height: 1.5; }
+  .hdp-org-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: var(--t); }
+  .hdp-org-row:last-child { border-bottom: none; }
+  .hdp-org-row:hover { background: var(--surface-2); padding-left: 4px; padding-right: 4px; }
+  .hdp-org-name { font-family: 'Roboto', sans-serif; font-size: 11px; font-weight: 600; color: var(--text); }
+  .hdp-org-meta { font-family: var(--mono); font-size: 8.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .hdp-org-score { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+  .hdp-city-chip { display: inline-flex; align-items: center; padding: 4px 9px; margin: 0 6px 6px 0; background: var(--surface-2); border: 1px solid var(--border-strong); color: var(--text-2); font-family: var(--mono); font-size: 9px; letter-spacing: 0.03em; cursor: pointer; transition: var(--t); }
+  .hdp-city-chip:hover { border-color: var(--blue-bright); color: var(--blue-bright); }
+  .hdp-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 5px; }
+  .hdp-row-lbl { font-family: var(--mono); font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .hdp-row-val { font-family: var(--mono); font-size: 10.5px; font-weight: 600; color: var(--text); text-align: right; }
+  .hdp-btn { width: 100%; margin-top: 6px; padding: 10px; background: transparent; border: 1px solid var(--amber); color: var(--amber); font-family: 'Roboto', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: var(--t); }
+  .hdp-btn:hover { background: var(--amber); color: #000; }
+
+  /* ── Cinematic handoff overlay ── */
+  #hmTransitionOverlay {
+    position: absolute; inset: 0; z-index: 50;
+    background: #000000;
+    opacity: 0;
+    pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.55s ease;
+  }
+  #hmTransitionOverlay.on { opacity: 1; pointer-events: all; }
+  .hmto-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .hmto-ring { width: 38px; height: 38px; border: 2px solid rgba(232,119,34,0.2); border-top-color: var(--amber); border-radius: 50%; animation: hmtoSpin 0.9s linear infinite; }
+  @keyframes hmtoSpin { to { transform: rotate(360deg); } }
+  .hmto-label { font-family: var(--mono); font-size: 9.5px; font-weight: 600; color: var(--text-2); letter-spacing: 0.09em; text-transform: uppercase; text-align: center; padding: 0 20px; }
+  @media (prefers-reduced-motion: reduce) {
+    .hmto-ring { animation: none; }
+  }
+  /* Ambient breathing atmosphere — slow, GPU-composited opacity pulse */
+  .cx-heatmap-canvas-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(ellipse 70% 60% at 50% 45%, rgba(70,150,230,0.10) 0%, rgba(70,150,230,0.04) 45%, transparent 75%);
+    animation: hmBreathe 8s ease-in-out infinite;
+  }
+  @keyframes hmBreathe {
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 1; }
+  }
+  /* Satellite scan sweep — periodic, calm, GPU transform-only */
+  .cx-heatmap-canvas-wrap::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -30%;
+    width: 30%; height: 100%;
+    z-index: 3;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background: linear-gradient(90deg, transparent 0%, rgba(130,190,255,0.10) 45%, rgba(190,225,255,0.16) 50%, rgba(130,190,255,0.10) 55%, transparent 100%);
+    transform: translateX(0%);
+    animation: hmScanSweep 13s cubic-bezier(0.45,0,0.4,1) infinite;
+  }
+  @keyframes hmScanSweep {
+    0%   { transform: translateX(0%);   opacity: 0; }
+    6%   { opacity: 1; }
+    46%  { opacity: 1; }
+    54%  { transform: translateX(433%); opacity: 0; }
+    100% { transform: translateX(433%); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cx-heatmap-canvas-wrap::before,
+    .cx-heatmap-canvas-wrap::after { animation: none; opacity: 0; }
   }
   .heatmap-tooltip {
     position: absolute;
@@ -248,16 +454,30 @@
     pointer-events: none;
     display: none;
     z-index: 20;
-    min-width: 200px;
+    min-width: 252px;
+    max-width: 272px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     transform: translate(14px, -50%);
+  }
+  .hm-tt-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+  }
+  .hm-tt-live {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+    animation: gsbPulse 2.4s ease-in-out infinite;
   }
   .hm-t-region {
     font-family: 'Roboto', sans-serif;
     font-size: 10px;
     font-weight: 700;
     color: var(--green);
-    margin-bottom: 5px;
+    margin-bottom: 0;
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
@@ -266,8 +486,49 @@
     font-size: 22px;
     font-weight: 700;
     line-height: 1;
-    margin-bottom: 6px;
+    margin-bottom: 0;
     letter-spacing: -0.02em;
+  }
+  .hm-tt-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 5px;
+    margin: 10px 0;
+    padding: 9px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .hm-tt-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hm-tt-label {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .hm-tt-value {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--cyan);
+    text-align: right;
+  }
+  .hm-tt-value.hm-tt-status { color: var(--green); }
+  .hm-tt-caption {
+    font-family: 'Roboto', sans-serif;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
   }
   .hm-t-desc {
     font-family: 'Roboto', sans-serif;
@@ -290,6 +551,31 @@
   .hm-t-severity.critical { background: rgba(255,51,51,0.1); color: var(--red); }
   .hm-t-severity.high     { background: rgba(255,102,0,0.1); color: var(--amber); }
   .hm-t-severity.moderate { background: var(--surface-3); color: var(--text-2); }
+  .hm-tt-layers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .hm-tt-chip {
+    font-family: var(--mono);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid var(--border-strong);
+    color: var(--text-muted);
+    background: var(--surface-3);
+    transition: var(--t);
+  }
+  .hm-tt-chip.active {
+    color: var(--blue-bright);
+    border-color: rgba(91,163,245,0.5);
+    background: rgba(27,110,235,0.18);
+  }
 
   .cx-hm-stats {
     display: grid;
@@ -348,10 +634,32 @@
     white-space: nowrap;
   }
   .hm-legend-bar {
+    position: relative;
     flex: 1;
     height: 4px;
     border-radius: 2px;
+    overflow: hidden;
     background: linear-gradient(90deg, #60a5fa 0%, #fbbf24 35%, #f97316 65%, #f87171 85%, #dc2626 100%);
+    transition: opacity 0.22s ease;
+  }
+  .hm-legend-bar::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -40%;
+    width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+    animation: hmLegendShimmer 5.5s ease-in-out infinite;
+  }
+  @keyframes hmLegendShimmer {
+    0%   { left: -40%; opacity: 0; }
+    12%  { opacity: 0.5; }
+    50%  { left: 100%;  opacity: 0.5; }
+    62%  { opacity: 0; }
+    100% { left: 100%;  opacity: 0; }
+  }
+  .hm-legend-bar.switching { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .hm-legend-bar::after { animation: none; opacity: 0; }
   }
   .hm-legend-ticks {
     display: flex;
@@ -382,9 +690,27 @@
     white-space: nowrap;
   }
   .hm-layer-btns {
+    position: relative;
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
+  }
+  .hm-layer-indicator {
+    position: absolute;
+    left: 0; bottom: -7px;
+    height: 2px;
+    width: 0;
+    border-radius: 2px;
+    background: var(--blue-bright);
+    box-shadow: 0 0 6px rgba(91,163,245,0.55);
+    pointer-events: none;
+    transition: left 0.32s cubic-bezier(0.4,0,0.2,1), width 0.32s cubic-bezier(0.4,0,0.2,1);
+  }
+  @media (max-width: 680px) {
+    .hm-layer-indicator { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hm-layer-indicator { transition: none; }
   }
   .hm-layer-btn {
     display: inline-flex;
@@ -430,6 +756,14 @@
     border-radius: 50%;
     background: var(--amber);
     flex-shrink: 0;
+    animation: hmAmberPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes hmAmberPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(232,119,34,0.4); }
+    55%      { box-shadow: 0 0 0 4px rgba(232,119,34,0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hm-layer-dot { animation: none; }
   }
   /* dynamic legend bar */
   .hm-legend-bar.co2  { background: linear-gradient(90deg,#ffffcc 0%,#fe9929 50%,#993404 100%); }
@@ -1657,11 +1991,12 @@
 
       <!-- Hero text — lower-left, Bloomberg × NASA institutional positioning -->
       <div class="cx-hero-content">
-        <h1 class="cx-hero-title">Risk OS™ — The Climate Intelligence Operating System</h1>
-        <p class="cx-hero-sub">
-          Measure. Monitor. Predict. Manage climate risk from one operating system. Risk OS™ continuously evaluates organizations across physical risk, transition exposure, and disclosure quality — generating the Climate Intelligence Score™, delivered through the Climate Intelligence Terminal™, and connected to the Climactix Community™. Risk OS™ is a members-only platform for banks, insurers, investors, governments, and enterprise subscribers.
+        <div class="cx-hero-badge"><span class="badge-dot"></span>Climactix Global · Institutional Climate Intelligence Platform</div>
+        <h1 class="cx-hero-title">Climate Intelligence Score™</h1>
+        <p class="cx-hero-sub" style="font-size:16px;font-weight:600;color:rgba(255,255,255,0.88);margin-bottom:0;">
+          The Intelligence Layer for Climate-Aware Decisions.
         </p>
-        <div class="cx-hero-tags" aria-hidden="true">
+        <div class="cx-hero-tags" aria-hidden="true" style="margin-top:20px;">
           <span>Risk OS™</span><span>Climate Intelligence Score™</span><span>Climate Intelligence Terminal™</span><span>Climactix Community™</span><span>Members-Only Platform</span>
         </div>
       </div>
@@ -1730,6 +2065,216 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════
+         SECTION: WHY CLIMATE INTELLIGENCE SCORE™?
+         The most important explainer on the homepage —
+         establishes what the score is and is not.
+    ═══════════════════════════════════════════════ -->
+    <section id="why-score" class="page-wrapper section-block">
+      <div class="cx-eyebrow">The Flagship Intelligence Output</div>
+      <h2 class="section-heading">Why Climate Intelligence Score™?</h2>
+      <p class="body-text" style="max-width:680px;">
+        Climate Intelligence Score™ is not another ESG score. It is not a sustainability rating. It is the institutional measure of climate resilience, risk exposure, and decision readiness — produced by Risk OS™, the Climate Intelligence Operating System, and built to convert climate information into decision-grade intelligence.
+      </p>
+      <p class="body-text" style="max-width:680px;">
+        Where ESG scores measure disclosure and sustainability performance, Climate Intelligence Score™ measures what capital allocators, underwriters, credit committees, and boards need to price into a decision — exposure, materiality, and readiness. Every score is evidence-backed and traceable to its underlying data, not a black-box composite.
+      </p>
+      <p class="body-text" style="max-width:680px;margin-bottom:32px;">
+        Each Climate Intelligence Score™ is built by evaluating an organization across twelve institutional dimensions:
+      </p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;max-width:820px;">
+        <span class="fw-chip">Climate Risk Exposure</span>
+        <span class="fw-chip">Financial Materiality</span>
+        <span class="fw-chip">Physical Risk</span>
+        <span class="fw-chip">Transition Risk</span>
+        <span class="fw-chip">Carbon Exposure</span>
+        <span class="fw-chip">Supply Chain Vulnerability</span>
+        <span class="fw-chip">Regulatory Readiness</span>
+        <span class="fw-chip">Governance Maturity</span>
+        <span class="fw-chip">Climate Resilience</span>
+        <span class="fw-chip">Nature &amp; Biodiversity Risk</span>
+        <span class="fw-chip">Business Continuity</span>
+        <span class="fw-chip">Long-Term Strategic Readiness</span>
+      </div>
+      <p class="body-text" style="max-width:680px;margin-top:32px;margin-bottom:0;">
+        The result is a single, defensible measure that supports better financial, operational, and strategic decisions — not a sustainability scorecard.
+      </p>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: WHAT YOU RECEIVE — the assessment
+         produces a complete intelligence package, not
+         a single number.
+    ═══════════════════════════════════════════════ -->
+    <section id="what-you-receive" class="page-wrapper section-block">
+      <div class="cx-eyebrow">Assessment Deliverables</div>
+      <h2 class="section-heading">What You Receive</h2>
+      <p class="body-text" style="max-width:640px;margin-bottom:36px;">
+        Completing a Risk OS™ assessment does not produce a single score. It produces a complete Climate Intelligence package — enterprise deliverables built for boards, investors, regulators, and risk committees.
+      </p>
+      <ul class="cx-mission-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px 28px;max-width:1040px;">
+        <li><span class="bullet-icon">→</span>Climate Intelligence Score™</li>
+        <li><span class="bullet-icon">→</span>Executive Climate Risk Report</li>
+        <li><span class="bullet-icon">→</span>Green Rating</li>
+        <li><span class="bullet-icon">→</span>Physical Risk Assessment</li>
+        <li><span class="bullet-icon">→</span>Transition Risk Assessment</li>
+        <li><span class="bullet-icon">→</span>Financial Materiality Assessment</li>
+        <li><span class="bullet-icon">→</span>Carbon Exposure Summary</li>
+        <li><span class="bullet-icon">→</span>Supply Chain Risk Assessment</li>
+        <li><span class="bullet-icon">→</span>Nature Risk Assessment</li>
+        <li><span class="bullet-icon">→</span>Regulatory Alignment Summary</li>
+        <li><span class="bullet-icon">→</span>Framework Mapping</li>
+        <li><span class="bullet-icon">→</span>Benchmark Report</li>
+        <li><span class="bullet-icon">→</span>Climate Scenario Analysis</li>
+        <li><span class="bullet-icon">→</span>Executive Dashboard</li>
+        <li><span class="bullet-icon">→</span>AI Recommendations</li>
+        <li><span class="bullet-icon">→</span>Continuous Monitoring</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SECTION: BUSINESS VALUE OF CLIMATE INTELLIGENCE
+         SCORE™ — commercial/strategic outcomes, not
+         software features.
+    ═══════════════════════════════════════════════ -->
+    <section id="business-value" class="page-wrapper section-block">
+      <div class="cx-eyebrow">Strategic Value</div>
+      <h2 class="section-heading">Business Value of Climate Intelligence Score™</h2>
+      <p class="body-text" style="max-width:720px;font-weight:600;color:var(--text-2);margin-bottom:20px;">
+        Unlock Better Financing, Lower Risk, Stronger Market Positioning, and Long-Term Business Resilience.
+      </p>
+      <p class="body-text" style="max-width:680px;">
+        Climate Intelligence Score™ is more than an environmental assessment. It is a strategic business intelligence framework that enables organizations to unlock financial opportunities, strengthen stakeholder confidence, improve regulatory readiness, reduce climate-related risks, and demonstrate measurable climate leadership.
+      </p>
+      <p class="body-text" style="max-width:680px;margin-bottom:0;">
+        A stronger Climate Intelligence Score and Green Rating can create tangible business advantages across financing, insurance, investments, procurement, reputation, and long-term enterprise value.
+      </p>
+
+      <div class="solution-grid">
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5c0-1 1-1.5 2.5-1.5s2.5.5 2.5 1.5-1 1.5-2.5 2-2.5 1-2.5 2 1 1.5 2.5 1.5 2.5-.5 2.5-1.5"/></svg></div>
+          <div class="sol-title">Better Access to Sustainable Finance</div>
+          <p class="sol-text">Organizations with stronger Climate Intelligence Scores are better positioned to demonstrate climate resilience and sustainability performance during financing discussions. This strengthens eligibility for sustainability-linked financing, green lending initiatives, and climate-focused investment opportunities.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Better access to sustainable finance</span>
+            <span class="fw-chip">Improved eligibility for green loans</span>
+            <span class="fw-chip">Competitive financing opportunities</span>
+            <span class="fw-chip">Stronger lender confidence</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 8l8 8M9.5 9.5a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0zM17 14.5a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0z"/></svg></div>
+          <div class="sol-title">Improved Financing Confidence</div>
+          <p class="sol-text">Climate Intelligence enables financial institutions to better understand organizational climate resilience, helping reduce uncertainty during credit evaluations and supporting more informed lending decisions.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Increased lender confidence</span>
+            <span class="fw-chip">Better credit positioning</span>
+            <span class="fw-chip">Climate-informed lending decisions</span>
+            <span class="fw-chip">Access to preferential financing structures</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <div class="sol-title">Reduced Climate &amp; Regulatory Exposure</div>
+          <p class="sol-text">Continuous assessment improves preparedness for evolving climate disclosure requirements, regulatory expectations, and emerging climate-related financial risks.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Improved regulatory readiness</span>
+            <span class="fw-chip">Lower compliance risk</span>
+            <span class="fw-chip">Stronger governance</span>
+            <span class="fw-chip">Better climate risk management</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+          <div class="sol-title">Greater Investor Confidence</div>
+          <p class="sol-text">Institutional investors increasingly evaluate climate resilience alongside financial performance. Climate Intelligence Score™ provides measurable evidence that supports investment analysis, stewardship, and long-term capital allocation.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Increased investor confidence</span>
+            <span class="fw-chip">Improved investment attractiveness</span>
+            <span class="fw-chip">Better ESG transparency</span>
+            <span class="fw-chip">Stronger capital market credibility</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9z"/><path d="M12 12v7a2 2 0 0 1-4 0"/><path d="M12 3v2"/></svg></div>
+          <div class="sol-title">Insurance Confidence</div>
+          <p class="sol-text">Climate Intelligence improves understanding of physical and operational climate risks, enabling more informed insurance discussions and stronger organizational resilience.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Better risk visibility</span>
+            <span class="fw-chip">Improved underwriting confidence</span>
+            <span class="fw-chip">Enhanced resilience planning</span>
+            <span class="fw-chip">Potential for more favorable terms, subject to insurer assessment</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></div>
+          <div class="sol-title">Green Bond &amp; Sustainable Finance Readiness</div>
+          <p class="sol-text">Climate Intelligence provides structured evidence that can support organizations preparing for sustainable finance initiatives and green capital market opportunities.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Green bond readiness</span>
+            <span class="fw-chip">Sustainability-linked finance support</span>
+            <span class="fw-chip">Climate disclosure confidence</span>
+            <span class="fw-chip">Investment documentation support</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4"/><path d="M4 4h13l-2.5 4L17 12H4"/></svg></div>
+          <div class="sol-title">Government Programs &amp; Incentives</div>
+          <p class="sol-text">A structured Climate Intelligence framework helps organizations demonstrate environmental performance when participating in government sustainability initiatives, climate programs, and future incentive mechanisms.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Readiness for government climate initiatives</span>
+            <span class="fw-chip">Improved participation in sustainability programs</span>
+            <span class="fw-chip">Stronger evidence for incentive applications</span>
+            <span class="fw-chip">Public sector credibility</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.9-6.2 3.9 1.6-7-5.4-4.7 7.1-.6z"/></svg></div>
+          <div class="sol-title">Brand Reputation &amp; Market Leadership</div>
+          <p class="sol-text">Organizations demonstrating measurable climate performance strengthen trust with customers, partners, employees, investors, and regulators.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Stronger corporate reputation</span>
+            <span class="fw-chip">Increased stakeholder trust</span>
+            <span class="fw-chip">Enhanced employer brand</span>
+            <span class="fw-chip">Market differentiation</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+          <div class="sol-title">Green Consumer Preference</div>
+          <p class="sol-text">Consumers increasingly prefer organizations demonstrating credible environmental performance. Climate Intelligence Score™ and Green Rating provide transparent evidence that supports purchasing confidence and strengthens brand perception.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Increased customer trust</span>
+            <span class="fw-chip">Improved brand preference</span>
+            <span class="fw-chip">Competitive differentiation</span>
+            <span class="fw-chip">Stronger customer loyalty</span>
+          </div>
+        </div>
+
+        <div class="solution-card">
+          <div class="sol-icon" style="background:var(--surface-2);color:var(--amber);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div class="sol-title">Enterprise Decision Intelligence</div>
+          <p class="sol-text">Climate Intelligence Score™ transforms climate information into measurable business intelligence for executives, boards, investors, lenders, insurers, and regulators.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;">
+            <span class="fw-chip">Better strategic decisions</span>
+            <span class="fw-chip">Improved capital allocation</span>
+            <span class="fw-chip">Enhanced operational resilience</span>
+            <span class="fw-chip">Long-term enterprise value creation</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
          SECTION: RISK OS™ — FLAGSHIP PRODUCT
     ═══════════════════════════════════════════════ -->
     <section id="risk-os" class="page-wrapper section-block">
@@ -1771,6 +2316,24 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════
+         SECTION: EARTH OBSERVATION CINEMATIC BANNER
+         Full-bleed looping video hero — same pattern as
+         NASA science-article heroes — framing the live
+         climate intelligence map that follows.
+    ═══════════════════════════════════════════════ -->
+    <section class="cx-eo-banner" id="eo-banner">
+      <video class="cx-eo-video" id="eoVideo" muted loop playsinline webkit-playsinline preload="none" aria-hidden="true">
+        <source src="hero-reel.mp4" type="video/mp4">
+      </video>
+      <div class="cx-eo-overlay"></div>
+      <div class="cx-eo-content page-wrapper">
+        <div class="cx-eo-eyebrow"><span class="cx-eo-dot" aria-hidden="true"></span>Climate Intelligence Score™ · Decision Intelligence</div>
+        <h2 class="cx-eo-heading">Transforming Climate Data into Decision Intelligence.</h2>
+        <p class="cx-eo-sub">Climate Intelligence Score™ integrates Earth observation, physical climate risks, transition risks, financial materiality, and regulatory intelligence into a unified assessment framework, enabling organizations to make informed and resilient business decisions.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
          SECTION: TEMPERATURE HEATMAP
     ═══════════════════════════════════════════════ -->
     <section class="cx-heatmap-section" id="climate-intelligence">
@@ -1789,6 +2352,7 @@
             <button class="hm-layer-btn" data-layer="sea_level"> Sea Level Rise</button>
             <button class="hm-layer-btn" data-layer="arctic_ice"> Arctic Ice</button>
             <button class="hm-layer-btn" data-layer="wb_cmip6"> WB CMIP6</button>
+            <div class="hm-layer-indicator" id="hmLayerIndicator" aria-hidden="true"></div>
           </div>
           <div class="hm-layer-status">
             <span class="hm-layer-dot"></span>
@@ -1797,12 +2361,31 @@
         </div>
 
         <div class="cx-heatmap-canvas-wrap">
-          <canvas id="heatmapCanvas" width="1000" height="460"></canvas>
+          <div id="hmMap"></div>
+          <div id="hmCrumb"></div>
           <div class="heatmap-tooltip" id="hmTooltip">
-            <div class="hm-t-region" id="hmRegion">—</div>
+            <div class="hm-tt-head">
+              <span class="hm-tt-live" aria-hidden="true"></span>
+              <div class="hm-t-region" id="hmRegion">—</div>
+            </div>
             <div class="hm-t-anomaly" id="hmAnomaly">—</div>
+            <div class="hm-tt-grid">
+              <div class="hm-tt-row"><span class="hm-tt-label">Location</span><span class="hm-tt-value" id="hmLocation">—</span></div>
+              <div class="hm-tt-row"><span class="hm-tt-label">Monitoring Status</span><span class="hm-tt-value hm-tt-status" id="hmStatus">—</span></div>
+              <div class="hm-tt-row"><span class="hm-tt-label">Satellite Coverage</span><span class="hm-tt-value" id="hmSatellite">—</span></div>
+              <div class="hm-tt-row"><span class="hm-tt-label">Last Updated</span><span class="hm-tt-value" id="hmUpdated">—</span></div>
+            </div>
+            <div class="hm-tt-caption">Recent Environmental Signal</div>
             <div class="hm-t-desc" id="hmDesc">—</div>
             <div class="hm-t-severity" id="hmSeverity">—</div>
+            <div class="hm-tt-layers" id="hmTtLayers"></div>
+          </div>
+          <div id="hmDrillPanel"></div>
+          <div id="hmTransitionOverlay">
+            <div class="hmto-inner">
+              <div class="hmto-ring"></div>
+              <div class="hmto-label" id="hmTransitionLabel">Opening Risk OS Assessment Workspace…</div>
+            </div>
           </div>
         </div>
 
@@ -2641,44 +3224,36 @@
 </section>
 
     <!-- HOW IT WORKS -->
-    <section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 0;">
+    <section id="how-it-works" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 0;">
       <div class="page-wrapper">
         <div class="cx-eyebrow">Process</div>
-        <h2 class="section-heading">How Climactix Global Works</h2>
-        <p class="body-text" style="max-width:540px;margin-bottom:48px;">Three steps — from publicly available data to structured climate intelligence outputs.</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--border-strong);overflow:hidden;">
-          <div style="background:var(--bg);padding:36px 30px;">
+        <h2 class="section-heading">How Climate Intelligence Score™ Works</h2>
+        <p class="body-text" style="max-width:560px;margin-bottom:48px;">Five steps — from organizational data to continuously monitored Climate Intelligence.</p>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--border-strong);overflow:hidden;">
+          <div style="background:var(--bg);padding:30px 22px;">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">01 — Collect</div>
-            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Data Collection</div>
-            <p style="font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:22px;">We collect publicly available climate disclosures, sustainability reports, emissions filings, and regulatory submissions — organized by sector and geography.</p>
-            <div style="display:flex;flex-direction:column;gap:7px;">
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Sustainability disclosures</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Annual reports &amp; filings</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Regulatory submissions</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Climate science datasets</div>
-            </div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Collect</div>
+            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Gather organizational, operational, environmental, financial, supply chain, and disclosure data.</p>
           </div>
-          <div style="background:var(--surface);padding:36px 30px;border-left:1px solid var(--border-strong);border-right:1px solid var(--border-strong);">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">02 — Analyze</div>
-            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Structured Analysis</div>
-            <p style="font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:22px;">Data is organized and analyzed across emissions, supply chain exposure, reporting quality, and operational indicators — using models aligned to TCFD, ISSB S2, GRI, and BRSR.</p>
-            <div style="display:flex;flex-direction:column;gap:7px;">
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Emissions classification</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Risk exposure scoring</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Disclosure gap review</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Framework cross-mapping</div>
-            </div>
+          <div style="background:var(--surface);padding:30px 22px;border-left:1px solid var(--border-strong);">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">02 — Assess</div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Assess</div>
+            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Evaluate climate exposure across physical, transition, governance, financial, regulatory, and operational dimensions.</p>
           </div>
-          <div style="background:var(--bg);padding:36px 30px;">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">03 — Output</div>
-            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Structured Outputs</div>
-            <p style="font-family:'Roboto',sans-serif;font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:22px;">Analysis is delivered as a Climate Intelligence Score™, structured reports, and regulatory-aligned disclosures — accessible in the Climate Intelligence Terminal™ for investors, boards, and regulatory review.</p>
-            <div style="display:flex;flex-direction:column;gap:7px;">
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Climate Intelligence Score™</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Disclosure quality assessments</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Regulatory-aligned filings</div>
-              <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.05em;"><span style="width:4px;height:4px;background:var(--amber);display:inline-block;flex-shrink:0;"></span>Scenario analysis outputs</div>
-            </div>
+          <div style="background:var(--bg);padding:30px 22px;border-left:1px solid var(--border-strong);">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">03 — Validate</div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Validate</div>
+            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Review evidence, uploaded documents, disclosures, AI analysis, and framework mapping.</p>
+          </div>
+          <div style="background:var(--surface);padding:30px 22px;border-left:1px solid var(--border-strong);">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">04 — Generate</div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Generate</div>
+            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Produce Climate Intelligence Score™, Green Rating, executive reports, benchmarking, and recommendations.</p>
+          </div>
+          <div style="background:var(--bg);padding:30px 22px;border-left:1px solid var(--border-strong);">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">05 — Monitor</div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Monitor</div>
+            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Continuously monitor organizational climate intelligence as regulations, disclosures, and climate risks evolve.</p>
           </div>
         </div>
       </div>
@@ -3840,6 +4415,8 @@
 
   <script src="script.js"></script>
   <script src="hero-clouds.js"></script>
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="intelligence-engine.js"></script>
   <script>
     const msgs=['Mapping climate data to disclosure frameworks…','Applying TCFD and ISSB S2 alignment…','Running disclosure quality assessment…','Structuring institutional-grade intelligence output…'];
     let mi=0;
@@ -3956,11 +4533,30 @@
       initClimateGlobe();
     }
 
+    /* Earth Observation cinematic banner — play only while in view, skip entirely under reduced motion */
+    function initEoBanner() {
+      const vid = document.getElementById('eoVideo');
+      if (!vid) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(en) {
+            if (en.isIntersecting) vid.play().catch(function(){});
+            else vid.pause();
+          });
+        }, { threshold: 0.15 });
+        io.observe(vid);
+      } else {
+        vid.play().catch(function(){});
+      }
+    }
+
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() { _tryInit(); initHeatmap(); });
+      document.addEventListener('DOMContentLoaded', function() { _tryInit(); initHeatmap(); initEoBanner(); });
     } else {
       _tryInit();
       initHeatmap();
+      initEoBanner();
     }
 
     /* ══════════════════════════════════════════════
@@ -4578,19 +5174,12 @@
        B. TEMPERATURE HEATMAP — Canvas 2D
     ══════════════════════════════════════════════ */
     function initHeatmap() {
-      const canvas = document.getElementById('heatmapCanvas');
+      const mapEl = document.getElementById('hmMap');
       const tooltip = document.getElementById('hmTooltip');
-      if (!canvas || !tooltip) return;
-
-      const W = canvas.width, H = canvas.height;
-      const ctx = canvas.getContext('2d');
-
-      /* ── Projection helpers ── */
-      function px(ln) { return ((ln + 180) / 360) * W; }
-      function py(la) { return ((90 - la) / 180) * H; }
+      if (!mapEl || !tooltip || typeof maplibregl === 'undefined') return;
 
       /* ══════════════════════════════════════════════════════
-         LAYER DATA SETS — 4 climate variables
+         LAYER DATA SETS — 5 climate variables
          Each layer has: regions[], colorFn(), legend config,
          section heading, and bottom stats row.
       ══════════════════════════════════════════════════════ */
@@ -4772,202 +5361,501 @@
 
       /* Active layer state */
       let _activeHmLayer = 'temperature';
+      const reducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-      /* ── Continent polygon data ── */
-      const CONTINENTS = [
-        [[72,-141],[71,-96],[60,-85],[50,-80],[47,-75],[40,-70],[35,-76],[25,-80],[10,-85],[8,-77],[3,-77],[14,-87],[22,-106],[23,-110],[30,-116],[34,-120],[48,-124],[55,-131],[60,-141]],
-        [[83,-40],[76,-18],[72,-24],[65,-43],[65,-52],[68,-56],[76,-69],[82,-52]],
-        [[12,-72],[10,-62],[8,-60],[3,-52],[-5,-35],[-15,-38],[-23,-43],[-34,-52],[-55,-68],[-56,-72],[-40,-73],[-20,-70],[-5,-80],[5,-77]],
-        [[71,28],[65,14],[58,8],[51,2],[43,-9],[36,-9],[36,3],[37,14],[40,18],[37,23],[38,26],[41,29],[44,28],[46,30],[48,38],[43,44],[47,53],[55,37],[59,28],[65,25],[68,29]],
-        [[37,-5],[37,10],[33,12],[28,33],[22,37],[15,42],[12,43],[10,42],[3,40],[-5,40],[-10,38],[-18,35],[-25,33],[-35,26],[-35,20],[-30,17],[-15,13],[-5,9],[0,9],[3,-10],[5,-15],[10,-17],[15,-17],[28,-14],[33,-5]],
-        [[70,30],[70,80],[70,140],[60,160],[50,140],[40,130],[35,125],[22,114],[10,104],[1,104],[-8,115],[-8,132],[0,130],[5,118],[10,108],[20,107],[25,90],[22,88],[22,80],[28,72],[22,60],[20,57],[22,55],[28,50],[35,36],[35,28],[40,26],[42,44],[47,53],[55,60],[55,80],[65,80],[70,60]],
-        [[-15,130],[-15,140],[-18,146],[-22,150],[-34,151],[-38,147],[-38,140],[-35,137],[-32,116],[-22,113]],
+      /* ── Satellite / layer metadata for the intelligence hover panel ── */
+      const SATELLITE_COVERAGE = {
+        temperature: 'NASA GISS · MODIS Terra/Aqua',
+        co2:         'Sentinel-5P TROPOMI',
+        sea_level:   'Jason-3 · Sentinel-6 Michael Freilich',
+        arctic_ice:  'NASA ICESat-2 · AMSR2',
+        wb_cmip6:    'World Bank CCKP · CMIP6 Ensemble',
+      };
+      const LAYER_SHORT_LABELS = {
+        temperature: 'Temperature',
+        co2:         'CO₂',
+        sea_level:   'Sea Level',
+        arctic_ice:  'Arctic Ice',
+        wb_cmip6:    'WB CMIP6',
+      };
+
+      /* ══════════════════════════════════════════════════════
+         GLOBAL INTELLIGENCE NAVIGATOR — reference data
+         Continent camera-framing table + a curated gazetteer of
+         real public coordinates for cities that actually appear
+         in window.INTELLIGENCE.COMPANIES. Country name/continent/
+         narrative lookups are public reference geography — no
+         fabricated risk data. COUNTRY_MACRO and the narrative text
+         are the same real content already used by simulation.html.
+      ══════════════════════════════════════════════════════ */
+      const CONTINENT_TARGETS = [
+        { id:'NA', name:'North America', center:[-100,45], zoom:1.7 },
+        { id:'SA', name:'South America', center:[-60,-18], zoom:1.8 },
+        { id:'EU', name:'Europe',        center:[15,52],   zoom:2.3 },
+        { id:'AF', name:'Africa',        center:[20,2],    zoom:1.7 },
+        { id:'AS', name:'Asia',          center:[90,32],   zoom:1.5 },
+        { id:'OC', name:'Oceania',       center:[140,-25], zoom:2.1 },
       ];
+      const CITY_GAZ = {
+        'Mumbai':{lat:19.076,lng:72.878,country:'India'}, 'Delhi':{lat:28.704,lng:77.102,country:'India'},
+        'Chennai':{lat:13.083,lng:80.271,country:'India'}, 'Pune':{lat:18.520,lng:73.856,country:'India'},
+        'Kolkata':{lat:22.573,lng:88.364,country:'India'}, 'Bengaluru':{lat:12.972,lng:77.594,country:'India'},
+        'Hyderabad':{lat:17.385,lng:78.487,country:'India'}, 'Gurugram':{lat:28.457,lng:77.026,country:'India'},
+        'Jamshedpur':{lat:22.804,lng:86.185,country:'India'}, 'Jamnagar':{lat:22.470,lng:70.058,country:'India'},
+        'Hazira':{lat:21.117,lng:72.645,country:'India'}, 'Thane':{lat:19.218,lng:72.978,country:'India'},
+        'Mangalore':{lat:12.914,lng:74.856,country:'India'}, 'Vadodara':{lat:22.307,lng:73.181,country:'India'},
+        'Chandigarh':{lat:30.733,lng:76.779,country:'India'}, 'Mysuru':{lat:12.295,lng:76.639,country:'India'},
+        'Mundra':{lat:22.839,lng:69.722,country:'India'}, 'Kattupalli':{lat:13.267,lng:80.323,country:'India'},
+        'Krishnapatnam':{lat:14.264,lng:80.109,country:'India'},
+        'Copenhagen':{lat:55.676,lng:12.568,country:'Denmark'}, 'Singapore':{lat:1.352,lng:103.820,country:'Singapore'},
+        'Rotterdam':{lat:51.924,lng:4.478,country:'Netherlands'}, 'Shanghai':{lat:31.230,lng:121.474,country:'China'},
+        'Los Angeles':{lat:34.052,lng:-118.244,country:'United States'}, 'Riyadh':{lat:24.713,lng:46.675,country:'Saudi Arabia'},
+      };
+      const ADM0_TO_NAME = {
+        USA:'United States',CHN:'China',IND:'India',DEU:'Germany',AUS:'Australia',SGP:'Singapore',BRA:'Brazil',
+        NLD:'Netherlands',ARE:'UAE',NGA:'Nigeria',JPN:'Japan',GBR:'United Kingdom',DNK:'Denmark',FRA:'France',
+        ITA:'Italy',ESP:'Spain',CAN:'Canada',RUS:'Russia',KOR:'South Korea',IDN:'Indonesia',MEX:'Mexico',
+        ZAF:'South Africa',SAU:'Saudi Arabia',TUR:'Turkey',ARG:'Argentina',EGY:'Egypt',PAK:'Pakistan',
+        BGD:'Bangladesh',VNM:'Vietnam',THA:'Thailand',MYS:'Malaysia',PHL:'Philippines',KEN:'Kenya',CHL:'Chile',
+        COL:'Colombia',NOR:'Norway',SWE:'Sweden',FIN:'Finland',POL:'Poland',UKR:'Ukraine',NZL:'New Zealand',
+        IRL:'Ireland',PRT:'Portugal',GRC:'Greece',CHE:'Switzerland',AUT:'Austria',BEL:'Belgium',QAT:'Qatar',
+        KWT:'Kuwait',ISR:'Israel',IRN:'Iran',IRQ:'Iraq',ETH:'Ethiopia',MAR:'Morocco',DZA:'Algeria',PER:'Peru',
+        VEN:'Venezuela',CZE:'Czechia',ROU:'Romania',
+      };
+      const ADM0_TO_CONTINENT = {
+        USA:'NA',CAN:'NA',MEX:'NA', BRA:'SA',CHL:'SA',COL:'SA',PER:'SA',ARG:'SA',VEN:'SA',
+        DEU:'EU',GBR:'EU',DNK:'EU',FRA:'EU',ITA:'EU',ESP:'EU',NLD:'EU',NOR:'EU',SWE:'EU',FIN:'EU',
+        POL:'EU',IRL:'EU',PRT:'EU',GRC:'EU',CHE:'EU',AUT:'EU',BEL:'EU',UKR:'EU',CZE:'EU',ROU:'EU',
+        NGA:'AF',ZAF:'AF',KEN:'AF',ETH:'AF',EGY:'AF',MAR:'AF',DZA:'AF',
+        CHN:'AS',IND:'AS',JPN:'AS',SGP:'AS',KOR:'AS',IDN:'AS',PAK:'AS',BGD:'AS',VNM:'AS',THA:'AS',
+        MYS:'AS',PHL:'AS',ARE:'AS',SAU:'AS',QAT:'AS',KWT:'AS',ISR:'AS',IRN:'AS',IRQ:'AS',TUR:'AS',RUS:'AS',
+        AUS:'OC',NZL:'OC',
+      };
+      const ADM0_TO_RCTX = {
+        USA:'USA',CHN:'China',IND:'India',AUS:'Australia',BRA:'Brazil',RUS:'Russia',CAN:'Canada',JPN:'Japan',KOR:'SouthKorea',
+        GBR:'EU',DEU:'EU',FRA:'EU',ITA:'EU',ESP:'EU',NLD:'EU',DNK:'EU',SWE:'EU',NOR:'EU',FIN:'EU',POL:'EU',
+        IRL:'EU',PRT:'EU',GRC:'EU',CHE:'EU',AUT:'EU',BEL:'EU',UKR:'EU',CZE:'EU',ROU:'EU',
+        ARE:'MENA',SAU:'MENA',QAT:'MENA',KWT:'MENA',ISR:'MENA',IRN:'MENA',IRQ:'MENA',EGY:'MENA',TUR:'MENA',MAR:'MENA',DZA:'MENA',
+        NGA:'Africa',ZAF:'Africa',KEN:'Africa',ETH:'Africa',
+        SGP:'SEA',IDN:'SEA',VNM:'SEA',THA:'SEA',MYS:'SEA',PHL:'SEA',BGD:'SEA',PAK:'SEA',
+        MEX:'LatAm',ARG:'LatAm',CHL:'LatAm',COL:'LatAm',PER:'LatAm',VEN:'LatAm',
+      };
+      const COUNTRY_RISK_NARRATIVE = {
+        EU:'North-western European climate systems are tracking 1.8× the global mean warming rate. Rhine-Danube basin precipitation events are intensifying, with 100-year flood recurrence compressing toward 35-year cycles under CMIP6 RCP6.0 projections. EU ETS Phase 4 carbon pricing creates simultaneous regulatory acceleration.',
+        USA:'Gulf Coast and eastern seaboard assets face compound coastal-fluvial flooding as Atlantic SSTs exceed +1.4°C above the 1951–1980 baseline. Dry-bulb temperature extremes in the continental interior are extending heat stress windows by 18 days per decade.',
+        China:'Yangtze and Pearl River delta hydrological systems are being restructured by monsoon intensification. CMIP6 projections indicate 50-year flood recurrence events compressing to sub-20-year frequency by 2040. Northern inland aridity expansion creates simultaneous drought risk for energy and agriculture assets.',
+        India:'Indo-Gangetic Plain wet-bulb temperature exceedance is accelerating, with WBGT thresholds critical to outdoor labour capacity projected to be breached for 45+ days/year by 2035. Bay of Bengal cyclone frequency has increased 23% per IPCC AR6, amplifying coastal and delta flood risk.',
+        Australia:'East-coast rainfall variability is increasing as the Indian Ocean Dipole intensifies. Inland aridity expansion threatens agriculture and mining water supply, while the Black Summer wildfire precedent signals step-change physical risk to infrastructure in forested and peri-urban zones.',
+        MENA:'Persian Gulf sea surface temperature anomalies are driving wet-bulb temperature indices that approach physiological thresholds for outdoor work. Heat stress increasingly constrains productive hours in construction, logistics, and energy sectors. Water stress from over-extraction compounds long-term viability risk.',
+        SouthKorea:'East Asian monsoonal systems are intensifying, elevating typhoon and flood frequency for coastal manufacturing and logistics assets. Korea is subject to simultaneous transition risk acceleration via K-ETS expansion and imported carbon cost via CBAM exposure.',
+        Japan:'Pacific typhoon tracks are shifting northward with increased Category 3+ intensity. Coastal infrastructure exposure is compounded by liquefaction risk in delta zones. Japan\'s carbon pricing trajectory accelerates post-2030 under the GX framework.',
+        Brazil:'Amazon hydrological disruption is compressing wet-dry seasonality, elevating drought risk for agriculture and hydro-dependent energy assets. Coastal and delta flooding in southern Brazil is intensifying under La Niña-modulated precipitation anomalies.',
+        Russia:'Permafrost degradation in Siberian and Arctic regions introduces structural infrastructure risk for energy extraction and pipeline assets. Western Russia faces increasing drought and wildfire risk consistent with European drying trends.',
+        Africa:'Sub-Saharan assets face intensifying heat stress and precipitation volatility. West African coastal regions are experiencing sea level rise at 1.3× the global mean rate. Agricultural and logistics assets face compound physical-transition risk as adaptation finance remains constrained.',
+        SEA:'South and South-East Asian deltas face the highest compound coastal-fluvial flood risk globally. Bangkok, Ho Chi Minh City, Jakarta, and Manila metro zones are projected to face 3× current annual flood exposure by 2040. Monsoon intensification amplifies river flood frequency across all major basins.',
+        LatAm:'Andean glacier retreat is restructuring water availability for energy, mining, and agriculture assets in Chile, Peru, and Bolivia. Caribbean basin hurricane intensification directly affects coastal and island manufacturing.',
+        Canada:'Northern Canadian assets face permafrost degradation and wildfire risk expansion. Southern assets are affected by Great Lakes water level volatility and increasing heat dome events modelled to triple in frequency by 2045.',
+        Global:'Regional climate systems are responding to global mean warming consistent with CMIP6 ensemble projections, with local amplification factors dependent on proximity to amplifying ocean systems and land surface feedback mechanisms.',
+      };
+      const COUNTRY_MACRO = {
+        'United States': {co2pc:14.9,renewables:21.5,carbonMarket:'California ETS + RGGI',rating:'BBB'},
+        'China':         {co2pc:7.4, renewables:28.7,carbonMarket:'National ETS (CNY ~60/t)',rating:'BB+'},
+        'India':         {co2pc:1.9, renewables:21.8,carbonMarket:'PAT scheme only',rating:'BB'},
+        'Germany':       {co2pc:7.7, renewables:44.5,carbonMarket:'EU ETS (~€65/t)',rating:'AAA'},
+        'Australia':     {co2pc:14.7,renewables:32.5,carbonMarket:'AUS Carbon Credit Units',rating:'AAA'},
+        'Singapore':     {co2pc:7.6, renewables:3.2, carbonMarket:'Carbon Tax (gov)',rating:'AAA'},
+        'Brazil':        {co2pc:2.2, renewables:83.0,carbonMarket:'B3 voluntary',rating:'BB-'},
+        'Netherlands':   {co2pc:7.5, renewables:33.7,carbonMarket:'EU ETS (~€65/t)',rating:'AAA'},
+        'UAE':           {co2pc:19.4,renewables:5.0, carbonMarket:'None (voluntary offsets)',rating:'AA'},
+        'Nigeria':       {co2pc:0.6, renewables:16.0,carbonMarket:'None established',rating:'B-'},
+        'Japan':         {co2pc:8.4, renewables:22.0,carbonMarket:'GX-ETS (voluntary → mandatory 2026)',rating:'A+'},
+      };
 
-      /* ── Draw base map (static, once) ── */
-      const baseCanvas = document.createElement('canvas');
-      baseCanvas.width = W; baseCanvas.height = H;
-      const bx = baseCanvas.getContext('2d');
-
-      /* Ocean gradient */
-      const og = bx.createLinearGradient(0, 0, 0, H);
-      og.addColorStop(0,   '#020a14');
-      og.addColorStop(0.5, '#030c18');
-      og.addColorStop(1,   '#020a10');
-      bx.fillStyle = og; bx.fillRect(0, 0, W, H);
-
-      /* Latitude bands — subtle polar tint */
-      const polN = bx.createLinearGradient(0, 0, 0, H * 0.25);
-      polN.addColorStop(0, 'rgba(100,160,220,0.08)');
-      polN.addColorStop(1, 'rgba(0,0,0,0)');
-      bx.fillStyle = polN; bx.fillRect(0, 0, W, H * 0.25);
-
-      /* Grid lines */
-      bx.strokeStyle = 'rgba(80,130,200,0.07)';
-      bx.lineWidth = 0.6;
-      for (let la = -60; la <= 60; la += 30) {
-        const y = py(la);
-        bx.beginPath(); bx.moveTo(0, y); bx.lineTo(W, y); bx.stroke();
+      function countryOrgs(name) {
+        return window.INTELLIGENCE ? window.INTELLIGENCE.COMPANIES.filter(function(c){ return c.country===name; }) : [];
       }
-      for (let ln = -180; ln <= 180; ln += 30) {
-        const x = px(ln);
-        bx.beginPath(); bx.moveTo(x, 0); bx.lineTo(x, H); bx.stroke();
+      function continentOrgs(contId) {
+        if (!window.INTELLIGENCE) return [];
+        const names = Object.keys(ADM0_TO_NAME).filter(function(k){ return ADM0_TO_CONTINENT[k]===contId; }).map(function(k){ return ADM0_TO_NAME[k]; });
+        return window.INTELLIGENCE.COMPANIES.filter(function(c){ return names.indexOf(c.country)!==-1; });
+      }
+      function hmOrgRow(o) {
+        const col = o.cScore>=70?'var(--green)':o.cScore>=50?'var(--amber)':'var(--red)';
+        return '<div class="hdp-org-row" onclick="hmSelectOrg(\'' + o.id + '\')"><div><div class="hdp-org-name">' + o.name + '</div><div class="hdp-org-meta">' + (o.industryLabel||o.industry) + ' · ' + o.country + '</div></div><div class="hdp-org-score" style="color:' + col + '">' + o.cScore + '</div></div>';
       }
 
-      /* Tropic lines */
-      bx.strokeStyle = 'rgba(180,120,20,0.1)'; bx.lineWidth = 0.8;
-      [23.5, -23.5].forEach(la => {
-        const y = py(la);
-        bx.beginPath(); bx.moveTo(0, y); bx.lineTo(W, y); bx.stroke();
-      });
-
-      /* Continents */
-      bx.fillStyle = '#0f3420';
-      CONTINENTS.forEach(pts => {
-        bx.beginPath();
-        pts.forEach(([la, ln], i) => {
-          const x = px(ln), y2 = py(la);
-          i === 0 ? bx.moveTo(x, y2) : bx.lineTo(x, y2);
-        });
-        bx.closePath(); bx.fill();
-      });
-
-      /* Continent border shimmer */
-      bx.strokeStyle = 'rgba(30,100,55,0.3)'; bx.lineWidth = 0.7;
-      CONTINENTS.forEach(pts => {
-        bx.beginPath();
-        pts.forEach(([la, ln], i) => {
-          const x = px(ln), y2 = py(la);
-          i === 0 ? bx.moveTo(x, y2) : bx.lineTo(x, y2);
-        });
-        bx.closePath(); bx.stroke();
-      });
-
-      /* ── Animated render loop ── */
-      let startTime = Date.now();
-      let hoveredIdx = -1;
-
-      function draw() {
-        requestAnimationFrame(draw);
-        const t = (Date.now() - startTime) / 1000;
-
-        ctx.clearRect(0, 0, W, H);
-        ctx.drawImage(baseCanvas, 0, 0);
-
-        const activeLayer = ALL_LAYERS[_activeHmLayer];
-        const regions = activeLayer.regions;
-        const colorFn = activeLayer.colorFn;
-        const valLabel = activeLayer.valLabel;
-
-        regions.forEach((reg, i) => {
-          const cx2 = px(reg.ln), cy2 = py(reg.la);
-          const { fill, glow } = colorFn(reg.val);
-          const isHovered = (i === hoveredIdx);
-
-          /* Outer pulse ring */
-          const pulse = 0.35 + 0.35 * Math.sin(t * 1.8 + i * 0.9);
-          const rOut = reg.r * (1 + pulse * 0.25);
-          const g2 = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, rOut);
-          g2.addColorStop(0,   glow + '55');
-          g2.addColorStop(0.4, glow + '22');
-          g2.addColorStop(1,   glow + '00');
-          ctx.fillStyle = g2;
-          ctx.beginPath(); ctx.arc(cx2, cy2, rOut, 0, Math.PI * 2); ctx.fill();
-
-          /* Core hotspot */
-          const rCore = reg.r * (isHovered ? 0.75 : 0.6);
-          const g1 = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, rCore);
-          g1.addColorStop(0,   fill + 'cc');
-          g1.addColorStop(0.5, fill + '66');
-          g1.addColorStop(1,   fill + '00');
-          ctx.fillStyle = g1;
-          ctx.beginPath(); ctx.arc(cx2, cy2, rCore, 0, Math.PI * 2); ctx.fill();
-
-          /* Centre dot */
-          ctx.fillStyle = isHovered ? '#ffffff' : glow;
-          ctx.beginPath(); ctx.arc(cx2, cy2, isHovered ? 5 : 3.5, 0, Math.PI * 2); ctx.fill();
-
-          /* Value label for hovered */
-          if (isHovered) {
-            const shortLabel = valLabel(reg.val).split(' ')[0]; /* first token only */
-            ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            ctx.beginPath(); ctx.arc(cx2, cy2, 24, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 9px "IBM Plex Mono", monospace';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(shortLabel, cx2, cy2);
-          }
-        });
+      /* ── Region markers → GeoJSON, with independent slow pulse baked per-frame ── */
+      function regionsToGeoJSON(layer, t) {
+        t = t || 0;
+        return { type:'FeatureCollection', features: layer.regions.map(function(reg, i) {
+          const c = layer.colorFn(reg.val);
+          const baseGlow = reg.sev==='critical' ? 26 : reg.sev==='high' ? 20 : 16;
+          const baseCore = reg.sev==='critical' ? 7  : reg.sev==='high' ? 5.5: 4.5;
+          const fast = 0.35 + 0.35 * Math.sin(t * 1.8 + i * 0.9);
+          const slow = reducedMotion ? 1 : (0.85 + 0.15 * Math.sin(t * 0.32 + i * 1.3));
+          const pulse = fast * slow;
+          return { type:'Feature', geometry:{ type:'Point', coordinates:[reg.ln, reg.la] },
+            properties:{ idx:i, name:reg.name, sev:reg.sev, desc:reg.desc, fill:c.fill, glow:c.glow,
+              valLabel: layer.valLabel(reg.val), glowR: baseGlow * (1 + pulse * 0.28), coreR: baseCore } };
+        }) };
       }
-      draw();
 
-      /* ── Tooltip interaction ── */
-      const wrap = canvas.parentElement;
-      canvas.addEventListener('mousemove', function(e) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = W / rect.width;
-        const scaleY = H / rect.height;
-        const mx = (e.clientX - rect.left) * scaleX;
-        const my = (e.clientY - rect.top) * scaleY;
+      function formatElapsed(startTime) {
+        const secs = Math.floor((Date.now() - startTime) / 1000);
+        if (secs < 5)  return 'Just now';
+        if (secs < 60) return secs + 's ago';
+        return Math.floor(secs / 60) + 'm ago';
+      }
+      const pageStart = Date.now();
 
-        const activeLayer = ALL_LAYERS[_activeHmLayer];
-        const regions = activeLayer.regions;
+      /* ══════════════════════════════════════════════════════
+         DRILL-DOWN STATE + BREADCRUMB
+         Global → Continent → Country → City → Organization → Assessment
+      ══════════════════════════════════════════════════════ */
+      const drillState = { level:'global', continent:null, country:null, countryIso:null, countryCenter:null, city:null, orgId:null };
 
-        let found = -1;
-        let minDist = Infinity;
-        regions.forEach((reg, i) => {
-          const dx = mx - px(reg.ln), dy = my - py(reg.la);
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < reg.r * 0.8 && dist < minDist) { minDist = dist; found = i; }
-        });
-
-        hoveredIdx = found;
-
-        if (found >= 0) {
-          const reg = regions[found];
-          const { glow } = activeLayer.colorFn(reg.val);
-          const sevClass = reg.sev;
-          const sevLabel = (activeLayer.sevMap || {})[sevClass] || sevClass;
-
-          document.getElementById('hmRegion').textContent   = reg.name;
-          document.getElementById('hmAnomaly').textContent  = activeLayer.valLabel(reg.val);
-          document.getElementById('hmAnomaly').style.color  = glow;
-          document.getElementById('hmDesc').textContent     = reg.desc;
-          document.getElementById('hmSeverity').textContent = sevLabel;
-          document.getElementById('hmSeverity').className   = 'hm-t-severity ' + sevClass;
-
-          /* Position tooltip */
-          const cx2 = px(reg.ln) / (W / rect.width);
-          const cy2 = py(reg.la) / (H / rect.height);
-          const rightEdge = rect.width - cx2;
-          tooltip.style.display = 'block';
-          tooltip.style.top  = (cy2 + rect.top - wrap.getBoundingClientRect().top) + 'px';
-
-          if (rightEdge < 230) {
-            tooltip.style.right = (rightEdge + 10) + 'px';
-            tooltip.style.left  = 'auto';
-            tooltip.style.transform = 'translateY(-50%)';
-          } else {
-            tooltip.style.left  = (cx2 + 14) + 'px';
-            tooltip.style.right = 'auto';
-            tooltip.style.transform = 'translateY(-50%)';
-          }
-        } else {
-          tooltip.style.display = 'none';
+      function renderCrumb() {
+        const el = document.getElementById('hmCrumb');
+        if (!el) return;
+        const d = drillState;
+        const parts = [{ label:'Global', action:'hmGoGlobal()' }];
+        if (d.continent) {
+          const cont = CONTINENT_TARGETS.find(function(c){ return c.id===d.continent; });
+          parts.push({ label: cont?cont.name:d.continent, action: "hmSelectContinent('" + d.continent + "')" });
         }
+        if (d.country) parts.push({ label:d.country, action:'hmJumpToCountry()' });
+        if (d.city) parts.push({ label:d.city, action:null });
+        if (d.level==='organization') {
+          const company = (window.INTELLIGENCE && window.INTELLIGENCE.COMPANIES || []).find(function(c){ return c.id===d.orgId; });
+          parts.push({ label: company?company.name:'Organization', action:null });
+        }
+        el.innerHTML = parts.map(function(p, i) {
+          const isLast = i===parts.length-1;
+          const sep = i>0 ? '<span class="hmc-sep">›</span>' : '';
+          if (isLast || !p.action) return sep + '<span class="hmc-crumb' + (isLast?' current':'') + '">' + p.label + '</span>';
+          return sep + '<span class="hmc-crumb" onclick="' + p.action + '">' + p.label + '</span>';
+        }).join('');
+      }
+
+      function hmOpenPanel(html) {
+        const panel = document.getElementById('hmDrillPanel');
+        if (!panel) return;
+        panel.innerHTML = '<div class="hdp-inner">' + html + '</div>';
+        panel.classList.add('on');
+      }
+      function hmClosePanel() {
+        const panel = document.getElementById('hmDrillPanel');
+        if (panel) panel.classList.remove('on');
+      }
+
+      function hmGoGlobal() {
+        drillState.level='global'; drillState.continent=null; drillState.country=null;
+        drillState.countryIso=null; drillState.city=null; drillState.orgId=null;
+        hmFlyTo([10,15], 0.35);
+        hmClosePanel();
+        renderCrumb();
+      }
+      function hmSelectContinent(contId) {
+        const cont = CONTINENT_TARGETS.find(function(c){ return c.id===contId; });
+        if (!cont) return;
+        drillState.level='continent'; drillState.continent=contId;
+        drillState.country=null; drillState.city=null; drillState.orgId=null;
+        hmFlyTo(cont.center, cont.zoom);
+        hmDrawContinentPanel(cont);
+        renderCrumb();
+      }
+      function hmDrawContinentPanel(cont) {
+        const orgs = continentOrgs(cont.id);
+        const cities = Object.keys(CITY_GAZ).filter(function(k) {
+          const g = CITY_GAZ[k];
+          const iso = Object.keys(ADM0_TO_NAME).find(function(k2){ return ADM0_TO_NAME[k2]===g.country; });
+          return iso && ADM0_TO_CONTINENT[iso]===cont.id;
+        });
+        hmOpenPanel(
+          '<div class="hdp-head"><div><div class="hdp-eyebrow">Continent Intelligence</div><div class="hdp-name">' + cont.name + '</div></div><button class="hdp-close" onclick="hmClosePanel()">✕</button></div>' +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Overview</div><div class="hdp-placeholder">Click any country within ' + cont.name + ' to open its climate intelligence profile.</div></div>' +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Organizations Tracked (' + orgs.length + ')</div>' + (orgs.length?orgs.map(hmOrgRow).join(''):'<div class="hdp-placeholder">No organizations currently tracked in this continent.</div>') + '</div>' +
+          (cities.length ? ('<div class="hdp-sec"><div class="hdp-sec-title">Cities with Facility Intelligence</div>' + cities.map(function(c){ return '<span class="hdp-city-chip" onclick="hmSelectCity(\'' + c.replace(/'/g,"\\'") + '\')">' + c + '</span>'; }).join('') + '</div>') : '')
+        );
+      }
+      function hmSelectCountry(props, lngLat) {
+        const name = ADM0_TO_NAME[props.ADM0_A3] || props.NAME || 'Unknown region';
+        const contId = ADM0_TO_CONTINENT[props.ADM0_A3];
+        drillState.level='country'; drillState.continent = contId || drillState.continent;
+        drillState.country=name; drillState.countryIso=props.ADM0_A3; drillState.city=null; drillState.orgId=null;
+        const center = lngLat ? [lngLat.lng, lngLat.lat] : (CONTINENT_TARGETS.find(function(c){ return c.id===contId; })||{}).center || [0,20];
+        drillState.countryCenter = center;
+        hmFlyTo(center, 3.6);
+        hmDrawCountryPanel(name, props.ADM0_A3);
+        renderCrumb();
+      }
+      function hmJumpToCountry() {
+        if (!drillState.country) return;
+        drillState.level='country'; drillState.city=null; drillState.orgId=null;
+        if (drillState.countryCenter) hmFlyTo(drillState.countryCenter, 3.6);
+        hmDrawCountryPanel(drillState.country, drillState.countryIso);
+        renderCrumb();
+      }
+      function hmDrawCountryPanel(name, iso) {
+        const macro = COUNTRY_MACRO[name];
+        const rctxKey = ADM0_TO_RCTX[iso] || 'Global';
+        const narrative = COUNTRY_RISK_NARRATIVE[rctxKey] || COUNTRY_RISK_NARRATIVE.Global;
+        const orgs = countryOrgs(name);
+        const cities = Object.keys(CITY_GAZ).filter(function(k){ return CITY_GAZ[k].country===name; });
+        const contName = (CONTINENT_TARGETS.find(function(c){ return c.id===drillState.continent; })||{}).name || '—';
+        hmOpenPanel(
+          '<div class="hdp-head"><div><div class="hdp-eyebrow">Country Intelligence</div><div class="hdp-name">' + name + '</div><div class="hdp-loc">' + contName + '</div></div><button class="hdp-close" onclick="hmClosePanel()">✕</button></div>' +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Climate Risk Overview</div><div class="hdp-narrative">' + narrative + '</div></div>' +
+          (macro ? (
+            '<div class="hdp-sec"><div class="hdp-sec-title">Macro &amp; Regulatory Environment</div>' +
+            '<div class="hdp-row"><span class="hdp-row-lbl">Sovereign Rating</span><span class="hdp-row-val">' + (macro.rating||'—') + '</span></div>' +
+            '<div class="hdp-row"><span class="hdp-row-lbl">CO₂ / Capita</span><span class="hdp-row-val">' + (macro.co2pc!=null?macro.co2pc+' t':'—') + '</span></div>' +
+            '<div class="hdp-row"><span class="hdp-row-lbl">Renewables Share</span><span class="hdp-row-val">' + (macro.renewables!=null?macro.renewables+'%':'—') + '</span></div>' +
+            '<div class="hdp-row"><span class="hdp-row-lbl">Carbon Market</span><span class="hdp-row-val" style="font-size:9px">' + (macro.carbonMarket||'—') + '</span></div>' +
+            '</div>'
+          ) : (
+            '<div class="hdp-sec"><div class="hdp-sec-title">Macro &amp; Regulatory Environment</div><div class="hdp-placeholder">Extended macro dataset not yet integrated for ' + name + '.</div></div>'
+          )) +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Organizations (' + orgs.length + ')</div>' + (orgs.length?orgs.map(hmOrgRow).join(''):'<div class="hdp-placeholder">No organizations currently tracked for this country.</div>') + '</div>' +
+          (cities.length ? ('<div class="hdp-sec"><div class="hdp-sec-title">Cities with Facility Intelligence</div>' + cities.map(function(c){ return '<span class="hdp-city-chip" onclick="hmSelectCity(\'' + c.replace(/'/g,"\\'") + '\')">' + c + '</span>'; }).join('') + '</div>') : '')
+        );
+      }
+      function hmSelectCity(cityName) {
+        const g = CITY_GAZ[cityName];
+        if (!g) return;
+        drillState.level='city'; drillState.city=cityName; drillState.country=g.country; drillState.orgId=null;
+        hmFlyTo([g.lng, g.lat], 5.6);
+        hmDrawCityPanel(cityName, g);
+        renderCrumb();
+      }
+      function hmDrawCityPanel(cityName, g) {
+        const orgs = (window.INTELLIGENCE ? window.INTELLIGENCE.COMPANIES : []).filter(function(c) {
+          return c.country===g.country && (c.facilities||[]).some(function(f){ return f.indexOf(cityName)===0; });
+        });
+        hmOpenPanel(
+          '<div class="hdp-head"><div><div class="hdp-eyebrow">City Intelligence</div><div class="hdp-name">' + cityName + '</div><div class="hdp-loc">' + g.country + '</div></div><button class="hdp-close" onclick="hmClosePanel()">✕</button></div>' +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Coordinates</div><div class="hdp-placeholder" style="font-style:normal">' + g.lat.toFixed(3) + '°, ' + g.lng.toFixed(3) + '°</div></div>' +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Organizations with Facilities Here (' + orgs.length + ')</div>' + (orgs.length?orgs.map(hmOrgRow).join(''):'<div class="hdp-placeholder">No tracked organizations list this city among their facilities.</div>') + '</div>'
+        );
+      }
+      function hmSelectOrg(companyId) {
+        const company = (window.INTELLIGENCE && window.INTELLIGENCE.COMPANIES || []).find(function(c){ return c.id===companyId; });
+        if (!company) return;
+        drillState.level='organization'; drillState.orgId=companyId;
+        hmDrawOrgPanel(company);
+        renderCrumb();
+      }
+      function hmDrawOrgPanel(company) {
+        const col = company.cScore>=70?'var(--green)':company.cScore>=50?'var(--amber)':'var(--red)';
+        const pr = company.physicalRisk && company.physicalRisk.overall!=null ? company.physicalRisk.overall : '—';
+        const tr = company.transitionRisk && company.transitionRisk.overall!=null ? company.transitionRisk.overall : '—';
+        hmOpenPanel(
+          '<div class="hdp-head"><div><div class="hdp-eyebrow">Organization Intelligence</div><div class="hdp-name">' + company.name + '</div><div class="hdp-loc">' + (company.industryLabel||company.industry) + ' · ' + company.country + '</div></div><button class="hdp-close" onclick="hmClosePanel()">✕</button></div>' +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Climate Intelligence Score</div><div style="font-family:var(--mono);font-size:30px;font-weight:700;color:' + col + '">' + company.cScore + '<span style="font-size:12px;color:var(--text-muted)">/100</span></div></div>' +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Risk Snapshot</div>' +
+            '<div class="hdp-row"><span class="hdp-row-lbl">Physical Risk</span><span class="hdp-row-val">' + pr + '</span></div>' +
+            '<div class="hdp-row"><span class="hdp-row-lbl">Transition Risk</span><span class="hdp-row-val">' + tr + '</span></div>' +
+          '</div>' +
+          '<div class="hdp-sec"><div class="hdp-sec-title">Facilities</div><div class="hdp-placeholder" style="font-style:normal">' + ((company.facilities||[]).join(' · ')||'—') + '</div></div>' +
+          '<button class="hdp-btn" onclick="hmOpenAssessment(\'' + company.id + '\')">Open Risk OS Assessment Workspace →</button>'
+        );
+      }
+      function hmOpenAssessment(companyId) {
+        const company = (window.INTELLIGENCE && window.INTELLIGENCE.COMPANIES || []).find(function(c){ return c.id===companyId; });
+        const overlay = document.getElementById('hmTransitionOverlay');
+        const label = document.getElementById('hmTransitionLabel');
+        if (label) label.textContent = 'Opening ' + (company?company.name:'Organization') + ' — Risk OS Assessment Workspace…';
+        if (overlay) overlay.classList.add('on');
+        setTimeout(function(){ window.location.href = 'platform-company-intel.html?company=' + encodeURIComponent(companyId); }, 650);
+      }
+      window.hmGoGlobal = hmGoGlobal;
+      window.hmSelectContinent = hmSelectContinent;
+      window.hmJumpToCountry = hmJumpToCountry;
+      window.hmSelectCity = hmSelectCity;
+      window.hmSelectOrg = hmSelectOrg;
+      window.hmOpenAssessment = hmOpenAssessment;
+      window.hmClosePanel = hmClosePanel;
+
+      /* ══════════════════════════════════════════════════════
+         MAPLIBRE MAP — dark scientific basemap + real country
+         boundaries (MapLibre demotiles — same host already used
+         for glyphs, no new external dependency class) + the
+         5-layer climate hotspot dataset above as live markers.
+      ══════════════════════════════════════════════════════ */
+      const map = new maplibregl.Map({
+        container: mapEl,
+        style: {
+          version: 8,
+          glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+          sources: {
+            dark: { type:'raster', tiles:[
+              'https://a.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
+              'https://b.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
+              'https://c.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png'
+            ], tileSize:256, attribution:'© OpenStreetMap contributors © CARTO', maxzoom:19 },
+          },
+          layers: [
+            { id:'bg', type:'background', paint:{ 'background-color':'#010815' } },
+            { id:'base', type:'raster', source:'dark', paint:{
+              'raster-opacity':0.88, 'raster-hue-rotate':205, 'raster-saturation':0.35,
+              'raster-contrast':0.18, 'raster-brightness-min':0.0, 'raster-brightness-max':0.62,
+            } },
+          ],
+        },
+        center: [10,15], zoom: 0.35, minZoom: 0.2, maxZoom: 8, attributionControl: true,
       });
-      canvas.addEventListener('mouseleave', function() {
-        tooltip.style.display = 'none';
-        hoveredIdx = -1;
+      map.dragRotate.disable();
+      map.touchZoomRotate.disableRotation();
+      map.addControl(new maplibregl.NavigationControl({ showCompass:false }), 'bottom-right');
+
+      map.on('load', function() {
+        try {
+          map.addSource('demotiles', { type:'vector', url:'https://demotiles.maplibre.org/tiles/tiles.json', promoteId:{ countries:'fid' } });
+          map.addLayer({ id:'country-fill', type:'fill', source:'demotiles', 'source-layer':'countries',
+            paint:{ 'fill-color':'#ffffff', 'fill-opacity':['case',
+              ['boolean',['feature-state','selected'],false],0.09,
+              ['boolean',['feature-state','hover'],false],0.05, 0.0 ] } });
+          map.addLayer({ id:'country-line', type:'line', source:'demotiles', 'source-layer':'countries',
+            paint:{ 'line-color':['case',
+                ['boolean',['feature-state','selected'],false],'#5BA3F5',
+                ['boolean',['feature-state','hover'],false],'#8FBFF7',
+                'rgba(110,175,230,0.28)' ],
+              'line-width':['case',
+                ['boolean',['feature-state','selected'],false],1.6,
+                ['boolean',['feature-state','hover'],false],1.1, 0.45 ] } });
+
+          let hoverFid = null, selectedFid = null;
+          map.on('mousemove', 'country-fill', function(e) {
+            if (!e.features || !e.features.length) return;
+            const f = e.features[0];
+            if (hoverFid!==null && hoverFid!==f.id) map.setFeatureState({ source:'demotiles', sourceLayer:'countries', id:hoverFid }, { hover:false });
+            hoverFid = f.id;
+            map.setFeatureState({ source:'demotiles', sourceLayer:'countries', id:hoverFid }, { hover:true });
+            map.getCanvas().style.cursor = 'pointer';
+          });
+          map.on('mouseleave', 'country-fill', function() {
+            if (hoverFid!==null) map.setFeatureState({ source:'demotiles', sourceLayer:'countries', id:hoverFid }, { hover:false });
+            hoverFid = null;
+            map.getCanvas().style.cursor = '';
+          });
+          map.on('click', 'country-fill', function(e) {
+            if (!e.features || !e.features.length) return;
+            const f = e.features[0];
+            if (selectedFid!==null) map.setFeatureState({ source:'demotiles', sourceLayer:'countries', id:selectedFid }, { selected:false });
+            selectedFid = f.id;
+            map.setFeatureState({ source:'demotiles', sourceLayer:'countries', id:selectedFid }, { selected:true });
+            hmSelectCountry(f.properties, e.lngLat);
+          });
+        } catch (e) { console.warn('Country boundary layer failed to load:', e); }
+
+        /* Climate hotspot markers for the active layer */
+        map.addSource('hm-regions', { type:'geojson', data: regionsToGeoJSON(ALL_LAYERS[_activeHmLayer], 0) });
+        map.addLayer({ id:'hm-glow', type:'circle', source:'hm-regions',
+          paint:{ 'circle-radius':['get','glowR'], 'circle-color':['get','glow'], 'circle-opacity':0.22, 'circle-blur':1 } });
+        map.addLayer({ id:'hm-core', type:'circle', source:'hm-regions',
+          paint:{ 'circle-radius':['get','coreR'], 'circle-color':['get','fill'], 'circle-opacity':0.92,
+                  'circle-stroke-width':1.3, 'circle-stroke-color':['get','glow'] } });
+
+        map.on('mousemove', 'hm-core', function(e) {
+          if (!e.features || !e.features.length) return;
+          const f = e.features[0].properties;
+          const activeLayer = ALL_LAYERS[_activeHmLayer];
+          const reg = activeLayer.regions[f.idx];
+          document.getElementById('hmRegion').textContent = f.name;
+          document.getElementById('hmAnomaly').textContent = f.valLabel;
+          document.getElementById('hmAnomaly').style.color = f.glow;
+          document.getElementById('hmDesc').textContent = f.desc;
+          const sevLabel = (activeLayer.sevMap||{})[f.sev] || f.sev;
+          document.getElementById('hmSeverity').textContent = sevLabel;
+          document.getElementById('hmSeverity').className = 'hm-t-severity ' + f.sev;
+          const locEl = document.getElementById('hmLocation');
+          if (locEl && reg) locEl.textContent = Math.abs(reg.la).toFixed(0) + '°' + (reg.la>=0?'N':'S') + ', ' + Math.abs(reg.ln).toFixed(0) + '°' + (reg.ln>=0?'E':'W');
+          const statusEl = document.getElementById('hmStatus');
+          if (statusEl) statusEl.textContent = 'Active · Monitoring';
+          const satEl = document.getElementById('hmSatellite');
+          if (satEl) satEl.textContent = SATELLITE_COVERAGE[_activeHmLayer] || '—';
+          const updEl = document.getElementById('hmUpdated');
+          if (updEl) updEl.textContent = formatElapsed(pageStart);
+
+          const rect = mapEl.getBoundingClientRect();
+          const rightEdge = rect.width - e.point.x;
+          tooltip.style.display = 'block';
+          tooltip.style.top = e.point.y + 'px';
+          if (rightEdge < 280) {
+            tooltip.style.right = (rightEdge + 10) + 'px';
+            tooltip.style.left = 'auto';
+          } else {
+            tooltip.style.left = (e.point.x + 14) + 'px';
+            tooltip.style.right = 'auto';
+          }
+          tooltip.style.transform = 'translateY(-50%)';
+          map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'hm-core', function() {
+          tooltip.style.display = 'none';
+          map.getCanvas().style.cursor = '';
+        });
+
+        renderCrumb();
       });
+
+      window.addEventListener('resize', function() {
+        try { map.resize(); } catch (e) {}
+        const cur = document.querySelector('#hmLayerBtns .hm-layer-btn.active');
+        if (cur) positionIndicator(cur);
+      });
+
+      /* ── Independent slow pulse — re-issues region GeoJSON at a calm cadence ── */
+      let isVisible = true;
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(en) { isVisible = en.isIntersecting; });
+        }, { threshold: 0.05 });
+        io.observe(mapEl);
+      }
+      setInterval(function() {
+        if (!isVisible || reducedMotion) return;
+        const src = map.getSource && map.getSource('hm-regions');
+        if (!src) return;
+        src.setData(regionsToGeoJSON(ALL_LAYERS[_activeHmLayer], (Date.now() - pageStart) / 1000));
+      }, 140);
+
+      /* ── Available Climate Layers chips (built once) ── */
+      const ttLayers = document.getElementById('hmTtLayers');
+      function updateTtChips() {
+        if (!ttLayers) return;
+        ttLayers.querySelectorAll('.hm-tt-chip').forEach(function(chip) {
+          chip.classList.toggle('active', chip.getAttribute('data-chip') === _activeHmLayer);
+        });
+      }
+      if (ttLayers) {
+        ttLayers.innerHTML = Object.keys(ALL_LAYERS).map(function(k) {
+          return '<span class="hm-tt-chip" data-chip="' + k + '">' + LAYER_SHORT_LABELS[k] + '</span>';
+        }).join('');
+        updateTtChips();
+      }
+      setInterval(function() {
+        const updEl = document.getElementById('hmUpdated');
+        if (updEl && tooltip.style.display === 'block') updEl.textContent = formatElapsed(pageStart);
+      }, 1000);
+
+      /* ── Sliding active-layer indicator (bottom timeline bar) ── */
+      const layerIndicator = document.getElementById('hmLayerIndicator');
+      function positionIndicator(btn) {
+        if (!layerIndicator || !btn) return;
+        layerIndicator.style.left  = btn.offsetLeft + 'px';
+        layerIndicator.style.width = btn.offsetWidth + 'px';
+      }
 
       /* ── Heatmap layer switch ── */
       function switchHmLayer(layer) {
         if (layer === _activeHmLayer) return;
         _activeHmLayer = layer;
-        hoveredIdx = -1;
         tooltip.style.display = 'none';
+
+        const src = map.getSource && map.getSource('hm-regions');
+        if (src) src.setData(regionsToGeoJSON(ALL_LAYERS[layer], (Date.now() - pageStart) / 1000));
+        updateTtChips();
 
         const L = ALL_LAYERS[layer];
 
@@ -4977,16 +5865,22 @@
         if (hdEl) hdEl.textContent = L.heading;
         if (dsEl) dsEl.textContent = L.desc;
 
-        /* Legend */
+        /* Legend — quick crossfade so the gradient never hard-cuts */
         const bar  = document.getElementById('hmLegendBar');
         const ticks= document.getElementById('hmLegendTicks');
         const lmin = document.getElementById('hmLegendMin');
         const lmax = document.getElementById('hmLegendMax');
-        if (bar)  { bar.className = 'hm-legend-bar ' + L.legend.barClass; }
+        if (bar) {
+          bar.classList.add('switching');
+          setTimeout(function() {
+            bar.className = 'hm-legend-bar switching ' + L.legend.barClass;
+            requestAnimationFrame(function() { bar.classList.remove('switching'); });
+          }, 160);
+        }
         if (lmin) lmin.textContent = L.legend.min;
         if (lmax) lmax.textContent = L.legend.max;
         if (ticks) {
-          ticks.innerHTML = L.legend.ticks.map(t => '<span>' + t + '</span>').join('');
+          ticks.innerHTML = L.legend.ticks.map(function(tk) { return '<span>' + tk + '</span>'; }).join('');
         }
 
         /* Stats */
@@ -4999,14 +5893,14 @@
         });
 
         /* Source label */
-        const src = document.getElementById('hmLayerSource');
-        if (src && layer === 'wb_cmip6') {
-          src.textContent = 'World Bank CCKP · CMIP6 SSP1-1.9 · 2020–2039';
-        } else if (src) {
-          src.textContent = 'Climactix Climate Intelligence · April 2026';
+        const src2 = document.getElementById('hmLayerSource');
+        if (src2 && layer === 'wb_cmip6') {
+          src2.textContent = 'World Bank CCKP · CMIP6 SSP1-1.9 · 2020–2039';
+        } else if (src2) {
+          src2.textContent = 'Climactix Climate Intelligence · April 2026';
         }
 
-        /* Button active states */
+        /* Button active states + sliding indicator */
         document.querySelectorAll('#hmLayerBtns .hm-layer-btn').forEach(function(btn) {
           btn.classList.remove('active', 'temperature', 'co2', 'sea', 'ice', 'wb');
         });
@@ -5014,16 +5908,30 @@
         if (activeBtn) {
           const cls = { temperature:'temperature', co2:'co2', sea_level:'sea', arctic_ice:'ice', wb_cmip6:'wb' }[layer] || '';
           activeBtn.classList.add('active', cls);
+          positionIndicator(activeBtn);
         }
       }
 
       document.querySelectorAll('#hmLayerBtns .hm-layer-btn').forEach(function(btn) {
         btn.addEventListener('click', function() { switchHmLayer(this.dataset.layer); });
+        btn.addEventListener('mouseenter', function() {
+          if (!btn.classList.contains('active')) positionIndicator(btn);
+        });
+        btn.addEventListener('mouseleave', function() {
+          const cur = document.querySelector('#hmLayerBtns .hm-layer-btn.active');
+          positionIndicator(cur);
+        });
       });
 
       /* Mark temperature active on init */
       const initBtn = document.querySelector('#hmLayerBtns [data-layer="temperature"]');
-      if (initBtn) initBtn.classList.add('active', 'temperature');
+      if (initBtn) { initBtn.classList.add('active', 'temperature'); positionIndicator(initBtn); }
+
+      function hmFlyTo(center, zoom) {
+        try { map.flyTo({ center:center, zoom:zoom, speed:0.75, curve:1.35, easing:function(t){ return 1 - Math.pow(1-t, 3); }, essential:true }); } catch (e) {}
+      }
+
+      renderCrumb();
     }
 
     /* ══════════════════════════════════════════════

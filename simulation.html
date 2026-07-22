@@ -2874,6 +2874,130 @@ body {
   pointer-events: none;
   z-index: 900;
 }
+
+/* ══════════════════════════════════════════════════════
+   GLOBAL INTELLIGENCE NAVIGATOR — cinematic drill-down
+   Global → Continent → Country → State → City → Facility → Org → Assessment
+═══════════════════════════════════════════════════════ */
+
+/* ── Breadcrumb — persistent "you are here" strip over the map ── */
+#drillCrumb {
+  position: absolute;
+  top: 12px; left: 12px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: calc(100% - 24px);
+  pointer-events: none;
+}
+.dc-crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(5,8,14,0.82);
+  border: 1px solid var(--bd1);
+  color: var(--tx2);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: var(--t);
+  white-space: nowrap;
+}
+.dc-crumb:hover { color: var(--tx0); border-color: var(--bd2); background: rgba(5,8,14,0.95); }
+.dc-crumb.current { color: var(--acc); border-color: var(--acc); cursor: default; }
+.dc-crumb.current:hover { color: var(--acc); }
+.dc-sep { color: var(--tx3); font-size: 9px; pointer-events: none; }
+.dc-live {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--nasa-grn, #00E676);
+  display: inline-block;
+  animation: dcLivePulse 2.4s ease-in-out infinite;
+}
+@keyframes dcLivePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,230,118,0.45); }
+  55%     { box-shadow: 0 0 0 4px rgba(0,230,118,0); }
+}
+@media (prefers-reduced-motion: reduce) { .dc-live { animation: none; } }
+
+/* ── Country hover tooltip ── */
+#countryHoverTip {
+  position: absolute;
+  z-index: 25;
+  background: rgba(5,8,14,0.94);
+  border: 1px solid var(--bd2);
+  padding: 9px 12px;
+  min-width: 190px;
+  font-family: var(--font);
+  pointer-events: none;
+  display: none;
+  transform: translate(14px, -50%);
+}
+.cht-name { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--tx0); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--bd1); }
+.cht-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 3px; }
+.cht-lbl { font-family: var(--mono); font-size: 8.5px; color: var(--tx3); letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+.cht-val { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--tx1); text-align: right; }
+.cht-val.on { color: var(--nasa-grn, #00E676); }
+.cht-val.off { color: var(--tx3); }
+
+/* ── Drill intelligence panel content (reuses #rp / #rpi / .rp-*) ── */
+.dp-org-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid var(--bd1);
+  cursor: pointer; transition: var(--t);
+}
+.dp-org-row:last-child { border-bottom: none; }
+.dp-org-row:hover { background: var(--bg2); padding-left: 4px; padding-right: 4px; }
+.dp-org-name { font-family: var(--font); font-size: 11px; font-weight: 600; color: var(--tx1); }
+.dp-org-meta { font-family: var(--mono); font-size: 8.5px; color: var(--tx3); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+.dp-org-score { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+.dp-city-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 9px; margin: 0 6px 6px 0;
+  background: var(--bg2); border: 1px solid var(--bd1); color: var(--tx2);
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.03em;
+  cursor: pointer; transition: var(--t);
+}
+.dp-city-chip:hover { border-color: var(--acc); color: var(--acc); }
+.dp-placeholder { font-family: var(--font); font-size: 10.5px; color: var(--tx3); line-height: 1.6; font-style: italic; }
+.dp-btn-primary {
+  width: 100%; margin-top: 14px; padding: 10px;
+  background: transparent; border: 1px solid var(--acc); color: var(--acc);
+  font-family: var(--font); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; transition: var(--t);
+}
+.dp-btn-primary:hover { background: var(--acc); color: #000; }
+
+/* ── Cinematic handoff overlay — Country/Org → Risk OS Assessment Workspace ── */
+#cxTransitionOverlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000000;
+  opacity: 0;
+  pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.6s ease;
+}
+#cxTransitionOverlay.on { opacity: 1; pointer-events: all; }
+.cxt-inner { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.cxt-ring {
+  width: 46px; height: 46px;
+  border: 2px solid rgba(255,102,0,0.18);
+  border-top-color: var(--acc);
+  border-radius: 50%;
+  animation: cxtSpin 0.9s linear infinite;
+}
+@keyframes cxtSpin { to { transform: rotate(360deg); } }
+.cxt-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  color: var(--tx2); letter-spacing: 0.1em; text-transform: uppercase;
+}
 </style>
 </head>
 <body>
@@ -3258,6 +3382,11 @@ body {
     <!-- MAP -->
     <div id="mw">
       <div id="map"></div>
+
+      <!-- Global Intelligence Navigator — drill-down breadcrumb -->
+      <div id="drillCrumb"></div>
+      <div id="countryHoverTip"></div>
+
       <div id="mload">
         <div class="ml-inner">
           <div class="ml-label">Initialising Climate Intelligence Layer</div>
@@ -3505,6 +3634,7 @@ body {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="intelligence-engine.js"></script>
 <script>
 'use strict';
 
@@ -3526,6 +3656,8 @@ const S={scenario:'2.0',year:2030,layer:'physical',selId:null,
          mining:false,trade:false,capital:false},
   /* UI mode */
   mode:'intel',
+  /* Global Intelligence Navigator — drill-down state */
+  drill:{level:'global',continent:null,country:null,countryIso:null,city:null,panelOpen:false},
 };
 
 let _mapUpdTimer=null;
@@ -5587,6 +5719,110 @@ function narrativeGJ(){
 }
 
 /* ─── MAP INIT ─── */
+/* ══════════════════════════════════════════════════════
+   GLOBAL INTELLIGENCE NAVIGATOR — reference data
+   Continent camera-framing table + a curated gazetteer of
+   real public coordinates for cities that actually appear
+   in window.INTELLIGENCE.COMPANIES facility/HQ records.
+   No fabricated risk data — only real geographic anchors.
+═══════════════════════════════════════════════════════ */
+const CONTINENTS=[
+  {id:'NA',name:'North America',center:[-100,45],zoom:2.8},
+  {id:'SA',name:'South America',center:[-60,-18],zoom:2.9},
+  {id:'EU',name:'Europe',       center:[15,52],  zoom:3.4},
+  {id:'AF',name:'Africa',       center:[20,2],   zoom:2.8},
+  {id:'AS',name:'Asia',         center:[90,32],  zoom:2.6},
+  {id:'OC',name:'Oceania',      center:[140,-25],zoom:3.2},
+  {id:'AN',name:'Antarctica',   center:[0,-82],  zoom:2.6},
+];
+/* Maps demotiles' CONTINENT feature property to the table above */
+const CONTINENT_ALIAS={
+  'North America':'NA','South America':'SA','Europe':'EU','Africa':'AF',
+  'Asia':'AS','Oceania':'OC','Antarctica':'AN','Seven seas (open ocean)':'OC',
+};
+const CITY_GAZ={
+  'Mumbai':{lat:19.076,lng:72.878,country:'India'},
+  'Delhi':{lat:28.704,lng:77.102,country:'India'},
+  'Chennai':{lat:13.083,lng:80.271,country:'India'},
+  'Pune':{lat:18.520,lng:73.856,country:'India'},
+  'Kolkata':{lat:22.573,lng:88.364,country:'India'},
+  'Bengaluru':{lat:12.972,lng:77.594,country:'India'},
+  'Hyderabad':{lat:17.385,lng:78.487,country:'India'},
+  'Gurugram':{lat:28.457,lng:77.026,country:'India'},
+  'Jamshedpur':{lat:22.804,lng:86.185,country:'India'},
+  'Jamnagar':{lat:22.470,lng:70.058,country:'India'},
+  'Hazira':{lat:21.117,lng:72.645,country:'India'},
+  'Thane':{lat:19.218,lng:72.978,country:'India'},
+  'Mangalore':{lat:12.914,lng:74.856,country:'India'},
+  'Vadodara':{lat:22.307,lng:73.181,country:'India'},
+  'Chandigarh':{lat:30.733,lng:76.779,country:'India'},
+  'Mysuru':{lat:12.295,lng:76.639,country:'India'},
+  'Mundra':{lat:22.839,lng:69.722,country:'India'},
+  'Kattupalli':{lat:13.267,lng:80.323,country:'India'},
+  'Krishnapatnam':{lat:14.264,lng:80.109,country:'India'},
+  'Copenhagen':{lat:55.676,lng:12.568,country:'Denmark'},
+  'Singapore':{lat:1.352,lng:103.820,country:'Singapore'},
+  'Rotterdam':{lat:51.924,lng:4.478,country:'Netherlands'},
+  'Shanghai':{lat:31.230,lng:121.474,country:'China'},
+  'Los Angeles':{lat:34.052,lng:-118.244,country:'United States'},
+  'Riyadh':{lat:24.713,lng:46.675,country:'Saudi Arabia'},
+};
+/* ISO-3166 alpha-3 → common display name (public reference geography, not risk data) */
+const ADM0_TO_NAME={
+  USA:'United States',CHN:'China',IND:'India',DEU:'Germany',AUS:'Australia',
+  SGP:'Singapore',BRA:'Brazil',NLD:'Netherlands',ARE:'UAE',NGA:'Nigeria',JPN:'Japan',
+  GBR:'United Kingdom',DNK:'Denmark',FRA:'France',ITA:'Italy',ESP:'Spain',CAN:'Canada',
+  RUS:'Russia',KOR:'South Korea',IDN:'Indonesia',MEX:'Mexico',ZAF:'South Africa',
+  SAU:'Saudi Arabia',TUR:'Turkey',ARG:'Argentina',EGY:'Egypt',PAK:'Pakistan',
+  BGD:'Bangladesh',VNM:'Vietnam',THA:'Thailand',MYS:'Malaysia',PHL:'Philippines',
+  KEN:'Kenya',CHL:'Chile',COL:'Colombia',NOR:'Norway',SWE:'Sweden',FIN:'Finland',
+  POL:'Poland',UKR:'Ukraine',NZL:'New Zealand',IRL:'Ireland',PRT:'Portugal',
+  GRC:'Greece',CHE:'Switzerland',AUT:'Austria',BEL:'Belgium',QAT:'Qatar',
+  KWT:'Kuwait',ISR:'Israel',IRN:'Iran',IRQ:'Iraq',ETH:'Ethiopia',MAR:'Morocco',
+  DZA:'Algeria',PER:'Peru',VEN:'Venezuela',CZE:'Czechia',ROU:'Romania',
+};
+/* ADM0_A3 → continent id (mirrors CONTINENTS above; public reference geography) */
+const ADM0_TO_CONTINENT={
+  USA:'NA',CAN:'NA',MEX:'NA',
+  BRA:'SA',CHL:'SA',COL:'SA',PER:'SA',ARG:'SA',VEN:'SA',
+  DEU:'EU',GBR:'EU',DNK:'EU',FRA:'EU',ITA:'EU',ESP:'EU',NLD:'EU',NOR:'EU',SWE:'EU',
+  FIN:'EU',POL:'EU',IRL:'EU',PRT:'EU',GRC:'EU',CHE:'EU',AUT:'EU',BEL:'EU',UKR:'EU',CZE:'EU',ROU:'EU',
+  NGA:'AF',ZAF:'AF',KEN:'AF',ETH:'AF',EGY:'AF',MAR:'AF',DZA:'AF',
+  CHN:'AS',IND:'AS',JPN:'AS',SGP:'AS',KOR:'AS',IDN:'AS',PAK:'AS',BGD:'AS',VNM:'AS',
+  THA:'AS',MYS:'AS',PHL:'AS',ARE:'AS',SAU:'AS',QAT:'AS',KWT:'AS',ISR:'AS',IRN:'AS',IRQ:'AS',TUR:'AS',RUS:'AS',
+  AUS:'OC',NZL:'OC',
+};
+/* ADM0_A3 → real narrative-region key used by COUNTRY_RISK_NARRATIVE below */
+const ADM0_TO_RCTX={
+  USA:'USA',CHN:'China',IND:'India',AUS:'Australia',BRA:'Brazil',RUS:'Russia',
+  CAN:'Canada',JPN:'Japan',KOR:'SouthKorea',
+  GBR:'EU',DEU:'EU',FRA:'EU',ITA:'EU',ESP:'EU',NLD:'EU',DNK:'EU',SWE:'EU',
+  NOR:'EU',FIN:'EU',POL:'EU',IRL:'EU',PRT:'EU',GRC:'EU',CHE:'EU',AUT:'EU',BEL:'EU',UKR:'EU',CZE:'EU',ROU:'EU',
+  ARE:'MENA',SAU:'MENA',QAT:'MENA',KWT:'MENA',ISR:'MENA',IRN:'MENA',IRQ:'MENA',EGY:'MENA',TUR:'MENA',MAR:'MENA',DZA:'MENA',
+  NGA:'Africa',ZAF:'Africa',KEN:'Africa',ETH:'Africa',
+  SGP:'SEA',IDN:'SEA',VNM:'SEA',THA:'SEA',MYS:'SEA',PHL:'SEA',BGD:'SEA',PAK:'SEA',
+  MEX:'LatAm',ARG:'LatAm',CHL:'LatAm',COL:'LatAm',PER:'LatAm',VEN:'LatAm',
+};
+/* Real region climate-risk narrative — verbatim text already authored in this
+   product's PDF report generator (see regionCtx/RCTX below in this file),
+   duplicated here at top scope so the map drill-down panel can reference it. */
+const COUNTRY_RISK_NARRATIVE={
+  EU:'North-western European climate systems are tracking 1.8× the global mean warming rate. Rhine-Danube basin precipitation events are intensifying, with 100-year flood recurrence compressing toward 35-year cycles under CMIP6 RCP6.0 projections. EU ETS Phase 4 carbon pricing creates simultaneous regulatory acceleration.',
+  USA:'Gulf Coast and eastern seaboard assets face compound coastal-fluvial flooding as Atlantic SSTs exceed +1.4°C above the 1951–1980 baseline. Dry-bulb temperature extremes in the continental interior are extending heat stress windows by 18 days per decade.',
+  China:'Yangtze and Pearl River delta hydrological systems are being restructured by monsoon intensification. CMIP6 projections indicate 50-year flood recurrence events compressing to sub-20-year frequency by 2040. Northern inland aridity expansion creates simultaneous drought risk for energy and agriculture assets.',
+  India:'Indo-Gangetic Plain wet-bulb temperature exceedance is accelerating, with WBGT thresholds critical to outdoor labour capacity projected to be breached for 45+ days/year by 2035. Bay of Bengal cyclone frequency has increased 23% per IPCC AR6, amplifying coastal and delta flood risk.',
+  Australia:'East-coast rainfall variability is increasing as the Indian Ocean Dipole intensifies. Inland aridity expansion threatens agriculture and mining water supply, while the Black Summer wildfire precedent signals step-change physical risk to infrastructure in forested and peri-urban zones.',
+  MENA:'Persian Gulf sea surface temperature anomalies are driving wet-bulb temperature indices that approach physiological thresholds for outdoor work. Heat stress increasingly constrains productive hours in construction, logistics, and energy sectors. Water stress from over-extraction compounds long-term viability risk.',
+  SouthKorea:'East Asian monsoonal systems are intensifying, elevating typhoon and flood frequency for coastal manufacturing and logistics assets. Korea is subject to simultaneous transition risk acceleration via K-ETS expansion and imported carbon cost via CBAM exposure.',
+  Japan:'Pacific typhoon tracks are shifting northward with increased Category 3+ intensity. Coastal infrastructure exposure is compounded by liquefaction risk in delta zones. Japan\'s carbon pricing trajectory accelerates post-2030 under the GX framework.',
+  Brazil:'Amazon hydrological disruption is compressing wet-dry seasonality, elevating drought risk for agriculture and hydro-dependent energy assets. Coastal and delta flooding in southern Brazil is intensifying under La Niña-modulated precipitation anomalies.',
+  Russia:'Permafrost degradation in Siberian and Arctic regions introduces structural infrastructure risk for energy extraction and pipeline assets. Western Russia faces increasing drought and wildfire risk consistent with European drying trends.',
+  Africa:'Sub-Saharan assets face intensifying heat stress and precipitation volatility. West African coastal regions are experiencing sea level rise at 1.3× the global mean rate. Agricultural and logistics assets face compound physical-transition risk as adaptation finance remains constrained.',
+  SEA:'South and South-East Asian deltas face the highest compound coastal-fluvial flood risk globally. Bangkok, Ho Chi Minh City, Jakarta, and Manila metro zones are projected to face 3× current annual flood exposure by 2040. Monsoon intensification amplifies river flood frequency across all major basins.',
+  LatAm:'Andean glacier retreat is restructuring water availability for energy, mining, and agriculture assets in Chile, Peru, and Bolivia. Caribbean basin hurricane intensification directly affects coastal and island manufacturing.',
+  Canada:'Northern Canadian assets face permafrost degradation and wildfire risk expansion. Southern assets are affected by Great Lakes water level volatility and increasing heat dome events modelled to triple in frequency by 2045.',
+  Global:'Regional climate systems are responding to global mean warming consistent with CMIP6 ensemble projections, with local amplification factors dependent on proximity to amplifying ocean systems and land surface feedback mechanisms.'
+};
 let map=null;
 function initMap(){
   map=new maplibregl.Map({
@@ -5633,6 +5869,62 @@ function initMap(){
     try{map.setPaintProperty('ct','raster-opacity',0.96);}catch(e){}
     try{map.setPaintProperty('day','raster-opacity',0.22);}catch(e){}
     try{map.setPaintProperty('lbl','raster-opacity',0.88);}catch(e){}
+
+    /* ══════════════════════════════════════════════════
+       GLOBAL INTELLIGENCE NAVIGATOR — country boundaries
+       MapLibre demotiles vector tiles (same host already
+       used for glyphs above — no new external dependency).
+       Real ADM0 polygons/lines; zoom 0–6 only, which is
+       exactly the Global→Continent→Country tier range.
+    ═══════════════════════════════════════════════════ */
+    try{
+      map.addSource('demotiles',{
+        type:'vector',
+        url:'https://demotiles.maplibre.org/tiles/tiles.json',
+        promoteId:{countries:'fid'}
+      });
+      map.addLayer({id:'country-fill',type:'fill',source:'demotiles','source-layer':'countries',
+        paint:{'fill-color':'#ffffff',
+          'fill-opacity':['case',
+            ['boolean',['feature-state','selected'],false],0.10,
+            ['boolean',['feature-state','hover'],false],0.06,
+            0.0]}});
+      map.addLayer({id:'country-line',type:'line',source:'demotiles','source-layer':'countries',
+        paint:{'line-color':['case',
+            ['boolean',['feature-state','selected'],false],'#5BA3F5',
+            ['boolean',['feature-state','hover'],false],'#8FBFF7',
+            'rgba(255,255,255,0.22)'],
+          'line-width':['case',
+            ['boolean',['feature-state','selected'],false],2.0,
+            ['boolean',['feature-state','hover'],false],1.4,
+            0.55]}});
+
+      let hoverFid=null,selectedFid=null;
+      map.on('mousemove','country-fill',e=>{
+        if(S.addMode||!e.features||!e.features.length)return;
+        const f=e.features[0];
+        if(hoverFid!==null&&hoverFid!==f.id)map.setFeatureState({source:'demotiles',sourceLayer:'countries',id:hoverFid},{hover:false});
+        hoverFid=f.id;
+        map.setFeatureState({source:'demotiles',sourceLayer:'countries',id:hoverFid},{hover:true});
+        map.getCanvas().style.cursor='pointer';
+        showCountryHoverTip(f.properties,e.point);
+      });
+      map.on('mouseleave','country-fill',()=>{
+        if(hoverFid!==null)map.setFeatureState({source:'demotiles',sourceLayer:'countries',id:hoverFid},{hover:false});
+        hoverFid=null;
+        if(!S.addMode)map.getCanvas().style.cursor='';
+        hideCountryHoverTip();
+      });
+      map.on('click','country-fill',e=>{
+        if(S.addMode||!e.features||!e.features.length)return;
+        e.preventDefault();
+        const f=e.features[0];
+        if(selectedFid!==null)map.setFeatureState({source:'demotiles',sourceLayer:'countries',id:selectedFid},{selected:false});
+        selectedFid=f.id;
+        map.setFeatureState({source:'demotiles',sourceLayer:'countries',id:selectedFid},{selected:true});
+        selectCountry(f.properties,e.lngLat);
+      });
+    }catch(e){ console.warn('Country boundary layer failed to load:',e); }
 
     map.addSource('rg',{type:'geojson',data:heatGJ()});
     map.addLayer({id:'rh',type:'heatmap',source:'rg',paint:{
@@ -7198,6 +7490,313 @@ function buildStaticMacro(country){
     <div style="margin-top:6px;font-size:7px;color:var(--tx3);letter-spacing:.1em">
       SOURCE: WORLD BANK 2022/23 · IMF · CLIMATE WATCH
     </div>`;
+}
+
+/* ══════════════════════════════════════════════════════
+   GLOBAL INTELLIGENCE NAVIGATOR — drill-down engine
+   Global → Continent → Country → (State) → City → Organization → Assessment
+   Reuses the existing #rp/#rpi asset panel + .rp-* classes
+   for full visual consistency. No fabricated data — every
+   figure below traces to COUNTRY_MACRO, window.INTELLIGENCE,
+   or the real narrative text also used by the PDF generator.
+═══════════════════════════════════════════════════════ */
+
+function countryOrgs(name){
+  if(!window.INTELLIGENCE)return[];
+  return window.INTELLIGENCE.COMPANIES.filter(c=>c.country===name);
+}
+function continentOrgs(contId){
+  if(!window.INTELLIGENCE)return[];
+  const names=Object.keys(ADM0_TO_NAME).filter(k=>ADM0_TO_CONTINENT[k]===contId).map(k=>ADM0_TO_NAME[k]);
+  return window.INTELLIGENCE.COMPANIES.filter(c=>names.indexOf(c.country)!==-1);
+}
+function orgRowHTML(o){
+  const col=o.cScore>=70?'var(--nasa-grn,#00CC44)':o.cScore>=50?'var(--acc)':'var(--rc)';
+  return `<div class="dp-org-row" onclick="selectOrg('${o.id}')">
+    <div><div class="dp-org-name">${o.name}</div><div class="dp-org-meta">${o.industryLabel||o.industry} · ${o.country}</div></div>
+    <div class="dp-org-score" style="color:${col}">${o.cScore}</div>
+  </div>`;
+}
+
+/* ── Camera choreography — calm, cinematic, no hard cuts ── */
+function flyToLevel(center,zoom,pitch){
+  try{ map.flyTo({center,zoom,pitch:pitch||0,bearing:0,speed:0.75,curve:1.35,easing:t=>1-Math.pow(1-t,3),essential:true}); }catch(e){}
+}
+
+/* ── Breadcrumb — persistent, click-to-jump navigation ── */
+function renderCrumb(){
+  const el=document.getElementById('drillCrumb');
+  if(!el)return;
+  const d=S.drill;
+  const parts=[{label:'Global',action:'goGlobal()'}];
+  if(d.continent){
+    const cont=CONTINENTS.find(c=>c.id===d.continent);
+    parts.push({label:cont?cont.name:d.continent,action:"selectContinent('"+d.continent+"')"});
+  }
+  if(d.country)parts.push({label:d.country,action:'jumpToCountry()'});
+  if(d.city)parts.push({label:d.city,action:null});
+  if(d.level==='organization'){
+    const company=(window.INTELLIGENCE&&window.INTELLIGENCE.COMPANIES||[]).find(c=>c.id===d.orgId);
+    parts.push({label:company?company.name:'Organization',action:null});
+  }
+  el.innerHTML=parts.map((p,i)=>{
+    const isLast=i===parts.length-1;
+    const sep=i>0?'<span class="dc-sep">›</span>':'<span class="dc-live"></span>';
+    if(isLast||!p.action)return sep+'<span class="dc-crumb'+(isLast?' current':'')+'">'+p.label+'</span>';
+    return sep+'<span class="dc-crumb" onclick="'+p.action+'">'+p.label+'</span>';
+  }).join('');
+}
+
+/* ── Panel open/close — shares #rp/#rpi with the asset panel ── */
+function openDrillPanel(html){
+  const rp=document.getElementById('rp'),rpi=document.getElementById('rpi');
+  if(!rp||!rpi)return;
+  S.selId=null;
+  rpi.innerHTML=html;
+  rp.classList.add('on');
+  S.drill.panelOpen=true;
+  const pdfBtn=document.getElementById('pdf-btn');
+  if(pdfBtn)pdfBtn.disabled=true;
+}
+function closeDrillPanel(){
+  const rp=document.getElementById('rp');
+  if(rp)rp.classList.remove('on');
+  S.drill.panelOpen=false;
+}
+
+/* ── Country hover tooltip ── */
+function showCountryHoverTip(props,point){
+  const tip=document.getElementById('countryHoverTip');
+  if(!tip)return;
+  const name=ADM0_TO_NAME[props.ADM0_A3]||props.NAME||'Unknown region';
+  const orgs=countryOrgs(name);
+  const hasMacro=!!COUNTRY_MACRO[name];
+  const contId=ADM0_TO_CONTINENT[props.ADM0_A3];
+  const contName=contId?(CONTINENTS.find(c=>c.id===contId)||{}).name:(props.CONTINENT||'—');
+  tip.innerHTML=
+    '<div class="cht-name">'+name+'</div>'+
+    '<div class="cht-row"><span class="cht-lbl">Intelligence Status</span><span class="cht-val '+((orgs.length||hasMacro)?'on':'off')+'">'+((orgs.length||hasMacro)?'Active Monitoring':'Limited Coverage')+'</span></div>'+
+    '<div class="cht-row"><span class="cht-lbl">Assessment Available</span><span class="cht-val '+(orgs.length?'on':'off')+'">'+(orgs.length?'Yes':'No')+'</span></div>'+
+    '<div class="cht-row"><span class="cht-lbl">Organizations</span><span class="cht-val">'+orgs.length+'</span></div>'+
+    '<div class="cht-row"><span class="cht-lbl">Continent</span><span class="cht-val">'+contName+'</span></div>';
+  tip.style.display='block';
+  tip.style.left=point.x+'px';
+  tip.style.top=point.y+'px';
+}
+function hideCountryHoverTip(){
+  const tip=document.getElementById('countryHoverTip');
+  if(tip)tip.style.display='none';
+}
+
+/* ── Global level ── */
+function goGlobal(){
+  S.drill={level:'global',continent:null,country:null,countryIso:null,countryCenter:null,city:null,orgId:null,panelOpen:false};
+  flyToLevel([-50,25],2.4,0);
+  closeDrillPanel();
+  renderCrumb();
+}
+
+/* ── Continent level ── */
+function selectContinent(contId){
+  const cont=CONTINENTS.find(c=>c.id===contId);
+  if(!cont)return;
+  S.drill.level='continent';
+  S.drill.continent=contId;
+  S.drill.country=null;S.drill.city=null;S.drill.orgId=null;
+  flyToLevel(cont.center,cont.zoom,8);
+  drawContinentPanel(cont);
+  renderCrumb();
+}
+function drawContinentPanel(cont){
+  const orgs=continentOrgs(cont.id);
+  const cities=Object.keys(CITY_GAZ).filter(k=>{
+    const g=CITY_GAZ[k];
+    const iso=Object.keys(ADM0_TO_NAME).find(k2=>ADM0_TO_NAME[k2]===g.country);
+    return iso&&ADM0_TO_CONTINENT[iso]===cont.id;
+  });
+  openDrillPanel(
+    '<div class="rp-head"><div>'+
+      '<div class="rp-eyebrow">Continent Intelligence</div>'+
+      '<div class="rp-name">'+cont.name+'</div>'+
+      '<div class="rp-loc">Global Climate Intelligence Navigator</div>'+
+    '</div><button class="btn-x" onclick="closeDrillPanel()"></button></div>'+
+    '<div class="rp-sec"><div class="rp-sec-title">Overview</div>'+
+      '<div class="dp-placeholder">Click any country within '+cont.name+' to open its climate intelligence profile, tracked organizations, and assessment status.</div>'+
+    '</div>'+
+    '<div class="rp-sec"><div class="rp-sec-title">Organizations Tracked ('+orgs.length+')</div>'+
+      (orgs.length?orgs.map(orgRowHTML).join(''):'<div class="dp-placeholder">No organizations currently tracked in this continent.</div>')+
+    '</div>'+
+    (cities.length?('<div class="rp-sec"><div class="rp-sec-title">Cities with Facility Intelligence</div>'+
+      cities.map(c=>'<span class="dp-city-chip" onclick="selectCity(\''+c.replace(/'/g,"\\'")+'\')">'+c+'</span>').join('')+
+    '</div>'):'')
+  );
+}
+
+/* ── Country level ── */
+function selectCountry(props,lngLat){
+  const name=ADM0_TO_NAME[props.ADM0_A3]||props.NAME||'Unknown region';
+  const contId=ADM0_TO_CONTINENT[props.ADM0_A3];
+  S.drill.level='country';
+  S.drill.continent=contId||S.drill.continent;
+  S.drill.country=name;
+  S.drill.countryIso=props.ADM0_A3;
+  S.drill.city=null;S.drill.orgId=null;
+  hideCountryHoverTip();
+  const center=lngLat?[lngLat.lng,lngLat.lat]:(CONTINENTS.find(c=>c.id===contId)||{}).center||[0,20];
+  S.drill.countryCenter=center;
+  flyToLevel(center,4.6,30);
+  drawCountryPanel(name,props.ADM0_A3);
+  renderCrumb();
+}
+function jumpToCountry(){
+  if(!S.drill.country)return;
+  S.drill.level='country';S.drill.city=null;S.drill.orgId=null;
+  if(S.drill.countryCenter)flyToLevel(S.drill.countryCenter,4.6,30);
+  drawCountryPanel(S.drill.country,S.drill.countryIso);
+  renderCrumb();
+}
+function drawCountryPanel(name,iso){
+  const macro=COUNTRY_MACRO[name];
+  const rctxKey=ADM0_TO_RCTX[iso]||'Global';
+  const narrative=COUNTRY_RISK_NARRATIVE[rctxKey]||COUNTRY_RISK_NARRATIVE.Global;
+  const orgs=countryOrgs(name);
+  const cities=Object.keys(CITY_GAZ).filter(k=>CITY_GAZ[k].country===name);
+  const contName=(CONTINENTS.find(c=>c.id===S.drill.continent)||{}).name||'—';
+  openDrillPanel(
+    '<div class="rp-head"><div>'+
+      '<div class="rp-eyebrow">Country Intelligence</div>'+
+      '<div class="rp-name">'+name+'</div>'+
+      '<div class="rp-loc"><svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4.5 8.5C4.5 8.5 1.5 5.5 1.5 3.5a3 3 0 0 1 6 0c0 2-3 5-3 5z"/><circle cx="4.5" cy="3.5" r="1"/></svg> '+contName+'</div>'+
+    '</div><button class="btn-x" onclick="closeDrillPanel()"></button></div>'+
+    '<div class="rp-sec"><div class="rp-sec-title">Climate Risk Overview</div>'+
+      '<div class="dp-placeholder" style="font-style:normal;color:var(--tx2)">'+narrative+'</div>'+
+    '</div>'+
+    (macro?(
+      '<div class="rp-sec"><div class="rp-sec-title">Macro &amp; Regulatory Environment</div>'+
+      '<div class="intel-row">'+
+        '<div class="intel-cell"><div class="intel-lbl">Sovereign Rating</div><div class="intel-val">'+(macro.rating||'—')+'</div></div>'+
+        '<div class="intel-cell"><div class="intel-lbl">CO₂ / Capita</div><div class="intel-val">'+(macro.co2pc!=null?macro.co2pc+' t':'—')+'</div></div>'+
+      '</div>'+
+      '<div class="intel-row" style="margin-top:6px">'+
+        '<div class="intel-cell"><div class="intel-lbl">Renewables Share</div><div class="intel-val">'+(macro.renewables!=null?macro.renewables+'%':'—')+'</div></div>'+
+        '<div class="intel-cell"><div class="intel-lbl">Carbon Market</div><div class="intel-val" style="font-size:9.5px">'+(macro.carbonMarket||'—')+'</div></div>'+
+      '</div></div>'
+    ):(
+      '<div class="rp-sec"><div class="rp-sec-title">Macro &amp; Regulatory Environment</div>'+
+      '<div class="dp-placeholder">Extended macro dataset not yet integrated for '+name+'.</div></div>'
+    ))+
+    '<div class="rp-sec"><div class="rp-sec-title">Organizations ('+orgs.length+')</div>'+
+      (orgs.length?orgs.map(orgRowHTML).join(''):'<div class="dp-placeholder">No organizations currently tracked for this country.</div>')+
+    '</div>'+
+    (cities.length?('<div class="rp-sec"><div class="rp-sec-title">Cities with Facility Intelligence</div>'+
+      cities.map(c=>'<span class="dp-city-chip" onclick="selectCity(\''+c.replace(/'/g,"\\'")+'\')">'+c+'</span>').join('')+
+    '</div>'):'')+
+    (name==='India'?(
+      '<div class="rp-sec"><div class="rp-sec-title">Administrative Boundaries</div>'+
+      '<div class="dp-placeholder" style="font-style:normal">State-level boundary data available. <span style="color:var(--acc);cursor:pointer" onclick="loadIndiaStates()">Load state boundaries →</span></div></div>'
+    ):(
+      '<div class="rp-sec"><div class="rp-sec-title">Administrative Boundaries</div>'+
+      '<div class="dp-placeholder">Sub-national (state/province) boundary data is not yet integrated for '+name+'.</div></div>'
+    ))
+  );
+}
+
+/* ── State tier — real for India (reuses india-climate-outlook.html's
+   working GeoJSON source); a progressive enhancement elsewhere ── */
+let _indiaStatesLoaded=false;
+function loadIndiaStates(){
+  S.drill.level='state';
+  if(_indiaStatesLoaded){flyToLevel([79,22.5],4.6,30);renderCrumb();return;}
+  fetch('https://raw.githubusercontent.com/geohacker/india/master/state/india_state.geojson')
+    .then(r=>{if(!r.ok)throw new Error('primary source failed');return r.json();})
+    .catch(()=>fetch('https://cdn.jsdelivr.net/gh/geohacker/india@master/state/india_state.geojson').then(r=>r.json()))
+    .then(gj=>{
+      if(!map.getSource('india-states')){
+        map.addSource('india-states',{type:'geojson',data:gj});
+        map.addLayer({id:'india-states-fill',type:'fill',source:'india-states',paint:{'fill-color':'#5BA3F5','fill-opacity':0.03}});
+        map.addLayer({id:'india-states-line',type:'line',source:'india-states',paint:{'line-color':'#5BA3F5','line-width':1.1,'line-opacity':0.75}});
+      }
+      _indiaStatesLoaded=true;
+      flyToLevel([79,22.5],4.6,30);
+      renderCrumb();
+    })
+    .catch(()=>{ /* boundary overlay is a progressive enhancement — silent no-op if unreachable */ });
+}
+
+/* ── City level ── */
+function selectCity(cityName){
+  const g=CITY_GAZ[cityName];
+  if(!g)return;
+  S.drill.level='city';
+  S.drill.city=cityName;
+  S.drill.country=g.country;
+  flyToLevel([g.lng,g.lat],8.2,45);
+  drawCityPanel(cityName,g);
+  renderCrumb();
+}
+function drawCityPanel(cityName,g){
+  const orgs=(window.INTELLIGENCE?window.INTELLIGENCE.COMPANIES:[]).filter(c=>
+    c.country===g.country && (c.facilities||[]).some(f=>f.indexOf(cityName)===0));
+  openDrillPanel(
+    '<div class="rp-head"><div>'+
+      '<div class="rp-eyebrow">City Intelligence</div>'+
+      '<div class="rp-name">'+cityName+'</div>'+
+      '<div class="rp-loc"><svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M4.5 8.5C4.5 8.5 1.5 5.5 1.5 3.5a3 3 0 0 1 6 0c0 2-3 5-3 5z"/><circle cx="4.5" cy="3.5" r="1"/></svg> '+g.country+'</div>'+
+    '</div><button class="btn-x" onclick="closeDrillPanel()"></button></div>'+
+    '<div class="rp-sec"><div class="rp-sec-title">Coordinates</div>'+
+      '<div class="dp-placeholder" style="font-style:normal">'+g.lat.toFixed(3)+'°, '+g.lng.toFixed(3)+'°</div>'+
+    '</div>'+
+    '<div class="rp-sec"><div class="rp-sec-title">Organizations with Facilities Here ('+orgs.length+')</div>'+
+      (orgs.length?orgs.map(orgRowHTML).join(''):'<div class="dp-placeholder">No tracked organizations list this city among their facilities.</div>')+
+    '</div>'
+  );
+}
+
+/* ── Organization level ── */
+function selectOrg(companyId){
+  const company=(window.INTELLIGENCE&&window.INTELLIGENCE.COMPANIES||[]).find(c=>c.id===companyId);
+  if(!company)return;
+  S.drill.level='organization';
+  S.drill.orgId=companyId;
+  drawOrgPanel(company);
+  renderCrumb();
+}
+function drawOrgPanel(company){
+  const col=company.cScore>=70?'var(--nasa-grn,#00CC44)':company.cScore>=50?'var(--acc)':'var(--rc)';
+  const pr=company.physicalRisk&&company.physicalRisk.overall!=null?company.physicalRisk.overall:'—';
+  const tr=company.transitionRisk&&company.transitionRisk.overall!=null?company.transitionRisk.overall:'—';
+  openDrillPanel(
+    '<div class="rp-head"><div>'+
+      '<div class="rp-eyebrow">Organization Intelligence</div>'+
+      '<div class="rp-name">'+company.name+'</div>'+
+      '<div class="rp-loc">'+(company.industryLabel||company.industry)+' · '+company.country+'</div>'+
+    '</div><button class="btn-x" onclick="closeDrillPanel()"></button></div>'+
+    '<div class="rp-sec"><div class="rp-sec-title">Climate Intelligence Score</div>'+
+      '<div style="font-family:var(--mono);font-size:32px;font-weight:700;color:'+col+'">'+company.cScore+'<span style="font-size:13px;color:var(--tx3)">/100</span></div>'+
+    '</div>'+
+    '<div class="rp-sec"><div class="rp-sec-title">Risk Snapshot</div>'+
+      '<div class="intel-row">'+
+        '<div class="intel-cell"><div class="intel-lbl">Physical Risk</div><div class="intel-val">'+pr+'</div></div>'+
+        '<div class="intel-cell"><div class="intel-lbl">Transition Risk</div><div class="intel-val">'+tr+'</div></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="rp-sec"><div class="rp-sec-title">Facilities</div>'+
+      '<div class="dp-placeholder" style="font-style:normal">'+((company.facilities||[]).join(' · ')||'—')+'</div>'+
+    '</div>'+
+    '<button class="dp-btn-primary" onclick="openAssessment(\''+company.id+'\')">Open Risk OS Assessment Workspace →</button>'
+  );
+}
+
+/* ── Assessment handoff — cinematic overlay, then a real, working
+   deep link (platform-company-intel.html already reads ?company=
+   against window.INTELLIGENCE.COMPANIES) ── */
+function openAssessment(companyId){
+  const company=(window.INTELLIGENCE&&window.INTELLIGENCE.COMPANIES||[]).find(c=>c.id===companyId);
+  const overlay=document.getElementById('cxTransitionOverlay');
+  const label=document.getElementById('cxTransitionLabel');
+  if(label)label.textContent='Opening '+(company?company.name:'Organization')+' — Risk OS Assessment Workspace…';
+  if(overlay)overlay.classList.add('on');
+  setTimeout(()=>{ window.location.href='platform-company-intel.html?company='+encodeURIComponent(companyId); },650);
 }
 
 /* ─── ASSET PANEL ─── */
@@ -9004,6 +9603,7 @@ function generateReport(){
 document.addEventListener('DOMContentLoaded',()=>{
   S.assets=ASSETS.slice();
   renderAll();initMap();
+  renderCrumb();
   document.getElementById('nname').addEventListener('input',e=>{
     document.getElementById('cfbtn').disabled=!e.target.value.trim();});
   /* Close search dropdown when clicking outside */
@@ -9481,6 +10081,14 @@ function addNITIMarkers() {
         <div>&#x25b8; CEA Generation Reports</div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Cinematic handoff overlay — Organization → Risk OS Assessment Workspace -->
+<div id="cxTransitionOverlay">
+  <div class="cxt-inner">
+    <div class="cxt-ring"></div>
+    <div class="cxt-label" id="cxTransitionLabel">Opening Risk OS Assessment Workspace…</div>
   </div>
 </div>
 </body>
