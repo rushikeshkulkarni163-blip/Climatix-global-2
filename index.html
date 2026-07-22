@@ -2096,6 +2096,215 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════
+         SECTION: SCORE PREVIEW — a live "product preview"
+         of the Climate Intelligence Score™ output, styled
+         to the v4.0 design system (light, NASA Blue) as a
+         distinct panel against the dark marketing page —
+         not page chrome, a demonstration of the real product.
+    ═══════════════════════════════════════════════ -->
+    <style>
+      .cx-score-preview {
+        --p-bg: #FFFFFF; --p-surface: #FAFAFA; --p-border: #D9D9D9;
+        --p-text: #111111; --p-text-2: #4F4F4F; --p-text-muted: #6B7280;
+        --p-accent: #0B3D91; --p-radius: 8px;
+        font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background: var(--p-bg); color: var(--p-text);
+        border: 1px solid var(--p-border); border-radius: var(--p-radius);
+        overflow: hidden;
+      }
+      .csp-grid { display: grid; grid-template-columns: 1.15fr 0.85fr 1.1fr; }
+      .csp-col { padding: 32px 28px; min-width: 0; }
+      .csp-col + .csp-col { border-left: 1px solid var(--p-border); }
+      .csp-title { font-size: 26px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 10px; }
+      .csp-tagline { font-size: 13.5px; font-weight: 700; color: var(--p-accent); margin-bottom: 12px; }
+      .csp-desc { font-size: 13px; line-height: 1.6; color: var(--p-text-2); margin: 0 0 22px; }
+      .csp-divider { height: 1px; background: var(--p-border); margin: 0 0 20px; }
+      .csp-feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 16px; }
+      .csp-feat-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--p-text); color: #fff; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; flex-shrink: 0; }
+      .csp-feat-icon svg { width: 15px; height: 15px; }
+      .csp-feat-title { font-size: 11.5px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; margin-bottom: 4px; }
+      .csp-feat-text { font-size: 11px; line-height: 1.5; color: var(--p-text-muted); }
+      .csp-score-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--p-text-muted); margin-bottom: 16px; }
+      .csp-score-num { display: flex; align-items: flex-end; gap: 4px; margin-bottom: 10px; }
+      .csp-score-big { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 60px; font-weight: 700; line-height: 0.85; letter-spacing: -0.02em; }
+      .csp-score-max { font-size: 18px; font-weight: 600; color: var(--p-text-muted); padding-bottom: 6px; }
+      .csp-score-tag { font-size: 13px; margin-bottom: 22px; }
+      .csp-score-rating { font-weight: 700; color: var(--p-accent); }
+      .csp-score-vs { color: var(--p-text-muted); }
+      .csp-meta-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--p-surface); font-size: 12px; }
+      .csp-meta-row span:first-child { color: var(--p-text-muted); }
+      .csp-meta-row span:last-child { font-weight: 600; text-align: right; }
+      .csp-cta { display: block; width: 100%; margin-top: 22px; padding: 11px 16px; background: transparent; border: 1px solid var(--p-accent); color: var(--p-accent); font-family: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; text-align: center; text-decoration: none; border-radius: var(--p-radius); cursor: pointer; transition: background 200ms cubic-bezier(0.22,1,0.36,1), color 200ms cubic-bezier(0.22,1,0.36,1); }
+      .csp-cta:hover { background: var(--p-accent); color: #fff; }
+      .csp-block-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--p-text-muted); margin-bottom: 14px; }
+      .csp-block-head-sub { font-weight: 500; text-transform: none; letter-spacing: 0; font-size: 10.5px; }
+      .csp-bar-row { display: grid; grid-template-columns: 16px 140px 1fr 26px; align-items: center; gap: 10px; padding: 6px 0; }
+      .csp-bar-row svg { width: 13px; height: 13px; color: var(--p-text-muted); }
+      .csp-bar-label { font-size: 11.5px; color: var(--p-text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .csp-bar-track { height: 5px; background: var(--p-surface); border-radius: 3px; overflow: hidden; }
+      .csp-bar-fill { height: 100%; background: var(--p-accent); border-radius: 3px; }
+      .csp-bar-val { font-size: 11.5px; font-weight: 700; text-align: right; }
+      .csp-cbar-row { display: grid; grid-template-columns: 132px 1fr 28px; align-items: center; gap: 10px; padding: 7px 0; }
+      .csp-cbar-label { font-size: 11.5px; color: var(--p-text-2); }
+      .csp-cbar-label.is-you { color: var(--p-accent); font-weight: 700; }
+      .csp-cbar-track { height: 6px; background: var(--p-surface); border-radius: 3px; overflow: hidden; }
+      .csp-cbar-fill { height: 100%; border-radius: 3px; background: #B8BEC8; }
+      .csp-cbar-fill.is-you { background: var(--p-accent); }
+      .csp-cbar-val { font-size: 11.5px; font-weight: 700; text-align: right; }
+      .csp-axis { display: flex; justify-content: space-between; font-size: 9.5px; color: var(--p-text-muted); margin: 6px 0 0 142px; }
+      .csp-indicators { background: #0B0E14; padding: 22px 28px 26px; }
+      .csp-ind-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+      .csp-ind-head-title { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #F4F6F8; }
+      .csp-ind-link { font-size: 11px; font-weight: 600; color: #7AA6F0; text-decoration: none; transition: color 200ms ease; }
+      .csp-ind-link:hover { color: #A9C6F5; }
+      .csp-ind-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+      .csp-ind-tile { padding: 10px; border-radius: 6px; transition: background 220ms cubic-bezier(0.22,1,0.36,1); }
+      .csp-ind-tile:hover { background: rgba(255,255,255,0.035); }
+      .csp-ind-label { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #8892A0; margin-bottom: 8px; }
+      .csp-ind-label svg { width: 11px; height: 11px; flex-shrink: 0; }
+      .csp-ind-val { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 18px; font-weight: 700; color: #F4F6F8; letter-spacing: -0.01em; margin-bottom: 8px; }
+      .csp-ind-val .unit { font-size: 10.5px; font-weight: 500; color: #8892A0; margin-left: 2px; }
+      .csp-ind-spark { display: block; margin-bottom: 8px; }
+      .csp-ind-delta { display: flex; justify-content: space-between; align-items: baseline; font-size: 9.5px; color: #6B7280; gap: 4px; }
+      .csp-ind-delta b { color: #A5ACB8; font-weight: 700; }
+      @media (max-width: 980px) {
+        .csp-grid { grid-template-columns: 1fr; }
+        .csp-col + .csp-col { border-left: none; border-top: 1px solid var(--p-border); }
+        .csp-ind-grid { grid-template-columns: repeat(3, 1fr); row-gap: 22px; }
+      }
+      @media (max-width: 560px) {
+        .csp-ind-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+    </style>
+    <section class="page-wrapper section-block" style="padding-top:0;">
+      <div class="cx-eyebrow">Sample Output</div>
+      <h2 class="section-heading">See the score in action</h2>
+      <p class="body-text" style="max-width:640px;margin-bottom:36px;">
+        A live preview of the actual Climate Intelligence Score™ interface — the same scoring, benchmarking, and indicator surface every assessment produces.
+      </p>
+
+      <div class="cx-score-preview-card cx-score-preview" data-tilt-scale="0.35">
+        <div class="csp-grid">
+
+          <div class="csp-col">
+            <h3 class="csp-title">Climate Intelligence Score™</h3>
+            <div class="csp-tagline">Measure Today. Manage Risk. Build Resilience.</div>
+            <p class="csp-desc">Climate Intelligence Score™ is a science-based assessment that evaluates an organization's climate resilience, risk exposure, and readiness across key environmental, financial, and governance dimensions.</p>
+            <div class="csp-divider"></div>
+            <div class="csp-feat-grid">
+              <div class="csp-feat">
+                <div class="csp-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg></div>
+                <div class="csp-feat-title">Risk Insight</div>
+                <div class="csp-feat-text">Identify and quantify climate-related risks across physical and transition dimensions.</div>
+              </div>
+              <div class="csp-feat">
+                <div class="csp-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></div>
+                <div class="csp-feat-title">Future Ready</div>
+                <div class="csp-feat-text">Stay ahead of evolving regulations, standards, and market expectations.</div>
+              </div>
+              <div class="csp-feat">
+                <div class="csp-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5.5 3.5 9.7 8 11 4.5-1.3 8-5.5 8-11V5z"/></svg></div>
+                <div class="csp-feat-title">Strategic Advantage</div>
+                <div class="csp-feat-text">Strengthen decision-making, resilience planning, and capital allocation.</div>
+              </div>
+              <div class="csp-feat">
+                <div class="csp-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-2.3-8-6.3-8-11.5A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 8 6.5C20 14.7 16 18.7 12 21z"/><path d="M9 12.5c1-2.7 3-4.3 5.5-5"/></svg></div>
+                <div class="csp-feat-title">Sustainable Impact</div>
+                <div class="csp-feat-text">Drive measurable environmental impact and long-term value creation.</div>
+              </div>
+              <div class="csp-feat">
+                <div class="csp-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <div class="csp-feat-title">Stakeholder Trust</div>
+                <div class="csp-feat-text">Build investor, regulator, and customer confidence through transparency.</div>
+              </div>
+              <div class="csp-feat">
+                <div class="csp-feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div>
+                <div class="csp-feat-title">Data Driven</div>
+                <div class="csp-feat-text">Powered by satellite data, climate science, and AI analytics.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="csp-col">
+            <div class="csp-score-label">Climate Intelligence Score™</div>
+            <div class="csp-score-num"><span class="csp-score-big">78</span><span class="csp-score-max">/100</span></div>
+            <div class="csp-score-tag"><span class="csp-score-rating">Strong</span> — <span class="csp-score-vs">Above Industry Average</span></div>
+            <div class="csp-divider"></div>
+            <div class="csp-meta-row"><span>Assessment Date</span><span>22 May 2025</span></div>
+            <div class="csp-meta-row"><span>Industry</span><span>Industrial Manufacturing</span></div>
+            <div class="csp-meta-row"><span>Country / Region</span><span>India</span></div>
+            <div class="csp-meta-row"><span>Scope</span><span>Organization-wide</span></div>
+            <a class="csp-cta" href="assessment.html">View Full Assessment</a>
+          </div>
+
+          <div class="csp-col">
+            <div class="csp-block-head"><span>Score Breakdown</span><span class="csp-block-head-sub">/100</span></div>
+            <div class="csp-bar-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="csp-bar-label">Physical Risk</span><span class="csp-bar-track"><span class="csp-bar-fill" style="width:82%;"></span></span><span class="csp-bar-val">82</span></div>
+            <div class="csp-bar-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span class="csp-bar-label">Transition Risk</span><span class="csp-bar-track"><span class="csp-bar-fill" style="width:75%;"></span></span><span class="csp-bar-val">75</span></div>
+            <div class="csp-bar-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span class="csp-bar-label">Financial Materiality</span><span class="csp-bar-track"><span class="csp-bar-fill" style="width:78%;"></span></span><span class="csp-bar-val">78</span></div>
+            <div class="csp-bar-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 21 8 3 8"/></svg><span class="csp-bar-label">Governance &amp; Strategy</span><span class="csp-bar-track"><span class="csp-bar-fill" style="width:80%;"></span></span><span class="csp-bar-val">80</span></div>
+            <div class="csp-bar-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span class="csp-bar-label">Disclosure &amp; Transparency</span><span class="csp-bar-track"><span class="csp-bar-fill" style="width:72%;"></span></span><span class="csp-bar-val">72</span></div>
+            <div class="csp-bar-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4-2.3-8-6.3-8-11.5A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 8 6.5C20 14.7 16 18.7 12 21z"/><path d="M9 12.5c1-2.7 3-4.3 5.5-5"/></svg><span class="csp-bar-label">Nature &amp; Biodiversity</span><span class="csp-bar-track"><span class="csp-bar-fill" style="width:70%;"></span></span><span class="csp-bar-val">70</span></div>
+            <div class="csp-bar-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="csp-bar-label">Supply Chain Resilience</span><span class="csp-bar-track"><span class="csp-bar-fill" style="width:76%;"></span></span><span class="csp-bar-val">76</span></div>
+
+            <div class="csp-block-head" style="margin-top:22px;"><span>Industry Comparison</span><span class="csp-block-head-sub">Score /100</span></div>
+            <div class="csp-cbar-row"><span class="csp-cbar-label is-you">Your Organization</span><span class="csp-cbar-track"><span class="csp-cbar-fill is-you" style="width:78%;"></span></span><span class="csp-cbar-val">78</span></div>
+            <div class="csp-cbar-row"><span class="csp-cbar-label">Industry Average</span><span class="csp-cbar-track"><span class="csp-cbar-fill" style="width:62%;"></span></span><span class="csp-cbar-val">62</span></div>
+            <div class="csp-cbar-row"><span class="csp-cbar-label">Regional Average</span><span class="csp-cbar-track"><span class="csp-cbar-fill" style="width:58%;"></span></span><span class="csp-cbar-val">58</span></div>
+            <div class="csp-cbar-row"><span class="csp-cbar-label">Global Average</span><span class="csp-cbar-track"><span class="csp-cbar-fill" style="width:55%;"></span></span><span class="csp-cbar-val">55</span></div>
+            <div class="csp-axis"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+          </div>
+
+        </div>
+
+        <div class="csp-indicators">
+          <div class="csp-ind-head">
+            <span class="csp-ind-head-title">Global Climate Indicators</span>
+            <a class="csp-ind-link" href="climate-risk-os.html">View All Indicators →</a>
+          </div>
+          <div class="csp-ind-grid">
+            <div class="csp-ind-tile">
+              <div class="csp-ind-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H6a4 4 0 1 1 .4-7.98A6 6 0 0 1 18 10a4.5 4.5 0 0 1-.5 9z"/></svg>CO₂ Concentration</div>
+              <div class="csp-ind-val">432.79<span class="unit">ppm</span></div>
+              <svg class="csp-ind-spark" viewBox="0 0 90 24" width="100%" height="24" preserveAspectRatio="none"><polyline points="0,18 15,17 30,15 45,13 60,10 75,7 90,4" fill="none" stroke="#3D7BE0" stroke-width="1.5"/></svg>
+              <div class="csp-ind-delta"><span>vs last month</span><b>↑ 2.1 ppm</b></div>
+            </div>
+            <div class="csp-ind-tile">
+              <div class="csp-ind-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.5a3.5 3.5 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg>Global Temp Anomaly</div>
+              <div class="csp-ind-val">1.46<span class="unit">°C</span></div>
+              <svg class="csp-ind-spark" viewBox="0 0 90 24" width="100%" height="24" preserveAspectRatio="none"><polyline points="0,16 15,15 30,16 45,12 60,10 75,8 90,5" fill="none" stroke="#3D7BE0" stroke-width="1.5"/></svg>
+              <div class="csp-ind-delta"><span>vs pre-industrial</span><b>↑ 0.02 °C</b></div>
+            </div>
+            <div class="csp-ind-tile">
+              <div class="csp-ind-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M2 13c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M2 19c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/></svg>Sea Level Rise</div>
+              <div class="csp-ind-val">3.7<span class="unit">mm/yr</span></div>
+              <svg class="csp-ind-spark" viewBox="0 0 90 24" width="100%" height="24" preserveAspectRatio="none"><polyline points="0,17 15,16 30,14 45,13 60,11 75,9 90,7" fill="none" stroke="#3D7BE0" stroke-width="1.5"/></svg>
+              <div class="csp-ind-delta"><span>vs last year</span><b>↑ 0.3 mm</b></div>
+            </div>
+            <div class="csp-ind-tile">
+              <div class="csp-ind-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Active Disasters</div>
+              <div class="csp-ind-val">12</div>
+              <svg class="csp-ind-spark" viewBox="0 0 90 24" width="100%" height="24" preserveAspectRatio="none"><polyline points="0,6 15,9 30,7 45,12 60,10 75,14 90,16" fill="none" stroke="#3D7BE0" stroke-width="1.5"/></svg>
+              <div class="csp-ind-delta"><span>vs last month</span><b>↓ 2</b></div>
+            </div>
+            <div class="csp-ind-tile">
+              <div class="csp-ind-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Renewable Share</div>
+              <div class="csp-ind-val">34.7<span class="unit">%</span></div>
+              <svg class="csp-ind-spark" viewBox="0 0 90 24" width="100%" height="24" preserveAspectRatio="none"><polyline points="0,15 15,17 30,12 45,14 60,9 75,10 90,5" fill="none" stroke="#3D7BE0" stroke-width="1.5"/></svg>
+              <div class="csp-ind-delta"><span>vs last month</span><b>↑ 1.2%</b></div>
+            </div>
+            <div class="csp-ind-tile">
+              <div class="csp-ind-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.7-4 3-9 3s-9-1.3-9-3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/></svg>Data Coverage</div>
+              <div class="csp-ind-val">120+</div>
+              <svg class="csp-ind-spark" viewBox="0 0 90 24" width="100%" height="24" preserveAspectRatio="none"><polyline points="0,12 15,11 30,13 45,10 60,11 75,9 90,8" fill="none" stroke="#3D7BE0" stroke-width="1.5"/></svg>
+              <div class="csp-ind-delta"><span>data sources</span><b>global</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
          SECTION: WHAT YOU RECEIVE — the assessment
          produces a complete intelligence package, not
          a single number.

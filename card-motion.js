@@ -9,6 +9,7 @@
      window.CX_CARD_MOTION_EXCLUDE  = ['.modal-card'];
      window.CX_CARD_MOTION_SOUND    = false; // disable the hover tick on this page
    Opt a single element out: class="no-card-motion" or data-no-motion.
+   Scale down tilt on an oversized card: data-tilt-scale="0.35" (0–1).
 
    Only animates transform / opacity / filter / box-shadow — never
    layout properties. Colors, borders, spacing, typography untouched.
@@ -275,6 +276,11 @@
       el.appendChild(sheen);
 
       var raf = null, lastX = 0, lastY = 0;
+      // Large panels (e.g. a full-width product-preview card) get a
+      // proportionally smaller tilt so the effect stays "calm" instead of
+      // warping visibly at the edges. Opt in with data-tilt-scale="0.35".
+      var tiltScale = parseFloat(el.dataset.tiltScale);
+      if (!(tiltScale > 0) || tiltScale > 1) tiltScale = 1;
 
       function apply() {
         raf = null;
@@ -282,7 +288,7 @@
         if (!r.width || !r.height) return;
         var px = Math.min(1, Math.max(0, (lastX - r.left) / r.width));
         var py = Math.min(1, Math.max(0, (lastY - r.top) / r.height));
-        var maxTilt = 2.4;
+        var maxTilt = 2.4 * tiltScale;
         el.style.setProperty('--cx-ry', ((px - 0.5) * 2 * maxTilt).toFixed(2) + 'deg');
         el.style.setProperty('--cx-rx', ((0.5 - py) * 2 * maxTilt).toFixed(2) + 'deg');
         el.style.setProperty('--cx-mx', (px * 100).toFixed(1) + '%');
