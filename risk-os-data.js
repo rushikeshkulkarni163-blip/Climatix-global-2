@@ -380,3 +380,134 @@ export async function resolveComment(commentId, resolved = true) {
     updatedAt: serverTimestamp(),
   }, { merge: true });
 }
+
+// ── Methodology version ─────────────────────────────────────────────────
+// Reference data, Admin-SDK/seed-script only (see firestore.rules and
+// scripts/seed-questions-firestore.js). Returns null in local mode or if
+// no version has been seeded/activated yet — callers should treat that as
+// "methodology version unknown", not fall back to inventing one.
+
+export async function getActiveMethodologyVersion() {
+  if (!_USE_FIREBASE) return null;
+  const { db, collection, query, where, limit, getDocs } = await _firestore();
+  const q = query(collection(db, 'ros_methodology_versions_v1'), where('status', '==', 'active'), limit(1));
+  const snap = await getDocs(q);
+  return snap.empty ? null : { id: snap.docs[0].id, ...snap.docs[0].data() };
+}
+
+// ── Question bank ────────────────────────────────────────────────────────
+// Reference data, Admin-SDK/seed-script only. climate-risk-os.html's inline
+// TYPED_QUESTIONS/BASE_QUESTIONS stay the local-mode fallback and the seed
+// source of truth (see scripts/seed-questions-firestore.js) — this just
+// lets every signed-in member see the SAME question bank the server holds,
+// a prerequisite for materiality-gated/mandate-driven question selection.
+// Returns [] (never throws) so callers can safely keep the inline fallback
+// on any failure instead of rendering a blank assessment.
+
+export async function loadQuestionBank() {
+  if (!_USE_FIREBASE) return [];
+  try {
+    const { db, collection, getDocs } = await _firestore();
+    const snap = await getDocs(collection(db, 'ros_questions_v1'));
+    return snap.docs.map(d => d.data());
+  } catch (e) {
+    console.error('[risk-os-data] loadQuestionBank failed, keeping local question bank', e);
+    return [];
+  }
+}
+
+// ── Assessment Mandate ───────────────────────────────────────────────────
+// Purpose/analyst/methodology fields live on the same ros_assessments_v1
+// document (firestore.rules already permits this: any field may change as
+// long as status doesn't, for a write-role member) — no new collection.
+// assignedAnalyst/assignedSeniorReviewer are populated by the analyst
+// portal rebuild (not this pass); left null until then.
+
+export async function saveMandate(assessmentId, mandate) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const { db, doc, setDoc, serverTimestamp } = await _firestore();
+  await setDoc(doc(db, 'ros_assessments_v1', assessmentId), {
+    purpose: mandate.purpose || null,
+    requestedBy: mandate.requestedBy || null,
+    decisionContext: mandate.decisionContext || null,
+    methodologyVersion: mandate.methodologyVersion || null,
+    benchmarkVersion: mandate.benchmarkVersion || null,
+    scenarioSet: mandate.scenarioSet || null,
+    assignedAnalyst: mandate.assignedAnalyst || null,
+    assignedSeniorReviewer: mandate.assignedSeniorReviewer || null,
+    updatedAt: serverTimestamp(),
+  }, { merge: true });
+}
+
+// ── Entities — legal entity / organizational boundary tree ──────────────
+// ancestryPath and effectiveOwnershipFromRoot are computed server-side by
+// the onRosEntityWritten Cloud Function trigger (functions/main.py) — never
+// set them here; firestore.rules denies client writes to those two fields
+// outright.
+
+export function subscribeEntities(companyId, onChange) {
+  if (!_USE_FIREBASE || !companyId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_entities_v1'), where('companyId', '==', companyId)),
+      snap => onChange(
+        snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(e => e.status !== 'inactive')
+      ),
+      err => console.error('[risk-os-data] entities subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// entity: { name, parentEntityId, legalEntityType, ownershipPct, votingControlPct,
+//           controlBasis, boundaryInclusion, consolidationMethod }. Pass an
+// existing entityId to update that node, omit it to create a new one.
+export async function saveEntity(companyId, entity, entityId = null) {
+  if (!_USE_FIREBASE) return null;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, doc, collection, setDoc, serverTimestamp } = await _firestore();
+  const ref = entityId ? doc(db, 'ros_entities_v1', entityId) : doc(collection(db, 'ros_entities_v1'));
+  await setDoc(ref, {
+    companyId,
+    parentEntityId: entity.parentEntityId || null,
+    name: entity.name,
+    legalEntityType: entity.legalEntityType || null,
+    ownershipPct: entity.ownershipPct ?? null,
+    votingControlPct: entity.votingControlPct ?? null,
+    controlBasis: entity.controlBasis || null,
+    boundaryInclusion: entity.boundaryInclusion
+      || { operational: true, financial: true, equityShare: true, reporting: true },
+    consolidationMethod: entity.consolidationMethod || null,
+    status: 'active',
+    ...(entityId ? { updatedAt: serverTimestamp() } : { createdBy: uid, createdAt: serverTimestamp() }),
+  }, { merge: true });
+  return ref.id;
+}
+
+// ── Initial Materiality Scan ─────────────────────────────────────────────
+// Written only by the runMaterialityScan Cloud Function (functions/main.py)
+// — firestore.rules denies client writes to ros_materiality_scans_v1
+// entirely, the same discipline as ros_ai_reviews_v1.
+
+export async function runMaterialityScan(companyId, assessmentId) {
+  if (!_USE_FIREBASE) return null;
+  const { functions, httpsCallable } = await _functionsApi();
+  const call = httpsCallable(functions, 'run_materiality_scan');
+  const result = await call({ companyId, assessmentId });
+  return result.data;
+}
+
+export function subscribeMaterialityScan(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, doc, onSnapshot }) => {
+    unsub = onSnapshot(
+      doc(db, 'ros_materiality_scans_v1', assessmentId),
+      snap => onChange(snap.exists() ? snap.data() : null),
+      err => console.error('[risk-os-data] materiality scan subscription failed', err),
+    );
+  });
+  return () => unsub();
+}

@@ -274,7 +274,11 @@
   <script type="module">
     import { signIn, getSession } from './auth.js?v=4';
 
-    if (getSession()) {
+    // Only an already-verified session should bounce straight past the login
+    // form — an existing-but-unverified session redirected to `redirect`
+    // (typically assessment.html, which itself redirects back here for the
+    // same reason) becomes an infinite reload loop between the two pages.
+    if (getSession()?.verified) {
       const p = new URLSearchParams(location.search);
       const redirect = p.get('redirect') || p.get('next') || 'assessment.html';
       location.href = redirect;

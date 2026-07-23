@@ -460,6 +460,60 @@
 .iro-field select option { background: var(--iro-s2); }
 .iro-field textarea { resize: vertical; min-height: 72px; }
 
+.iro-form-hint {
+  font-size: 11px;
+  color: var(--iro-tm);
+  line-height: 1.5;
+  margin-top: -10px;
+  margin-bottom: 14px;
+}
+.iro-mandate-meta {
+  font-family: var(--iro-mono);
+  font-size: 10px;
+  color: var(--iro-tm);
+  letter-spacing: 0.03em;
+}
+.iro-mandate-meta b { color: var(--iro-t2); font-weight: 700; }
+
+/* ── Organizational Boundary — entity tree ── */
+.iro-entity-boundary-panel { display: flex; flex-direction: column; gap: 10px; }
+.iro-entity-tree { display: flex; flex-direction: column; gap: 2px; }
+.iro-entity-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--iro-b);
+  border-radius: var(--iro-radius);
+  background: var(--iro-s1);
+  font-size: 12px;
+}
+.iro-entity-row .name { font-weight: 600; color: var(--iro-t1); flex: 1; }
+.iro-entity-row .meta { font-family: var(--iro-mono); font-size: 10px; color: var(--iro-tm); }
+.iro-entity-empty { font-size: 12px; color: var(--iro-tm); padding: 10px 0; }
+.iro-entity-add-row {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 8px; align-items: end;
+}
+.iro-entity-add-row .iro-field { gap: 4px; }
+.iro-entity-add-row label { font-size: 10px; }
+.iro-entity-add-row input, .iro-entity-add-row select { padding: 7px 9px; font-size: 12px; }
+.iro-entity-disabled-note {
+  font-size: 11px; color: var(--iro-tm); font-style: italic;
+  padding: 10px 12px; border: 1px dashed var(--iro-b); border-radius: var(--iro-radius);
+}
+
+/* ── Materiality Scan badges (sidebar, dynamic per-assessment) — distinct
+   from the existing static per-question .iro-mat-badge (below, ~line 808,
+   authored on each question's `mat` field) to avoid colliding with it. ── */
+.iro-mat-scan-badge {
+  font-family: var(--iro-mono); font-size: 7px; font-weight: 700;
+  letter-spacing: 0.06em; flex-shrink: 0; padding: 1px 5px;
+  border-radius: 3px; border: 1px solid currentColor;
+}
+.iro-mat-scan-badge.CRITICAL { color: var(--critical); }
+.iro-mat-scan-badge.HIGH     { color: var(--warning); }
+.iro-mat-scan-badge.MEDIUM   { color: var(--iro-t2); border-color: var(--iro-b); }
+.iro-mat-scan-badge.LOW      { color: var(--iro-tm); border-color: var(--iro-b); }
+
 .iro-entity-actions {
   display: flex;
   gap: 12px;
@@ -783,6 +837,21 @@
   background: var(--iro-s2);
   letter-spacing: 0.02em;
   border-radius: var(--iro-pill);
+}
+/* Framework genuinely applicable to the entity's stated jurisdiction
+   (see _applicableFrameworks()) — a real match, not decorative emphasis. */
+.iro-fw-tag.applicable {
+  color: var(--iro-accent);
+  font-weight: 700;
+  border-color: rgba(11,61,145,0.3);
+  background: rgba(11,61,145,0.06);
+}
+.iro-q-id-tag {
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--iro-tm);
+  letter-spacing: 0.04em;
 }
 
 .iro-q-body { flex: 1; }
@@ -2222,6 +2291,38 @@
         <h2>Entity Intelligence Profile</h2>
         <p>Institutional context is used to calibrate risk weights, sector-specific modules, and framework applicability. All fields inform the scoring engine — complete accuracy improves analytical precision.</p>
 
+        <div class="iro-form-section-label">Assessment Mandate</div>
+        <p class="iro-form-hint">Defines why this assessment exists. This selection shapes materiality weighting, question emphasis, and the final report structure — see Risk OS methodology.</p>
+        <div class="iro-form-grid">
+          <div class="iro-field">
+            <label>Assessment Purpose *</label>
+            <select id="fPurpose">
+              <option value="">— Select —</option>
+              <option>Corporate Climate Assessment</option>
+              <option>Investor Due Diligence</option>
+              <option>Credit Assessment</option>
+              <option>Loan Underwriting</option>
+              <option>Insurance Underwriting</option>
+              <option>Portfolio Monitoring</option>
+              <option>M&amp;A Due Diligence</option>
+              <option>Infrastructure Assessment</option>
+              <option>Supplier Assessment</option>
+              <option>Regulatory Assessment</option>
+              <option>Government Assessment</option>
+              <option>Transition Finance Assessment</option>
+            </select>
+          </div>
+          <div class="iro-field">
+            <label>Requested By</label>
+            <input type="text" id="fRequestedBy" placeholder="e.g. Risk Committee, Lead Investor, Internal ESG" />
+          </div>
+          <div class="iro-field full">
+            <label>Primary Decision Context</label>
+            <textarea id="fDecisionContext" placeholder="e.g. Supports FY26 credit renewal decision for a ₹200 Cr term loan facility."></textarea>
+          </div>
+        </div>
+        <div class="iro-mandate-meta" id="mandateMethodologyDisplay">Methodology version: <b>resolving…</b></div>
+
         <div class="iro-form-section-label">Entity Identity</div>
         <div class="iro-form-grid">
           <div class="iro-field">
@@ -2272,6 +2373,12 @@
               <option>Other</option>
             </select>
           </div>
+        </div>
+
+        <div class="iro-form-section-label">Organizational Boundary</div>
+        <p class="iro-form-hint">Subsidiaries, joint ventures, and controlled entities — each assessed against its own ownership share and control basis. Click "Save Entity Details" below to begin adding subsidiaries.</p>
+        <div id="entityBoundaryPanel" class="iro-entity-boundary-panel">
+          <div class="iro-entity-disabled-note">Save your entity identity above ("Save Entity Details"), then return here to define subsidiaries and joint ventures.</div>
         </div>
 
         <div class="iro-form-section-label">Operational Footprint</div>
@@ -2386,6 +2493,7 @@
           <button class="iro-btn-primary" onclick="startAssessment()">
             Launch Assessment →
           </button>
+          <button class="iro-btn-ghost" id="btnSaveEntityDraft" onclick="saveEntityDraft()">Save Entity Details</button>
           <button class="iro-btn-ghost" onclick="showWelcome()">← Back</button>
         </div>
       </div>
@@ -2481,7 +2589,9 @@
 ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── STATE ── */
-const STATE = { entity:{}, answers:{}, currentSection:0, radarChart:null, companyId:null, assessmentId:null };
+const STATE = { entity:{}, answers:{}, currentSection:0, radarChart:null, companyId:null, assessmentId:null,
+  mandate:{}, entities:[], materialityScan:null, methodologyVersion:null };
+let _unsubRiskOSEntities = null;
 try { const s=localStorage.getItem('iro_answers_v4'); if(s) STATE.answers=JSON.parse(s); } catch(e){}
 try { const e=localStorage.getItem('iro_entity'); if(e) STATE.entity=JSON.parse(e); } catch(e){}
 let _unsubRiskOSAnswers = null;
@@ -3449,7 +3559,12 @@ const BASE_QUESTIONS = [
  text:'For material climate KPIs — GHG emissions, energy consumption, water withdrawal — does the entity collect and review data monthly or quarterly, enabling proactive in-year performance management?',
  ctx:'Annual-only data collection prevents in-year course correction. Monthly emissions tracking enables identification of deviations from reduction trajectory before year-end reporting forces disclosure of failure.'}
 ]; /* ── END BASE ── */
-const QUESTIONS = [...TYPED_QUESTIONS, ...BASE_QUESTIONS];
+// `let`, not `const`: reassigned once loadQuestionBank() resolves from
+// Firestore in startAssessment() (falls back to this local seed data on
+// any failure or in local mode). Every consumer below reads the QUESTIONS
+// binding fresh at call time rather than holding a stale copy, so
+// reassigning it here is safe.
+let QUESTIONS = [...TYPED_QUESTIONS, ...BASE_QUESTIONS];
   </script>
 
   <script>
@@ -3657,6 +3772,8 @@ async function showEntityForm() {
   showScreen('iro-entity');
   setProgress(5, 'Entity Intelligence Profile — Enter institution details', 'ENTITY SETUP');
   if (STATE.entity.name) { const el=document.getElementById('fEntityName'); if(el) el.value=STATE.entity.name; }
+  renderMethodologyBadge();
+  renderEntityBoundary();
   // Resume: if this member already belongs to a Risk OS company, reuse it
   // (updates in place) instead of creating a duplicate on every visit.
   if (window.RiskOSData && !STATE.companyId) {
@@ -3668,17 +3785,17 @@ async function showEntityForm() {
         if (nameEl && !nameEl.value) nameEl.value = existing.company.name || '';
         const sectorEl = document.getElementById('fSector');
         if (sectorEl && existing.company.sector) sectorEl.value = existing.company.sector;
+        _startEntitiesSubscription();
+        renderEntityBoundary();
       }
     } catch (e) { console.error('[risk-os] findMyCompany failed', e); }
   }
 }
-async function startAssessment() {
-  const name=(document.getElementById('fEntityName')?.value||'').trim();
-  const sector=document.getElementById('fSector')?.value||'';
-  if (!name)   { alert('Entity name is required.'); return; }
-  if (!sector) { alert('Please select a sector.'); return; }
-  STATE.entity = {
-    name, ticker:(document.getElementById('fTicker')?.value||'').trim(), sector,
+function _readEntityFormFields() {
+  return {
+    name:(document.getElementById('fEntityName')?.value||'').trim(),
+    ticker:(document.getElementById('fTicker')?.value||'').trim(),
+    sector:document.getElementById('fSector')?.value||'',
     entityType:document.getElementById('fEntityType')?.value||'',
     hq:(document.getElementById('fHQ')?.value||'').trim(),
     countries:document.getElementById('fCountries')?.value||'',
@@ -3690,8 +3807,56 @@ async function startAssessment() {
     sbti:document.getElementById('fSbti')?.value||'',
     assurance:document.getElementById('fAssurance')?.value||'',
     netZero:document.getElementById('fNetZero')?.value||'',
-    riskContext:(document.getElementById('fRiskContext')?.value||'').trim()
+    riskContext:(document.getElementById('fRiskContext')?.value||'').trim(),
   };
+}
+function _readMandateFormFields() {
+  return {
+    purpose: document.getElementById('fPurpose')?.value || '',
+    requestedBy: (document.getElementById('fRequestedBy')?.value || '').trim(),
+    decisionContext: (document.getElementById('fDecisionContext')?.value || '').trim(),
+    methodologyVersion: STATE.methodologyVersion?.id || null,
+    benchmarkVersion: STATE.methodologyVersion?.benchmarkVersion || null,
+    scenarioSet: STATE.methodologyVersion?.scenarioSet || null,
+  };
+}
+
+// Saves entity + mandate WITHOUT leaving the entity form or touching
+// STATE.currentSection — this is what unlocks the Organizational Boundary
+// panel (subsidiaries need a real companyId to attach to) for a brand-new
+// user, ahead of "Launch Assessment →" taking them into the questionnaire.
+async function saveEntityDraft() {
+  const fields = _readEntityFormFields();
+  if (!fields.name)   { alert('Entity name is required.'); return; }
+  if (!fields.sector) { alert('Please select a sector.'); return; }
+  STATE.entity = fields;
+  try { localStorage.setItem('iro_entity', JSON.stringify(STATE.entity)); } catch(e){}
+  if (!window.RiskOSData) return;
+
+  const btn = document.getElementById('btnSaveEntityDraft');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    const result = await window.RiskOSData.saveEntityAndGetAssessment(STATE.entity, STATE.entity.year, STATE.companyId);
+    if (result) {
+      STATE.companyId = result.companyId;
+      STATE.assessmentId = result.assessmentId;
+      STATE.mandate = _readMandateFormFields();
+      await window.RiskOSData.saveMandate(STATE.assessmentId, STATE.mandate);
+      _startEntitiesSubscription();
+    }
+  } catch (e) {
+    console.error('[risk-os] saveEntityDraft failed', e);
+    alert('Could not save entity details — please try again.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Save Entity Details'; }
+  }
+}
+
+async function startAssessment() {
+  const fields = _readEntityFormFields();
+  if (!fields.name)   { alert('Entity name is required.'); return; }
+  if (!fields.sector) { alert('Please select a sector.'); return; }
+  STATE.entity = fields;
   try { localStorage.setItem('iro_entity', JSON.stringify(STATE.entity)); } catch(e){}
 
   if (window.RiskOSData) {
@@ -3702,10 +3867,30 @@ async function startAssessment() {
       if (result) {
         STATE.companyId = result.companyId;
         STATE.assessmentId = result.assessmentId;
+
+        STATE.mandate = _readMandateFormFields();
+        await window.RiskOSData.saveMandate(STATE.assessmentId, STATE.mandate);
+
         const remoteAnswers = await window.RiskOSData.loadAnswers(result.assessmentId);
         Object.assign(STATE.answers, remoteAnswers);
         try { localStorage.setItem('iro_answers_v4', JSON.stringify(STATE.answers)); } catch(e){}
         _startAnswersSubscription();
+        _startEntitiesSubscription();
+
+        // Question bank + materiality scan run in parallel with the screen
+        // transition below — neither blocks entering the questionnaire.
+        // loadQuestionBank() falls back silently (keeps the local seed
+        // array) on any failure, so this can never leave QUESTIONS empty.
+        window.RiskOSData.loadQuestionBank().then(remoteQuestions => {
+          if (remoteQuestions && remoteQuestions.length) {
+            QUESTIONS = remoteQuestions;
+            renderSidebar();
+            if (document.getElementById('iro-assess')?.classList.contains('active')) renderSection(STATE.currentSection);
+          }
+        });
+        window.RiskOSData.runMaterialityScan(STATE.companyId, STATE.assessmentId).catch(e =>
+          console.error('[risk-os] materiality scan failed', e));
+        _startMaterialityScanSubscription();
       }
     } catch (e) {
       console.error('[risk-os] saveEntityAndGetAssessment failed', e);
@@ -3718,6 +3903,112 @@ async function startAssessment() {
   STATE.currentSection = 0;
   renderSidebar();
   goToSection(0);
+}
+
+// ── Organizational Boundary ──────────────────────────────────────────────
+
+function _startEntitiesSubscription() {
+  if (!window.RiskOSData || !STATE.companyId) return;
+  if (_unsubRiskOSEntities) { _unsubRiskOSEntities(); _unsubRiskOSEntities = null; }
+  _unsubRiskOSEntities = window.RiskOSData.subscribeEntities(STATE.companyId, (entities) => {
+    STATE.entities = entities;
+    renderEntityBoundary();
+  });
+}
+
+function renderEntityBoundary() {
+  const panel = document.getElementById('entityBoundaryPanel');
+  if (!panel) return;
+  if (!STATE.companyId) {
+    panel.innerHTML = `<div class="iro-entity-disabled-note">Save your entity identity above ("Save Entity Details"), then return here to define subsidiaries and joint ventures.</div>`;
+    return;
+  }
+
+  // Simple indented tree from ancestryPath length — root company itself
+  // (depth 0) isn't a ros_entities_v1 doc, so the shallowest real nodes
+  // (ancestryPath: []) render as direct children of it.
+  const byDepth = [...STATE.entities].sort((a,b) => (a.ancestryPath?.length||0) - (b.ancestryPath?.length||0));
+  const rootLabel = STATE.entity?.name || 'Parent Company';
+  const treeRows = byDepth.map(e => {
+    const depth = (e.ancestryPath?.length||0) + 1;
+    const pct = e.ownershipPct!=null ? `${e.ownershipPct}% owned` : 'ownership n/a';
+    const eff = e.effectiveOwnershipFromRoot!=null ? ` · ${(e.effectiveOwnershipFromRoot*100).toFixed(1)}% effective from root` : '';
+    return `<div class="iro-entity-row" style="margin-left:${depth*18}px">
+      <span class="name">${e.name}</span>
+      <span class="meta">${e.legalEntityType||'Entity'} · ${pct}${eff} · ${(e.controlBasis||'control basis n/a').replace('_',' ')}</span>
+    </div>`;
+  }).join('');
+
+  panel.innerHTML = `
+    <div class="iro-entity-tree">
+      <div class="iro-entity-row" style="border-left:3px solid var(--iro-accent)">
+        <span class="name">${rootLabel}</span>
+        <span class="meta">Root entity · 100% by definition</span>
+      </div>
+      ${treeRows || '<div class="iro-entity-empty">No subsidiaries or joint ventures added yet — single-entity boundary.</div>'}
+    </div>
+    <div class="iro-entity-add-row">
+      <div class="iro-field"><label>Subsidiary / JV name</label><input type="text" id="fNewEntityName" placeholder="e.g. Apex Renewables Pte Ltd" /></div>
+      <div class="iro-field"><label>Ownership %</label><input type="number" id="fNewEntityOwnership" min="0" max="100" placeholder="100" /></div>
+      <div class="iro-field"><label>Control basis</label>
+        <select id="fNewEntityControlBasis">
+          <option value="operational_control">Operational control</option>
+          <option value="financial_control">Financial control</option>
+          <option value="equity_share">Equity share</option>
+        </select>
+      </div>
+      <div class="iro-field"><label>Parent node</label>
+        <select id="fNewEntityParent">
+          <option value="">${rootLabel} (root)</option>
+          ${STATE.entities.map(e => `<option value="${e.id}">${e.name}</option>`).join('')}
+        </select>
+      </div>
+      <button class="iro-btn-ghost" onclick="addSubsidiary()" style="padding:9px 14px">+ Add</button>
+    </div>`;
+}
+
+async function addSubsidiary() {
+  const name = (document.getElementById('fNewEntityName')?.value||'').trim();
+  const ownershipPct = parseFloat(document.getElementById('fNewEntityOwnership')?.value);
+  const controlBasis = document.getElementById('fNewEntityControlBasis')?.value || 'operational_control';
+  const parentEntityId = document.getElementById('fNewEntityParent')?.value || null;
+  if (!name) { alert('Subsidiary / JV name is required.'); return; }
+  if (isNaN(ownershipPct) || ownershipPct < 0 || ownershipPct > 100) { alert('Enter an ownership percentage between 0 and 100.'); return; }
+  try {
+    await window.RiskOSData.saveEntity(STATE.companyId, {
+      name, ownershipPct, controlBasis, parentEntityId,
+      legalEntityType: parentEntityId ? 'Subsidiary' : 'Direct Subsidiary',
+    });
+    document.getElementById('fNewEntityName').value = '';
+    document.getElementById('fNewEntityOwnership').value = '';
+  } catch (e) {
+    console.error('[risk-os] addSubsidiary failed', e);
+    alert('Could not add entity — please try again.');
+  }
+}
+
+// ── Methodology version + Initial Materiality Scan ───────────────────────
+
+async function renderMethodologyBadge() {
+  const el = document.getElementById('mandateMethodologyDisplay');
+  if (!el || !window.RiskOSData) return;
+  try {
+    STATE.methodologyVersion = await window.RiskOSData.getActiveMethodologyVersion();
+    el.innerHTML = STATE.methodologyVersion
+      ? `Methodology version: <b>${STATE.methodologyVersion.id}</b> · effective ${STATE.methodologyVersion.effectiveDate||'—'}`
+      : `Methodology version: <b>not yet configured</b>`;
+  } catch (e) {
+    console.error('[risk-os] renderMethodologyBadge failed', e);
+    el.innerHTML = `Methodology version: <b>unavailable</b>`;
+  }
+}
+
+function _startMaterialityScanSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  window.RiskOSData.subscribeMaterialityScan(STATE.assessmentId, (scan) => {
+    STATE.materialityScan = scan;
+    renderSidebar();
+  });
 }
 
 // Live collaboration: re-subscribes on every fresh assessmentId, merges
@@ -3807,7 +4098,13 @@ function renderSidebar() {
   if (pt) pt.textContent=`${completedCount} / ${SECTIONS.length} sections`;
   if (sf) sf.style.width=`${(completedCount/SECTIONS.length)*100}%`;
 
-  nav.innerHTML = SECTIONS.map((s,i)=>{
+  // Gate/prioritize by materiality (Phase 3, spec section 41): sidebar
+  // DISPLAY order sorts CRITICAL/HIGH sections first once a scan exists —
+  // navigation itself (goToSection(i), Next/Prev) still indexes into the
+  // real, unsorted SECTIONS array, so reordering the sidebar can never
+  // desync from what Next/Prev actually advances through.
+  const MAT_RANK = {CRITICAL:0, HIGH:1, MEDIUM:2, LOW:3};
+  const rows = SECTIONS.map((s,i)=>{
     const qs=QUESTIONS.filter(q=>q.sec===s.id);
     const ans=qs.filter(q=>STATE.answers[q.id]!==undefined&&STATE.answers[q.id]!==null&&STATE.answers[q.id]!=='').length;
     const isActive=i===STATE.currentSection;
@@ -3817,12 +4114,23 @@ function renderSidebar() {
     let dot=`<span style="color:var(--iro-tm);font-size:9px;flex-shrink:0">○</span>`;
     if(isComplete)  dot=`<span style="color:#1E8E3E;font-size:9px;flex-shrink:0">✓</span>`;
     else if(ans>0)  dot=`<span style="color:#B45309;font-size:9px;flex-shrink:0">◑</span>`;
-    return `<div onclick="goToSection(${i})" style="display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;border-bottom:1px solid var(--iro-b);transition:.12s ease;${isActive?'background:rgba(11,61,145,.06);border-left:2px solid '+clayer.color+';':''}">
+    // Materiality Scan (section 41) — badge only renders once the scan has
+    // actually run for this assessment; absent scan = no badge, never a
+    // fabricated/default level.
+    const matTopic = STATE.materialityScan?.topics?.find(t => t.clayerId === cl);
+    const matBadge = matTopic
+      ? `<span class="iro-mat-scan-badge ${matTopic.level}" title="${(matTopic.why||'').replace(/"/g,'&quot;')}">${matTopic.level}</span>`
+      : '';
+    const html = `<div onclick="goToSection(${i})" style="display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;border-bottom:1px solid var(--iro-b);transition:.12s ease;${isActive?'background:rgba(11,61,145,.06);border-left:2px solid '+clayer.color+';':''}">
       <span style="font-family:var(--iro-mono);font-size:8px;font-weight:700;color:${clayer.color};flex-shrink:0;width:52px;letter-spacing:.04em">${clayer.label}</span>
       <span style="font-size:11px;font-weight: 500;color:${isActive?'var(--iro-t1)':'var(--iro-t2)'};flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.title}</span>
+      ${matBadge}
       ${dot}
     </div>`;
-  }).join('');
+    return { html, sortRank: matTopic ? MAT_RANK[matTopic.level] : 4 };
+  });
+  if (STATE.materialityScan) rows.sort((a,b)=>a.sortRank-b.sortRank); // stable sort — ties keep original S01..S21 order
+  nav.innerHTML = rows.map(r=>r.html).join('');
 }
 
 function renderSection(idx) {
@@ -3857,13 +4165,40 @@ function renderSection(idx) {
     <div class="iro-questions-wrap">${qs.map((q,i)=>renderQuestion(q,i+1)).join('')}</div>`;
 }
 
+// Geography-based framework relevance (Phase 3): the jurisdiction ->
+// framework associations here aren't invented — they make explicit what
+// several BASE_QUESTIONS ctx fields already state in prose (e.g. S01-Q03:
+// "Key jurisdictions: EU (CSRD, EU ETS), USA (SEC), India (BRSR, SEBI),
+// UK (TCFD mandatory), Australia (ASRS)"). Only frameworks that actually
+// appear in a question's own `fw` array ever get highlighted — this never
+// asserts a framework applies where the question data doesn't already
+// reference it, so it can only narrow attention, never fabricate scope.
+const JURISDICTION_FRAMEWORK_MAP = [
+  { match: /india/i,                         frameworks: ['BRSR'] },
+  { match: /\beu\b|europe|european union/i,  frameworks: ['CSRD', 'EU Taxonomy', 'ESRS'] },
+  { match: /\busa?\b|united states/i,        frameworks: ['SEC'] },
+  { match: /\buk\b|united kingdom/i,         frameworks: ['TCFD'] },
+];
+function _applicableFrameworks(jurisdictionText) {
+  if (!jurisdictionText) return [];
+  const out = new Set();
+  JURISDICTION_FRAMEWORK_MAP.forEach(({match, frameworks}) => {
+    if (match.test(jurisdictionText)) frameworks.forEach(f => out.add(f));
+  });
+  return [...out];
+}
+
 function renderQuestion(q, num) {
   const ans  = STATE.answers[q.id];
   const type = q.type || 'select5';
   const hasAns = ans !== undefined && ans !== null && ans !== '';
 
   const typeLabels = {select5:'5-Option',yesno:'Yes / No',number:'Numeric',dropdown:'Dropdown',text:'AI Analysis',upload:'Document'};
-  const fwTags = (q.fw||[]).map(f=>`<span class="iro-fw-tag">${f}</span>`).join('');
+  const applicableFw = _applicableFrameworks(STATE.entity?.jurisdiction || '');
+  const fwTags = (q.fw||[]).map(f=>{
+    const applicable = applicableFw.includes(f);
+    return `<span class="iro-fw-tag${applicable?' applicable':''}"${applicable?` title="Applicable to your stated jurisdiction: ${STATE.entity.jurisdiction}"`:''}>${f}${applicable?' ✓':''}</span>`;
+  }).join('');
 
   let inputHTML = '';
 
@@ -3954,6 +4289,7 @@ function renderQuestion(q, num) {
       <div class="iro-q-num${hasAns?' answered':''}">${String(num).padStart(2,'0')}</div>
       <div class="iro-q-body">
         <div class="iro-q-badges">
+          <span class="iro-q-id-tag">${q.id}</span>
           <span class="iro-sev-badge ${q.sev}">${q.sev}</span>
           <span class="iro-mat-badge ${q.mat}">${q.mat} MAT</span>
           <span class="iro-input-type-badge type-${type}">${typeLabels[type]||type}</span>

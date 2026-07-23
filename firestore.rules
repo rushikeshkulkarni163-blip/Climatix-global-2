@@ -365,6 +365,52 @@ service cloud.firestore {
     // rules above (per-user, write-on-behalf-of pattern) — just new `type`
     // values (assignment/mention/deadline/...), no schema or rule change.
 
+    // ── Methodology versions — reference data, Admin-SDK/seed-script only ──
+    match /ros_methodology_versions_v1/{versionId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // ── Question bank — reference data, Admin-SDK/seed-script only ────────
+    // Source of truth for seeding is climate-risk-os.html's own
+    // TYPED_QUESTIONS/BASE_QUESTIONS — see scripts/seed-questions-firestore.js.
+    // Client-supplied clayer/questionType on ros_answers_v1 writes is no
+    // longer the only source for that mapping once question gating (Phase 3)
+    // reads it from here instead of trusting the client.
+    match /ros_questions_v1/{questionId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // ── Entities — legal entity / ownership boundary tree ─────────────────
+    // ancestryPath and effectiveOwnershipFromRoot are computed server-side by
+    // the onRosEntityWritten Cloud Function trigger (functions/main.py) —
+    // clients may never set them directly, the same discipline already
+    // applied to ros_ai_reviews_v1 and the ros_members_v1 role-escalation fix.
+    // Every entity in one company's tree (parent, subsidiaries, JVs) shares
+    // the same top-level companyId field regardless of depth, so the
+    // existing one-hop isCompanyMember() check already authorizes the whole
+    // subtree — no recursive rule-walking needed.
+    match /ros_entities_v1/{entityId} {
+      allow read: if isCompanyMember(resource.data.companyId);
+      allow create: if hasAnyRole(request.resource.data.companyId, rosWriteRoles())
+                     && !('ancestryPath' in request.resource.data)
+                     && !('effectiveOwnershipFromRoot' in request.resource.data);
+      allow update: if hasAnyRole(resource.data.companyId, rosWriteRoles())
+                     && !request.resource.data.diff(resource.data).affectedKeys()
+                          .hasAny(['ancestryPath', 'effectiveOwnershipFromRoot']);
+      allow delete: if false; // soft-delete via status:'inactive', preserves ancestry for any children
+    }
+
+    // ── Materiality scans — doc id == assessmentId, Cloud-Function-only write ─
+    // Written by the runMaterialityScan callable (functions/main.py) so the
+    // scan's topic levels can never be spoofed client-side, the same
+    // reasoning as ros_ai_reviews_v1.
+    match /ros_materiality_scans_v1/{assessmentId} {
+      allow read: if isCompanyMember(companyOfAssessment(assessmentId));
+      allow write: if false;
+    }
+
     // Deny everything else by default.
     match /{document=**} {
       allow read, write: if false;

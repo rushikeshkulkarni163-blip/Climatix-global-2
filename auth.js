@@ -100,12 +100,22 @@ async function _fbSignUp({ fullName, email, companyName, password }) {
 }
 
 async function _fbVerifyEmail(_email, _token) {
-  // After Firebase signUp the user is already signed in — just cache the session
+  // After Firebase signUp the user is already signed in — just cache the session.
+  // Reaching this function (user clicked "Verify Email & Access Platform") is
+  // this product's in-app verification signal, distinct from Firebase's own
+  // user.emailVerified — that stays false until the user clicks the real
+  // emailed link, a separate signal this flow doesn't block on. _cache()
+  // prefers emailVerified over verified via `??`, which only skips
+  // null/undefined, not false — so the real (still-false) emailVerified must
+  // be cleared explicitly here, or it would silently override verified:true
+  // below, caching an unverified session and sending the user into a
+  // redirect loop between login.html and assessment.html (each page
+  // disagreeing about whether this session is usable).
   const auth = await _fbAuth();
   const user = auth.currentUser;
   if (!user) throw { code: 'not-signed-in', message: 'No active session.' };
   const extra = _extra();
-  _cache({ ...user, companyName: extra.companyName }, false);
+  _cache({ ...user, emailVerified: undefined, companyName: extra.companyName, verified: true }, false);
   return _fbPublic(user);
 }
 

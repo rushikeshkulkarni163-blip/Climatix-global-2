@@ -88,7 +88,10 @@
   <script type="module">
     import { verifyEmail, getSession } from './auth.js?v=4';
 
-    if (getSession()) { location.href = 'assessment.html'; }
+    // Same guard as login.html: only skip this page for an already-verified
+    // session, or an unverified one bounced here from login.html would just
+    // redirect straight back to assessment.html and loop again.
+    if (getSession()?.verified) { location.href = 'assessment.html'; }
 
     function show(id) {
       ['stateLoading','stateSuccess','stateError'].forEach(s =>
