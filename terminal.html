@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="color-scheme" content="light" />
+<script>(function(){var t=localStorage.getItem('cx-theme');if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}})();</script>
 <title>Climate Risk Terminal — Climactix Global</title>
 <meta name="description" content="Institutional-grade Climate Risk Intelligence Terminal. Physical risk, NGFS simulation, disclosure studio, investor screening, supply chain, climate finance."/>
 <link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png"/>
@@ -40,6 +41,24 @@
   --grn:var(--success);--red:var(--critical);--amb:var(--warning);--blu:var(--accent);
   --font:var(--font-body);--mono:var(--font-code);
 }
+/* Dark theme — NASA mission-control black. True near-black surfaces
+   (not the softer dark-slate DESIGN.md default), bright NASA Blue
+   accent for contrast. All the legacy aliases above (--bg0, --tx0,
+   --acc, etc.) are live var() references to these primary tokens, so
+   they follow automatically — nothing else in this file needs to
+   change per theme. */
+[data-theme="dark"]{
+  --bg:#000000;--surface:#060607;--card:#0D0D0F;--card-2:#141417;
+  --border:rgba(255,255,255,0.09);--border-2:rgba(255,255,255,0.16);
+  --text:#FFFFFF;--text-2:#C7CCD3;--text-muted:#8A93A0;--text-faint:#565E6A;
+  --accent:#4C8DF0;--accent-tint:rgba(76,141,240,0.16);--accent-border:rgba(76,141,240,0.42);
+  --success:#2ECC71;--success-tint:rgba(46,204,113,0.16);--success-border:rgba(46,204,113,0.38);
+  --warning:#F5A623;--warning-tint:rgba(245,166,35,0.16);--warning-border:rgba(245,166,35,0.38);
+  --warning-deep:#E08A00;--warning-deep-tint:rgba(224,138,0,0.16);--warning-deep-border:rgba(224,138,0,0.38);
+  --critical:#FF5C5C;--critical-tint:rgba(255,92,92,0.16);--critical-border:rgba(255,92,92,0.38);
+  --critical-deep:#FF3333;--critical-deep-tint:rgba(255,51,51,0.20);--critical-deep-border:rgba(255,51,51,0.42);
+  --bd2:rgba(255,255,255,0.18);
+}
 html,body{height:100%;overflow:hidden}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:12px;line-height:1.5;-webkit-font-smoothing:antialiased}
 h1,h2,h3,h4,.cre-title,.exp-entity-name{font-family:var(--font-heading)}
@@ -58,6 +77,8 @@ h1,h2,h3,h4,.cre-title,.exp-entity-name{font-family:var(--font-heading)}
 .tb-clock{font-family:var(--font-number);font-variant-numeric:tabular-nums;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.02em;flex-shrink:0}
 .tb-back{font-size:10px;color:var(--tx3);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border:1px solid var(--bd1);border-radius:var(--radius);transition:color var(--t),border-color var(--t);flex-shrink:0}
 .tb-back:hover{color:var(--tx1);border-color:var(--bd2)}
+.tb-theme{font-family:inherit;font-size:10px;color:var(--tx3);background:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border:1px solid var(--bd1);border-radius:var(--radius);transition:color var(--t),border-color var(--t);flex-shrink:0}
+.tb-theme:hover{color:var(--tx1);border-color:var(--bd2)}
 .tb-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--success);font-weight:700;letter-spacing:.08em;flex-shrink:0}
 .tb-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
@@ -422,6 +443,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 
   <div class="tb-live"><span class="tb-dot"></span>LIVE</div>
   <div class="tb-clock" id="clock">--:--:--</div>
+  <button type="button" class="tb-theme" id="themeToggle" title="Toggle theme">◐ Theme</button>
   <a href="index.html" class="tb-back">← Back to Site</a>
 </div>
 
@@ -591,10 +613,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
     </div>
     <div class="sig-hd" style="border-top:1px solid var(--bd0)"><span>Carbon Markets</span><span style="font-size:9px;color:var(--tx3);font-family:var(--mono)">LIVE</span></div>
     <div class="carbon-mkt">
-      <div class="cmkt-row"><span class="cmkt-label">EU ETS</span><span class="cmkt-val">€98.4</span><span class="cmkt-chg" style="color:#DC2626">▲ +2.1%</span></div>
-      <div class="cmkt-row"><span class="cmkt-label">UK ETS</span><span class="cmkt-val">£42.7</span><span class="cmkt-chg" style="color:#1E8E3E">▼ -0.8%</span></div>
-      <div class="cmkt-row"><span class="cmkt-label">CA CCA</span><span class="cmkt-val">$38.2</span><span class="cmkt-chg" style="color:#DC2626">▲ +1.4%</span></div>
-      <div class="cmkt-row"><span class="cmkt-label">VCM</span><span class="cmkt-val">$14.8</span><span class="cmkt-chg" style="color:#1E8E3E">▼ -3.2%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">EU ETS</span><span class="cmkt-val">€98.4</span><span class="cmkt-chg" style="color:var(--critical)">▲ +2.1%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">UK ETS</span><span class="cmkt-val">£42.7</span><span class="cmkt-chg" style="color:var(--success)">▼ -0.8%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">CA CCA</span><span class="cmkt-val">$38.2</span><span class="cmkt-chg" style="color:var(--critical)">▲ +1.4%</span></div>
+      <div class="cmkt-row"><span class="cmkt-label">VCM</span><span class="cmkt-val">$14.8</span><span class="cmkt-chg" style="color:var(--success)">▼ -3.2%</span></div>
     </div>
   </div>
 
@@ -1017,6 +1039,22 @@ function updateClock(){
 }
 setInterval(updateClock,1000);updateClock();
 
+// ─── Theme toggle ──────────────────────────────────────────────
+document.getElementById('themeToggle').addEventListener('click',function(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('cx-theme','light');
+  }else{
+    document.documentElement.setAttribute('data-theme','dark');
+    localStorage.setItem('cx-theme','dark');
+  }
+  const cs=document.querySelector('meta[name="color-scheme"]');
+  if(cs)cs.setAttribute('content',isDark?'light':'dark');
+  const activeTab=document.querySelector('.mod-tab.active');
+  if(activeTab)initChartsForModule(activeTab.dataset.mod);
+});
+
 // ─── Module Tab Switching ─────────────────────────────────────
 document.querySelectorAll('.mod-tab').forEach(btn=>{
   btn.addEventListener('click',function(){
@@ -1087,11 +1125,19 @@ function buildUptimeBars(){
 buildUptimeBars();
 
 // ─── Charts ───────────────────────────────────────────────────
-const CHART_DEFAULTS={
+// Chart.js paints to canvas, so CSS variables can't reach it — these
+// helpers read the current theme directly and every chart config below
+// calls them fresh, so re-running initChartsForModule() on theme toggle
+// (see the toggle handler above) repaints charts in the new theme.
+function cxDark(){return document.documentElement.getAttribute('data-theme')==='dark';}
+function cxTick(){return cxDark()?'#8A93A0':'#6B7280';}
+function cxTick2(){return cxDark()?'#C7CCD3':'#4F4F4F';}
+function cxGrid(a){return cxDark()?`rgba(255,255,255,${a})`:`rgba(17,17,17,${a})`;}
+function getChartDefaults(){return{
   responsive:true,maintainAspectRatio:false,
-  plugins:{legend:{display:false},tooltip:{backgroundColor:'#FFFFFF',titleColor:'#111111',bodyColor:'#4F4F4F',borderColor:'#D9D9D9',borderWidth:1,padding:10,titleFont:{weight:700,size:11},bodyFont:{size:10.5},boxPadding:4}},
-  scales:{x:{grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:10}}},y:{grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:10}}}},
-};
+  plugins:{legend:{display:false},tooltip:{backgroundColor:cxDark()?'#0D0D0F':'#FFFFFF',titleColor:cxDark()?'#FFFFFF':'#111111',bodyColor:cxTick2(),borderColor:cxDark()?'rgba(255,255,255,0.16)':'#D9D9D9',borderWidth:1,padding:10,titleFont:{weight:700,size:11},bodyFont:{size:10.5},boxPadding:4}},
+  scales:{x:{grid:{color:cxGrid(0.08)},ticks:{color:cxTick(),font:{size:10}}},y:{grid:{color:cxGrid(0.08)},ticks:{color:cxTick(),font:{size:10}}}},
+};}
 const charts={};
 function makeChart(id,cfg){
   if(charts[id]){charts[id].destroy();delete charts[id];}
@@ -1231,8 +1277,8 @@ function renderExpStress(id){
 }
 function renderExpPolicy(id){
   const d=EDATA[id];if(!d)return;
-  const cm={CRITICAL:'#DC2626',HIGH:'#B45309',MEDIUM:'#B45309',LOW:'#0B3D91',POSITIVE:'#1E8E3E',NEUTRAL:'#6B7280'};
-  document.getElementById('exp-policy').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">Policy Sensitivity Analysis</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Regulation</th><th>Impact</th><th>Financial Delta</th><th>Confidence</th></tr></thead><tbody>${d.policy.map(p=>`<tr><td>${p.reg}</td><td><span style="font-size:9px;font-weight:700;color:${cm[p.impact]||'#6B7280'}">${p.impact}</span></td><td class="t-mono" style="font-size:10px">${p.delta}</td><td><span class="rbadge ${p.conf==='HIGH'?'rb-low':p.conf==='MEDIUM'?'rb-medium':'rb-high'}">${p.conf}</span></td></tr>`).join('')}</tbody></table></div></div>`;
+  const cm={CRITICAL:'#DC2626',HIGH:'#B45309',MEDIUM:'#B45309',LOW:'#0B3D91',POSITIVE:'#1E8E3E',NEUTRAL:cxTick()};
+  document.getElementById('exp-policy').innerHTML=`<div class="panel"><div class="panel-hd"><span class="panel-title">Policy Sensitivity Analysis</span></div><div class="panel-body no-pad"><table class="t-table"><thead><tr><th>Regulation</th><th>Impact</th><th>Financial Delta</th><th>Confidence</th></tr></thead><tbody>${d.policy.map(p=>`<tr><td>${p.reg}</td><td><span style="font-size:9px;font-weight:700;color:${cm[p.impact]||cxTick()}">${p.impact}</span></td><td class="t-mono" style="font-size:10px">${p.delta}</td><td><span class="rbadge ${p.conf==='HIGH'?'rb-low':p.conf==='MEDIUM'?'rb-medium':'rb-high'}">${p.conf}</span></td></tr>`).join('')}</tbody></table></div></div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1339,7 +1385,7 @@ const CRE_ZONES=[
 let _creScenario='flood';
 
 function _creRatingFor(score){return score>80?'critical':score>60?'high':score>40?'medium':'low';}
-function _creSevColor(sev){return {critical:'#DC2626',high:'#B45309',medium:'#92400E',low:'#1E8E3E'}[sev]||'#6B7280';}
+function _creSevColor(sev){return {critical:'#DC2626',high:'#B45309',medium:'#92400E',low:'#1E8E3E'}[sev]||cxTick();}
 
 function _creAnimateValue(el,from,to,suffix,decimals){
   const dur=600,t0=performance.now();
@@ -1565,11 +1611,11 @@ function initSimCharts(){
     {label:'Below 2°C',data:[100,94,87,81,76,72],borderColor:'#0B3D91',tension:0.4,pointRadius:2,borderWidth:2},
     {label:'Delayed',data:[100,97,90,80,70,63],borderColor:'#B45309',tension:0.4,pointRadius:2,borderWidth:2,borderDash:[4,4]},
     {label:'Current Policy',data:[100,96,88,76,62,52],borderColor:'#DC2626',tension:0.4,pointRadius:2,borderWidth:2,borderDash:[4,4]},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:12}}}}});
+  ]},options:{...getChartDefaults(),plugins:{...getChartDefaults().plugins,legend:{display:true,labels:{color:cxTick(),font:{size:10},boxWidth:12}}}}});
   makeChart('chartCarbonPrice',{type:'line',data:{labels:YEARS,datasets:[
     {label:'Net Zero',data:[40,147,180,210,250,280],borderColor:'#1E8E3E',tension:0.4,pointRadius:2,borderWidth:2},
     {label:'Current Policy',data:[28,38,42,48,52,55],borderColor:'#DC2626',tension:0.4,pointRadius:2,borderWidth:2},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:12}}}}});
+  ]},options:{...getChartDefaults(),plugins:{...getChartDefaults().plugins,legend:{display:true,labels:{color:cxTick(),font:{size:10},boxWidth:12}}}}});
 }
 
 function updateSimCharts(){initSimCharts();}
@@ -1578,18 +1624,18 @@ function initInvestorCharts(){
   makeChart('chartESGRadar',{type:'radar',data:{labels:['Climate','Energy','Water','Waste','Social','Governance'],datasets:[
     {label:'Portfolio',data:[72,68,61,75,64,80],borderColor:'#0B3D91',backgroundColor:'rgba(11,61,145,0.10)',pointRadius:3,borderWidth:2},
     {label:'Benchmark',data:[60,55,58,62,60,70],borderColor:'#9CA3AF',backgroundColor:'rgba(107,114,128,0.06)',pointRadius:3,borderWidth:1.5,borderDash:[4,4]},
-  ]},options:{...CHART_DEFAULTS,scales:{r:{grid:{color:'rgba(17,17,17,0.08)'},ticks:{color:'#6B7280',font:{size:9},backdropColor:'transparent'},pointLabels:{color:'#6B7280',font:{size:10}}}},plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}}}});
+  ]},options:{...getChartDefaults(),scales:{r:{grid:{color:cxGrid(0.08)},ticks:{color:cxTick(),font:{size:9},backdropColor:'transparent'},pointLabels:{color:cxTick(),font:{size:10}}}},plugins:{...getChartDefaults().plugins,legend:{display:true,labels:{color:cxTick(),font:{size:10},boxWidth:10}}}}});
   makeChart('chartClimateVar',{type:'line',data:{labels:YEARS,datasets:[
     {label:'Net Zero VaR',data:[-2,-3,-4,-5,-5.5,-6],borderColor:'#1E8E3E',backgroundColor:'rgba(30,142,62,0.05)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
     {label:'Current Policy VaR',data:[-4,-8,-13,-19,-26,-32],borderColor:'#DC2626',backgroundColor:'rgba(220,38,38,0.05)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:12}}}}});
+  ]},options:{...getChartDefaults(),plugins:{...getChartDefaults().plugins,legend:{display:true,labels:{color:cxTick(),font:{size:10},boxWidth:12}}}}});
 }
 
 function initSCCharts(){
   const cats=['Purchased Goods','Capital Goods','Fuel & Energy','Transport (Up)','Waste','Business Travel','Employee Commute','Transport (Down)','Processing','Use of Product'];
   const vals=[82400,24100,18600,31200,8400,12800,9600,28400,14200,46800];
   const colors=vals.map(v=>v>40000?'#DC2626':v>20000?'#B45309':'#1E8E3E');
-  makeChart('chartScope3',{type:'bar',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors}]},options:{...CHART_DEFAULTS,indexAxis:'y',plugins:{...CHART_DEFAULTS.plugins},scales:{x:{grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:9}}},y:{grid:{color:'rgba(17,17,17,0.04)'},ticks:{color:'#6B7280',font:{size:9}}}}}});
+  makeChart('chartScope3',{type:'bar',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors}]},options:{...getChartDefaults(),indexAxis:'y',plugins:{...getChartDefaults().plugins},scales:{x:{grid:{color:cxGrid(0.06)},ticks:{color:cxTick(),font:{size:9}}},y:{grid:{color:cxGrid(0.04)},ticks:{color:cxTick(),font:{size:9}}}}}});
 }
 
 function initNarrativeCharts(){
@@ -1597,9 +1643,9 @@ function initNarrativeCharts(){
   makeChart('chartSentiment',{type:'line',data:{labels:days,datasets:[
     {label:'Positive',data:[42,38,45,40,36,42,48,44,46,50,47,52,48,54],borderColor:'#1E8E3E',backgroundColor:'rgba(30,142,62,0.06)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
     {label:'Negative',data:[28,32,26,30,34,28,24,26,22,20,23,18,22,18],borderColor:'#DC2626',backgroundColor:'rgba(220,38,38,0.04)',fill:true,tension:0.4,pointRadius:2,borderWidth:2},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}}}});
+  ]},options:{...getChartDefaults(),plugins:{...getChartDefaults().plugins,legend:{display:true,labels:{color:cxTick(),font:{size:10},boxWidth:10}}}}});
   const topics=['Carbon Pricing','Net Zero','ESG Disclosure','Physical Risk','Green Finance','Biodiversity'];
-  makeChart('chartTopicPulse',{type:'bar',data:{labels:topics,datasets:[{data:[284,218,196,162,138,94],backgroundColor:'#0B3D91'}]},options:{...CHART_DEFAULTS}});
+  makeChart('chartTopicPulse',{type:'bar',data:{labels:topics,datasets:[{data:[284,218,196,162,138,94],backgroundColor:'#0B3D91'}]},options:{...getChartDefaults()}});
 }
 
 function initDiscQuality(){
@@ -1607,7 +1653,7 @@ function initDiscQuality(){
   makeChart('chartTcfdQuality',{type:'bar',data:{labels:sections,datasets:[
     {label:'Your Score',data:[82,74,68,85,71],backgroundColor:'#0B3D91',borderRadius:3},
     {label:'Peer Average',data:[65,60,58,70,62],backgroundColor:'#D1D5DB',borderRadius:3},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}}}});
+  ]},options:{...getChartDefaults(),plugins:{...getChartDefaults().plugins,legend:{display:true,labels:{color:cxTick(),font:{size:10},boxWidth:10}}}}});
 }
 
 function initFinanceCharts(){
@@ -1616,12 +1662,12 @@ function initFinanceCharts(){
     {label:'Green',data:[167,258,270,522,487,576,620],backgroundColor:'#1E8E3E'},
     {label:'Social',data:[8,22,148,214,186,178,155],backgroundColor:'#0B3D91'},
     {label:'Sustainability',data:[4,18,68,152,184,206,230],backgroundColor:'#B45309'},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}},scales:{x:{stacked:true,grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:10}}},y:{stacked:true,grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:10}}}}}});
-  makeChart('chartGBSector',{type:'bar',data:{labels:['Energy','Buildings','Transport','Water','Waste','Other'],datasets:[{data:[38,24,18,12,5,3],backgroundColor:['#0B3D91','#3D7BE0','#7FA8E8','#173F73','#9CA3AF','#D1D5DB'],borderRadius:4,maxBarThickness:22}]},options:{...CHART_DEFAULTS,indexAxis:'y',plugins:{...CHART_DEFAULTS.plugins},scales:{x:{grid:{color:'rgba(17,17,17,0.06)'},ticks:{color:'#6B7280',font:{size:9}}},y:{grid:{display:false},ticks:{color:'#4F4F4F',font:{size:10}}}}}});
+  ]},options:{...getChartDefaults(),plugins:{...getChartDefaults().plugins,legend:{display:true,labels:{color:cxTick(),font:{size:10},boxWidth:10}}},scales:{x:{stacked:true,grid:{color:cxGrid(0.06)},ticks:{color:cxTick(),font:{size:10}}},y:{stacked:true,grid:{color:cxGrid(0.06)},ticks:{color:cxTick(),font:{size:10}}}}}});
+  makeChart('chartGBSector',{type:'bar',data:{labels:['Energy','Buildings','Transport','Water','Waste','Other'],datasets:[{data:[38,24,18,12,5,3],backgroundColor:['#0B3D91','#3D7BE0','#7FA8E8','#173F73','#9CA3AF','#D1D5DB'],borderRadius:4,maxBarThickness:22}]},options:{...getChartDefaults(),indexAxis:'y',plugins:{...getChartDefaults().plugins},scales:{x:{grid:{color:cxGrid(0.06)},ticks:{color:cxTick(),font:{size:9}}},y:{grid:{display:false},ticks:{color:cxTick2(),font:{size:10}}}}}});
   makeChart('chartCarbonMkt',{type:'line',data:{labels:['2020','2021','2022','2023','2024','2025E','2026E','2027E','2028E','2029E','2030E'],datasets:[
     {label:'EU ETS',data:[25,54,80,88,65,98,104,112,118,126,134],borderColor:'#0B3D91',tension:0.4,pointRadius:2,borderWidth:2},
     {label:'UK ETS',data:[null,48,70,55,35,43,48,54,60,66,72],borderColor:'#B45309',tension:0.4,pointRadius:2,borderWidth:2},
-  ]},options:{...CHART_DEFAULTS,plugins:{...CHART_DEFAULTS.plugins,legend:{display:true,labels:{color:'#6B7280',font:{size:10},boxWidth:10}}}}});
+  ]},options:{...getChartDefaults(),plugins:{...getChartDefaults().plugins,legend:{display:true,labels:{color:cxTick(),font:{size:10},boxWidth:10}}}}});
 }
 
 // ─── Init first module ────────────────────────────────────────
