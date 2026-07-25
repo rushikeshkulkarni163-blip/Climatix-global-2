@@ -293,6 +293,17 @@ service cloud.firestore {
       allow delete: if false; // soft-delete via deletedAt, not a real delete
     }
 
+    // ── Assessor Notes — private, reviewer-only (never visible to
+    // contributors/read_only, unlike ros_comments_v1 above) ──────────────
+    match /ros_assessor_notes_v1/{noteId} {
+      allow read: if hasAnyRole(companyOfAssessment(resource.data.assessmentId),
+                                 rosReviewRoles().concat(['administrator']));
+      allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
+                                   rosReviewRoles().concat(['administrator']))
+                     && request.resource.data.authorId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
     // ── Tasks ───────────────────────────────────────────────────────────
     match /ros_tasks_v1/{taskId} {
       allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));

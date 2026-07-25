@@ -903,6 +903,125 @@
 .iro-ans-btn.sel-NOT_ADDRESSED{ background: rgba(220,38,38,0.10);  border-color: rgba(220,38,38,0.35);  color: #DC2626; }
 .iro-ans-btn.sel-NA           { background: var(--iro-s2); border-color: var(--iro-bs); color: var(--iro-t2); }
 
+/* ── DYNAMIC ANSWER DETAIL PANEL — justification + per-status fields (progressive disclosure, always visible once a status is selected) ── */
+.iro-dyn-panel { padding-left: 36px; margin-top: 10px; }
+.iro-dyn-panel:empty { margin-top: 0; }
+.iro-just-block { margin-bottom: 10px; }
+.iro-just-label {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--iro-t2);
+  margin-bottom: 6px;
+}
+.iro-just-req { color: var(--iro-tm); font-weight: 500; text-transform: none; letter-spacing: 0; }
+.iro-just-textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--iro-b);
+  color: var(--iro-t1);
+  font-size: 12.5px;
+  font-family: var(--iro-sans);
+  line-height: 1.5;
+  resize: vertical;
+  border-radius: var(--iro-radius);
+  transition: border-color var(--iro-tr);
+}
+.iro-just-textarea:focus { outline: none; border-color: var(--iro-accent); }
+.iro-just-textarea.ok { border-color: rgba(30,142,62,0.35); }
+.iro-just-meta { display: flex; justify-content: space-between; margin-top: 5px; }
+.iro-just-count { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-tm); }
+.iro-just-count.ok   { color: #1E8E3E; }
+.iro-just-count.warn { color: #B45309; }
+.iro-just-saved { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-tm); }
+
+.iro-dyn-fields-title {
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--iro-t2);
+  margin: 12px 0 6px;
+}
+.iro-dyn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.iro-dyn-field { display: flex; flex-direction: column; gap: 4px; }
+.iro-dyn-field.full { grid-column: 1 / -1; }
+.iro-dyn-field label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--iro-tm);
+}
+.iro-dyn-field input,
+.iro-dyn-field select,
+.iro-dyn-field textarea {
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--card);
+  border: 1px solid var(--iro-b);
+  color: var(--iro-t1);
+  font-size: 12.5px;
+  font-family: var(--iro-sans);
+  border-radius: var(--iro-radius);
+  transition: border-color var(--iro-tr);
+}
+.iro-dyn-field input:focus,
+.iro-dyn-field select:focus,
+.iro-dyn-field textarea:focus { outline: none; border-color: var(--iro-accent); }
+.iro-dyn-field textarea { resize: vertical; min-height: 52px; }
+
+.iro-na-block { margin-top: 10px; }
+.iro-na-warn {
+  margin-top: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #B45309;
+  background: rgba(180,83,9,0.08);
+  border: 1px solid rgba(180,83,9,0.25);
+  border-radius: var(--iro-radius);
+}
+
+/* ── Financial Materiality + Scenario sub-panels (Phase 4) — collapsed by
+   default, opt-in per question (q.financialImpact / q.scenarioTag), so most
+   question cards are entirely unaffected. ── */
+.iro-sub-toggle {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 10px;
+  font-family: var(--font-heading); font-size: 10.5px; font-weight: 600;
+  color: var(--iro-accent);
+  background: rgba(11,61,145,0.05);
+  border: 1px solid rgba(11,61,145,0.2);
+  border-radius: var(--iro-pill);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all var(--iro-tr);
+}
+.iro-sub-toggle:hover { background: rgba(11,61,145,0.09); }
+.iro-sub-toggle .chev { font-size: 8px; transition: transform var(--iro-tr); }
+.iro-sub-toggle.expanded .chev { transform: rotate(180deg); }
+.iro-sub-panel { display: none; margin-top: 8px; padding: 12px; border: 1px solid var(--iro-b); border-radius: var(--iro-radius); background: var(--iro-s1); }
+.iro-sub-panel.expanded { display: block; }
+.iro-scenario-row { display: grid; grid-template-columns: 1fr 1fr 2fr auto; gap: 6px; margin-bottom: 6px; align-items: center; }
+.iro-scenario-row select, .iro-scenario-row input {
+  padding: 6px 8px; font-size: 11.5px; font-family: var(--iro-sans);
+  border: 1px solid var(--iro-b); border-radius: var(--iro-radius); background: var(--card); color: var(--iro-t1);
+}
+.iro-scenario-remove {
+  font-size: 11px; color: var(--iro-tm); background: none; border: none; cursor: pointer; padding: 4px;
+}
+.iro-scenario-remove:hover { color: #DC2626; }
+.iro-scenario-add {
+  font-family: var(--font-heading); font-size: 10.5px; font-weight: 500;
+  color: var(--iro-accent); background: none; border: 1px dashed rgba(11,61,145,0.3);
+  border-radius: var(--iro-radius); padding: 5px 10px; cursor: pointer; margin-top: 2px;
+}
+
 /* Section navigation buttons */
 .iro-section-nav-bar {
   display: flex;
@@ -1025,6 +1144,48 @@
   letter-spacing: 0.01em;
   margin-top: 2px;
 }
+
+/* ── Data Confidence rail widget ── */
+.iro-confidence-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.iro-confidence-badge {
+  font-family: var(--iro-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 8px;
+  border-radius: var(--iro-pill);
+  border: 1px solid var(--iro-b);
+  background: var(--iro-s2);
+  color: var(--iro-t2);
+}
+.iro-confidence-badge.very-high { color: #1E8E3E; border-color: rgba(30,142,62,0.3); background: rgba(30,142,62,0.08); }
+.iro-confidence-badge.high      { color: #1E8E3E; border-color: rgba(30,142,62,0.25); background: rgba(30,142,62,0.06); }
+.iro-confidence-badge.moderate  { color: var(--iro-accent); border-color: rgba(11,61,145,0.25); background: rgba(11,61,145,0.06); }
+.iro-confidence-badge.low       { color: #B45309; border-color: rgba(180,83,9,0.3); background: rgba(180,83,9,0.08); }
+.iro-confidence-badge.very-low  { color: #DC2626; border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.08); }
+.iro-confidence-sub { font-size: 10px; color: var(--iro-tm); }
+.iro-confidence-track { height: 4px; background: var(--iro-s3); border-radius: 2px; overflow: hidden; }
+.iro-confidence-fill { height: 100%; background: var(--iro-accent); transition: width var(--iro-tr); }
+.iro-confidence-meta { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-tm); margin-top: 6px; line-height: 1.6; }
+
+/* ── Quality Gate rail widget (Phase 5) ── */
+.iro-qgate-row { display: flex; align-items: center; gap: 8px; }
+.iro-qgate-badge {
+  font-family: var(--iro-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: var(--iro-pill);
+  border: 1px solid var(--iro-b);
+}
+.iro-qgate-badge.PRELIMINARY     { color: #DC2626; border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.08); }
+.iro-qgate-badge.INDICATIVE      { color: #B45309; border-color: rgba(180,83,9,0.3); background: rgba(180,83,9,0.08); }
+.iro-qgate-badge.EVIDENCE-BACKED { color: var(--iro-accent); border-color: rgba(11,61,145,0.3); background: rgba(11,61,145,0.08); }
+.iro-qgate-badge.VERIFIED        { color: #1E8E3E; border-color: rgba(30,142,62,0.3); background: rgba(30,142,62,0.08); }
+.iro-qgate-reasons { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-tm); margin-top: 8px; line-height: 1.7; }
+.iro-qgate-reasons div::before { content: '· '; }
 
 .iro-flag-list { display: flex; flex-direction: column; gap: 4px; }
 .iro-flag-item {
@@ -1870,6 +2031,38 @@
 }
 .iro-ws-upload-btn:hover { border-color: var(--iro-accent); color: var(--iro-accent); }
 
+/* Evidence status badge (6-state verification lifecycle) + rich metadata form */
+.iro-ev-status {
+  display: inline-block;
+  font-family: var(--iro-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: var(--iro-pill);
+  margin-left: 5px;
+}
+.iro-ev-status.verified            { color: #1E8E3E; background: rgba(30,142,62,0.10); }
+.iro-ev-status.partially-verified  { color: var(--iro-accent); background: rgba(11,61,145,0.08); }
+.iro-ev-status.self-reported,
+.iro-ev-status.pending             { color: var(--iro-tm); background: var(--iro-s2); }
+.iro-ev-status.unverified          { color: #B45309; background: rgba(180,83,9,0.08); }
+.iro-ev-status.contradictory       { color: #DC2626; background: rgba(220,38,38,0.10); }
+.iro-ev-status.expired             { color: #B45309; background: rgba(180,83,9,0.08); }
+.iro-ev-verify-select {
+  margin-top: 4px;
+  font-family: var(--iro-mono);
+  font-size: 9px;
+  padding: 3px 6px;
+  border: 1px solid var(--iro-b);
+  border-radius: var(--iro-radius);
+  background: var(--card);
+  color: var(--iro-t2);
+}
+.iro-ev-form { padding: 10px; border: 1px solid var(--iro-b); border-radius: var(--iro-radius); background: var(--iro-s1); margin-bottom: 8px; }
+.iro-ev-form .iro-dyn-grid { margin-bottom: 8px; }
+
 /* Discussion */
 .iro-cm-item { padding: 8px 0; border-bottom: 1px solid var(--iro-b); }
 .iro-cm-item:last-child { border-bottom: none; }
@@ -2544,6 +2737,30 @@
         </div>
 
         <div class="iro-rail-section">
+          <div class="iro-rail-label">Assessment Quality Gate</div>
+          <div class="iro-qgate-row">
+            <span class="iro-qgate-badge" id="railQGateBadge">PRELIMINARY</span>
+          </div>
+          <div class="iro-qgate-reasons" id="railQGateReasons"></div>
+        </div>
+
+        <div class="iro-rail-section">
+          <div class="iro-rail-label">Assessment Completion</div>
+          <div class="iro-confidence-row"><span class="iro-confidence-sub" id="railCompletionOverall">0% overall</span></div>
+          <div id="railCompletionRows"></div>
+        </div>
+
+        <div class="iro-rail-section">
+          <div class="iro-rail-label">Data Confidence</div>
+          <div class="iro-confidence-row">
+            <span class="iro-confidence-badge" id="railConfidenceBadge">—</span>
+            <span class="iro-confidence-sub" id="railConfidenceSub">No answers yet</span>
+          </div>
+          <div class="iro-confidence-track"><div class="iro-confidence-fill" id="railConfidenceFill" style="width:0%"></div></div>
+          <div class="iro-confidence-meta" id="railConfidenceMeta"></div>
+        </div>
+
+        <div class="iro-rail-section">
           <div class="iro-rail-label">C-Layer Intelligence</div>
           <div id="railPillars"></div>
         </div>
@@ -2581,7 +2798,14 @@
   </div>
 
   <!-- ════ SCRIPT PLACEHOLDER — filled in next steps ════ -->
-  
+
+  <!-- Industry ontology + industry/materiality-triggered question content
+       (classic global-scope scripts, not modules — loaded before iroScript
+       so INDUSTRY_QUESTIONS/CORE_MATERIALITY_QUESTIONS/currentIndustryCode
+       are available when QUESTIONS is assembled below). -->
+  <script src="risk-os-industries.js"></script>
+  <script src="risk-os-questions-industry.js"></script>
+
   <script id="iroScript">
 /* ═══════════════════════════════════════════════════════════════════════
    CLIMACTIX — C-LAYER INTELLIGENCE OS v4.0
@@ -2590,11 +2814,13 @@
 
 /* ── STATE ── */
 const STATE = { entity:{}, answers:{}, currentSection:0, radarChart:null, companyId:null, assessmentId:null,
-  mandate:{}, entities:[], materialityScan:null, methodologyVersion:null };
+  mandate:{}, entities:[], materialityScan:null, methodologyVersion:null, evidenceByQuestion:{}, financialMateriality:{}, scenariosByQuestion:{} };
 let _unsubRiskOSEntities = null;
 try { const s=localStorage.getItem('iro_answers_v4'); if(s) STATE.answers=JSON.parse(s); } catch(e){}
 try { const e=localStorage.getItem('iro_entity'); if(e) STATE.entity=JSON.parse(e); } catch(e){}
 let _unsubRiskOSAnswers = null;
+let _unsubRiskOSEvidence = null;
+let _unsubRiskOSFinMat = null;
 
 /* ── SECTIONS ── */
 const SECTIONS = [
@@ -3564,7 +3790,11 @@ const BASE_QUESTIONS = [
 // any failure or in local mode). Every consumer below reads the QUESTIONS
 // binding fresh at call time rather than holding a stale copy, so
 // reassigning it here is safe.
-let QUESTIONS = [...TYPED_QUESTIONS, ...BASE_QUESTIONS];
+let QUESTIONS = [
+  ...TYPED_QUESTIONS, ...BASE_QUESTIONS,
+  ...(typeof INDUSTRY_QUESTIONS !== 'undefined' ? INDUSTRY_QUESTIONS : []),
+  ...(typeof CORE_MATERIALITY_QUESTIONS !== 'undefined' ? CORE_MATERIALITY_QUESTIONS : []),
+];
   </script>
 
   <script>
@@ -3572,6 +3802,393 @@ let QUESTIONS = [...TYPED_QUESTIONS, ...BASE_QUESTIONS];
    CLIMACTIX C-LAYER ENGINE v4.0
    AI Text Analysis · 5 Input Types · Nonlinear Scoring · AAA-C Rating
 ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── ANSWER SCHEMA — select5 answers are stored as a discriminated-union
+   value: legacy answers (and every non-select5 type) stay a flat string;
+   select5 answers written from this point on are an object carrying the
+   status plus response justification / dynamic per-status fields. _statusOf()
+   is the single read-side guard every consumer uses so both shapes work
+   forever without a batch migration. ─── */
+function _statusOf(raw) { return (raw && typeof raw === 'object') ? raw.status : raw; }
+
+/* ─── BRANCHING ENGINE (showIf) + INDUSTRY GATE ───
+   One composed filter chain — section -> industry -> showIf — used
+   everywhere QUESTIONS is filtered for display/counting, so industry
+   gating and conditional branching can never desync from each other or
+   from what's actually rendered. A follow-up question in the "adaptive
+   depth" chain (spec §9) is just a normal question whose showIf points at
+   its parent's answer — no separate mechanism. */
+const _LEVEL_RANK = {LOW:0, MEDIUM:1, HIGH:2, CRITICAL:3};
+function _answerMatches(raw, op, value, valuePath) {
+  let v;
+  if (valuePath) {
+    v = raw;
+    valuePath.split('.').forEach(p => { v = (v && typeof v === 'object') ? v[p] : undefined; });
+  } else {
+    v = _statusOf(raw);
+  }
+  if (op === 'answered')    return v !== undefined && v !== null && v !== '';
+  if (op === 'notAnswered') return v === undefined || v === null || v === '';
+  if (op === 'equals')      return v === value;
+  if (op === 'in')          return Array.isArray(value) && value.includes(v);
+  if (op === 'gt')          return parseFloat(v) > parseFloat(value);
+  return false;
+}
+function _showIfSatisfied(showIf) {
+  if (!showIf) return true;
+  if (showIf.all) return showIf.all.every(_showIfSatisfied);
+  if (showIf.op === 'materialityAtLeast') {
+    const topics = (STATE.materialityScan && STATE.materialityScan.topics) || [];
+    const topic = topics.find(t => t.clayerId === showIf.clayerId);
+    if (!topic) return false; // no scan yet, or this C-LAYER wasn't scored — never show speculatively
+    return _LEVEL_RANK[topic.level] >= _LEVEL_RANK[showIf.level];
+  }
+  return _answerMatches(STATE.answers[showIf.questionId], showIf.op, showIf.value, showIf.valuePath);
+}
+function _questionVisible(q) {
+  if (q.industryCode && q.industryCode !== (typeof currentIndustryCode === 'function' ? currentIndustryCode() : null)) return false;
+  return _showIfSatisfied(q.showIf);
+}
+// The one place section+industry+branching compose — every renderer/counter
+// below calls this instead of QUESTIONS.filter(q=>q.sec===...) directly.
+function visibleQuestionsForSection(secId) {
+  return QUESTIONS.filter(q => q.sec === secId && _questionVisible(q));
+}
+
+const REASON_CODES = [
+  'Not identified as material', 'Insufficient data', 'Insufficient resources',
+  'No regulatory requirement', 'No internal capability', 'Management decision',
+  'Under evaluation', 'Other',
+];
+const APPROVAL_STATUSES = ['Not yet proposed', 'Proposed', 'Board approved', 'Budget approved'];
+const EVIDENCE_DOC_TYPES = [
+  'Sustainability Report', 'Financial Report', 'Board Document', 'Policy Document',
+  'Risk Register', 'Audit Report', 'Certificate', 'Climate Model Output',
+  'Asset Register', 'Insurance Documentation', 'Energy Bill', 'Emissions Inventory',
+  'Supplier Record', 'URL / External Reference', 'Other',
+];
+const EVIDENCE_REVIEW_STATUSES = ['self-reported', 'partially-verified', 'verified', 'unverified', 'contradictory', 'expired'];
+
+function _justMinChars(q) {
+  if (q.sev === 'CRITICAL') return 250;
+  if (q.mat === 'HIGH') return 100;
+  return 0;
+}
+function _fmtTs(ts) {
+  return new Date(ts).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+}
+
+/* Renders the full detail panel (justification + dynamic fields + N/A flag)
+   under a select5 question once it has been answered. Called both from
+   renderQuestion() on first paint and from answer() when the status changes. */
+function renderAnswerDetailPanel(q, ansObj) {
+  if (!ansObj || typeof ansObj !== 'object') return '';
+  const status = ansObj.status;
+  const minChars = _justMinChars(q);
+  const justLen = (ansObj.justification || '').length;
+  const justOk = minChars === 0 || justLen >= minChars;
+  const savedTxt = ansObj.justificationSavedAt ? `Last updated ${_fmtTs(ansObj.justificationSavedAt)}` : 'Not yet saved';
+  const reqLabel = minChars === 0 ? '' :
+    `<span class="iro-just-req">· ${q.sev === 'CRITICAL' ? 'mandatory' : 'recommended'}, min ${minChars} chars</span>`;
+
+  const justificationHTML = `
+    <div class="iro-just-block">
+      <div class="iro-just-label">Response Justification ${reqLabel}</div>
+      <textarea class="iro-just-textarea${justOk ? ' ok' : ''}" id="just-${q.id}"
+        placeholder="Provide the basis for your response, including current practices, policies, controls, data, targets, implementation status, responsible functions and relevant evidence."
+        oninput="updateJustification('${q.id}', this.value)">${ansObj.justification || ''}</textarea>
+      <div class="iro-just-meta">
+        <span class="iro-just-count ${justOk ? 'ok' : 'warn'}" id="just-count-${q.id}">${justLen} chars${minChars > 0 ? ` / ${minChars} min` : ''}</span>
+        <span class="iro-just-saved" id="just-saved-${q.id}">${savedTxt}</span>
+      </div>
+    </div>`;
+
+  const fieldsHTML = status ? renderDynamicStatusFields(q, ansObj) : '';
+  const naHTML = status === 'NA' ? renderNAValidation(q, ansObj) : '';
+
+  return justificationHTML + fieldsHTML + naHTML;
+}
+
+// Financial Materiality / Scenario Analysis are opt-in per question
+// (q.financialImpact / q.scenarioTag) and, unlike the justification/dynamic-
+// status fields above, apply to EVERY question type (most financialImpact
+// questions in risk-os-questions-industry.js are type:'number', not
+// select5) — so they're rendered independently in renderQuestion() rather
+// than nested inside the select5-only answer detail panel.
+function renderSupplementaryPanels(q) {
+  let html = '';
+  if (q.financialImpact) html += renderFinancialMaterialityPanel(q);
+  if (q.scenarioTag) html += renderScenarioPanel(q);
+  return html;
+}
+
+function _toggleSubPanel(id) {
+  const btn = document.getElementById('tgl-'+id);
+  const panel = document.getElementById('panel-'+id);
+  if (!btn || !panel) return;
+  const expanding = !panel.classList.contains('expanded');
+  btn.classList.toggle('expanded', expanding);
+  panel.classList.toggle('expanded', expanding);
+}
+
+/* ─── FINANCIAL MATERIALITY (spec §10) ───
+   Opt-in per question (q.financialImpact) — revenue/EBITDA/asset exposure,
+   expected loss, capex/opex, insurance/carbon/financing cost. Persisted to
+   ros_financial_materiality_v1 via RiskOSData.saveFinancialMateriality,
+   cached locally in STATE.financialMateriality[qId]. */
+const FIN_FIELDS = [
+  ['revenueExposureUSD', 'Revenue exposed (USD)'],
+  ['ebitdaExposureUSD', 'EBITDA exposed (USD)'],
+  ['assetValueExposedUSD', 'Asset value exposed (USD)'],
+  ['expectedLossUSD', 'Expected annual loss (USD)'],
+  ['capexUSD', 'CAPEX required (USD)'],
+  ['opexUSD', 'OPEX impact (USD)'],
+  ['insuranceCostDeltaUSD', 'Insurance cost delta (USD)'],
+  ['carbonCostUSD', 'Carbon cost exposure (USD)'],
+  ['financingCostDeltaUSD', 'Financing cost delta (USD)'],
+];
+function renderFinancialMaterialityPanel(q) {
+  const rec = STATE.financialMateriality[q.id] || {};
+  const toggleId = 'fin-'+q.id;
+  const fieldsHTML = FIN_FIELDS.map(([name,label]) => `
+    <div class="iro-dyn-field"><label>${label}</label>
+      <input type="number" min="0" value="${rec[name] ?? ''}" placeholder="0"
+        onchange="updateFinancialField('${q.id}','${name}',this.value)" />
+    </div>`).join('');
+  const horizons = ['Current','2030','2040','2050','2070','2100'];
+  return `
+    <button class="iro-sub-toggle" id="tgl-${toggleId}" onclick="_toggleSubPanel('${toggleId}')" type="button">
+      <span>💰 Financial Materiality</span><span class="chev">▾</span>
+    </button>
+    <div class="iro-sub-panel" id="panel-${toggleId}">
+      <div class="iro-dyn-grid">
+        ${fieldsHTML}
+        <div class="iro-dyn-field"><label>Time horizon</label>
+          <select onchange="updateFinancialField('${q.id}','timeHorizon',this.value)">
+            <option value="">— Select —</option>
+            ${horizons.map(h=>`<option${rec.timeHorizon===h?' selected':''}>${h}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    </div>`;
+}
+const _finSyncDebounce = {};
+function updateFinancialField(qId, field, val) {
+  if (!STATE.financialMateriality[qId]) STATE.financialMateriality[qId] = {questionId: qId};
+  STATE.financialMateriality[qId][field] = field === 'timeHorizon' ? val : (val === '' ? null : parseFloat(val));
+  clearTimeout(_finSyncDebounce[qId]);
+  _finSyncDebounce[qId] = setTimeout(() => {
+    if (!window.RiskOSData || !STATE.assessmentId) return;
+    const q = QUESTIONS.find(x => x.id === qId);
+    window.RiskOSData.saveFinancialMateriality(STATE.assessmentId, qId, q?.sec, STATE.financialMateriality[qId])
+      .catch(e => console.error('[risk-os] financial materiality save failed', e));
+  }, 800);
+}
+
+/* ─── SCENARIO ANALYSIS (spec §11) ───
+   Opt-in per question (q.scenarioTag) — attaches 1.5°C/2°C/3°C+/Current
+   Policies x 2030-2100 rows with a short exposure note. Kept in a
+   standalone STATE.scenariosByQuestion map (not inside the answer object)
+   because scenarioTag questions are frequently type:'number'/'select5'
+   alike — a scenario attachment shouldn't depend on the answer happening
+   to be object-shaped. Local-only (localStorage) for this pass, same as
+   every other answer-adjacent field before Firestore mirroring was added;
+   evidence and financial materiality remain the cloud-synced paths. */
+const SCENARIO_PATHWAYS = ['1.5°C', '2°C', '3°C+', 'Current Policies'];
+const SCENARIO_HORIZONS = ['2030', '2040', '2050', '2070', '2100'];
+try { const sc=localStorage.getItem('iro_scenarios_v1'); if(sc) STATE.scenariosByQuestion=JSON.parse(sc); } catch(e){}
+if (!STATE.scenariosByQuestion) STATE.scenariosByQuestion = {};
+function _saveScenarios() { try { localStorage.setItem('iro_scenarios_v1', JSON.stringify(STATE.scenariosByQuestion)); } catch(e){} }
+function renderScenarioPanel(q) {
+  const rows = STATE.scenariosByQuestion[q.id] || [];
+  const toggleId = 'scn-'+q.id;
+  const rowsHTML = rows.map((r, i) => `
+    <div class="iro-scenario-row">
+      <select onchange="updateScenarioField('${q.id}',${i},'pathway',this.value)">
+        ${SCENARIO_PATHWAYS.map(p=>`<option${r.pathway===p?' selected':''}>${p}</option>`).join('')}
+      </select>
+      <select onchange="updateScenarioField('${q.id}',${i},'horizon',this.value)">
+        ${SCENARIO_HORIZONS.map(h=>`<option${r.horizon===h?' selected':''}>${h}</option>`).join('')}
+      </select>
+      <input type="text" placeholder="Exposure under this scenario" value="${(r.exposureNote||'').replace(/"/g,'&quot;')}"
+        onchange="updateScenarioField('${q.id}',${i},'exposureNote',this.value)" />
+      <button class="iro-scenario-remove" onclick="removeScenarioRow('${q.id}',${i})" type="button">✕</button>
+    </div>`).join('');
+  return `
+    <button class="iro-sub-toggle" id="tgl-${toggleId}" onclick="_toggleSubPanel('${toggleId}')" type="button">
+      <span>🌡️ Scenario Analysis</span><span class="chev">▾</span>
+    </button>
+    <div class="iro-sub-panel" id="panel-${toggleId}">
+      <div id="scn-rows-${q.id}">${rowsHTML || '<div class="iro-ws-empty">No scenarios attached yet.</div>'}</div>
+      <button class="iro-scenario-add" onclick="addScenarioRow('${q.id}')" type="button">+ Add scenario</button>
+    </div>`;
+}
+function _scenarioRowsRefresh(qId) {
+  const q = QUESTIONS.find(x => x.id === qId);
+  const el = document.getElementById('scn-rows-'+qId);
+  if (!q || !el) return;
+  // Re-render just the row list, not the whole toggle/panel, so the panel's
+  // own expanded/collapsed state never resets while editing.
+  const rows = STATE.scenariosByQuestion[qId] || [];
+  el.innerHTML = rows.map((r, i) => `
+    <div class="iro-scenario-row">
+      <select onchange="updateScenarioField('${qId}',${i},'pathway',this.value)">
+        ${SCENARIO_PATHWAYS.map(p=>`<option${r.pathway===p?' selected':''}>${p}</option>`).join('')}
+      </select>
+      <select onchange="updateScenarioField('${qId}',${i},'horizon',this.value)">
+        ${SCENARIO_HORIZONS.map(h=>`<option${r.horizon===h?' selected':''}>${h}</option>`).join('')}
+      </select>
+      <input type="text" placeholder="Exposure under this scenario" value="${(r.exposureNote||'').replace(/"/g,'&quot;')}"
+        onchange="updateScenarioField('${qId}',${i},'exposureNote',this.value)" />
+      <button class="iro-scenario-remove" onclick="removeScenarioRow('${qId}',${i})" type="button">✕</button>
+    </div>`).join('') || '<div class="iro-ws-empty">No scenarios attached yet.</div>';
+}
+function addScenarioRow(qId) {
+  if (!STATE.scenariosByQuestion[qId]) STATE.scenariosByQuestion[qId] = [];
+  STATE.scenariosByQuestion[qId].push({pathway: SCENARIO_PATHWAYS[0], horizon: SCENARIO_HORIZONS[0], exposureNote: ''});
+  _saveScenarios();
+  _scenarioRowsRefresh(qId);
+}
+function updateScenarioField(qId, idx, field, val) {
+  const rows = STATE.scenariosByQuestion[qId];
+  if (!rows || !rows[idx]) return;
+  rows[idx][field] = val;
+  _saveScenarios();
+}
+function removeScenarioRow(qId, idx) {
+  const rows = STATE.scenariosByQuestion[qId];
+  if (!rows) return;
+  rows.splice(idx, 1);
+  _saveScenarios();
+  _scenarioRowsRefresh(qId);
+}
+
+function _dynField(q, name, label, type, ansObj, opts) {
+  opts = opts || {};
+  const val = (ansObj.fields && ansObj.fields[name] != null) ? ansObj.fields[name] : '';
+  const full = opts.full ? ' full' : '';
+  const escVal = String(val).replace(/"/g, '&quot;');
+  let control;
+  if (type === 'select') {
+    control = `<select onchange="updateDynField('${q.id}','${name}',this.value)">
+      <option value="">— Select —</option>
+      ${(opts.options || []).map(o => `<option value="${o}"${val === o ? ' selected' : ''}>${o}</option>`).join('')}
+    </select>`;
+  } else if (type === 'textarea') {
+    control = `<textarea oninput="updateDynField('${q.id}','${name}',this.value)" placeholder="${opts.placeholder || ''}">${val}</textarea>`;
+  } else {
+    control = `<input type="${type}" value="${escVal}" placeholder="${opts.placeholder || ''}" ${type === 'number' ? 'min="0"' : ''}
+      onchange="updateDynField('${q.id}','${name}',this.value)" />`;
+  }
+  return `<div class="iro-dyn-field${full}"><label>${label}</label>${control}</div>`;
+}
+
+function renderDynamicStatusFields(q, ansObj) {
+  const status = ansObj.status;
+  let title = '', fields = '';
+  if (status === 'IMPLEMENTED') {
+    title = 'Implementation Details';
+    fields = [
+      _dynField(q, 'implementationDate', 'Date of implementation', 'date', ansObj),
+      _dynField(q, 'coveragePct', '% of operations / assets / revenue covered', 'number', ansObj, {placeholder:'0–100'}),
+      _dynField(q, 'businessUnits', 'Business units covered', 'text', ansObj),
+      _dynField(q, 'geoCoverage', 'Geographic coverage', 'text', ansObj),
+      _dynField(q, 'responsibleDept', 'Responsible department / owner', 'text', ansObj),
+      _dynField(q, 'kpi', 'KPI used', 'text', ansObj),
+      _dynField(q, 'kpiResult', 'Latest measured result', 'text', ansObj),
+      _dynField(q, 'verificationStatus', 'Independently verified?', 'select', ansObj, {options:['Yes — externally assured','Yes — internally verified','No — self-reported','Verification in progress']}),
+      _dynField(q, 'evidenceNote', 'Supporting evidence (reference)', 'text', ansObj, {full:true}),
+    ].join('');
+  } else if (status === 'PROGRESSING') {
+    title = 'Progress Details';
+    fields = [
+      _dynField(q, 'completionPct', '% completion', 'number', ansObj, {placeholder:'0–100'}),
+      _dynField(q, 'targetDate', 'Target completion date', 'date', ansObj),
+      _dynField(q, 'responsibleDept', 'Responsible owner', 'text', ansObj),
+      _dynField(q, 'budgetAllocated', 'Budget allocated', 'text', ansObj),
+      _dynField(q, 'actionsCompleted', 'Actions completed', 'textarea', ansObj, {full:true}),
+      _dynField(q, 'actionsOutstanding', 'Actions outstanding', 'textarea', ansObj, {full:true}),
+      _dynField(q, 'dependencies', 'Key dependencies', 'text', ansObj),
+      _dynField(q, 'barriers', 'Implementation barriers', 'text', ansObj),
+    ].join('');
+  } else if (status === 'PLANNED') {
+    title = 'Planning Details';
+    fields = [
+      _dynField(q, 'plannedInitiative', 'Planned initiative', 'text', ansObj, {full:true}),
+      _dynField(q, 'approvalStatus', 'Board / management approval status', 'select', ansObj, {options:APPROVAL_STATUSES}),
+      _dynField(q, 'startDate', 'Planned start date', 'date', ansObj),
+      _dynField(q, 'targetDate', 'Target completion date', 'date', ansObj),
+      _dynField(q, 'estCapex', 'Expected CAPEX / OPEX', 'text', ansObj),
+      _dynField(q, 'responsibleDept', 'Responsible owner', 'text', ansObj),
+      _dynField(q, 'expectedCoverage', 'Expected coverage', 'text', ansObj),
+      _dynField(q, 'expectedImpact', 'Expected climate impact', 'text', ansObj),
+    ].join('');
+  } else if (status === 'NOT_ADDRESSED') {
+    title = 'Risk Gap Record';
+    fields = [
+      _dynField(q, 'reasonCode', 'Why has this issue not been addressed?', 'select', ansObj, {options:REASON_CODES, full:true}),
+      _dynField(q, 'barrier', 'What prevents implementation?', 'text', ansObj, {full:true}),
+      _dynField(q, 'managementAssessed', 'Has management formally assessed this risk?', 'select', ansObj, {options:['Yes','No','Under review']}),
+      _dynField(q, 'targetTimeline', 'Estimated timeline for addressing it', 'text', ansObj),
+    ].join('');
+  } else {
+    return '';
+  }
+  return `<div class="iro-dyn-fields-title">${title}</div><div class="iro-dyn-grid">${fields}</div>`;
+}
+
+function renderNAValidation(q, ansObj) {
+  const naLen = (ansObj.fields && ansObj.fields.naJustification || '').length;
+  const flagged = _isNAImplausible(q);
+  return `
+    <div class="iro-na-block" id="na-flag-${q.id}">
+      <div class="iro-just-label">Why is this Not Applicable? <span class="iro-just-req">· mandatory</span></div>
+      <textarea class="iro-just-textarea${naLen >= 40 ? ' ok' : ''}"
+        placeholder="Explain why this question is not applicable to the organization, given its industry, geography, assets, revenue and business model."
+        oninput="updateDynField('${q.id}','naJustification',this.value)">${(ansObj.fields && ansObj.fields.naJustification) || ''}</textarea>
+      ${flagged ? `<div class="iro-na-warn">⚠ N/A VALIDATION FLAG — this response may be inconsistent with the entity's stated profile. Evidence confidence may be reduced pending review.</div>` : ''}
+    </div>`;
+}
+
+/* Interim heuristic: flags CRITICAL/HIGH-materiality questions marked N/A
+   regardless of entity profile. Refined with real industry/geography/asset
+   cross-referencing once risk-os-industries.js (Phase 3) is wired in. */
+function _isNAImplausible(q) {
+  return q.sev === 'CRITICAL' || q.mat === 'HIGH';
+}
+
+const _answerSyncDebounce = {};
+function updateJustification(qId, val) {
+  const a = STATE.answers[qId];
+  if (!a || typeof a !== 'object') return;
+  a.justification = val;
+  a.justificationSavedAt = Date.now();
+  try { localStorage.setItem('iro_answers_v4', JSON.stringify(STATE.answers)); } catch(e){}
+  const q = QUESTIONS.find(x => x.id === qId);
+  const minChars = _justMinChars(q);
+  const ok = minChars === 0 || val.length >= minChars;
+  const cEl = document.getElementById('just-count-' + qId);
+  if (cEl) { cEl.textContent = `${val.length} chars${minChars > 0 ? ` / ${minChars} min` : ''}`; cEl.className = `iro-just-count ${ok ? 'ok' : 'warn'}`; }
+  const sEl = document.getElementById('just-saved-' + qId);
+  if (sEl) sEl.textContent = 'Last updated ' + _fmtTs(a.justificationSavedAt);
+  clearTimeout(_answerSyncDebounce[qId]);
+  _answerSyncDebounce[qId] = setTimeout(() => _syncAnswerToCloud(qId), 800);
+}
+
+function updateDynField(qId, field, val) {
+  const a = STATE.answers[qId];
+  if (!a || typeof a !== 'object') return;
+  if (!a.fields) a.fields = {};
+  a.fields[field] = val;
+  try { localStorage.setItem('iro_answers_v4', JSON.stringify(STATE.answers)); } catch(e){}
+  if (field === 'naJustification') {
+    const q = QUESTIONS.find(x => x.id === qId);
+    const flagEl = document.getElementById('na-flag-' + qId);
+    if (flagEl && q) flagEl.outerHTML = renderNAValidation(q, a);
+  }
+  clearTimeout(_answerSyncDebounce[qId]);
+  _answerSyncDebounce[qId] = setTimeout(() => _syncAnswerToCloud(qId), 800);
+}
 
 /* ─── AI TEXT ANALYSIS ENGINE ─── */
 function analyzeTextResponse(text) {
@@ -3625,10 +4242,11 @@ function getAnswerValue(qId) {
   const type = q.type || 'select5';
 
   if (type === 'select5') {
-    if (raw === 'IMPLEMENTED')   return 100;
-    if (raw === 'PROGRESSING')   return 60;
-    if (raw === 'PLANNED')       return 30;
-    if (raw === 'NOT_ADDRESSED') return 0;
+    const status = _statusOf(raw);
+    if (status === 'IMPLEMENTED')   return 100;
+    if (status === 'PROGRESSING')   return 60;
+    if (status === 'PLANNED')       return 30;
+    if (status === 'NOT_ADDRESSED') return 0;
     return null;
   }
   if (type === 'yesno') return raw === 'YES' ? 100 : raw === 'NO' ? 0 : null;
@@ -3663,6 +4281,148 @@ function toClimactixScale(raw) {
   return Math.max(10, Math.min(100, Math.round(10 + (raw / 100) * 90)));
 }
 
+/* ─── EVIDENCE-WEIGHTED SCORING (spec §5) ───
+   Adjusted Question Score = Base Response Score × Evidence Confidence Factor
+   × Verification Factor × Recency Factor. Deliberately falls back to the
+   raw Base Response Score (factor 1.0) whenever no evidence has been
+   attached yet, so answering 230 questions with zero evidence — today's
+   only real-world state — produces an identical composite to before this
+   phase; the adjustment only engages once evidence exists, per the
+   evidence-weighted design in the approved plan. Evidence Confidence is
+   still surfaced as its own, separate number (see calcDataConfidenceRollup)
+   even in that zero-evidence case — Performance Score and Evidence
+   Confidence are never merged into one opaque figure. */
+const _VERIFICATION_FACTORS = {
+  'verified': 1.0, 'partially-verified': 0.85, 'self-reported': 0.7,
+  'pending': 0.7, 'unverified': 0.55, 'contradictory': 0.25, 'expired': 0.5,
+};
+function _bestEvidenceFor(qId) {
+  const items = STATE.evidenceByQuestion[qId] || [];
+  if (!items.length) return null;
+  const rank = {verified:4, 'partially-verified':3, 'self-reported':2, pending:2, unverified:1, expired:0.5, contradictory:0};
+  let best = items[0], bestRank = -1;
+  items.forEach(ev => { const r = rank[ev.reviewStatus] ?? 2; if (r > bestRank) { bestRank = r; best = ev; } });
+  return best;
+}
+function calcEvidenceConfidenceFactor(qId) {
+  const best = _bestEvidenceFor(qId);
+  if (!best) return 1.0;
+  const verificationFactor = _VERIFICATION_FACTORS[best.reviewStatus] ?? 0.7;
+  const createdMs = best.createdAt?.seconds ? best.createdAt.seconds * 1000 : Date.now();
+  const ageDays = (Date.now() - createdMs) / 86400000;
+  const recencyFactor = ageDays <= 400 ? 1.0 : ageDays <= 800 ? 0.85 : 0.65;
+  return Math.max(0.25, verificationFactor * recencyFactor);
+}
+function calcAdjustedScore(qId) {
+  const base = getAnswerValue(qId);
+  if (base === null) return null;
+  if (!(STATE.evidenceByQuestion[qId] || []).length) return base;
+  return Math.round(base * calcEvidenceConfidenceFactor(qId));
+}
+
+function _confidenceLabelForFactor(f) {
+  if (f >= 0.9)  return 'VERY HIGH';
+  if (f >= 0.75) return 'HIGH';
+  if (f >= 0.55) return 'MODERATE';
+  if (f >= 0.35) return 'LOW';
+  return 'VERY LOW';
+}
+/* Question -> section -> C-LAYER -> assessment confidence rollup. Unlike
+   calcAdjustedScore (which only discounts once evidence exists), this
+   display-only rollup treats "answered but no evidence at all" as its own,
+   lower confidence bucket (0.5) — evidence coverage is what confidence is
+   meant to communicate, even before it starts moving the score itself. */
+function calcDataConfidenceRollup() {
+  let sumFactor = 0, countAnswered = 0, evidenceCount = 0;
+  QUESTIONS.forEach(q => {
+    if (getAnswerValue(q.id) === null) return;
+    countAnswered++;
+    const items = STATE.evidenceByQuestion[q.id] || [];
+    if (items.length) { evidenceCount++; sumFactor += calcEvidenceConfidenceFactor(q.id); }
+    else sumFactor += 0.5;
+  });
+  const overallFactor = countAnswered > 0 ? sumFactor / countAnswered : 0;
+  return {
+    overallFactor,
+    overallLabel: countAnswered > 0 ? _confidenceLabelForFactor(overallFactor) : '—',
+    questionsAnswered: countAnswered,
+    questionsWithEvidence: evidenceCount,
+    evidenceCoveragePct: countAnswered > 0 ? Math.round((evidenceCount / countAnswered) * 100) : 0,
+  };
+}
+
+/* ─── COMPLETION LOGIC (spec §19) ───
+   Multi-dimensional progress instead of a single "N/21 sections" number —
+   questions/evidence/critical-data/financial-data/asset-data, each tracked
+   independently against the industry+branching-visible question set. */
+function _isAnswered(q) { return STATE.answers[q.id] !== undefined && STATE.answers[q.id] !== null && STATE.answers[q.id] !== ''; }
+function calcCompletionMetrics() {
+  const visible = QUESTIONS.filter(_questionVisible);
+
+  const answered = visible.filter(_isAnswered);
+  const questionsPct = visible.length ? Math.round((answered.length / visible.length) * 100) : 0;
+
+  const evidenceReq = visible.filter(q => q.evidenceReq === 'MANDATORY' || q.sev === 'CRITICAL');
+  const evidenceHave = evidenceReq.filter(q => (STATE.evidenceByQuestion[q.id] || []).length > 0);
+  const evidencePct = evidenceReq.length ? Math.round((evidenceHave.length / evidenceReq.length) * 100) : 100;
+
+  const criticalQs = visible.filter(q => q.sev === 'CRITICAL');
+  const criticalAns = criticalQs.filter(_isAnswered);
+  const criticalPct = criticalQs.length ? Math.round((criticalAns.length / criticalQs.length) * 100) : 100;
+
+  const finQs = visible.filter(q => q.financialImpact);
+  const finHave = finQs.filter(q => STATE.financialMateriality[q.id]);
+  const financialPct = finQs.length ? Math.round((finHave.length / finQs.length) * 100) : 100;
+
+  const assetQs = visible.filter(q => q.pil === 'physical');
+  const assetAns = assetQs.filter(_isAnswered);
+  const assetPct = assetQs.length ? Math.round((assetAns.length / assetQs.length) * 100) : 100;
+
+  const overall = Math.round((questionsPct + evidencePct + criticalPct + financialPct + assetPct) / 5);
+  return { overall, questionsPct, evidencePct, criticalPct, financialPct, assetPct };
+}
+
+/* ─── QUALITY GATE (spec §20) ───
+   Classifies the assessment before it's presented with report-level
+   authority — PRELIMINARY/INDICATIVE/EVIDENCE-BACKED/VERIFIED — so a
+   sparse, unevidenced assessment is never shown with the same weight as a
+   fully verified one. */
+function calcQualityGate() {
+  const visible = QUESTIONS.filter(_questionVisible);
+  const answered = visible.filter(_isAnswered);
+  const naCount = answered.filter(q => _statusOf(STATE.answers[q.id]) === 'NA').length;
+  const naPct = answered.length ? naCount / answered.length : 0;
+  const criticalQs = visible.filter(q => q.sev === 'CRITICAL');
+  const criticalMissing = criticalQs.filter(q => !_isAnswered(q)).length;
+  const flags = detectContradictions();
+  const criticalFlags = flags.filter(f => f.sev === 'CRITICAL').length;
+  const unsupportedImplemented = answered.filter(q =>
+    _statusOf(STATE.answers[q.id]) === 'IMPLEMENTED' &&
+    q.evidenceReq === 'MANDATORY' &&
+    !(STATE.evidenceByQuestion[q.id] || []).length
+  ).length;
+  const dq = calcDataConfidenceRollup();
+  const completion = calcCompletionMetrics();
+
+  const reasons = [];
+  if (criticalMissing > 0) reasons.push(`${criticalMissing} CRITICAL question(s) not yet answered`);
+  if (criticalFlags > 0) reasons.push(`${criticalFlags} CRITICAL contradiction flag(s) unresolved`);
+  if (naPct > 0.25 && answered.length > 0) reasons.push(`${Math.round(naPct*100)}% of answered questions marked Not Applicable`);
+  if (unsupportedImplemented > 0) reasons.push(`${unsupportedImplemented} "Implemented" response(s) on mandatory-evidence questions lack supporting evidence`);
+  if (completion.financialPct < 100) reasons.push(`Financial materiality incomplete for ${100-completion.financialPct}% of applicable questions`);
+  if (dq.evidenceCoveragePct < 30 && answered.length > 0) reasons.push(`Evidence coverage only ${dq.evidenceCoveragePct}% of answered questions`);
+
+  let level;
+  if (answered.length === 0 || criticalMissing > 0) level = 'PRELIMINARY';
+  else if (criticalFlags > 0 || naPct > 0.4 || unsupportedImplemented > 2) level = 'PRELIMINARY';
+  else if (dq.evidenceCoveragePct < 30) level = 'INDICATIVE';
+  else if (dq.evidenceCoveragePct < 70 || dq.overallLabel === 'LOW' || dq.overallLabel === 'VERY LOW') level = 'EVIDENCE-BACKED';
+  else level = 'VERIFIED';
+  if (level === 'VERIFIED' && reasons.length > 0) level = 'EVIDENCE-BACKED'; // belt and suspenders — VERIFIED never carries open reasons
+
+  return { level, reasons };
+}
+
 function calcCLayerScores() {
   const scores = {};
   C_LAYERS.forEach(cl => {
@@ -3670,7 +4430,7 @@ function calcCLayerScores() {
     const qs   = QUESTIONS.filter(q => secs.includes(q.sec));
     let totalW = 0, wSum = 0;
     qs.forEach(q => {
-      const val = getAnswerValue(q.id);
+      const val = calcAdjustedScore(q.id);
       if (val === null) return;
       const w = getSevWeight(q.sev) * getMatMult(q.mat) * (q.w || 1);
       totalW += w; wSum += val * w;
@@ -3714,30 +4474,81 @@ function calcGreenwashing() {
   return Math.min(100, Math.max(0, Math.round(gw)));
 }
 
-function detectContradictions() {
-  const ps  = calcCLayerScores();
-  const a   = STATE.answers;
-  const flags = [];
-  const yn = (id) => a[id] === 'YES';
-  const has = (id) => a[id] && a[id] !== 'NOT_ADDRESSED' && a[id] !== 'NO';
-  const n   = (id) => parseFloat(a[id]||'0') || 0;
+/* Extends calcGreenwashing() with claim-vs-CAPEX-vs-Scope3-vs-trajectory
+   mismatch checks (spec §14) using data only available from Phase 3/4:
+   financial materiality records and the Scope 3 Category 1 question. Kept
+   as a separate wrapper (not merged into calcGreenwashing) so the base
+   heuristic's existing behavior/tuning stays traceable and unchanged. */
+function calcGreenwashingV2() {
+  let gw = calcGreenwashing();
+  const netZeroClaimed = !!(STATE.entity && STATE.entity.netZero);
+  if (netZeroClaimed) {
+    const anyTransitionCapex = Object.values(STATE.financialMateriality || {}).some(r => (r.capexUSD || 0) > 0);
+    if (!anyTransitionCapex) gw += 15; // net-zero claim without any quantified transition CAPEX anywhere in the assessment
+    if (_statusOf(STATE.answers['S07-Q04']) === 'NOT_ADDRESSED') gw += 10; // net-zero claim without Scope 3 Category 1 measurement
+  }
+  return Math.min(100, Math.max(0, Math.round(gw)));
+}
 
-  if (yn('S02-Y01') && a['S04-Q01']==='NOT_ADDRESSED')
-    flags.push({sev:'HIGH', text:'C-CORE: Board climate mandate claimed but C-FIN financial materiality assessment absent (TCFD A1/B2)'});
-  if (has('S03-T01') && n('S07-N01') === 0 && !a['S07-N01'])
-    flags.push({sev:'CRITICAL', text:'C-CAPITAL: Transition plan described but no Scope 1 emissions baseline — plan cannot be validated (SBTi/IFRS S2)'});
-  if (a['S03-Q01']==='IMPLEMENTED' && !has('S11-T01'))
-    flags.push({sev:'HIGH', text:'C-CAPITAL: TCFD transition plan claims without climate scenario analysis — TCFD Pillar C gap'});
-  if ((ps.c_supply||10) > 50 && a['S07-Q04']==='NOT_ADDRESSED')
-    flags.push({sev:'MEDIUM', text:'C-SUPPLY: Supply chain resilience claimed but Scope 3 Category 1 emissions unmeasured'});
-  if (has('S16-T01') && a['S01-Q04']==='NOT_ADDRESSED')
-    flags.push({sev:'HIGH', text:'C-ADAPT: Adaptation strategy described but no geo-coded asset register — adaptation claims unsubstantiated'});
-  if (a['S21-U01'] && a['S21-Q01']==='NOT_ADDRESSED')
-    flags.push({sev:'CRITICAL', text:'C-TRUTH: Assurance statement uploaded but no formal ESG data governance framework — audit integrity risk'});
-  if (n('S09-N01') >= 90 && !a['S07-U01'] && !a['S09-Q01'])
-    flags.push({sev:'MEDIUM', text:'C-CAPITAL: >90% renewable energy claimed without GHG assurance or EAC documentation — C-TRUTH signal'});
-  if (a['S02-D01'] === 'Enterprise dynamic — real-time climate dashboards' && !a['S21-U01'])
-    flags.push({sev:'MEDIUM', text:'C-CORE: Top ERM maturity claimed without ESG data assurance evidence — governance credibility gap'});
+/* ─── CONTRADICTION ENGINE (spec §13) ───
+   Data-driven rule table — CR01-CR08 are the original 8 hand-coded checks,
+   converted 1:1 (same conditions, same text) so existing behavior is
+   preserved exactly; CR09+ are new. Adding a rule going forward is a table
+   entry, not an engine change. */
+const CONTRADICTION_RULES = [
+  {id:'CR01', sev:'HIGH',
+    text:'C-CORE: Board climate mandate claimed but C-FIN financial materiality assessment absent (TCFD A1/B2)',
+    test:(a,ps,h)=> h.yn('S02-Y01') && h.st('S04-Q01')==='NOT_ADDRESSED'},
+  {id:'CR02', sev:'CRITICAL',
+    text:'C-CAPITAL: Transition plan described but no Scope 1 emissions baseline — plan cannot be validated (SBTi/IFRS S2)',
+    test:(a,ps,h)=> h.has('S03-T01') && h.n('S07-N01')===0 && !a['S07-N01']},
+  {id:'CR03', sev:'HIGH',
+    text:'C-CAPITAL: TCFD transition plan claims without climate scenario analysis — TCFD Pillar C gap',
+    test:(a,ps,h)=> h.st('S03-Q01')==='IMPLEMENTED' && !h.has('S11-T01')},
+  {id:'CR04', sev:'MEDIUM',
+    text:'C-SUPPLY: Supply chain resilience claimed but Scope 3 Category 1 emissions unmeasured',
+    test:(a,ps,h)=> (ps.c_supply||10)>50 && h.st('S07-Q04')==='NOT_ADDRESSED'},
+  {id:'CR05', sev:'HIGH',
+    text:'C-ADAPT: Adaptation strategy described but no geo-coded asset register — adaptation claims unsubstantiated',
+    test:(a,ps,h)=> h.has('S16-T01') && h.st('S01-Q04')==='NOT_ADDRESSED'},
+  {id:'CR06', sev:'CRITICAL',
+    text:'C-TRUTH: Assurance statement uploaded but no formal ESG data governance framework — audit integrity risk',
+    test:(a,ps,h)=> a['S21-U01'] && h.st('S21-Q01')==='NOT_ADDRESSED'},
+  {id:'CR07', sev:'MEDIUM',
+    text:'C-CAPITAL: >90% renewable energy claimed without GHG assurance or EAC documentation — C-TRUTH signal',
+    test:(a,ps,h)=> h.n('S09-N01')>=90 && !a['S07-U01'] && !a['S09-Q01']},
+  {id:'CR08', sev:'MEDIUM',
+    text:'C-CORE: Top ERM maturity claimed without ESG data assurance evidence — governance credibility gap',
+    test:(a,ps,h)=> a['S02-D01']==='Enterprise dynamic — real-time climate dashboards' && !a['S21-U01']},
+  {id:'CR09', sev:'HIGH',
+    text:'Evidence-integrity: at least one piece of uploaded evidence has been reviewed and marked contradictory — the underlying claim requires re-verification before this assessment can be treated as evidence-backed.',
+    test:(a,ps,h)=> Object.values(STATE.evidenceByQuestion||{}).some(list=>list.some(ev=>ev.reviewStatus==='contradictory'))},
+];
+function detectContradictions() {
+  const ps = calcCLayerScores();
+  const a  = STATE.answers;
+  const h = {
+    yn:  (id) => a[id] === 'YES',
+    has: (id) => { const v = _statusOf(a[id]); return v && v !== 'NOT_ADDRESSED' && v !== 'NO'; },
+    n:   (id) => parseFloat(a[id]||'0') || 0,
+    st:  (id) => _statusOf(a[id]),
+  };
+  const flags = CONTRADICTION_RULES
+    .filter(r => { try { return r.test(a, ps, h); } catch(e) { return false; } })
+    .map(r => ({sev: r.sev, text: r.text}));
+
+  // Claim-vs-evidence checks generated directly from question metadata
+  // (q.greenwashRel = {claimField, checkAgainst:[...]}) — a new claim/
+  // evidence pair added via question content alone participates here with
+  // zero engine change, per the "configuration-driven" requirement.
+  QUESTIONS.forEach(q => {
+    if (!q.greenwashRel || h.st(q.greenwashRel.claimField) !== 'IMPLEMENTED') return;
+    const refs = q.greenwashRel.checkAgainst || [];
+    if (refs.length && refs.every(id => h.st(id) === 'NOT_ADDRESSED' || h.st(id) === undefined)) {
+      flags.push({sev:'HIGH', text:`Claim-evidence inconsistency detected: ${q.id} reports a strong practice, but supporting question(s) ${refs.join(', ')} show no corroborating response.`});
+    }
+  });
+
   return flags;
 }
 
@@ -3876,6 +4687,8 @@ async function startAssessment() {
         try { localStorage.setItem('iro_answers_v4', JSON.stringify(STATE.answers)); } catch(e){}
         _startAnswersSubscription();
         _startEntitiesSubscription();
+        _startEvidenceSubscription();
+        _startFinancialMaterialitySubscription();
 
         // Question bank + materiality scan run in parallel with the screen
         // transition below — neither blocks entering the questionnaire.
@@ -4008,6 +4821,11 @@ function _startMaterialityScanSubscription() {
   window.RiskOSData.subscribeMaterialityScan(STATE.assessmentId, (scan) => {
     STATE.materialityScan = scan;
     renderSidebar();
+    // Materiality-triggered questions (CORE_MATERIALITY_QUESTIONS' showIf:
+    // {op:'materialityAtLeast', ...}) only become visible once a scan
+    // exists — refresh whatever section is on screen so they appear
+    // without requiring the user to navigate away and back.
+    if (document.getElementById('iro-assess')?.classList.contains('active')) renderSection(STATE.currentSection);
   });
 }
 
@@ -4025,6 +4843,33 @@ function _startAnswersSubscription() {
       renderSection(STATE.currentSection);
       updateRail();
     }
+  });
+}
+
+// Assessment-wide evidence stream, grouped by questionId — powers evidence-
+// weighted scoring (calcAdjustedScore) and the data confidence rollup across
+// the FULL question bank without requiring every question's Workspace panel
+// to have been individually expanded first.
+function _startEvidenceSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSEvidence) { _unsubRiskOSEvidence(); _unsubRiskOSEvidence = null; }
+  _unsubRiskOSEvidence = window.RiskOSData.subscribeAllEvidence(STATE.assessmentId, (items) => {
+    const byQ = {};
+    items.forEach(ev => { (byQ[ev.questionId] = byQ[ev.questionId] || []).push(ev); });
+    STATE.evidenceByQuestion = byQ;
+    if (document.getElementById('iro-assess')?.classList.contains('active')) updateRail();
+  });
+}
+
+// Financial materiality records (spec §10), keyed by questionId — mirrors
+// the evidence subscription pattern above.
+function _startFinancialMaterialitySubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSFinMat) { _unsubRiskOSFinMat(); _unsubRiskOSFinMat = null; }
+  _unsubRiskOSFinMat = window.RiskOSData.subscribeFinancialMateriality(STATE.assessmentId, (items) => {
+    const byQ = {};
+    items.forEach(rec => { byQ[rec.questionId] = rec; });
+    STATE.financialMateriality = byQ;
   });
 }
 
@@ -4047,8 +4892,8 @@ async function _syncAnswerToCloud(qId) {
     const scores = C_LAYERS.map(cl => ({
       clayerId: cl.id, weight: cl.weight, rawScore: ps[cl.id] ?? null,
       climactixScore: ps[cl.id] ?? null,
-      questionsTotal: QUESTIONS.filter(qq => (SECTION_CLAYER[qq.sec]||'c_core')===cl.id).length,
-      questionsAnswered: QUESTIONS.filter(qq => (SECTION_CLAYER[qq.sec]||'c_core')===cl.id && getAnswerValue(qq.id)!==null).length,
+      questionsTotal: QUESTIONS.filter(qq => (SECTION_CLAYER[qq.sec]||'c_core')===cl.id && _questionVisible(qq)).length,
+      questionsAnswered: QUESTIONS.filter(qq => (SECTION_CLAYER[qq.sec]||'c_core')===cl.id && _questionVisible(qq) && getAnswerValue(qq.id)!==null).length,
     }));
     const composite = calcComposite();
     const rating = getClimateRating(composite).grade;
@@ -4090,7 +4935,7 @@ function renderSidebar() {
   const nav=document.getElementById('sidebarNav');
   if (!nav) return;
   const completedCount=SECTIONS.filter(s=>{
-    const qs=QUESTIONS.filter(q=>q.sec===s.id);
+    const qs=visibleQuestionsForSection(s.id);
     return qs.length>0 && qs.every(q=>STATE.answers[q.id]!==undefined&&STATE.answers[q.id]!==null&&STATE.answers[q.id]!=='');
   }).length;
   const pt=document.getElementById('sidebarProgressText');
@@ -4105,7 +4950,7 @@ function renderSidebar() {
   // desync from what Next/Prev actually advances through.
   const MAT_RANK = {CRITICAL:0, HIGH:1, MEDIUM:2, LOW:3};
   const rows = SECTIONS.map((s,i)=>{
-    const qs=QUESTIONS.filter(q=>q.sec===s.id);
+    const qs=visibleQuestionsForSection(s.id);
     const ans=qs.filter(q=>STATE.answers[q.id]!==undefined&&STATE.answers[q.id]!==null&&STATE.answers[q.id]!=='').length;
     const isActive=i===STATE.currentSection;
     const isComplete=ans===qs.length&&qs.length>0;
@@ -4136,7 +4981,7 @@ function renderSidebar() {
 function renderSection(idx) {
   _teardownWorkspaceSubs(); // this section's DOM (and any open workspace panels) is about to be replaced
   const sec=SECTIONS[idx];
-  const qs=QUESTIONS.filter(q=>q.sec===sec.id);
+  const qs=visibleQuestionsForSection(sec.id);
   const content=document.getElementById('sectionContent');
   if (!content) return;
   const answered=qs.filter(q=>STATE.answers[q.id]!==undefined&&STATE.answers[q.id]!==null&&STATE.answers[q.id]!=='').length;
@@ -4210,7 +5055,9 @@ function renderQuestion(q, num) {
       {val:'NOT_ADDRESSED', label:'Not Addressed'},
       {val:'NA',            label:'Not Applicable'}
     ];
-    inputHTML = `<div class="iro-answer-row">${opts.map(o=>`<button class="iro-ans-btn${ans===o.val?' sel-'+o.val:''}" onclick="answer('${q.id}','${o.val}',this,'select5')">${o.label}</button>`).join('')}</div>`;
+    const status = _statusOf(ans);
+    inputHTML = `<div class="iro-answer-row">${opts.map(o=>`<button class="iro-ans-btn${status===o.val?' sel-'+o.val:''}" onclick="answer('${q.id}','${o.val}',this,'select5')">${o.label}</button>`).join('')}</div>
+    <div class="iro-dyn-panel" id="dyn-panel-${q.id}">${(ans && typeof ans==='object') ? renderAnswerDetailPanel(q, ans) : ''}</div>`;
   }
 
   else if (type === 'yesno') {
@@ -4301,6 +5148,7 @@ function renderQuestion(q, num) {
       </div>
     </div>
     ${inputHTML}
+    ${(q.financialImpact || q.scenarioTag) ? `<div class="iro-dyn-panel">${renderSupplementaryPanels(q)}</div>` : ''}
     ${window.RiskOSData && STATE.assessmentId ? `
     <button class="iro-ws-toggle" id="ws-toggle-${q.id}" onclick="toggleWorkspace('${q.id}')" aria-expanded="false">
       <span>Workspace</span><span class="chev">▾</span>
@@ -4316,6 +5164,8 @@ function _teardownWorkspaceSubs() {
   Object.values(_wsSubs).forEach(subs => {
     if (subs.evidence) subs.evidence();
     if (subs.comments) subs.comments();
+    if (subs.notes) subs.notes();
+    if (subs.reviewActions) subs.reviewActions();
     Object.values(subs.ai || {}).forEach(u => u());
   });
   for (const k in _wsSubs) delete _wsSubs[k];
@@ -4335,10 +5185,24 @@ function toggleWorkspace(qId) {
       <div class="iro-ws-section">
         <div class="iro-ws-section-title"><span>Evidence</span></div>
         <div id="ws-evidence-${qId}"><div class="iro-ws-empty">Loading…</div></div>
-        <label class="iro-ws-upload-btn" style="margin-top:8px">
-          📎 Upload evidence
-          <input type="file" style="display:none" onchange="handleEvidenceUpload('${qId}', this)" />
-        </label>
+        <div class="iro-ev-form">
+          <div class="iro-dyn-grid">
+            <div class="iro-dyn-field"><label>Document type</label>
+              <select id="ev-doctype-${qId}">
+                <option value="">— Select —</option>
+                ${EVIDENCE_DOC_TYPES.map(t=>`<option>${t}</option>`).join('')}
+              </select>
+            </div>
+            <div class="iro-dyn-field"><label>Reporting period</label><input type="text" id="ev-period-${qId}" placeholder="e.g. FY2025" /></div>
+            <div class="iro-dyn-field"><label>Issuing authority</label><input type="text" id="ev-authority-${qId}" placeholder="e.g. Internal / external auditor" /></div>
+            <div class="iro-dyn-field"><label>Page / section reference</label><input type="text" id="ev-pageref-${qId}" placeholder="e.g. Pages 47–52" /></div>
+            <div class="iro-dyn-field full"><label>Notes</label><input type="text" id="ev-notes-${qId}" placeholder="Optional notes" /></div>
+          </div>
+          <label class="iro-ws-upload-btn">
+            📎 Upload evidence
+            <input type="file" style="display:none" onchange="handleEvidenceUpload('${qId}', this)" />
+          </label>
+        </div>
       </div>
       <div class="iro-ws-section">
         <div class="iro-ws-section-title"><span>Discussion</span></div>
@@ -4348,6 +5212,21 @@ function toggleWorkspace(qId) {
             onkeydown="if(event.key==='Enter') postWorkspaceComment('${qId}')" />
           <button class="iro-btn-ghost" style="padding:7px 14px;font-size:11px" onclick="postWorkspaceComment('${qId}')">Post</button>
         </div>
+      </div>
+      <div class="iro-ws-section">
+        <div class="iro-ws-section-title"><span>Assessor Notes</span><span style="font-size:9px;color:var(--iro-tm);font-weight:400">Private — reviewer roles only</span></div>
+        <div id="ws-notes-${qId}"><div class="iro-ws-empty">Loading…</div></div>
+        <div class="iro-cm-input-row">
+          <input type="text" class="iro-cm-input" id="ws-note-input-${qId}" placeholder="Analyst observation, evidence concern, materiality note…"
+            onkeydown="if(event.key==='Enter') postAssessorNote('${qId}')" />
+          <button class="iro-btn-ghost" style="padding:7px 14px;font-size:11px" onclick="postAssessorNote('${qId}')">Add</button>
+        </div>
+        <div class="iro-ws-section-title" style="margin-top:12px"><span>Review Actions</span></div>
+        <div class="iro-ev-actions" style="justify-content:flex-start;max-width:none">
+          <button class="iro-ev-ai-btn" onclick="fileReviewAction('${qId}','flag_for_review')">🚩 Flag for review</button>
+          <button class="iro-ev-ai-btn" onclick="fileReviewAction('${qId}','request_evidence')">📋 Request additional information</button>
+        </div>
+        <div id="ws-review-actions-${qId}"></div>
       </div>`;
     _subscribeWorkspace(qId);
   }
@@ -4358,18 +5237,73 @@ function _subscribeWorkspace(qId) {
   _wsSubs[qId] = _wsSubs[qId] || {};
   _wsSubs[qId].evidence = window.RiskOSData.subscribeEvidence(STATE.assessmentId, qId, items => _renderEvidenceList(qId, items));
   _wsSubs[qId].comments = window.RiskOSData.subscribeComments(STATE.assessmentId, qId, items => _renderCommentsList(qId, items));
+  _wsSubs[qId].notes = window.RiskOSData.subscribeAssessorNotes(STATE.assessmentId, qId, items => _renderAssessorNotes(qId, items));
+  _wsSubs[qId].reviewActions = window.RiskOSData.subscribeReviewActions(STATE.assessmentId, items => _renderReviewActions(qId, items));
+}
+
+// Assessor Notes — private, reviewer-role only. firestore.rules restricts
+// both read and write on ros_assessor_notes_v1 to rosReviewRoles()+
+// administrator; a non-reviewer's subscription simply returns no docs
+// (read denial resolves to an empty snapshot, not an error) and a write
+// attempt fails server-side, surfaced via the same alert-on-denial pattern
+// used elsewhere in this file (no client-side role cache to hide the UI
+// pre-emptively).
+function _renderAssessorNotes(qId, items) {
+  const el = document.getElementById('ws-notes-'+qId);
+  if (!el) return;
+  if (!items.length) { el.innerHTML = '<div class="iro-ws-empty">No assessor notes yet.</div>'; return; }
+  el.innerHTML = items.map(n => `
+    <div class="iro-cm-item">
+      <div class="iro-cm-head"><span class="iro-cm-author">Assessor</span><span class="iro-cm-time">${_fmtWorkspaceTime(n.createdAt)}</span></div>
+      <div class="iro-cm-body">${n.body}</div>
+    </div>`).join('');
+}
+async function postAssessorNote(qId) {
+  const input = document.getElementById('ws-note-input-'+qId);
+  if (!input || !input.value.trim() || !window.RiskOSData || !STATE.assessmentId) return;
+  const body = input.value.trim();
+  input.value = '';
+  try { await window.RiskOSData.saveAssessorNote(STATE.assessmentId, qId, body); }
+  catch (e) { alert('Could not add assessor note (reviewer role required): ' + (e.message||e)); }
+}
+
+function _renderReviewActions(qId, items) {
+  const el = document.getElementById('ws-review-actions-'+qId);
+  if (!el) return;
+  const forThis = items.filter(a => a.questionId === qId);
+  if (!forThis.length) { el.innerHTML = ''; return; }
+  const labels = {flag_for_review:'🚩 Flagged for review', request_evidence:'📋 Additional information requested', approve:'✓ Approved', reject:'✕ Rejected', close:'Closed'};
+  el.innerHTML = forThis.slice(0,5).map(a => `
+    <div class="iro-ai-review-result"><span class="rtype">${labels[a.actionType]||a.actionType}</span>${a.note?` — ${a.note}`:''} <span style="color:var(--iro-tm)">· ${_fmtWorkspaceTime(a.createdAt)}</span></div>
+  `).join('');
+}
+async function fileReviewAction(qId, actionType) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  const note = prompt(actionType === 'flag_for_review' ? 'Reason for flagging this question for review (optional):' : 'What additional information is being requested (optional):');
+  try { await window.RiskOSData.createReviewAction(STATE.assessmentId, qId, actionType, note || null); }
+  catch (e) { alert('Could not file review action (reviewer role required): ' + (e.message||e)); }
 }
 
 function _renderEvidenceList(qId, items) {
   const el = document.getElementById('ws-evidence-'+qId);
   if (!el) return;
   if (!items.length) { el.innerHTML = '<div class="iro-ws-empty">No evidence uploaded yet.</div>'; return; }
-  el.innerHTML = items.map(ev => `
+  el.innerHTML = items.map(ev => {
+    const metaBits = [`${((ev.fileSizeBytes||0)/1024).toFixed(0)} KB`];
+    if (ev.documentCategory) metaBits.push(ev.documentCategory);
+    if (ev.reportingPeriod) metaBits.push(ev.reportingPeriod);
+    if (ev.pageReference) metaBits.push(ev.pageReference);
+    return `
     <div class="iro-ev-item">
       <div class="iro-ev-icon">📄</div>
       <div class="iro-ev-body">
-        <div class="iro-ev-name">${ev.originalName||ev.filename}</div>
-        <div class="iro-ev-meta">${((ev.fileSizeBytes||0)/1024).toFixed(0)} KB · ${ev.reviewStatus}</div>
+        <div class="iro-ev-name">${ev.originalName||ev.filename}<span class="iro-ev-status ${ev.reviewStatus}">${(ev.reviewStatus||'pending').replace(/-/g,' ')}</span></div>
+        <div class="iro-ev-meta">${metaBits.join(' · ')}</div>
+        ${ev.issuingAuthority ? `<div class="iro-ev-meta">Issued by: ${ev.issuingAuthority}</div>` : ''}
+        <select class="iro-ev-verify-select" onchange="setEvidenceReviewStatusUI('${ev.id}', this.value, '${qId}')">
+          <option value="">Set verification status…</option>
+          ${EVIDENCE_REVIEW_STATUSES.map(s=>`<option value="${s}"${ev.reviewStatus===s?' selected':''}>${s.replace(/-/g,' ')}</option>`).join('')}
+        </select>
         <div id="ws-ai-${ev.id}"></div>
       </div>
       <div class="iro-ev-actions">
@@ -4377,12 +5311,26 @@ function _renderEvidenceList(qId, items) {
         <button class="iro-ev-ai-btn" onclick="runEvidenceAIReview('${ev.id}','contradictions','${qId}')">Check contradictions</button>
         <button class="iro-ev-ai-btn" onclick="runEvidenceAIReview('${ev.id}','framework_mapping','${qId}')">Map frameworks</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   items.forEach(ev => {
     _wsSubs[qId] = _wsSubs[qId] || {}; _wsSubs[qId].ai = _wsSubs[qId].ai || {};
     if (_wsSubs[qId].ai[ev.id]) return;
     _wsSubs[qId].ai[ev.id] = window.RiskOSData.subscribeAIReviews(ev.id, reviews => _renderAIReviews(ev.id, reviews));
   });
+}
+
+// Reviewer action — firestore.rules restricts the underlying write to
+// rosReviewRoles(); a non-reviewer's attempt fails server-side and surfaces
+// as an alert here rather than being hidden client-side (the page has no
+// client-cached role lookup today, so this mirrors the same
+// attempt-then-alert-on-denial pattern already used by handleEvidenceUpload).
+async function setEvidenceReviewStatusUI(evidenceId, status, qId) {
+  if (!status || !window.RiskOSData) return;
+  try {
+    await window.RiskOSData.setEvidenceReviewStatus(evidenceId, status);
+    await window.RiskOSData.logAuditEvent(STATE.assessmentId, 'evidence_verification_changed', evidenceId, null, status);
+  } catch (e) { alert('Could not update verification status: ' + (e.message||e)); }
 }
 
 function _renderAIReviews(evidenceId, reviews) {
@@ -4398,7 +5346,20 @@ async function handleEvidenceUpload(qId, input) {
   const file = input.files[0];
   if (!file || !window.RiskOSData || !STATE.companyId || !STATE.assessmentId) return;
   input.disabled = true;
-  try { await window.RiskOSData.uploadEvidence(STATE.companyId, STATE.assessmentId, qId, file, {}); }
+  const g = id => document.getElementById(id)?.value || null;
+  const meta = {
+    documentCategory: g('ev-doctype-'+qId),
+    reportingPeriod: g('ev-period-'+qId),
+    issuingAuthority: g('ev-authority-'+qId),
+    pageReference: g('ev-pageref-'+qId),
+    description: g('ev-notes-'+qId),
+  };
+  try {
+    const evidenceId = await window.RiskOSData.uploadEvidence(STATE.companyId, STATE.assessmentId, qId, file, meta);
+    await window.RiskOSData.logAuditEvent(STATE.assessmentId, 'evidence_added', evidenceId, null, {filename: file.name, questionId: qId});
+    ['ev-period-','ev-authority-','ev-pageref-','ev-notes-'].forEach(p => { const el = document.getElementById(p+qId); if (el) el.value = ''; });
+    const dt = document.getElementById('ev-doctype-'+qId); if (dt) dt.value = '';
+  }
   catch (e) { alert('Upload failed: ' + (e.message||e)); }
   finally { input.disabled = false; input.value = ''; }
 }
@@ -4473,7 +5434,22 @@ function uploadAnswer(qId, input) {
 }
 
 function answer(qId, val, el, type) {
-  STATE.answers[qId] = val;
+  if (type === 'select5') {
+    // select5 answers are objects (status + justification + dynamic fields);
+    // preserve whatever was already captured when the status itself changes.
+    const prev = STATE.answers[qId];
+    const prevObj = (prev && typeof prev === 'object') ? prev : {};
+    STATE.answers[qId] = {
+      __v: 2,
+      status: val,
+      justification: prevObj.justification || '',
+      justificationSavedAt: prevObj.justificationSavedAt || null,
+      fields: prevObj.fields || {},
+      assessorNote: prevObj.assessorNote || null,
+    };
+  } else {
+    STATE.answers[qId] = val;
+  }
   try { localStorage.setItem('iro_answers_v4', JSON.stringify(STATE.answers)); } catch(e){}
   _syncAnswerToCloud(qId);
 
@@ -4484,6 +5460,9 @@ function answer(qId, val, el, type) {
       const numEl=qEl.querySelector('.iro-q-num'); if(numEl) numEl.classList.add('answered');
       qEl.querySelectorAll('.iro-ans-btn').forEach(b=>{ b.className='iro-ans-btn'+(b===el?' sel-'+val:''); });
     }
+    const q = QUESTIONS.find(x=>x.id===qId);
+    const panel = document.getElementById('dyn-panel-'+qId);
+    if (q && panel) panel.innerHTML = renderAnswerDetailPanel(q, STATE.answers[qId]);
   } else if (type === 'yesno') {
     const qEl=document.getElementById('q-'+qId);
     if (qEl) {
@@ -4528,13 +5507,30 @@ function answer(qId, val, el, type) {
       }
     }
   }
+
+  // Branching: if any question's showIf depends on the one just answered
+  // (directly, or as one leg of an `all` chain — covers both simple gating
+  // and the recursive "adaptive depth" follow-up chains), re-render the
+  // current section so newly-satisfied questions appear immediately rather
+  // than only on next navigation. Cheap at this question-bank size (~350
+  // questions, ~20 per section) — a full section re-render, not a diff.
+  if (QUESTIONS.some(q => _showIfDependsOn(q.showIf, qId))) {
+    renderSection(STATE.currentSection);
+  }
+
   updateRail();
   renderSidebar();
 }
 
+function _showIfDependsOn(showIf, qId) {
+  if (!showIf) return false;
+  if (showIf.all) return showIf.all.some(s => _showIfDependsOn(s, qId));
+  return showIf.questionId === qId;
+}
+
 function updateRail() {
   const ps=calcCLayerScores(), composite=calcComposite(), rating=getClimateRating(composite);
-  const gw=calcGreenwashing(), flags=detectContradictions();
+  const gw=calcGreenwashingV2(), flags=detectContradictions();
   const rcv=document.getElementById('railComposite');
   if (rcv) rcv.textContent=composite||'—';
   const rr=document.getElementById('railRating');
@@ -4554,6 +5550,46 @@ function updateRail() {
   if (rf) rf.innerHTML=flags.length===0
     ?'<div class="iro-no-flags">No flags detected</div>'
     :flags.map(f=>`<div class="iro-flag-item${f.sev==='MEDIUM'?' warn':''}">[${f.sev}] ${f.text}</div>`).join('');
+
+  const conf = calcDataConfidenceRollup();
+  const cb = document.getElementById('railConfidenceBadge');
+  if (cb) { cb.textContent = conf.overallLabel; cb.className = 'iro-confidence-badge ' + conf.overallLabel.toLowerCase().replace(' ','-'); }
+  const cs = document.getElementById('railConfidenceSub');
+  if (cs) cs.textContent = conf.questionsAnswered > 0 ? `${conf.evidenceCoveragePct}% evidence coverage` : 'No answers yet';
+  const cf = document.getElementById('railConfidenceFill');
+  if (cf) cf.style.width = Math.round(conf.overallFactor * 100) + '%';
+  const cm = document.getElementById('railConfidenceMeta');
+  if (cm) cm.textContent = conf.questionsAnswered > 0
+    ? `${conf.questionsWithEvidence} / ${conf.questionsAnswered} answered questions have supporting evidence`
+    : '';
+
+  const gate = calcQualityGate();
+  const qb = document.getElementById('railQGateBadge');
+  if (qb) { qb.textContent = gate.level; qb.className = 'iro-qgate-badge ' + gate.level; }
+  const qr = document.getElementById('railQGateReasons');
+  if (qr) qr.innerHTML = gate.reasons.length
+    ? gate.reasons.map(r=>`<div>${r}</div>`).join('')
+    : '<div>No outstanding quality-gate issues</div>';
+
+  const completion = calcCompletionMetrics();
+  const co = document.getElementById('railCompletionOverall');
+  if (co) co.textContent = `${completion.overall}% overall`;
+  const cr = document.getElementById('railCompletionRows');
+  if (cr) {
+    const rows = [
+      ['Questions answered', completion.questionsPct, '#0B3D91'],
+      ['Evidence coverage', completion.evidencePct, '#1E8E3E'],
+      ['Critical data', completion.criticalPct, '#DC2626'],
+      ['Financial data', completion.financialPct, '#B45309'],
+      ['Asset intelligence', completion.assetPct, '#4338CA'],
+    ];
+    cr.innerHTML = rows.map(([label,pct,color])=>`
+      <div class="iro-clayer-row">
+        <span class="iro-clayer-lbl" style="color:${color}">${label}</span>
+        <div class="iro-clayer-track"><div class="iro-clayer-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span class="iro-clayer-score">${pct}%</span>
+      </div>`).join('');
+  }
 }
 
 /* ─── REPORT ENGINE ─── */
@@ -4584,7 +5620,7 @@ function buildFrameworkMatrix() {
 
 function renderReport() {
   const ps=calcCLayerScores(), composite=calcComposite(), rating=getClimateRating(composite);
-  const gw=calcGreenwashing(), flags=detectContradictions(), recos=buildRecommendations(ps), fwMatrix=buildFrameworkMatrix();
+  const gw=calcGreenwashingV2(), flags=detectContradictions(), recos=buildRecommendations(ps), fwMatrix=buildFrameworkMatrix();
   const entity=STATE.entity, answered=Object.keys(STATE.answers).length;
   const date=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
   const gwColor=gw<30?'#1E8E3E':gw<60?'#B45309':'#DC2626';
@@ -4685,7 +5721,7 @@ function buildRadarChart(ps) {
 
 /* ─── UTILITY ─── */
 function sendToAI() {
-  const ps=calcCLayerScores(), composite=calcComposite(), rating=getClimateRating(composite), gw=calcGreenwashing();
+  const ps=calcCLayerScores(), composite=calcComposite(), rating=getClimateRating(composite), gw=calcGreenwashingV2();
   window.location.href='climactix-ai.html?context='+encodeURIComponent(`C-LAYER OS | ${STATE.entity.name||'Unknown'} | Rating: ${rating.grade} (${composite}/100) | C-TRUTH GW: ${gw}% | ${C_LAYERS.map(cl=>cl.label+'='+ps[cl.id]).join(', ')}`);
 }
 function retakeAssessment() {

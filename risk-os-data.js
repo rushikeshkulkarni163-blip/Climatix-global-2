@@ -282,10 +282,47 @@ export async function uploadEvidence(companyId, assessmentId, questionId, file, 
     fileSizeBytes: file.size, storagePath, sha256Hash,
     documentCategory: meta.documentCategory || null, description: meta.description || null,
     confidentialityLevel: meta.confidentialityLevel || 'internal',
-    reviewStatus: 'pending', version: 1, tags: meta.tags || [],
+    // Richer institutional evidence metadata (spec §4): reporting period,
+    // issuing authority, and page/section reference for citing a specific
+    // passage in a large document rather than the document as a whole.
+    reportingPeriod: meta.reportingPeriod || null,
+    issuingAuthority: meta.issuingAuthority || null,
+    pageReference: meta.pageReference || null,
+    reviewStatus: 'self-reported', version: 1, tags: meta.tags || [],
     createdAt: serverTimestamp(),
   });
   return docRef.id;
+}
+
+// Reviewer action: moves a piece of evidence through the 6-state verification
+// lifecycle (self-reported/pending -> verified/partially-verified/unverified/
+// contradictory/expired). firestore.rules already restricts this update to
+// rosReviewRoles() and to exactly these fields — no rules change needed.
+export async function setEvidenceReviewStatus(evidenceId, reviewStatus, note = null) {
+  if (!_USE_FIREBASE || !evidenceId) return;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, doc, setDoc, serverTimestamp } = await _firestore();
+  await setDoc(doc(db, 'ros_evidence_v1', evidenceId), {
+    reviewStatus, verifiedBy: uid, verifiedAt: serverTimestamp(),
+    ...(note ? { description: note } : {}),
+  }, { merge: true });
+}
+
+// Assessment-wide evidence stream (all questions at once) — used to compute
+// evidence-weighted confidence across the full question bank without waiting
+// for each question's Workspace panel to be individually expanded.
+export function subscribeAllEvidence(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_evidence_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] all-evidence subscription failed', err),
+    );
+  });
+  return () => unsub();
 }
 
 async function _sha256(file) {
@@ -507,6 +544,165 @@ export function subscribeMaterialityScan(assessmentId, onChange) {
       doc(db, 'ros_materiality_scans_v1', assessmentId),
       snap => onChange(snap.exists() ? snap.data() : null),
       err => console.error('[risk-os-data] materiality scan subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Financial materiality (spec §10) ──────────────────────────────────────
+// One doc per {assessmentId}_{questionId}: revenue/EBITDA/asset exposure,
+// expected loss, capex/opex, insurance/carbon/financing cost deltas.
+
+export async function saveFinancialMateriality(assessmentId, questionId, sectionId, data) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const uid = _uid();
+  if (!uid) return;
+  const { db, doc, setDoc, serverTimestamp } = await _firestore();
+  await setDoc(doc(db, 'ros_financial_materiality_v1', `${assessmentId}_${questionId}`), {
+    assessmentId, questionId, sectionId: sectionId || null,
+    revenueExposureUSD: data.revenueExposureUSD ?? null,
+    ebitdaExposureUSD: data.ebitdaExposureUSD ?? null,
+    assetValueExposedUSD: data.assetValueExposedUSD ?? null,
+    expectedLossUSD: data.expectedLossUSD ?? null,
+    capexUSD: data.capexUSD ?? null,
+    opexUSD: data.opexUSD ?? null,
+    insuranceCostDeltaUSD: data.insuranceCostDeltaUSD ?? null,
+    carbonCostUSD: data.carbonCostUSD ?? null,
+    financingCostDeltaUSD: data.financingCostDeltaUSD ?? null,
+    timeHorizon: data.timeHorizon || null,
+    updatedBy: uid, updatedAt: serverTimestamp(),
+  }, { merge: true });
+}
+
+export function subscribeFinancialMateriality(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_financial_materiality_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] financial materiality subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Risk gap notes (spec §3, "NOT ADDRESSED" answers) ────────────────────
+// Mirrors the answer-local gap fields into a first-class, trackable risk
+// item so gaps surface across the whole assessment, not just on one card.
+
+export async function saveRiskNote(assessmentId, questionId, note) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const uid = _uid();
+  if (!uid) return;
+  const { db, doc, collection, setDoc, serverTimestamp } = await _firestore();
+  const ref = doc(collection(db, 'ros_risk_notes_v1'), `${assessmentId}_${questionId}`);
+  await setDoc(ref, {
+    assessmentId, questionId, sourceQuestionId: questionId, noteType: note.noteType || 'gap',
+    reasonCode: note.reasonCode || null, barrier: note.barrier || null,
+    managementAssessed: note.managementAssessed || null, targetTimeline: note.targetTimeline || null,
+    likelihood: note.likelihood ?? null, impact: note.impact ?? null,
+    updatedBy: uid, updatedAt: serverTimestamp(),
+  }, { merge: true });
+}
+
+export function subscribeRiskNotes(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_risk_notes_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] risk notes subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Review actions (spec §6: flag for review / request additional info) ──
+// Create-only / immutable per firestore.rules — "closing" a review action is
+// a new action document (actionType:'close'), not a mutation of the old one.
+
+export async function createReviewAction(assessmentId, questionId, actionType, note = null) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, collection, addDoc, serverTimestamp } = await _firestore();
+  await addDoc(collection(db, 'ros_review_actions_v1'), {
+    assessmentId, questionId: questionId || null, actionType, note: note || null,
+    reviewerId: uid, createdAt: serverTimestamp(),
+  });
+}
+
+export function subscribeReviewActions(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_review_actions_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0))),
+      err => console.error('[risk-os-data] review actions subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Assessor Notes (spec §6) ──────────────────────────────────────────────
+// Private, reviewer-only — the one collection genuinely new to this schema
+// (see firestore.rules: ros_comments_v1 is visible to all company members
+// by design, so private analyst notes can't live there or on the answer doc
+// itself, since Firestore rules can't redact one field of a doc by role).
+
+export async function saveAssessorNote(assessmentId, questionId, body) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, collection, addDoc, serverTimestamp } = await _firestore();
+  await addDoc(collection(db, 'ros_assessor_notes_v1'), {
+    assessmentId, questionId, authorId: uid, body, createdAt: serverTimestamp(),
+  });
+}
+
+export function subscribeAssessorNotes(assessmentId, questionId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_assessor_notes_v1'),
+        where('assessmentId', '==', assessmentId), where('questionId', '==', questionId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.createdAt?.seconds||0) - (b.createdAt?.seconds||0))),
+      err => console.error('[risk-os-data] assessor notes subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Audit log (spec §18) ──────────────────────────────────────────────────
+// Append-only; pairs with the always-visible ros_answer_versions_v1 for
+// events beyond answer-value changes (evidence added/removed, score shifts).
+// Note: readable only by reviewer/owner/auditor roles per firestore.rules,
+// not by ordinary contributors — supplements, does not replace, the answer
+// version trail everyone already sees.
+
+export async function logAuditEvent(assessmentId, eventType, entityId, beforeValue = null, afterValue = null) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const uid = _uid();
+  if (!uid) return;
+  const { db, collection, addDoc, serverTimestamp } = await _firestore();
+  await addDoc(collection(db, 'ros_audit_log_v1'), {
+    assessmentId, eventType, entityId: entityId || null,
+    beforeValue, afterValue, actorUserId: uid, createdAt: serverTimestamp(),
+  });
+}
+
+export function subscribeAuditLog(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_audit_log_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0))),
+      err => console.error('[risk-os-data] audit log subscription failed', err),
     );
   });
   return () => unsub();
