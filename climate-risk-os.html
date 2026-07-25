@@ -2187,6 +2187,108 @@
 .iro-cm-input:focus { outline: none; border-color: var(--iro-accent); }
 
 /* ═══════════════════════════════════════════════════════════
+   EVIDENCE-DRIVEN INTELLIGENCE WORKFLOW
+   Three-state row, compact action bar, Question Intelligence
+   drawer, and the persistent Climactix Assessment Agent panel.
+═══════════════════════════════════════════════════════════ */
+.iro-state-row { display: flex; align-items: center; gap: 6px; margin: 10px 0 0 36px; flex-wrap: wrap; }
+.iro-state-chip {
+  font-family: var(--iro-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.03em;
+  padding: 3px 8px; border-radius: var(--iro-pill); border: 1px solid var(--iro-b); color: var(--iro-tm);
+}
+.iro-state-chip.evidenced.has { color: var(--iro-accent); border-color: rgba(11,61,145,0.3); }
+.iro-state-chip.assessed.has { color: #1E8E3E; border-color: rgba(30,142,62,0.3); }
+.iro-state-arrow { color: var(--iro-tm); font-size: 10px; }
+
+.iro-action-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0 0 36px; }
+.iro-action-btn {
+  font-family: var(--font-heading); font-size: 11px; font-weight: 500;
+  padding: 6px 12px; border-radius: var(--iro-radius); border: 1px solid var(--iro-b);
+  background: transparent; color: var(--iro-t2); cursor: pointer; transition: all var(--iro-tr);
+}
+.iro-action-btn:hover { border-color: var(--iro-accent); color: var(--iro-accent); }
+.iro-action-btn.primary { background: var(--iro-accent-fill); color: #fff; border-color: transparent; }
+.iro-action-btn.primary:hover { opacity: 0.85; color: #fff; }
+.iro-action-badge { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-tm); padding: 5px 4px; }
+
+/* Question Intelligence drawer — institutional slide-in, not a generic modal */
+.iro-intel-overlay {
+  position: fixed; inset: 0; background: rgba(17,17,17,0.15); z-index: 399;
+  opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
+}
+.iro-intel-overlay.open { opacity: 1; pointer-events: auto; }
+.iro-intel-drawer {
+  position: fixed; top: 0; right: -480px; width: 460px; max-width: 92vw; height: 100vh;
+  background: var(--card); border-left: 1px solid var(--iro-b); box-sizing: border-box;
+  z-index: 400; transition: right 0.22s ease; overflow-y: auto; padding: 22px;
+}
+.iro-intel-drawer.open { right: 0; }
+.iro-intel-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--iro-b); padding-bottom: 14px; margin-bottom: 14px; }
+.iro-intel-eyebrow { font-family: var(--iro-mono); font-size: 9px; font-weight: 700; color: var(--iro-tm); letter-spacing: 0.08em; text-transform: uppercase; }
+.iro-intel-title { font-family: var(--font-heading); font-size: 15px; font-weight: 700; color: var(--iro-t1); margin-top: 4px; }
+.iro-intel-qid { font-family: var(--iro-mono); font-size: 10px; color: var(--iro-tm); margin-top: 2px; }
+.iro-intel-close { background: none; border: 1px solid var(--iro-b); border-radius: var(--iro-radius); cursor: pointer; color: var(--iro-t2); padding: 5px 11px; font-size: 12px; }
+.iro-intel-close:hover { border-color: var(--iro-accent); color: var(--iro-accent); }
+.iro-intel-section { border-bottom: 1px solid var(--iro-b); padding: 0 0 14px; margin-bottom: 14px; }
+.iro-intel-section:last-child { border-bottom: none; }
+.iro-intel-label { font-family: var(--iro-mono); font-size: 9px; font-weight: 700; color: var(--iro-tm); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+.iro-intel-body { font-size: 12px; color: var(--iro-t2); line-height: 1.6; white-space: pre-wrap; }
+.iro-intel-empty { font-size: 11px; color: var(--iro-tm); font-style: italic; }
+.iro-intel-citation {
+  font-family: var(--iro-mono); font-size: 10px; color: var(--iro-accent);
+  background: rgba(11,61,145,0.06); border-radius: 4px; padding: 2px 6px;
+  margin: 4px 4px 0 0; display: inline-block; cursor: default;
+}
+.iro-intel-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.iro-intel-btn {
+  font-family: var(--font-heading); font-size: 11px; padding: 7px 12px; border-radius: var(--iro-radius);
+  border: 1px solid var(--iro-b); background: transparent; color: var(--iro-t2); cursor: pointer; transition: all var(--iro-tr);
+}
+.iro-intel-btn:hover { border-color: var(--iro-accent); color: var(--iro-accent); }
+.iro-intel-btn.primary { background: var(--iro-accent-fill); color: #fff; border-color: transparent; }
+.iro-intel-btn.primary:hover { opacity: 0.85; color: #fff; }
+.iro-intel-btn:disabled { opacity: 0.45; cursor: default; }
+.iro-intel-conf { font-family: var(--font-heading); font-weight: 700; font-size: 26px; color: var(--iro-accent); }
+.iro-intel-conf-sub { font-size: 10px; color: var(--iro-tm); margin-top: 2px; }
+.iro-intel-draft-box { background: var(--iro-s1); border: 1px dashed var(--iro-b); border-radius: var(--iro-radius); padding: 10px; font-size: 12px; color: var(--iro-t1); margin-top: 8px; white-space: pre-wrap; }
+.iro-intel-draft-tag { font-family: var(--iro-mono); font-size: 9px; font-weight: 700; color: var(--iro-gold); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.iro-intel-contradiction { border-left: 2px solid var(--iro-red); background: rgba(220,38,38,0.06); padding: 6px 10px; margin-bottom: 6px; font-size: 11px; color: var(--iro-t2); }
+.iro-intel-contradiction .sev { font-family: var(--iro-mono); font-weight: 700; color: var(--iro-red); margin-right: 6px; }
+
+/* Persistent Climactix Assessment Agent */
+.iro-agent-launcher {
+  position: fixed; bottom: 24px; right: 24px; z-index: 380;
+  background: var(--iro-accent-fill); color: #fff; border: none; border-radius: var(--iro-pill);
+  padding: 12px 20px; font-family: var(--font-heading); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: opacity var(--iro-tr);
+}
+.iro-agent-launcher:hover { opacity: 0.85; }
+.iro-agent-panel {
+  position: fixed; bottom: 0; right: 24px; width: 400px; max-width: 92vw; height: 0;
+  background: var(--card); border: 1px solid var(--iro-b); border-bottom: none;
+  border-radius: var(--iro-radius) var(--iro-radius) 0 0; z-index: 381;
+  overflow: hidden; transition: height 0.22s ease; display: flex; flex-direction: column;
+}
+.iro-agent-panel.open { height: min(70vh, 560px); }
+.iro-agent-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--iro-b); flex-shrink: 0; }
+.iro-agent-head-title { font-family: var(--font-heading); font-size: 13px; font-weight: 700; color: var(--iro-t1); }
+.iro-agent-head-sub { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-tm); }
+.iro-agent-close { background: none; border: none; color: var(--iro-t2); cursor: pointer; font-size: 14px; }
+.iro-agent-messages { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.iro-agent-msg { font-size: 12px; line-height: 1.55; padding: 8px 11px; border-radius: var(--iro-radius); max-width: 92%; white-space: pre-wrap; }
+.iro-agent-msg.user { align-self: flex-end; background: var(--iro-accent-fill); color: #fff; }
+.iro-agent-msg.assistant { align-self: flex-start; background: var(--iro-s1); border: 1px solid var(--iro-b); color: var(--iro-t1); }
+.iro-agent-empty { font-size: 11px; color: var(--iro-tm); font-style: italic; padding: 6px 0; }
+.iro-agent-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--iro-b); flex-shrink: 0; }
+.iro-agent-input {
+  flex: 1; padding: 8px 10px; border: 1px solid var(--iro-b); border-radius: var(--iro-radius);
+  background: var(--iro-bg); color: var(--iro-t1); font-family: var(--iro-sans); font-size: 12px;
+}
+.iro-agent-input:focus { outline: none; border-color: var(--iro-accent); }
+.iro-agent-send { background: var(--iro-accent-fill); color: #fff; border: none; border-radius: var(--iro-radius); padding: 8px 14px; font-size: 12px; cursor: pointer; }
+.iro-agent-send:disabled { opacity: 0.5; cursor: default; }
+
+/* ═══════════════════════════════════════════════════════════
    C-LAYER RAIL (replaces pillar rail)
 ═══════════════════════════════════════════════════════════ */
 .iro-clayer-row {
@@ -3053,6 +3155,46 @@
     </div>
   </div>
 
+  <!-- ════════════════════════════════════════
+       CLIMACTIX QUESTION INTELLIGENCE DRAWER
+       One global drawer, populated per-question by openIntelDrawer(qId) —
+       not duplicated 220x inline with every question.
+  ════════════════════════════════════════════ -->
+  <div class="iro-intel-overlay" id="intelOverlay" onclick="closeIntelDrawer()"></div>
+  <aside class="iro-intel-drawer" id="intelDrawer" aria-hidden="true">
+    <div class="iro-intel-header">
+      <div>
+        <div class="iro-intel-eyebrow">Climactix Question Intelligence</div>
+        <div class="iro-intel-title" id="intelTitle">—</div>
+        <div class="iro-intel-qid" id="intelQid">—</div>
+      </div>
+      <button class="iro-intel-close" onclick="closeIntelDrawer()">Close ✕</button>
+    </div>
+    <div id="intelBody"><div class="iro-intel-empty">Loading…</div></div>
+  </aside>
+
+  <!-- ════════════════════════════════════════
+       PERSISTENT CLIMACTIX ASSESSMENT AGENT
+  ════════════════════════════════════════════ -->
+  <button class="iro-agent-launcher" id="agentLauncher" onclick="toggleAgentPanel()" style="display:none">✦ Ask Climactix</button>
+  <div class="iro-agent-panel" id="agentPanel">
+    <div class="iro-agent-head">
+      <div>
+        <div class="iro-agent-head-title">Climactix Assessment Agent</div>
+        <div class="iro-agent-head-sub">Scoped to this assessment's real data only</div>
+      </div>
+      <button class="iro-agent-close" onclick="toggleAgentPanel()">✕</button>
+    </div>
+    <div class="iro-agent-messages" id="agentMessages">
+      <div class="iro-agent-empty">Ask things like "what evidence am I missing?" or "which critical questions could affect my score?" — every answer is grounded in this assessment's actual data.</div>
+    </div>
+    <div class="iro-agent-input-row">
+      <input type="text" class="iro-agent-input" id="agentInput" placeholder="Ask the Assessment Agent…"
+        onkeydown="if(event.key==='Enter') sendAgentMessage()" />
+      <button class="iro-agent-send" id="agentSendBtn" onclick="sendAgentMessage()">Send</button>
+    </div>
+  </div>
+
   <!-- ════ SCRIPT PLACEHOLDER — filled in next steps ════ -->
 
   <!-- Industry ontology + industry/materiality-triggered question content
@@ -3070,13 +3212,30 @@
 
 /* ── STATE ── */
 const STATE = { entity:{}, answers:{}, currentSection:0, radarChart:null, companyId:null, assessmentId:null,
-  mandate:{}, entities:[], materialityScan:null, methodologyVersion:null, evidenceByQuestion:{}, financialMateriality:{}, scenariosByQuestion:{} };
+  mandate:{}, entities:[], materialityScan:null, methodologyVersion:null, evidenceByQuestion:{}, financialMateriality:{}, scenariosByQuestion:{},
+  // Evidence-driven intelligence workflow additions — kept as separate maps
+  // rather than merged into `answers` so Declared (answers), Evidenced
+  // (evidenceByQuestion + aiReviewsByQuestion), and Assessed
+  // (assessedByQuestion) never collapse into one field.
+  aiReviewsByQuestion:{}, assessedByQuestion:{}, evidenceLinksByQuestion:{}, contradictionFlags:[], agentConversation:[],
+  // Management Response / Supporting Narrative for non-select5 questions
+  // (select5 already carries its justification inside answers[qId] itself).
+  narrativeByQuestion:{}, narrativeSavedAt:{} };
 let _unsubRiskOSEntities = null;
 try { const s=localStorage.getItem('iro_answers_v4'); if(s) STATE.answers=JSON.parse(s); } catch(e){}
 try { const e=localStorage.getItem('iro_entity'); if(e) STATE.entity=JSON.parse(e); } catch(e){}
+try { const n=localStorage.getItem('iro_narrative_v1'); if(n) STATE.narrativeByQuestion=JSON.parse(n); } catch(e){}
+try { const n=localStorage.getItem('iro_narrative_saved_v1'); if(n) STATE.narrativeSavedAt=JSON.parse(n); } catch(e){}
 let _unsubRiskOSAnswers = null;
 let _unsubRiskOSEvidence = null;
 let _unsubRiskOSFinMat = null;
+let _unsubRiskOSAssessed = null;
+let _unsubRiskOSNarratives = null;
+let _unsubRiskOSContradictions = null;
+let _unsubRiskOSAgentConvo = null;
+let _unsubRiskOSAIReviews = null;
+let _unsubRiskOSEvidenceLinks = null;
+let _intelDrawerQid = null; // which question the Question Intelligence drawer is currently open on, if any
 
 /* ── SECTIONS ── */
 const SECTIONS = [
@@ -4431,6 +4590,48 @@ function updateJustification(qId, val) {
   _answerSyncDebounce[qId] = setTimeout(() => _syncAnswerToCloud(qId), 800);
 }
 
+// Generic Management Response / Supporting Narrative (spec §1B) for every
+// NON-select5 question type (yesno/dropdown/number/text/upload) — select5
+// questions already get a richer justification field with dynamic
+// per-status follow-ups via renderAnswerDetailPanel()/updateJustification()
+// above, so this only covers the ~55+ question types that don't already
+// have a write-up field, rather than duplicating select5's mechanism.
+function renderGenericNarrativePanel(q) {
+  const qId = q.id;
+  const text = STATE.narrativeByQuestion[qId] || '';
+  const savedAt = STATE.narrativeSavedAt[qId];
+  return `
+    <div class="iro-just-block" id="narrative-block-${qId}">
+      <div class="iro-just-label">Management Response / Supporting Narrative</div>
+      <textarea class="iro-just-textarea" id="narrative-${qId}"
+        placeholder="Describe the organisation's current position, methodology, controls, exposure, implementation status, assumptions and supporting rationale. Include quantitative information where available."
+        oninput="updateNarrative('${qId}', this.value)">${text}</textarea>
+      <div class="iro-just-meta">
+        <span class="iro-just-count" id="narrative-count-${qId}">${text.length} chars</span>
+        <span class="iro-just-saved" id="narrative-saved-${qId}">${savedAt ? 'Last updated ' + _fmtTs(savedAt) : 'Not yet saved'}</span>
+      </div>
+    </div>`;
+}
+function updateNarrative(qId, val) {
+  STATE.narrativeByQuestion[qId] = val;
+  STATE.narrativeSavedAt[qId] = Date.now();
+  try {
+    localStorage.setItem('iro_narrative_v1', JSON.stringify(STATE.narrativeByQuestion));
+    localStorage.setItem('iro_narrative_saved_v1', JSON.stringify(STATE.narrativeSavedAt));
+  } catch(e){}
+  const cEl = document.getElementById('narrative-count-' + qId);
+  if (cEl) cEl.textContent = `${val.length} chars`;
+  const sEl = document.getElementById('narrative-saved-' + qId);
+  if (sEl) sEl.textContent = 'Last updated ' + _fmtTs(STATE.narrativeSavedAt[qId]);
+  clearTimeout(_answerSyncDebounce['narr-'+qId]);
+  _answerSyncDebounce['narr-'+qId] = setTimeout(() => _syncNarrativeToCloud(qId), 800);
+}
+async function _syncNarrativeToCloud(qId) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  try { await window.RiskOSData.saveNarrative(STATE.assessmentId, qId, STATE.narrativeByQuestion[qId] || ''); }
+  catch (e) { console.error('[risk-os] narrative sync failed', e); }
+}
+
 function updateDynField(qId, field, val) {
   const a = STATE.answers[qId];
   if (!a || typeof a !== 'object') return;
@@ -4567,7 +4768,16 @@ function calcEvidenceConfidenceFactor(qId) {
   const createdMs = best.createdAt?.seconds ? best.createdAt.seconds * 1000 : Date.now();
   const ageDays = (Date.now() - createdMs) / 86400000;
   const recencyFactor = ageDays <= 400 ? 1.0 : ageDays <= 800 ? 0.85 : 0.65;
-  return Math.max(0.25, verificationFactor * recencyFactor);
+  // Evidence-mapping factor (spec §14): an uploaded file that has never
+  // actually been reviewed by the AI evidence engine only weakly supports
+  // the claim it was attached to — the file's mere existence is not proof
+  // it's relevant to this specific question. A real AI review (summarize/
+  // find_gaps/contradictions/etc, see risk_os_ai_review.py) lifts this back
+  // up, scaled by that review's own grounded confidence score.
+  const reviews = STATE.aiReviewsByQuestion[qId] || [];
+  const reviewed = reviews.find(r => r.confidenceScore != null);
+  const mappingFactor = reviewed ? Math.max(0.5, reviewed.confidenceScore / 100) : 0.6;
+  return Math.max(0.2, verificationFactor * recencyFactor * mappingFactor);
 }
 function calcAdjustedScore(qId) {
   const base = getAnswerValue(qId);
@@ -4657,6 +4867,22 @@ function calcQualityGate() {
     q.evidenceReq === 'MANDATORY' &&
     !(STATE.evidenceByQuestion[q.id] || []).length
   ).length;
+  // Spec §15: CRITICAL questions carry a stricter bar than "evidence
+  // required" alone — a CRITICAL question claiming active practice
+  // (Implemented/Progressing) with zero evidence at all is a harder block
+  // than a merely-unsupported MANDATORY-evidence question above.
+  const criticalNoEvidence = criticalQs.filter(q =>
+    ['IMPLEMENTED','PROGRESSING'].includes(_statusOf(STATE.answers[q.id])) &&
+    !(STATE.evidenceByQuestion[q.id] || []).length
+  ).length;
+  // Spec §8/§15/§19: a CRITICAL question can have evidence uploaded and
+  // still lack a human-accepted Assessed status — VERIFIED (the top tier)
+  // requires every answered CRITICAL question to have gone through that
+  // Declared -> Evidenced -> Assessed acceptance, not just have a file
+  // attached to it.
+  const criticalUnassessed = criticalQs.filter(q =>
+    _isAnswered(q) && (STATE.evidenceByQuestion[q.id]||[]).length && !STATE.assessedByQuestion[q.id]
+  ).length;
   const dq = calcDataConfidenceRollup();
   const completion = calcCompletionMetrics();
 
@@ -4665,14 +4891,16 @@ function calcQualityGate() {
   if (criticalFlags > 0) reasons.push(`${criticalFlags} CRITICAL contradiction flag(s) unresolved`);
   if (naPct > 0.25 && answered.length > 0) reasons.push(`${Math.round(naPct*100)}% of answered questions marked Not Applicable`);
   if (unsupportedImplemented > 0) reasons.push(`${unsupportedImplemented} "Implemented" response(s) on mandatory-evidence questions lack supporting evidence`);
+  if (criticalNoEvidence > 0) reasons.push(`${criticalNoEvidence} CRITICAL question(s) claim active practice with no supporting evidence at all`);
+  if (criticalUnassessed > 0) reasons.push(`${criticalUnassessed} CRITICAL question(s) have evidence but no accepted evidence assessment yet — run "Review with Climactix" and accept a recommendation`);
   if (completion.financialPct < 100) reasons.push(`Financial materiality incomplete for ${100-completion.financialPct}% of applicable questions`);
   if (dq.evidenceCoveragePct < 30 && answered.length > 0) reasons.push(`Evidence coverage only ${dq.evidenceCoveragePct}% of answered questions`);
 
   let level;
   if (answered.length === 0 || criticalMissing > 0) level = 'PRELIMINARY';
-  else if (criticalFlags > 0 || naPct > 0.4 || unsupportedImplemented > 2) level = 'PRELIMINARY';
+  else if (criticalFlags > 0 || naPct > 0.4 || unsupportedImplemented > 2 || criticalNoEvidence > 0) level = 'PRELIMINARY';
   else if (dq.evidenceCoveragePct < 30) level = 'INDICATIVE';
-  else if (dq.evidenceCoveragePct < 70 || dq.overallLabel === 'LOW' || dq.overallLabel === 'VERY LOW') level = 'EVIDENCE-BACKED';
+  else if (dq.evidenceCoveragePct < 70 || dq.overallLabel === 'LOW' || dq.overallLabel === 'VERY LOW' || criticalUnassessed > 0) level = 'EVIDENCE-BACKED';
   else level = 'VERIFIED';
   if (level === 'VERIFIED' && reasons.length > 0) level = 'EVIDENCE-BACKED'; // belt and suspenders — VERIFIED never carries open reasons
 
@@ -4779,6 +5007,9 @@ const CONTRADICTION_RULES = [
   {id:'CR09', sev:'HIGH',
     text:'Evidence-integrity: at least one piece of uploaded evidence has been reviewed and marked contradictory — the underlying claim requires re-verification before this assessment can be treated as evidence-backed.',
     test:(a,ps,h)=> Object.values(STATE.evidenceByQuestion||{}).some(list=>list.some(ev=>ev.reviewStatus==='contradictory'))},
+  {id:'CR10', sev:'HIGH',
+    text:'C-RISK/P: Acute physical risk exposure denied (S05-Q02 marked Not Addressed / Not Applicable) despite corroborating chronic, water-stress, or high-risk-property assessments recorded elsewhere (S05-Q03/S05-Q06/S05-Q10) — cross-assessment inconsistency (spec §13).',
+    test:(a,ps,h)=> ['NOT_ADDRESSED','NA'].includes(h.st('S05-Q02')) && ['S05-Q03','S05-Q06','S05-Q10'].some(id=>['IMPLEMENTED','PROGRESSING'].includes(h.st(id)))},
 ];
 function detectContradictions() {
   const ps = calcCLayerScores();
@@ -4803,6 +5034,15 @@ function detectContradictions() {
     if (refs.length && refs.every(id => h.st(id) === 'NOT_ADDRESSED' || h.st(id) === undefined)) {
       flags.push({sev:'HIGH', text:`Claim-evidence inconsistency detected: ${q.id} reports a strong practice, but supporting question(s) ${refs.join(', ')} show no corroborating response.`});
     }
+  });
+
+  // Durable, server-computed flags (AI-review 'contradictions' review type,
+  // and the evidence-graph traversal in functions/services/evidence_graph.py)
+  // — surfaced alongside the client-side rules above rather than replacing
+  // them, since these can catch inconsistencies the fixed rule table can't
+  // (e.g. a document's own numbers contradicting the declared answer).
+  (STATE.contradictionFlags || []).forEach(f => {
+    flags.push({sev: (f.severity||'MEDIUM').toUpperCase(), text: `[${f.sourceType==='graph'?'Evidence graph':'AI review'}] ${f.summary}`});
   });
 
   return flags;
@@ -4945,6 +5185,13 @@ async function startAssessment() {
         _startEntitiesSubscription();
         _startEvidenceSubscription();
         _startFinancialMaterialitySubscription();
+        _startAIReviewsSubscription();
+        _startAssessedStatusSubscription();
+        _startNarrativesSubscription();
+        _startContradictionFlagsSubscription();
+        _startEvidenceLinksSubscription();
+        _startAgentConversationSubscription();
+        _showAgentLauncherIfReady();
 
         // Question bank + materiality scan run in parallel with the screen
         // transition below — neither blocks entering the questionnaire.
@@ -5106,6 +5353,16 @@ function _startAnswersSubscription() {
 // weighted scoring (calcAdjustedScore) and the data confidence rollup across
 // the FULL question bank without requiring every question's Workspace panel
 // to have been individually expanded first.
+// Re-renders the Question Intelligence drawer in place when live data it
+// depends on changes (a new AI review lands, evidence is added, etc.) —
+// called from every relevant subscription below rather than requiring the
+// user to close and reopen the drawer to see a review they just requested.
+function _refreshIntelDrawerIfOpen(qId) {
+  if (_intelDrawerQid && (!qId || _intelDrawerQid === qId) && typeof _renderIntelDrawerContent === 'function') {
+    _renderIntelDrawerContent(_intelDrawerQid);
+  }
+}
+
 function _startEvidenceSubscription() {
   if (!window.RiskOSData || !STATE.assessmentId) return;
   if (_unsubRiskOSEvidence) { _unsubRiskOSEvidence(); _unsubRiskOSEvidence = null; }
@@ -5114,6 +5371,8 @@ function _startEvidenceSubscription() {
     items.forEach(ev => { (byQ[ev.questionId] = byQ[ev.questionId] || []).push(ev); });
     STATE.evidenceByQuestion = byQ;
     if (document.getElementById('iro-assess')?.classList.contains('active')) updateRail();
+    _refreshIntelDrawerIfOpen();
+    _refreshAllVisibleActionBars();
   });
 }
 
@@ -5126,6 +5385,76 @@ function _startFinancialMaterialitySubscription() {
     const byQ = {};
     items.forEach(rec => { byQ[rec.questionId] = rec; });
     STATE.financialMateriality = byQ;
+  });
+}
+
+// AI reviews, keyed by questionId (latest-first) — powers the compact
+// action bar's Confidence badge and the Question Intelligence drawer.
+function _startAIReviewsSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSAIReviews) { _unsubRiskOSAIReviews(); _unsubRiskOSAIReviews = null; }
+  _unsubRiskOSAIReviews = window.RiskOSData.subscribeAllAIReviews(STATE.assessmentId, (items) => {
+    const byQ = {};
+    items.forEach(r => { (byQ[r.questionId] = byQ[r.questionId] || []).push(r); });
+    Object.values(byQ).forEach(list => list.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0)));
+    STATE.aiReviewsByQuestion = byQ;
+    if (document.getElementById('iro-assess')?.classList.contains('active')) updateRail();
+    _refreshIntelDrawerIfOpen();
+    _refreshAllVisibleActionBars();
+  });
+}
+
+// Assessed status (spec §8: Declared -> Evidenced -> Assessed) — only ever
+// written by a human clicking "Accept Recommendation" in the drawer.
+function _startAssessedStatusSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSAssessed) { _unsubRiskOSAssessed(); _unsubRiskOSAssessed = null; }
+  _unsubRiskOSAssessed = window.RiskOSData.subscribeAssessedStatuses(STATE.assessmentId, (byQ) => {
+    STATE.assessedByQuestion = byQ;
+    if (document.getElementById('iro-assess')?.classList.contains('active')) updateRail();
+    _refreshIntelDrawerIfOpen();
+    _refreshAllVisibleActionBars();
+  });
+}
+
+// Generic narrative (spec §1B, non-select5 question types) — merged like
+// _startAnswersSubscription() rather than replaced wholesale, so a remote
+// snapshot arriving mid-keystroke never clobbers what the user just typed
+// for a DIFFERENT question in the same render.
+function _startNarrativesSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSNarratives) { _unsubRiskOSNarratives(); _unsubRiskOSNarratives = null; }
+  _unsubRiskOSNarratives = window.RiskOSData.subscribeNarratives(STATE.assessmentId, (remote) => {
+    STATE.narrativeByQuestion = { ...STATE.narrativeByQuestion, ...remote };
+    try { localStorage.setItem('iro_narrative_v1', JSON.stringify(STATE.narrativeByQuestion)); } catch(e){}
+    _refreshIntelDrawerIfOpen();
+  });
+}
+
+// Durable contradiction flags (rule/AI-review/graph-sourced) — feeds the
+// Score Rail's flag list alongside the client-side detectContradictions().
+function _startContradictionFlagsSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSContradictions) { _unsubRiskOSContradictions(); _unsubRiskOSContradictions = null; }
+  _unsubRiskOSContradictions = window.RiskOSData.subscribeContradictionFlags(STATE.assessmentId, (flags) => {
+    STATE.contradictionFlags = flags;
+    if (document.getElementById('iro-assess')?.classList.contains('active')) updateRail();
+    _refreshIntelDrawerIfOpen();
+  });
+}
+
+// Evidence links (Evidence Library reuse) — union with STATE.evidenceByQuestion
+// so a linked (not just directly-uploaded) file counts for a question.
+function _startEvidenceLinksSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSEvidenceLinks) { _unsubRiskOSEvidenceLinks(); _unsubRiskOSEvidenceLinks = null; }
+  _unsubRiskOSEvidenceLinks = window.RiskOSData.subscribeEvidenceLinks(STATE.assessmentId, (links) => {
+    const byQ = {};
+    links.forEach(l => { (byQ[l.questionId] = byQ[l.questionId] || []).push(l.evidenceId); });
+    STATE.evidenceLinksByQuestion = byQ;
+    if (document.getElementById('iro-assess')?.classList.contains('active')) updateRail();
+    _refreshIntelDrawerIfOpen();
+    _refreshAllVisibleActionBars();
   });
 }
 
@@ -5598,13 +5927,88 @@ function renderQuestion(q, num) {
       </div>
     </div>
     ${inputHTML}
+    ${type !== 'select5' ? renderGenericNarrativePanel(q) : ''}
     ${(q.financialImpact || q.scenarioTag) ? `<div class="iro-dyn-panel">${renderSupplementaryPanels(q)}</div>` : ''}
-    ${window.RiskOSData && STATE.assessmentId ? `
-    <button class="iro-ws-toggle" id="ws-toggle-${q.id}" onclick="toggleWorkspace('${q.id}')" aria-expanded="false">
-      <span>Workspace</span><span class="chev">▾</span>
-    </button>
-    <div class="iro-ws-panel" id="ws-panel-${q.id}"></div>` : ''}
+    ${window.RiskOSData && STATE.assessmentId ? renderQuestionActionBar(q) : ''}
   </div>`;
+}
+
+/* ─── EVIDENCE-DRIVEN INTELLIGENCE — action bar, three-state row,
+   Question Intelligence drawer ─── */
+
+function _questionEvidenceCount(qId) {
+  const direct = (STATE.evidenceByQuestion[qId] || []).length;
+  const linked = (STATE.evidenceLinksByQuestion[qId] || []).length;
+  return direct + linked;
+}
+function _latestAIReview(qId, reviewType) {
+  const list = STATE.aiReviewsByQuestion[qId] || [];
+  return reviewType ? list.find(r => r.reviewType === reviewType) : list[0];
+}
+const _STATUS_LABELS = {IMPLEMENTED:'Implemented', PROGRESSING:'Progressing', PLANNED:'Planned', NOT_ADDRESSED:'Not Addressed', NA:'Not Applicable', YES:'Yes', NO:'No'};
+function _statusLabel(status) { return status ? (_STATUS_LABELS[status] || status) : 'Not answered'; }
+
+// Compact secondary action bar (spec §10) — replaces the old single
+// "Workspace" toggle. Add Write-Up / Upload Evidence still open the same
+// underlying Workspace panel this file already had; "Review with
+// Climactix" is the one genuinely new entry point (the drawer below).
+// Split into an "inner" piece (state row + action buttons — everything
+// that depends on live evidence/review/assessed data) and the outer
+// wrapper that also owns the Workspace panel. Evidence/AI-review/assessed-
+// status subscriptions fire asynchronously *after* this question card was
+// first rendered, so _refreshQuestionActionBar() below re-renders ONLY the
+// inner piece by id — never touching ws-panel-${qId}, which may already be
+// expanded with its own live subscriptions (_wsSubs) that a full re-render
+// would silently tear down.
+function _renderActionBarInner(q) {
+  const qId = q.id;
+  const evCount = _questionEvidenceCount(qId);
+  const latest = _latestAIReview(qId);
+  const confidenceTxt = latest && latest.confidenceScore != null ? Math.round(latest.confidenceScore) + '%' : '—';
+  const declared = _statusOf(STATE.answers[qId]);
+  const assessed = STATE.assessedByQuestion[qId];
+  return `
+    <div class="iro-state-row">
+      <span class="iro-state-chip declared">Declared: ${_statusLabel(declared)}</span>
+      <span class="iro-state-arrow">→</span>
+      <span class="iro-state-chip evidenced${evCount?' has':''}">Evidenced: ${evCount} file${evCount===1?'':'s'}${latest?' · '+confidenceTxt:''}</span>
+      <span class="iro-state-arrow">→</span>
+      <span class="iro-state-chip assessed${assessed?' has':''}">Assessed: ${assessed ? _statusLabel(assessed.assessedStatus) : 'Pending'}</span>
+    </div>
+    <div class="iro-action-bar">
+      <button class="iro-action-btn" onclick="_focusWriteUp('${qId}')">+ Add Write-Up</button>
+      <button class="iro-action-btn" onclick="toggleWorkspace('${qId}')">↑ Upload Evidence</button>
+      <button class="iro-action-btn primary" onclick="openIntelDrawer('${qId}')">✦ Review with Climactix</button>
+      <span class="iro-action-badge">Evidence: ${evCount} file${evCount===1?'':'s'}</span>
+      <span class="iro-action-badge">Confidence: ${confidenceTxt}</span>
+      <button class="iro-ws-toggle" id="ws-toggle-${qId}" onclick="toggleWorkspace('${qId}')" aria-expanded="false" style="margin-top:0;margin-left:0">
+        <span>More</span><span class="chev">▾</span>
+      </button>
+    </div>`;
+}
+function renderQuestionActionBar(q) {
+  return `<div class="iro-qab" id="qab-${q.id}">${_renderActionBarInner(q)}</div><div class="iro-ws-panel" id="ws-panel-${q.id}"></div>`;
+}
+function _refreshQuestionActionBar(qId) {
+  const el = document.getElementById('qab-'+qId);
+  if (!el) return; // not currently rendered (different section) — picks up fresh next render
+  const q = QUESTIONS.find(x => x.id === qId);
+  if (q) el.innerHTML = _renderActionBarInner(q);
+}
+function _refreshAllVisibleActionBars() {
+  document.querySelectorAll('.iro-qab').forEach(el => _refreshQuestionActionBar(el.id.replace('qab-','')));
+}
+
+function _focusWriteUp(qId) {
+  // select5's justification textarea, or the generic narrative textarea
+  // every other question type gets (renderGenericNarrativePanel) — one of
+  // the two always exists once a question is on screen.
+  const el = document.getElementById('just-'+qId) || document.getElementById('narrative-'+qId);
+  if (el) { el.scrollIntoView({behavior:'smooth', block:'center'}); el.focus(); return; }
+  // select5 justification only renders once a status is chosen — draw
+  // attention to the status buttons instead of silently doing nothing.
+  const row = document.getElementById('q-'+qId)?.querySelector('.iro-answer-row');
+  if (row) { row.scrollIntoView({behavior:'smooth', block:'center'}); row.style.outline = '2px solid var(--iro-accent)'; setTimeout(()=>{ row.style.outline=''; }, 1200); }
 }
 
 /* ─── QUESTION WORKSPACE — Evidence + Discussion (Firestore/Storage-backed) ─── */
@@ -5819,6 +6223,294 @@ async function runEvidenceAIReview(evidenceId, reviewType, qId) {
   const q = QUESTIONS.find(qq => qq.id === qId);
   try { await window.RiskOSData.requestAIReview(evidenceId, reviewType, q ? q.text : ''); }
   catch (e) { alert('AI review failed: ' + (e.message||e)); }
+}
+
+/* ─── CLIMACTIX QUESTION INTELLIGENCE DRAWER ───
+   One global drawer (see HTML markup near #iro-report) populated per-
+   question. Every section reads real, already-subscribed STATE — nothing
+   here computes a new number, it only presents what the Cloud Function
+   already returned (see functions/services/risk_os_ai_review.py). */
+
+function _intelMostRecentEvidence(qId) {
+  const items = STATE.evidenceByQuestion[qId] || [];
+  if (!items.length) return null;
+  return [...items].sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0))[0];
+}
+
+function openIntelDrawer(qId) {
+  _intelDrawerQid = qId;
+  document.getElementById('intelOverlay').classList.add('open');
+  const drawer = document.getElementById('intelDrawer');
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden', 'false');
+  const q = QUESTIONS.find(x => x.id === qId);
+  document.getElementById('intelTitle').textContent = q ? (q.label || (q.text.length > 60 ? q.text.slice(0,60)+'…' : q.text)) : qId;
+  document.getElementById('intelQid').textContent = qId;
+  _renderIntelDrawerContent(qId);
+}
+function closeIntelDrawer() {
+  document.getElementById('intelOverlay').classList.remove('open');
+  const drawer = document.getElementById('intelDrawer');
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden', 'true');
+  _intelDrawerQid = null;
+}
+
+function _renderIntelDrawerContent(qId) {
+  const body = document.getElementById('intelBody');
+  if (!body) return;
+  const q = QUESTIONS.find(x => x.id === qId);
+  const ans = STATE.answers[qId];
+  const declared = _statusOf(ans);
+  const justification = (ans && typeof ans === 'object') ? ans.justification : (STATE.narrativeByQuestion[qId] || '');
+  const evidenceItems = STATE.evidenceByQuestion[qId] || [];
+  const linkedIds = STATE.evidenceLinksByQuestion[qId] || [];
+  const mostRecent = _intelMostRecentEvidence(qId);
+
+  const summarize = _latestAIReview(qId, 'summarize');
+  const findGaps = _latestAIReview(qId, 'find_gaps');
+  const contradictionsReview = _latestAIReview(qId, 'contradictions');
+  const frameworkMapping = _latestAIReview(qId, 'framework_mapping');
+  const draftResponse = _latestAIReview(qId, 'draft_response');
+  const anyReview = _latestAIReview(qId);
+  const assessed = STATE.assessedByQuestion[qId];
+
+  const ruleFlags = detectContradictions().filter(f => f.text.includes(qId));
+  const durableFlags = (STATE.contradictionFlags || []).filter(f => (f.questionIds||[]).includes(qId));
+
+  const citationsHTML = list => (list||[]).map(c =>
+    `<span class="iro-intel-citation" title="${(c.excerpt||'').replace(/"/g,'&quot;')}">${c.locator}</span>`).join('');
+  const busy = !mostRecent ? 'disabled title="Upload evidence for this question first"' : '';
+
+  body.innerHTML = `
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Company Declaration</div>
+      <div class="iro-intel-body">${_statusLabel(declared)}</div>
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Management Narrative</div>
+      <div class="iro-intel-body">${justification || '<span class="iro-intel-empty">No write-up provided yet.</span>'}</div>
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Evidence Reviewed</div>
+      ${(evidenceItems.length || linkedIds.length)
+        ? `<div class="iro-intel-body">${evidenceItems.length} uploaded${linkedIds.length ? `, ${linkedIds.length} linked from the Evidence Library` : ''}${mostRecent ? ` — most recent: ${mostRecent.originalName||mostRecent.filename}` : ''}</div>`
+        : '<div class="iro-intel-empty">No evidence uploaded or linked yet.</div>'}
+      <div class="iro-intel-actions" style="margin-top:8px">
+        <button class="iro-intel-btn" onclick="toggleWorkspace('${qId}')">Upload new evidence</button>
+        <button class="iro-intel-btn" onclick="openEvidenceLibrary('${qId}')">Use existing evidence</button>
+      </div>
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Evidence Extracted / Agent Interpretation</div>
+      ${summarize ? `<div class="iro-intel-body">${summarize.outputSummary}</div><div>${citationsHTML(summarize.citations)}</div>` : '<div class="iro-intel-empty">No summary run yet.</div>'}
+      <div class="iro-intel-actions" style="margin-top:8px">
+        <button class="iro-intel-btn" ${busy} onclick="runIntelReview('${qId}','summarize')">Summarize evidence</button>
+      </div>
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Contradictions</div>
+      ${(ruleFlags.length || durableFlags.length)
+        ? [...ruleFlags.map(f=>`<div class="iro-intel-contradiction"><span class="sev">${f.sev}</span>${f.text}</div>`),
+           ...durableFlags.map(f=>`<div class="iro-intel-contradiction"><span class="sev">${f.severity}</span>${f.summary}</div>`)].join('')
+        : '<div class="iro-intel-empty">No contradictions detected for this question.</div>'}
+      ${contradictionsReview ? `<div class="iro-intel-body" style="margin-top:6px">${contradictionsReview.outputSummary}</div>` : ''}
+      <div class="iro-intel-actions" style="margin-top:8px">
+        <button class="iro-intel-btn" ${busy} onclick="runIntelReview('${qId}','contradictions')">Check contradictions</button>
+      </div>
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Missing Evidence</div>
+      ${findGaps ? `<div class="iro-intel-body">${findGaps.evidenceGap || findGaps.outputSummary}</div>` : '<div class="iro-intel-empty">No gap analysis run yet.</div>'}
+      <div class="iro-intel-actions" style="margin-top:8px">
+        <button class="iro-intel-btn" ${busy} onclick="runIntelReview('${qId}','find_gaps')">Run gap analysis</button>
+      </div>
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Framework Interpretation</div>
+      ${frameworkMapping ? `<div class="iro-intel-body">${frameworkMapping.outputSummary}</div>` : '<div class="iro-intel-empty">No framework mapping run yet.</div>'}
+      <div class="iro-intel-actions" style="margin-top:8px">
+        <button class="iro-intel-btn" ${busy} onclick="runIntelReview('${qId}','framework_mapping')">Map frameworks</button>
+      </div>
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Climate Materiality</div>
+      <div class="iro-intel-body">${q ? `${q.sev} severity · ${q.mat} materiality${(q.fw||[]).length ? ` · ${q.fw.join(', ')}` : ''}` : '—'}</div>
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Agent Assessment &amp; Confidence</div>
+      ${anyReview && anyReview.confidenceScore != null
+        ? `<div class="iro-intel-conf">${Math.round(anyReview.confidenceScore)}%</div><div class="iro-intel-conf-sub">from the most recent ${anyReview.reviewType.replace(/_/g,' ')} review${findGaps && findGaps.suggestedStatus ? ` — suggested status: ${_statusLabel(findGaps.suggestedStatus)}` : ''}</div>`
+        : '<div class="iro-intel-empty">No AI review run yet — use the buttons above.</div>'}
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Suggested Response</div>
+      ${draftResponse
+        ? `<div class="iro-intel-draft-tag">Climactix Agent Draft — pending review</div><div class="iro-intel-draft-box">${draftResponse.outputSummary}</div><div>${citationsHTML(draftResponse.citations)}</div>
+           <div class="iro-intel-actions" style="margin-top:8px"><button class="iro-intel-btn primary" onclick="insertDraftIntoResponse('${qId}')">Insert into Response</button></div>`
+        : `<div class="iro-intel-empty">No draft generated yet.</div><div class="iro-intel-actions" style="margin-top:8px"><button class="iro-intel-btn" ${busy} onclick="runIntelReview('${qId}','draft_response')">Generate Evidence-Based Response</button></div>`}
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Assessed Status</div>
+      <div class="iro-intel-body">${assessed
+        ? `${_statusLabel(assessed.assessedStatus)} · ${assessed.assessedConfidence!=null ? Math.round(assessed.assessedConfidence)+'%' : '—'} confidence · basis: ${assessed.assessedBasis==='ai_review' ? 'AI review, human-accepted' : 'human review'}`
+        : 'Pending — no recommendation accepted yet.'}</div>
+      <div class="iro-intel-actions" style="margin-top:8px">
+        <button class="iro-intel-btn primary" ${findGaps && findGaps.suggestedStatus ? '' : 'disabled'} onclick="acceptIntelRecommendation('${qId}')">Accept Recommendation</button>
+        <button class="iro-intel-btn" onclick="requestHumanReviewFromDrawer('${qId}')">Request Human Review</button>
+        <button class="iro-intel-btn" onclick="closeIntelDrawer()">Close</button>
+      </div>
+    </div>`;
+}
+
+async function runIntelReview(qId, reviewType) {
+  const ev = _intelMostRecentEvidence(qId);
+  if (!ev) { alert('Upload evidence for this question first.'); return; }
+  await runEvidenceAIReview(ev.id, reviewType, qId);
+  // STATE.aiReviewsByQuestion refreshes via the live subscription, which
+  // calls _refreshIntelDrawerIfOpen() — no manual re-render needed here.
+}
+
+async function acceptIntelRecommendation(qId) {
+  const findGaps = _latestAIReview(qId, 'find_gaps');
+  if (!findGaps || !findGaps.suggestedStatus || !window.RiskOSData) return;
+  try {
+    await window.RiskOSData.setAssessedStatus(STATE.assessmentId, qId, {
+      assessedStatus: findGaps.suggestedStatus,
+      assessedConfidence: findGaps.confidenceScore,
+      assessedBasis: 'ai_review',
+    });
+    await window.RiskOSData.logAuditEvent(STATE.assessmentId, 'assessed_status_accepted', qId, null, {assessedStatus: findGaps.suggestedStatus});
+  } catch (e) { alert('Could not record assessed status: ' + (e.message||e)); }
+}
+
+// The draft is inserted as plain text into the human's own Management
+// Response field — it becomes indistinguishable from "Company Submitted"
+// text the moment the human edits and saves it, per spec §6 ("never
+// silently overwrite the respondent's answer"). Only a select5 question
+// with a status already chosen has this field at all.
+function insertDraftIntoResponse(qId) {
+  const draft = _latestAIReview(qId, 'draft_response');
+  if (!draft) return;
+  const ans = STATE.answers[qId];
+  const justTextarea = document.getElementById('just-'+qId);
+  const narrativeTextarea = document.getElementById('narrative-'+qId);
+  if (justTextarea && ans && typeof ans === 'object') {
+    justTextarea.value = draft.outputSummary;
+    updateJustification(qId, draft.outputSummary);
+  } else if (narrativeTextarea) {
+    narrativeTextarea.value = draft.outputSummary;
+    updateNarrative(qId, draft.outputSummary);
+  } else {
+    alert('Select a declared status for this question first — the response field only appears once a status is chosen.');
+    return;
+  }
+  alert('Draft inserted into the Management Response field — review and edit it before it is treated as your submission.');
+}
+
+function requestHumanReviewFromDrawer(qId) { fileReviewAction(qId, 'flag_for_review'); }
+
+/* ─── EVIDENCE LIBRARY — reuse one upload across multiple questions (spec §17) ─── */
+function openEvidenceLibrary(qId) {
+  const allEvidence = Object.values(STATE.evidenceByQuestion || {}).flat();
+  if (!allEvidence.length) { alert('No evidence has been uploaded anywhere in this assessment yet.'); return; }
+  const q = QUESTIONS.find(x => x.id === qId);
+  const relevantTags = new Set([...(q?.fw||[]), q?.sev, q?.mat].filter(Boolean));
+  const scored = allEvidence
+    .filter(ev => ev.questionId !== qId) // already directly attached to this question — nothing to "reuse"
+    .map(ev => ({ ev, relevant: !!(ev.documentCategory && relevantTags.size && [...relevantTags].some(t => (ev.documentCategory||'').toLowerCase().includes(String(t).toLowerCase()))) }))
+    .sort((a,b) => (b.relevant - a.relevant));
+  const listHTML = scored.map(({ev, relevant}) => `
+    <div class="iro-ev-item">
+      <div class="iro-ev-icon">📎</div>
+      <div class="iro-ev-body">
+        <div class="iro-ev-name">${ev.originalName||ev.filename}${relevant ? ' <span style="color:var(--iro-accent);font-size:9px;font-family:var(--iro-mono)">RELEVANT</span>' : ''}</div>
+        <div class="iro-ev-meta">From ${ev.questionId}${ev.documentCategory ? ' · '+ev.documentCategory : ''}</div>
+      </div>
+      <div class="iro-ev-actions">
+        <button class="iro-ev-ai-btn" onclick="attachExistingEvidence('${qId}','${ev.id}')">Attach to this question</button>
+      </div>
+    </div>`).join('') || '<div class="iro-ws-empty">No other evidence available to reuse.</div>';
+
+  const body = document.getElementById('intelBody');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Assessment Evidence Library</div>
+      <div class="iro-intel-body" style="margin-bottom:8px">Attach a file already uploaded elsewhere in this assessment instead of uploading it again.</div>
+      ${listHTML}
+      <div class="iro-intel-actions" style="margin-top:10px">
+        <button class="iro-intel-btn" onclick="_renderIntelDrawerContent('${qId}')">← Back</button>
+      </div>
+    </div>`;
+}
+
+async function attachExistingEvidence(qId, evidenceId) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  try {
+    await window.RiskOSData.linkExistingEvidence(STATE.assessmentId, evidenceId, qId);
+    await window.RiskOSData.logAuditEvent(STATE.assessmentId, 'evidence_reused', evidenceId, null, {questionId: qId});
+    _renderIntelDrawerContent(qId);
+  } catch (e) { alert('Could not attach evidence: ' + (e.message||e)); }
+}
+
+/* ─── PERSISTENT CLIMACTIX ASSESSMENT AGENT ───
+   Scoped chat over this assessment's real Firestore data via a fixed
+   server-side toolset (functions/services/assessment_agent.py) — every
+   answer is grounded in a tool call the Cloud Function actually made,
+   never invented client-side. */
+let _agentPanelOpen = false;
+
+function toggleAgentPanel() {
+  _agentPanelOpen = !_agentPanelOpen;
+  document.getElementById('agentPanel').classList.toggle('open', _agentPanelOpen);
+  if (_agentPanelOpen) document.getElementById('agentInput')?.focus();
+}
+
+function _showAgentLauncherIfReady() {
+  const launcher = document.getElementById('agentLauncher');
+  if (launcher) launcher.style.display = (window.RiskOSData && STATE.assessmentId) ? 'block' : 'none';
+}
+
+function _renderAgentMessages() {
+  const el = document.getElementById('agentMessages');
+  if (!el) return;
+  const messages = STATE.agentConversation || [];
+  if (!messages.length) {
+    el.innerHTML = '<div class="iro-agent-empty">Ask things like "what evidence am I missing?" or "which critical questions could affect my score?" — every answer is grounded in this assessment\'s actual data.</div>';
+    return;
+  }
+  el.innerHTML = messages.map(m => `<div class="iro-agent-msg ${m.role}">${(m.text||'').replace(/</g,'&lt;')}</div>`).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+async function sendAgentMessage() {
+  const input = document.getElementById('agentInput');
+  const btn = document.getElementById('agentSendBtn');
+  const message = (input?.value || '').trim();
+  if (!message || !window.RiskOSData || !STATE.assessmentId) return;
+  input.value = '';
+  STATE.agentConversation = [...(STATE.agentConversation||[]), {role:'user', text: message}];
+  _renderAgentMessages();
+  btn.disabled = true;
+  try {
+    const result = await window.RiskOSData.chatWithAssessmentAgent(STATE.assessmentId, message);
+    STATE.agentConversation = [...STATE.agentConversation, {role:'assistant', text: result.reply}];
+  } catch (e) {
+    STATE.agentConversation = [...STATE.agentConversation, {role:'assistant', text: 'The Assessment Agent could not respond: ' + (e.message||e)}];
+  } finally {
+    btn.disabled = false;
+    _renderAgentMessages();
+  }
+}
+
+function _startAgentConversationSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSAgentConvo) { _unsubRiskOSAgentConvo(); _unsubRiskOSAgentConvo = null; }
+  _unsubRiskOSAgentConvo = window.RiskOSData.subscribeAgentConversation(STATE.assessmentId, (messages) => {
+    STATE.agentConversation = messages;
+    _renderAgentMessages();
+  });
 }
 
 function _currentUid() {

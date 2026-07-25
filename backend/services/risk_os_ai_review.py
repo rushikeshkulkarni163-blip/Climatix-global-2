@@ -21,6 +21,16 @@ Supported review_type values (matches risk_os_ai_reviews.review_type CHECK):
   confidence_score     Composite confidence derived from the above
   exec_summary         Board-ready summary grounded in the document text
   compare_previous     Diff against the prior version of the same evidence slot
+  draft_response       Evidence-grounded draft of a management response paragraph,
+                        for a human to review/edit/insert — never auto-saved as
+                        the company's own answer (Question Intelligence drawer)
+
+Citations: extractor.py tags every extracted unit with a real locator
+([Page N] for PDF, [¶N] / [Table T.Row R] for DOCX, [Sheet: X, Row N] for
+XLSX, [Row N] for CSV). The grounded prompt below requires the model to
+reuse one of those exact tags when citing evidence rather than inventing a
+page/row number — so a citation is either a real locator from the source
+document or absent, never fabricated.
 """
 
 from __future__ import annotations
@@ -83,8 +93,33 @@ def _extract_document_text(content: bytes, filename: str, content_type: str = ""
     return text
 
 
+_CITATION_INSTRUCTION = (
+    'The document text below is pre-tagged with real locator markers, e.g. "[Page 3]", '
+    '"[¶12]", "[Table 1.Row 4]", "[Sheet: Operating Assets, Row 9]", "[Row 12]". When you '
+    "cite evidence, you MUST reuse the exact locator tag it appears under — never invent a page, "
+    "row, or paragraph number that isn't one of these tags. If nothing in the text is directly "
+    "citable, return an empty citations list rather than guessing."
+)
+
+# Extra JSON fields requested per review_type, beyond the universal
+# {result, confidence, citations} — merged into the schema instructions sent
+# to the model, then lifted into the returned dict by run_ai_review() below.
+_EXTRA_SCHEMA_FIELDS = {
+    "find_gaps": (
+        '"evidence_gap": "<one paragraph naming exactly what is missing, or empty string if '
+        'nothing is missing>", "suggested_status": "<one of IMPLEMENTED, PROGRESSING, PLANNED, '
+        'NOT_ADDRESSED, NA — your best-supported read of the declared status based ONLY on this '
+        'document>"'
+    ),
+    "summarize": (
+        '"relevant_evidence_excerpt": "<a short excerpt, close to verbatim, from the document '
+        'text that is most relevant to the assessment question — empty string if none>"'
+    ),
+}
+
+
 def _llm_grounded(review_type: str, text: str, question_text: str, prior_summary: Optional[str]) -> dict:
-    """summarize / exec_summary / find_gaps(narrative) / compare_previous — single grounded LLM call."""
+    """summarize / exec_summary / find_gaps / compare_previous / draft_response — single grounded LLM call."""
     client = _get_client()
 
     task_instructions = {
@@ -105,12 +140,22 @@ def _llm_grounded(review_type: str, text: str, question_text: str, prior_summary
             "evidence slot provided below. State concretely what changed, what improved, what got "
             "weaker, or 'No prior version to compare' if none was provided."
         ),
+        "draft_response": (
+            "Draft a professional, institutional-grade management-response paragraph answering the "
+            "assessment question below, using ONLY facts present in the document text. If the text "
+            "only partially supports the question (e.g. coverage for some but not all assets), the "
+            "draft must state that partial coverage honestly with the actual figures found — never "
+            "imply full compliance the text doesn't support. This draft will be shown to a human as "
+            "a suggestion pending their review, never saved automatically."
+        ),
     }
     instruction = task_instructions.get(review_type)
     if instruction is None:
         raise ValueError(f"_llm_grounded does not handle review_type={review_type!r}")
 
     prior_block = f"\nPREVIOUS VERSION SUMMARY:\n{prior_summary}\n" if prior_summary else ""
+    extra_fields = _EXTRA_SCHEMA_FIELDS.get(review_type, "")
+    extra_fields_json = f", {extra_fields}" if extra_fields else ""
 
     user_prompt = f"""ASSESSMENT QUESTION THIS EVIDENCE SUPPORTS:
 {question_text or "(not specified)"}
@@ -121,11 +166,15 @@ DOCUMENT TEXT (truncated to first 12000 characters):
 TASK:
 {instruction}
 
-Return JSON: {{"result": "<your answer>", "confidence": <0.0-1.0 based on how directly the text supports your answer>}}"""
+{_CITATION_INSTRUCTION}
+
+Return JSON: {{"result": "<your answer>", "confidence": <0.0-1.0 based on how directly the text \
+supports your answer>, "citations": [{{"locator": "<exact tag from the text, e.g. [Page 3]>", \
+"excerpt": "<short quote from right after that tag>"}}]{extra_fields_json}}}"""
 
     resp = client.chat.completions.create(
         model=MODEL,
-        max_tokens=700,
+        max_tokens=800,
         temperature=0.1,
         messages=[
             {"role": "system", "content": _GROUNDED_SYSTEM},
@@ -133,11 +182,20 @@ Return JSON: {{"result": "<your answer>", "confidence": <0.0-1.0 based on how di
         ],
     )
     parsed = _parse_json(resp.choices[0].message.content or "")
-    return {
+    citations = parsed.get("citations") or []
+    if not isinstance(citations, list):
+        citations = []
+    out = {
         "output_summary": parsed.get("result", "").strip(),
         "confidence_score": round(float(parsed.get("confidence", 0.5)) * 100, 1),
         "model_used": MODEL,
+        "citations": [c for c in citations if isinstance(c, dict) and c.get("locator")][:5],
     }
+    if review_type in _EXTRA_SCHEMA_FIELDS:
+        for key in ("evidence_gap", "suggested_status", "relevant_evidence_excerpt"):
+            if key in parsed:
+                out[key] = parsed[key]
+    return out
 
 
 def run_ai_review(
@@ -159,15 +217,23 @@ def run_ai_review(
     """
     text = _extract_document_text(content, filename, content_type)
 
-    if review_type in ("summarize", "exec_summary", "find_gaps", "compare_previous"):
+    if review_type in ("summarize", "exec_summary", "find_gaps", "compare_previous", "draft_response"):
         result = _llm_grounded(review_type, text, question_text, prior_summary)
-        return {
+        out = {
             "output_summary": result["output_summary"],
             "extracted_data": None,
             "contradictions": None,
             "confidence_score": result["confidence_score"],
             "model_used": result["model_used"],
+            "citations": result.get("citations", []),
         }
+        # Optional extra fields only find_gaps/summarize populate (see
+        # _EXTRA_SCHEMA_FIELDS) — included when present, omitted otherwise,
+        # never backfilled with a guessed value.
+        for key in ("evidence_gap", "suggested_status", "relevant_evidence_excerpt"):
+            if key in result:
+                out[key] = result[key]
+        return out
 
     if review_type == "extract_data":
         scan = scan_for_greenwashing(text, company_name)

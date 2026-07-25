@@ -48,32 +48,44 @@ def _extract_pdf(content: bytes) -> str:
 
 
 def _extract_docx(content: bytes) -> str:
-    """Extract text from DOCX using python-docx."""
+    """Extract text from DOCX using python-docx.
+
+    Each paragraph/table-row is prefixed with a locator (¶N / TableT.RowR)
+    so an AI review's citation can point at a real position in the source
+    document instead of just "somewhere in this file" — needed for the
+    Question Intelligence drawer's "View Source" feature.
+    """
     try:
         from docx import Document
 
         doc = Document(io.BytesIO(content))
-        paragraphs = []
+        lines = []
 
+        para_idx = 0
         for para in doc.paragraphs:
             text = para.text.strip()
             if text:
-                paragraphs.append(text)
+                para_idx += 1
+                lines.append(f"[¶{para_idx}] {text}")
 
-        # Also extract tables
-        for table in doc.tables:
-            for row in table.rows:
+        for table_idx, table in enumerate(doc.tables, start=1):
+            for row_idx, row in enumerate(table.rows, start=1):
                 cells = [cell.text.strip() for cell in row.cells if cell.text.strip()]
                 if cells:
-                    paragraphs.append(" | ".join(cells))
+                    lines.append(f"[Table {table_idx}.Row {row_idx}] " + " | ".join(cells))
 
-        return _clean_text("\n\n".join(paragraphs))
+        return _clean_text("\n\n".join(lines))
     except ImportError:
         raise RuntimeError("python-docx not installed. Run: pip install python-docx")
 
 
 def _extract_xlsx(content: bytes) -> str:
-    """Extract text from XLSX using openpyxl."""
+    """Extract text from XLSX using openpyxl.
+
+    Each row keeps its real 1-based spreadsheet row number as a locator
+    (e.g. "[Sheet: Operating Assets, Row 12]") so citations can point at
+    an actual row instead of just the filename.
+    """
     try:
         import openpyxl
 
@@ -82,10 +94,10 @@ def _extract_xlsx(content: bytes) -> str:
 
         for sheet in wb.worksheets:
             parts.append(f"=== Sheet: {sheet.title} ===")
-            for row in sheet.iter_rows(values_only=True):
+            for row_idx, row in enumerate(sheet.iter_rows(values_only=True), start=1):
                 cells = [str(c) for c in row if c is not None and str(c).strip() not in ("", "None")]
                 if cells:
-                    parts.append("  |  ".join(cells))
+                    parts.append(f"[Sheet: {sheet.title}, Row {row_idx}] " + "  |  ".join(cells))
 
         return _clean_text("\n".join(parts))
     except ImportError:
@@ -93,7 +105,12 @@ def _extract_xlsx(content: bytes) -> str:
 
 
 def _extract_csv(content: bytes) -> str:
-    """Extract text from CSV — renders as labelled rows for the AI."""
+    """Extract text from CSV — renders as labelled rows for the AI.
+
+    Rows keep their real 1-based CSV row number (header = row 1) as a
+    locator, matching how a human would refer to "row 12" when opening
+    the same file in a spreadsheet app.
+    """
     import csv
 
     try:
@@ -106,7 +123,7 @@ def _extract_csv(content: bytes) -> str:
         headers = rows[0] if rows else []
         parts   = []
 
-        for row in rows[1:]:
+        for row_idx, row in enumerate(rows[1:], start=2):
             if not any(cell.strip() for cell in row):
                 continue
             # Pair each cell with its header for readable context
@@ -116,7 +133,7 @@ def _extract_csv(content: bytes) -> str:
                     label = headers[i].strip() if i < len(headers) else f"Column {i+1}"
                     pairs.append(f"{label}: {cell.strip()}")
             if pairs:
-                parts.append(" | ".join(pairs))
+                parts.append(f"[Row {row_idx}] " + " | ".join(pairs))
 
         return _clean_text("\n".join(parts))
     except Exception as e:

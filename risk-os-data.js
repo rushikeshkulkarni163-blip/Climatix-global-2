@@ -187,6 +187,76 @@ export function subscribeAnswers(assessmentId, onChange) {
   return () => unsub();
 }
 
+// Separate from subscribeAnswers() above (which only surfaces rawAnswer,
+// the DECLARED value) so a caller can tell Declared apart from Assessed
+// without the two ever being conflated into one field. Keyed by questionId
+// -> {assessedStatus, assessedConfidence, assessedBasis, assessedAt} |
+// undefined (undefined = no human has accepted a recommendation yet).
+export function subscribeAssessedStatuses(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_answers_v1'), where('assessmentId', '==', assessmentId)),
+      snap => {
+        const out = {};
+        snap.forEach(d => {
+          const a = d.data();
+          if (a.assessedStatus) {
+            out[a.questionId] = {
+              assessedStatus: a.assessedStatus, assessedConfidence: a.assessedConfidence,
+              assessedBasis: a.assessedBasis, assessedAt: a.assessedAt,
+            };
+          }
+        });
+        onChange(out);
+      },
+      err => console.error('[risk-os-data] assessed-status subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Generic Management Response / Supporting Narrative ───────────────────
+// For every NON-select5 question type (yesno/dropdown/number/text/upload).
+// select5 questions already carry their write-up inside rawAnswer.justification
+// via saveAnswer() above — this is the parallel field for every other type,
+// stored on the same ros_answers_v1 doc so a question's declared answer and
+// its narrative always live together. assessmentId/questionId are written
+// explicitly on every call (not left to merge from a prior saveAnswer) so a
+// narrative typed before the structured answer is ever saved still shows up
+// in assessmentId-scoped queries.
+export async function saveNarrative(assessmentId, questionId, text) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const uid = _uid();
+  if (!uid) return;
+  const { db, doc, setDoc, serverTimestamp } = await _firestore();
+  await setDoc(doc(db, 'ros_answers_v1', `${assessmentId}_${questionId}`), {
+    assessmentId, questionId, narrative: text,
+    narrativeSavedAt: serverTimestamp(), narrativeSavedBy: uid,
+  }, { merge: true });
+}
+
+export function subscribeNarratives(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_answers_v1'), where('assessmentId', '==', assessmentId)),
+      snap => {
+        const out = {};
+        snap.forEach(d => {
+          const a = d.data();
+          if (a.narrative) out[a.questionId] = a.narrative;
+        });
+        onChange(out);
+      },
+      err => console.error('[risk-os-data] narratives subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
 // Upserts one answer + appends a version-history row. Fire-and-forget from
 // the caller's perspective (climate-risk-os.html keeps STATE.answers as the
 // source of truth for rendering; this just persists it).
@@ -369,6 +439,23 @@ export function subscribeAIReviews(evidenceId, onChange) {
       query(collection(db, 'ros_ai_reviews_v1'), where('evidenceId', '==', evidenceId)),
       snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0))),
       err => console.error('[risk-os-data] AI review subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// Assessment-wide AI review stream (mirrors subscribeAllEvidence) — used to
+// power the Question Intelligence drawer's per-question review history and
+// the compact action bar's "Confidence: N%" badge without waiting for each
+// question's Workspace panel to be individually expanded first.
+export function subscribeAllAIReviews(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_ai_reviews_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] all-AI-reviews subscription failed', err),
     );
   });
   return () => unsub();
@@ -737,6 +824,120 @@ export function subscribeAuditLog(assessmentId, onChange) {
       query(collection(db, 'ros_audit_log_v1'), where('assessmentId', '==', assessmentId)),
       snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0))),
       err => console.error('[risk-os-data] audit log subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Assessed status — Declared / Evidenced / Assessed (spec §8) ──────────
+// Written ONLY by an explicit human "Accept Recommendation" click in the
+// Question Intelligence drawer — never auto-applied from an AI review, per
+// the same "AI must not silently modify scores" discipline already implicit
+// in saveClayerScores(). assessedBasis records WHY a human accepted it
+// ('ai_review' vs 'human_review'), so the provenance survives alongside the
+// declared answer rather than overwriting it.
+export async function setAssessedStatus(assessmentId, questionId, { assessedStatus, assessedConfidence, assessedBasis }) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, doc, setDoc, serverTimestamp } = await _firestore();
+  await setDoc(doc(db, 'ros_answers_v1', `${assessmentId}_${questionId}`), {
+    assessedStatus: assessedStatus || null,
+    assessedConfidence: assessedConfidence ?? null,
+    assessedBasis: assessedBasis || null,
+    assessedAt: serverTimestamp(),
+    assessedBy: uid,
+  }, { merge: true });
+}
+
+// ── Evidence Library — reuse one upload across multiple questions ────────
+// (spec §17). The original ros_evidence_v1 doc and its own questionId are
+// never mutated — a link is a separate, append-only join row, so one
+// upload can serve many questions without duplicating the file or losing
+// track of where it was originally attached.
+export async function linkExistingEvidence(assessmentId, evidenceId, questionId) {
+  if (!_USE_FIREBASE || !assessmentId) return null;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, collection, addDoc, serverTimestamp } = await _firestore();
+  const docRef = await addDoc(collection(db, 'ros_evidence_links_v1'), {
+    assessmentId, evidenceId, questionId, linkedBy: uid, linkedAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+export function subscribeEvidenceLinks(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_evidence_links_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] evidence links subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Contradiction flags — durable, cross-referenced version of what
+// detectContradictions() computes ephemerally client-side, plus findings
+// from AI evidence review and the evidence-graph traversal (spec §12/§13).
+// Cloud-Function-only write (functions/main.py: compute_evidence_graph,
+// and the 'contradictions' AI review type) — read-only here by design.
+export function subscribeContradictionFlags(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_contradiction_flags_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] contradiction flags subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Evidence graph — read-only nodes built by the compute_evidence_graph
+// Cloud Function trigger (functions/services/evidence_graph.py). Exposed
+// mainly for the Assessment Agent / debugging — the drawer surfaces
+// contradiction flags directly rather than walking the graph itself.
+export function subscribeEvidenceGraph(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_evidence_graph_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] evidence graph subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Persistent Climactix Assessment Agent (spec §16) ──────────────────────
+// Both the user's message and the agent's reply are appended server-side by
+// the assessment_agent_chat callable (functions/services/assessment_agent.py)
+// — the client only ever reads the conversation doc and calls the callable,
+// it never writes ros_agent_conversations_v1 directly (firestore.rules
+// denies that), so a fake assistant turn can never be injected client-side.
+export async function chatWithAssessmentAgent(assessmentId, message) {
+  if (!_USE_FIREBASE) return { reply: 'The Assessment Agent requires a connected backend — not available in local/demo mode.', toolCalls: [] };
+  const { functions, httpsCallable } = await _functionsApi();
+  const fn = httpsCallable(functions, 'assessment_agent_chat');
+  const res = await fn({ assessmentId, message });
+  return res.data;
+}
+
+export function subscribeAgentConversation(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  const uid = _uid();
+  if (!uid) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, doc, onSnapshot }) => {
+    unsub = onSnapshot(
+      doc(db, 'ros_agent_conversations_v1', `${assessmentId}_${uid}`),
+      snap => onChange(snap.exists() ? snap.data().messages || [] : []),
+      err => console.error('[risk-os-data] agent conversation subscription failed', err),
     );
   });
   return () => unsub();

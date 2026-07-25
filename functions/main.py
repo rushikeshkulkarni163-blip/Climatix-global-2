@@ -30,6 +30,8 @@ from firebase_functions.params import SecretParam
 
 from services.risk_os_ai_review import run_ai_review
 from services.industry_ontology import get_industry_config
+from services.evidence_graph import build_evidence_graph
+from services.assessment_agent import chat as run_assessment_agent_chat
 
 firebase_admin.initialize_app()
 
@@ -38,6 +40,7 @@ OPENAI_API_KEY = SecretParam("OPENAI_API_KEY")
 VALID_REVIEW_TYPES = {
     "summarize", "extract_data", "find_gaps", "contradictions",
     "framework_mapping", "confidence_score", "exec_summary", "compare_previous",
+    "draft_response",
 }
 
 
@@ -133,6 +136,12 @@ def request_evidence_ai_review(req: https_fn.CallableRequest) -> dict:
         "contradictions": result["contradictions"],
         "confidenceScore": result["confidence_score"],
         "modelUsed": result["model_used"],
+        # Real locators only (see extractor.py / risk_os_ai_review.py) — empty
+        # list when the model found nothing directly citable, never a guess.
+        "citations": result.get("citations") or [],
+        "evidenceGap": result.get("evidence_gap"),
+        "suggestedStatus": result.get("suggested_status"),
+        "relevantEvidenceExcerpt": result.get("relevant_evidence_excerpt"),
         "requestedBy": req.auth.uid,
         "createdAt": firestore.SERVER_TIMESTAMP,
     }
@@ -351,3 +360,112 @@ def _recompute_entity_and_descendants(db, entity_id: str, _seen: set | None = No
     # node's, so any real change here must propagate down the tree.
     for child in db.collection("ros_entities_v1").where("parentEntityId", "==", entity_id).stream():
         _recompute_entity_and_descendants(db, child.id, _seen)
+
+
+# ── Evidence Graph — scoped cross-question consistency check ─────────────
+# ros_evidence_graph_v1 / ros_contradiction_flags_v1 are both Cloud-Function-
+# only writes (firestore.rules) so a flag's existence can never be spoofed
+# client-side. Re-runs on every ros_answers_v1 write; see evidence_graph.py
+# for exactly what real data this reads and the one contradiction it can
+# honestly detect today.
+@firestore_fn.on_document_written(document="ros_answers_v1/{answerId}")
+def compute_evidence_graph(event: firestore_fn.Event) -> None:
+    if event.data.after is None:
+        return
+    assessment_id = event.data.after.to_dict().get("assessmentId")
+    if not assessment_id:
+        return
+    db = firestore.client()
+    result = build_evidence_graph(db, assessment_id)
+
+    batch = db.batch()
+    existing_nodes = db.collection("ros_evidence_graph_v1").where("assessmentId", "==", assessment_id).stream()
+    for doc in existing_nodes:
+        batch.delete(doc.reference)
+    for node in result["nodes"]:
+        ref = db.collection("ros_evidence_graph_v1").document(f"{assessment_id}_{node['nodeId']}")
+        batch.set(ref, {**node, "assessmentId": assessment_id, "updatedAt": firestore.SERVER_TIMESTAMP})
+    batch.commit()
+
+    # Idempotent flag lifecycle: appears while the condition holds, is
+    # removed once resolved, never duplicated across repeated answer writes.
+    stale = (
+        db.collection("ros_contradiction_flags_v1")
+        .where("assessmentId", "==", assessment_id).where("ruleId", "==", "GRAPH01")
+        .stream()
+    )
+    stale_ids = [d.id for d in stale]
+    contradiction = result["contradiction"]
+    if contradiction:
+        if not stale_ids:
+            db.collection("ros_contradiction_flags_v1").add({
+                "assessmentId": assessment_id, "ruleId": contradiction["ruleId"],
+                "severity": contradiction["severity"], "questionIds": contradiction["questionIds"],
+                "sourceType": contradiction["sourceType"], "summary": contradiction["summary"],
+                "createdAt": firestore.SERVER_TIMESTAMP,
+            })
+    else:
+        for doc_id in stale_ids:
+            db.collection("ros_contradiction_flags_v1").document(doc_id).delete()
+
+
+# ── Persistent Climactix Assessment Agent ─────────────────────────────────
+# Callable from the client as:
+#   httpsCallable(functions, 'assessment_agent_chat')({ assessmentId, message })
+# Scoped strictly to one assessment's real Firestore data via a fixed
+# toolset (services/assessment_agent.py) — never a generic open LLM chat,
+# and never trusts an assessmentId the model itself might try to invent,
+# since the tool implementations only ever read the assessmentId this
+# callable already RBAC-checked below.
+@https_fn.on_call(
+    region="us-central1",
+    memory=options.MemoryOption.MB_512,
+    timeout_sec=120,
+    secrets=[OPENAI_API_KEY],
+)
+def assessment_agent_chat(req: https_fn.CallableRequest) -> dict:
+    if req.auth is None:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.UNAUTHENTICATED, "Sign in required.")
+
+    data = req.data or {}
+    assessment_id = data.get("assessmentId")
+    message = (data.get("message") or "").strip()
+    if not assessment_id or not message:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+                                   "assessmentId and message are required.")
+
+    db = firestore.client()
+    assessment = db.collection("ros_assessments_v1").document(assessment_id).get()
+    if not assessment.exists:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.NOT_FOUND, "Assessment not found.")
+    company_id = assessment.to_dict().get("companyId")
+
+    member_ref = db.collection("ros_members_v1").document(f"{company_id}_{req.auth.uid}")
+    if not member_ref.get().exists:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.PERMISSION_DENIED,
+                                   "Not a member of this company.")
+
+    conversation_id = f"{assessment_id}_{req.auth.uid}"
+    conv_ref = db.collection("ros_agent_conversations_v1").document(conversation_id)
+    conv_snap = conv_ref.get()
+    history = conv_snap.to_dict().get("messages", []) if conv_snap.exists else []
+
+    try:
+        result = run_assessment_agent_chat(db, assessment_id, message, history)
+    except RuntimeError as e:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.FAILED_PRECONDITION,
+                                   f"Assessment agent unavailable: {e}")
+
+    now = firestore.SERVER_TIMESTAMP
+    new_messages = history + [
+        {"role": "user", "text": message, "createdAt": now},
+        {"role": "assistant", "text": result["reply"], "createdAt": now,
+         "toolCalls": [{"name": tc["name"], "args": tc["args"]} for tc in result["toolCalls"]]},
+    ]
+    conv_ref.set({
+        "assessmentId": assessment_id, "userId": req.auth.uid,
+        "messages": new_messages, "updatedAt": now,
+        **({} if conv_snap.exists else {"createdAt": now}),
+    }, merge=True)
+
+    return {"reply": result["reply"], "toolCalls": result["toolCalls"]}
