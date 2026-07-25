@@ -1212,6 +1212,111 @@
 }
 
 /* ═══════════════════════════════════════════════
+   DECLARATION & ACKNOWLEDGEMENT — consent gate
+   between the questionnaire and the C-LAYER report
+═══════════════════════════════════════════════ */
+.iro-decl-shell { max-width: 880px; margin: 0 auto; padding: 32px 24px 80px; }
+.iro-decl-stepper {
+  display: flex; align-items: center; gap: 0;
+  margin-bottom: 24px; padding: 14px 18px;
+  background: var(--card); border: 1px solid var(--iro-b); border-radius: var(--iro-radius);
+}
+.iro-decl-step {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-heading); font-size: 11px; font-weight: 500;
+  color: var(--iro-tm); flex: 1; position: relative;
+}
+.iro-decl-step .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--iro-b); flex-shrink: 0; }
+.iro-decl-step.done { color: var(--iro-t2); }
+.iro-decl-step.done .dot { background: var(--iro-green); }
+.iro-decl-step.active { color: var(--iro-accent); font-weight: 700; }
+.iro-decl-step.active .dot { background: var(--iro-accent); }
+.iro-decl-step:not(:last-child)::after {
+  content: ''; position: absolute; right: -50%; top: 3px; width: 100%; height: 1px; background: var(--iro-b);
+}
+
+.iro-decl-card {
+  background: var(--card); border: 1px solid var(--iro-b); border-left: 3px solid var(--iro-accent);
+  border-radius: var(--iro-radius); padding: 32px;
+}
+.iro-decl-ref {
+  font-family: var(--iro-mono); font-size: 9px; font-weight: 700; color: var(--iro-tm);
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+}
+.iro-decl-card h2 { font-family: var(--font-heading); font-size: 22px; font-weight: 700; color: var(--iro-t1); letter-spacing: -0.01em; margin-bottom: 6px; }
+.iro-decl-subtitle { font-size: 12px; color: var(--iro-t2); letter-spacing: 0.02em; margin-bottom: 20px; }
+
+.iro-decl-meta-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  padding: 14px 16px; background: var(--iro-s1); border: 1px solid var(--iro-b); border-radius: var(--iro-radius);
+  margin-bottom: 8px;
+}
+.iro-decl-meta-row > div { display: flex; flex-direction: column; gap: 3px; }
+.iro-decl-meta-row span { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-tm); letter-spacing: 0.06em; text-transform: uppercase; }
+.iro-decl-meta-row b { font-size: 13px; color: var(--iro-t1); font-weight: 700; }
+
+.iro-decl-bullets { margin: 0 0 4px; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+.iro-decl-bullets li { font-size: 13px; color: var(--iro-t2); line-height: 1.6; }
+
+.iro-decl-quote {
+  background: var(--iro-s1); border: 1px solid var(--iro-b); border-radius: var(--iro-radius);
+  padding: 16px 18px; margin-bottom: 14px;
+}
+.iro-decl-quote p { font-size: 13px; color: var(--iro-t1); line-height: 1.7; font-style: italic; }
+.iro-decl-quote p + p { margin-top: 10px; }
+
+.iro-decl-body-text { font-size: 13px; color: var(--iro-t2); line-height: 1.7; margin-bottom: 14px; }
+
+.iro-decl-notice {
+  background: rgba(180,83,9,0.05); border: 1px solid rgba(180,83,9,0.25); border-left: 3px solid var(--iro-gold);
+  border-radius: var(--iro-radius); padding: 16px 18px; margin-bottom: 8px;
+}
+.iro-decl-notice-title { font-family: var(--font-heading); font-size: 12px; font-weight: 700; color: var(--iro-gold); letter-spacing: 0.02em; margin-bottom: 8px; text-transform: uppercase; }
+.iro-decl-notice p { font-size: 13px; color: var(--iro-t2); line-height: 1.7; }
+.iro-decl-notice p + p { margin-top: 8px; }
+
+.iro-decl-final {
+  background: rgba(11,61,145,0.05); border: 1px solid rgba(11,61,145,0.25); border-left: 3px solid var(--iro-accent);
+  border-radius: var(--iro-radius); padding: 18px 20px; margin-bottom: 4px;
+}
+.iro-decl-final > p { font-size: 13px; color: var(--iro-t1); line-height: 1.7; margin-bottom: 14px; font-weight: 500; }
+
+.iro-decl-check {
+  display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
+  padding: 4px 0 14px;
+}
+.iro-decl-check input[type="checkbox"] {
+  width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; cursor: pointer;
+  accent-color: var(--iro-accent-fill);
+}
+.iro-decl-check span { font-size: 13px; color: var(--iro-t1); line-height: 1.55; font-weight: 500; }
+
+.iro-decl-gate-hint {
+  font-family: var(--iro-mono); font-size: 10px; color: var(--iro-tm); letter-spacing: 0.02em;
+  margin-top: 10px; text-align: right;
+}
+.iro-decl-gate-hint.ready { color: var(--iro-green); }
+
+.iro-decl-submitted-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-heading); font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--iro-green); background: rgba(30,142,62,0.08); border: 1px solid rgba(30,142,62,0.3);
+  border-radius: var(--iro-pill); padding: 6px 16px; margin-bottom: 18px;
+}
+.iro-decl-record {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px;
+  padding: 18px 20px; background: var(--iro-s1); border: 1px solid var(--iro-b); border-radius: var(--iro-radius);
+  margin-bottom: 20px;
+}
+.iro-decl-record .row { display: flex; flex-direction: column; gap: 3px; }
+.iro-decl-record .row span { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-tm); letter-spacing: 0.06em; text-transform: uppercase; }
+.iro-decl-record .row b { font-size: 13px; color: var(--iro-t1); font-weight: 700; }
+.iro-decl-record-detail {
+  margin-top: 16px; padding: 16px 18px; border: 1px dashed var(--iro-b); border-radius: var(--iro-radius);
+  font-family: var(--iro-mono); font-size: 11px; color: var(--iro-t2); line-height: 2;
+}
+
+/* ═══════════════════════════════════════════════
    FINAL REPORT SCREEN
 ═══════════════════════════════════════════════ */
 #iro-report {
@@ -2331,12 +2436,12 @@
         <div class="iro-compare-card">
           <div class="iro-compare-title">Designed to go beyond</div>
           <ul class="iro-compare-list">
-            <li><span class="mark r">↑</span> MSCI ESG — disclosure scoring only</li>
-            <li><span class="mark r">↑</span> Sustainalytics — risk exposure, not resilience</li>
-            <li><span class="mark r">↑</span> CDP questionnaire — self-reported, not contradiction-tested</li>
-            <li><span class="mark r">↑</span> TCFD tools — qualitative framework, not scored</li>
-            <li><span class="mark r">↑</span> Bloomberg ESG — data aggregation, not intelligence</li>
-            <li><span class="mark r">↑</span> S&amp;P / Moody's Climate — sector-average, not entity-specific</li>
+            <li><span class="mark r">↑</span> Generic ESG disclosure scoring — measures reporting, not resilience</li>
+            <li><span class="mark r">↑</span> Static risk-exposure ratings — no dynamic scenario stress testing</li>
+            <li><span class="mark r">↑</span> Self-reported questionnaires — not cross-validated for contradictions</li>
+            <li><span class="mark r">↑</span> Qualitative disclosure frameworks — descriptive, not quantitatively scored</li>
+            <li><span class="mark r">↑</span> Data aggregation platforms — surface data, not decision intelligence</li>
+            <li><span class="mark r">↑</span> Sector-average benchmarks — not entity-specific risk modeling</li>
           </ul>
         </div>
       </div>
@@ -2782,6 +2887,157 @@
       </aside>
 
     </div><!-- /.iro-assess-layout -->
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SCREEN: DECLARATION & ACKNOWLEDGEMENT
+       Consent gate — required before an assessment is accepted for
+       scoring. Records the exact declaration / methodology / questionnaire
+       versions the signer accepted, not just a boolean flag.
+  ════════════════════════════════════════════ -->
+  <div id="iro-declaration" class="iro-screen">
+    <div class="iro-decl-shell">
+
+      <div class="iro-decl-stepper">
+        <div class="iro-decl-step done"><span class="dot"></span>Assessment Completed</div>
+        <div class="iro-decl-step done"><span class="dot"></span>Evidence Review</div>
+        <div class="iro-decl-step active"><span class="dot"></span>Declaration</div>
+        <div class="iro-decl-step" id="declStepSubmission"><span class="dot"></span>Submission</div>
+      </div>
+
+      <!-- FORM -->
+      <div id="declFormWrap">
+        <div class="iro-decl-card">
+          <div class="iro-decl-ref">Climactix Global | Risk OS</div>
+          <h2>Climate Risk Assessment — Declaration &amp; Acknowledgement</h2>
+          <p class="iro-decl-subtitle">Data Integrity · Methodology Consent · Assessment Responsibility</p>
+
+          <div class="iro-decl-meta-row">
+            <div><span>Assessment ID</span><b id="declAssessmentId">—</b></div>
+            <div><span>Organisation</span><b id="declOrgDisplay">—</b></div>
+            <div><span>Methodology</span><b id="declMethodologyDisplay">—</b></div>
+            <div><span>Evidence Files</span><b id="declEvidenceCount">0</b></div>
+          </div>
+
+          <!-- 1. Purpose -->
+          <div class="iro-form-section-label">1 · Purpose of This Page</div>
+          <ul class="iro-decl-bullets">
+            <li>The organisation submitting this assessment is responsible for the information provided.</li>
+            <li>The organisation confirms that, to the best of its knowledge, submitted information is true, accurate, complete and not intentionally misleading.</li>
+            <li>Climactix Global evaluates the information using its proprietary climate-risk assessment methodology.</li>
+            <li>Assessment results depend on the quality, completeness, relevance and verifiability of the underlying information.</li>
+            <li>A Climactix score, rating, risk classification or analytical output is an assessment result and should not be represented as a guarantee, certification of future performance, credit rating, investment recommendation or assurance opinion unless explicitly stated otherwise.</li>
+            <li>Supporting documents may be used to strengthen evidence and assessment confidence.</li>
+            <li>Climactix Global does not assume responsibility for inaccurate, incomplete, outdated, manipulated or misleading information supplied by the assessed organisation or authorised respondent.</li>
+          </ul>
+
+          <!-- 2. Data Declaration -->
+          <div class="iro-form-section-label">2 · Organisation Data Declaration</div>
+          <div class="iro-decl-quote">
+            <p>By submitting this Climate Risk Assessment, I confirm that the information, responses, declarations, supporting documents and other materials provided during this assessment are, to the best of my knowledge and authority, true, accurate and complete.</p>
+            <p>I further confirm that material information relevant to the assessment has not knowingly been omitted, concealed, manipulated or misrepresented.</p>
+            <p>I understand that Climactix Global may rely upon the submitted information when generating climate-risk scores, indicators, classifications, analytical outputs and assessment results.</p>
+          </div>
+          <label class="iro-decl-check">
+            <input type="checkbox" id="declCheckTrue" onchange="_updateDeclSubmitState()">
+            <span>I confirm that the information submitted is true and accurate to the best of my knowledge and authority.</span>
+          </label>
+
+          <!-- 3. Authorisation -->
+          <div class="iro-form-section-label">3 · Authorisation to Submit</div>
+          <label class="iro-decl-check">
+            <input type="checkbox" id="declCheckAuthorised" onchange="_updateDeclSubmitState()">
+            <span>I confirm that I am authorised by the organisation to submit this assessment and associated information.</span>
+          </label>
+          <div class="iro-form-grid">
+            <div class="iro-field"><label>Full Name *</label><input type="text" id="declFullName" placeholder="e.g. Ananya Rao" oninput="_updateDeclSubmitState()"></div>
+            <div class="iro-field"><label>Designation / Role *</label><input type="text" id="declDesignation" placeholder="e.g. Chief Sustainability Officer" oninput="_updateDeclSubmitState()"></div>
+            <div class="iro-field"><label>Organisation *</label><input type="text" id="declOrganisation" placeholder="Legal entity name" oninput="_updateDeclSubmitState()"></div>
+            <div class="iro-field"><label>Corporate Email *</label><input type="email" id="declEmail" placeholder="name@organisation.com" oninput="_updateDeclSubmitState()"></div>
+            <div class="iro-field"><label>Department *</label><input type="text" id="declDepartment" placeholder="e.g. Risk &amp; Sustainability" oninput="_updateDeclSubmitState()"></div>
+            <div class="iro-field"><label>Employee / Authorisation Reference</label><input type="text" id="declAuthRef" placeholder="Optional"></div>
+          </div>
+          <div class="iro-mandate-meta">Date &amp; time of submission: <b id="declTimestamp">—</b></div>
+
+          <!-- 4. Methodology -->
+          <div class="iro-form-section-label">4 · Climactix Methodology Acknowledgement</div>
+          <div class="iro-decl-quote">
+            <p>The Climactix Climate Risk Assessment is evaluated using Climactix Global's proprietary methodologies, scoring models, analytical frameworks, sector-specific assessment logic, evidence evaluation processes and climate-risk intelligence models.</p>
+            <p>The resulting scores and outputs may consider factors including data completeness, evidence quality, climate exposure, transition preparedness, physical-risk exposure, governance, emissions performance, financial materiality, scenario resilience, regulatory exposure and other relevant climate-risk indicators.</p>
+            <p>Assessment results may change where underlying information, evidence, methodology, scenarios, benchmarks, regulatory conditions or relevant datasets change.</p>
+          </div>
+          <label class="iro-decl-check">
+            <input type="checkbox" id="declCheckMethodology" onchange="_updateDeclSubmitState()">
+            <span>I understand and acknowledge that assessment results are calculated using Climactix Global's applicable methodologies and scoring logic.</span>
+          </label>
+
+          <!-- 5. Data Quality -->
+          <div class="iro-form-section-label">5 · Data Quality &amp; Evidence Responsibility</div>
+          <div class="iro-decl-quote">
+            <p>The reliability of an assessment depends materially on the quality of the information and evidence available.</p>
+            <p>Where information cannot be independently verified, is incomplete, contradictory or unsupported, Climactix may apply appropriate evidence-quality, confidence, completeness or methodology adjustments in accordance with the applicable assessment methodology.</p>
+          </div>
+          <label class="iro-decl-check">
+            <input type="checkbox" id="declCheckDataQuality" onchange="_updateDeclSubmitState()">
+            <span>I understand that insufficient or unverifiable evidence may affect the assessment score, confidence level or final result.</span>
+          </label>
+
+          <!-- 6. Limitation -->
+          <div class="iro-form-section-label">6 · Limitation of Assessment</div>
+          <div class="iro-decl-notice">
+            <div class="iro-decl-notice-title">Important Assessment Notice</div>
+            <p>Climactix Global provides climate-risk intelligence and analytical assessments based on available information and applicable methodologies.</p>
+            <p>Unless expressly stated otherwise, an assessment does not constitute an audit, statutory certification, legal opinion, investment advice, credit rating, insurance recommendation or guarantee of environmental or financial performance.</p>
+            <p>Assessment results represent an analytical view based on the information, assumptions, methodologies, scenarios and evidence applicable at the time of assessment.</p>
+          </div>
+
+          <!-- 7. Misrepresentation -->
+          <div class="iro-form-section-label">7 · Misrepresentation &amp; Reassessment</div>
+          <p class="iro-decl-body-text">If Climactix subsequently identifies material inconsistencies, omissions, misrepresentations or evidence that materially conflicts with information submitted during the assessment, Climactix may, subject to its applicable methodology and terms, review, revise, suspend or withdraw the relevant assessment result.</p>
+          <label class="iro-decl-check">
+            <input type="checkbox" id="declCheckReassessment" onchange="_updateDeclSubmitState()">
+            <span>I acknowledge that material discrepancies may result in reassessment or revision of the assessment outcome.</span>
+          </label>
+
+          <!-- 8. Final Declaration -->
+          <div class="iro-form-section-label">8 · Final Declaration</div>
+          <div class="iro-decl-final">
+            <p>By proceeding, I confirm that I have reviewed the information submitted in this assessment and acknowledge the basis on which Climactix Global will conduct the Climate Risk Assessment.</p>
+            <label class="iro-decl-check">
+              <input type="checkbox" id="declCheckFinal" onchange="_updateDeclSubmitState()">
+              <span>I have read, understood and accept the Assessment Declaration and Acknowledgement.</span>
+            </label>
+          </div>
+
+          <div class="iro-entity-actions">
+            <button class="iro-btn-ghost" onclick="prevSection()">← Back to Assessment</button>
+            <button class="iro-btn-primary" id="btnSubmitDeclaration" onclick="submitDeclaration()" disabled>Submit Assessment</button>
+          </div>
+          <div class="iro-decl-gate-hint" id="declGateHint">All declarations above must be accepted, and signer details completed, before submission is enabled.</div>
+        </div>
+      </div>
+
+      <!-- POST-SUBMISSION CONFIRMATION -->
+      <div id="declSubmittedWrap" style="display:none">
+        <div class="iro-decl-card">
+          <div class="iro-decl-submitted-badge">✓ ASSESSMENT SUBMITTED</div>
+          <p class="iro-decl-body-text">Your Climate Risk Assessment has been submitted to Climactix Global Risk OS. The assessment will be evaluated using the applicable Climactix methodology and the information and evidence associated with this assessment.</p>
+
+          <div class="iro-decl-record" id="declRecordSummary"></div>
+
+          <div class="iro-entity-actions">
+            <button class="iro-btn-ghost" onclick="toggleSubmissionRecord()">View Submission Record</button>
+            <button class="iro-btn-ghost" onclick="downloadAcknowledgement()">Download Acknowledgement</button>
+            <button class="iro-btn-primary" onclick="viewFullReport()">View Full Intelligence Report →</button>
+          </div>
+          <div class="iro-entity-actions" style="margin-top:0;border-top:none;padding-top:0">
+            <button class="iro-btn-ghost" onclick="returnToRiskOS()">← Return to Risk OS</button>
+          </div>
+          <div id="declRecordDetail" class="iro-decl-record-detail" style="display:none"></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- ════════════════════════════════════════
@@ -4919,16 +5175,210 @@ function goToSection(idx) {
   const prev=document.getElementById('btnPrevSection');
   const next=document.getElementById('btnNextSection');
   if (prev) prev.style.visibility=idx===0?'hidden':'visible';
-  if (next) next.textContent=idx===SECTIONS.length-1?'Generate Report →':'Next →';
+  if (next) next.textContent=idx===SECTIONS.length-1?'Review & Submit →':'Next →';
 }
 function prevSection() { if (STATE.currentSection>0) goToSection(STATE.currentSection-1); }
 function nextSection() {
   if (STATE.currentSection<SECTIONS.length-1) goToSection(STATE.currentSection+1);
-  else {
-    renderReport(); showScreen('iro-report'); setProgress(100,'C-LAYER Intelligence Report Generated — Institutional Grade Output','COMPLETE');
-    if (window.RiskOSData && STATE.assessmentId) window.RiskOSData.markAssessmentSubmitted(STATE.assessmentId).catch(e=>console.error('[risk-os] submit failed',e));
+  else goToDeclaration();
+}
+
+/* ─── DECLARATION & ACKNOWLEDGEMENT — consent gate before scoring ───
+   The assessment is not accepted for scoring until this screen's six
+   mandatory checkboxes are accepted and signer identity is captured.
+   The exact declaration/methodology/questionnaire version strings are
+   persisted with the acceptance (not just a boolean), so any historical
+   assessment can be reconstructed against the terms that governed it. */
+const DECLARATION_VERSION  = 'DECL-2026.1';
+const QUESTIONNAIRE_VERSION = 'C-LAYER-QB-2026.1'; // 220+ questions / 21 sections, this file's inline question bank
+
+function goToDeclaration() {
+  showScreen('iro-declaration');
+  setProgress(97, 'Questionnaire Complete — Review Declaration & Submit', 'DECLARATION');
+
+  document.getElementById('declFormWrap').style.display = '';
+  document.getElementById('declSubmittedWrap').style.display = 'none';
+  const stepSub = document.getElementById('declStepSubmission');
+  if (stepSub) stepSub.classList.remove('active');
+
+  document.getElementById('declAssessmentId').textContent = _assessmentRef();
+  document.getElementById('declOrgDisplay').textContent = STATE.entity?.name || '—';
+  document.getElementById('declMethodologyDisplay').textContent = STATE.methodologyVersion?.id || 'Not yet configured';
+  const evidenceCount = Object.values(STATE.evidenceByQuestion || {}).reduce((n, list) => n + list.length, 0);
+  document.getElementById('declEvidenceCount').textContent = String(evidenceCount);
+  document.getElementById('declTimestamp').textContent = new Date().toLocaleString();
+
+  const orgField = document.getElementById('declOrganisation');
+  if (orgField && !orgField.value) orgField.value = STATE.entity?.name || '';
+  const nameField = document.getElementById('declFullName');
+  if (nameField && !nameField.value && window.CX_SESSION?.fullName) nameField.value = window.CX_SESSION.fullName;
+  const emailField = document.getElementById('declEmail');
+  if (emailField && !emailField.value && window.CX_SESSION?.email) emailField.value = window.CX_SESSION.email;
+
+  _updateDeclSubmitState();
+}
+
+function _assessmentRef() {
+  if (STATE.assessmentRef) return STATE.assessmentRef;
+  const base = STATE.assessmentId || (Date.now().toString(36) + Math.random().toString(36).slice(2));
+  // Stable 8-char code derived from the backend assessment id (or a fresh
+  // one in local/offline mode) — same input always yields the same ref.
+  let hash = 0;
+  for (const ch of base) hash = (hash * 31 + ch.charCodeAt(0)) | 0;
+  const code = Math.abs(hash).toString(36).toUpperCase().padStart(8, '0').slice(0, 8);
+  STATE.assessmentRef = `CLX-CRA-${code}`;
+  return STATE.assessmentRef;
+}
+
+function _declChecksState() {
+  return {
+    dataTrue:       document.getElementById('declCheckTrue')?.checked || false,
+    authorised:     document.getElementById('declCheckAuthorised')?.checked || false,
+    methodology:    document.getElementById('declCheckMethodology')?.checked || false,
+    dataQuality:    document.getElementById('declCheckDataQuality')?.checked || false,
+    reassessment:   document.getElementById('declCheckReassessment')?.checked || false,
+    finalDeclaration: document.getElementById('declCheckFinal')?.checked || false,
+  };
+}
+
+function _declSignerValid() {
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  const email = val('declEmail');
+  return !!(val('declFullName') && val('declDesignation') && val('declOrganisation')
+    && email.includes('@') && email.includes('.') && val('declDepartment'));
+}
+
+function _updateDeclSubmitState() {
+  const checks = _declChecksState();
+  const allChecked = Object.values(checks).every(Boolean);
+  const valid = allChecked && _declSignerValid();
+  const btn = document.getElementById('btnSubmitDeclaration');
+  const hint = document.getElementById('declGateHint');
+  if (btn) btn.disabled = !valid;
+  if (hint) {
+    hint.textContent = valid
+      ? 'All declarations accepted — ready to submit.'
+      : 'All declarations above must be accepted, and signer details completed, before submission is enabled.';
+    hint.classList.toggle('ready', valid);
   }
 }
+
+let _lastDeclarationRecord = null;
+
+async function submitDeclaration() {
+  const checks = _declChecksState();
+  if (!Object.values(checks).every(Boolean) || !_declSignerValid()) { _updateDeclSubmitState(); return; }
+
+  const btn = document.getElementById('btnSubmitDeclaration');
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  const record = {
+    assessmentId: STATE.assessmentId || null,
+    assessmentRef: _assessmentRef(),
+    organisation: val('declOrganisation') || STATE.entity?.name || null,
+    submittedBy: {
+      fullName: val('declFullName'), designation: val('declDesignation'),
+      email: val('declEmail'), department: val('declDepartment'),
+      authRef: val('declAuthRef') || null,
+    },
+    submittedAt: new Date().toISOString(),
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    methodologyVersion: STATE.methodologyVersion?.id || null,
+    questionnaireVersion: QUESTIONNAIRE_VERSION,
+    declarationVersion: DECLARATION_VERSION,
+    evidenceCount: Object.values(STATE.evidenceByQuestion || {}).reduce((n, list) => n + list.length, 0),
+    checks,
+  };
+
+  try {
+    if (window.RiskOSData && STATE.assessmentId) {
+      const declId = await window.RiskOSData.saveDeclaration(STATE.assessmentId, record);
+      await window.RiskOSData.logAuditEvent(STATE.assessmentId, 'declaration_accepted', declId || null, null, {
+        declarationVersion: record.declarationVersion,
+        methodologyVersion: record.methodologyVersion,
+        questionnaireVersion: record.questionnaireVersion,
+      });
+      await window.RiskOSData.markAssessmentSubmitted(STATE.assessmentId);
+    }
+  } catch (e) {
+    console.error('[risk-os] declaration submit failed', e);
+    alert('Could not record the declaration — please try again.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Submit Assessment'; }
+    return;
+  }
+
+  _lastDeclarationRecord = record;
+  try { localStorage.setItem('iro_declaration_' + (STATE.assessmentId || 'local'), JSON.stringify(record)); } catch (e) {}
+
+  renderReport(); // pre-render so "View Full Intelligence Report" is instant
+
+  document.getElementById('declFormWrap').style.display = 'none';
+  const wrap = document.getElementById('declSubmittedWrap');
+  wrap.style.display = '';
+  document.getElementById('declStepSubmission')?.classList.add('active');
+  document.getElementById('declRecordSummary').innerHTML = `
+    <div class="row"><span>Assessment Reference</span><b>${record.assessmentRef}</b></div>
+    <div class="row"><span>Status</span><b>Submitted</b></div>
+    <div class="row"><span>Methodology</span><b>CLX Climate Risk Methodology ${record.methodologyVersion || '— not yet configured'}</b></div>
+    <div class="row"><span>Submitted</span><b>${new Date(record.submittedAt).toLocaleString()} (${record.timezone})</b></div>`;
+  document.getElementById('declRecordDetail').style.display = 'none';
+
+  setProgress(100, 'Assessment Submitted — Climactix Risk OS', 'SUBMITTED');
+}
+
+function toggleSubmissionRecord() {
+  const detail = document.getElementById('declRecordDetail');
+  if (!detail || !_lastDeclarationRecord) return;
+  const r = _lastDeclarationRecord;
+  detail.innerHTML = `
+    Assessment ID: ${r.assessmentRef}<br>
+    Organisation: ${r.organisation || '—'}<br>
+    Submitted By: ${r.submittedBy.fullName} (${r.submittedBy.designation})<br>
+    Corporate Email: ${r.submittedBy.email}<br>
+    Department: ${r.submittedBy.department}${r.submittedBy.authRef ? ' · Ref: ' + r.submittedBy.authRef : ''}<br>
+    Submission Timestamp: ${new Date(r.submittedAt).toLocaleString()} (${r.timezone})<br>
+    Methodology Version: ${r.methodologyVersion || 'not yet configured'}<br>
+    Questionnaire Version: ${r.questionnaireVersion}<br>
+    Declaration Version: ${r.declarationVersion}<br>
+    Evidence Files Submitted: ${r.evidenceCount}<br>
+    Acknowledgement Status: ACCEPTED`;
+  detail.style.display = detail.style.display === 'none' ? '' : 'none';
+}
+
+function downloadAcknowledgement() {
+  if (!_lastDeclarationRecord) return;
+  const r = _lastDeclarationRecord;
+  const text = `CLIMACTIX GLOBAL — RISK OS
+Digital Acknowledgement Record
+────────────────────────────────────────────
+Assessment ID:          ${r.assessmentRef}
+Organisation:            ${r.organisation || '—'}
+Submitted By:            ${r.submittedBy.fullName}
+Designation:             ${r.submittedBy.designation}
+Corporate Email:         ${r.submittedBy.email}
+Department:              ${r.submittedBy.department}
+Authorisation Reference: ${r.submittedBy.authRef || '—'}
+Submission Timestamp:    ${new Date(r.submittedAt).toLocaleString()} (${r.timezone})
+Methodology Version:     ${r.methodologyVersion || 'not yet configured'}
+Questionnaire Version:   ${r.questionnaireVersion}
+Declaration Version:     ${r.declarationVersion}
+Evidence Files Submitted:${r.evidenceCount}
+Acknowledgement Status:  ACCEPTED
+────────────────────────────────────────────
+This record confirms acceptance of the Climate Risk Assessment
+Declaration & Acknowledgement under the versions listed above.
+`;
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${r.assessmentRef}-acknowledgement.txt`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(a.href);
+}
+
+function viewFullReport() { showScreen('iro-report'); }
+function returnToRiskOS() { showWelcome(); }
 
 /* ─── RENDERING ENGINE ─── */
 function renderSidebar() {
@@ -5780,6 +6230,7 @@ document.addEventListener('DOMContentLoaded', () => {
     import { getSession } from './auth.js?v=4';
     const session = getSession();
     window.CX_MEMBER = !!(session && session.verified);
+    window.CX_SESSION = session || null;
   </script>
 
   <!-- Risk OS cloud data layer — Firestore persistence, exposed to the

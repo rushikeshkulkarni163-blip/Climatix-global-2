@@ -372,6 +372,19 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // ── Declarations — Assessment Declaration & Acknowledgement consent
+    // gate, submitted immediately before an assessment moves to
+    // 'submitted'. Append-only: a re-submission after a methodology or
+    // questionnaire revision creates a NEW record rather than overwriting
+    // an old one, so each past submission stays reconstructable against
+    // the exact declaration/methodology/questionnaire versions accepted.
+    match /ros_declarations_v1/{declarationId} {
+      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles())
+                     && request.resource.data.submittedByUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
     // Risk OS notifications reuse the existing cx_notifs_v1 collection and
     // rules above (per-user, write-on-behalf-of pattern) — just new `type`
     // values (assignment/mention/deadline/...), no schema or rule change.

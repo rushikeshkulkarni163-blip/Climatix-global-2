@@ -677,6 +677,40 @@ export function subscribeAssessorNotes(assessmentId, questionId, onChange) {
   return () => unsub();
 }
 
+// ── Declaration & Acknowledgement (consent gate before submission) ───────
+// Append-only, one doc per submission — a re-submission after a
+// methodology/questionnaire revision creates a NEW record rather than
+// overwriting the last one, so every historical submission stays
+// reconstructable as: submitted data + evidence + questionnaire version +
+// methodology version + declaration version + timestamp. Never store just
+// a boolean "accepted" flag — the exact version strings are what let
+// Climactix later establish which terms governed a given assessment.
+export async function saveDeclaration(assessmentId, declaration) {
+  if (!_USE_FIREBASE || !assessmentId) return null;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, collection, addDoc, serverTimestamp } = await _firestore();
+  const docRef = await addDoc(collection(db, 'ros_declarations_v1'), {
+    assessmentId,
+    assessmentRef: declaration.assessmentRef || null,
+    organisation: declaration.organisation || null,
+    submittedByName: declaration.submittedBy?.fullName || null,
+    submittedByDesignation: declaration.submittedBy?.designation || null,
+    submittedByEmail: declaration.submittedBy?.email || null,
+    submittedByDepartment: declaration.submittedBy?.department || null,
+    authorisationRef: declaration.submittedBy?.authRef || null,
+    methodologyVersion: declaration.methodologyVersion || null,
+    questionnaireVersion: declaration.questionnaireVersion || null,
+    declarationVersion: declaration.declarationVersion || null,
+    evidenceFilesCount: declaration.evidenceCount ?? 0,
+    checks: declaration.checks || {},
+    timezone: declaration.timezone || null,
+    submittedByUid: uid,
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
 // ── Audit log (spec §18) ──────────────────────────────────────────────────
 // Append-only; pairs with the always-visible ros_answer_versions_v1 for
 // events beyond answer-value changes (evidence added/removed, score shifts).
