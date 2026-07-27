@@ -3427,41 +3427,340 @@
   </div>
 </section>
 
-    <!-- HOW IT WORKS -->
-    <section id="how-it-works" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 0;">
+    <!-- ═══════════════════════════════════════════════
+         SECTION: HOW CLIMATE INTELLIGENCE SCORE™ WORKS —
+         connected process map (not five independent cards).
+         One intelligence rail runs through five stages, with
+         a continuous-reassessment loop returning from
+         MONITOR back to ASSESS.
+    ═══════════════════════════════════════════════ -->
+    <style>
+      .cip-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 96px 0 88px; }
+      .cip-meta-tag { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: -8px 0 44px; }
+      .cip-meta-tag b { color: var(--text-2); font-weight: 600; }
+
+      /* ── Map shell ── */
+      .cip-map { position: relative; }
+
+      /* ── Rail + marker row ── */
+      .cip-track-row { position: relative; height: 46px; margin-bottom: 22px; }
+      .cip-rail-line { position: absolute; left: 10%; right: 10%; top: 50%; height: 2px; transform: translateY(-1px); background: var(--border-strong); overflow: visible; }
+      .cip-rail-fill { position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, var(--blue-dim), var(--blue-bright)); transition: width 900ms cubic-bezier(0.4,0,0.2,1); }
+      .cip-rail-chevron { position: absolute; top: 50%; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 5px solid var(--border-strong); transform: translate(-50%,-50%); transition: border-left-color var(--t); }
+      .cip-rail-chevron.is-lit { border-left-color: var(--blue-bright); }
+      .cip-node-marker {
+        position: absolute; top: 50%; width: 40px; height: 40px; border-radius: 50%;
+        background: var(--surface); border: 1px solid var(--border-strong);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text-muted);
+        transform: translate(-50%,-50%); z-index: 2;
+        transition: border-color var(--t), color var(--t), background var(--t), box-shadow var(--t);
+      }
+      .cip-node.is-active .cip-node-marker { border-color: var(--blue); color: var(--blue-bright); background: var(--blue-tint); box-shadow: 0 0 0 4px var(--blue-glow); }
+      .cip-node.is-hover .cip-node-marker { border-color: var(--blue-bright); }
+
+      /* ── Card row ── */
+      .cip-cards { display: grid; grid-template-columns: repeat(5,1fr); gap: 0; border: 1px solid var(--border); }
+      .cip-node { position: relative; border-left: 1px solid var(--border); }
+      .cip-node:first-child { border-left: none; }
+      .cip-node-btn {
+        display: block; width: 100%; text-align: left; background: transparent; border: 0; margin: 0; cursor: pointer;
+        font-family: inherit; padding: 22px 18px 24px; color: inherit;
+        transition: background var(--t), opacity var(--t);
+      }
+      .cip-node-btn:hover, .cip-node-btn:focus-visible { background: var(--surface-2); }
+      .cip-node-btn:focus-visible { outline: 2px solid var(--blue-bright); outline-offset: -2px; }
+      .cip-node.is-dimmed .cip-node-btn { opacity: 0.45; }
+      .cip-node-micro { display: block; font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; }
+      .cip-node-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em; }
+      .cip-node-desc { font-size: 12px; color: var(--text-2); line-height: 1.6; margin-bottom: 16px; min-height: 72px; }
+      .cip-node-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+      .cip-node-tags .cx-chip { font-size: 8.5px !important; }
+      .cip-node-tags .cx-chip.is-primary { color: var(--blue-bright) !important; border-color: var(--border-accent) !important; background: var(--blue-tint) !important; font-weight: 700 !important; font-size: 10px !important; letter-spacing: 0.06em !important; }
+      .cip-node-status { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); padding-top: 12px; border-top: 1px solid var(--border); opacity: 0; transform: translateY(4px); transition: opacity 500ms ease, transform 500ms ease, color var(--t); }
+      .cip-node.is-active .cip-node-status { opacity: 1; transform: translateY(0); color: var(--blue-bright); }
+      .cip-node-status::before { content: '●'; font-size: 6px; margin-right: 6px; color: var(--green); vertical-align: middle; }
+
+      /* ── Expand panel ── */
+      .cip-panel { border: 1px solid var(--border); border-top: none; background: var(--bg); overflow: hidden; max-height: 0; transition: max-height 320ms cubic-bezier(0.4,0,0.2,1); }
+      .cip-panel.is-open { max-height: 320px; }
+      .cip-panel-inner { padding: 26px 28px 28px; }
+      .cip-panel-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+      .cip-panel-num { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--blue-bright); }
+      .cip-panel-title { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+      .cip-panel-close { background: transparent; border: 1px solid var(--border-strong); color: var(--text-2); width: 24px; height: 24px; cursor: pointer; font-size: 13px; line-height: 1; transition: var(--t); }
+      .cip-panel-close:hover, .cip-panel-close:focus-visible { color: var(--text); border-color: var(--red); outline: none; }
+      .cip-panel-cols { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; }
+      .cip-panel-col-label { font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+      .cip-panel-col ul { list-style: none; margin: 0; padding: 0; }
+      .cip-panel-col li { position: relative; font-size: 12.5px; color: var(--text-2); line-height: 1.6; padding-left: 14px; margin-bottom: 6px; }
+      .cip-panel-col li::before { content: '→'; position: absolute; left: 0; color: var(--blue-bright); }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cip-rail-fill, .cip-panel, .cip-node-status { transition: none; }
+      }
+
+      /* ── Mobile: vertical pipeline ── */
+      @media (max-width: 860px) {
+        .cip-track-row { display: none; }
+        .cip-cards { grid-template-columns: 1fr; border: none; }
+        .cip-node { border-left: none; border: 1px solid var(--border); margin-bottom: 14px; }
+        .cip-node::after {
+          content: ''; position: absolute; left: 50%; bottom: -15px; width: 0; height: 0; transform: translateX(-50%);
+          border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--border-strong);
+        }
+        .cip-node:last-child::after { display: none; }
+        .cip-node-btn { padding: 20px 20px 22px; }
+        .cip-node-desc { min-height: 0; }
+      }
+
+      @media (max-width: 560px) {
+        .cip-panel-cols { grid-template-columns: 1fr; gap: 18px; }
+      }
+    </style>
+    <section id="how-it-works" class="cip-section" data-cip-section>
       <div class="page-wrapper">
-        <div class="cx-eyebrow">Process</div>
+        <div class="cx-eyebrow">Process / Climate Intelligence Engine</div>
         <h2 class="section-heading">How Climate Intelligence Score™ Works</h2>
-        <p class="body-text" style="max-width:560px;margin-bottom:48px;">Five steps — from organizational data to continuously monitored Climate Intelligence.</p>
-        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--border-strong);overflow:hidden;">
-          <div style="background:var(--bg);padding:30px 22px;">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">01 — Collect</div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Collect</div>
-            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Gather organizational, operational, environmental, financial, supply chain, and disclosure data.</p>
+        <p class="body-text" style="max-width:600px;">From enterprise data to continuously monitored, decision-grade climate intelligence.</p>
+        <div class="cip-meta-tag"><b>Climactix Intelligence Pipeline</b> · CIS™ Methodology</div>
+
+        <div class="cip-map" data-cip-map>
+
+          <div class="cip-track-row" aria-hidden="true">
+            <div class="cip-rail-line">
+              <div class="cip-rail-fill" data-cip-fill></div>
+              <div class="cip-rail-chevron" style="left:20%;" data-cip-chevron="1"></div>
+              <div class="cip-rail-chevron" style="left:40%;" data-cip-chevron="2"></div>
+              <div class="cip-rail-chevron" style="left:60%;" data-cip-chevron="3"></div>
+              <div class="cip-rail-chevron" style="left:80%;" data-cip-chevron="4"></div>
+            </div>
+            <div class="cip-node-marker" style="left:10%;" data-cip-marker="1">01</div>
+            <div class="cip-node-marker" style="left:30%;" data-cip-marker="2">02</div>
+            <div class="cip-node-marker" style="left:50%;" data-cip-marker="3">03</div>
+            <div class="cip-node-marker" style="left:70%;" data-cip-marker="4">04</div>
+            <div class="cip-node-marker" style="left:90%;" data-cip-marker="5">05</div>
           </div>
-          <div style="background:var(--surface);padding:30px 22px;border-left:1px solid var(--border-strong);">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">02 — Assess</div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Assess</div>
-            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Evaluate climate exposure across physical, transition, governance, financial, regulatory, and operational dimensions.</p>
+
+          <div class="cip-cards" role="list">
+
+            <div class="cip-node" data-cip-node="1" role="listitem">
+              <button class="cip-node-btn" type="button" data-cip-trigger aria-expanded="false" aria-controls="cipPanel"
+                data-inputs="Financial statements||Operational records||Asset register||Supply chain data||Disclosure documents||Environmental datasets"
+                data-analysis="Data completeness check||Source verification||Structuring into intelligence schema"
+                data-outputs="Structured enterprise dataset||Data quality baseline">
+                <span class="cip-node-micro">Data Ingestion</span>
+                <span class="cip-node-title">Collect</span>
+                <span class="cip-node-desc">Gather organizational, operational, environmental, financial, asset, supply-chain and disclosure data.</span>
+                <span class="cip-node-tags">
+                  <span class="cx-chip">Financials</span><span class="cx-chip">Operations</span><span class="cx-chip">Assets</span><span class="cx-chip">Supply Chain</span><span class="cx-chip">Disclosures</span><span class="cx-chip">Environmental Data</span>
+                </span>
+                <span class="cip-node-status">Data Ingested</span>
+              </button>
+            </div>
+
+            <div class="cip-node" data-cip-node="2" role="listitem">
+              <button class="cip-node-btn" type="button" data-cip-trigger aria-expanded="false" aria-controls="cipPanel"
+                data-inputs="Asset locations||Operational data||Climate scenarios"
+                data-analysis="Physical risk||Transition risk||Financial materiality"
+                data-outputs="Risk exposure||Scenario sensitivity||Financial impact">
+                <span class="cip-node-micro">Climate Risk Engine</span>
+                <span class="cip-node-title">Assess</span>
+                <span class="cip-node-desc">Evaluate enterprise climate exposure across physical, transition, financial, regulatory, governance and operational dimensions.</span>
+                <span class="cip-node-tags">
+                  <span class="cx-chip">Physical</span><span class="cx-chip">Transition</span><span class="cx-chip">Financial</span><span class="cx-chip">Regulatory</span><span class="cx-chip">Governance</span><span class="cx-chip">Operational</span>
+                </span>
+                <span class="cip-node-status">Risk Model</span>
+              </button>
+            </div>
+
+            <div class="cip-node" data-cip-node="3" role="listitem">
+              <button class="cip-node-btn" type="button" data-cip-trigger aria-expanded="false" aria-controls="cipPanel"
+                data-inputs="Uploaded evidence||Disclosure documents||Framework references||Prior assessment history"
+                data-analysis="Evidence verification||Data quality scoring||AI consistency review||Framework cross-mapping"
+                data-outputs="Validated dataset||Confidence rating||Framework alignment record">
+                <span class="cip-node-micro">Evidence + Assurance</span>
+                <span class="cip-node-title">Validate</span>
+                <span class="cip-node-desc">Review evidence, uploaded documents, disclosures, data quality, AI analysis and framework mappings.</span>
+                <span class="cip-node-tags">
+                  <span class="cx-chip">Evidence</span><span class="cx-chip">Documents</span><span class="cx-chip">Data Quality</span><span class="cx-chip">AI Review</span><span class="cx-chip">Framework Mapping</span>
+                </span>
+                <span class="cip-node-status">Evidence Verified</span>
+              </button>
+            </div>
+
+            <div class="cip-node" data-cip-node="4" role="listitem">
+              <button class="cip-node-btn" type="button" data-cip-trigger aria-expanded="false" aria-controls="cipPanel"
+                data-inputs="Validated risk dataset||Peer benchmark data||Scenario models"
+                data-analysis="Score computation||Peer benchmarking||Materiality weighting"
+                data-outputs="Climate Intelligence Score™||Green Rating||Executive Climate Risk Report">
+                <span class="cip-node-micro">Intelligence Engine</span>
+                <span class="cip-node-title">Generate</span>
+                <span class="cip-node-desc">Transform validated climate-risk information into decision-grade intelligence.</span>
+                <span class="cip-node-tags">
+                  <span class="cx-chip is-primary">CIS™</span><span class="cx-chip">Green Rating</span><span class="cx-chip">Financial Exposure</span><span class="cx-chip">Risk Benchmarks</span><span class="cx-chip">Executive Intelligence</span><span class="cx-chip">Recommendations</span>
+                </span>
+                <span class="cip-node-status">Intelligence Generated</span>
+              </button>
+            </div>
+
+            <div class="cip-node" data-cip-node="5" role="listitem">
+              <button class="cip-node-btn" type="button" data-cip-trigger aria-expanded="false" aria-controls="cipPanel"
+                data-inputs="Live risk signals||Regulatory updates||Disclosure changes||Asset exposure feeds"
+                data-analysis="Signal materiality triage||Score drift detection||Reassessment threshold check"
+                data-outputs="Score movement alerts||Reassessment trigger||Updated intelligence cycle">
+                <span class="cip-node-micro">Continuous Intelligence</span>
+                <span class="cip-node-title">Monitor</span>
+                <span class="cip-node-desc">Continuously track organizational climate intelligence as risk conditions, regulations, disclosures and external signals evolve.</span>
+                <span class="cip-node-tags">
+                  <span class="cx-chip">Risk Signals</span><span class="cx-chip">Regulatory Change</span><span class="cx-chip">Disclosure Change</span><span class="cx-chip">Asset Exposure</span><span class="cx-chip">Score Movement</span>
+                </span>
+                <span class="cip-node-status">Live Monitoring</span>
+              </button>
+            </div>
+
           </div>
-          <div style="background:var(--bg);padding:30px 22px;border-left:1px solid var(--border-strong);">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">03 — Validate</div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Validate</div>
-            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Review evidence, uploaded documents, disclosures, AI analysis, and framework mapping.</p>
+
+          <div class="cip-panel" data-cip-panel id="cipPanel" role="region" aria-live="polite">
+            <div class="cip-panel-inner">
+              <div class="cip-panel-head">
+                <span class="cip-panel-num" data-cip-panel-num></span>
+                <span class="cip-panel-title" data-cip-panel-title></span>
+                <button class="cip-panel-close" type="button" data-cip-panel-close aria-label="Close stage details">✕</button>
+              </div>
+              <div class="cip-panel-cols">
+                <div class="cip-panel-col"><div class="cip-panel-col-label">Inputs</div><ul data-cip-panel-inputs></ul></div>
+                <div class="cip-panel-col"><div class="cip-panel-col-label">Analysis</div><ul data-cip-panel-analysis></ul></div>
+                <div class="cip-panel-col"><div class="cip-panel-col-label">Outputs</div><ul data-cip-panel-outputs></ul></div>
+              </div>
+            </div>
           </div>
-          <div style="background:var(--surface);padding:30px 22px;border-left:1px solid var(--border-strong);">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">04 — Generate</div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Generate</div>
-            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Produce Climate Intelligence Score™, Green Rating, executive reports, benchmarking, and recommendations.</p>
-          </div>
-          <div style="background:var(--bg);padding:30px 22px;border-left:1px solid var(--border-strong);">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:20px;">05 — Monitor</div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;letter-spacing:-0.01em;font-family:'Roboto',sans-serif;">Monitor</div>
-            <p style="font-family:'Roboto',sans-serif;font-size:12.5px;color:var(--text-2);line-height:1.6;">Continuously monitor organizational climate intelligence as regulations, disclosures, and climate risks evolve.</p>
-          </div>
+
         </div>
       </div>
     </section>
+    <script>
+    (function(){
+      var section = document.querySelector('[data-cip-section]');
+      if (!section) return;
+      var nodes = Array.prototype.slice.call(section.querySelectorAll('[data-cip-node]'));
+      var markers = Array.prototype.slice.call(section.querySelectorAll('[data-cip-marker]'));
+      var chevrons = Array.prototype.slice.call(section.querySelectorAll('[data-cip-chevron]'));
+      var fill = section.querySelector('[data-cip-fill]');
+      var panel = section.querySelector('[data-cip-panel]');
+      var panelNum = section.querySelector('[data-cip-panel-num]');
+      var panelTitle = section.querySelector('[data-cip-panel-title]');
+      var panelInputs = section.querySelector('[data-cip-panel-inputs]');
+      var panelAnalysis = section.querySelector('[data-cip-panel-analysis]');
+      var panelOutputs = section.querySelector('[data-cip-panel-outputs]');
+      var panelClose = section.querySelector('[data-cip-panel-close]');
+      var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var openIndex = null;
+
+      function setActive(i) {
+        nodes.forEach(function(n, idx) {
+          var on = (idx + 1) <= i;
+          n.classList.toggle('is-active', on);
+          var m = markers[idx];
+          if (m) m.parentElement.classList.toggle('is-active', on);
+        });
+        markers.forEach(function(m, idx) {
+          m.classList.toggle('is-active', (idx + 1) <= i);
+        });
+        chevrons.forEach(function(c, idx) {
+          c.classList.toggle('is-lit', (idx + 1) < i);
+        });
+        if (fill) fill.style.width = (Math.max(0, i - 1) / 4 * 100) + '%';
+      }
+
+      function runSequence() {
+        if (reduced) { setActive(5); return; }
+        var step = 1;
+        setActive(step);
+        var timer = setInterval(function() {
+          step++;
+          setActive(step);
+          if (step >= 5) clearInterval(timer);
+        }, 650);
+      }
+
+      var played = false;
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(en) {
+            if (en.isIntersecting && !played) {
+              played = true;
+              runSequence();
+              io.unobserve(section);
+            }
+          });
+        }, { threshold: 0.25 });
+        io.observe(section);
+      } else {
+        setActive(5);
+      }
+
+      /* Hover / focus — illuminate one node, dim the rest */
+      function hoverOn(idx) {
+        nodes.forEach(function(n, i) { n.classList.toggle('is-dimmed', i !== idx); });
+        var m = markers[idx];
+        if (m) m.classList.add('is-hover');
+        var node = nodes[idx];
+        if (node) node.classList.add('is-hover');
+      }
+      function hoverOff() {
+        nodes.forEach(function(n) { n.classList.remove('is-dimmed', 'is-hover'); });
+        markers.forEach(function(m) { m.classList.remove('is-hover'); });
+      }
+      nodes.forEach(function(n, idx) {
+        var btn = n.querySelector('[data-cip-trigger]');
+        if (!btn) return;
+        n.addEventListener('mouseenter', function() { hoverOn(idx); });
+        n.addEventListener('mouseleave', hoverOff);
+        btn.addEventListener('focus', function() { hoverOn(idx); });
+        btn.addEventListener('blur', hoverOff);
+      });
+
+      /* Click-to-expand intelligence panel */
+      function split(str) { return (str || '').split('||').filter(Boolean); }
+      function fillList(ul, items) {
+        ul.innerHTML = '';
+        items.forEach(function(text) {
+          var li = document.createElement('li');
+          li.textContent = text;
+          ul.appendChild(li);
+        });
+      }
+      function closePanel() {
+        panel.classList.remove('is-open');
+        if (openIndex !== null) {
+          var prevBtn = nodes[openIndex].querySelector('[data-cip-trigger]');
+          if (prevBtn) prevBtn.setAttribute('aria-expanded', 'false');
+        }
+        openIndex = null;
+      }
+      nodes.forEach(function(n, idx) {
+        var btn = n.querySelector('[data-cip-trigger]');
+        if (!btn) return;
+        btn.addEventListener('click', function() {
+          if (openIndex === idx) { closePanel(); return; }
+          nodes.forEach(function(other, i) {
+            var ob = other.querySelector('[data-cip-trigger]');
+            if (ob) ob.setAttribute('aria-expanded', i === idx ? 'true' : 'false');
+          });
+          var num = String(idx + 1).padStart(2, '0');
+          panelNum.textContent = num;
+          panelTitle.textContent = n.querySelector('.cip-node-title').textContent;
+          fillList(panelInputs, split(btn.getAttribute('data-inputs')));
+          fillList(panelAnalysis, split(btn.getAttribute('data-analysis')));
+          fillList(panelOutputs, split(btn.getAttribute('data-outputs')));
+          panel.classList.add('is-open');
+          openIndex = idx;
+        });
+      });
+      if (panelClose) panelClose.addEventListener('click', closePanel);
+    })();
+    </script>
 
     <!-- ARCHITECTURE FLOW -->
     <section class="cx-arch-section">
