@@ -6,6 +6,7 @@ import { ArrowRight, TrendingUp, Globe, BookOpen, CheckCircle2 } from "lucide-re
 import LiveTicker from "@/components/live/LiveTicker";
 import LiveMetricsBar from "@/components/live/LiveMetricsBar";
 import AlertBanner from "@/components/live/AlertBanner";
+import AssessmentLifecycle from "@/components/homepage/AssessmentLifecycle";
 
 // ── Globe (client-only — Three.js needs the DOM) ──────────
 const GlobeComponent = dynamic(
@@ -206,6 +207,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ══ HOW THE ASSESSMENT WORKS ══════════════════════════ */}
+      <AssessmentLifecycle />
 
       {/* ══ TOPIC STRIP ══════════════════════════════════════ */}
       <div className="border-b border-[#1F1F1F] bg-[#0A0A0A]">
