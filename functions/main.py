@@ -32,6 +32,8 @@ from services.risk_os_ai_review import run_ai_review
 from services.industry_ontology import get_industry_config
 from services.evidence_graph import build_evidence_graph
 from services.assessment_agent import chat as run_assessment_agent_chat
+from services.extractor import extract_text, extract_from_url
+from services.evidence_intelligence_agent import run_evidence_intelligence
 
 firebase_admin.initialize_app()
 
@@ -148,6 +150,436 @@ def request_evidence_ai_review(req: https_fn.CallableRequest) -> dict:
     _, review_ref = db.collection("ros_ai_reviews_v1").add(review_doc)
 
     return {"id": review_ref.id, **{k: v for k, v in review_doc.items() if k != "createdAt"}}
+
+
+# ── Climactix Evidence Intelligence Agent ───────────────────────────────────
+# Runs the full evidence-verification pipeline (services/evidence_intelligence_
+# agent.py) against EVERY piece of evidence attached to one question — not
+# just the most recent file, unlike request_evidence_ai_review above — plus
+# any linked facility, and persists structured results a client could never
+# write itself (ros_claims_v1, ros_evidence_confidence_v1 are both Cloud-
+# Function-only writes; see firestore.rules).
+
+# EVIDENCE_DOC_TYPES values (climate-risk-os.html) mapped onto verification_
+# engine.py's evidence-type trust taxonomy (regulatory/third_party/audited/
+# document/report/website/self_declared). A category the user didn't pick,
+# or one outside this map, falls back to "self_declared" — the lowest trust
+# tier — rather than assuming a document is more credible than it declared
+# itself to be.
+_DOC_CATEGORY_TO_EVIDENCE_TYPE = {
+    "Sustainability Report": "report", "Financial Report": "audited",
+    "Board Document": "document", "Policy Document": "document",
+    "Risk Register": "document", "Audit Report": "audited",
+    "Certificate": "third_party", "Climate Model Output": "document",
+    "Asset Register": "document", "Insurance Documentation": "document",
+    "Energy Bill": "document", "Emissions Inventory": "document",
+    "Supplier Record": "document", "URL / External Reference": "website",
+    "Other": "self_declared",
+}
+
+
+def _camelize_keys(d: dict) -> dict:
+    """snake_case -> camelCase, one level deep (claim/metric dicts from
+    claim_intelligence.py/metric_intelligence.py are flat, no nesting to
+    recurse into)."""
+    def _camel(key: str) -> str:
+        parts = key.split("_")
+        return parts[0] + "".join(p.capitalize() for p in parts[1:])
+    return {_camel(k): v for k, v in d.items()}
+
+
+def _infer_evidence_type(ev_data: dict) -> str:
+    if ev_data.get("sourceType") == "url":
+        return "website"
+    category = ev_data.get("documentCategory")
+    evidence_type = _DOC_CATEGORY_TO_EVIDENCE_TYPE.get(category, "self_declared")
+    # A regulator/exchange named as the issuing authority outweighs the
+    # document-category default (e.g. a "Certificate" issued directly by a
+    # government regulator is regulatory-grade, not merely third-party).
+    authority = (ev_data.get("issuingAuthority") or "").lower()
+    if any(k in authority for k in ("regulator", "government", "ministry", "exchange", "sebi", "sec ")):
+        return "regulatory"
+    return evidence_type
+
+
+def _is_climactix_staff(db, uid: str) -> bool:
+    return db.collection("cx_staff_v1").document(uid).get().exists
+
+
+def _execute_evidence_intelligence(db, assessment_id: str, question_id: str, question_text: str,
+                                    facility_id, requested_by: str):
+    """
+    Core pipeline shared by the staff-invoked manual callable below and the
+    onEvidenceCreated auto-trigger: gather this question's evidence + declared
+    answer + linked facility, run the orchestrator, persist claims/confidence/
+    contradiction-flags. Callers own their own auth — this assumes it's
+    already been authorized (the callable checks isClimactixStaff first; the
+    trigger runs under Admin SDK privileges and needs no additional check,
+    since it fires from Cloud Functions infrastructure regardless of who
+    uploaded the evidence).
+
+    Returns the orchestrator's result dict, or None if the assessment can't
+    be resolved. Raises RuntimeError if the AI backend itself is unavailable
+    (missing API key, etc.) — callers decide how to surface that.
+    """
+    assessment = db.collection("ros_assessments_v1").document(assessment_id).get()
+    if not assessment.exists:
+        return None
+    company_id = assessment.to_dict().get("companyId")
+
+    company_snap = db.collection("ros_companies_v1").document(company_id).get()
+    company_name = (company_snap.to_dict() or {}).get("name") or "The Company" if company_snap.exists else "The Company"
+
+    answer_snap = db.collection("ros_answers_v1").document(f"{assessment_id}_{question_id}").get()
+    answer_data = answer_snap.to_dict() if answer_snap.exists else {}
+    raw_answer = answer_data.get("rawAnswer")
+    entity_response = {
+        "status": raw_answer.get("status") if isinstance(raw_answer, dict) else raw_answer,
+        "justification": raw_answer.get("justification") if isinstance(raw_answer, dict) else None,
+    }
+    # Fall back to the persisted facility link (ros_answers_v1.facilityId,
+    # written by saveFacilityLink()) when the caller didn't pass one
+    # explicitly — the auto-trigger below has no live client to source this
+    # from, so it must read whatever was last linked.
+    if not facility_id:
+        facility_id = answer_data.get("facilityId")
+
+    evidence_docs = list(
+        db.collection("ros_evidence_v1")
+        .where("assessmentId", "==", assessment_id).where("questionId", "==", question_id)
+        .stream()
+    )
+
+    evidence_items = []
+    if evidence_docs:
+        bucket = storage.bucket()
+        for ev in evidence_docs:
+            ev_data = ev.to_dict()
+            text = ""
+            try:
+                if ev_data.get("sourceType") == "url" and ev_data.get("sourceUrl"):
+                    fetched = extract_from_url(ev_data["sourceUrl"])
+                    text = fetched["text"]
+                elif ev_data.get("storagePath"):
+                    blob = bucket.blob(ev_data["storagePath"])
+                    if blob.exists():
+                        content = blob.download_as_bytes()
+                        text = extract_text(content, ev_data.get("filename", "document"), ev_data.get("fileType") or "")
+            except Exception:
+                # A single unreadable/unreachable evidence item must not sink
+                # the whole question's analysis — it's simply treated as
+                # contributing no extractable text (visible via a low
+                # evidence_relevance/completeness factor downstream, not a
+                # crash).
+                text = ""
+            evidence_items.append({
+                "id": ev.id,
+                "filename": ev_data.get("originalName") or ev_data.get("filename"),
+                "source_label": ev_data.get("originalName") or ev_data.get("filename") or ev_data.get("sourceUrl") or ev.id,
+                "text": text,
+                "evidence_type": _infer_evidence_type(ev_data),
+                "reporting_period": ev_data.get("reportingPeriod"),
+                "document_category": ev_data.get("documentCategory"),
+            })
+
+    facility = None
+    if facility_id:
+        facility_snap = db.collection("ros_facilities_v1").document(facility_id).get()
+        if facility_snap.exists:
+            facility = facility_snap.to_dict()
+
+    result = run_evidence_intelligence(
+        question_id=question_id,
+        question_text=question_text or "",
+        entity_response=entity_response,
+        evidence_items=evidence_items,
+        facility=facility,
+        company_name=company_name,
+    )
+
+    now = firestore.SERVER_TIMESTAMP
+
+    # Summary surfaced through the existing ros_ai_reviews_v1 stream so
+    # _latestAIReview()/subscribeAIReviews() in climate-risk-os.html keep
+    # working unmodified for this new reviewType. Note: ros_ai_reviews_v1
+    # itself is still readable by isCompanyMember() (unchanged) — only the
+    # NEW collections below (ros_claims_v1 etc.) are staff-only — so this
+    # summary doc is technically company-visible. It carries no more detail
+    # than outputSummary/confidenceScore already exposed by every other
+    # reviewType on this same collection; the full analysis (claims,
+    # signals, recommendation) lives only in the staff-only collections.
+    review_doc = {
+        "evidenceId": None, "assessmentId": assessment_id, "questionId": question_id, "companyId": company_id,
+        "reviewType": "evidence_intelligence_full",
+        "outputSummary": result["agent_recommendation"],
+        "extractedData": {"metricsCount": len(result["extracted_metrics"]), "claimsCount": len(result["extracted_claims"])},
+        "contradictions": result["durable_contradictions"],
+        "confidenceScore": result["evidence_confidence"]["score"],
+        "modelUsed": "evidence_intelligence_agent_v1",
+        "citations": [],
+        "evidenceGap": "; ".join(result["missing_evidence"][:5]) if result["missing_evidence"] else "",
+        "suggestedStatus": None,
+        "requestedBy": requested_by,
+        "createdAt": now,
+    }
+    db.collection("ros_ai_reviews_v1").add(review_doc)
+
+    # Claims + metrics — idempotent replace-on-rerun, same discipline as
+    # compute_evidence_graph's delete-old/write-new batch below. The Python
+    # services (claim_intelligence.py/metric_intelligence.py) return
+    # snake_case keys; every other collection in this schema is camelCase
+    # (see ros_evidence_v1/ros_answers_v1/etc.), so keys are converted here
+    # rather than leaving ros_claims_v1 as the one mixed-case collection the
+    # client (climate-risk-os.html) would otherwise have to special-case.
+    batch = db.batch()
+    existing_claims = (
+        db.collection("ros_claims_v1")
+        .where("assessmentId", "==", assessment_id).where("questionId", "==", question_id)
+        .stream()
+    )
+    for doc in existing_claims:
+        batch.delete(doc.reference)
+    for c in result["extracted_claims"]:
+        ref = db.collection("ros_claims_v1").document()
+        batch.set(ref, {"assessmentId": assessment_id, "questionId": question_id, "companyId": company_id,
+                         "kind": "claim", **_camelize_keys(c), "createdAt": now})
+    for m in result["extracted_metrics"]:
+        ref = db.collection("ros_claims_v1").document()
+        batch.set(ref, {"assessmentId": assessment_id, "questionId": question_id, "companyId": company_id,
+                         "kind": "metric", **_camelize_keys(m), "createdAt": now})
+    batch.commit()
+
+    # Evidence confidence — one doc per question, full breakdown; triggers
+    # recompute_entity_intelligence below on every write.
+    db.collection("ros_evidence_confidence_v1").document(f"{assessment_id}_{question_id}").set({
+        "assessmentId": assessment_id, "questionId": question_id, "companyId": company_id,
+        "score": result["evidence_confidence"]["score"], "label": result["evidence_confidence"]["label"],
+        "explanation": result["evidence_confidence"]["explanation"], "factors": result["evidence_confidence"]["factors"],
+        "methodologyVersion": result["evidence_confidence"]["methodology_version"],
+        "externalCrossCheck": [_camelize_keys(x) for x in result["external_cross_check"]],
+        "geospatialCrossCheck": (_camelize_keys(result["geospatial_cross_check"]) if result["geospatial_cross_check"] else None),
+        "crossDocumentContradictions": [_camelize_keys(x) for x in result["cross_document_contradictions"]],
+        "greenwashingSignals": [_camelize_keys(x) for x in result["greenwashing_signals"]],
+        "missingEvidence": result["missing_evidence"],
+        "agentRecommendation": result["agent_recommendation"],
+        "recommendedScore": result["recommended_score"],
+        "analystReviewRequired": result["analyst_review_required"],
+        "analystReviewReason": result["analyst_review_reason"],
+        "updatedAt": now,
+    }, merge=True)
+
+    # Durable cross-document contradiction flags — idempotent lifecycle
+    # identical to compute_evidence_graph's GRAPH01 handling: appears while
+    # material, disappears once resolved, keyed so re-running never duplicates.
+    stale = (
+        db.collection("ros_contradiction_flags_v1")
+        .where("assessmentId", "==", assessment_id)
+        .where("sourceType", "==", "evidence_intelligence")
+        .where("sourceQuestionId", "==", question_id)
+        .stream()
+    )
+    stale_ids = [d.id for d in stale]
+    material = [c for c in result["cross_document_contradictions"] if c.get("severity") in ("High", "Critical")]
+    if material:
+        if not stale_ids:
+            for c in material:
+                db.collection("ros_contradiction_flags_v1").add({
+                    "assessmentId": assessment_id, "ruleId": f"EI-{c.get('metric', 'metric')}",
+                    "severity": c.get("severity"), "questionIds": [question_id],
+                    "sourceQuestionId": question_id, "sourceType": "evidence_intelligence",
+                    "summary": c.get("explanation", ""), "createdAt": now,
+                })
+    else:
+        for doc_id in stale_ids:
+            db.collection("ros_contradiction_flags_v1").document(doc_id).delete()
+
+    return result
+
+
+@https_fn.on_call(
+    region="us-central1",
+    memory=options.MemoryOption.MB_512,
+    timeout_sec=180,
+    secrets=[OPENAI_API_KEY],
+)
+def run_evidence_intelligence_analysis(req: https_fn.CallableRequest) -> dict:
+    """
+    Manual re-run, restricted to the Climactix internal/backend team (see
+    firestore.rules' isClimactixStaff() — the entity being assessed cannot
+    call this even though it can freely upload evidence, since that upload
+    is what the onEvidenceCreated trigger below already runs automatically).
+
+    Callable from the client as:
+      httpsCallable(functions, 'run_evidence_intelligence_analysis')
+        ({ assessmentId, questionId, questionText, facilityId })
+    """
+    if req.auth is None:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.UNAUTHENTICATED, "Sign in required.")
+
+    data = req.data or {}
+    assessment_id = data.get("assessmentId")
+    question_id = data.get("questionId")
+    if not assessment_id or not question_id:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+                                   "assessmentId and questionId are required.")
+
+    db = firestore.client()
+
+    if not _is_climactix_staff(db, req.auth.uid):
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.PERMISSION_DENIED,
+                                   "This tool is restricted to the Climactix internal review team.")
+
+    try:
+        result = _execute_evidence_intelligence(
+            db, assessment_id, question_id, data.get("questionText", ""),
+            data.get("facilityId"), requested_by=req.auth.uid,
+        )
+    except RuntimeError as e:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.FAILED_PRECONDITION,
+                                   f"Evidence Intelligence Agent unavailable: {e}")
+
+    if result is None:
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.NOT_FOUND, "Assessment not found.")
+
+    return result
+
+
+# Auto-runs the Evidence Intelligence Agent the moment new evidence (a file
+# upload or a web source) is added to a question — the backend team should
+# never need to manually trigger analysis; it starts working as soon as the
+# assessment starts receiving evidence. on_document_created (not _written)
+# so this fires exactly once per evidence item, never re-fires when its
+# reviewStatus is later updated by setEvidenceReviewStatus(). Admin SDK
+# execution context — no RBAC check needed, unlike the callable above; this
+# runs from Cloud Functions infrastructure regardless of who uploaded it.
+@firestore_fn.on_document_created(
+    document="ros_evidence_v1/{evidenceId}",
+    region="us-central1",
+    memory=options.MemoryOption.MB_512,
+    timeout_sec=180,
+    secrets=[OPENAI_API_KEY],
+)
+def on_evidence_created(event: firestore_fn.Event) -> None:
+    ev_data = event.data.to_dict()
+    assessment_id = ev_data.get("assessmentId")
+    question_id = ev_data.get("questionId")
+    if not assessment_id or not question_id:
+        return
+
+    db = firestore.client()
+
+    # Question text isn't currently used inside the orchestrator itself (see
+    # evidence_intelligence_agent.py), but is looked up here on a best-effort
+    # basis from the seeded question-bank mirror in case a future pass starts
+    # using it — never fabricated if the mirror doesn't have this question.
+    question_text = ""
+    question_snap = db.collection("ros_questions_v1").document(question_id).get()
+    if question_snap.exists:
+        question_text = question_snap.to_dict().get("text") or ""
+
+    try:
+        _execute_evidence_intelligence(
+            db, assessment_id, question_id, question_text,
+            facility_id=None, requested_by=f"system:auto_trigger:{ev_data.get('uploadedBy', 'unknown')}",
+        )
+    except RuntimeError:
+        # AI backend unavailable (e.g. no API key configured) — skip
+        # silently. The backend team can still manually re-run once
+        # configured, via run_evidence_intelligence_analysis above.
+        pass
+
+
+# ── Entity-level Evidence Intelligence aggregation ──────────────────────────
+# Rolls every question's ros_evidence_confidence_v1 + ros_claims_v1 up into
+# one ros_entity_intelligence_v1 doc per assessment (spec §15). Scoped to one
+# assessment rather than one company across every historical assessment, for
+# the same reason ros_clayer_scores_v1/ros_materiality_scans_v1 are — every
+# other intelligence layer in this schema is assessment-scoped, so "entity-
+# level" here means "this entity's current assessment," not a cross-year
+# rollup this schema doesn't otherwise support.
+@firestore_fn.on_document_written(document="ros_evidence_confidence_v1/{docId}")
+def recompute_entity_intelligence(event: firestore_fn.Event) -> None:
+    if event.data.after is None:
+        return
+    written = event.data.after.to_dict()
+    assessment_id = written.get("assessmentId")
+    if not assessment_id:
+        return
+
+    db = firestore.client()
+    confidence_docs = [
+        d.to_dict() for d in
+        db.collection("ros_evidence_confidence_v1").where("assessmentId", "==", assessment_id).stream()
+    ]
+    if not confidence_docs:
+        return
+    claim_docs = [
+        d.to_dict() for d in
+        db.collection("ros_claims_v1").where("assessmentId", "==", assessment_id).stream()
+    ]
+
+    scores = [c.get("score") for c in confidence_docs if c.get("score") is not None]
+    evidence_integrity_score = round(sum(scores) / len(scores)) if scores else 0
+
+    consistency_penalties = 0
+    total_cross_doc_checks = 0
+    for c in confidence_docs:
+        for x in (c.get("crossDocumentContradictions") or []):
+            total_cross_doc_checks += 1
+            if x.get("severity") in ("High", "Critical"):
+                consistency_penalties += 1
+    disclosure_consistency_score = (
+        round(100 * (1 - (consistency_penalties / total_cross_doc_checks))) if total_cross_doc_checks else 100
+    )
+
+    conf_by_question = {c.get("questionId"): c for c in confidence_docs if c.get("questionId")}
+    verified = partial = unsupported = contradictory = 0
+    for claim in claim_docs:
+        conf = conf_by_question.get(claim.get("questionId"), {})
+        label = conf.get("label", "INSUFFICIENT")
+        has_material_signal = any(
+            s.get("category") in ("Material Contradiction", "Potential Greenwashing Signal")
+            for s in (conf.get("greenwashingSignals") or [])
+        )
+        if has_material_signal:
+            contradictory += 1
+        elif label == "HIGH":
+            verified += 1
+        elif label == "MODERATE":
+            partial += 1
+        else:
+            unsupported += 1
+
+    total_claims = len(claim_docs) or 1
+    verification_coverage_pct = round(100 * verified / total_claims)
+
+    signal_categories = [
+        s.get("category") for c in confidence_docs for s in (c.get("greenwashingSignals") or [])
+    ]
+    material_signal_count = sum(
+        1 for cat in signal_categories if cat in ("Potential Greenwashing Signal", "Material Contradiction")
+    )
+    if material_signal_count == 0:
+        greenwashing_risk = "LOW"
+    elif material_signal_count <= 2:
+        greenwashing_risk = "MODERATE"
+    elif material_signal_count <= 5:
+        greenwashing_risk = "ELEVATED"
+    else:
+        greenwashing_risk = "HIGH"
+
+    db.collection("ros_entity_intelligence_v1").document(assessment_id).set({
+        "assessmentId": assessment_id,
+        "companyId": written.get("companyId"),
+        "evidenceIntegrityScore": evidence_integrity_score,
+        "disclosureConsistencyScore": disclosure_consistency_score,
+        "verificationCoveragePct": verification_coverage_pct,
+        "greenwashingRisk": greenwashing_risk,
+        "verifiedClaims": verified, "partiallyVerifiedClaims": partial,
+        "unsupportedClaims": unsupported, "contradictoryClaims": contradictory,
+        "questionsAnalyzed": len(confidence_docs),
+        "updatedAt": firestore.SERVER_TIMESTAMP,
+    }, merge=True)
 
 
 # ── Initial Materiality Scan ─────────────────────────────────────────────

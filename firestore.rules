@@ -47,6 +47,30 @@ service cloud.firestore {
     function companyOfAssessment(assessmentId) {
       return get(/databases/$(database)/documents/ros_assessments_v1/$(assessmentId)).data.companyId;
     }
+
+    // ── Climactix internal/backend team — cross-company, NOT scoped to any
+    // one ros_members_v1 company membership. CLAUDE.md's third user role
+    // ("Climactix Internal Team — review/modify assessments...") is global
+    // by definition: a Climactix analyst reviews assessments across every
+    // client company, not just companies they were individually added to.
+    // Membership in cx_staff_v1 is Admin-SDK/console-managed only (see the
+    // collection's own rule below) — never client-writable, so a company
+    // user can never self-grant Climactix staff access to their own or any
+    // other company's evidence intelligence.
+    function isClimactixStaff() {
+      return signedIn() &&
+        exists(/databases/$(database)/documents/cx_staff_v1/$(request.auth.uid));
+    }
+    // Composite read/write helpers — the Internal Analyst System (cx-portal-
+    // dashboard.html / cx-review-workspace.html / cx-report-generator.html)
+    // needs staff to read AND perform review-tier writes on every company's
+    // Risk OS data, not just companies they happen to also hold a
+    // ros_members_v1 role in. Company-only writes (answers, evidence,
+    // facilities — anything gated by rosWriteRoles()) deliberately do NOT
+    // get a staff bypass: staff reviews a company's submission, it never
+    // edits it on the company's behalf.
+    function isStaffOrCompanyMember(companyId) { return isCompanyMember(companyId) || isClimactixStaff(); }
+    function isStaffOrHasAnyRole(companyId, roles) { return hasAnyRole(companyId, roles) || isClimactixStaff(); }
     // Assessment status state machine — mirrors the FastAPI design this
     // replaced, enforced declaratively since there's no server code here.
     function rosTransitionAllowed(from, to) {
@@ -186,7 +210,7 @@ service cloud.firestore {
 
     // ── Companies — one document per assessed entity ────────────────────
     match /ros_companies_v1/{companyId} {
-      allow read: if isCompanyMember(companyId);
+      allow read: if isStaffOrCompanyMember(companyId);
       allow create: if signedIn() && request.resource.data.createdBy == request.auth.uid;
       allow update: if hasAnyRole(companyId, rosAdminRoles());
       allow delete: if false;
@@ -216,17 +240,19 @@ service cloud.firestore {
 
     // ── Assessments ───────────────────────────────────────────────────────
     match /ros_assessments_v1/{assessmentId} {
-      allow read: if isCompanyMember(resource.data.companyId);
+      allow read: if isStaffOrCompanyMember(resource.data.companyId);
       allow create: if hasAnyRole(request.resource.data.companyId, rosWriteRoles())
                      && request.resource.data.status == 'draft';
-      allow update: if isCompanyMember(resource.data.companyId) && (
+      allow update: if isStaffOrCompanyMember(resource.data.companyId) && (
         (
           // Content edit, no status change.
           request.resource.data.status == resource.data.status &&
           hasAnyRole(resource.data.companyId, rosWriteRoles())
         ) || (
           // Status transition — must follow the state machine, and the
-          // heavier review-tier states require reviewer/approver/admin.
+          // heavier review-tier states require reviewer/approver/admin —
+          // or Climactix staff, via the Internal Analyst System's
+          // approve/reject/request-clarification actions.
           request.resource.data.status != resource.data.status &&
           rosTransitionAllowed(resource.data.status, request.resource.data.status) &&
           (
@@ -234,7 +260,7 @@ service cloud.firestore {
               && hasAnyRole(resource.data.companyId, rosWriteRoles())) ||
             (request.resource.data.status in
               ['under_review', 'evidence_requested', 'validated', 'approved', 'rejected', 'archived']
-              && hasAnyRole(resource.data.companyId, rosReviewRoles()))
+              && isStaffOrHasAnyRole(resource.data.companyId, rosReviewRoles()))
           )
         )
       );
@@ -243,7 +269,7 @@ service cloud.firestore {
 
     // ── Answers — doc id `${assessmentId}_${questionId}` ─────────────────
     match /ros_answers_v1/{answerId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow create, update: if
         hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
       allow delete: if false;
@@ -251,24 +277,26 @@ service cloud.firestore {
 
     // ── Answer version history — append-only ─────────────────────────────
     match /ros_answer_versions_v1/{versionId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
       allow update, delete: if false;
     }
 
     // ── C-LAYER scores — doc id `${assessmentId}_${clayerId}` ────────────
     match /ros_clayer_scores_v1/{scoreId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow write: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
     }
 
     // ── Evidence — file bytes live in Storage; this is metadata ──────────
     match /ros_evidence_v1/{evidenceId} {
-      allow read: if isCompanyMember(resource.data.companyId);
+      allow read: if isStaffOrCompanyMember(resource.data.companyId);
       allow create: if hasAnyRole(request.resource.data.companyId, rosWriteRoles());
       // Only the review/verification fields may change after upload — the
       // uploaded file record itself (filename/storagePath/hash) is immutable.
-      allow update: if hasAnyRole(resource.data.companyId, rosReviewRoles())
+      // Climactix staff reviewing via the Internal Analyst System can also
+      // set verification status, same as a company-side reviewer role.
+      allow update: if isStaffOrHasAnyRole(resource.data.companyId, rosReviewRoles())
                      && onlyChangedFields(['reviewStatus', 'verifiedBy', 'verifiedAt', 'tags', 'description']);
       allow delete: if false;
     }
@@ -277,16 +305,16 @@ service cloud.firestore {
     // (Admin SDK bypasses rules; clients can read results but never write
     // or spoof them — see functions/main.py: request_evidence_ai_review.)
     match /ros_ai_reviews_v1/{reviewId} {
-      allow read: if isCompanyMember(resource.data.companyId);
+      allow read: if isStaffOrCompanyMember(resource.data.companyId);
       allow write: if false;
     }
 
     // ── Comments — threaded, per-question ─────────────────────────────────
     match /ros_comments_v1/{commentId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
-      allow create: if isCompanyMember(companyOfAssessment(request.resource.data.assessmentId))
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create: if isStaffOrCompanyMember(companyOfAssessment(request.resource.data.assessmentId))
                      && request.resource.data.authorId == request.auth.uid;
-      allow update: if isCompanyMember(companyOfAssessment(resource.data.assessmentId)) && (
+      allow update: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId)) && (
         resource.data.authorId == request.auth.uid ||
         onlyChangedFields(['resolved', 'resolvedBy', 'resolvedAt', 'pinned', 'updatedAt'])
       );
@@ -294,11 +322,13 @@ service cloud.firestore {
     }
 
     // ── Assessor Notes — private, reviewer-only (never visible to
-    // contributors/read_only, unlike ros_comments_v1 above) ──────────────
+    // contributors/read_only, unlike ros_comments_v1 above). Climactix staff
+    // reviewing via the Internal Analyst System count as reviewer-tier here
+    // too — this collection IS the "+ Note" feature in that workspace.
     match /ros_assessor_notes_v1/{noteId} {
-      allow read: if hasAnyRole(companyOfAssessment(resource.data.assessmentId),
+      allow read: if isStaffOrHasAnyRole(companyOfAssessment(resource.data.assessmentId),
                                  rosReviewRoles().concat(['administrator']));
-      allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
+      allow create: if isStaffOrHasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
                                    rosReviewRoles().concat(['administrator']))
                      && request.resource.data.authorId == request.auth.uid;
       allow update, delete: if false;
@@ -306,57 +336,59 @@ service cloud.firestore {
 
     // ── Tasks ───────────────────────────────────────────────────────────
     match /ros_tasks_v1/{taskId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
-      allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create: if isStaffOrHasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
                                    rosWriteRoles().concat(rosReviewRoles()));
       // The assignee may update their own task's status/progress; write
       // roles and reviewers may reassign/reprioritize.
-      allow update: if isCompanyMember(companyOfAssessment(resource.data.assessmentId)) && (
+      allow update: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId)) && (
         resource.data.assignedToUser == request.auth.uid ||
-        hasAnyRole(companyOfAssessment(resource.data.assessmentId), rosWriteRoles().concat(rosReviewRoles()))
+        isStaffOrHasAnyRole(companyOfAssessment(resource.data.assessmentId), rosWriteRoles().concat(rosReviewRoles()))
       );
       allow delete: if false;
     }
 
     // ── Risk notes ──────────────────────────────────────────────────────
     match /ros_risk_notes_v1/{noteId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
-      allow create, update: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create, update: if isStaffOrHasAnyRole(companyOfAssessment(request.resource.data.assessmentId),
                                            rosWriteRoles().concat(rosReviewRoles()));
       allow delete: if false;
     }
 
     // ── Facilities — geospatial anchors ──────────────────────────────────
     match /ros_facilities_v1/{facilityId} {
-      allow read: if isCompanyMember(resource.data.companyId);
+      allow read: if isStaffOrCompanyMember(resource.data.companyId);
       allow create, update: if hasAnyRole(request.resource.data.companyId, rosWriteRoles());
       allow delete: if false;
     }
 
     // ── Financial materiality ─────────────────────────────────────────────
     match /ros_financial_materiality_v1/{recordId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow create, update: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
       allow delete: if false;
     }
 
     // ── Framework mappings — doc id `${assessmentId}_${frameworkCode}` ───
     match /ros_framework_mappings_v1/{mappingId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow write: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles());
     }
 
-    // ── Review actions — return/request-evidence/approve/reject/close ────
+    // ── Review actions — return/request-evidence/approve/reject/close.
+    // This IS the Internal Analyst System's approve/reject/flag/override
+    // action log (spec §13) — staff must be able to create these directly.
     match /ros_review_actions_v1/{actionId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
-      allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosReviewRoles())
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow create: if isStaffOrHasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosReviewRoles())
                      && request.resource.data.reviewerId == request.auth.uid;
       allow update, delete: if false;
     }
 
     // ── Organization notebook — persistent, lifecycle-spanning notes ─────
     match /ros_notebook_v1/{entryId} {
-      allow read: if isCompanyMember(resource.data.companyId);
+      allow read: if isStaffOrCompanyMember(resource.data.companyId);
       allow create: if isCompanyMember(request.resource.data.companyId)
                      && request.resource.data.authorId == request.auth.uid;
       allow update: if resource.data.authorId == request.auth.uid;
@@ -365,7 +397,7 @@ service cloud.firestore {
 
     // ── Audit log — append-only, immutable once written ───────────────────
     match /ros_audit_log_v1/{logId} {
-      allow read: if hasAnyRole(companyOfAssessment(resource.data.assessmentId),
+      allow read: if isStaffOrHasAnyRole(companyOfAssessment(resource.data.assessmentId),
                                  rosReviewRoles().concat(['assessment_owner', 'auditor']));
       allow create: if isCompanyMember(companyOfAssessment(request.resource.data.assessmentId))
                      && request.resource.data.actorUserId == request.auth.uid;
@@ -379,7 +411,7 @@ service cloud.firestore {
     // an old one, so each past submission stays reconstructable against
     // the exact declaration/methodology/questionnaire versions accepted.
     match /ros_declarations_v1/{declarationId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles())
                      && request.resource.data.submittedByUid == request.auth.uid;
       allow update, delete: if false;
@@ -416,7 +448,7 @@ service cloud.firestore {
     // existing one-hop isCompanyMember() check already authorizes the whole
     // subtree — no recursive rule-walking needed.
     match /ros_entities_v1/{entityId} {
-      allow read: if isCompanyMember(resource.data.companyId);
+      allow read: if isStaffOrCompanyMember(resource.data.companyId);
       allow create: if hasAnyRole(request.resource.data.companyId, rosWriteRoles())
                      && !('ancestryPath' in request.resource.data)
                      && !('effectiveOwnershipFromRoot' in request.resource.data);
@@ -431,7 +463,7 @@ service cloud.firestore {
     // scan's topic levels can never be spoofed client-side, the same
     // reasoning as ros_ai_reviews_v1.
     match /ros_materiality_scans_v1/{assessmentId} {
-      allow read: if isCompanyMember(companyOfAssessment(assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(assessmentId));
       allow write: if false;
     }
 
@@ -439,7 +471,7 @@ service cloud.firestore {
     // (Evidence Library reuse) without duplicating the upload or mutating
     // the original ros_evidence_v1 doc's own questionId. Append-only.
     match /ros_evidence_links_v1/{linkId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow create: if hasAnyRole(companyOfAssessment(request.resource.data.assessmentId), rosWriteRoles())
                      && request.resource.data.linkedBy == request.auth.uid;
       allow update, delete: if false;
@@ -451,7 +483,7 @@ service cloud.firestore {
     // Cloud-Function-only write, same discipline as ros_ai_reviews_v1 —
     // a flag's existence must never be spoofable by a client.
     match /ros_contradiction_flags_v1/{flagId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow write: if false;
     }
 
@@ -460,8 +492,65 @@ service cloud.firestore {
     // compute_evidence_graph Cloud Function trigger. Cloud-Function-only
     // write — never a generic client-writable graph.
     match /ros_evidence_graph_v1/{nodeId} {
-      allow read: if isCompanyMember(companyOfAssessment(resource.data.assessmentId));
+      allow read: if isStaffOrCompanyMember(companyOfAssessment(resource.data.assessmentId));
       allow write: if false;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // CLIMACTIX EVIDENCE INTELLIGENCE AGENT — spec-driven evidence
+    // verification pipeline (services/evidence_intelligence_agent.py).
+    // Backend-team-only tool: read access is isClimactixStaff(), NOT
+    // isCompanyMember() — the entity being assessed must never see how its
+    // own evidence was scored/flagged (this is explicitly what CLAUDE.md's
+    // "Climactix Internal Team" role reviews, distinct from the Enterprise
+    // User role that submitted the evidence). Every one of these is also
+    // Cloud-Function-only write, same discipline as ros_ai_reviews_v1/
+    // ros_contradiction_flags_v1/ros_evidence_graph_v1 above — a claim's
+    // extraction, a confidence score, or an entity's aggregate greenwashing-
+    // risk banner can never be spoofed client-side. Written by
+    // run_evidence_intelligence_analysis (staff-invoked) and onEvidenceCreated
+    // (auto-runs on every evidence upload, Admin SDK — see functions/main.py),
+    // plus recompute_entity_intelligence for the entity-level rollup.
+    // ══════════════════════════════════════════════════════════════════
+
+    // ── Climactix staff roster — who counts as "Backend team." Admin-SDK/
+    // console-managed only; staff can see the roster, no one can write it
+    // from a client (adding staff is an internal ops action, not a product
+    // feature — mirrors ros_methodology_versions_v1's reference-data pattern).
+    match /cx_staff_v1/{uid} {
+      allow read: if isClimactixStaff();
+      allow write: if false;
+    }
+
+    // ── Extracted claims/metrics — one doc per claim or metric per question ──
+    match /ros_claims_v1/{claimId} {
+      allow read: if isClimactixStaff();
+      allow write: if false;
+    }
+
+    // ── Evidence Confidence Score — doc id `${assessmentId}_${questionId}` ──
+    match /ros_evidence_confidence_v1/{docId} {
+      allow read: if isClimactixStaff();
+      allow write: if false;
+    }
+
+    // ── Entity-level Evidence Intelligence — doc id == assessmentId ─────────
+    match /ros_entity_intelligence_v1/{assessmentId} {
+      allow read: if isClimactixStaff();
+      allow write: if false;
+    }
+
+    // ── Generated report snapshots (Internal Analyst System's Report
+    // Engine) — one immutable doc per generated+saved report, mirroring
+    // ros_declarations_v1's append-only-snapshot discipline: a report is a
+    // point-in-time record of what was true when it was generated, not a
+    // live view that silently changes if the underlying assessment is later
+    // re-scored. Staff-only, both directions — a client-side write here
+    // would let a report claim scores that were never actually computed.
+    match /ros_reports_v1/{reportId} {
+      allow read: if isClimactixStaff();
+      allow create: if isClimactixStaff() && request.resource.data.generatedBy == request.auth.uid;
+      allow update, delete: if false;
     }
 
     // ── Assessment agent conversations — doc id `${assessmentId}_${uid}`.

@@ -1212,6 +1212,26 @@
   border-left: 2px solid var(--iro-green);
 }
 
+/* ── Entity-level Evidence Intelligence rail widget (spec §15) ── */
+.iro-ei-rail-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 10px; color: var(--iro-t2); margin-bottom: 7px; }
+.iro-ei-rail-row span:first-child { color: var(--iro-tm); }
+.iro-ei-rail-row b { font-family: var(--iro-mono); font-weight: 700; color: var(--iro-t1); }
+.iro-ei-risk-badge {
+  font-family: var(--iro-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: var(--iro-pill); border: 1px solid var(--iro-b);
+}
+.iro-ei-risk-badge.LOW      { color: #1E8E3E; border-color: rgba(30,142,62,0.3); background: rgba(30,142,62,0.08); }
+.iro-ei-risk-badge.MODERATE { color: var(--iro-accent); border-color: rgba(11,61,145,0.3); background: rgba(11,61,145,0.08); }
+.iro-ei-risk-badge.ELEVATED { color: #B45309; border-color: rgba(180,83,9,0.3); background: rgba(180,83,9,0.08); }
+.iro-ei-risk-badge.HIGH     { color: #DC2626; border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.08); }
+.iro-ei-claims-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+.iro-ei-claim-chip { padding: 6px 8px; border: 1px solid var(--iro-b); border-radius: 6px; font-size: 9px; line-height: 1.5; }
+.iro-ei-claim-chip b { display: block; font-family: var(--iro-mono); font-size: 14px; }
+.iro-ei-claim-chip.verified b     { color: var(--iro-green); }
+.iro-ei-claim-chip.partial b      { color: var(--iro-accent); }
+.iro-ei-claim-chip.unsupported b  { color: var(--iro-gold); }
+.iro-ei-claim-chip.contradictory b{ color: var(--iro-red); }
+
 /* ═══════════════════════════════════════════════
    DECLARATION & ACKNOWLEDGEMENT — consent gate
    between the questionnaire and the C-LAYER report
@@ -2258,6 +2278,69 @@
 .iro-intel-contradiction { border-left: 2px solid var(--iro-red); background: rgba(220,38,38,0.06); padding: 6px 10px; margin-bottom: 6px; font-size: 11px; color: var(--iro-t2); }
 .iro-intel-contradiction .sev { font-family: var(--iro-mono); font-weight: 700; color: var(--iro-red); margin-right: 6px; }
 
+/* ── Climactix Evidence Intelligence Agent — compact intelligence panel
+   (spec §14 exact layout: label/value rows framed by top+bottom rules) ── */
+.iro-ei-panel { border: 1px solid var(--iro-b); border-radius: var(--iro-radius); background: var(--iro-s1); padding: 0; margin-bottom: 16px; overflow: hidden; }
+.iro-ei-panel-head {
+  font-family: var(--iro-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--iro-t1); padding: 10px 14px; border-bottom: 1px solid var(--iro-b); background: var(--iro-s2);
+}
+.iro-ei-panel-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 14px; font-size: 11px; border-bottom: 1px solid var(--iro-b);
+}
+.iro-ei-panel-row:last-child { border-bottom: none; }
+.iro-ei-panel-row span:first-child { color: var(--iro-tm); font-family: var(--font-heading); }
+.iro-ei-panel-row .val { font-family: var(--iro-mono); font-weight: 700; color: var(--iro-t1); }
+.iro-ei-panel-row .val.good { color: var(--iro-green); }
+.iro-ei-panel-row .val.warn { color: var(--iro-gold); }
+.iro-ei-panel-row .val.bad  { color: var(--iro-red); }
+.iro-ei-processing {
+  display: flex; align-items: center; gap: 8px; padding: 14px; font-family: var(--iro-mono);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--iro-accent);
+}
+.iro-ei-processing .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--iro-accent); animation: iroEiPulse 1s ease-in-out infinite; }
+@keyframes iroEiPulse { 0%,100% { opacity: 0.25; } 50% { opacity: 1; } }
+
+/* Greenwashing Signal taxonomy badges (spec §9) — hedged, never accusatory */
+.iro-signal-item { border-left: 2px solid var(--iro-b); padding: 6px 10px; margin-bottom: 6px; font-size: 11px; color: var(--iro-t2); }
+.iro-signal-badge {
+  font-family: var(--iro-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: var(--iro-pill); margin-right: 6px; display: inline-block;
+}
+.iro-signal-item.informational           { border-left-color: var(--iro-tm); }
+.iro-signal-item.evidence-gap            { border-left-color: var(--iro-gold); background: rgba(180,83,9,0.05); }
+.iro-signal-item.weak-evidence           { border-left-color: var(--iro-gold); background: rgba(180,83,9,0.06); }
+.iro-signal-item.potential-contradiction { border-left-color: var(--iro-accent); background: rgba(11,61,145,0.05); }
+.iro-signal-item.material-contradiction  { border-left-color: var(--iro-red); background: rgba(220,38,38,0.06); }
+.iro-signal-item.potential-greenwashing-signal { border-left-color: var(--iro-red); background: rgba(220,38,38,0.08); }
+.iro-signal-badge.informational           { color: var(--iro-tm); background: var(--iro-s2); }
+.iro-signal-badge.evidence-gap            { color: var(--iro-gold); background: rgba(180,83,9,0.1); }
+.iro-signal-badge.weak-evidence           { color: var(--iro-gold); background: rgba(180,83,9,0.12); }
+.iro-signal-badge.potential-contradiction { color: var(--iro-accent); background: rgba(11,61,145,0.1); }
+.iro-signal-badge.material-contradiction  { color: var(--iro-red); background: rgba(220,38,38,0.1); }
+.iro-signal-badge.potential-greenwashing-signal { color: #fff; background: var(--iro-red); }
+
+/* Analyst review action row (spec §13) */
+.iro-analyst-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px; }
+.iro-intel-btn.danger  { border-color: rgba(220,38,38,0.35); color: var(--iro-red); }
+.iro-intel-btn.danger:hover  { background: rgba(220,38,38,0.08); }
+.iro-intel-btn.warn    { border-color: rgba(180,83,9,0.35); color: var(--iro-gold); }
+.iro-intel-btn.warn:hover    { background: rgba(180,83,9,0.08); }
+.iro-analyst-log { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+.iro-analyst-log-item { font-size: 10px; color: var(--iro-tm); font-family: var(--iro-mono); line-height: 1.5; }
+.iro-analyst-log-item b { color: var(--iro-t2); font-weight: 700; }
+
+/* Evidence Workspace — Add Web Source / Add Facility inline forms */
+.iro-ws-secondary-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.iro-ws-secondary-btn {
+  font-family: var(--font-heading); font-size: 10px; padding: 6px 10px; border-radius: var(--iro-radius);
+  border: 1px dashed var(--iro-b); background: transparent; color: var(--iro-t2); cursor: pointer; transition: all var(--iro-tr);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.iro-ws-secondary-btn:hover { border-color: var(--iro-accent); color: var(--iro-accent); border-style: solid; }
+.iro-ws-facility-chip { font-family: var(--iro-mono); font-size: 9px; color: var(--iro-accent); background: rgba(11,61,145,0.06); border-radius: 4px; padding: 3px 8px; display: inline-flex; align-items: center; gap: 4px; }
+
 /* Persistent Climactix Assessment Agent */
 .iro-agent-launcher {
   position: fixed; bottom: 24px; right: 24px; z-index: 380;
@@ -2989,6 +3072,20 @@
             <div class="iro-no-flags">No flags detected</div>
           </div>
         </div>
+
+        <!-- Entity-level Evidence Intelligence rollup (spec §15) — aggregated
+             server-side across every question's Evidence Confidence result
+             by recompute_entity_intelligence (functions/main.py). Distinct
+             from "Data Confidence" above, which reflects answer completeness,
+             not evidence quality. -->
+        <div class="iro-rail-section" id="railEvidenceIntelSection" style="display:none">
+          <div class="iro-rail-label">Climactix Evidence Intelligence</div>
+          <div class="iro-ei-rail-row"><span>Evidence Integrity</span><b id="railEIIntegrity">—</b></div>
+          <div class="iro-ei-rail-row"><span>Disclosure Consistency</span><b id="railEIConsistency">—</b></div>
+          <div class="iro-ei-rail-row"><span>Verification Coverage</span><b id="railEICoverage">—</b></div>
+          <div class="iro-ei-rail-row"><span>Greenwashing Risk</span><span class="iro-ei-risk-badge" id="railEIRiskBadge">—</span></div>
+          <div class="iro-ei-claims-grid" id="railEIClaimsGrid"></div>
+        </div>
       </aside>
 
     </div><!-- /.iro-assess-layout -->
@@ -3223,7 +3320,20 @@ const STATE = { entity:{}, answers:{}, currentSection:0, radarChart:null, compan
   aiReviewsByQuestion:{}, assessedByQuestion:{}, evidenceLinksByQuestion:{}, contradictionFlags:[], agentConversation:[],
   // Management Response / Supporting Narrative for non-select5 questions
   // (select5 already carries its justification inside answers[qId] itself).
-  narrativeByQuestion:{}, narrativeSavedAt:{} };
+  narrativeByQuestion:{}, narrativeSavedAt:{},
+  // Climactix Evidence Intelligence Agent — claims/metrics extracted per
+  // question, the full confidence breakdown per question, the entity-wide
+  // rollup, and which facility (if any) each question is linked to. Kept
+  // separate from evidenceByQuestion/aiReviewsByQuestion (which predate the
+  // Evidence Intelligence Agent) rather than folded in, so the existing AI-
+  // review-per-file flow and the new full-pipeline flow never overwrite
+  // each other's data.
+  claimsByQuestion:{}, evidenceConfidenceByQuestion:{}, entityIntelligence:null, facilities:[], facilityByQuestion:{},
+  // Evidence Intelligence Agent is a Backend-team-only tool (see
+  // firestore.rules' isClimactixStaff()) — the entity being assessed must
+  // never see how its own evidence was scored. Resolved once per session
+  // once window.RiskOSData is available (see the assessment-load flow).
+  isClimactixStaff:false };
 let _unsubRiskOSEntities = null;
 try { const s=localStorage.getItem('iro_answers_v4'); if(s) STATE.answers=JSON.parse(s); } catch(e){}
 try { const e=localStorage.getItem('iro_entity'); if(e) STATE.entity=JSON.parse(e); } catch(e){}
@@ -3238,6 +3348,11 @@ let _unsubRiskOSContradictions = null;
 let _unsubRiskOSAgentConvo = null;
 let _unsubRiskOSAIReviews = null;
 let _unsubRiskOSEvidenceLinks = null;
+let _unsubRiskOSEntityIntelligence = null;
+let _unsubRiskOSFacilities = null;
+let _unsubRiskOSFacilityLinks = null;
+const _unsubRiskOSClaims = {}; // qId -> unsub (per-question, opened lazily from the drawer)
+const _unsubRiskOSEvidenceConfidence = {}; // qId -> unsub
 let _intelDrawerQid = null; // which question the Question Intelligence drawer is currently open on, if any
 
 // Simple line-icon wrapper (24x24 viewBox, matches the same institutional
@@ -5202,7 +5317,17 @@ async function startAssessment() {
         _startContradictionFlagsSubscription();
         _startEvidenceLinksSubscription();
         _startAgentConversationSubscription();
+        _startFacilitiesSubscription();
+        _startFacilityLinksSubscription();
         _showAgentLauncherIfReady();
+
+        // Evidence Intelligence Agent is a Backend-team-only tool — only
+        // subscribe to its (staff-only-readable) collections if this user
+        // actually is Climactix staff, rather than letting every company
+        // user's client attempt a subscription that firestore.rules will
+        // just deny (noisy console errors, wasted listeners, no data).
+        STATE.isClimactixStaff = await window.RiskOSData.checkClimactixStaff();
+        if (STATE.isClimactixStaff) _startEntityIntelligenceSubscription();
 
         // Question bank + materiality scan run in parallel with the screen
         // transition below — neither blocks entering the questionnaire.
@@ -5466,6 +5591,45 @@ function _startEvidenceLinksSubscription() {
     if (document.getElementById('iro-assess')?.classList.contains('active')) updateRail();
     _refreshIntelDrawerIfOpen();
     _refreshAllVisibleActionBars();
+  });
+}
+
+// Entity-level Evidence Intelligence rollup (spec §15) — Evidence Integrity
+// Score, Disclosure Consistency Score, Verification Coverage, Greenwashing
+// Risk banner, claim-status counts. Recomputed server-side (functions/
+// main.py's recompute_entity_intelligence trigger) every time any question's
+// evidence confidence is written — this just reflects the latest snapshot.
+function _startEntityIntelligenceSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSEntityIntelligence) { _unsubRiskOSEntityIntelligence(); _unsubRiskOSEntityIntelligence = null; }
+  _unsubRiskOSEntityIntelligence = window.RiskOSData.subscribeEntityIntelligence(STATE.assessmentId, (data) => {
+    STATE.entityIntelligence = data;
+    _renderEntityIntelligencePanel();
+  });
+}
+
+// Facilities (spec §7 geospatial anchors) — company-wide list, so any
+// question's "Add Facility / Location" step can reuse a facility already
+// registered for a different question instead of re-entering coordinates.
+function _startFacilitiesSubscription() {
+  if (!window.RiskOSData || !STATE.companyId) return;
+  if (_unsubRiskOSFacilities) { _unsubRiskOSFacilities(); _unsubRiskOSFacilities = null; }
+  _unsubRiskOSFacilities = window.RiskOSData.subscribeFacilities(STATE.companyId, (items) => {
+    STATE.facilities = items;
+  });
+}
+
+// Which facility (if any) is linked to each question — persisted on
+// ros_answers_v1.facilityId (see saveFacilityLink()) rather than held only
+// in STATE, so the link survives a page reload AND is visible server-side
+// to the onEvidenceCreated auto-trigger (functions/main.py), which has no
+// live client to source a facilityId from.
+function _startFacilityLinksSubscription() {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  if (_unsubRiskOSFacilityLinks) { _unsubRiskOSFacilityLinks(); _unsubRiskOSFacilityLinks = null; }
+  _unsubRiskOSFacilityLinks = window.RiskOSData.subscribeFacilityLinks(STATE.assessmentId, (byQ) => {
+    STATE.facilityByQuestion = { ...STATE.facilityByQuestion, ...byQ };
+    Object.keys(byQ).forEach(qId => _renderFacilityTag(qId));
   });
 }
 
@@ -6070,6 +6234,32 @@ function toggleWorkspace(qId) {
             ${_icon('<path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 0 1-7.78-7.78l9.2-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a1.5 1.5 0 0 1-2.12-2.12l8.49-8.48"/>', 13)} Upload evidence
             <input type="file" style="display:none" onchange="handleEvidenceUpload('${qId}', this)" />
           </label>
+          <div class="iro-ws-secondary-actions">
+            <button class="iro-ws-secondary-btn" onclick="toggleWebSourceForm('${qId}')">${_icon('<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>', 11)} Add web source</button>
+            <button class="iro-ws-secondary-btn" onclick="toggleFacilityForm('${qId}')">${_icon('<path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>', 11)} Add facility / location</button>
+          </div>
+          <div id="ws-facility-tag-${qId}"></div>
+          <div id="ws-websource-form-${qId}" class="iro-ev-form" style="display:none;margin-top:8px">
+            <div class="iro-dyn-grid">
+              <div class="iro-dyn-field full"><label>Source URL</label><input type="url" id="ws-url-${qId}" placeholder="https://…" /></div>
+              <div class="iro-dyn-field"><label>Reporting period</label><input type="text" id="ws-url-period-${qId}" placeholder="e.g. FY2025" /></div>
+              <div class="iro-dyn-field"><label>Issuing authority</label><input type="text" id="ws-url-authority-${qId}" placeholder="e.g. Regulator, exchange" /></div>
+            </div>
+            <button class="iro-btn-ghost" style="padding:7px 14px;font-size:11px" onclick="submitWebSource('${qId}')">Add source</button>
+          </div>
+          <div id="ws-facility-form-${qId}" class="iro-ev-form" style="display:none;margin-top:8px">
+            <div id="ws-facility-existing-${qId}"></div>
+            <div class="iro-dyn-grid">
+              <div class="iro-dyn-field"><label>Facility / project name</label><input type="text" id="ws-fac-name-${qId}" placeholder="e.g. Chennai Manufacturing Unit" /></div>
+              <div class="iro-dyn-field"><label>Country</label><input type="text" id="ws-fac-country-${qId}" placeholder="e.g. India" /></div>
+              <div class="iro-dyn-field"><label>State / district</label><input type="text" id="ws-fac-state-${qId}" placeholder="e.g. Tamil Nadu" /></div>
+              <div class="iro-dyn-field"><label>Asset identifier</label><input type="text" id="ws-fac-asset-${qId}" placeholder="Optional internal ID" /></div>
+              <div class="iro-dyn-field"><label>Latitude</label><input type="number" step="any" id="ws-fac-lat-${qId}" placeholder="e.g. 13.0827" /></div>
+              <div class="iro-dyn-field"><label>Longitude</label><input type="number" step="any" id="ws-fac-lng-${qId}" placeholder="e.g. 80.2707" /></div>
+              <div class="iro-dyn-field"><label>Area</label><input type="text" id="ws-fac-area-${qId}" placeholder="e.g. 12 hectares" /></div>
+            </div>
+            <button class="iro-btn-ghost" style="padding:7px 14px;font-size:11px" onclick="submitFacility('${qId}')">Save facility &amp; link</button>
+          </div>
         </div>
       </div>
       <div class="iro-ws-section">
@@ -6107,6 +6297,82 @@ function _subscribeWorkspace(qId) {
   _wsSubs[qId].comments = window.RiskOSData.subscribeComments(STATE.assessmentId, qId, items => _renderCommentsList(qId, items));
   _wsSubs[qId].notes = window.RiskOSData.subscribeAssessorNotes(STATE.assessmentId, qId, items => _renderAssessorNotes(qId, items));
   _wsSubs[qId].reviewActions = window.RiskOSData.subscribeReviewActions(STATE.assessmentId, items => _renderReviewActions(qId, items));
+  _renderFacilityTag(qId);
+}
+
+/* ─── Evidence Workspace — Add Web Source (spec §1/§12) ─── */
+function toggleWebSourceForm(qId) {
+  const el = document.getElementById('ws-websource-form-'+qId);
+  if (el) el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+}
+async function submitWebSource(qId) {
+  const urlInput = document.getElementById('ws-url-'+qId);
+  const url = (urlInput?.value || '').trim();
+  if (!url || !window.RiskOSData || !STATE.companyId || !STATE.assessmentId) return;
+  const g = id => document.getElementById(id)?.value || null;
+  const meta = { reportingPeriod: g('ws-url-period-'+qId), issuingAuthority: g('ws-url-authority-'+qId) };
+  try {
+    const evidenceId = await window.RiskOSData.addWebSourceEvidence(STATE.companyId, STATE.assessmentId, qId, url, meta);
+    await window.RiskOSData.logAuditEvent(STATE.assessmentId, 'evidence_added', evidenceId, null, { sourceUrl: url, questionId: qId });
+    urlInput.value = '';
+    ['ws-url-period-', 'ws-url-authority-'].forEach(p => { const e = document.getElementById(p+qId); if (e) e.value = ''; });
+    toggleWebSourceForm(qId);
+  } catch (e) { alert('Could not add web source: ' + (e.message||e)); }
+}
+
+/* ─── Evidence Workspace — Add Facility / Location (spec §7) ─── */
+function toggleFacilityForm(qId) {
+  const el = document.getElementById('ws-facility-form-'+qId);
+  if (!el) return;
+  const opening = el.style.display === 'none';
+  el.style.display = opening ? 'block' : 'none';
+  if (opening) _renderExistingFacilitiesPicker(qId);
+}
+function _renderExistingFacilitiesPicker(qId) {
+  const el = document.getElementById('ws-facility-existing-'+qId);
+  if (!el) return;
+  if (!(STATE.facilities||[]).length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="iro-dyn-field full" style="margin-bottom:8px">
+    <label>Or link an existing facility</label>
+    <select onchange="if(this.value) linkFacilityToQuestion('${qId}', this.value)">
+      <option value="">— Select existing —</option>
+      ${STATE.facilities.map(f => `<option value="${f.id}">${(f.name||'Unnamed facility')}${f.country?` · ${f.country}`:''}</option>`).join('')}
+    </select>
+  </div>`;
+}
+async function submitFacility(qId) {
+  const g = id => document.getElementById(id)?.value || null;
+  const name = g('ws-fac-name-'+qId);
+  if (!name || !window.RiskOSData || !STATE.companyId) return;
+  const facility = {
+    name, country: g('ws-fac-country-'+qId), stateDistrict: g('ws-fac-state-'+qId),
+    assetIdentifier: g('ws-fac-asset-'+qId), area: g('ws-fac-area-'+qId),
+    latitude: g('ws-fac-lat-'+qId) ? parseFloat(g('ws-fac-lat-'+qId)) : null,
+    longitude: g('ws-fac-lng-'+qId) ? parseFloat(g('ws-fac-lng-'+qId)) : null,
+  };
+  try {
+    const facilityId = await window.RiskOSData.saveFacility(STATE.companyId, facility);
+    linkFacilityToQuestion(qId, facilityId);
+    ['ws-fac-name-','ws-fac-country-','ws-fac-state-','ws-fac-asset-','ws-fac-lat-','ws-fac-lng-','ws-fac-area-'].forEach(p => { const e = document.getElementById(p+qId); if (e) e.value = ''; });
+    toggleFacilityForm(qId);
+  } catch (e) { alert('Could not save facility: ' + (e.message||e)); }
+}
+function linkFacilityToQuestion(qId, facilityId) {
+  STATE.facilityByQuestion[qId] = facilityId;
+  _renderFacilityTag(qId);
+  if (window.RiskOSData && STATE.assessmentId) {
+    window.RiskOSData.saveFacilityLink(STATE.assessmentId, qId, facilityId).catch(e => console.error('[risk-os] could not persist facility link', e));
+  }
+}
+function _renderFacilityTag(qId) {
+  const el = document.getElementById('ws-facility-tag-'+qId);
+  if (!el) return;
+  const facilityId = STATE.facilityByQuestion[qId];
+  const facility = (STATE.facilities||[]).find(f => f.id === facilityId);
+  el.innerHTML = facility
+    ? `<span class="iro-ws-facility-chip">${_icon('<path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>', 10)} Linked: ${facility.name||'Facility'}
+        <span style="cursor:pointer" onclick="linkFacilityToQuestion('${qId}', null)" title="Unlink">✕</span></span>`
+    : '';
 }
 
 // Assessor Notes — private, reviewer-role only. firestore.rules restricts
@@ -6140,9 +6406,15 @@ function _renderReviewActions(qId, items) {
   if (!el) return;
   const forThis = items.filter(a => a.questionId === qId);
   if (!forThis.length) { el.innerHTML = ''; return; }
-  const labels = {flag_for_review:'Flagged for review', request_evidence:'Additional information requested', approve:'✓ Approved', reject:'✕ Rejected', close:'Closed'};
+  const labels = {
+    flag_for_review:'Flagged for review', request_evidence:'Additional information requested',
+    approve:'✓ Approved', reject:'✕ Rejected', close:'Closed',
+    // Climactix Evidence Intelligence Agent analyst review workflow (spec §13)
+    accept_agent_finding:'✓ Agent finding accepted', reject_agent_finding:'✕ Agent finding rejected',
+    request_more_evidence:'Additional evidence requested', override_score:'⚠ Score overridden',
+  };
   el.innerHTML = forThis.slice(0,5).map(a => `
-    <div class="iro-ai-review-result"><span class="rtype">${labels[a.actionType]||a.actionType}</span>${a.note?` — ${a.note}`:''} <span style="color:var(--iro-tm)">· ${_fmtWorkspaceTime(a.createdAt)}</span></div>
+    <div class="iro-ai-review-result"><span class="rtype">${labels[a.actionType]||a.actionType}</span>${a.actionType==='override_score' && a.scoreBefore!=null ? ` (${a.scoreBefore} → ${a.scoreAfter})` : ''}${a.note?` — ${a.note}`:''} <span style="color:var(--iro-tm)">· ${_fmtWorkspaceTime(a.createdAt)}</span></div>
   `).join('');
 }
 async function fileReviewAction(qId, actionType) {
@@ -6150,6 +6422,64 @@ async function fileReviewAction(qId, actionType) {
   const note = prompt(actionType === 'flag_for_review' ? 'Reason for flagging this question for review (optional):' : 'What additional information is being requested (optional):');
   try { await window.RiskOSData.createReviewAction(STATE.assessmentId, qId, actionType, note || null); }
   catch (e) { alert('Could not file review action (reviewer role required): ' + (e.message||e)); }
+}
+
+/* ─── Analyst Review Workflow — Climactix Evidence Intelligence Agent
+   (spec §13). Every action is stored via the same ros_review_actions_v1
+   collection fileReviewAction() above already uses — this only adds the
+   new actionType values the Evidence Intelligence panel's action row needs,
+   plus the mandatory-reason + before/after handling override_score requires. ─── */
+async function acceptAgentFinding(qId) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  try { await window.RiskOSData.createReviewAction(STATE.assessmentId, qId, 'accept_agent_finding', null); }
+  catch (e) { alert('Could not record acceptance (reviewer role required): ' + (e.message||e)); }
+}
+async function rejectAgentFinding(qId) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  const note = prompt('Reason for rejecting the Evidence Intelligence Agent\'s finding:');
+  if (note === null) return;
+  try { await window.RiskOSData.createReviewAction(STATE.assessmentId, qId, 'reject_agent_finding', note || null); }
+  catch (e) { alert('Could not record rejection: ' + (e.message||e)); }
+}
+async function requestMoreEvidence(qId) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  const note = prompt('What additional evidence is required?');
+  if (note === null) return;
+  try { await window.RiskOSData.createReviewAction(STATE.assessmentId, qId, 'request_more_evidence', note || null); }
+  catch (e) { alert('Could not request additional evidence: ' + (e.message||e)); }
+}
+async function overrideAgentScore(qId) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  const conf = STATE.evidenceConfidenceByQuestion[qId];
+  const before = conf ? conf.recommendedScore : null;
+  const afterRaw = prompt(`Enter the overridden score (0–100). Current recommended score: ${before ?? '—'}`);
+  if (afterRaw === null) return;
+  const after = parseInt(afterRaw, 10);
+  if (isNaN(after) || after < 0 || after > 100) { alert('Enter a whole number between 0 and 100.'); return; }
+  const reason = prompt('Reason for override (required):');
+  if (!reason || !reason.trim()) { alert('A reason is required to override the agent-recommended score.'); return; }
+  try {
+    await window.RiskOSData.createReviewAction(STATE.assessmentId, qId, 'override_score', reason.trim(), { scoreBefore: before, scoreAfter: after });
+  } catch (e) { alert('Could not record override: ' + (e.message||e)); }
+}
+
+/* ─── Climactix Evidence Intelligence Agent — full pipeline trigger ─── */
+async function runFullEvidenceIntelligence(qId) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  const q = QUESTIONS.find(qq => qq.id === qId);
+  const panel = document.getElementById('intelEiPanel');
+  if (panel) panel.innerHTML = `<div class="iro-ei-processing"><span class="dot"></span> Evidence Intelligence / Analysis in progress</div>`;
+  const btn = document.getElementById('intelEiRunBtn');
+  if (btn) btn.disabled = true;
+  try {
+    await window.RiskOSData.runEvidenceIntelligenceAnalysis(STATE.assessmentId, qId, q ? q.text : '', STATE.facilityByQuestion[qId] || null);
+    // Results arrive via the live ros_claims_v1 / ros_evidence_confidence_v1
+    // subscriptions opened when the drawer loaded — no manual re-render needed.
+  } catch (e) {
+    if (panel) panel.innerHTML = `<div class="iro-intel-empty">Evidence Intelligence Agent unavailable: ${(e.message||e)}</div>`;
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 function _renderEvidenceList(qId, items) {
@@ -6245,6 +6575,35 @@ async function runEvidenceAIReview(evidenceId, reviewType, qId) {
    here computes a new number, it only presents what the Cloud Function
    already returned (see functions/services/risk_os_ai_review.py). */
 
+// Entity-level Evidence Intelligence rollup (spec §15) — renders into the
+// score rail's #railEvidenceIntelSection (see the aside markup). Hidden
+// until at least one question has been analyzed (no misleading "0" scores
+// before any evidence has actually been reviewed).
+function _renderEntityIntelligencePanel() {
+  const section = document.getElementById('railEvidenceIntelSection');
+  if (!section) return;
+  // Backend-team-only (see firestore.rules' isClimactixStaff()) — a company
+  // user's STATE.entityIntelligence will always be null anyway (its
+  // subscription is never even opened for them), but this is the explicit
+  // gate rather than relying on that as an accident of wiring.
+  if (!STATE.isClimactixStaff) { section.style.display = 'none'; return; }
+  const ei = STATE.entityIntelligence;
+  if (!ei) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  document.getElementById('railEIIntegrity').textContent = `${ei.evidenceIntegrityScore}/100`;
+  document.getElementById('railEIConsistency').textContent = `${ei.disclosureConsistencyScore}/100`;
+  document.getElementById('railEICoverage').textContent = `${ei.verificationCoveragePct}%`;
+  const badge = document.getElementById('railEIRiskBadge');
+  badge.textContent = ei.greenwashingRisk;
+  badge.className = 'iro-ei-risk-badge ' + ei.greenwashingRisk;
+  document.getElementById('railEIClaimsGrid').innerHTML = `
+    <div class="iro-ei-claim-chip verified"><b>${ei.verifiedClaims}</b>Verified</div>
+    <div class="iro-ei-claim-chip partial"><b>${ei.partiallyVerifiedClaims}</b>Partial</div>
+    <div class="iro-ei-claim-chip unsupported"><b>${ei.unsupportedClaims}</b>Unsupported</div>
+    <div class="iro-ei-claim-chip contradictory"><b>${ei.contradictoryClaims}</b>Contradictory</div>
+  `;
+}
+
 function _intelMostRecentEvidence(qId) {
   const items = STATE.evidenceByQuestion[qId] || [];
   if (!items.length) return null;
@@ -6261,6 +6620,33 @@ function openIntelDrawer(qId) {
   document.getElementById('intelTitle').textContent = q ? (q.label || (q.text.length > 60 ? q.text.slice(0,60)+'…' : q.text)) : qId;
   document.getElementById('intelQid').textContent = qId;
   _renderIntelDrawerContent(qId);
+  _subscribeIntelDrawerData(qId);
+}
+
+// Claims/metrics + Evidence Confidence subscriptions are opened lazily, the
+// first time a question's Question Intelligence drawer is opened — mirrors
+// the existing per-evidence AI-review subscription pattern (_wsSubs[qId].ai)
+// rather than subscribing to every question's data up front. Left open for
+// the rest of the session once opened (same as that pattern) so re-opening
+// the drawer doesn't re-subscribe.
+function _subscribeIntelDrawerData(qId) {
+  if (!window.RiskOSData || !STATE.assessmentId) return;
+  // Backend-team-only data — a company user's subscription would just be
+  // denied by firestore.rules (isClimactixStaff()); skip it entirely rather
+  // than opening a listener that can never receive data.
+  if (!STATE.isClimactixStaff) return;
+  if (!_unsubRiskOSClaims[qId]) {
+    _unsubRiskOSClaims[qId] = window.RiskOSData.subscribeClaims(STATE.assessmentId, qId, items => {
+      STATE.claimsByQuestion[qId] = items;
+      _refreshIntelDrawerIfOpen(qId);
+    });
+  }
+  if (!_unsubRiskOSEvidenceConfidence[qId]) {
+    _unsubRiskOSEvidenceConfidence[qId] = window.RiskOSData.subscribeEvidenceConfidence(STATE.assessmentId, qId, data => {
+      STATE.evidenceConfidenceByQuestion[qId] = data;
+      _refreshIntelDrawerIfOpen(qId);
+    });
+  }
 }
 function closeIntelDrawer() {
   document.getElementById('intelOverlay').classList.remove('open');
@@ -6296,15 +6682,78 @@ function _renderIntelDrawerContent(qId) {
     `<span class="iro-intel-citation" title="${(c.excerpt||'').replace(/"/g,'&quot;')}">${c.locator}</span>`).join('');
   const busy = !mostRecent ? 'disabled title="Upload evidence for this question first"' : '';
 
+  // ── Climactix Evidence Intelligence Agent — full-pipeline result for this
+  // question (spec §14/§17), populated by ros_evidence_confidence_v1 +
+  // ros_claims_v1 once runFullEvidenceIntelligence() has been run at least
+  // once. Distinct from summarize/find_gaps/contradictions above, which are
+  // single-review-type AI passes over one file — this is the composite result
+  // across every evidence item, claim, metric, and cross-document check.
+  const ei = STATE.evidenceConfidenceByQuestion[qId] || null;
+  const claimsData = STATE.claimsByQuestion[qId] || [];
+  const claims = claimsData.filter(c => c.kind === 'claim');
+  const metrics = claimsData.filter(c => c.kind === 'metric');
+  const eiBusy = evidenceItems.length ? '' : 'disabled title="Add evidence for this question first"';
+
+  const verificationLabel = !ei ? '—'
+    : (ei.crossDocumentContradictions||[]).some(c => c.severity === 'Critical' || c.severity === 'High') ? 'CONTRADICTORY'
+    : ei.label === 'HIGH' ? 'VERIFIED' : ei.label === 'INSUFFICIENT' ? 'UNVERIFIED' : 'PARTIALLY VERIFIED';
+  const verificationClass = verificationLabel === 'VERIFIED' ? 'good' : verificationLabel === 'CONTRADICTORY' ? 'bad' : verificationLabel === 'UNVERIFIED' ? 'bad' : 'warn';
+  const extConsistencyChecks = [...(ei?.externalCrossCheck||[]), ...(ei?.geospatialCrossCheck ? [ei.geospatialCrossCheck] : [])];
+  const extConsistencyLabel = !extConsistencyChecks.length ? 'NOT ASSESSED'
+    : extConsistencyChecks.every(c => c.status === 'EXTERNAL_SOURCE_UNAVAILABLE' || c.status === 'GEOSPATIAL_DATA_UNAVAILABLE') ? 'NO EXTERNAL SOURCE AVAILABLE'
+    : extConsistencyChecks.some(c => c.status === 'MISMATCH' || c.status === 'CONTRADICTED') ? 'LOW'
+    : extConsistencyChecks.some(c => c.status === 'PARTIAL' || c.status === 'PARTIAL_MATCH') ? 'MODERATE' : 'HIGH';
+  const contradictionCount = (ei?.crossDocumentContradictions||[]).length + durableFlags.length + ruleFlags.length;
+  const gapCount = (ei?.missingEvidence||[]).length;
+  const signalCount = (ei?.greenwashingSignals||[]).length;
+
+  const _signalClass = cat => (cat||'').toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
+
+  // Evidence Intelligence Agent output is a Backend-team-only tool (see
+  // firestore.rules' isClimactixStaff()) — the entity being assessed sees a
+  // neutral "received, pending review" note instead of the analysis itself.
+  // It also auto-runs on every evidence upload now (onEvidenceCreated,
+  // functions/main.py), so there is no company-facing "Run" button at all —
+  // only staff get the manual re-run control.
+  const showEI = STATE.isClimactixStaff;
+
   body.innerHTML = `
     <div class="iro-intel-section">
-      <div class="iro-intel-label">Company Declaration</div>
+      <div class="iro-intel-label">Entity Response</div>
       <div class="iro-intel-body">${_statusLabel(declared)}</div>
     </div>
     <div class="iro-intel-section">
       <div class="iro-intel-label">Management Narrative</div>
       <div class="iro-intel-body">${justification || '<span class="iro-intel-empty">No write-up provided yet.</span>'}</div>
     </div>
+
+    <!-- ═══ CLIMACTIX EVIDENCE INTELLIGENCE — compact panel (spec §14) ═══
+         Backend-team-only — see showEI above. ═══ -->
+    ${showEI ? `
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Climactix Agent Assessment</div>
+      <div id="intelEiPanel">
+        ${ei ? `
+        <div class="iro-ei-panel">
+          <div class="iro-ei-panel-head">Climactix Evidence Intelligence</div>
+          <div class="iro-ei-panel-row"><span>Evidence Confidence</span><span class="val ${ei.score>=75?'good':ei.score>=50?'':'bad'}">${ei.score}/100 — ${ei.label}</span></div>
+          <div class="iro-ei-panel-row"><span>Verification</span><span class="val ${verificationClass}">${verificationLabel}</span></div>
+          <div class="iro-ei-panel-row"><span>External Consistency</span><span class="val">${extConsistencyLabel}</span></div>
+          <div class="iro-ei-panel-row"><span>Contradictions</span><span class="val ${contradictionCount?'bad':'good'}">${contradictionCount}</span></div>
+          <div class="iro-ei-panel-row"><span>Evidence Gaps</span><span class="val ${gapCount?'warn':'good'}">${gapCount}</span></div>
+          <div class="iro-ei-panel-row"><span>Greenwashing Signals</span><span class="val ${signalCount?'bad':'good'}">${signalCount}</span></div>
+          <div class="iro-ei-panel-row"><span>Analyst Review</span><span class="val ${ei.analystReviewRequired?'bad':'good'}">${ei.analystReviewRequired?'REQUIRED':'NOT REQUIRED'}</span></div>
+        </div>` : '<div class="iro-intel-empty">Not yet analyzed — runs automatically once evidence is uploaded for this question.</div>'}
+      </div>
+      <div class="iro-intel-actions" style="margin-top:8px">
+        <button class="iro-intel-btn primary" id="intelEiRunBtn" ${eiBusy} onclick="runFullEvidenceIntelligence('${qId}')">Re-run Evidence Intelligence Agent</button>
+      </div>
+    </div>` : `
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Climactix Review Status</div>
+      <div class="iro-intel-body">${evidenceItems.length ? 'Evidence received — pending Climactix review.' : 'No evidence submitted yet for this question.'}</div>
+    </div>`}
+
     <div class="iro-intel-section">
       <div class="iro-intel-label">Evidence Reviewed</div>
       ${(evidenceItems.length || linkedIds.length)
@@ -6322,24 +6771,89 @@ function _renderIntelDrawerContent(qId) {
         <button class="iro-intel-btn" ${busy} onclick="runIntelReview('${qId}','summarize')">Summarize evidence</button>
       </div>
     </div>
+
+    <!-- Extracted Data (spec §3/§4) + Cross-Checks (spec §6/§7) — Backend-
+         team-only, same discipline as the compact panel above. -->
+    ${showEI ? `
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Extracted Data</div>
+      ${(claims.length || metrics.length) ? `
+        ${metrics.length ? `<div class="iro-intel-body" style="margin-bottom:6px"><b>Metrics</b></div>` + metrics.map(m => `
+          <div class="iro-signal-item informational">${m.metric}: <b>${m.value}${m.unit?(' '+m.unit):''}</b>${m.reportingPeriod?` · ${m.reportingPeriod}`:''}${m.boundary?` · ${m.boundary}`:''}
+            ${m.sourceLocator ? `<span class="iro-intel-citation">${m.sourceLocator}</span>` : `<span style="color:var(--iro-gold);font-family:var(--iro-mono);font-size:9px"> · SOURCE TRACEABILITY INSUFFICIENT</span>`}</div>
+        `).join('') : ''}
+        ${claims.length ? `<div class="iro-intel-body" style="margin:8px 0 6px"><b>Claims</b></div>` + claims.map(c => `
+          <div class="iro-signal-item informational">${c.claim} <span style="color:var(--iro-tm)">(${c.claimType||'Claim'}${c.targetYear?`, target ${c.targetYear}`:''})</span>
+            ${c.potentialGreenwashingRisk ? `<div style="color:var(--iro-gold);font-size:10px;margin-top:3px">${c.potentialGreenwashingRisk}</div>` : ''}</div>
+        `).join('') : ''}
+      ` : '<div class="iro-intel-empty">No structured claims or metrics extracted yet.</div>'}
+    </div>
+
+    <!-- Both external + geospatial cross-checks are stubbed (no live
+         regulatory/CDP/satellite provider configured) — shown honestly as
+         unavailable rather than fabricating a match. -->
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Cross-Checks</div>
+      ${extConsistencyChecks.length ? extConsistencyChecks.map(c => `
+        <div class="iro-intel-body" style="margin-bottom:6px">${c.status.replace(/_/g,' ')}${c.item?` — ${c.item}`:''}: ${c.reason}</div>
+      `).join('') : '<div class="iro-intel-empty">No external or geospatial cross-check run yet.</div>'}
+    </div>` : ''}
+
     <div class="iro-intel-section">
       <div class="iro-intel-label">Contradictions</div>
-      ${(ruleFlags.length || durableFlags.length)
+      ${(ruleFlags.length || durableFlags.length || (showEI && (ei?.crossDocumentContradictions||[]).length))
         ? [...ruleFlags.map(f=>`<div class="iro-intel-contradiction"><span class="sev">${f.sev}</span>${f.text}</div>`),
-           ...durableFlags.map(f=>`<div class="iro-intel-contradiction"><span class="sev">${f.severity}</span>${f.summary}</div>`)].join('')
+           ...durableFlags.map(f=>`<div class="iro-intel-contradiction"><span class="sev">${f.severity}</span>${f.summary}</div>`),
+           ...(showEI ? (ei?.crossDocumentContradictions||[]).map(c=>`<div class="iro-intel-contradiction"><span class="sev">${c.severity}</span>${c.metric}: ${c.explanation} <span style="color:var(--iro-tm)">(${(c.classification||'').replace(/_/g,' ')})</span></div>`) : [])].join('')
         : '<div class="iro-intel-empty">No contradictions detected for this question.</div>'}
       ${contradictionsReview ? `<div class="iro-intel-body" style="margin-top:6px">${contradictionsReview.outputSummary}</div>` : ''}
       <div class="iro-intel-actions" style="margin-top:8px">
         <button class="iro-intel-btn" ${busy} onclick="runIntelReview('${qId}','contradictions')">Check contradictions</button>
       </div>
     </div>
+
+    <!-- Greenwashing Signals (spec §9) — Backend-team-only, hedged language only. -->
+    ${showEI ? `
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Greenwashing Signals</div>
+      ${(ei?.greenwashingSignals||[]).length ? ei.greenwashingSignals.map(s => `
+        <div class="iro-signal-item ${_signalClass(s.category)}"><span class="iro-signal-badge ${_signalClass(s.category)}">${s.category}</span><b>${s.title}</b><div style="margin-top:3px">${s.description}</div></div>
+      `).join('') : '<div class="iro-intel-empty">No greenwashing signals identified.</div>'}
+    </div>` : ''}
+
     <div class="iro-intel-section">
       <div class="iro-intel-label">Missing Evidence</div>
-      ${findGaps ? `<div class="iro-intel-body">${findGaps.evidenceGap || findGaps.outputSummary}</div>` : '<div class="iro-intel-empty">No gap analysis run yet.</div>'}
+      ${(findGaps || (showEI && (ei?.missingEvidence||[]).length)) ? `
+        ${findGaps ? `<div class="iro-intel-body">${findGaps.evidenceGap || findGaps.outputSummary}</div>` : ''}
+        ${showEI ? (ei?.missingEvidence||[]).map(g => `<div class="iro-intel-body">${g}</div>`).join('') : ''}
+      ` : '<div class="iro-intel-empty">No gap analysis run yet.</div>'}
       <div class="iro-intel-actions" style="margin-top:8px">
         <button class="iro-intel-btn" ${busy} onclick="runIntelReview('${qId}','find_gaps')">Run gap analysis</button>
       </div>
     </div>
+
+    <!-- Agent Reasoning Summary + Recommended Assessment + analyst review
+         actions (spec §10/§13) — Backend-team-only. Concise, auditable
+         reasoning only, never raw chain-of-thought. -->
+    ${showEI ? `
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Agent Reasoning Summary</div>
+      ${ei ? `<div class="iro-intel-body">${ei.agentRecommendation}</div>` : '<div class="iro-intel-empty">Not yet analyzed.</div>'}
+    </div>
+    <div class="iro-intel-section">
+      <div class="iro-intel-label">Recommended Assessment</div>
+      ${ei ? `
+        <div class="iro-intel-body"><b>Recommended score:</b> ${ei.recommendedScore != null ? ei.recommendedScore+'/100' : '—'}</div>
+        <div class="iro-intel-body" style="margin-top:4px"><b>Analyst review:</b> ${ei.analystReviewRequired ? `REQUIRED — ${ei.analystReviewReason}` : 'Not required — routine confidence profile.'}</div>
+      ` : '<div class="iro-intel-empty">No recommendation yet.</div>'}
+      <div class="iro-analyst-actions" style="margin-top:10px">
+        <button class="iro-intel-btn primary" onclick="acceptAgentFinding('${qId}')">Accept Agent Finding</button>
+        <button class="iro-intel-btn danger" onclick="rejectAgentFinding('${qId}')">Reject</button>
+        <button class="iro-intel-btn warn" onclick="requestMoreEvidence('${qId}')">Request More Evidence</button>
+        <button class="iro-intel-btn warn" onclick="fileReviewAction('${qId}','flag_for_review')">Flag for Review</button>
+        <button class="iro-intel-btn danger" onclick="overrideAgentScore('${qId}')">Override Score</button>
+      </div>
+    </div>` : ''}
     <div class="iro-intel-section">
       <div class="iro-intel-label">Framework Interpretation</div>
       ${frameworkMapping ? `<div class="iro-intel-body">${frameworkMapping.outputSummary}</div>` : '<div class="iro-intel-empty">No framework mapping run yet.</div>'}
@@ -6943,7 +7457,7 @@ document.addEventListener('DOMContentLoaded', () => {
        classic iroScript block above as window.RiskOSData. See
        risk-os-data.js and RISK_OS_COLLABORATION_ARCHITECTURE.md. -->
   <script type="module">
-    import * as RiskOSData from './risk-os-data.js?v=1';
+    import * as RiskOSData from './risk-os-data.js?v=2';
     window.RiskOSData = RiskOSData;
   </script>
 

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light dark" />
+<title>Climactix Global — Internal Staff Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+<!-- Risk OS v4.0: light-first design system; page defaults to data-theme="light" unless the visitor previously chose dark -->
+<script>(function(){var t=localStorage.getItem('cx-theme');if(t!=='dark')document.documentElement.setAttribute('data-theme','light');else document.documentElement.setAttribute('data-theme','dark');})()</script>
+<style>
+:root{
+  /* Climactix Design System v4.0 — NASA × MSCI (light-first) */
+  --bg:#FFFFFF; --surface:#FAFAFA; --card:#FFFFFF;
+  --border:#D9D9D9; --border-strong:#BFC5CC;
+  --text:#111111; --text-2:#4F4F4F; --text-muted:#6B7280;
+  --accent:#0B3D91; --accent-fill:#0B3D91;
+  --success:#1E8E3E; --warning:#B45309; --critical:#DC2626;
+  --font-heading:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-body:'Source Sans Pro',Arial,sans-serif;
+  --t:0.18s ease; --radius:8px; --pill:999px;
+}
+[data-theme="dark"]{
+  --bg:#0B0E14; --surface:#11151C; --card:#161B24;
+  --border:#232935; --border-strong:#2E3644;
+  --text:#F4F6F8; --text-2:#B8C0CC; --text-muted:#7C8794;
+  --accent:#3D7BE0; --accent-fill:#0B3D91;
+  --success:#22C55E; --warning:#F59E0B; --critical:#F87171;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px}
+.mono{font-family:var(--font-heading)}
+
+.topbar{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);background:var(--bg)}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.brand-logo-img{height:22px;width:auto;display:block}
+.brand-logo{font-family:var(--font-heading);font-size:14px;font-weight:700;letter-spacing:-0.01em;color:var(--text)}
+.internal-badge{font-family:var(--font-heading);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);padding:3px 10px;border-radius:var(--pill);border:1px solid var(--border);background:var(--surface)}
+.topbar-meta{font-family:var(--font-body);font-size:12px;color:var(--text-muted)}
+
+.alert-banner{background:rgba(220,38,38,0.05);border-bottom:1px solid rgba(220,38,38,0.18);padding:8px 24px;display:flex;align-items:center;gap:12px}
+.alert-tag{font-family:var(--font-heading);font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--critical);color:#fff;padding:3px 9px;border-radius:var(--pill)}
+.alert-text{font-family:var(--font-body);font-size:12px;color:var(--critical)}
+
+.page{display:flex;justify-content:center;min-height:calc(100vh - 96px);align-items:center}
+
+.auth-panel{width:440px;max-width:100%;padding:40px 36px;border-left:1px solid var(--border);border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center}
+.auth-brand{margin-bottom:28px}
+.auth-brand-logo{font-family:var(--font-heading);font-size:16px;font-weight:700;letter-spacing:-0.01em;margin-bottom:8px;color:var(--text)}
+.auth-brand-sub{font-family:var(--font-heading);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);padding:4px 10px;border-radius:var(--pill);border:1px solid var(--border);background:var(--surface);display:inline-flex;margin-bottom:12px}
+.auth-brand-desc{font-size:13px;color:var(--text-2)}
+
+.auth-title{font-family:var(--font-heading);font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px;color:var(--text)}
+.auth-sub{font-size:14px;color:var(--text-2);margin-bottom:20px}
+
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-family:var(--font-heading);font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:6px}
+.form-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:11px 12px;font-size:14px;color:var(--text);font-family:var(--font-body);outline:none;transition:border-color var(--t)}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--text-muted)}
+.form-row-check{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.form-row-check label{font-size:13px;color:var(--text-2)}
+
+.btn-primary{width:100%;background:var(--accent-fill);color:#fff;border:none;border-radius:var(--radius);padding:12px;font-family:var(--font-heading);font-size:14px;font-weight:500;cursor:pointer;transition:opacity var(--t)}
+.btn-primary:hover{opacity:0.88}
+.btn-primary:disabled{opacity:0.5;cursor:default}
+.btn-outline{width:100%;background:none;border:1px solid var(--border-strong);color:var(--text-2);border-radius:var(--radius);padding:10px;font-family:var(--font-heading);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--t);margin-top:10px}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+
+.status-msg{padding:11px 13px;border-radius:var(--radius);font-size:13px;line-height:1.5;display:none;margin-bottom:14px}
+.status-msg.visible{display:block}
+.status-msg.success{background:rgba(30,142,62,0.07);border:1px solid rgba(30,142,62,0.25);color:var(--success)}
+.status-msg.error{background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.22);color:var(--critical)}
+.status-msg.info{background:rgba(11,61,145,0.06);border:1px solid rgba(11,61,145,0.22);color:var(--accent)}
+.status-msg a{color:inherit;font-weight:700}
+
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0}
+.div-line{flex:1;height:1px;background:var(--border)}
+.div-text{font-family:var(--font-heading);font-size:11px;color:var(--text-muted)}
+
+.portal-link{display:block;text-align:center;font-family:var(--font-heading);font-size:13px;font-weight:500;color:var(--text-2);text-decoration:none;padding:10px;border:1px solid var(--border);border-radius:var(--radius);transition:all var(--t)}
+.portal-link:hover{border-color:var(--accent);color:var(--accent)}
+
+.notice-box{margin-top:20px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--warning);border-radius:var(--radius);padding:14px 16px}
+.notice-title{font-family:var(--font-heading);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--warning);margin-bottom:6px}
+.notice-body{font-size:13px;color:var(--text-2);line-height:1.5}
+.notice-body a{color:var(--accent);font-weight:600;text-decoration:none}
+.notice-body a:hover{text-decoration:underline}
+
+.page-footer{border-top:1px solid var(--border);padding:0 24px;height:44px;display:flex;align-items:center;justify-content:space-between}
+.footer-links{display:flex;gap:16px}
+.footer-link{font-family:var(--font-heading);font-size:12px;font-weight:500;color:var(--text-muted);text-decoration:none}
+.footer-link:hover{color:var(--accent)}
+.footer-cert{font-family:var(--font-body);font-size:11px;color:var(--text-muted)}
+
+@media(max-width:900px){.auth-panel{border-left:none;border-right:none}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <img src="Climatix_logo.png" alt="Climactix Global" class="brand-logo-img" />
+    <span class="brand-logo">Climactix Global</span>
+    <span class="internal-badge mono">Internal system</span>
+  </div>
+  <span class="topbar-meta">Restricted access — authorized personnel only</span>
+</header>
+
+<div class="alert-banner">
+  <span class="alert-tag mono">Restricted</span>
+  <span class="alert-text">Authorized Climactix Global personnel only. All access is logged and audited.</span>
+</div>
+
+<div class="page">
+
+  <div class="auth-panel">
+    <div class="auth-brand">
+      <div class="auth-brand-logo">Climactix Global</div>
+      <div><span class="auth-brand-sub mono">Internal staff portal</span></div>
+      <div class="auth-brand-desc">Climate Risk Intelligence Operating System — Backend Team Access</div>
+    </div>
+
+    <div class="status-msg" id="status-msg"></div>
+    <h2 class="auth-title">Staff sign in</h2>
+    <p class="auth-sub">Sign in with your Climactix Global employee account</p>
+
+    <form id="staff-login-form">
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="email-inp" class="form-input" placeholder="you@climactix.global" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="pwd-inp" class="form-input" placeholder="Enter your password" required autocomplete="current-password" />
+      </div>
+      <div class="form-row-check">
+        <input type="checkbox" id="remember-inp" checked />
+        <label for="remember-inp">Keep me signed in on this device</label>
+      </div>
+      <button type="submit" class="btn-primary" id="submit-btn">Sign in</button>
+    </form>
+
+    <div class="divider"><div class="div-line"></div><div class="div-text mono">Not internal staff?</div><div class="div-line"></div></div>
+    <a href="login.html" class="portal-link">Company / investor sign in →</a>
+
+    <div class="notice-box">
+      <div class="notice-title mono">Access notice</div>
+      <div class="notice-body">Staff accounts are provisioned by Climactix operations. If you don't have one, contact your platform administrator. Access is governed by the <a href="terms-of-access.html">Acceptable Use &amp; Data Protection Policy</a>.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="page-footer">
+  <div class="footer-links">
+    <a href="login.html" class="footer-link">Company portal</a>
+    <a href="terms-of-access.html" class="footer-link">Acceptable use policy</a>
+    <a href="index.html" class="footer-link">Platform home</a>
+  </div>
+  <span class="footer-cert">Climactix Global Internal System &nbsp;·&nbsp; All access logged &nbsp;·&nbsp; &copy; 2026</span>
+</footer>
+
+<script type="module">
+  import { signIn, signOut, getSession } from './auth.js';
+  import * as RiskOSData from './risk-os-data.js';
+
+  const $ = id => document.getElementById(id);
+  // Staff land on the cross-company Internal Analyst System dashboard, not
+  // directly in one specific assessment's climate-risk-os.html — they don't
+  // yet know which assessment they're reviewing until they pick one there.
+  const DESTINATION = 'cx-portal-dashboard.html';
+
+  function showStatus(type, msg) {
+    const el = $('status-msg');
+    el.className = `status-msg visible ${type}`;
+    el.innerHTML = msg;
+  }
+  function hideStatus() { $('status-msg').className = 'status-msg'; }
+  function setLoading(on) {
+    const btn = $('submit-btn');
+    btn.disabled = on;
+    btn.textContent = on ? 'Signing in…' : 'Sign in';
+  }
+
+  // Route a signed-in user straight through if they're already recognized
+  // staff (cx_staff_v1) — otherwise fall through to the sign-in form even
+  // though a Firebase session exists, since that session might belong to a
+  // company/enterprise account that simply isn't staff.
+  async function checkExistingSession() {
+    const session = getSession();
+    if (!session?.verified) return;
+    showStatus('info', 'Checking access…');
+    const isStaff = await RiskOSData.checkClimactixStaff();
+    if (isStaff) {
+      showStatus('success', 'Already signed in — redirecting…');
+      setTimeout(() => { window.location.href = DESTINATION; }, 400);
+    } else {
+      hideStatus();
+    }
+  }
+  checkExistingSession();
+
+  $('staff-login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    hideStatus();
+    const email = $('email-inp').value.trim();
+    const password = $('pwd-inp').value;
+    const remember = $('remember-inp').checked;
+    if (!email || !password) { showStatus('error', 'Enter your email and password.'); return; }
+
+    setLoading(true);
+    try {
+      await signIn({ email, password, remember });
+    } catch (err) {
+      setLoading(false);
+      if (err.code === 'not-verified') {
+        showStatus('error', `Email not verified. <a href="verify-email.html?email=${encodeURIComponent(err.email)}&token=${err.token}">Verify now →</a>`);
+      } else if (err.code === 'invalid-credentials') {
+        showStatus('error', 'No account found, or the password is incorrect.');
+      } else if (err.code === 'network-error') {
+        showStatus('error', err.message || 'Could not reach the authentication service. Check your connection and try again.');
+      } else {
+        showStatus('error', err.message || 'Sign in failed. Please try again.');
+      }
+      return;
+    }
+
+    // Signed in via real Firebase Auth — now check whether this identity is
+    // actually provisioned as Climactix staff (cx_staff_v1). A valid company
+    // or investor account signing in here is a legitimate identity, just not
+    // an authorized one for this portal — sign them back out rather than
+    // leaving an authenticated-but-unauthorized session sitting around.
+    const isStaff = await RiskOSData.checkClimactixStaff();
+    setLoading(false);
+    if (isStaff) {
+      showStatus('success', 'Access confirmed — redirecting to Risk OS…');
+      setTimeout(() => { window.location.href = DESTINATION; }, 500);
+    } else {
+      await signOut();
+      showStatus('error', 'This portal is restricted to authorized Climactix Global personnel. Your account does not have internal staff access — use the Company / Investor sign-in instead.');
+    }
+  });
+</script>
+<!-- Card micro-interaction engine (hover lift/tilt, entrance reveal) -->
+<script src="card-motion.js" defer></script>
+</body>
+</html>

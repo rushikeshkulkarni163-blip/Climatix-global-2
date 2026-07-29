@@ -80,6 +80,134 @@ function _uid() {
   return s ? s.uid : null;
 }
 
+// ── Climactix internal/backend team check ────────────────────────────────
+// The Evidence Intelligence Agent (analysis panel, entity-level rollup,
+// analyst review actions) is a Backend-team-only tool — the entity being
+// assessed must never see how its own evidence was scored (see
+// firestore.rules' isClimactixStaff()). cx_staff_v1 is Admin-SDK-managed
+// only; this is a read-only membership check, never a self-service toggle.
+export async function checkClimactixStaff() {
+  if (!_USE_FIREBASE) return false;
+  const uid = _uid();
+  if (!uid) return false;
+  const { db, doc, getDoc } = await _firestore();
+  try {
+    const snap = await getDoc(doc(db, 'cx_staff_v1', uid));
+    return snap.exists();
+  } catch (e) {
+    return false; // denied read (not staff) resolves here too — fail closed
+  }
+}
+
+// ── Internal Analyst System — cross-company staff queries ────────────────
+// Unlike every other subscribe*() in this file (all scoped to one already-
+// known assessmentId/companyId), these are unfiltered collection-wide
+// queries — only readable at all because firestore.rules grants
+// isClimactixStaff() a bypass on these collections' isCompanyMember() checks
+// (see cx-portal-dashboard.html, the Internal Analyst System's cross-
+// company landing dashboard). A non-staff caller's listener just receives a
+// permission-denied error, never partial/wrong data.
+
+export function subscribeAllAssessmentsForStaff(onChange) {
+  if (!_USE_FIREBASE) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, onSnapshot }) => {
+    unsub = onSnapshot(
+      collection(db, 'ros_assessments_v1'),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] all-assessments (staff) subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+export function subscribeAllCompaniesForStaff(onChange) {
+  if (!_USE_FIREBASE) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, onSnapshot }) => {
+    unsub = onSnapshot(
+      collection(db, 'ros_companies_v1'),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] all-companies (staff) subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// Entity-level Evidence Intelligence rollup for EVERY assessment at once —
+// powers the dashboard's rating/greenwashing-risk distributions without
+// recomputing anything client-side (every number here already comes from
+// recompute_entity_intelligence, see functions/main.py).
+export function subscribeAllEntityIntelligenceForStaff(onChange) {
+  if (!_USE_FIREBASE) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, onSnapshot }) => {
+    unsub = onSnapshot(
+      collection(db, 'ros_entity_intelligence_v1'),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] all-entity-intelligence (staff) subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// Real replacement for cx-internal.js's fake `ANALYSTS` localStorage array
+// (Analyst Roster widget) — the actual cx_staff_v1 roster.
+export function subscribeStaffRoster(onChange) {
+  if (!_USE_FIREBASE) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, onSnapshot }) => {
+    unsub = onSnapshot(
+      collection(db, 'cx_staff_v1'),
+      snap => onChange(snap.docs.map(d => ({ uid: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] staff roster subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// Approve/Reject/Request Clarification in the Internal Analyst System move
+// the assessment itself through the review-tier states of the status state
+// machine (firestore.rules' rosTransitionAllowed()) — mirrors
+// markAssessmentSubmitted()'s "walk one legal step at a time" discipline,
+// just for the reviewer-side transitions instead of the company-side ones.
+export async function updateAssessmentStatus(assessmentId, newStatus) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const { db, doc, setDoc, serverTimestamp } = await _firestore();
+  await setDoc(doc(db, 'ros_assessments_v1', assessmentId), {
+    status: newStatus, updatedAt: serverTimestamp(),
+  }, { merge: true });
+}
+
+// ── Report Engine — generated report snapshots (ros_reports_v1) ──────────
+// Append-only, same reasoning as saveDeclaration(): a saved report is a
+// point-in-time record of what was true when generated, not a live view —
+// re-generating produces a NEW doc/id rather than overwriting the old one.
+
+export async function saveReportSnapshot(report) {
+  if (!_USE_FIREBASE) return null;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, collection, addDoc, serverTimestamp } = await _firestore();
+  const docRef = await addDoc(collection(db, 'ros_reports_v1'), {
+    ...report, generatedBy: uid, createdAt: serverTimestamp(),
+  });
+  return docRef.id;
+}
+
+export function subscribeReport(reportId, onChange) {
+  if (!_USE_FIREBASE || !reportId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, doc, onSnapshot }) => {
+    unsub = onSnapshot(
+      doc(db, 'ros_reports_v1', reportId),
+      snap => onChange(snap.exists() ? { id: snap.id, ...snap.data() } : null),
+      err => console.error('[risk-os-data] report subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
 // ── Companies & membership ──────────────────────────────────────────────────
 
 // Finds the caller's first active company membership. Returns
@@ -217,6 +345,40 @@ export function subscribeAssessedStatuses(assessmentId, onChange) {
   return () => unsub();
 }
 
+// ── Facility link per question (spec §7) ──────────────────────────────────
+// Stored on the same ros_answers_v1 doc as the declared answer (doc id
+// `${assessmentId}_${questionId}`) rather than only in client STATE — a
+// server-side auto-trigger (onEvidenceCreated, functions/main.py) has no
+// live client to source a facilityId from, so the link must be persisted,
+// not just held in memory. Also fixes linkFacilityToQuestion() silently
+// resetting on every page reload.
+export async function saveFacilityLink(assessmentId, questionId, facilityId) {
+  if (!_USE_FIREBASE || !assessmentId) return;
+  const uid = _uid();
+  if (!uid) return;
+  const { db, doc, setDoc, serverTimestamp } = await _firestore();
+  await setDoc(doc(db, 'ros_answers_v1', `${assessmentId}_${questionId}`), {
+    assessmentId, questionId, facilityId: facilityId || null, updatedAt: serverTimestamp(),
+  }, { merge: true });
+}
+
+export function subscribeFacilityLinks(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_answers_v1'), where('assessmentId', '==', assessmentId)),
+      snap => {
+        const out = {};
+        snap.forEach(d => { const a = d.data(); if (a.facilityId) out[a.questionId] = a.facilityId; });
+        onChange(out);
+      },
+      err => console.error('[risk-os-data] facility-link subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
 // ── Generic Management Response / Supporting Narrative ───────────────────
 // For every NON-select5 question type (yesno/dropdown/number/text/upload).
 // select5 questions already carry their write-up inside rawAnswer.justification
@@ -307,6 +469,23 @@ export async function saveClayerScores(assessmentId, scores, composite, rating) 
   await batch.commit();
 }
 
+// All 8 C-LAYER pillar scores for one assessment at once — used by the
+// Internal Analyst System's review workspace (Overview tab's C-LAYER grid),
+// which needs every pillar simultaneously rather than climate-risk-os.html's
+// own per-question rendering path.
+export function subscribeClayerScores(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_clayer_scores_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] clayer scores subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
 // ── Assessment status (submit) ────────────────────────────────────────────────
 
 export async function markAssessmentSubmitted(assessmentId) {
@@ -377,6 +556,38 @@ export async function setEvidenceReviewStatus(evidenceId, reviewStatus, note = n
     reviewStatus, verifiedBy: uid, verifiedAt: serverTimestamp(),
     ...(note ? { description: note } : {}),
   }, { merge: true });
+}
+
+// Web-source evidence (spec §1/§12: website URLs, regulatory filing pages,
+// etc.) — same ros_evidence_v1 collection as file uploads, distinguished by
+// sourceType:'url' and no storagePath/sha256Hash. Extraction happens
+// server-side per analysis run (see functions/main.py's
+// run_evidence_intelligence_analysis, services/extractor.py's
+// extract_from_url) rather than at add-time, so the page is re-fetched
+// fresh each time the Evidence Intelligence Agent runs instead of trusting
+// a possibly-stale snapshot taken once at upload time.
+export async function addWebSourceEvidence(companyId, assessmentId, questionId, url, meta = {}) {
+  if (!_USE_FIREBASE) return null;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  let parsed;
+  try { parsed = new URL(url); } catch { throw new Error('Enter a valid URL, including https://'); }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') throw new Error('Only http(s) URLs are supported.');
+
+  const { db, collection, addDoc, serverTimestamp } = await _firestore();
+  const docRef = await addDoc(collection(db, 'ros_evidence_v1'), {
+    companyId, assessmentId, questionId, uploadedBy: uid,
+    sourceType: 'url', sourceUrl: parsed.toString(),
+    filename: parsed.hostname + parsed.pathname, originalName: parsed.toString(),
+    fileType: 'text/html', fileSizeBytes: null, storagePath: null, sha256Hash: null,
+    documentCategory: meta.documentCategory || 'URL / External Reference',
+    description: meta.description || null, confidentialityLevel: meta.confidentialityLevel || 'internal',
+    reportingPeriod: meta.reportingPeriod || null, issuingAuthority: meta.issuingAuthority || null,
+    pageReference: meta.pageReference || null,
+    reviewStatus: 'self-reported', version: 1, tags: meta.tags || [],
+    createdAt: serverTimestamp(),
+  });
+  return docRef.id;
 }
 
 // Assessment-wide evidence stream (all questions at once) — used to compute
@@ -459,6 +670,131 @@ export function subscribeAllAIReviews(assessmentId, onChange) {
     );
   });
   return () => unsub();
+}
+
+// ── Climactix Evidence Intelligence Agent ───────────────────────────────────
+// The full evidence-verification pipeline (functions/services/evidence_
+// intelligence_agent.py) — distinct from requestAIReview() above, which
+// runs ONE review type against ONE evidence file. This runs every review
+// type against EVERY evidence item attached to the question (plus any
+// linked facility) in one pass, and writes ros_claims_v1 +
+// ros_evidence_confidence_v1 (both Cloud-Function-only writes — see
+// firestore.rules) in addition to the usual ros_ai_reviews_v1 entry.
+
+export async function runEvidenceIntelligenceAnalysis(assessmentId, questionId, questionText = '', facilityId = null) {
+  if (!_USE_FIREBASE) return null;
+  const { functions, httpsCallable } = await _functionsApi();
+  const call = httpsCallable(functions, 'run_evidence_intelligence_analysis');
+  const result = await call({ assessmentId, questionId, questionText, facilityId: facilityId || null });
+  return result.data;
+}
+
+// Extracted claims + metrics for one question (ros_claims_v1 — one doc per
+// claim/metric, distinguished by `kind`).
+export function subscribeClaims(assessmentId, questionId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_claims_v1'),
+        where('assessmentId', '==', assessmentId), where('questionId', '==', questionId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] claims subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// Every claim/metric across the WHOLE assessment at once (no questionId
+// filter) — used by the Internal Analyst System's review workspace for its
+// assessment-wide "Quantitative Data Points" view, where subscribing
+// per-question (as subscribeClaims() above does) would mean opening one
+// listener per question — impractical at 200+ questions.
+export function subscribeAllClaimsForAssessment(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_claims_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] all-claims subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// Evidence Confidence Score + full breakdown for one question — doc id
+// `${assessmentId}_${questionId}`, written only by run_evidence_intelligence_
+// analysis (functions/main.py).
+export function subscribeEvidenceConfidence(assessmentId, questionId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, doc, onSnapshot }) => {
+    unsub = onSnapshot(
+      doc(db, 'ros_evidence_confidence_v1', `${assessmentId}_${questionId}`),
+      snap => onChange(snap.exists() ? snap.data() : null),
+      err => console.error('[risk-os-data] evidence confidence subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// Entity-level Evidence Intelligence rollup — doc id == assessmentId,
+// recomputed by the recompute_entity_intelligence Cloud Function trigger
+// every time a question's ros_evidence_confidence_v1 doc is written.
+export function subscribeEntityIntelligence(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, doc, onSnapshot }) => {
+    unsub = onSnapshot(
+      doc(db, 'ros_entity_intelligence_v1', assessmentId),
+      snap => onChange(snap.exists() ? snap.data() : null),
+      err => console.error('[risk-os-data] entity intelligence subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// ── Facilities — geospatial anchors for location-dependent claims (spec §7) ──
+// ros_facilities_v1 already exists in firestore.rules (company-member read,
+// rosWriteRoles create/update) but had no client-side wiring until now.
+// Mirrors saveEntity()/subscribeEntities()'s pattern exactly.
+
+export function subscribeFacilities(companyId, onChange) {
+  if (!_USE_FIREBASE || !companyId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_facilities_v1'), where('companyId', '==', companyId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      err => console.error('[risk-os-data] facilities subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// facility: { name, country, stateDistrict, latitude, longitude, area,
+//             areaUnit, assetIdentifier }. Pass an existing facilityId to
+// update that node, omit it to create a new one.
+export async function saveFacility(companyId, facility, facilityId = null) {
+  if (!_USE_FIREBASE) return null;
+  const uid = _uid();
+  if (!uid) throw new Error('Not signed in.');
+  const { db, doc, collection, setDoc, serverTimestamp } = await _firestore();
+  const ref = facilityId ? doc(db, 'ros_facilities_v1', facilityId) : doc(collection(db, 'ros_facilities_v1'));
+  await setDoc(ref, {
+    companyId,
+    name: facility.name || null,
+    country: facility.country || null,
+    stateDistrict: facility.stateDistrict || null,
+    latitude: facility.latitude ?? null,
+    longitude: facility.longitude ?? null,
+    area: facility.area ?? null,
+    areaUnit: facility.areaUnit || null,
+    assetIdentifier: facility.assetIdentifier || null,
+    ...(facilityId ? { updatedAt: serverTimestamp() } : { createdBy: uid, createdAt: serverTimestamp() }),
+  }, { merge: true });
+  return ref.id;
 }
 
 // ── Comments / internal discussion ──────────────────────────────────────────
@@ -710,13 +1046,26 @@ export function subscribeRiskNotes(assessmentId, onChange) {
 // Create-only / immutable per firestore.rules — "closing" a review action is
 // a new action document (actionType:'close'), not a mutation of the old one.
 
-export async function createReviewAction(assessmentId, questionId, actionType, note = null) {
+// actionType is one of: flag_for_review | request_evidence | accept_agent_finding |
+// reject_agent_finding | request_more_evidence | override_score (spec §13).
+// `extra` carries override_score's before/after values ({scoreBefore, scoreAfter})
+// — additive, existing actionTypes/callers are unaffected by the new param.
+// override_score REQUIRES a non-empty reason: this is checked here (defense-
+// in-depth) on top of firestore.rules' reviewer-role requirement, since rules
+// can restrict WHO writes but not enforce a non-empty string's semantic
+// meaning as "a real reason."
+export async function createReviewAction(assessmentId, questionId, actionType, note = null, extra = null) {
   if (!_USE_FIREBASE || !assessmentId) return;
+  if (actionType === 'override_score' && (!note || !note.trim())) {
+    throw new Error('A reason is required to override the agent-recommended score.');
+  }
   const uid = _uid();
   if (!uid) throw new Error('Not signed in.');
   const { db, collection, addDoc, serverTimestamp } = await _firestore();
   await addDoc(collection(db, 'ros_review_actions_v1'), {
     assessmentId, questionId: questionId || null, actionType, note: note || null,
+    ...(extra && typeof extra.scoreBefore !== 'undefined' ? { scoreBefore: extra.scoreBefore } : {}),
+    ...(extra && typeof extra.scoreAfter !== 'undefined' ? { scoreAfter: extra.scoreAfter } : {}),
     reviewerId: uid, createdAt: serverTimestamp(),
   });
 }
@@ -759,6 +1108,24 @@ export function subscribeAssessorNotes(assessmentId, questionId, onChange) {
         where('assessmentId', '==', assessmentId), where('questionId', '==', questionId)),
       snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.createdAt?.seconds||0) - (b.createdAt?.seconds||0))),
       err => console.error('[risk-os-data] assessor notes subscription failed', err),
+    );
+  });
+  return () => unsub();
+}
+
+// Every assessor note across the WHOLE assessment at once — same reasoning
+// as subscribeAllClaimsForAssessment(): the Internal Analyst System's review
+// workspace renders a "+ Note" annotation area on every question card, and
+// one Firestore listener per question would not scale to a 200+ question
+// assessment. Callers filter by questionId client-side.
+export function subscribeAllAssessorNotesForAssessment(assessmentId, onChange) {
+  if (!_USE_FIREBASE || !assessmentId) return () => {};
+  let unsub = () => {};
+  _firestore().then(({ db, collection, query, where, onSnapshot }) => {
+    unsub = onSnapshot(
+      query(collection(db, 'ros_assessor_notes_v1'), where('assessmentId', '==', assessmentId)),
+      snap => onChange(snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.createdAt?.seconds||0) - (b.createdAt?.seconds||0))),
+      err => console.error('[risk-os-data] all-assessor-notes subscription failed', err),
     );
   });
   return () => unsub();
