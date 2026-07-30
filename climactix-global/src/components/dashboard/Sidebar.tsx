@@ -19,6 +19,7 @@ import {
   Settings,
   ChevronsLeft,
   ChevronsRight,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/store";
@@ -31,6 +32,7 @@ export interface NavItem {
 
 export const DASHBOARD_NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: Sparkles, label: "Scenario Studio", href: "/scenario-studio" },
   { icon: Briefcase, label: "Portfolio", href: "/portfolio" },
   { icon: Building2, label: "Companies", href: "/dashboard/companies" },
   { icon: ShieldAlert, label: "Risk Monitor", href: "/dashboard#risk-matrix" },

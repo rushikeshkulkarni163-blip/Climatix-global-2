@@ -53,7 +53,8 @@ export interface ScenarioConfig {
 export interface AssetRiskProfile {
   assetId: string;
   year: number;
-  scenario: ScenarioId;
+  /** ScenarioId for the legacy 3-scenario map, or a ScenarioFamilyId label for Scenario Studio. */
+  scenario: string;
   // Physical risk sub-scores (0–100)
   heatStress: number;
   floodRisk: number;

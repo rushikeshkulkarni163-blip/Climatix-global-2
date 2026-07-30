@@ -10,6 +10,7 @@ import type {
   LiveDashboardState,
 } from "@/types/live";
 import type { User, AuthState } from "@/types/auth";
+import type { ScenarioFamilyId, ProjectionYear } from "@/types/scenario-studio";
 
 // ── Climate Metrics Store ─────────────────────────────────────────────────────
 
@@ -297,4 +298,63 @@ export const useDashboardStore = create<DashboardStore>()((set) => ({
   setSelectedAssetId: (id) => set({ selectedAssetId: id }),
   selectedRiskCell: null,
   setSelectedRiskCell: (cell) => set({ selectedRiskCell: cell }),
+}));
+
+// ── Scenario Studio Store ─────────────────────────────────────────────────────
+// Scoped to /scenario-studio only — selection state for the flagship
+// company/scenario-family/horizon workflow, shared across its 14 modules.
+
+export interface ScenarioStudioGisLayer {
+  id: string;
+  label: string;
+  active: boolean;
+}
+
+interface ScenarioStudioStore {
+  selectedCompanyId: string | null;
+  setSelectedCompanyId: (id: string | null) => void;
+  selectedAssetId: string | null;
+  setSelectedAssetId: (id: string | null) => void;
+  scenario: ScenarioFamilyId;
+  setScenario: (scenario: ScenarioFamilyId) => void;
+  compareScenario: ScenarioFamilyId | null;
+  setCompareScenario: (scenario: ScenarioFamilyId | null) => void;
+  horizon: ProjectionYear;
+  setHorizon: (year: ProjectionYear) => void;
+  timelinePlaying: boolean;
+  setTimelinePlaying: (playing: boolean) => void;
+  gisLayers: ScenarioStudioGisLayer[];
+  toggleGisLayer: (id: string) => void;
+  aiAnalystOpen: boolean;
+  setAiAnalystOpen: (open: boolean) => void;
+}
+
+export const useScenarioStudioStore = create<ScenarioStudioStore>()((set) => ({
+  selectedCompanyId: null,
+  setSelectedCompanyId: (id) => set({ selectedCompanyId: id }),
+  selectedAssetId: null,
+  setSelectedAssetId: (id) => set({ selectedAssetId: id }),
+  scenario: "delayed-transition",
+  setScenario: (scenario) => set({ scenario }),
+  compareScenario: null,
+  setCompareScenario: (compareScenario) => set({ compareScenario }),
+  horizon: 2040,
+  setHorizon: (horizon) => set({ horizon }),
+  timelinePlaying: false,
+  setTimelinePlaying: (timelinePlaying) => set({ timelinePlaying }),
+  gisLayers: [
+    { id: "assets", label: "Company Assets", active: true },
+    { id: "supply-links", label: "Supply Chain Links", active: true },
+    { id: "physical", label: "Physical Risk (Heat/Flood/Storm/Drought)", active: false },
+    { id: "transition", label: "Transition Risk", active: false },
+    { id: "carbon", label: "Carbon Price Exposure", active: false },
+    { id: "ports", label: "Ports", active: false },
+    { id: "power-plants", label: "Power Plants", active: false },
+  ],
+  toggleGisLayer: (id) =>
+    set((state) => ({
+      gisLayers: state.gisLayers.map((l) => (l.id === id ? { ...l, active: !l.active } : l)),
+    })),
+  aiAnalystOpen: false,
+  setAiAnalystOpen: (aiAnalystOpen) => set({ aiAnalystOpen }),
 }));

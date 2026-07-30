@@ -99,12 +99,24 @@ function baseTransitionByRegion(lat: number, lng: number): number {
 
 // ─── Core computation ─────────────────────────────────────────────────────────
 
-export function computeAssetRisk(
+/** The subset of ScenarioConfig the risk math actually needs — lets any caller
+ *  (the legacy 3-scenario map, or Scenario Studio's 6 NGFS families) drive the
+ *  same computation with its own multiplier trajectory. */
+export interface ScenarioMultiplierConfig {
+  physicalMultiplier2030: number;
+  physicalMultiplier2050: number;
+  transitionMultiplier2030: number;
+  transitionMultiplier2050: number;
+  carbonPrice2030: number;
+  carbonPrice2050: number;
+}
+
+export function computeAssetRiskWithConfig(
   asset: SimAsset,
-  scenario: ScenarioId,
-  year: number
+  cfg: ScenarioMultiplierConfig,
+  year: number,
+  scenarioLabel: string
 ): AssetRiskProfile {
-  const cfg = SCENARIOS[scenario];
   const bp = basePhysical(asset.lat, asset.lng);
   const sw = sectorWeights(asset.sector);
 
@@ -158,7 +170,7 @@ export function computeAssetRisk(
   return {
     assetId: asset.id,
     year,
-    scenario,
+    scenario: scenarioLabel,
     heatStress,
     floodRisk,
     stormRisk,
@@ -176,6 +188,14 @@ export function computeAssetRisk(
     overallRisk,
     riskLevel,
   };
+}
+
+export function computeAssetRisk(
+  asset: SimAsset,
+  scenario: ScenarioId,
+  year: number
+): AssetRiskProfile {
+  return computeAssetRiskWithConfig(asset, SCENARIOS[scenario], year, scenario);
 }
 
 // ─── Portfolio aggregation ────────────────────────────────────────────────────
