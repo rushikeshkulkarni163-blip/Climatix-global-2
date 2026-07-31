@@ -8,7 +8,7 @@ export type AssetCategory =
   | 'supply-node'
   | 'mine'
   | 'farm';
-export type LayerType = 'physical' | 'transition' | 'carbon' | 'composite';
+export type LayerType = 'physical' | 'transition' | 'carbon' | 'ocean' | 'composite';
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 
 export interface SimAsset {
@@ -60,6 +60,8 @@ export interface AssetRiskProfile {
   floodRisk: number;
   stormRisk: number;
   droughtRisk: number;
+  /** 0–100, coastal/marine-exposed assets only (0 elsewhere) — India EEZ deoxygenation reference curve. */
+  oceanRisk: number;
   physicalRisk: number;
   // Transition risk sub-scores (0–100)
   carbonPriceExposure: number; // $/tCO2 effective regional price

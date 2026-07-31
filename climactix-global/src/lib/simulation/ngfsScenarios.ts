@@ -1,7 +1,13 @@
 import type { ScenarioConfig, ScenarioId } from '@/types/simulation';
+import { recalibratedPhysicalMultiplier2050 } from './damageFunction';
 
 /**
- * NGFS Phase IV scenario calibration (2023 release).
+ * NGFS Phase IV scenario calibration (2023 release), with physical-risk
+ * severity re-baselined to the NGFS Phase V / Kotz et al. (2024) chronic
+ * damage function (see damageFunction.ts for the uplift factors and
+ * rationale). Carbon-price and transition-multiplier columns remain the
+ * original Phase IV calibration — Kotz et al. concerns physical (chronic)
+ * damage only, not transition risk.
  *
  * Net Zero 2050  → 1.5°C  → aggressive early-transition, high carbon prices, lower physical risk
  * Delayed Trans  → 2.0°C  → slow start then sharp policy shock, moderate physical risk
@@ -19,7 +25,7 @@ export const SCENARIOS: Record<ScenarioId, ScenarioConfig> = {
     carbonPrice2030: 130,
     carbonPrice2050: 800,
     physicalMultiplier2030: 0.55,
-    physicalMultiplier2050: 0.72,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(0.72, 'orderly'), // 0.72 → 0.85
     transitionMultiplier2030: 1.45,
     transitionMultiplier2050: 1.85,
     color: '#10B981',
@@ -34,7 +40,7 @@ export const SCENARIOS: Record<ScenarioId, ScenarioConfig> = {
     carbonPrice2030: 40,
     carbonPrice2050: 300,
     physicalMultiplier2030: 0.78,
-    physicalMultiplier2050: 1.1,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(1.1, 'disorderly'), // 1.10 → 1.41
     transitionMultiplier2030: 0.88,
     transitionMultiplier2050: 1.38,
     color: '#F59E0B',
@@ -49,7 +55,7 @@ export const SCENARIOS: Record<ScenarioId, ScenarioConfig> = {
     carbonPrice2030: 28,
     carbonPrice2050: 65,
     physicalMultiplier2030: 0.95,
-    physicalMultiplier2050: 1.82,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(1.82, 'hot-house-world'), // 1.82 → 2.46
     transitionMultiplier2030: 0.48,
     transitionMultiplier2050: 0.58,
     color: '#EF4444',

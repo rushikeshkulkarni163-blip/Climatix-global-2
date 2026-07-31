@@ -13,6 +13,7 @@ import {
   getRegionId,
   interpYear,
 } from './ngfsScenarios';
+import { computeOceanRisk, isMarineExposed } from './oceanHazard';
 
 // ─── Physical risk base scores by geography ──────────────────────────────────
 
@@ -57,7 +58,7 @@ function basePhysical(lat: number, lng: number) {
   // Arctic permafrost thaw (unique physical risk at high latitudes)
   const permafrost = a >= 65 ? 65 : 0;
 
-  return { heat, flood, storm, drought, permafrost };
+  return { heat, flood, storm, drought, permafrost, isCoastal };
 }
 
 // ─── Sector-specific risk weights ────────────────────────────────────────────
@@ -130,10 +131,12 @@ export function computeAssetRiskWithConfig(
   const floodRisk   = Math.min(100, bp.flood  * physMult * sw.physicalMult);
   const stormRisk   = Math.min(100, bp.storm  * physMult * sw.physicalMult);
   const droughtRisk = Math.min(100, (bp.drought + bp.permafrost * 0.3) * physMult * sw.physicalMult);
+  const marineExposed = isMarineExposed({ category: asset.category, sector: asset.sector }, bp.isCoastal);
+  const oceanRisk = computeOceanRisk(marineExposed, year, physMult);
 
   const physicalRisk = Math.min(
     100,
-    heatStress * 0.28 + floodRisk * 0.32 + stormRisk * 0.22 + droughtRisk * 0.18
+    heatStress * 0.26 + floodRisk * 0.30 + stormRisk * 0.20 + droughtRisk * 0.16 + oceanRisk * 0.08
   );
 
   // Transition sub-scores
@@ -175,6 +178,7 @@ export function computeAssetRiskWithConfig(
     floodRisk,
     stormRisk,
     droughtRisk,
+    oceanRisk,
     physicalRisk,
     carbonPriceExposure,
     policyRisk,
@@ -303,6 +307,9 @@ export function generateRiskGrid(
           break;
         case 'carbon':
           intensity = Math.min(1, risk.carbonPriceExposure / 900);
+          break;
+        case 'ocean':
+          intensity = risk.oceanRisk / 100;
           break;
         default:
           intensity = risk.overallRisk / 100;

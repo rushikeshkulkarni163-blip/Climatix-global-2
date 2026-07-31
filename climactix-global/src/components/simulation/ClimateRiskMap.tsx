@@ -27,6 +27,7 @@ const LAYER_META: Record<LayerType, { label: string; desc: string; icon: React.C
   physical:   { label: 'Physical Risk',   desc: 'Heat, flood, storm, drought exposure',    icon: Thermometer },
   transition: { label: 'Transition Risk', desc: 'Policy, carbon pricing, technology shift', icon: Zap },
   carbon:     { label: 'Carbon Exposure', desc: 'Effective regional carbon price ($/tCO2)', icon: Wind },
+  ocean:      { label: 'Ocean Deoxygenation', desc: 'Coastal/marine dissolved-oxygen decline', icon: Droplets },
   composite:  { label: 'Composite Risk',  desc: 'Weighted overall climate risk score',       icon: Layers },
 };
 

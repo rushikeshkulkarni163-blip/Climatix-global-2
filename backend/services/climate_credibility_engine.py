@@ -30,6 +30,9 @@ Architecture:
     - Climate Credibility Score  (0–100, higher = more credible)
     - Institutional Risk Rating  (AAA → CCC)
     - Greenwashing Risk Level    (Credible | Moderate | High | Severe)
+    - Typology Analysis          (14-typology classification + DPM/TWM/
+                                   Selective Disclosure Index — see
+                                   greenwashing_taxonomy.py)
 """
 
 from __future__ import annotations
@@ -51,6 +54,7 @@ from services.greenwashing_scanner import (
 )
 from services.contradiction_detector import detect_contradictions
 from services.esg_framework_intelligence import run_intelligence_analysis
+from services.greenwashing_taxonomy import run_typology_analysis
 
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 
@@ -809,6 +813,7 @@ def run_full_credibility_scan(text: str, company_name: str = "The Company") -> d
       9. Recommendations (LLM)
      10. Key Findings + Explainability (LLM)
      11. ESG Framework Intelligence Layer
+     12. Greenwashing Typology Classification (14-typology framework) + DPM/TWM/Selective Disclosure Index
     """
     import uuid
     from datetime import datetime, timezone
@@ -877,6 +882,14 @@ def run_full_credibility_scan(text: str, company_name: str = "The Company") -> d
         intel = run_intelligence_analysis(text, data, flags, company_name)
     except Exception:
         intel = {}
+
+    # Stage 12: Greenwashing Typology Classification + DPM/TWM/Selective Disclosure Index
+    try:
+        typology_analysis = run_typology_analysis(
+            detection_result, contradiction_result, credibility["dimensions"], framework_results
+        )
+    except Exception:
+        typology_analysis = {}
 
     # Greenwashing risk level label (0–25 Credible, 26–50 Moderate, 51–75 High, 76–100 Severe)
     if gw_risk_score <= 25:
@@ -947,4 +960,7 @@ def run_full_credibility_scan(text: str, company_name: str = "The Company") -> d
 
         # Intelligence Layer
         "intelligence": intel,
+
+        # Typology Analysis (14-typology framework + DPM/TWM/Selective Disclosure Index)
+        "typology_analysis": typology_analysis,
     }

@@ -348,6 +348,7 @@ export const useScenarioStudioStore = create<ScenarioStudioStore>()((set) => ({
     { id: "physical", label: "Physical Risk (Heat/Flood/Storm/Drought)", active: false },
     { id: "transition", label: "Transition Risk", active: false },
     { id: "carbon", label: "Carbon Price Exposure", active: false },
+    { id: "ocean", label: "Ocean Deoxygenation (coastal/marine assets)", active: false },
     { id: "ports", label: "Ports", active: false },
     { id: "power-plants", label: "Power Plants", active: false },
   ],

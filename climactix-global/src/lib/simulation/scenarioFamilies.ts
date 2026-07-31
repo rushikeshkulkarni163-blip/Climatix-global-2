@@ -9,6 +9,7 @@ import type {
 } from '@/types/scenario-studio';
 import { PROJECTION_YEARS } from '@/types/scenario-studio';
 import { computeAssetRiskWithConfig } from './riskEngine';
+import { recalibratedPhysicalMultiplier2050, extendedPhysicalMultiplier } from './damageFunction';
 
 /**
  * Scenario Studio's 6 scenario families — the NGFS Phase IV/V published
@@ -21,6 +22,13 @@ import { computeAssetRiskWithConfig } from './riskEngine';
  * qualitative orderly/disorderly/hot-house-world categorisation into the
  * risk engine's multiplier space — they are not official NGFS output
  * variables. See /scenario-studio/risk-engine for the full methodology note.
+ *
+ * `physicalMultiplier2050` values below are recalibrated to the NGFS Phase V
+ * / Kotz et al. (2024) chronic damage function via
+ * `recalibratedPhysicalMultiplier2050()` — see damageFunction.ts for the
+ * uplift factors and rationale. Post-2050 continuation also uses that
+ * module's persistence-aware model instead of a uniform deceleration
+ * assumption (see `computeAssetRiskForFamily` below).
  */
 export const SCENARIO_FAMILIES: Record<ScenarioFamilyId, ScenarioFamilyConfig> = {
   'net-zero-2050': {
@@ -34,7 +42,7 @@ export const SCENARIO_FAMILIES: Record<ScenarioFamilyId, ScenarioFamilyConfig> =
     carbonPrice2030: 130,
     carbonPrice2050: 800,
     physicalMultiplier2030: 0.55,
-    physicalMultiplier2050: 0.72,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(0.72, 'orderly'), // 0.72 → 0.85 (NGFS Phase V / Kotz et al. 2024)
     transitionMultiplier2030: 1.45,
     transitionMultiplier2050: 1.85,
     policyOrderliness: 1.0,
@@ -52,7 +60,7 @@ export const SCENARIO_FAMILIES: Record<ScenarioFamilyId, ScenarioFamilyConfig> =
     carbonPrice2030: 95,
     carbonPrice2050: 520,
     physicalMultiplier2030: 0.62,
-    physicalMultiplier2050: 0.85,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(0.85, 'orderly'), // 0.85 → 1.00 (NGFS Phase V / Kotz et al. 2024)
     transitionMultiplier2030: 1.2,
     transitionMultiplier2050: 1.55,
     policyOrderliness: 0.9,
@@ -70,7 +78,7 @@ export const SCENARIO_FAMILIES: Record<ScenarioFamilyId, ScenarioFamilyConfig> =
     carbonPrice2030: 45,
     carbonPrice2050: 140,
     physicalMultiplier2030: 0.85,
-    physicalMultiplier2050: 1.35,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(1.35, 'hot-house-world'), // 1.35 → 1.82 (NGFS Phase V / Kotz et al. 2024)
     transitionMultiplier2030: 0.62,
     transitionMultiplier2050: 0.78,
     policyOrderliness: 0.55,
@@ -88,7 +96,7 @@ export const SCENARIO_FAMILIES: Record<ScenarioFamilyId, ScenarioFamilyConfig> =
     carbonPrice2030: 40,
     carbonPrice2050: 300,
     physicalMultiplier2030: 0.78,
-    physicalMultiplier2050: 1.1,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(1.1, 'disorderly'), // 1.10 → 1.41 (NGFS Phase V / Kotz et al. 2024)
     transitionMultiplier2030: 0.88,
     transitionMultiplier2050: 1.65,
     policyOrderliness: 0.35,
@@ -106,7 +114,7 @@ export const SCENARIO_FAMILIES: Record<ScenarioFamilyId, ScenarioFamilyConfig> =
     carbonPrice2030: 55,
     carbonPrice2050: 260,
     physicalMultiplier2030: 0.9,
-    physicalMultiplier2050: 1.55,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(1.55, 'disorderly'), // 1.55 → 1.98 (NGFS Phase V / Kotz et al. 2024)
     transitionMultiplier2030: 1.05,
     transitionMultiplier2050: 1.5,
     policyOrderliness: 0.2,
@@ -124,7 +132,7 @@ export const SCENARIO_FAMILIES: Record<ScenarioFamilyId, ScenarioFamilyConfig> =
     carbonPrice2030: 28,
     carbonPrice2050: 65,
     physicalMultiplier2030: 0.95,
-    physicalMultiplier2050: 1.82,
+    physicalMultiplier2050: recalibratedPhysicalMultiplier2050(1.82, 'hot-house-world'), // 1.82 → 2.46 (NGFS Phase V / Kotz et al. 2024)
     transitionMultiplier2030: 0.48,
     transitionMultiplier2050: 0.58,
     policyOrderliness: 0.1,
@@ -145,13 +153,15 @@ export const SCENARIO_FAMILY_ORDER: ScenarioFamilyId[] = [
 const METHODOLOGY: EvidenceMeta = {
   sourceDatasets: [
     'NGFS Phase IV/V Scenario Explorer — carbon price & temperature pathways',
-    'Climactix geographic hazard heuristic (heat/flood/storm/drought base rates by latitude/coastal proximity)',
+    'Kotz, Kuik, Levermann & Wenz (2024), "The economic commitment of climate change," Nature 628 — NGFS Phase V chronic physical damage function (DOSE database, 1,660 sub-national regions, 1960–2019; ISIMIP/W5E5/CMIP-6 climate inputs)',
+    'India EEZ marine dissolved-oxygen decline (Current Policies pathway) — template dataset for the ocean deoxygenation hazard, applied globally to coastal/marine-exposed assets with disclosed extrapolation',
+    'Climactix geographic hazard heuristic (heat/flood/storm/drought/ocean base rates by latitude/coastal proximity)',
     'Climactix sector risk-weight table (9 sectors — physical/transition multipliers, EBITDA leverage)',
   ],
   calculationMethod:
-    'Physical and transition multipliers interpolated 2024→2030→2050 (linear), applied to geography- and sector-derived base risk scores; financial impact scaled via sector EBITDA leverage.',
+    'Physical multipliers reflect NGFS Phase V / Kotz et al. (2024) calibration: 2030/2050 checkpoints translate NGFS\'s published median-loss trajectories into Climactix\'s risk-multiplier space; post-2050 continuation uses a persistence-aware model — no deceleration for hot-house-world pathways, partial deceleration for disorderly, and a committed-damage floor (85% of the 2050 value) for all pathways, since chronic climate damage does not fully unwind even under Net Zero. Transition multipliers interpolated 2024→2030→2050 (linear). Financial impact scaled via sector EBITDA leverage. Per NGFS Phase V guidance, this chronic damage-function view is directional and not summed against acute NatCat hazard models, to avoid double-counting overlapping effects.',
   confidence: 'medium',
-  lastUpdated: '2024-01-01',
+  lastUpdated: '2026-07-30',
   methodologyHref: '/scenario-studio/risk-engine',
 };
 
@@ -177,7 +187,7 @@ export function computeAssetRiskForFamily(
     physicalMultiplier2030: family.physicalMultiplier2030,
     physicalMultiplier2050:
       year > 2050
-        ? extendedMultiplier(year, family.physicalMultiplier2030, family.physicalMultiplier2050)
+        ? extendedPhysicalMultiplier(year, family.physicalMultiplier2030, family.physicalMultiplier2050, family.category)
         : family.physicalMultiplier2050,
     transitionMultiplier2030: family.transitionMultiplier2030,
     transitionMultiplier2050:
@@ -280,6 +290,9 @@ export function generateRiskGridForFamily(
           break;
         case 'carbon':
           intensity = Math.min(1, risk.carbonPriceExposure / 900);
+          break;
+        case 'ocean':
+          intensity = risk.oceanRisk / 100;
           break;
         default:
           intensity = risk.overallRisk / 100;
