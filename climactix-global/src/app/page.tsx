@@ -7,6 +7,7 @@ import LiveTicker from "@/components/live/LiveTicker";
 import LiveMetricsBar from "@/components/live/LiveMetricsBar";
 import AlertBanner from "@/components/live/AlertBanner";
 import AssessmentLifecycle from "@/components/homepage/AssessmentLifecycle";
+import Navbar from "@/components/layout/Navbar";
 
 // ── Globe (client-only — Three.js needs the DOM) ──────────
 const GlobeComponent = dynamic(
@@ -101,6 +102,8 @@ const TCFD_ITEMS = [
 export default function HomePage() {
   return (
     <div className="bg-black text-white">
+
+      <Navbar />
 
       {/* ══ ALERT BANNER (live climate alerts) ═══════════════ */}
       <AlertBanner maxVisible={1} autoHide autoHideMs={10000} />

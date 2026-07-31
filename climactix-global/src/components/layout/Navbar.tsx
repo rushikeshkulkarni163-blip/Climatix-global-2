@@ -8,6 +8,12 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   {
+    label: "Scenario Studio",
+    href: "/scenario-studio",
+    sub: ["Run Simulation", "GIS Viewer", "Physical Risk", "Transition Risk", "Climate VaR", "Reports"],
+    highlight: true,
+  },
+  {
     label: "Markets",
     href: "/dashboard",
     sub: ["Risk Dashboard", "Temperature Trends", "Air Quality", "Disaster Events", "Scenario Analysis"],
