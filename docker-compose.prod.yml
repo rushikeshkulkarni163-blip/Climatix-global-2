@@ -2,6 +2,30 @@ version: "3.9"
 
 services:
 
+  postgres:
+    image: postgres:16-alpine
+    container_name: climactix-postgres
+    restart: unless-stopped
+    env_file: ./backend/.env.prod
+    environment:
+      POSTGRES_USER: climactix
+      POSTGRES_DB: climactix
+      # POSTGRES_PASSWORD comes from ./backend/.env.prod (env_file above) —
+      # set it there, and make sure DATABASE_URL in the same file uses the
+      # identical password and host "postgres" (the Compose service name,
+      # NOT localhost — localhost inside the api container means the api
+      # container itself, which is what caused this to be broken).
+    volumes:
+      - climactix-pgdata:/var/lib/postgresql/data
+    networks:
+      - climactix-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U climactix -d climactix"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   api:
     build:
       context: ./backend
@@ -13,6 +37,9 @@ services:
       - ./backend/knowledge:/app/knowledge
     networks:
       - climactix-net
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -40,3 +67,6 @@ services:
 networks:
   climactix-net:
     driver: bridge
+
+volumes:
+  climactix-pgdata:
