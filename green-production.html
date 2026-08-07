@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="light dark" />
+<title>Climactix Green Production — Certification Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="Climatix_logo.png" />
+<!-- Design System v4.0 — light-first; page defaults to light unless the visitor previously chose dark -->
+<script>(function(){var t=localStorage.getItem('cx-theme');if(t!=='dark')document.documentElement.setAttribute('data-theme','light');else document.documentElement.setAttribute('data-theme','dark');})()</script>
+<style>
+:root{
+  --bg:#FFFFFF; --surface:#FAFAFA; --surface-2:#F0F1F3; --surface-3:#E7E9EC;
+  --border:#D9D9D9; --border-strong:#BFC5CC;
+  --text:#111111; --text-2:#4F4F4F; --text-muted:#6B7280;
+  --accent:#0B3D91; --accent-fill:#0B3D91;
+  --success:#1E8E3E; --warning:#B45309; --critical:#DC2626;
+  --font-heading:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-body:'Source Sans Pro',Arial,sans-serif;
+  --t:0.18s ease; --radius:8px; --pill:999px;
+}
+[data-theme="dark"]{
+  --bg:#0B0E14; --surface:#11151C; --surface-2:#161B24; --surface-3:#1C222C;
+  --border:#232935; --border-strong:#2E3644;
+  --text:#F4F6F8; --text-2:#B8C0CC; --text-muted:#7C8794;
+  --accent:#3D7BE0; --accent-fill:#0B3D91;
+  --success:#22C55E; --warning:#F59E0B; --critical:#F87171;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.5;min-height:100vh}
+.mono{font-family:var(--font-heading);font-variant-numeric:tabular-nums}
+a{color:inherit}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+
+/* Nav */
+.nav{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:100}
+.nav-left{display:flex;align-items:center;gap:10px}
+.nav-logo-img{height:22px;width:auto;display:block}
+.nav-logo{font-family:var(--font-heading);font-size:14px;font-weight:700;letter-spacing:-0.01em}
+.nav-module{font-family:var(--font-heading);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);padding:3px 10px;border-radius:var(--pill);border:1px solid var(--border);background:var(--surface)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.nav-btn{background:none;border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font-family:var(--font-heading);font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;transition:all var(--t)}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+#api-status{font-size:11px;padding:3px 9px;border-radius:var(--pill);border:1px solid var(--border);color:var(--text-muted)}
+
+/* Layout */
+.shell{max-width:1600px;margin:0 auto;padding:24px 20px 64px}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:16px}
+.sec-hdr-title{font-family:var(--font-heading);font-size:18px;font-weight:700}
+.sec-hdr-meta{font-size:12px;color:var(--text-muted)}
+.page-title{font-family:var(--font-heading);font-size:32px;font-weight:700;letter-spacing:-0.01em;margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--text-2);margin-bottom:28px;max-width:720px}
+
+/* Card */
+.card{background:var(--card,var(--bg));border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+.card-title{font-family:var(--font-heading);font-size:16px;font-weight:700;margin-bottom:14px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;font-weight:500;color:var(--text-2)}
+.field input,.field select{padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);transition:border-color var(--t)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius);font-family:var(--font-heading);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text);transition:all var(--t)}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:0.45;cursor:not-allowed}
+.btn-primary{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
+.btn-primary:hover{opacity:0.9;color:#fff}
+.btn-row{display:flex;gap:10px;margin-top:16px}
+.hint{font-size:12px;color:var(--text-muted);margin-top:10px}
+
+/* KPI strip */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+.kpi-cell{padding:16px;border-right:1px solid var(--border);background:var(--bg)}
+.kpi-cell:last-child{border-right:none}
+.kpi-label{font-family:var(--font-heading);font-size:11px;font-weight:500;color:var(--text-muted);margin-bottom:6px}
+.kpi-val{font-family:var(--font-heading);font-size:28px;font-weight:700;letter-spacing:-0.01em;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+.kpi-sub{font-size:12px;color:var(--text-2);margin-top:4px}
+
+/* Chips */
+.chip{display:inline-flex;padding:3px 10px;border-radius:var(--pill);font-family:var(--font-heading);font-size:11px;font-weight:700;letter-spacing:0.02em;white-space:nowrap}
+.chip-muted{background:var(--surface);border:1px solid var(--border);color:var(--text-2)}
+.chip-warning{background:rgba(180,83,9,0.08);border:1px solid rgba(180,83,9,0.3);color:var(--warning)}
+.chip-accent{background:rgba(11,61,145,0.07);border:1px solid rgba(11,61,145,0.3);color:var(--accent)}
+.chip-success{background:rgba(30,142,62,0.08);border:1px solid rgba(30,142,62,0.3);color:var(--success)}
+.chip-critical{background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.25);color:var(--critical)}
+
+/* Distribution bars (dimension scores) */
+.dist-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.dist-row:last-child{border-bottom:none}
+.dist-label{font-family:var(--font-heading);font-size:12px;font-weight:700;width:120px;color:var(--text-2);text-transform:capitalize}
+.dist-bar{flex:1;height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.dist-fill{height:100%;background:var(--accent);border-radius:3px;transition:width 0.25s ease}
+.dist-count{font-family:var(--font-heading);font-size:13px;font-weight:700;color:var(--text);width:46px;text-align:right;font-variant-numeric:tabular-nums}
+.dist-weight{font-size:11px;color:var(--text-muted);width:56px;text-align:right}
+
+/* Activity table */
+.data-table{width:100%;border-collapse:collapse}
+.data-table thead th{font-family:var(--font-heading);font-size:11px;font-weight:700;color:var(--text-muted);padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;background:var(--surface)}
+.data-table tbody tr{border-bottom:1px solid var(--border)}
+.data-table td{padding:8px 10px;font-size:12.5px}
+.num{font-family:var(--font-heading);font-variant-numeric:tabular-nums;text-align:right}
+
+/* Questionnaire */
+.q-group{margin-bottom:18px}
+.q-group-title{font-family:var(--font-heading);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:8px}
+.q-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--border)}
+.q-row:last-child{border-bottom:none}
+.q-text{font-size:13px;flex:1}
+.q-control select,.q-control input{padding:6px 9px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);width:150px}
+.q-toggle{display:flex;border:1px solid var(--border);border-radius:var(--pill);overflow:hidden}
+.q-toggle button{border:none;background:var(--bg);padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text-2)}
+.q-toggle button.active{background:var(--accent-fill);color:#fff}
+
+/* Certificate */
+.cert-panel{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.cert-qr{width:180px;height:180px;border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;background:var(--surface);flex-shrink:0}
+.cert-qr img{width:160px;height:160px}
+.cert-detail{flex:1;min-width:260px}
+.cert-num{font-family:var(--font-heading);font-size:20px;font-weight:700;letter-spacing:-0.01em;margin-bottom:4px}
+.cert-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.cert-row:last-child{border-bottom:none}
+.cert-row span:first-child{color:var(--text-muted)}
+
+/* Timeline chart */
+.tl-chart{display:flex;align-items:flex-end;gap:3px;height:150px;padding:10px 4px 0;min-width:max-content}
+.tl-col{flex:0 0 16px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px;cursor:default}
+.tl-bar{width:12px;background:var(--accent);border-radius:2px 2px 0 0;min-height:2px;transition:height var(--t)}
+.tl-bar.future{background:var(--surface-2)}
+.tl-bar.today{background:var(--warning)}
+.tl-daylabel{font-size:9px;color:var(--text-muted);white-space:nowrap}
+
+.empty-note{padding:24px 0;font-size:13px;color:var(--text-muted);text-align:center}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--text);color:var(--bg);padding:10px 16px;border-radius:var(--radius);font-size:13px;display:none;z-index:200;max-width:360px}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}.kpi-strip{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-left">
+    <img src="Climatix_logo.png" alt="Climactix Global" class="nav-logo-img" />
+    <span class="nav-logo">Climactix Global</span>
+    <span class="nav-module mono">Green Production</span>
+  </div>
+  <div class="nav-right">
+    <span id="api-status" class="mono">checking API…</span>
+    <button class="nav-btn" id="theme-toggle">Dark mode</button>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="page-title">Sustainable Production Certification</div>
+  <div class="page-sub">Register a production, log activity across every phase, and get an explainable Climactix Green Production Score with Bronze&nbsp;→&nbsp;Diamond certification — backed by a real multi-country emission-factor database, not a static estimate.</div>
+
+  <!-- STEP 1: Registration -->
+  <div class="card" id="registration-card">
+    <div class="card-title">1. Register production</div>
+    <div class="grid-3">
+      <div class="field"><label>Production name</label><input id="f-name" placeholder="e.g. Coastal Currents"></div>
+      <div class="field"><label>Production company</label><input id="f-company" placeholder="e.g. Climactix Studios"></div>
+      <div class="field"><label>Film type</label>
+        <select id="f-type">
+          <option value="movie">Movie</option>
+          <option value="series">Series</option>
+          <option value="documentary" selected>Documentary</option>
+          <option value="advertisement">Advertisement</option>
+          <option value="web_series">Web series</option>
+          <option value="music_video">Music video</option>
+          <option value="animation">Animation</option>
+          <option value="event">Event</option>
+          <option value="tv_show">TV show</option>
+        </select>
+      </div>
+      <div class="field"><label>Country</label>
+        <select id="f-country">
+          <option value="India" selected>India</option>
+          <option value="United Kingdom">United Kingdom</option>
+          <option value="United States">United States</option>
+          <option value="Germany">Germany</option>
+          <option value="Australia">Australia</option>
+        </select>
+      </div>
+      <div class="field"><label>Crew size</label><input id="f-crew" type="number" value="25" min="1"></div>
+      <div class="field"><label>Cast size</label><input id="f-cast" type="number" value="4" min="1"></div>
+      <div class="field"><label>Shoot start</label><input id="f-start" type="date" value="2026-02-01"></div>
+      <div class="field"><label>Shoot end</label><input id="f-end" type="date" value="2026-02-15"></div>
+      <div class="field"><label>Distribution</label>
+        <select id="f-dist"><option value="streaming" selected>Streaming</option><option value="cinema">Cinema</option><option value="both">Both</option></select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-register">Register production</button>
+    </div>
+    <div class="hint" id="registration-hint">Talks directly to the live FastAPI backend at <span class="mono" id="api-base-label">—</span>. Start it with <span class="mono">uvicorn main:app --reload --port 8000</span> from <span class="mono">backend/</span> if it's not already running.</div>
+  </div>
+
+  <!-- WORKSPACE (hidden until a production exists) -->
+  <div id="workspace" style="display:none">
+
+    <div class="section-hdr"><span class="sec-hdr-title" id="ws-title">Production</span><span class="sec-hdr-meta mono" id="ws-id">—</span></div>
+
+    <div class="kpi-strip">
+      <div class="kpi-cell"><div class="kpi-label">Total footprint</div><div class="kpi-val mono" id="kpi-co2e">—</div><div class="kpi-sub">kg CO₂e logged</div></div>
+      <div class="kpi-cell"><div class="kpi-label">CO₂e / crew-day</div><div class="kpi-val mono" id="kpi-intensity">—</div><div class="kpi-sub">Carbon intensity</div></div>
+      <div class="kpi-cell"><div class="kpi-label">Green Production Score</div><div class="kpi-val mono" id="kpi-score">—</div><div class="kpi-sub">0–100 composite</div></div>
+      <div class="kpi-cell"><div class="kpi-label">Certification</div><div class="kpi-val" style="font-size:20px" id="kpi-cert"><span class="chip chip-muted">Not scored</span></div><div class="kpi-sub" id="kpi-cert-sub">Run scoring below</div></div>
+    </div>
+
+    <!-- Production timeline: day 1 of the shoot through the final wrap date -->
+    <div class="card">
+      <div class="card-title">2. Production timeline</div>
+      <div id="timeline-day-badge" class="hint" style="margin-top:-6px;margin-bottom:10px">—</div>
+      <div style="height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin-bottom:16px">
+        <div id="timeline-progress" style="height:100%;background:var(--accent);width:0%;transition:width var(--t)"></div>
+      </div>
+      <div class="grid-3" style="margin-bottom:16px">
+        <div class="field"><label>Days with data logged</label><div class="kpi-val mono" style="font-size:20px" id="tl-active-days">—</div></div>
+        <div class="field"><label>CO₂e to date</label><div class="kpi-val mono" style="font-size:20px" id="tl-co2e-to-date">—</div></div>
+        <div class="field"><label>Projected total at current pace</label><div class="kpi-val mono" style="font-size:20px;color:var(--text-2)" id="tl-projected">—</div></div>
+      </div>
+      <div id="timeline-chart" style="overflow-x:auto"></div>
+      <div class="hint">One bar per calendar day from shoot start to wrap. Every activity, water, and waste entry is dated — this is a running daily log, not a one-shot total.</div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Activity logging -->
+      <div class="card">
+        <div class="card-title">3. Log activity</div>
+        <div class="grid-2">
+          <div class="field" style="grid-column:1/3"><label>Category</label><select id="a-category"></select></div>
+          <div class="field"><label>Phase</label><select id="a-phase"></select></div>
+          <div class="field"><label>Region (grid factor)</label>
+            <select id="a-region"><option>India</option><option>UK</option><option>US</option><option>Europe</option><option>Australia</option><option selected>Global</option></select>
+          </div>
+          <div class="field"><label>Date logged</label><input id="a-date" type="date"></div>
+          <div class="field"><label>Quantity <span id="a-unit" class="hint" style="margin:0"></span></label><input id="a-qty" type="number" min="0" step="0.01" value="500"></div>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary" id="btn-log-activity">Log activity → compute CO₂e</button></div>
+        <div style="max-height:220px;overflow-y:auto;margin-top:14px">
+          <table class="data-table"><thead><tr><th>Date</th><th>Category</th><th>Phase</th><th class="num">CO₂e (kg)</th></tr></thead><tbody id="activity-log-body"><tr><td colspan="4" class="empty-note">No activity logged yet.</td></tr></tbody></table>
+        </div>
+      </div>
+
+      <!-- Water & waste -->
+      <div class="card">
+        <div class="card-title">4. Water &amp; waste</div>
+        <div class="grid-2">
+          <div class="field"><label>Water source</label><select id="w-source"><option>set</option><option>hotel</option><option>crew</option><option>cleaning</option><option>catering</option><option>sanitation</option></select></div>
+          <div class="field"><label>Date logged</label><input id="w-date" type="date"></div>
+          <div class="field"><label>Volume (liters)</label><input id="w-volume" type="number" value="5000" min="0"></div>
+          <div class="field"><label>Greywater recycled (liters)</label><input id="w-recycled" type="number" value="1500" min="0"></div>
+        </div>
+        <div class="btn-row"><button class="btn" id="btn-log-water">Log water</button></div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
+        <div class="grid-2">
+          <div class="field"><label>Waste type</label><select id="ws-type"><option>plastic</option><option>paper</option><option>wood</option><option>food</option><option>construction</option><option>metal</option><option>glass</option><option>hazardous</option><option>electronic</option><option>battery</option></select></div>
+          <div class="field"><label>Date logged</label><input id="ws-date" type="date"></div>
+          <div class="field"><label>Quantity (kg)</label><input id="ws-qty" type="number" value="200" min="0"></div>
+          <div class="field"><label>% recycled</label><input id="ws-recycled" type="number" value="50" min="0" max="100"></div>
+          <div class="field"><label>% reused</label><input id="ws-reused" type="number" value="10" min="0" max="100"></div>
+        </div>
+        <div class="btn-row"><button class="btn" id="btn-log-waste">Log waste</button></div>
+        <div class="hint" id="water-waste-summary">Water: — · Waste diversion: —</div>
+      </div>
+    </div>
+
+    <!-- Questionnaire -->
+    <div class="card">
+      <div class="card-title">5. Sustainability questionnaire</div>
+      <div id="questionnaire-body"><div class="empty-note">Loading questions…</div></div>
+    </div>
+
+    <!-- Score -->
+    <div class="card">
+      <div class="card-title">6. Compute score</div>
+      <div class="btn-row" style="margin-top:0;margin-bottom:16px"><button class="btn btn-primary" id="btn-score">Compute Green Production Score</button></div>
+      <div id="score-body"><div class="empty-note">Run activity, water/waste, and questionnaire steps above, then compute the score.</div></div>
+    </div>
+
+    <!-- Certificate -->
+    <div class="card">
+      <div class="card-title">7. Certification</div>
+      <div class="btn-row" style="margin-top:0;margin-bottom:16px">
+        <button class="btn btn-primary" id="btn-issue-cert">Issue certificate</button>
+        <button class="btn" id="btn-approve-cert" style="display:none">Approve (reviewer)</button>
+      </div>
+      <div id="cert-body"><div class="empty-note">A certificate can be issued once the production clears Bronze's minimum score and mandatory criteria.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000' : '';
+const BASE = `${API_BASE}/api/v1/green-production`;
+$('api-base-label').textContent = API_BASE || location.origin;
+
+let productionId = null;
+let categories = [];
+let questions = [];
+let latestScore = null;
+let latestCertificate = null;
+
+function toast(msg, isError) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = isError ? 'var(--critical)' : 'var(--text)';
+  el.style.color = isError ? '#fff' : 'var(--bg)';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { el.style.display = 'none'; }, 4200);
+}
+
+async function api(path, opts) {
+  const res = await fetch(`${BASE}${path}`, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `${res.status} ${res.statusText}`);
+  }
+  return res.status === 204 ? null : res.json();
+}
+
+// ── API health check ──────────────────────────────────────────────────────────
+(async function checkApi() {
+  try {
+    await api('/certification-levels');
+    $('api-status').textContent = 'API live';
+    $('api-status').style.color = 'var(--success)';
+    $('api-status').style.borderColor = 'var(--success)';
+  } catch (e) {
+    $('api-status').textContent = 'API unreachable';
+    $('api-status').style.color = 'var(--critical)';
+    $('api-status').style.borderColor = 'var(--critical)';
+    $('registration-hint').innerHTML =
+      `<strong style="color:var(--critical)">Backend not reachable at ${API_BASE}.</strong> ` +
+      `Start it: <span class="mono">cd backend && .venv/bin/uvicorn main:app --reload --port 8000</span>`;
+  }
+})();
+
+// ── Theme toggle ──────────────────────────────────────────────────────────────
+$('theme-toggle').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('cx-theme', next);
+});
+
+// ── Step 1: Register ──────────────────────────────────────────────────────────
+$('btn-register').addEventListener('click', async () => {
+  const name = $('f-name').value.trim();
+  const company = $('f-company').value.trim();
+  if (!name || !company) { toast('Production name and company are required', true); return; }
+  $('btn-register').disabled = true;
+  try {
+    const created = await api('/productions', {
+      method: 'POST',
+      body: JSON.stringify({
+        production_name: name, production_company: company, film_type: $('f-type').value,
+        country: $('f-country').value, crew_size_expected: Number($('f-crew').value),
+        cast_size_expected: Number($('f-cast').value), timeline_start: $('f-start').value,
+        timeline_end: $('f-end').value, distribution_channel: $('f-dist').value,
+      }),
+    });
+    productionId = created.id;
+    $('ws-title').textContent = name;
+    $('ws-id').textContent = productionId;
+    $('registration-card').style.display = 'none';
+    $('workspace').style.display = 'block';
+    toast(`Production registered — ${productionId}`);
+
+    // Clamp every "date logged" field to the production's own shoot window,
+    // defaulting to today (or the nearest in-range day) — this is what makes
+    // logging a day-1-to-wrap data log rather than a single undated total.
+    const start = $('f-start').value, end = $('f-end').value;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const defaultDate = todayStr < start ? start : (todayStr > end ? end : todayStr);
+    [$('a-date'), $('w-date'), $('ws-date')].forEach(inp => {
+      inp.min = start; inp.max = end; inp.value = defaultDate;
+    });
+
+    await loadCategories();
+    await loadQuestionnaire();
+    await refreshFootprint();
+    await refreshWaterWaste();
+    await refreshTimeline();
+  } catch (e) {
+    toast(`Registration failed: ${e.message}`, true);
+  } finally {
+    $('btn-register').disabled = false;
+  }
+});
+
+// ── Step 3: Activity taxonomy + logging ──────────────────────────────────────
+async function loadCategories() {
+  const data = await api('/activity-categories');
+  categories = data.categories;
+  const sel = $('a-category');
+  sel.innerHTML = categories.map(c => `<option value="${c.id}" data-unit="${c.unit}" data-phases="${c.applicablePhases.join(',')}">${c.label} (${c.department.replace(/_/g, ' ')})</option>`).join('');
+  sel.addEventListener('change', updatePhaseOptions);
+  updatePhaseOptions();
+}
+
+function updatePhaseOptions() {
+  const opt = $('a-category').selectedOptions[0];
+  const phases = (opt.dataset.phases || '').split(',');
+  $('a-unit').textContent = `(${opt.dataset.unit})`;
+  $('a-phase').innerHTML = phases.map(p => `<option value="${p}">${p.replace(/_/g, ' ')}</option>`).join('');
+}
+
+$('btn-log-activity').addEventListener('click', async () => {
+  const category_id = $('a-category').value;
+  const phase = $('a-phase').value;
+  const quantity = Number($('a-qty').value);
+  $('btn-log-activity').disabled = true;
+  try {
+    const r = await api(`/productions/${productionId}/activities`, {
+      method: 'POST',
+      body: JSON.stringify({ category_id, phase, quantity, region: $('a-region').value, activity_date: $('a-date').value }),
+    });
+    const tbody = $('activity-log-body');
+    if (tbody.children.length === 1 && tbody.children[0].children.length === 1) tbody.innerHTML = '';
+    tbody.insertAdjacentHTML('afterbegin', `<tr>
+      <td class="mono" style="font-size:11px">${r.activityDate}</td>
+      <td>${r.categoryLabel}<div class="hint" style="margin:0">${r.factorKey} @ ${r.regionUsed}</div></td>
+      <td>${r.phase.replace(/_/g, ' ')}</td>
+      <td class="num mono">${r.co2eKg.toLocaleString()}</td></tr>`);
+    toast(`Logged ${r.categoryLabel} on ${r.activityDate} → ${r.co2eKg.toLocaleString()} kgCO2e (${r.factorSource})`);
+    await refreshFootprint();
+    await refreshTimeline();
+  } catch (e) {
+    toast(`Failed to log activity: ${e.message}`, true);
+  } finally {
+    $('btn-log-activity').disabled = false;
+  }
+});
+
+async function refreshFootprint() {
+  try {
+    const f = await api(`/productions/${productionId}/footprint`);
+    $('kpi-co2e').textContent = f.totalCo2eKg.toLocaleString();
+    $('kpi-intensity').textContent = f.co2ePerCrewDay != null ? f.co2ePerCrewDay.toLocaleString() : '—';
+  } catch (e) { /* footprint may 404 before any activity — fine */ }
+}
+
+// ── Step 4: Water & waste ─────────────────────────────────────────────────────
+$('btn-log-water').addEventListener('click', async () => {
+  try {
+    await api(`/productions/${productionId}/water`, {
+      method: 'POST',
+      body: JSON.stringify({
+        phase: 'production', source: $('w-source').value, recorded_at: $('w-date').value,
+        volume_liters: Number($('w-volume').value), greywater_recycled_liters: Number($('w-recycled').value),
+      }),
+    });
+    toast('Water record logged');
+    await refreshWaterWaste();
+    await refreshTimeline();
+  } catch (e) { toast(`Failed: ${e.message}`, true); }
+});
+
+$('btn-log-waste').addEventListener('click', async () => {
+  try {
+    await api(`/productions/${productionId}/waste`, {
+      method: 'POST',
+      body: JSON.stringify({
+        phase: 'production', waste_type: $('ws-type').value, quantity_kg: Number($('ws-qty').value),
+        pct_recycled: Number($('ws-recycled').value), pct_reused: Number($('ws-reused').value),
+        recorded_at: $('ws-date').value,
+      }),
+    });
+    toast('Waste record logged');
+    await refreshWaterWaste();
+    await refreshTimeline();
+  } catch (e) { toast(`Failed: ${e.message}`, true); }
+});
+
+async function refreshWaterWaste() {
+  const [water, waste] = await Promise.all([
+    api(`/productions/${productionId}/water-summary`),
+    api(`/productions/${productionId}/waste-summary`),
+  ]);
+  $('water-waste-summary').textContent =
+    `Water: ${water.totalVolumeLiters.toLocaleString()} L (${water.recyclingRatePct}% recycled) · ` +
+    `Waste diversion: ${waste.diversionRatePct}% of ${waste.totalWasteKg.toLocaleString()} kg`;
+}
+
+// ── Production timeline: day 1 of the shoot through wrap ─────────────────────
+async function refreshTimeline() {
+  let t;
+  try {
+    t = await api(`/productions/${productionId}/timeline`);
+  } catch (e) {
+    $('timeline-day-badge').textContent = `Timeline unavailable: ${e.message}`;
+    return;
+  }
+
+  $('timeline-day-badge').innerHTML =
+    `<strong style="color:var(--text)">Day ${t.elapsedDays} of ${t.totalDays}</strong> — ` +
+    `${t.timelineStart} → ${t.timelineEnd} · ${t.daysWithActivity} day(s) with data · ${t.daysRemaining} day(s) remaining`;
+  $('timeline-progress').style.width = `${Math.min(100, t.totalDays ? (t.elapsedDays / t.totalDays * 100) : 0)}%`;
+  $('tl-active-days').textContent = `${t.daysWithActivity} / ${t.totalDays}`;
+  $('tl-co2e-to-date').textContent = `${t.totalCo2eKgToDate.toLocaleString()} kg`;
+  $('tl-projected').textContent = t.projectedTotalCo2eKg != null
+    ? `${t.projectedTotalCo2eKg.toLocaleString()} kg (@ ${t.avgCo2ePerActiveDay.toLocaleString()}/active day)`
+    : 'Log activity to project';
+
+  const maxCo2e = Math.max(...t.days.map(d => d.co2eKg), 1);
+  const labelEvery = Math.max(1, Math.ceil(t.totalDays / 20)); // avoid label clutter on long shoots
+  $('timeline-chart').innerHTML = `<div class="tl-chart">${t.days.map(d => {
+    const heightPct = Math.max(2, Math.round(d.co2eKg / maxCo2e * 100));
+    const cls = d.isFuture ? 'future' : (d.date === new Date().toISOString().slice(0, 10) ? 'today' : '');
+    const label = d.dayNumber === 1 || d.dayNumber === t.totalDays || d.dayNumber % labelEvery === 0 ? `D${d.dayNumber}` : '';
+    return `<div class="tl-col" title="${d.date} (Day ${d.dayNumber}) — ${d.co2eKg.toLocaleString()} kgCO2e, cumulative ${d.cumulativeCo2eKg.toLocaleString()} kg">
+      <div class="tl-bar ${cls}" style="height:${heightPct}%"></div>
+      <div class="tl-daylabel">${label}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── Step 5: Questionnaire ─────────────────────────────────────────────────────
+async function loadQuestionnaire() {
+  const data = await api('/questionnaire');
+  questions = data.questions;
+  const byDim = {};
+  questions.forEach(q => { (byDim[q.scoring_dimension] ??= []).push(q); });
+
+  const html = Object.entries(byDim).map(([dim, qs]) => `
+    <div class="q-group">
+      <div class="q-group-title">${dim}</div>
+      ${qs.map(q => `<div class="q-row" data-qid="${q.id}">
+        <div class="q-text">${q.question_text}</div>
+        <div class="q-control">${renderControl(q)}</div>
+      </div>`).join('')}
+    </div>`).join('');
+  $('questionnaire-body').innerHTML = html;
+
+  $('questionnaire-body').querySelectorAll('[data-qid]').forEach(row => {
+    const qid = row.dataset.qid;
+    const q = questions.find(x => x.id === qid);
+    if (q.question_type === 'boolean') {
+      row.querySelectorAll('.q-toggle button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          row.querySelectorAll('.q-toggle button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          submitResponse(qid, btn.dataset.val === 'true');
+        });
+      });
+    } else {
+      const input = row.querySelector('select, input');
+      input.addEventListener('change', () => {
+        const val = q.question_type === 'numeric' ? Number(input.value) : input.value;
+        submitResponse(qid, val);
+      });
+    }
+  });
+}
+
+function renderControl(q) {
+  if (q.question_type === 'boolean') {
+    return `<div class="q-toggle"><button data-val="true">Yes</button><button data-val="false">No</button></div>`;
+  }
+  if (q.question_type === 'numeric') {
+    return `<input type="number" min="0" max="100" placeholder="0-100">`;
+  }
+  if (q.question_type === 'single_select') {
+    const opts = Array.isArray(q.options) ? q.options : [];
+    return `<select><option value="">—</option>${opts.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+  }
+  return `<input type="text">`;
+}
+
+async function submitResponse(question_id, response) {
+  try {
+    await api(`/productions/${productionId}/questionnaire-responses`, {
+      method: 'POST',
+      body: JSON.stringify({ question_id, response }),
+    });
+  } catch (e) { toast(`Failed to save answer: ${e.message}`, true); }
+}
+
+// ── Step 6: Score ─────────────────────────────────────────────────────────────
+const CERT_CHIP = { bronze: 'chip-muted', silver: 'chip-muted', gold: 'chip-warning', platinum: 'chip-accent', diamond: 'chip-success' };
+
+$('btn-score').addEventListener('click', async () => {
+  $('btn-score').disabled = true;
+  try {
+    latestScore = await api(`/productions/${productionId}/score`);
+    renderScore(latestScore);
+    await refreshFootprint();
+    toast(`Score computed: ${latestScore.totalScore} / 100`);
+  } catch (e) {
+    toast(`Scoring failed: ${e.message}`, true);
+  } finally {
+    $('btn-score').disabled = false;
+  }
+});
+
+function renderScore(s) {
+  $('kpi-score').textContent = s.totalScore;
+  const lvl = s.certificationLevel;
+  if (lvl.achieved) {
+    $('kpi-cert').innerHTML = `<span class="chip ${CERT_CHIP[lvl.levelId] || 'chip-muted'}">${lvl.label}</span>`;
+    $('kpi-cert-sub').textContent = lvl.improvementNote || '';
+  } else {
+    $('kpi-cert').innerHTML = `<span class="chip chip-critical">Not certified</span>`;
+    $('kpi-cert-sub').textContent = `${lvl.scoreGap ?? '?'} points to Bronze`;
+  }
+
+  const dims = Object.entries(s.dimensionScores).map(([dim, val]) => {
+    const w = s.breakdown[dim].compositeWeightPct;
+    return `<div class="dist-row">
+      <div class="dist-label">${dim}</div>
+      <div class="dist-bar"><div class="dist-fill" style="width:${val}%"></div></div>
+      <div class="dist-count">${val}</div>
+      <div class="dist-weight">${w}% wt</div>
+    </div>`;
+  }).join('');
+  $('score-body').innerHTML = dims;
+}
+
+// ── Step 7: Certification ────────────────────────────────────────────────────
+$('btn-issue-cert').addEventListener('click', async () => {
+  $('btn-issue-cert').disabled = true;
+  try {
+    latestCertificate = await api(`/productions/${productionId}/certifications/issue`, { method: 'POST', body: JSON.stringify({}) });
+    await renderCertificate();
+    toast(`Certificate issued: ${latestCertificate.certificateNumber} (pending review)`);
+  } catch (e) {
+    toast(`Cannot issue certificate yet: ${e.message}`, true);
+  } finally {
+    $('btn-issue-cert').disabled = false;
+  }
+});
+
+$('btn-approve-cert').addEventListener('click', async () => {
+  try {
+    await api(`/certifications/${latestCertificate.id}/status`, {
+      method: 'POST',
+      body: JSON.stringify({ status: 'verified', reviewer_notes: 'Approved from Green Production console.' }),
+    });
+    toast('Certificate approved and verified');
+    await renderCertificate();
+  } catch (e) { toast(`Approval failed: ${e.message}`, true); }
+});
+
+async function renderCertificate() {
+  const verify = await api(`/verify/${latestCertificate.certificateNumber}`).catch(() => null);
+  const qrUrl = `${BASE}/verify/${latestCertificate.certificateNumber}/qrcode`;
+  const statusChip = verify?.isValid ? 'chip-success' : verify?.verificationStatus === 'pending' ? 'chip-warning' : 'chip-critical';
+  $('cert-body').innerHTML = `
+    <div class="cert-panel">
+      <div class="cert-qr"><img src="${qrUrl}" alt="Certificate QR"></div>
+      <div class="cert-detail">
+        <div class="cert-num mono">${latestCertificate.certificateNumber}</div>
+        <div class="chip ${statusChip}" style="margin-bottom:12px">${verify?.verificationStatus || 'pending'}${verify?.isValid ? ' · valid' : ''}</div>
+        <div class="cert-row"><span>Level</span><span>${latestCertificate.levelLabel}</span></div>
+        <div class="cert-row"><span>Score</span><span>${latestCertificate.score}</span></div>
+        <div class="cert-row"><span>Issued by</span><span>${latestCertificate.issuedBy}</span></div>
+        <div class="cert-row"><span>Issued</span><span>${new Date(latestCertificate.issuedAt).toLocaleString()}</span></div>
+        <div class="cert-row"><span>Expires</span><span>${new Date(latestCertificate.expiresAt).toLocaleDateString()}</span></div>
+        <div class="cert-row"><span>Signature</span><span>${verify?.signatureValid ? 'Valid (HMAC-SHA256)' : '—'}</span></div>
+        <div class="cert-row"><span>Public verify URL</span><span class="mono" style="font-size:11px">${latestCertificate.verifyUrl}</span></div>
+      </div>
+    </div>`;
+  $('btn-approve-cert').style.display = verify?.verificationStatus === 'pending' ? 'inline-flex' : 'none';
+  $('btn-issue-cert').textContent = 'Re-issue certificate';
+}
+</script>
+</body>
+</html>

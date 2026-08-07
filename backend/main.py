@@ -51,6 +51,7 @@ from routers.mfa import router as mfa_router
 from routers.api_keys import router as api_keys_router
 from routers.knowledge import router as knowledge_router
 from routers.materiality import router as materiality_router
+from routers.green_production import router as green_production_router
 import database as db
 
 # ── Template directory ─────────────────────────────────────────────────────────
@@ -173,6 +174,7 @@ app.include_router(mfa_router)
 app.include_router(api_keys_router)
 app.include_router(knowledge_router)
 app.include_router(materiality_router)
+app.include_router(green_production_router)
 
 # ── In-memory cache (last successful generation) ──────────────────────────────
 _cache: dict = {}
