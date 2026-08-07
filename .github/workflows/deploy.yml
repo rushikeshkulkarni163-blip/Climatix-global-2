@@ -26,6 +26,9 @@ jobs:
             cd /opt/climactix && git pull origin main
             echo "→ Files on server:"
             ls *.html | head -20
+            echo "→ Reclaiming disk space (stopped containers, unused images/networks, build cache — bind-mounted host paths and named volumes are untouched)..."
+            docker system prune -af
+            df -h / | tail -1
             echo "→ Restarting containers..."
             docker compose -f docker-compose.prod.yml up --build -d || docker-compose -f docker-compose.prod.yml up --build -d
             echo "✅ Deployed at $(date)"
