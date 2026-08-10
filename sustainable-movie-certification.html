@@ -65,25 +65,27 @@ section{padding:72px 0}
 @media(max-width:920px){.nav-links{display:none}}
 
 /* ── Hero ── */
-.hero{padding:72px 0 64px;border-bottom:1px solid var(--border)}
-.hero-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:56px;align-items:center}
-.breadcrumb{font-size:12px;color:var(--text-muted);margin-bottom:18px}
-.breadcrumb b{color:var(--text-2);font-weight:600}
-.hero h1{font-size:clamp(32px,4.2vw,52px);font-weight:700;letter-spacing:-0.02em;line-height:1.08;margin-bottom:20px}
-.hero-sub{font-size:17px;color:var(--text-2);line-height:1.7;max-width:560px;margin-bottom:32px}
+.hero{position:relative;padding:96px 0 84px;border-bottom:1px solid var(--border);overflow:hidden;background:#0A0A0A}
+.hero-bg-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.hero-bg-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(115deg,rgba(6,7,9,0.88) 0%,rgba(6,7,9,0.72) 42%,rgba(6,7,9,0.42) 78%,rgba(6,7,9,0.62) 100%)}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr 0.85fr;gap:56px;align-items:center}
+.breadcrumb{font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:18px}
+.breadcrumb b{color:rgba(255,255,255,0.85);font-weight:600}
+.hero h1{font-size:clamp(32px,4.2vw,52px);font-weight:700;letter-spacing:-0.02em;line-height:1.08;margin-bottom:20px;color:#fff}
+.hero-sub{font-size:17px;color:rgba(255,255,255,0.82);line-height:1.7;max-width:560px;margin-bottom:32px}
 .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
-.hero-note{font-size:12.5px;color:var(--text-muted)}
+.hero-ctas .btn:not(.btn-primary){border-color:rgba(255,255,255,0.38);color:#fff;background:rgba(255,255,255,0.06)}
+.hero-ctas .btn:not(.btn-primary):hover{border-color:#fff;color:#fff;background:rgba(255,255,255,0.12)}
+.hero-note{font-size:12.5px;color:rgba(255,255,255,0.55)}
+@media (prefers-reduced-motion: reduce){ .hero-bg-video{display:none} }
 
-/* Cinematic instrument panel (line-art, no stock imagery) */
-.hero-visual{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:28px;position:relative}
-.hero-visual-frame{border:1px solid var(--border-strong);border-radius:var(--radius);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;background:var(--bg);margin-bottom:18px;position:relative;overflow:hidden}
-.hero-visual-frame::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,var(--border) 0 1px,transparent 1px 40px),repeating-linear-gradient(0deg,var(--border) 0 1px,transparent 1px 40px);opacity:0.35}
-.hero-slate{width:56%;color:var(--accent);position:relative;z-index:1}
-.hero-readout{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.hero-readout-cell{background:var(--bg);padding:12px 14px}
-.hero-readout-label{font-size:9.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
-.hero-readout-val{font-family:var(--font-heading);font-weight:700;font-size:19px;color:var(--accent);letter-spacing:-0.01em}
-.hero-readout-note{font-size:10px;color:var(--text-muted);margin-top:8px;grid-column:1/4;padding:0 14px 12px}
+/* Illustrative stat readout, floating over the cinematic footage */
+.hero-visual{position:relative;padding:0}
+.hero-readout{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.16);border-radius:var(--radius);overflow:hidden}
+.hero-readout-cell{background:rgba(10,10,10,0.6);padding:14px 14px}
+.hero-readout-label{font-size:9.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:6px}
+.hero-readout-val{font-family:var(--font-heading);font-weight:700;font-size:19px;color:#fff;letter-spacing:-0.01em}
+.hero-readout-note{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px;grid-column:1/4;padding:0 14px 14px}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
 
 /* ── Positioning / M-R-V-C ── */
@@ -276,6 +278,10 @@ body{padding-left:144px;padding-right:144px}
 
 <!-- ═══ HERO ═══ -->
 <header class="hero" id="overview">
+  <video class="hero-bg-video" id="heroVideo" muted loop playsinline webkit-playsinline preload="none" aria-hidden="true">
+    <source src="Climactix_global_green_filmv1.mp4" type="video/mp4">
+  </video>
+  <div class="hero-bg-overlay" aria-hidden="true"></div>
   <div class="wrap hero-grid">
     <div>
       <div class="breadcrumb"><b>Climactix Global</b> · Certification · Sustainable Movie Certification</div>
@@ -288,17 +294,6 @@ body{padding-left:144px;padding-right:144px}
       <div class="hero-note">Climactix Global brings evidence-based sustainability intelligence to the entertainment industry — the same assessment discipline applied across our climate risk, ESG, and disclosure intelligence products.</div>
     </div>
     <div class="hero-visual" aria-hidden="true">
-      <div class="hero-visual-frame">
-        <svg class="hero-slate" viewBox="0 0 200 140" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="10" y="34" width="180" height="96" rx="4"/>
-          <path d="M10 34 L46 10 L74 10 L48 34 Z"/>
-          <path d="M74 34 L102 10 L130 10 L104 34 Z"/>
-          <path d="M138 34 L166 10 L190 10 L190 34 Z"/>
-          <line x1="10" y1="58" x2="190" y2="58"/>
-          <circle cx="100" cy="94" r="20"/>
-          <circle cx="100" cy="94" r="7"/>
-        </svg>
-      </div>
       <div class="hero-readout">
         <div class="hero-readout-cell"><div class="hero-readout-label">Phases tracked</div><div class="hero-readout-val">5</div></div>
         <div class="hero-readout-cell"><div class="hero-readout-label">Score dimensions</div><div class="hero-readout-val">8</div></div>
@@ -555,6 +550,24 @@ body{padding-left:144px;padding-right:144px}
 </footer>
 
 <script>
+(function(){
+  // Hero background video — play only while in view, skip entirely under reduced motion
+  var vid = document.getElementById('heroVideo');
+  if (vid && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if (en.isIntersecting) vid.play().catch(function(){});
+          else vid.pause();
+        });
+      }, { threshold: 0.15 });
+      io.observe(vid);
+    } else {
+      vid.play().catch(function(){});
+    }
+  }
+})();
+
 (function(){
   var toggle = document.getElementById('theme-toggle');
   function apply(){
