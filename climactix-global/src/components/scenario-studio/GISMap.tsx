@@ -22,11 +22,46 @@ function pinDataUri(hex: string): string {
   return `data:image/svg+xml;base64,${window.btoa(svg)}`;
 }
 
+interface EoIndicator {
+  data: { name: string; value: number; unit: string };
+  provenance: {
+    source: string;
+    date: string;
+    confidence: "HIGH" | "MEDIUM" | "LOW";
+    demo: boolean;
+    method: string;
+  };
+}
+
 interface HoverInfo {
   x: number;
   y: number;
   asset: SimAsset;
   profile?: AssetRiskProfile;
+  eo?: EoIndicator;
+}
+
+const EO_LAYER_TO_INDICATOR: Record<string, string> = {
+  "vegetation-ndvi": "NDVI",
+  "water-surface-ndwi": "NDWI",
+  "land-surface-temp": "LST",
+};
+
+/** Diverging low->high color for an EO indicator value, distinct from the
+ * risk-grid heatmap palette so the two never look like the same data class. */
+function eoColor(indicatorId: string, value: number): [number, number, number, number] {
+  if (indicatorId === "vegetation-ndvi") {
+    // NDVI -1..1: sparse (amber) -> dense vegetation (green)
+    const t = Math.max(0, Math.min(1, (value + 0.2) / 0.8));
+    return [Math.round(180 - t * 150), Math.round(83 + t * 90), Math.round(9 + t * 30), 220];
+  }
+  if (indicatorId === "water-surface-ndwi") {
+    const t = Math.max(0, Math.min(1, (value + 0.3) / 0.6));
+    return [Math.round(11 + t * 0), Math.round(61 + t * 90), Math.round(145 + t * 60), 220];
+  }
+  // land-surface-temp: cool (blue) -> hot (red), roughly -5..40C
+  const t = Math.max(0, Math.min(1, (value + 5) / 45));
+  return [Math.round(30 + t * 190), Math.round(143 - t * 105), Math.round(62 - t * 24), 220];
 }
 
 const RISK_LABEL: Record<RiskLevel, string> = {
@@ -49,6 +84,8 @@ export default function GISMap({ assets, profiles, edges, onSelectAsset }: GISMa
   const overlayRef = useRef<{ setProps: (props: Record<string, unknown>) => void } | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
+  const [eoByAsset, setEoByAsset] = useState<Record<string, Record<string, EoIndicator>>>({});
+  const eoFetchedRef = useRef<Set<string>>(new Set());
 
   const gisLayers = useScenarioStudioStore((s) => s.gisLayers);
   const scenario = useScenarioStudioStore((s) => s.scenario);
@@ -116,6 +153,48 @@ export default function GISMap({ assets, profiles, edges, onSelectAsset }: GISMa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ── Earth Observation indicator fetch (spec §13: buffer analysis around
+  // each asset) — one call per asset returns NDVI/NDWI/LST together, cached
+  // in eoFetchedRef so toggling layers on/off never re-fetches. ──────────
+  useEffect(() => {
+    const eoActive = gisLayers.some((l) => l.earthObservation && l.active);
+    if (!eoActive) return;
+
+    const toFetch = assets.filter((a) => !eoFetchedRef.current.has(a.id));
+    if (toFetch.length === 0) return;
+
+    let cancelled = false;
+    toFetch.forEach((a) => eoFetchedRef.current.add(a.id));
+
+    Promise.all(
+      toFetch.map(async (a) => {
+        try {
+          const res = await fetch(
+            `/api/earth-observation/environmental-indicators?lat=${a.lat}&lng=${a.lng}&radius_km=5`
+          );
+          const json = await res.json();
+          if (!json.ok) return null;
+          return { assetId: a.id, indicators: json.indicators as Record<string, EoIndicator> };
+        } catch {
+          return null;
+        }
+      })
+    ).then((results) => {
+      if (cancelled) return;
+      setEoByAsset((prev) => {
+        const next = { ...prev };
+        for (const r of results) {
+          if (r) next[r.assetId] = r.indicators;
+        }
+        return next;
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [gisLayers, assets]);
+
   // ── Reactive layer rebuild ───────────────────────────────────────────────
   useEffect(() => {
     if (!mapLoaded || !overlayRef.current) return;
@@ -123,7 +202,7 @@ export default function GISMap({ assets, profiles, edges, onSelectAsset }: GISMa
     let cancelled = false;
 
     async function buildLayers() {
-      const { IconLayer, LineLayer } = await import("@deck.gl/layers");
+      const { IconLayer, LineLayer, ScatterplotLayer } = await import("@deck.gl/layers");
       const { HeatmapLayer } = await import("@deck.gl/aggregation-layers");
       if (cancelled) return;
 
@@ -190,6 +269,43 @@ export default function GISMap({ assets, profiles, edges, onSelectAsset }: GISMa
         );
       }
 
+      const activeEoLayerId = Object.keys(EO_LAYER_TO_INDICATOR).find((id) => activeIds.has(id));
+      if (activeEoLayerId) {
+        const indicatorId = EO_LAYER_TO_INDICATOR[activeEoLayerId];
+        const points = assets
+          .map((a) => {
+            const ind = eoByAsset[a.id]?.[indicatorId];
+            if (!ind) return null;
+            return { asset: a, indicator: ind };
+          })
+          .filter((x): x is { asset: SimAsset; indicator: EoIndicator } => x !== null);
+
+        layers.push(
+          new ScatterplotLayer({
+            id: `eo-${activeEoLayerId}`,
+            data: points,
+            getPosition: (d) => [d.asset.lng, d.asset.lat],
+            getFillColor: (d) => eoColor(activeEoLayerId, d.indicator.data.value),
+            getRadius: 9000,
+            radiusUnits: "meters",
+            stroked: true,
+            getLineColor: [255, 255, 255, 220],
+            lineWidthMinPixels: 1.5,
+            pickable: true,
+            onHover: (info: { object?: { asset: SimAsset; indicator: EoIndicator }; x: number; y: number }) => {
+              if (info.object) {
+                setHoverInfo({
+                  x: info.x, y: info.y, asset: info.object.asset,
+                  profile: profiles[info.object.asset.id], eo: info.object.indicator,
+                });
+              } else {
+                setHoverInfo(null);
+              }
+            },
+          })
+        );
+      }
+
       if (activeIds.has("assets")) {
         layers.push(
           new IconLayer({
@@ -227,7 +343,7 @@ export default function GISMap({ assets, profiles, edges, onSelectAsset }: GISMa
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapLoaded, gisLayers, scenario, horizon, assets, profiles, edges]);
+  }, [mapLoaded, gisLayers, scenario, horizon, assets, profiles, edges, eoByAsset]);
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-lg border border-ds-border">
@@ -257,6 +373,20 @@ export default function GISMap({ assets, profiles, edges, onSelectAsset }: GISMa
               <span className="font-ds-number font-bold text-ds-text">
                 {Math.round(hoverInfo.profile.overallRisk)}/100
               </span>
+            </div>
+          )}
+          {hoverInfo.eo && (
+            <div className="mt-1.5 border-t border-ds-border pt-1.5 font-ds-body text-[12px]">
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-bold text-ds-text">{hoverInfo.eo.data.name}</span>
+                <span className="font-ds-number font-bold text-[#0B3D91]">
+                  {hoverInfo.eo.data.value} {hoverInfo.eo.data.unit}
+                </span>
+              </div>
+              <p className="mt-0.5 text-[11px] text-ds-muted">
+                {hoverInfo.eo.provenance.source} · {hoverInfo.eo.provenance.confidence} confidence
+                {hoverInfo.eo.provenance.demo ? " · DEMO DATA" : ""}
+              </p>
             </div>
           )}
         </div>

@@ -308,6 +308,10 @@ export interface ScenarioStudioGisLayer {
   id: string;
   label: string;
   active: boolean;
+  /** True for layers backed by the Earth Observation API (spec: Climactix Earth
+   * Observation & Climate Data Repository) rather than the client-side scenario
+   * risk grid — GISMap fetches these per-asset instead of generating them locally. */
+  earthObservation?: boolean;
 }
 
 interface ScenarioStudioStore {
@@ -351,6 +355,9 @@ export const useScenarioStudioStore = create<ScenarioStudioStore>()((set) => ({
     { id: "ocean", label: "Ocean Deoxygenation (coastal/marine assets)", active: false },
     { id: "ports", label: "Ports", active: false },
     { id: "power-plants", label: "Power Plants", active: false },
+    { id: "vegetation-ndvi", label: "Vegetation (NDVI, Sentinel-2)", active: false, earthObservation: true },
+    { id: "water-surface-ndwi", label: "Water Surface (NDWI, Sentinel-2)", active: false, earthObservation: true },
+    { id: "land-surface-temp", label: "Land Surface Temperature (Landsat/Sentinel-3)", active: false, earthObservation: true },
   ],
   toggleGisLayer: (id) =>
     set((state) => ({

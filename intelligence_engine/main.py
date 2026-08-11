@@ -34,6 +34,10 @@ from api.supply_chain_router import router as supply_chain_router
 from api.narrative_router import router as narrative_router
 from api.finance_router import router as finance_router
 from api.ws_router import router as ws_router
+from api.earth_observation_router import router as earth_observation_router
+
+import database
+from earth_observation.registry import seed_registry
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("climactix")
@@ -42,7 +46,16 @@ logger = logging.getLogger("climactix")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Climactix Intelligence Engine starting up...")
+    try:
+        pool = await database.init_pool()
+        await seed_registry(pool)
+        logger.info("Earth Observation Data Source Registry seeded.")
+    except Exception as e:
+        # Spec §28: a database/registry hiccup must not prevent the rest of
+        # the API (physical/transition risk, ESG, etc.) from serving traffic.
+        logger.error(f"Earth Observation database init failed, EO endpoints will be degraded: {e}")
     yield
+    await database.close_pool()
     logger.info("Intelligence Engine shutting down...")
 
 
@@ -97,6 +110,7 @@ app.include_router(disclosure_router,    prefix="/api/v1/disclosure",    tags=["
 app.include_router(supply_chain_router,  prefix="/api/v1/supply-chain",  tags=["Supply Chain"])
 app.include_router(narrative_router,     prefix="/api/v1/narrative",     tags=["Narrative Intelligence"])
 app.include_router(finance_router,       prefix="/api/v1/finance",       tags=["Climate Finance"])
+app.include_router(earth_observation_router, prefix="/api/v1/earth-observation", tags=["Earth Observation"])
 app.include_router(ws_router,                                            tags=["WebSocket Streaming"])
 
 # ── Health & status ───────────────────────────────────────────────────────────
@@ -117,6 +131,7 @@ async def health():
             "supply_chain": "operational",
             "narrative": "operational",
             "carbon_market": "operational",
+            "earth_observation": "operational",
         }
     }
 
