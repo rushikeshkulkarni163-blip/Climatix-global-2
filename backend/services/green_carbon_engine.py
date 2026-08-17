@@ -188,6 +188,37 @@ async def _waste_co2e(pool: asyncpg.Pool, production_id: str) -> float:
     return round(total, 4)
 
 
+_DATALOG_CO2E_TABLES = (
+    ("green_fuel_vehicle_logs", "fuel_vehicle_log"),
+    ("green_crew_travel_logs", "crew_travel_log"),
+    ("green_shoot_stay_trip_logs", "shoot_stay_trip_log"),
+    ("green_energy_logs", "energy_log"),
+    ("green_materials_logs", "materials_log"),
+    ("green_accommodation_logs", "accommodation_log"),
+    ("green_food_catering_logs", "food_catering_log"),
+)
+
+
+async def _datalog_co2e_total(pool: asyncpg.Pool, production_id: str) -> tuple[float, list[dict]]:
+    """Sums CO2e already computed on the granular Production Data Log
+    sheets (Fuel & Vehicles, Crew Travel, Shoot-Stay Trips, Energy,
+    Materials, Accommodation, Food & Catering) so the footprint/timeline
+    reflect the full data log, not just the quick single-entry logger."""
+    total = 0.0
+    by_source: list[dict] = []
+    for table, label in _DATALOG_CO2E_TABLES:
+        row = await pool.fetchrow(
+            f"SELECT COALESCE(SUM(co2e_kg),0) AS co2e_kg, COUNT(co2e_kg) AS entry_count "
+            f"FROM {table} WHERE production_id = $1",
+            production_id,
+        )
+        co2e = float(row["co2e_kg"] or 0)
+        if co2e:
+            total += co2e
+            by_source.append({"source": label, "co2eKg": round(co2e, 2), "entryCount": row["entry_count"]})
+    return round(total, 2), by_source
+
+
 async def get_production_footprint(pool: asyncpg.Pool, production_id: str) -> dict:
     """Full carbon footprint: total CO2e, broken down by phase, department,
     and category, plus a per-crew-day intensity metric for benchmarking."""
@@ -213,7 +244,8 @@ async def get_production_footprint(pool: asyncpg.Pool, production_id: str) -> di
 
     activity_co2e = sum(float(r["co2e_kg"] or 0) for r in rows)
     waste_co2e = await _waste_co2e(pool, production_id)
-    total_co2e = round(activity_co2e + waste_co2e, 2)
+    datalog_co2e, datalog_by_source = await _datalog_co2e_total(pool, production_id)
+    total_co2e = round(activity_co2e + waste_co2e + datalog_co2e, 2)
 
     by_phase: dict[str, float] = {}
     by_department: dict[str, float] = {}
@@ -230,6 +262,8 @@ async def get_production_footprint(pool: asyncpg.Pool, production_id: str) -> di
     by_category.sort(key=lambda x: x["co2eKg"], reverse=True)
     if waste_co2e:
         by_department["waste_disposal"] = round(by_department.get("waste_disposal", 0) + waste_co2e, 2)
+    for source in datalog_by_source:
+        by_department[source["source"]] = round(by_department.get(source["source"], 0) + source["co2eKg"], 2)
 
     crew_size = prod["crew_size_expected"] or 0
     shoot_days = None
@@ -245,6 +279,8 @@ async def get_production_footprint(pool: asyncpg.Pool, production_id: str) -> di
         "totalCo2eKg": total_co2e,
         "activityCo2eKg": round(activity_co2e, 2),
         "wasteDisposalCo2eKg": waste_co2e,
+        "dataLogCo2eKg": datalog_co2e,
+        "dataLogBySource": datalog_by_source,
         "byPhase": by_phase,
         "byDepartment": by_department,
         "byCategory": by_category,
@@ -297,6 +333,15 @@ async def get_production_timeline(pool: asyncpg.Pool, production_id: str) -> dic
     co2e_by_day = {r["activity_date"]: float(r["co2e_kg"] or 0) for r in co2e_rows}
     water_by_day = {r["recorded_at"]: float(r["liters"] or 0) for r in water_rows}
     waste_by_day = {r["recorded_at"]: float(r["kg"] or 0) for r in waste_rows}
+
+    for table, _label in _DATALOG_CO2E_TABLES:
+        rows = await pool.fetch(
+            f"SELECT log_date, SUM(co2e_kg) AS co2e_kg FROM {table} "
+            f"WHERE production_id = $1 GROUP BY log_date",
+            production_id,
+        )
+        for r in rows:
+            co2e_by_day[r["log_date"]] = co2e_by_day.get(r["log_date"], 0.0) + float(r["co2e_kg"] or 0)
 
     total_days = (end - start).days + 1
     today = date.today()

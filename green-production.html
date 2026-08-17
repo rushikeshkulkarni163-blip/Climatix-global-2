@@ -134,7 +134,75 @@ button,input,select{font-family:inherit;font-size:inherit;color:inherit}
 
 .empty-note{padding:24px 0;font-size:13px;color:var(--text-muted);text-align:center}
 #toast{position:fixed;bottom:20px;right:20px;background:var(--text);color:var(--bg);padding:10px 16px;border-radius:var(--radius);font-size:13px;display:none;z-index:200;max-width:360px}
+
+/* Production Data Log — sheet tabs */
+.dl-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--border);margin-bottom:16px;padding-bottom:10px}
+.dl-tab{background:none;border:1px solid var(--border);border-radius:var(--pill);padding:6px 13px;font-family:var(--font-heading);font-size:12px;font-weight:600;color:var(--text-2);cursor:pointer;transition:all var(--t);white-space:nowrap}
+.dl-tab:hover{border-color:var(--accent);color:var(--accent)}
+.dl-tab.active{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
+.dl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.dl-field{display:flex;flex-direction:column;gap:4px}
+.dl-field label{font-size:11px;font-weight:500;color:var(--text-2)}
+.dl-field input,.dl-field select{padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);font-size:13px}
+.dl-field input:focus,.dl-field select:focus{outline:none;border-color:var(--accent)}
+.dl-check{flex-direction:row;align-items:center;gap:6px;padding-top:18px}
+.dl-check input{width:15px;height:15px;accent-color:var(--accent)}
+.dl-check label{padding-top:0}
+.dl-summary-table{width:100%;border-collapse:collapse;margin-bottom:18px}
+.dl-summary-table th{text-align:left;font-family:var(--font-heading);font-size:11px;font-weight:700;color:var(--text-muted);padding:7px 10px;border-bottom:1px solid var(--border);background:var(--surface)}
+.dl-summary-table td{padding:7px 10px;font-size:12.5px;border-bottom:1px solid var(--border)}
+.dl-dq-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.dl-dq-row:last-child{border-bottom:none}
+@media(max-width:900px){.dl-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.dl-grid{grid-template-columns:1fr}}
 @media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}.kpi-strip{grid-template-columns:repeat(2,1fr)}}
+
+/* Certification Review */
+.subcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.subcard-title{font-family:var(--font-heading);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;color:var(--text-muted);margin-bottom:10px}
+.cr-console{border:1px dashed var(--warning);background:rgba(180,83,9,0.04)}
+.cr-console .subcard-title{color:var(--warning)}
+.cr-success{background:rgba(30,142,62,0.06);border:1px solid rgba(30,142,62,0.3);border-radius:var(--radius);padding:16px;margin-bottom:18px}
+.cr-success-title{font-family:var(--font-heading);font-size:14px;font-weight:700;color:var(--success);margin-bottom:8px}
+.cr-success-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.cr-success-row span:first-child{color:var(--text-2)}
+.cr-stepper{display:flex;align-items:flex-start;margin-bottom:6px}
+.cr-step{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;text-align:center}
+.cr-step-line{position:absolute;top:11px;left:-50%;width:100%;height:2px;background:var(--border);z-index:1}
+.cr-step:first-child .cr-step-line{display:none}
+.cr-step.done .cr-step-line,.cr-step.active .cr-step-line{background:var(--accent-fill)}
+.cr-step-dot{width:22px;height:22px;border-radius:50%;background:var(--bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:10px;font-weight:700;color:var(--text-muted);z-index:2;transition:all var(--t)}
+.cr-step.done .cr-step-dot{background:var(--success);border-color:var(--success);color:#fff}
+.cr-step.active .cr-step-dot{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff;transform:scale(1.18)}
+.cr-step.rejected .cr-step-dot{background:var(--critical);border-color:var(--critical);color:#fff}
+.cr-step-label{font-size:10px;color:var(--text-muted);margin-top:6px;max-width:78px;line-height:1.25}
+.cr-step.active .cr-step-label{color:var(--accent);font-weight:700}
+.cr-progress-track{height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;margin:14px 0 6px}
+.cr-progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width 0.3s ease}
+.cr-summary-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.cr-summary-row:last-child{border-bottom:none}
+.cr-summary-row span:first-child{color:var(--text-muted)}
+.cr-summary-row span:last-child{font-family:var(--font-heading);font-weight:600;text-align:right}
+.cr-feedback-item{padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.cr-feedback-item:last-child{border-bottom:none}
+.cr-feedback-meta{font-size:11px;color:var(--text-muted);margin-bottom:3px}
+.cr-action-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.cr-action-item:last-child{border-bottom:none}
+.cr-timeline{border-left:2px solid var(--border);margin-left:5px;padding-left:16px}
+.cr-timeline-item{position:relative;padding-bottom:14px;font-size:12.5px}
+.cr-timeline-item:last-child{padding-bottom:0}
+.cr-timeline-item::before{content:'';position:absolute;left:-20.5px;top:3px;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.cr-timeline-date{font-family:var(--font-heading);font-size:11px;font-weight:700;color:var(--text-2)}
+.cr-timeline-detail{color:var(--text-2);margin-top:2px}
+.cr-download-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.cr-download-row:last-child{border-bottom:none}
+.cr-download-row a.btn{text-decoration:none}
+details.cr-details summary{cursor:pointer;font-family:var(--font-heading);font-size:12px;font-weight:700;color:var(--text-2);list-style:none}
+details.cr-details summary::-webkit-details-marker{display:none}
+details.cr-details summary::before{content:'▸ ';color:var(--text-muted)}
+details.cr-details[open] summary::before{content:'▾ '}
+.cr-criteria-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px;border-bottom:1px solid var(--border)}
+.cr-criteria-row:last-child{border-bottom:none}
 </style>
 </head>
 <body>
@@ -266,6 +334,19 @@ button,input,select{font-family:inherit;font-size:inherit;color:inherit}
       </div>
     </div>
 
+    <!-- Production Data Log: full sheet-by-sheet log, mirrors the manual
+         "Film Green Rating — Production Sustainability Data Log" workbook -->
+    <div class="card">
+      <div class="card-title">3B. Production Data Log (full sheet-by-sheet log)</div>
+      <div class="hint" style="margin-top:-8px;margin-bottom:14px">Every sheet below mirrors the manual data-log workbook column-for-column. Entries here compute real CO₂e from the same multi-country emission-factor database and roll straight into the footprint, timeline, and score above.</div>
+      <div class="dl-tabs" id="dl-tabs"></div>
+      <div id="dl-form"></div>
+      <div class="btn-row" style="margin-top:0"><button class="btn btn-primary" id="btn-dl-log">Log entry →</button></div>
+      <div id="dl-table-wrap" style="max-height:280px;overflow-y:auto;margin-top:16px">
+        <table class="data-table"><thead><tr id="dl-table-head"></tr></thead><tbody id="dl-table-body"><tr><td class="empty-note">No entries logged yet.</td></tr></tbody></table>
+      </div>
+    </div>
+
     <!-- Questionnaire -->
     <div class="card">
       <div class="card-title">5. Sustainability questionnaire</div>
@@ -279,14 +360,97 @@ button,input,select{font-family:inherit;font-size:inherit;color:inherit}
       <div id="score-body"><div class="empty-note">Run activity, water/waste, and questionnaire steps above, then compute the score.</div></div>
     </div>
 
-    <!-- Certificate -->
-    <div class="card">
-      <div class="card-title">7. Certification</div>
-      <div class="btn-row" style="margin-top:0;margin-bottom:16px">
-        <button class="btn btn-primary" id="btn-issue-cert">Issue certificate</button>
-        <button class="btn" id="btn-approve-cert" style="display:none">Approve (reviewer)</button>
+    <!-- Certification Review -->
+    <div class="card" id="cert-review-card">
+      <div class="section-hdr" style="border:none;padding:4px 0 14px;margin-bottom:0">
+        <span class="sec-hdr-title" style="font-size:16px">7. Certification Review</span>
+        <span class="chip chip-muted" id="cr-status-badge">Draft</span>
       </div>
-      <div id="cert-body"><div class="empty-note">A certificate can be issued once the production clears Bronze's minimum score and mandatory criteria.</div></div>
+      <div class="hint" style="margin-top:-6px;margin-bottom:14px">Certification is granted only after internal Climactix Global review — a production can never self-issue. Compute a score above, then submit for review.</div>
+
+      <!-- Pre-submission -->
+      <div id="cr-presubmit">
+        <div id="cr-eligibility"></div>
+        <div class="btn-row"><button class="btn btn-primary" id="btn-cr-submit">Submit for Certification Review</button></div>
+      </div>
+
+      <!-- Post-submission dashboard -->
+      <div id="cr-dashboard" style="display:none">
+        <div class="cr-success" id="cr-success-panel" style="display:none"></div>
+
+        <div class="cr-stepper" id="cr-stepper"></div>
+        <div class="cr-progress-track"><div class="cr-progress-fill" id="cr-progress-fill" style="width:0%"></div></div>
+        <div class="hint" id="cr-stepper-label" style="margin-top:0;margin-bottom:20px"></div>
+
+        <div class="grid-2" style="align-items:flex-start">
+          <div>
+            <div class="subcard">
+              <details class="cr-details" open><summary>Reviewer Feedback</summary>
+                <div id="cr-feedback" style="margin-top:10px"></div>
+              </details>
+            </div>
+            <div class="subcard" id="cr-actions-card" style="display:none">
+              <div class="subcard-title">Action Required</div>
+              <div id="cr-required-actions"></div>
+              <div class="btn-row" style="margin-top:10px"><button class="btn btn-primary" id="btn-cr-resubmit" style="display:none">Resubmit Application</button></div>
+            </div>
+            <div class="subcard">
+              <details class="cr-details"><summary>Activity & Timeline</summary>
+                <div class="cr-timeline" id="cr-timeline" style="margin-top:14px"></div>
+              </details>
+            </div>
+          </div>
+          <div>
+            <div class="subcard">
+              <div class="subcard-title">Application Summary</div>
+              <div id="cr-summary"></div>
+            </div>
+            <div class="subcard">
+              <div class="subcard-title">Download Center</div>
+              <div id="cr-downloads"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Internal Review Console — dev/demo only -->
+        <div class="subcard cr-console">
+          <div class="subcard-title">⚠ Internal Review Console — dev/demo only, no reviewer authentication wired up yet</div>
+          <div class="grid-3">
+            <div class="field"><label>Reviewer name</label><input id="cr-reviewer-name" placeholder="e.g. J. Rao"></div>
+            <div class="field"><label>Assign reviewer</label><button class="btn" id="btn-cr-assign">Assign</button></div>
+            <div class="field"><label>Advance to stage</label>
+              <div style="display:flex;gap:6px">
+                <select id="cr-advance-stage" style="flex:1"></select>
+                <button class="btn" id="btn-cr-advance">Advance</button>
+              </div>
+            </div>
+          </div>
+          <div class="grid-2" style="margin-top:12px">
+            <div class="field"><label>Request documents (comma-separated)</label><input id="cr-req-items" placeholder="Fuel invoices, Waste manifest"></div>
+            <div class="field"><label>Deadline</label><input id="cr-req-deadline" type="date"></div>
+          </div>
+          <div class="btn-row" style="margin-top:8px"><button class="btn" id="btn-cr-request-docs">Request documents</button></div>
+          <hr style="border:none;border-top:1px solid var(--border);margin:14px 0">
+          <div class="field"><label>Reviewer comment</label><input id="cr-comment-text" placeholder="Add a note visible to the applicant"></div>
+          <div class="btn-row" style="margin-top:8px"><button class="btn" id="btn-cr-comment">Add comment</button></div>
+          <hr style="border:none;border-top:1px solid var(--border);margin:14px 0">
+          <div class="grid-2">
+            <div class="field"><label>Final decision</label>
+              <select id="cr-decision">
+                <option value="approved">Approved</option>
+                <option value="approved_with_conditions">Approved with Conditions</option>
+                <option value="more_info_required">More Information Required</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="field"><label>Decision comment</label><input id="cr-decision-comment" placeholder="Rationale"></div>
+          </div>
+          <div class="btn-row" style="margin-top:8px">
+            <button class="btn btn-primary" id="btn-cr-decision">Record decision</button>
+            <button class="btn" id="btn-cr-issue-cert" style="display:none">Issue certificate (Stage 7)</button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -306,6 +470,8 @@ let categories = [];
 let questions = [];
 let latestScore = null;
 let latestCertificate = null;
+let shootStart = null, shootEnd = null, shootDefaultDate = null;
+let dlActiveSheet = null;
 
 function toast(msg, isError) {
   const el = $('toast');
@@ -386,12 +552,15 @@ $('btn-register').addEventListener('click', async () => {
     [$('a-date'), $('w-date'), $('ws-date')].forEach(inp => {
       inp.min = start; inp.max = end; inp.value = defaultDate;
     });
+    shootStart = start; shootEnd = end; shootDefaultDate = defaultDate;
 
     await loadCategories();
     await loadQuestionnaire();
     await refreshFootprint();
     await refreshWaterWaste();
     await refreshTimeline();
+    initDataLog();
+    await refreshCertificationReview();
   } catch (e) {
     toast(`Registration failed: ${e.message}`, true);
   } finally {
@@ -526,6 +695,459 @@ async function refreshTimeline() {
   }).join('')}</div>`;
 }
 
+// ── Step 3B: Production Data Log — schema-driven sheet-by-sheet logger ───────
+// One tab per sheet of the manual data-log workbook. Each sheet declares its
+// fields + endpoint once; a single form renderer / submit handler / results
+// table serves all of them, instead of hand-writing 11 near-duplicate panels.
+const REGION_OPTS = ['India', 'UK', 'US', 'Europe', 'Australia', 'Global'];
+const DQ_OPTS = ['Actual', 'Estimated'];
+const VEHICLE_OPTS = ['Car', 'SUV', 'Bus', 'Vanity Van', 'Mini Truck', 'EV', 'Hybrid'];
+const FUEL_OPTS = ['Diesel', 'Petrol', 'Biofuel', 'Electric', 'Hybrid'];
+const PHASE_OPTS = ['pre_production', 'production', 'post_production', 'marketing', 'distribution'];
+
+const DATALOG_SHEETS = [
+  {
+    id: 'daily', label: 'Daily Log', endpoint: 'daily-log', dateKey: 'log_date',
+    fields: [
+      { k: 'log_date', l: 'Date', t: 'date', req: true },
+      { k: 'shoot_day_number', l: 'Shoot Day #', t: 'number' },
+      { k: 'location_set', l: 'Location / Set', t: 'text' },
+      { k: 'shoot_unit', l: 'Shoot / Unit', t: 'text' },
+      { k: 'call_time', l: 'Call Time', t: 'time' },
+      { k: 'wrap_time', l: 'Wrap Time', t: 'time' },
+      { k: 'crew_count', l: 'Crew Count', t: 'number' },
+      { k: 'cast_count', l: 'Cast Count', t: 'number' },
+      { k: 'extras_count', l: 'Extras Count', t: 'number' },
+      { k: 'production_hours', l: 'Production Hours', t: 'number', step: 0.5 },
+      { k: 'weather_conditions', l: 'Weather / Conditions', t: 'text' },
+      { k: 'power_source', l: 'Power Source', t: 'text' },
+      { k: 'diesel_generator_l', l: 'Diesel Generator (L)', t: 'number' },
+      { k: 'grid_electricity_kwh', l: 'Grid Electricity (kWh)', t: 'number' },
+      { k: 'water_used_l', l: 'Water Used (L)', t: 'number' },
+      { k: 'waste_generated_kg', l: 'Waste Generated (kg)', t: 'number' },
+      { k: 'crew_travel_km', l: 'Crew Travel (km)', t: 'number' },
+      { k: 'shoot_stay_km', l: 'Shoot-Stay Trips (km)', t: 'number' },
+      { k: 'accommodation_rooms_nights', l: 'Accommodation Rooms/Night', t: 'number' },
+      { k: 'catering_covers', l: 'Catering Covers', t: 'number' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['log_date', 'Date'], ['shoot_day_number', 'Day#'], ['location_set', 'Location'],
+      ['crew_count', 'Crew'], ['cast_count', 'Cast'], ['grid_electricity_kwh', 'Grid kWh'],
+      ['water_used_l', 'Water L'], ['waste_generated_kg', 'Waste kg'],
+    ],
+  },
+  {
+    id: 'fuel', label: 'Fuel & Vehicles', endpoint: 'fuel-vehicle-log', dateKey: 'log_date', hasCo2e: true,
+    fields: [
+      { k: 'log_date', l: 'Date', t: 'date', req: true },
+      { k: 'region', l: 'Region (grid factor)', t: 'select', opts: REGION_OPTS, def: 'Global' },
+      { k: 'vehicle_equipment_id', l: 'Vehicle / Equipment ID', t: 'text' },
+      { k: 'vehicle_type', l: 'Vehicle Type', t: 'select', opts: VEHICLE_OPTS },
+      { k: 'fuel_type', l: 'Fuel Type', t: 'select', opts: FUEL_OPTS },
+      { k: 'opening_odometer_km', l: 'Opening Odometer (km)', t: 'number' },
+      { k: 'closing_odometer_km', l: 'Closing Odometer (km)', t: 'number' },
+      { k: 'distance_km', l: 'Distance (km)', t: 'number' },
+      { k: 'fuel_purchased_l', l: 'Fuel Purchased (L)', t: 'number' },
+      { k: 'fuel_consumed_l', l: 'Fuel Consumed (L)', t: 'number' },
+      { k: 'fuel_receipt_ref', l: 'Fuel Receipt / Ref.', t: 'text' },
+      { k: 'fuel_vendor', l: 'Fuel Vendor', t: 'text' },
+      { k: 'is_generator', l: 'Generator?', t: 'checkbox' },
+      { k: 'generator_hours', l: 'Generator Hours', t: 'number' },
+      { k: 'generator_fuel_l', l: 'Generator Fuel (L)', t: 'number' },
+      { k: 'adblue_l', l: 'AdBlue / DEF (L)', t: 'number' },
+      { k: 'purpose_route', l: 'Purpose / Route', t: 'text' },
+      { k: 'driver_name', l: 'Driver / Responsible Person', t: 'text' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['log_date', 'Date'], ['vehicle_equipment_id', 'Vehicle'], ['vehicle_type', 'Type'],
+      ['fuel_type', 'Fuel'], ['distance_km', 'Dist km'], ['co2e_kg', 'CO₂e kg'],
+    ],
+  },
+  {
+    id: 'crew', label: 'Crew Travel', endpoint: 'crew-travel-log', dateKey: 'log_date', hasCo2e: true,
+    fields: [
+      { k: 'log_date', l: 'Date', t: 'date', req: true },
+      { k: 'region', l: 'Region', t: 'select', opts: REGION_OPTS, def: 'Global' },
+      { k: 'person_crew_category', l: 'Person / Crew Category', t: 'text' },
+      { k: 'department', l: 'Department', t: 'text' },
+      { k: 'travel_mode', l: 'Travel Mode', t: 'select', opts: [...VEHICLE_OPTS, 'Train', 'Metro', 'Boat / Ferry', 'Domestic Flight', 'International Flight'] },
+      { k: 'origin', l: 'Origin', t: 'text' },
+      { k: 'destination', l: 'Destination', t: 'text' },
+      { k: 'one_way_distance_km', l: 'One-way Distance (km)', t: 'number' },
+      { k: 'num_persons', l: 'No. of Persons', t: 'number', def: 1 },
+      { k: 'trips', l: 'Trips', t: 'number', def: 1 },
+      { k: 'purpose', l: 'Purpose', t: 'text' },
+      { k: 'shared_vehicle', l: 'Shared Vehicle?', t: 'checkbox' },
+      { k: 'public_transport', l: 'Public Transport?', t: 'checkbox' },
+      { k: 'is_flight', l: 'Flight?', t: 'checkbox' },
+      { k: 'travel_class', l: 'Class / Type', t: 'select', opts: ['Economy', 'Business'] },
+      { k: 'ticket_ref', l: 'Ticket / Booking Ref.', t: 'text' },
+      { k: 'cost_inr', l: 'Cost (₹)', t: 'number' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['log_date', 'Date'], ['person_crew_category', 'Category'], ['travel_mode', 'Mode'],
+      ['origin', 'Origin'], ['destination', 'Dest'], ['passenger_km', 'Pax-km'], ['co2e_kg', 'CO₂e kg'],
+    ],
+  },
+  {
+    id: 'shootstay', label: 'Shoot-Stay Trips', endpoint: 'shoot-stay-trip-log', dateKey: 'log_date', hasCo2e: true,
+    fields: [
+      { k: 'log_date', l: 'Date', t: 'date', req: true },
+      { k: 'region', l: 'Region', t: 'select', opts: REGION_OPTS, def: 'Global' },
+      { k: 'trip_label', l: 'Trip ID', t: 'text' },
+      { k: 'from_location', l: 'From', t: 'text' },
+      { k: 'to_location', l: 'To', t: 'text' },
+      { k: 'trip_purpose', l: 'Trip Purpose', t: 'text' },
+      { k: 'vehicle_id', l: 'Vehicle ID', t: 'text' },
+      { k: 'vehicle_type', l: 'Vehicle Type', t: 'select', opts: VEHICLE_OPTS },
+      { k: 'fuel_type', l: 'Fuel Type', t: 'select', opts: FUEL_OPTS },
+      { k: 'distance_per_trip_km', l: 'Distance per Trip (km)', t: 'number' },
+      { k: 'number_of_trips', l: 'Number of Trips', t: 'number', def: 1 },
+      { k: 'passengers_per_trip', l: 'Passengers per Trip', t: 'number', def: 1 },
+      { k: 'fuel_consumed_l', l: 'Fuel Consumed (L)', t: 'number' },
+      { k: 'driver_name', l: 'Driver', t: 'text' },
+      { k: 'start_time', l: 'Start Time', t: 'time' },
+      { k: 'end_time', l: 'End Time', t: 'time' },
+      { k: 'evidence_ref', l: 'Evidence Ref.', t: 'text' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['log_date', 'Date'], ['trip_label', 'Trip'], ['from_location', 'From'], ['to_location', 'To'],
+      ['number_of_trips', 'Trips'], ['co2e_kg', 'CO₂e kg'],
+    ],
+  },
+  {
+    id: 'water', label: 'Water', endpoint: 'water', dateKey: 'recorded_at',
+    fields: [
+      { k: 'recorded_at', l: 'Date', t: 'date', req: true },
+      { k: 'location_name', l: 'Location / Set', t: 'text' },
+      { k: 'source', l: 'Water Source', t: 'select', opts: ['crew', 'hotel', 'set', 'cleaning', 'catering', 'sanitation'], req: true },
+      { k: 'purpose', l: 'Purpose', t: 'text' },
+      { k: 'phase', l: 'Phase', t: 'select', opts: PHASE_OPTS, def: 'production' },
+      { k: 'meter_start_l', l: 'Meter Start (L)', t: 'number' },
+      { k: 'meter_end_l', l: 'Meter End (L)', t: 'number' },
+      { k: 'volume_liters', l: 'Metered / Total Use (L)', t: 'number', req: true },
+      { k: 'tanker_liters', l: 'Tanker / Purchased (L)', t: 'number' },
+      { k: 'bottled_liters', l: 'Bottled Water (L)', t: 'number' },
+      { k: 'drinking_liters', l: 'Drinking Water (L)', t: 'number' },
+      { k: 'sanitation_liters', l: 'Sanitation (L)', t: 'number' },
+      { k: 'cleaning_liters', l: 'Cleaning (L)', t: 'number' },
+      { k: 'catering_liters', l: 'Catering (L)', t: 'number' },
+      { k: 'makeup_liters', l: 'Make-up / Costume (L)', t: 'number' },
+      { k: 'other_liters', l: 'Other (L)', t: 'number' },
+      { k: 'people_served', l: 'People Served', t: 'number' },
+      { k: 'greywater_recycled_liters', l: 'Greywater Recycled (L)', t: 'number' },
+      { k: 'evidence_ref', l: 'Evidence Ref.', t: 'text' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['recorded_at', 'Date'], ['location_name', 'Location'], ['source', 'Source'],
+      ['volume_liters', 'Volume L'], ['greywater_recycled_liters', 'Recycled L'], ['people_served', 'People'],
+    ],
+  },
+  {
+    id: 'waste', label: 'Waste', endpoint: 'waste', dateKey: 'recorded_at',
+    fields: [
+      { k: 'recorded_at', l: 'Date', t: 'date', req: true },
+      { k: 'location_name', l: 'Location / Set', t: 'text' },
+      { k: 'waste_type', l: 'Waste Type', t: 'select', opts: ['plastic', 'paper', 'glass', 'metal', 'wood', 'food', 'construction', 'hazardous', 'electronic', 'battery'], req: true },
+      { k: 'source_activity', l: 'Source / Activity', t: 'text' },
+      { k: 'phase', l: 'Phase', t: 'select', opts: PHASE_OPTS, def: 'production' },
+      { k: 'quantity_kg', l: 'Quantity (kg)', t: 'number', req: true },
+      { k: 'quantity_units', l: 'Quantity (units)', t: 'number' },
+      { k: 'unit_type', l: 'Unit Type', t: 'text' },
+      { k: 'segregated', l: 'Segregated?', t: 'checkbox' },
+      { k: 'collection_method', l: 'Collection Method', t: 'text' },
+      { k: 'destination_vendor', l: 'Destination / Vendor', t: 'text' },
+      { k: 'pct_recycled', l: '% Recycled', t: 'number' },
+      { k: 'pct_reused', l: '% Reused', t: 'number' },
+      { k: 'composted_kg', l: 'Composted (kg)', t: 'number' },
+      { k: 'incinerated_kg', l: 'Incinerated (kg)', t: 'number' },
+      { k: 'hazardous', l: 'Hazardous?', t: 'checkbox' },
+      { k: 'manifest_ref', l: 'Manifest / Receipt Ref.', t: 'text' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['recorded_at', 'Date'], ['location_name', 'Location'], ['waste_type', 'Type'],
+      ['quantity_kg', 'Qty kg'], ['pct_recycled', '% Recycled'], ['pct_reused', '% Reused'],
+    ],
+  },
+  {
+    id: 'energy', label: 'Energy', endpoint: 'energy-log', dateKey: 'log_date', hasCo2e: true,
+    fields: [
+      { k: 'log_date', l: 'Date', t: 'date', req: true },
+      { k: 'region', l: 'Region (grid factor)', t: 'select', opts: REGION_OPTS, def: 'Global' },
+      { k: 'location_name', l: 'Location / Set', t: 'text' },
+      { k: 'energy_source', l: 'Energy Source', t: 'text' },
+      { k: 'equipment_area', l: 'Equipment / Area', t: 'text' },
+      { k: 'meter_start_kwh', l: 'Meter Start (kWh)', t: 'number' },
+      { k: 'meter_end_kwh', l: 'Meter End (kWh)', t: 'number' },
+      { k: 'grid_kwh', l: 'Grid Electricity (kWh)', t: 'number' },
+      { k: 'generator_kwh', l: 'Generator Electricity (kWh)', t: 'number' },
+      { k: 'renewable_kwh', l: 'Renewable Electricity (kWh)', t: 'number' },
+      { k: 'battery_kwh', l: 'Battery / Storage (kWh)', t: 'number' },
+      { k: 'generator_hours', l: 'Generator Hours', t: 'number' },
+      { k: 'diesel_used_l', l: 'Diesel Used (L)', t: 'number' },
+      { k: 'renewable_source', l: 'Renewable Source', t: 'text' },
+      { k: 'meter_invoice_ref', l: 'Meter / Invoice Ref.', t: 'text' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['log_date', 'Date'], ['location_name', 'Location'], ['grid_kwh', 'Grid kWh'],
+      ['generator_kwh', 'Gen kWh'], ['renewable_kwh', 'Renew kWh'], ['co2e_kg', 'CO₂e kg'],
+    ],
+  },
+  {
+    id: 'materials', label: 'Materials', endpoint: 'materials-log', dateKey: 'log_date', hasCo2e: true,
+    fields: [
+      { k: 'log_date', l: 'Date', t: 'date', req: true },
+      { k: 'region', l: 'Region', t: 'select', opts: REGION_OPTS, def: 'Global' },
+      { k: 'department', l: 'Department', t: 'text' },
+      { k: 'material_item', l: 'Material / Item', t: 'text' },
+      { k: 'category', l: 'Category', t: 'select', opts: [
+        'Timber / Wood', 'Steel (Virgin)', 'Steel (Recycled)', 'Plastic (Virgin)', 'Plastic (Recycled)',
+        'Concrete', 'Fabric / Textile', 'Paint', 'Foam', 'Costume (Purchased)', 'Costume (Rental)',
+        'Cosmetics / Makeup', 'Paper',
+      ] },
+      { k: 'quantity', l: 'Quantity', t: 'number' },
+      { k: 'unit', l: 'Unit', t: 'text' },
+      { k: 'condition_new_reused', l: 'New / Reused', t: 'select', opts: ['New', 'Reused'] },
+      { k: 'locally_sourced', l: 'Locally Sourced?', t: 'checkbox' },
+      { k: 'reusable_recyclable', l: 'Reusable / Recyclable?', t: 'checkbox' },
+      { k: 'supplier', l: 'Supplier', t: 'text' },
+      { k: 'cost_inr', l: 'Purchase / Hire Cost (₹)', t: 'number' },
+      { k: 'disposal_route', l: 'Disposal Route', t: 'text' },
+      { k: 'evidence_ref', l: 'Evidence Ref.', t: 'text' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['log_date', 'Date'], ['material_item', 'Item'], ['category', 'Category'],
+      ['quantity', 'Qty'], ['co2e_kg', 'CO₂e kg'],
+    ],
+  },
+  {
+    id: 'accommodation', label: 'Accommodation', endpoint: 'accommodation-log', dateKey: 'log_date', hasCo2e: true,
+    fields: [
+      { k: 'log_date', l: 'Date', t: 'date', req: true },
+      { k: 'region', l: 'Region', t: 'select', opts: REGION_OPTS, def: 'Global' },
+      { k: 'property_hotel', l: 'Property / Hotel', t: 'text' },
+      { k: 'location_name', l: 'Location', t: 'text' },
+      { k: 'crew_cast_category', l: 'Crew / Cast Category', t: 'text' },
+      { k: 'rooms_occupied', l: 'Rooms Occupied', t: 'number' },
+      { k: 'nights', l: 'Nights', t: 'number' },
+      { k: 'occupancy_per_room', l: 'Occupancy per Room', t: 'number' },
+      { k: 'check_in', l: 'Check-in', t: 'date' },
+      { k: 'check_out', l: 'Check-out', t: 'date' },
+      { k: 'electricity_included', l: 'Electricity Included?', t: 'checkbox' },
+      { k: 'water_included', l: 'Water Included?', t: 'checkbox' },
+      { k: 'waste_services', l: 'Waste Services?', t: 'checkbox' },
+      { k: 'laundry_services', l: 'Laundry Services?', t: 'checkbox' },
+      { k: 'booking_ref', l: 'Booking Ref.', t: 'text' },
+      { k: 'cost_inr', l: 'Cost (₹)', t: 'number' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['log_date', 'Date'], ['property_hotel', 'Property'], ['rooms_occupied', 'Rooms'],
+      ['nights', 'Nights'], ['co2e_kg', 'CO₂e kg'],
+    ],
+  },
+  {
+    id: 'food', label: 'Food & Catering', endpoint: 'food-catering-log', dateKey: 'log_date', hasCo2e: true,
+    fields: [
+      { k: 'log_date', l: 'Date', t: 'date', req: true },
+      { k: 'region', l: 'Region', t: 'select', opts: REGION_OPTS, def: 'Global' },
+      { k: 'location_name', l: 'Location', t: 'text' },
+      { k: 'meal', l: 'Meal', t: 'select', opts: ['Breakfast', 'Lunch', 'Dinner', 'Snacks'] },
+      { k: 'covers_servings', l: 'Covers / Servings', t: 'number' },
+      { k: 'menu_type', l: 'Menu Type', t: 'select', opts: ['Vegetarian', 'Non-Vegetarian', 'Mixed', 'Vegan'] },
+      { k: 'food_purchased_kg', l: 'Food Purchased (kg)', t: 'number' },
+      { k: 'food_waste_kg', l: 'Food Waste (kg)', t: 'number' },
+      { k: 'packaging_waste_kg', l: 'Packaging Waste (kg)', t: 'number' },
+      { k: 'vegetarian_covers', l: 'Vegetarian Covers', t: 'number' },
+      { k: 'nonveg_covers', l: 'Non-Veg Covers', t: 'number' },
+      { k: 'local_seasonal_pct', l: 'Local / Seasonal %', t: 'number' },
+      { k: 'plant_based_options', l: 'Plant-Based Options?', t: 'checkbox' },
+      { k: 'reusable_crockery', l: 'Reusable Crockery?', t: 'checkbox' },
+      { k: 'single_use_items_qty', l: 'Single-Use Items (qty)', t: 'number' },
+      { k: 'water_used_l', l: 'Water Used (L)', t: 'number' },
+      { k: 'supplier', l: 'Supplier', t: 'text' },
+      { k: 'evidence_ref', l: 'Evidence Ref.', t: 'text' },
+      { k: 'data_quality', l: 'Data Quality', t: 'select', opts: DQ_OPTS },
+      { k: 'notes', l: 'Notes', t: 'text' },
+    ],
+    listCols: [
+      ['log_date', 'Date'], ['meal', 'Meal'], ['covers_servings', 'Covers'],
+      ['vegetarian_covers', 'Veg'], ['nonveg_covers', 'Non-Veg'], ['co2e_kg', 'CO₂e kg'],
+    ],
+  },
+  {
+    id: 'evidence', label: 'Evidence Register', endpoint: 'evidence', dateKey: 'evidence_date',
+    fields: [
+      { k: 'evidence_date', l: 'Date', t: 'date', req: true },
+      { k: 'evidence_type', l: 'Document Type', t: 'select', opts: ['bill', 'fuel_receipt', 'electricity_bill', 'generator_log', 'travel_ticket', 'invoice', 'photograph', 'gps_record', 'supplier_certificate', 'meter_reading', 'vendor_record', 'other'], req: true },
+      { k: 'data_category', l: 'Data Category', t: 'text' },
+      { k: 'description', l: 'Description', t: 'text' },
+      { k: 'file_folder_reference', l: 'File / Folder Reference', t: 'text' },
+      { k: 'source_vendor', l: 'Source / Vendor', t: 'text' },
+      { k: 'amount_quantity', l: 'Amount / Quantity', t: 'number' },
+      { k: 'unit', l: 'Unit', t: 'text' },
+      { k: 'verified_by', l: 'Verified By', t: 'text' },
+      { k: 'verification_date', l: 'Verification Date', t: 'date' },
+      { k: 'status', l: 'Status', t: 'select', opts: ['pending', 'approved', 'rejected'], def: 'pending' },
+      { k: 'remarks', l: 'Remarks', t: 'text' },
+    ],
+    listCols: [
+      ['evidence_date', 'Date'], ['evidence_type', 'Type'], ['description', 'Description'],
+      ['source_vendor', 'Vendor'], ['status', 'Status'],
+    ],
+  },
+  { id: 'summary', label: 'Summary', endpoint: null },
+];
+
+function initDataLog() {
+  $('dl-tabs').innerHTML = DATALOG_SHEETS.map(s =>
+    `<button class="dl-tab" data-sheet="${s.id}">${s.label}</button>`).join('');
+  $('dl-tabs').querySelectorAll('.dl-tab').forEach(btn => {
+    btn.addEventListener('click', () => selectDlSheet(btn.dataset.sheet));
+  });
+  selectDlSheet(DATALOG_SHEETS[0].id);
+}
+
+function selectDlSheet(sheetId) {
+  dlActiveSheet = sheetId;
+  $('dl-tabs').querySelectorAll('.dl-tab').forEach(b => b.classList.toggle('active', b.dataset.sheet === sheetId));
+  const sheet = DATALOG_SHEETS.find(s => s.id === sheetId);
+  if (sheet.id === 'summary') {
+    $('dl-form').innerHTML = '';
+    $('btn-dl-log').style.display = 'none';
+    $('dl-table-wrap').style.display = 'none';
+    renderDlSummary();
+    return;
+  }
+  $('btn-dl-log').style.display = 'inline-flex';
+  $('dl-table-wrap').style.display = 'block';
+  $('dl-form').innerHTML = `<div class="dl-grid">${sheet.fields.map(f => renderDlField(f)).join('')}</div>`;
+  const dateInput = sheet.fields.find(f => f.k === sheet.dateKey);
+  if (dateInput) {
+    const el = document.getElementById(`dl-f-${sheet.dateKey}`);
+    if (el && shootStart) { el.min = shootStart; el.max = shootEnd; el.value = shootDefaultDate; }
+  }
+  $('dl-table-head').innerHTML = sheet.listCols.map(([, l]) => `<th>${l}</th>`).join('');
+  $('dl-table-body').innerHTML = '<tr><td class="empty-note">Loading…</td></tr>';
+  loadDlList(sheet);
+}
+
+function renderDlField(f) {
+  const id = `dl-f-${f.k}`;
+  if (f.t === 'checkbox') {
+    return `<div class="dl-field dl-check"><input type="checkbox" id="${id}"><label for="${id}">${f.l}</label></div>`;
+  }
+  if (f.t === 'select') {
+    const opts = ['<option value="">—</option>', ...f.opts.map(o => `<option value="${o}"${f.def === o ? ' selected' : ''}>${o}</option>`)];
+    return `<div class="dl-field"><label for="${id}">${f.l}</label><select id="${id}">${opts.join('')}</select></div>`;
+  }
+  const step = f.t === 'number' ? ` step="${f.step || 'any'}"` : '';
+  const val = f.def !== undefined ? ` value="${f.def}"` : '';
+  return `<div class="dl-field"><label for="${id}">${f.l}</label><input type="${f.t}" id="${id}"${step}${val}></div>`;
+}
+
+function collectDlValues(sheet) {
+  const out = {};
+  for (const f of sheet.fields) {
+    const el = document.getElementById(`dl-f-${f.k}`);
+    if (!el) continue;
+    if (f.t === 'checkbox') { out[f.k] = el.checked; continue; }
+    if (el.value === '') continue;
+    out[f.k] = f.t === 'number' ? Number(el.value) : el.value;
+  }
+  return out;
+}
+
+$('btn-dl-log').addEventListener('click', async () => {
+  const sheet = DATALOG_SHEETS.find(s => s.id === dlActiveSheet);
+  if (!sheet || !sheet.endpoint) return;
+  const values = collectDlValues(sheet);
+  if (sheet.fields.filter(f => f.req).some(f => values[f.k] === undefined)) {
+    toast('Fill in the required fields for this sheet (date + key quantity)', true);
+    return;
+  }
+  $('btn-dl-log').disabled = true;
+  try {
+    const r = await api(`/productions/${productionId}/${sheet.endpoint}`, {
+      method: 'POST', body: JSON.stringify(values),
+    });
+    const row = { ...values, co2e_kg: r.co2eKg, passenger_km: r.passengerKm, total_passenger_km: r.totalPassengerKm };
+    prependDlRow(sheet, row);
+    toast(`${sheet.label} entry logged` + (r.co2eKg != null ? ` — ${r.co2eKg.toLocaleString()} kgCO2e` : ''));
+    if (sheet.hasCo2e) { await refreshFootprint(); await refreshTimeline(); }
+  } catch (e) {
+    toast(`Failed to log ${sheet.label}: ${e.message}`, true);
+  } finally {
+    $('btn-dl-log').disabled = false;
+  }
+});
+
+function dlCellValue(row, key) {
+  const v = row[key];
+  if (v === undefined || v === null || v === '') return '—';
+  if (typeof v === 'boolean') return v ? 'Yes' : 'No';
+  if (typeof v === 'number') return v.toLocaleString();
+  return v;
+}
+
+function prependDlRow(sheet, row) {
+  const tbody = $('dl-table-body');
+  if (tbody.children.length === 1 && tbody.children[0].children.length === 1) tbody.innerHTML = '';
+  const cells = sheet.listCols.map(([key]) => `<td>${dlCellValue(row, key)}</td>`).join('');
+  tbody.insertAdjacentHTML('afterbegin', `<tr>${cells}</tr>`);
+}
+
+async function loadDlList(sheet) {
+  try {
+    const data = await api(`/productions/${productionId}/${sheet.endpoint}`);
+    const tbody = $('dl-table-body');
+    if (!data.entries || !data.entries.length) {
+      tbody.innerHTML = '<tr><td class="empty-note">No entries logged yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.entries.map(row =>
+      `<tr>${sheet.listCols.map(([key]) => `<td>${dlCellValue(row, key)}</td>`).join('')}</tr>`).join('');
+  } catch (e) {
+    $('dl-table-body').innerHTML = `<tr><td class="empty-note">Could not load entries: ${e.message}</td></tr>`;
+  }
+}
+
+async function renderDlSummary() {
+  $('dl-table-head').innerHTML = '';
+  $('dl-table-body').innerHTML = '';
+  try {
+    const s = await api(`/productions/${productionId}/data-log-summary`);
+    const metricRows = s.metrics.map(m =>
+      `<tr><td>${m.metric}</td><td class="num mono">${m.value.toLocaleString()}</td><td>${m.unit}</td><td>${m.source}</td></tr>`).join('');
+    const dqRows = s.dataQualityCheck.map(d =>
+      `<div class="dl-dq-row"><span>${d.label}</span><span class="mono">${d.count}</span></div>`).join('');
+    $('dl-form').innerHTML = `
+      <table class="dl-summary-table"><thead><tr><th>Metric</th><th>Total / Average</th><th>Unit</th><th>Primary Source</th></tr></thead>
+      <tbody>${metricRows}</tbody></table>
+      <div class="card-title" style="font-size:13px">Data Quality Check</div>
+      ${dqRows}`;
+  } catch (e) {
+    $('dl-form').innerHTML = `<div class="empty-note">Could not load summary: ${e.message}</div>`;
+  }
+}
+
 // ── Step 5: Questionnaire ─────────────────────────────────────────────────────
 async function loadQuestionnaire() {
   const data = await api('/questionnaire');
@@ -596,6 +1218,7 @@ $('btn-score').addEventListener('click', async () => {
     latestScore = await api(`/productions/${productionId}/score`);
     renderScore(latestScore);
     await refreshFootprint();
+    renderCertificationReview();
     toast(`Score computed: ${latestScore.totalScore} / 100`);
   } catch (e) {
     toast(`Scoring failed: ${e.message}`, true);
@@ -627,53 +1250,225 @@ function renderScore(s) {
   $('score-body').innerHTML = dims;
 }
 
-// ── Step 7: Certification ────────────────────────────────────────────────────
-$('btn-issue-cert').addEventListener('click', async () => {
-  $('btn-issue-cert').disabled = true;
+// ── Step 7: Certification Review — governed application/review pipeline ─────
+// A production can never self-issue: submitting only creates an application.
+// A real certificate is produced solely by a reviewer's "Issue certificate"
+// action in the Internal Review Console below, gated behind a recorded
+// approval decision. There is no reviewer authentication in this codebase
+// yet, so the console is actor-tagged only — clearly labeled as dev/demo.
+const CR_STAGE_ORDER = ['submitted', 'initial_review', 'documentation_review', 'technical_assessment', 'quality_assurance', 'final_decision', 'certificate_issued'];
+const CR_STAGE_LABELS = { submitted: 'Submitted', initial_review: 'Initial Review', documentation_review: 'Documentation Review', technical_assessment: 'Technical Assessment', quality_assurance: 'Quality Assurance', final_decision: 'Final Decision', certificate_issued: 'Certificate Issued' };
+const CR_STATUS_BADGE = { draft: 'chip-muted', submitted: 'chip-accent', under_review: 'chip-accent', more_info_required: 'chip-warning', renewal_due: 'chip-warning', approved: 'chip-success', approved_with_conditions: 'chip-warning', certified: 'chip-success', rejected: 'chip-critical', expired: 'chip-critical' };
+const CR_STATUS_LABEL = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', more_info_required: 'Awaiting Documents', approved: 'Approved', approved_with_conditions: 'Approved with Conditions', certified: 'Certified', rejected: 'Rejected', expired: 'Expired', renewal_due: 'Renewal Due' };
+
+let latestApplication = null;
+let justSubmitted = false;
+
+async function refreshCertificationReview() {
+  if (!productionId) return;
   try {
-    latestCertificate = await api(`/productions/${productionId}/certifications/issue`, { method: 'POST', body: JSON.stringify({}) });
-    await renderCertificate();
-    toast(`Certificate issued: ${latestCertificate.certificateNumber} (pending review)`);
+    const data = await api(`/productions/${productionId}/certification-applications`);
+    latestApplication = data.applications && data.applications.length ? data.applications[0] : null;
+  } catch (e) { latestApplication = null; }
+  renderCertificationReview();
+}
+
+function renderCertificationReview() {
+  const badge = $('cr-status-badge');
+  if (!latestApplication) {
+    badge.className = 'chip chip-muted';
+    badge.textContent = 'Draft';
+    $('cr-presubmit').style.display = 'block';
+    $('cr-dashboard').style.display = 'none';
+    renderEligibilityPreview();
+    return;
+  }
+  $('cr-presubmit').style.display = 'none';
+  $('cr-dashboard').style.display = 'block';
+  renderCertificationDashboard(latestApplication);
+}
+
+function renderEligibilityPreview() {
+  if (!latestScore) {
+    $('cr-eligibility').innerHTML = `<div class="empty-note">Compute the Green Production Score above to check eligibility.</div>`;
+    $('btn-cr-submit').disabled = true;
+    return;
+  }
+  const lvl = latestScore.certificationLevel;
+  if (lvl.achieved) {
+    $('cr-eligibility').innerHTML = `
+      <div class="cr-criteria-row"><span>Green Production Score</span><span class="mono">${latestScore.totalScore}</span></div>
+      <div class="cr-criteria-row"><span>Expected Certification Level</span><span class="chip ${CERT_CHIP[lvl.levelId] || 'chip-muted'}">${lvl.label}</span></div>
+      <div class="cr-criteria-row"><span>Mandatory criteria</span><span style="color:var(--success)">All met</span></div>`;
+    $('btn-cr-submit').disabled = false;
+  } else {
+    $('cr-eligibility').innerHTML = `
+      <div class="cr-criteria-row"><span>Green Production Score</span><span class="mono">${latestScore.totalScore}</span></div>
+      <div class="cr-criteria-row"><span>Gap to Bronze</span><span style="color:var(--critical)">${lvl.scoreGap ?? '?'} points</span></div>
+      ${(lvl.unmetCriteria || []).map(c => `<div class="cr-criteria-row"><span>${c.replace(/_/g, ' ')}</span><span style="color:var(--critical)">Not met</span></div>`).join('')}`;
+    $('btn-cr-submit').disabled = true;
+  }
+}
+
+$('btn-cr-submit').addEventListener('click', async () => {
+  $('btn-cr-submit').disabled = true;
+  try {
+    latestApplication = await api(`/productions/${productionId}/certification-applications`, { method: 'POST', body: JSON.stringify({ actor: 'Applicant' }) });
+    justSubmitted = true;
+    renderCertificationReview();
+    toast(`Application submitted — ${latestApplication.application_number}`);
   } catch (e) {
-    toast(`Cannot issue certificate yet: ${e.message}`, true);
-  } finally {
-    $('btn-issue-cert').disabled = false;
+    toast(`Submission failed: ${e.message}`, true);
+    $('btn-cr-submit').disabled = false;
   }
 });
 
-$('btn-approve-cert').addEventListener('click', async () => {
-  try {
-    await api(`/certifications/${latestCertificate.id}/status`, {
-      method: 'POST',
-      body: JSON.stringify({ status: 'verified', reviewer_notes: 'Approved from Green Production console.' }),
+function renderCertificationDashboard(app) {
+  const badge = $('cr-status-badge');
+  badge.className = `chip ${CR_STATUS_BADGE[app.status] || 'chip-muted'}`;
+  badge.textContent = CR_STATUS_LABEL[app.status] || app.status;
+
+  // Success panel — only right after a fresh, untouched submission
+  if (justSubmitted && app.status === 'submitted') {
+    $('cr-success-panel').style.display = 'block';
+    $('cr-success-panel').innerHTML = `
+      <div class="cr-success-title">Application Submitted Successfully</div>
+      <div class="cr-success-row"><span>Application ID</span><span class="mono">${app.application_number}</span></div>
+      <div class="cr-success-row"><span>Status</span><span>Under Initial Review</span></div>
+      <div class="cr-success-row"><span>Estimated review time</span><span>5–10 business days</span></div>`;
+  } else {
+    $('cr-success-panel').style.display = 'none';
+  }
+
+  // Stepper
+  const stageIdx = CR_STAGE_ORDER.indexOf(app.current_stage);
+  $('cr-stepper').innerHTML = CR_STAGE_ORDER.map((stage, i) => {
+    let cls = i < stageIdx ? 'done' : i === stageIdx ? 'active' : '';
+    if (i === stageIdx && app.status === 'rejected') cls = 'rejected';
+    return `<div class="cr-step ${cls}"><div class="cr-step-line"></div><div class="cr-step-dot">${i < stageIdx ? '✓' : i + 1}</div><div class="cr-step-label">${CR_STAGE_LABELS[stage]}</div></div>`;
+  }).join('');
+  $('cr-progress-fill').style.width = `${app.progressPct}%`;
+  $('cr-stepper-label').textContent = `Stage ${app.stageIndex} of ${app.totalStages} — ${CR_STAGE_LABELS[app.current_stage]} (${app.progressPct}% complete)`;
+
+  // Reviewer feedback — latest comment/request event
+  const feedbackEvents = app.events.filter(e => e.event_type === 'comment_added' || e.event_type === 'documents_requested').reverse();
+  $('cr-feedback').innerHTML = feedbackEvents.length
+    ? feedbackEvents.slice(0, 5).map(e => `<div class="cr-feedback-item"><div class="cr-feedback-meta">${new Date(e.created_at).toLocaleDateString()} · ${e.actor || 'Reviewer'}</div>${e.comment || ''}</div>`).join('')
+    : `<div class="empty-note" style="padding:8px 0">No reviewer comments yet.</div>`;
+
+  // Required actions
+  const pending = app.requiredDocuments.filter(d => d.status === 'pending');
+  if (pending.length) {
+    $('cr-actions-card').style.display = 'block';
+    const deadline = pending.map(d => d.deadline).filter(Boolean).sort().slice(-1)[0];
+    $('cr-required-actions').innerHTML =
+      (deadline ? `<div class="hint" style="margin:0 0 8px">Deadline: <strong style="color:var(--text)">${deadline}</strong></div>` : '') +
+      pending.map(d => `<div class="cr-action-item"><span>${d.description}</span><button class="btn" data-doc="${d.id}">Upload Evidence</button></div>`).join('');
+    $('cr-required-actions').querySelectorAll('[data-doc]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        try {
+          latestApplication = await api(`/certification-applications/${app.id}/required-documents/${btn.dataset.doc}/fulfill`, { method: 'POST', body: JSON.stringify({ actor: 'Applicant' }) });
+          renderCertificationDashboard(latestApplication);
+          toast('Marked fulfilled');
+        } catch (e) { toast(`Failed: ${e.message}`, true); }
+      });
     });
-    toast('Certificate approved and verified');
-    await renderCertificate();
-  } catch (e) { toast(`Approval failed: ${e.message}`, true); }
+  } else {
+    $('cr-actions-card').style.display = 'none';
+  }
+  $('btn-cr-resubmit').style.display = app.status === 'more_info_required' ? 'inline-flex' : 'none';
+
+  // Timeline
+  $('cr-timeline').innerHTML = app.events.map(e => `
+    <div class="cr-timeline-item">
+      <div class="cr-timeline-date">${new Date(e.created_at).toLocaleString()}</div>
+      <div>${e.event_type.replace(/_/g, ' ')}${e.actor ? ` — ${e.actor}` : ''}</div>
+      ${e.comment ? `<div class="cr-timeline-detail">${e.comment}</div>` : ''}
+    </div>`).join('') || `<div class="empty-note">No activity yet.</div>`;
+
+  // Summary side card
+  $('cr-summary').innerHTML = `
+    <div class="cr-summary-row"><span>Production</span><span>${app.production_name}</span></div>
+    <div class="cr-summary-row"><span>Score</span><span>${app.score}</span></div>
+    <div class="cr-summary-row"><span>Expected Rating</span><span>${app.expected_level_label || '—'}</span></div>
+    <div class="cr-summary-row"><span>Submitted</span><span>${new Date(app.submitted_at).toLocaleDateString()}</span></div>
+    <div class="cr-summary-row"><span>Application ID</span><span class="mono">${app.application_number}</span></div>
+    <div class="cr-summary-row"><span>Version</span><span>v${app.version}</span></div>
+    <div class="cr-summary-row"><span>Reviewer</span><span>${app.reviewer_name || 'Pending Assignment'}</span></div>`;
+
+  // Download center
+  const dlBase = `${BASE}/certification-applications/${app.id}/downloads`;
+  $('cr-downloads').innerHTML = `
+    <div class="cr-download-row"><span>Submission Summary</span><a class="btn" href="${dlBase}/submission-summary.pdf" target="_blank">Download PDF</a></div>
+    <div class="cr-download-row"><span>Review Report</span><a class="btn" href="${dlBase}/review-report.pdf" target="_blank">Download PDF</a></div>
+    <div class="cr-download-row"><span>Certificate</span>${app.status === 'certified'
+      ? `<a class="btn btn-primary" href="${dlBase}/certificate.pdf" target="_blank">Download PDF</a>`
+      : `<span class="hint" style="margin:0">Available once certified</span>`}</div>`;
+
+  // Reviewer console
+  $('cr-reviewer-name').value = app.reviewer_name || '';
+  $('cr-advance-stage').innerHTML = CR_STAGE_ORDER
+    .filter((s, i) => i > stageIdx && s !== 'certificate_issued')
+    .map(s => `<option value="${s}">${CR_STAGE_LABELS[s]}</option>`).join('') || '<option value="">No further stages</option>';
+  $('btn-cr-issue-cert').style.display = (app.status === 'approved' || app.status === 'approved_with_conditions') ? 'inline-flex' : 'none';
+}
+
+async function crAction(fn) {
+  try {
+    latestApplication = await fn();
+    justSubmitted = false;
+    renderCertificationDashboard(latestApplication);
+    return true;
+  } catch (e) {
+    toast(`Failed: ${e.message}`, true);
+    return false;
+  }
+}
+
+$('btn-cr-assign').addEventListener('click', () => {
+  const reviewer_name = $('cr-reviewer-name').value.trim();
+  if (!reviewer_name) { toast('Enter a reviewer name', true); return; }
+  crAction(() => api(`/certification-applications/${latestApplication.id}/reviewer/assign`, { method: 'POST', body: JSON.stringify({ reviewer_name, actor: reviewer_name }) }));
 });
 
-async function renderCertificate() {
-  const verify = await api(`/verify/${latestCertificate.certificateNumber}`).catch(() => null);
-  const qrUrl = `${BASE}/verify/${latestCertificate.certificateNumber}/qrcode`;
-  const statusChip = verify?.isValid ? 'chip-success' : verify?.verificationStatus === 'pending' ? 'chip-warning' : 'chip-critical';
-  $('cert-body').innerHTML = `
-    <div class="cert-panel">
-      <div class="cert-qr"><img src="${qrUrl}" alt="Certificate QR"></div>
-      <div class="cert-detail">
-        <div class="cert-num mono">${latestCertificate.certificateNumber}</div>
-        <div class="chip ${statusChip}" style="margin-bottom:12px">${verify?.verificationStatus || 'pending'}${verify?.isValid ? ' · valid' : ''}</div>
-        <div class="cert-row"><span>Level</span><span>${latestCertificate.levelLabel}</span></div>
-        <div class="cert-row"><span>Score</span><span>${latestCertificate.score}</span></div>
-        <div class="cert-row"><span>Issued by</span><span>${latestCertificate.issuedBy}</span></div>
-        <div class="cert-row"><span>Issued</span><span>${new Date(latestCertificate.issuedAt).toLocaleString()}</span></div>
-        <div class="cert-row"><span>Expires</span><span>${new Date(latestCertificate.expiresAt).toLocaleDateString()}</span></div>
-        <div class="cert-row"><span>Signature</span><span>${verify?.signatureValid ? 'Valid (HMAC-SHA256)' : '—'}</span></div>
-        <div class="cert-row"><span>Public verify URL</span><span class="mono" style="font-size:11px">${latestCertificate.verifyUrl}</span></div>
-      </div>
-    </div>`;
-  $('btn-approve-cert').style.display = verify?.verificationStatus === 'pending' ? 'inline-flex' : 'none';
-  $('btn-issue-cert').textContent = 'Re-issue certificate';
-}
+$('btn-cr-advance').addEventListener('click', () => {
+  const to_stage = $('cr-advance-stage').value;
+  if (!to_stage) return;
+  crAction(() => api(`/certification-applications/${latestApplication.id}/reviewer/advance-stage`, { method: 'POST', body: JSON.stringify({ to_stage, actor: $('cr-reviewer-name').value.trim() || 'Reviewer' }) }));
+});
+
+$('btn-cr-request-docs').addEventListener('click', async () => {
+  const items = $('cr-req-items').value.split(',').map(s => s.trim()).filter(Boolean);
+  if (!items.length) { toast('List at least one requested document', true); return; }
+  const deadline = $('cr-req-deadline').value || null;
+  const ok = await crAction(() => api(`/certification-applications/${latestApplication.id}/reviewer/request-documents`, {
+    method: 'POST', body: JSON.stringify({ items, deadline, actor: $('cr-reviewer-name').value.trim() || 'Reviewer' }),
+  }));
+  if (ok) $('cr-req-items').value = '';
+});
+
+$('btn-cr-comment').addEventListener('click', async () => {
+  const comment = $('cr-comment-text').value.trim();
+  if (!comment) return;
+  const ok = await crAction(() => api(`/certification-applications/${latestApplication.id}/reviewer/comment`, { method: 'POST', body: JSON.stringify({ comment, actor: $('cr-reviewer-name').value.trim() || 'Reviewer' }) }));
+  if (ok) $('cr-comment-text').value = '';
+});
+
+$('btn-cr-decision').addEventListener('click', () => {
+  const decision = $('cr-decision').value;
+  const comment = $('cr-decision-comment').value.trim() || null;
+  crAction(() => api(`/certification-applications/${latestApplication.id}/reviewer/decision`, { method: 'POST', body: JSON.stringify({ decision, comment, actor: $('cr-reviewer-name').value.trim() || 'Reviewer' }) }));
+});
+
+$('btn-cr-issue-cert').addEventListener('click', async () => {
+  const ok = await crAction(() => api(`/certification-applications/${latestApplication.id}/reviewer/issue-certificate`, { method: 'POST', body: JSON.stringify({ actor: $('cr-reviewer-name').value.trim() || 'Reviewer' }) }));
+  if (ok) toast(`Certificate issued: ${latestApplication.certificate_number}`);
+});
+
+$('btn-cr-resubmit').addEventListener('click', async () => {
+  const ok = await crAction(() => api(`/certification-applications/${latestApplication.id}/resubmit`, { method: 'POST', body: JSON.stringify({ actor: 'Applicant' }) }));
+  if (ok) toast(`Resubmitted as v${latestApplication.version}`);
+});
 </script>
 </body>
 </html>

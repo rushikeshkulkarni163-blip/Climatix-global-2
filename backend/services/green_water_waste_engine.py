@@ -30,6 +30,21 @@ async def log_water_record(
     location_id: Optional[str] = None,
     notes: Optional[str] = None,
     recorded_at: Optional[date] = None,
+    location_name: Optional[str] = None,
+    purpose: Optional[str] = None,
+    meter_start_l: Optional[float] = None,
+    meter_end_l: Optional[float] = None,
+    tanker_liters: Optional[float] = None,
+    bottled_liters: Optional[float] = None,
+    drinking_liters: Optional[float] = None,
+    sanitation_liters: Optional[float] = None,
+    cleaning_liters: Optional[float] = None,
+    catering_liters: Optional[float] = None,
+    makeup_liters: Optional[float] = None,
+    other_liters: Optional[float] = None,
+    people_served: Optional[int] = None,
+    evidence_ref: Optional[str] = None,
+    data_quality: str = "Actual",
 ) -> dict:
     if source not in WATER_SOURCES:
         raise ValueError(f"invalid water source '{source}' (expected one of {WATER_SOURCES})")
@@ -43,11 +58,17 @@ async def log_water_record(
     row = await pool.fetchrow(
         """
         INSERT INTO green_water_records
-          (production_id, location_id, phase, source, volume_liters, greywater_recycled_liters, notes, recorded_at)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+          (production_id, location_id, phase, source, volume_liters, greywater_recycled_liters,
+           notes, recorded_at, location_name, purpose, meter_start_l, meter_end_l, tanker_liters,
+           bottled_liters, drinking_liters, sanitation_liters, cleaning_liters, catering_liters,
+           makeup_liters, other_liters, people_served, evidence_ref, data_quality)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)
         RETURNING id, recorded_at
         """,
-        production_id, location_id, phase, source, volume_liters, greywater_recycled_liters, notes, recorded_at,
+        production_id, location_id, phase, source, volume_liters, greywater_recycled_liters, notes,
+        recorded_at, location_name, purpose, meter_start_l, meter_end_l, tanker_liters, bottled_liters,
+        drinking_liters, sanitation_liters, cleaning_liters, catering_liters, makeup_liters,
+        other_liters, people_served, evidence_ref, data_quality,
     )
     return {
         "id": row["id"], "productionId": production_id, "phase": phase, "source": source,
@@ -95,6 +116,18 @@ async def log_waste_record(
     disposal_partner: Optional[str] = None,
     location_id: Optional[str] = None,
     recorded_at: Optional[date] = None,
+    location_name: Optional[str] = None,
+    source_activity: Optional[str] = None,
+    quantity_units: Optional[float] = None,
+    unit_type: Optional[str] = None,
+    segregated: Optional[bool] = None,
+    collection_method: Optional[str] = None,
+    destination_vendor: Optional[str] = None,
+    composted_kg: Optional[float] = None,
+    incinerated_kg: Optional[float] = None,
+    hazardous: Optional[bool] = None,
+    manifest_ref: Optional[str] = None,
+    data_quality: str = "Actual",
 ) -> dict:
     if waste_type not in WASTE_TYPES:
         raise ValueError(f"invalid waste type '{waste_type}' (expected one of {WASTE_TYPES})")
@@ -111,12 +144,18 @@ async def log_waste_record(
         """
         INSERT INTO green_waste_records
           (production_id, location_id, phase, waste_type, quantity_kg,
-           pct_recycled, pct_reused, pct_landfill, disposal_partner, recorded_at)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+           pct_recycled, pct_reused, pct_landfill, disposal_partner, recorded_at,
+           location_name, source_activity, quantity_units, unit_type, segregated,
+           collection_method, destination_vendor, composted_kg, incinerated_kg,
+           hazardous, manifest_ref, data_quality)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)
         RETURNING id, recorded_at
         """,
         production_id, location_id, phase, waste_type, quantity_kg,
         pct_recycled, pct_reused, pct_landfill, disposal_partner, recorded_at,
+        location_name, source_activity, quantity_units, unit_type, segregated,
+        collection_method, destination_vendor, composted_kg, incinerated_kg,
+        hazardous, manifest_ref, data_quality,
     )
     return {
         "id": row["id"], "productionId": production_id, "phase": phase, "wasteType": waste_type,
