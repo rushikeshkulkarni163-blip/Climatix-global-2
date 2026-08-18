@@ -261,7 +261,6 @@ details.cr-details[open] summary::before{content:'▾ '}
     <div class="btn-row">
       <button class="btn btn-primary" id="btn-register">Register production</button>
     </div>
-    <div class="hint" id="registration-hint">Talks directly to the live FastAPI backend at <span class="mono" id="api-base-label">—</span>. Start it with <span class="mono">uvicorn main:app --reload --port 8000</span> from <span class="mono">backend/</span> if it's not already running.</div>
   </div>
 
   <!-- WORKSPACE (hidden until a production exists) -->
@@ -463,7 +462,6 @@ const $ = id => document.getElementById(id);
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:8000' : '';
 const BASE = `${API_BASE}/api/v1/green-production`;
-$('api-base-label').textContent = API_BASE || location.origin;
 
 let productionId = null;
 let categories = [];
@@ -506,9 +504,6 @@ async function api(path, opts) {
     $('api-status').textContent = 'API unreachable';
     $('api-status').style.color = 'var(--critical)';
     $('api-status').style.borderColor = 'var(--critical)';
-    $('registration-hint').innerHTML =
-      `<strong style="color:var(--critical)">Backend not reachable at ${API_BASE}.</strong> ` +
-      `Start it: <span class="mono">cd backend && .venv/bin/uvicorn main:app --reload --port 8000</span>`;
   }
 })();
 
