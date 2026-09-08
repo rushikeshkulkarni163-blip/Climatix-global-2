@@ -6212,25 +6212,22 @@
          boundaries (MapLibre demotiles — same host already used
          for glyphs, no new external dependency class) + the
          5-layer climate hotspot dataset above as live markers.
+         Note: previously blended in a CARTO "dark_nolabels" raster
+         tile layer for extra texture. CARTO now requires an API
+         key for that endpoint and stamps an "API key required"
+         watermark on unauthenticated requests, so that layer has
+         been removed — the flat background + the free demotiles
+         country-line layer below already give the same minimal
+         dark-basemap look with no external key dependency.
       ══════════════════════════════════════════════════════ */
       const map = new maplibregl.Map({
         container: mapEl,
         style: {
           version: 8,
           glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
-          sources: {
-            dark: { type:'raster', tiles:[
-              'https://a.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-              'https://b.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-              'https://c.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png'
-            ], tileSize:256, attribution:'© OpenStreetMap contributors © CARTO', maxzoom:19 },
-          },
+          sources: {},
           layers: [
             { id:'bg', type:'background', paint:{ 'background-color':'#010815' } },
-            { id:'base', type:'raster', source:'dark', paint:{
-              'raster-opacity':0.88, 'raster-hue-rotate':205, 'raster-saturation':0.35,
-              'raster-contrast':0.18, 'raster-brightness-min':0.0, 'raster-brightness-max':0.62,
-            } },
           ],
         },
         center: [10,15], zoom: 0.35, minZoom: 0.2, maxZoom: 8, attributionControl: true,
