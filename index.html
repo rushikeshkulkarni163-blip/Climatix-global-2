@@ -6277,12 +6277,19 @@
         } catch (e) { console.warn('Country boundary layer failed to load:', e); }
 
         /* Climate hotspot markers for the active layer */
-        map.addSource('hm-regions', { type:'geojson', data: regionsToGeoJSON(ALL_LAYERS[_activeHmLayer], 0) });
-        map.addLayer({ id:'hm-glow', type:'circle', source:'hm-regions',
-          paint:{ 'circle-radius':['get','glowR'], 'circle-color':['get','glow'], 'circle-opacity':0.22, 'circle-blur':1 } });
-        map.addLayer({ id:'hm-core', type:'circle', source:'hm-regions',
-          paint:{ 'circle-radius':['get','coreR'], 'circle-color':['get','fill'], 'circle-opacity':0.92,
-                  'circle-stroke-width':1.3, 'circle-stroke-color':['get','glow'] } });
+        try {
+          map.addSource('hm-regions', { type:'geojson', data: regionsToGeoJSON(ALL_LAYERS[_activeHmLayer], 0) });
+          map.addLayer({ id:'hm-glow', type:'circle', source:'hm-regions',
+            paint:{ 'circle-radius':['get','glowR'], 'circle-color':['get','glow'], 'circle-opacity':0.22, 'circle-blur':1 } });
+          map.addLayer({ id:'hm-core', type:'circle', source:'hm-regions',
+            paint:{ 'circle-radius':['get','coreR'], 'circle-color':['get','fill'], 'circle-opacity':0.92,
+                    'circle-stroke-width':1.3, 'circle-stroke-color':['get','glow'] } });
+        } catch (e) { console.warn('Climate hotspot markers failed to load:', e); }
+
+        /* Defensive: force a resize/repaint once everything is wired up, in case
+           the container's size settled after the map was constructed (e.g. late
+           layout shift), which can otherwise leave the canvas painted blank. */
+        requestAnimationFrame(function(){ try { map.resize(); } catch(e) {} });
 
         map.on('mousemove', 'hm-core', function(e) {
           if (!e.features || !e.features.length) return;

@@ -1030,14 +1030,17 @@ let mapTilted = false;
 
 /* Basemap GL style URLs — light (positron) for light theme, dark (dark-matter) for dark theme.
    Chosen at map-init time and re-applied via map.setStyle() when the UI theme toggles,
-   so the map basemap always matches the current data-theme (no light-map-on-dark-chrome mismatch). */
+   so the map basemap always matches the current data-theme (no light-map-on-dark-chrome mismatch).
+   Served via OpenFreeMap (free, no API key) rather than CARTO's hosted GL styles — CARTO now
+   requires a paid API key and stamps unauthenticated requests with an "API key required" watermark;
+   OpenFreeMap serves the same Positron/Dark Matter style family with no key. */
 function currentUITheme() {
   return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
 }
 function basemapStyleUrlForTheme(theme) {
   return theme === 'dark'
-    ? 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
-    : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+    ? 'https://tiles.openfreemap.org/styles/dark'
+    : 'https://tiles.openfreemap.org/styles/positron';
 }
 
 async function initMap() {
@@ -1111,7 +1114,12 @@ function applyBasemapForTheme(theme) {
   });
 }
 
-/* ── Satellite imagery layer (toggleable, no API key required) ── */
+/* ── Satellite imagery layer (toggleable, no API key required) ──
+   Previously also blended a CARTO "light_only_labels" raster overlay on
+   top for place names. CARTO now requires a paid API key for that
+   endpoint and stamps unauthenticated requests with an "API key
+   required" watermark, so that overlay has been removed — satellite
+   mode still works, just without the extra label texture. */
 function addSatelliteLayers() {
   if (map.getSource('sat')) return;
   map.addSource('sat', {type:'raster',
@@ -1119,15 +1127,10 @@ function addSatelliteLayers() {
     tileSize:256, maxzoom:19,
     attribution:'Esri, Maxar, Earthstar Geographics'});
   map.addLayer({id:'sat-layer', type:'raster', source:'sat', paint:{'raster-opacity':0, 'raster-fade-duration':200}});
-
-  map.addSource('sat-labels', {type:'raster',
-    tiles:['https://a.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png','https://b.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png','https://c.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png'],
-    tileSize:256, maxzoom:19});
-  map.addLayer({id:'sat-labels-layer', type:'raster', source:'sat-labels', paint:{'raster-opacity':0, 'raster-fade-duration':200}});
 }
 
 function bringLabelsToFront() {
-  if (map.getLayer('sat-labels-layer')) map.moveLayer('sat-labels-layer');
+  /* No-op: the CARTO labels overlay this used to reorder has been removed. */
 }
 
 function setBasemap(mode) {
@@ -1137,7 +1140,6 @@ function setBasemap(mode) {
   if (!map || !map.getLayer('sat-layer')) return;
   const satOn = mode === 'satellite';
   map.setPaintProperty('sat-layer','raster-opacity', satOn ? 0.95 : 0);
-  map.setPaintProperty('sat-labels-layer','raster-opacity', satOn ? 0.8 : 0);
   LAYERS.forEach(l => {
     if (map.getLayer('fill-'+l.id)) map.setPaintProperty('fill-'+l.id, 'fill-opacity', satOn ? 0.5 : 1);
   });

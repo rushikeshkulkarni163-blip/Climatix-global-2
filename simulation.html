@@ -6148,21 +6148,16 @@ function initMap(){
           tileSize:256,attribution:'NASA GIBS · Imagery courtesy of NASA Earth Observatory',maxzoom:8},
         nasaday:{type:'raster',
           tiles:['https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/2004-08/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg'],
-          tileSize:256,maxzoom:8},
-        labels:{type:'raster',
-          tiles:[
-            'https://a.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png',
-            'https://b.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png',
-            'https://c.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png'
-          ],
-          tileSize:256,maxzoom:19,
-          attribution:'© OpenStreetMap contributors © CARTO'}
+          tileSize:256,maxzoom:8}
+        /* Previously also blended a CARTO "dark_only_labels" raster overlay for
+           place names. CARTO now requires a paid API key for that endpoint and
+           stamps unauthenticated requests with an "API key required" watermark,
+           so that layer/source has been removed. */
       },
       layers:[
         {id:'bg',type:'background',paint:{'background-color':'#07090F'}},
         {id:'day',type:'raster',source:'nasaday',paint:{'raster-opacity':.28}},
-        {id:'ct',type:'raster',source:'nasa',paint:{'raster-opacity':.94}},
-        {id:'lbl',type:'raster',source:'labels',paint:{'raster-opacity':.82}}
+        {id:'ct',type:'raster',source:'nasa',paint:{'raster-opacity':.94}}
       ]},
     center:[-50,25],zoom:2.4,minZoom:1.2,maxZoom:14,attributionControl:false});
   map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
@@ -6180,7 +6175,6 @@ function initMap(){
     /* Richer night-side opacity for NASA imagery */
     try{map.setPaintProperty('ct','raster-opacity',0.96);}catch(e){}
     try{map.setPaintProperty('day','raster-opacity',0.22);}catch(e){}
-    try{map.setPaintProperty('lbl','raster-opacity',0.88);}catch(e){}
 
     /* ══════════════════════════════════════════════════
        GLOBAL INTELLIGENCE NAVIGATOR — country boundaries
