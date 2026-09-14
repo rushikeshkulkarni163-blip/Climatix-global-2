@@ -120,7 +120,7 @@ export default function SupplyChainPage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.18em] mb-1">
-            SUPPLY CHAIN INTELLIGENCE / SCOPE 3 ENGINE
+            ATLAS™ / VALUE CHAIN INTELLIGENCE
           </div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             Supply Chain Climate Risk & Scope 3 Mapping

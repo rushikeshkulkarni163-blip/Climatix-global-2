@@ -166,7 +166,7 @@ export default function ClimateFinancePage() {
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <div className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.18em] mb-1">
-            CLIMATE FINANCE MONITOR / CAPITAL MARKETS
+            LEDGER™ / CLIMATE FINANCIAL INTELLIGENCE
           </div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             Sustainable Finance &amp; Climate Capital Flows

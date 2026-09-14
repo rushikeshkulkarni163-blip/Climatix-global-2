@@ -132,7 +132,7 @@ export default function Navbar() {
               className="ml-1 px-4 py-1.5 bg-[#F97316] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#EA6C0A] transition-colors active:scale-[0.98] flex items-center gap-1.5"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              Open Terminal
+              Open Terminal™
             </Link>
             <Link
               href="/risk-analysis"

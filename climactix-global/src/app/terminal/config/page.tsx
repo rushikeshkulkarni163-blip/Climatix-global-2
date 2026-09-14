@@ -62,7 +62,7 @@ export default function ConfigPage() {
 
       <div>
         <div className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.18em] mb-1">
-          API & CONFIGURATION / ENTERPRISE LAYER
+          NEXUS™ / CLIMATE INTELLIGENCE INFRASTRUCTURE
         </div>
         <h1 className="text-xl font-bold text-gray-900 tracking-tight">API Access & System Configuration</h1>
         <p className="text-xs text-gray-500 mt-1">

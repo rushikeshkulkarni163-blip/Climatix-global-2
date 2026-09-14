@@ -145,7 +145,7 @@ export default function DisclosureStudioPage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.18em] mb-1">
-            DISCLOSURE STUDIO / REPORTING ENGINE
+            PRISM™ / DISCLOSURE & CREDIBILITY INTELLIGENCE
           </div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             Climate Disclosure & Report Generation

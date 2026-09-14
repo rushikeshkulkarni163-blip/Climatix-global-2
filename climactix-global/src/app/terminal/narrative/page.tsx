@@ -197,7 +197,7 @@ export default function NarrativeIntelligencePage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.18em] mb-1">
-            NARRATIVE INTELLIGENCE / SIGNAL LAYER
+            SIGNAL™ / EARLY WARNING INTELLIGENCE
           </div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             ESG Narrative & Regulatory Intelligence Monitor

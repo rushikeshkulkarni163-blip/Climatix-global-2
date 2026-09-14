@@ -27,25 +27,25 @@ const MODULES: NavGroup[] = [
     group: "COMMAND",
     items: [
       { icon: LayoutDashboard,  label: "Dashboard",            href: "/dashboard",            badge: "LIVE" },
-      { icon: CloudLightning,   label: "Climate Risk",         href: "/terminal",             badge: null },
-      { icon: Thermometer,      label: "Physical Exposure",    href: "/terminal/simulation",  badge: null },
-      { icon: ArrowLeftRight,   label: "Transition Risk",      href: "/terminal/finance",     badge: null },
+      { icon: CloudLightning,   label: "ORBIT™",               href: "/terminal",             badge: null },
+      { icon: Thermometer,      label: "VECTOR™ — Physical Exposure", href: "/terminal/simulation",  badge: null },
+      { icon: ArrowLeftRight,   label: "LEDGER™ — Transition Risk",   href: "/terminal/finance",     badge: null },
     ],
   },
   {
     group: "INTELLIGENCE",
     items: [
       { icon: Fingerprint,      label: "Climate Identity",     href: "/climate-identity",     badge: "NEW" },
-      { icon: Package,          label: "Supply Chain",         href: "/terminal/supply-chain",badge: null },
-      { icon: BookOpen,         label: "Regulatory Intel",     href: "/terminal/narrative",   badge: null },
-      { icon: FlaskConical,     label: "Scenario Engine",      href: "/terminal/simulation",  badge: null },
+      { icon: Package,          label: "ATLAS™",                href: "/terminal/supply-chain",badge: null },
+      { icon: BookOpen,         label: "SIGNAL™ — Regulatory Intel",  href: "/terminal/narrative",   badge: null },
+      { icon: FlaskConical,     label: "VECTOR™ — Scenario Engine",   href: "/terminal/simulation",  badge: null },
     ],
   },
   {
     group: "ANALYTICS",
     items: [
       { icon: FileBarChart,     label: "Reports",              href: "/report",               badge: null },
-      { icon: Radio,            label: "Investor Terminal",    href: "/terminal/investor",    badge: null },
+      { icon: Radio,            label: "PULSE™",               href: "/terminal/investor",    badge: null },
       { icon: AlertTriangle,    label: "Risk Propagation",     href: "/risk-propagation",     badge: "BETA" },
     ],
   },

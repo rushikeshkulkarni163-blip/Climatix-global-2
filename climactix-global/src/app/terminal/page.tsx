@@ -98,7 +98,7 @@ export default function RiskTerminalPage() {
       {/* Page header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", borderBottom: "1px solid #1E2C3D", background: "#0F1722" }}>
         <div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.20em", textTransform: "uppercase", marginBottom: "3px" }}>CLIMATE RISK TERMINAL — PHYSICAL + TRANSITION INTELLIGENCE</div>
+          <div style={{ fontFamily: "var(--font-mono)", fontSize: "8px", color: "#3D506A", letterSpacing: "0.20em", textTransform: "uppercase", marginBottom: "3px" }}>ORBIT™ — PHYSICAL + TRANSITION RISK INTELLIGENCE</div>
           <h1 style={{ fontSize: "16px", fontWeight: 700, color: "#DDE7F2", margin: 0 }}>Global Climate Risk Command Center</h1>
         </div>
         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>

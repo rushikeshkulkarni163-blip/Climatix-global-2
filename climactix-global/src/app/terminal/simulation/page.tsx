@@ -116,7 +116,7 @@ export default function SimulationLabPage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.18em] mb-1">
-            SIMULATION LAB / SCENARIO ENGINE
+            VECTOR™ / CLIMATE SCENARIO SIMULATION
           </div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             Climate Scenario Financial Impact Simulator

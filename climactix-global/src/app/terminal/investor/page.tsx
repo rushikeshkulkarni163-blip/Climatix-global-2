@@ -175,7 +175,7 @@ export default function InvestorDashboardPage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.18em] mb-1">
-            INVESTOR DASHBOARD / PORTFOLIO INTELLIGENCE
+            PULSE™ / PORTFOLIO CLIMATE INTELLIGENCE
           </div>
           <h1 className="text-xl font-bold text-gray-900 tracking-tight">
             Climate Portfolio Risk &amp; ESG Intelligence
