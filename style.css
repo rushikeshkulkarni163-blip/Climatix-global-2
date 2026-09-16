@@ -885,30 +885,47 @@ body {
   50%     { opacity: 0.80; }
 }
 
-/* Full-bleed photo background — NASA ISS oblique horizon photograph */
-.cx-hero-globe-bg {
+/* Full-bleed video background — Climactix Global Earth-observation reel.
+   Falls back to the video's poster (the original ISS horizon photograph)
+   whenever the video has no active source — see initHeroVideo() JS, which
+   withholds the source entirely on reduced-motion, data-saver, and small
+   viewports so the static poster stands in on mobile/slow connections. */
+.cx-hero-video-bg {
   position: absolute;
-  inset: -4%;          /* slight bleed so Ken Burns never reveals edges */
+  inset: -4%;          /* slight bleed so the slow zoom never reveals edges */
   z-index: 0;
+  overflow: hidden;
   background-color: #000;
-  background-image:
-    /* Deep space above horizon */
-    linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 7%, transparent 18%),
-    /* Thin atmospheric limb arc */
-    radial-gradient(ellipse 180% 16% at 50% 10%, rgba(40,110,230,0.40) 0%, rgba(15,60,180,0.18) 50%, transparent 70%),
-    /* Photo — ISS oblique Earth horizon, NASA/Unsplash */
-    url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=90&w=2560&auto=format&fit=crop');
-  background-size: cover;
-  background-position: center 25%;
-  background-repeat: no-repeat;
-  /* Ken Burns — 38 s, eased, infinite, GPU-composited */
+}
+
+.cx-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  pointer-events: none;
+  /* Ken Burns — 38 s, eased, infinite, GPU-composited (same slow drift as the retired static photo) */
   animation: cx-kb 38s ease-in-out infinite;
   transform-origin: 58% 52%;
   will-change: transform;
 }
 
+/* Deep space above horizon + thin atmospheric limb arc — composited over the
+   video, matching the retired static-photo treatment */
+.cx-hero-video-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 7%, transparent 18%),
+    radial-gradient(ellipse 180% 16% at 50% 10%, rgba(40,110,230,0.40) 0%, rgba(15,60,180,0.18) 50%, transparent 70%);
+}
+
 /* Atmospheric limb glow — breathes on its own cycle */
-.cx-hero-globe-bg::before {
+.cx-hero-video-bg::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -916,13 +933,14 @@ body {
   background: radial-gradient(ellipse 180% 14% at 50% 8%, rgba(60,130,255,0.30) 0%, transparent 65%);
   animation: cx-atmo 14s ease-in-out infinite;
   will-change: opacity;
+  z-index: 1;
 }
 
 /* Cloud animation canvas — sits between photo and gradient overlay */
 #heroCloudCanvas {
   position: absolute;
   inset: 0;
-  z-index: 1;           /* above .cx-hero-globe-bg (0), below .cx-hero-overlay (2) */
+  z-index: 1;           /* above .cx-hero-video-bg (0), below .cx-hero-overlay (2) */
   width: 100%;
   height: 100%;
   pointer-events: none;

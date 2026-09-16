@@ -1976,8 +1976,25 @@
     ══════════════════════════════════════════ -->
     <section class="cx-hero">
 
-      <!-- Full-bleed photo background — NASA ISS orbital photograph -->
-      <div class="cx-hero-globe-bg" id="cx-hero-globe-bg" aria-hidden="true"></div>
+      <!-- Full-bleed looping video background — poster falls back to the
+           original NASA ISS orbital photograph on slow connections,
+           unsupported browsers, and reduced-motion preference -->
+      <div class="cx-hero-video-bg" id="cx-hero-video-bg" aria-hidden="true">
+        <video
+          class="cx-hero-video"
+          id="cx-hero-video"
+          muted
+          loop
+          playsinline
+          webkit-playsinline
+          preload="none"
+          poster="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=90&w=2560&auto=format&fit=crop"
+        >
+          <!-- Add a WebM transcode here when available, before the MP4 fallback:
+               <source src="climactix-global-intro.webm" type="video/webm"> -->
+          <source src="climactix-global-intro.mp4" type="video/mp4">
+        </video>
+      </div>
 
       <!-- Animated cloud canvas — 4-layer parallax, GPU composited -->
       <canvas id="heroCloudCanvas" aria-hidden="true"></canvas>
@@ -5046,6 +5063,36 @@
       initClimateGlobe();
     }
 
+    /* Top hero — Earth-observation reel. Loads the real <source> only on
+       desktop/tablet with no data-saver and no reduced-motion preference;
+       mobile and constrained connections keep the static poster image
+       (the original ISS horizon photograph) with zero video request. */
+    function initHeroVideo() {
+      const vid = document.getElementById('cx-hero-video');
+      if (!vid) return;
+      const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const saveData = navigator.connection && navigator.connection.saveData;
+      const isMobile = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+      if (reducedMotion || saveData || isMobile) return; /* poster stands in */
+
+      vid.preload = 'auto';
+      vid.load();
+      const tryPlay = function() { vid.play().catch(function(){}); };
+      vid.addEventListener('canplay', tryPlay, { once: true });
+
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(en) {
+            if (en.isIntersecting) tryPlay();
+            else vid.pause();
+          });
+        }, { threshold: 0.1 });
+        io.observe(vid);
+      } else {
+        tryPlay();
+      }
+    }
+
     /* Earth Observation cinematic banner — play only while in view, skip entirely under reduced motion */
     function initEoBanner() {
       const vid = document.getElementById('eoVideo');
@@ -5065,10 +5112,11 @@
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() { _tryInit(); initHeatmap(); initEoBanner(); });
+      document.addEventListener('DOMContentLoaded', function() { _tryInit(); initHeatmap(); initHeroVideo(); initEoBanner(); });
     } else {
       _tryInit();
       initHeatmap();
+      initHeroVideo();
       initEoBanner();
     }
 
