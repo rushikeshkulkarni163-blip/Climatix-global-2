@@ -1,0 +1,156 @@
+/* ═══════════════════════════════════════════════════════════════════
+   rim-intel.css — analytical layers of the Risk Intelligence Map
+   Carbon exposure · Narrative intelligence · NGFS scenario modelling
+
+   Loaded after story-sections.css; uses the same pinned instrument tokens (--cxs-*) and
+   the same panel language as the ingestion panel, brief and chain. Panels are anchored around
+   the Earth — the map stays the primary canvas.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* chapter controls in the panel bar */
+.rim-lens { display: inline-flex; gap: 6px; margin-left: 12px; }
+.rim-lens button {
+  height: 26px; padding: 0 10px; font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cxs-text-2); background: transparent; border: 1px solid var(--cxs-line-2); border-radius: 2px; cursor: pointer;
+  transition: color 0.15s var(--cxs-ease), border-color 0.15s var(--cxs-ease), background 0.15s var(--cxs-ease);
+}
+.rim-lens button:hover, .rim-lens button:focus-visible { color: var(--cxs-text); border-color: var(--cxs-blue); outline: none; }
+.rim-lens button.is-cur { color: var(--cxs-text); border-color: var(--cxs-blue-deep); }
+.rim-lens button.is-on { color: var(--cxs-text); border-color: var(--cxs-blue); background: var(--cxs-surface-2); }
+
+/* analytical panels (left column; one is on at a time, cross-fading at hand-over) */
+.rim-ip {
+  position: absolute; left: 16px; top: 92px; z-index: 2; width: 236px; padding: 11px 12px 9px; pointer-events: none;
+  background: var(--cxs-surface); border: 1px solid var(--cxs-line-2); border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035); font-family: var(--mono);
+  opacity: 0; transform: translateY(4px); transition: opacity 0.3s var(--cxs-ease), transform 0.3s var(--cxs-ease);
+}
+.rim-ip.is-on { opacity: 1; transform: none; }
+.rim-ip-s.is-on { pointer-events: auto; }
+.rim-ip-h { display: flex; flex-direction: column; gap: 2px; padding-bottom: 8px; margin-bottom: 4px; border-bottom: 1px solid var(--cxs-line); }
+.rim-ip-h b { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cxs-text); }
+.rim-ip-h span { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cxs-text-mute); }
+.rim-ip-d { margin: 0; display: grid; }
+.rim-ip-d > div {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--cxs-line);
+  opacity: 0.22; transition: opacity 0.25s var(--cxs-ease);
+}
+.rim-ip-d > div:last-child { border-bottom: 0; }
+.rim-ip-d > div.is-on { opacity: 1; }
+.rim-ip-d dt { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cxs-text-2); }
+.rim-ip-d dd { margin: 0; font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: -0.01em; color: var(--cxs-text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rim-ip-d dd small { font-family: var(--mono); font-size: 7.5px; font-weight: 700; letter-spacing: 0.06em; color: var(--cxs-text-mute); margin-left: 2px; }
+.rim-ip-d dd b { font-weight: 700; }
+.rim-ip-f { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--cxs-line); font-size: 7.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cxs-amber); line-height: 1.5; }
+
+.rim-docs { list-style: none; margin: 2px 0 6px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.rim-docs li { font-size: 8px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cxs-text-2); padding: 3px 6px; border: 1px solid var(--cxs-line-2); border-radius: 2px; }
+
+/* claims extracted from the disclosures (right column, under the ingestion panel) */
+.rim-claims {
+  position: absolute; right: 16px; top: 160px; z-index: 2; width: 252px; margin: 0; padding: 0; list-style: none; pointer-events: none; display: none;
+}
+.rim-claims.is-on { display: grid; gap: 6px; }
+.rim-claims li {
+  padding: 7px 9px 8px; background: var(--cxs-surface); border: 1px solid var(--cxs-line-2); border-radius: var(--radius-md); font-family: var(--mono);
+  opacity: 0; transform: translateX(6px); transition: opacity 0.3s var(--cxs-ease), transform 0.3s var(--cxs-ease), border-color 0.3s var(--cxs-ease);
+}
+.rim-claims li.is-on { opacity: 1; transform: none; }
+.rim-cl-t { display: block; font-family: var(--font); font-size: 11.5px; font-weight: 500; line-height: 1.35; color: var(--cxs-text); }
+.rim-cl-d { display: block; margin-top: 2px; font-size: 7.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cxs-text-mute); }
+.rim-claims em { display: inline-block; margin-top: 5px; font-style: normal; font-size: 7.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cxs-text-mute); opacity: 0; transition: opacity 0.3s var(--cxs-ease); }
+.rim-claims li.is-eval em { opacity: 1; }
+.rim-claims li.is-eval[data-status="supported"] { border-color: var(--cxs-blue-deep); } .rim-claims li.is-eval[data-status="supported"] em { color: var(--cxs-blue); }
+.rim-claims li.is-eval[data-status="partial"] em { color: var(--cxs-text); }
+.rim-claims li.is-eval[data-status="gap"] { border-color: rgba(232,119,34,0.55); } .rim-claims li.is-eval[data-status="gap"] em { color: var(--cxs-amber); }
+
+/* scenario model controls */
+.rim-ip-s { width: 244px; }
+.rim-sc-l { display: block; margin: 6px 0 4px; font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cxs-text-mute); }
+.rim-sc-sel {
+  width: 100%; height: 28px; padding: 0 8px; font-family: var(--font); font-size: 12px; font-weight: 500; color: var(--cxs-text);
+  background: var(--cxs-bg); border: 1px solid var(--cxs-line-2); border-radius: var(--radius-md); cursor: pointer;
+}
+.rim-sc-sel:focus-visible { outline: 1px solid var(--cxs-blue); outline-offset: 1px; }
+.rim-sc-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rim-sc-row.stack { flex-direction: column; align-items: stretch; gap: 4px; }
+.rim-sc-row.stack .rim-seg { display: flex; } .rim-sc-row.stack .rim-seg button { flex: 1; }
+.rim-seg { display: inline-flex; }
+.rim-seg button {
+  height: 24px; padding: 0 8px; font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cxs-text-2); background: transparent; border: 1px solid var(--cxs-line-2); margin-left: -1px; cursor: pointer;
+  transition: color 0.15s var(--cxs-ease), background 0.15s var(--cxs-ease), border-color 0.15s var(--cxs-ease);
+}
+.rim-seg button:first-child { margin-left: 0; border-radius: 2px 0 0 2px; } .rim-seg button:last-child { border-radius: 0 2px 2px 0; }
+.rim-seg button:hover, .rim-seg button:focus-visible { color: var(--cxs-text); outline: none; }
+.rim-seg button.is-on { color: var(--cxs-text); background: var(--cxs-surface-2); border-color: var(--cxs-blue); position: relative; z-index: 1; }
+.rim-sc-outs { list-style: none; margin: 8px 0 0; padding: 8px 0 0; border-top: 1px solid var(--cxs-line); display: grid; gap: 7px; }
+.rim-sc-outs li { display: grid; grid-template-columns: 1fr auto auto; align-items: baseline; gap: 6px; }
+.rim-sc-outs span { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cxs-text-2); }
+.rim-sc-outs b { font-size: 9px; color: var(--cxs-text-mute); } .rim-sc-outs li.is-up b { color: var(--cxs-amber); } .rim-sc-outs li.is-down b { color: var(--cxs-blue); }
+.rim-sc-outs em { min-width: 62px; text-align: right; font-style: normal; font-family: var(--font-head); font-size: 12px; font-weight: 700; color: var(--cxs-text); }
+.rim-sc-outs li.is-hi em { color: var(--cxs-amber); }
+.rim-sc-outs i { grid-column: 1 / -1; display: block; height: 2px; background: var(--cxs-line); position: relative; }
+.rim-sc-outs i::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: var(--w, 0%); background: var(--cxs-blue); transition: width 0.4s var(--cxs-ease); }
+.rim-sc-outs li.is-hi i::after { background: var(--cxs-amber); }
+
+/* the shared chain strip carries the active layer's relationship chain */
+.rim-ichain { position: absolute; left: 0; right: 0; top: 0; }
+.rim-ichain li.is-off { display: none; }
+.rim-ichain-note { position: absolute; left: 0; right: 0; top: 42px; margin: 0; }
+.rim-chainwrap.has-intel .rim-chain:not(.rim-ichain) { opacity: 0; }
+
+/* closing synthesis at the facility: current + carbon + narrative + scenario → climate intelligence → materiality */
+.rim-synth {
+  position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: 10px; padding: 10px 12px 10px;
+  background: var(--cxs-surface); border: 1px solid var(--cxs-line-2); border-radius: var(--radius-md); font-family: var(--mono);
+  opacity: 0; transform: translateY(6px); transition: opacity 0.3s var(--cxs-ease), transform 0.3s var(--cxs-ease);
+}
+.rim-synth.is-on { opacity: 1; transform: none; }
+.rim-synth-h { font-size: 8.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cxs-text-2); margin-bottom: 8px; }
+.rim-synth-row { display: flex; align-items: stretch; gap: 10px; }
+.rim-synth-in, .rim-synth-out { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex: 1; min-width: 0; }
+.rim-synth-in li, .rim-synth-out span {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; padding: 7px 9px; background: var(--cxs-bg); border: 1px solid var(--cxs-line); border-radius: var(--radius-md);
+  opacity: 0.3; transition: opacity 0.25s var(--cxs-ease), border-color 0.25s var(--cxs-ease);
+}
+.rim-synth-in li.is-lit, .rim-synth-out span.is-lit { opacity: 1; border-color: var(--cxs-line-2); }
+.rim-synth small { font-size: 7.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cxs-text-mute); }
+.rim-synth b { font-family: var(--font); font-size: 12.5px; font-weight: 700; color: var(--cxs-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rim-synth-in li[data-tone="high"] b { color: var(--cxs-amber); }
+.rim-synth-x { align-self: center; font-size: 14px; color: var(--cxs-blue); }
+.rim-synth-out span:last-child.is-lit { border-color: var(--cxs-blue-deep); } .rim-synth-out span:last-child b { color: var(--cxs-blue); }
+.cxs-rim.is-away .rim-synth { opacity: 0; }
+.cxs-rim.is-synth .rim-brief { opacity: 0; transform: translateY(6px); }
+
+/* nine layers in the right rail: a little tighter, same look */
+.rim-layers .rim-layer { padding: 9px 14px; }
+.rim-layers .rim-chips { margin-top: 6px; gap: 3px; }
+.rim-layers .rim-chips li { font-size: 10px; padding: 3px 6px; }
+
+@media (max-width: 1100px) {
+  .rim-layer:nth-child(7) { border-left: 0; }
+  .rim-ip { width: 214px; } .rim-ip-s { width: 224px; } .rim-claims { width: 220px; }
+  .rim-synth-in li, .rim-synth-out span { padding: 6px 7px; } .rim-synth b { font-size: 11px; }
+}
+@media (max-width: 860px) {
+  .rim-layer:nth-child(6) { grid-column: auto; }
+  .rim-layer:last-child { grid-column: 1 / -1; border-left: 0; }
+}
+@media (max-width: 720px) {
+  .rim-lens { margin-left: 8px; } .rim-lens button { padding: 0 7px; }
+  .cxs-rim .cxs-bar { flex-wrap: wrap; row-gap: 6px; padding-top: 6px; padding-bottom: 6px; }
+  /* mobile: the map keeps its overlays; text panels give way to the chain strip + stage title */
+  .rim-ip, .rim-claims { display: none !important; }
+  .rim-ichain { position: relative; flex-wrap: wrap; } .rim-ichain li { flex: 1 1 33%; }
+  .rim-ichain-note { position: relative; top: 0; }
+  .rim-synth:not(.is-on), .rim-ichain:not(.is-on), .rim-ichain-note:not(.is-on) { display: none; }      /* no reserved space while idle */
+  .rim-chainwrap.has-intel .rim-chain:not(.rim-ichain) { display: none; }
+  .rim-synth { position: relative; bottom: auto; margin: 0 0 8px; } .rim-synth-row { flex-direction: column; } .rim-synth-in, .rim-synth-out { flex-wrap: wrap; } .rim-synth-x { transform: rotate(90deg); }
+  .rim-layer:nth-child(n) { grid-column: auto; }
+  .rim-layer:last-child { grid-column: 1 / -1; }
+  .rim-layer:nth-child(6) { grid-column: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rim-ip, .rim-claims li, .rim-synth, .rim-ip-d > div { transition: none !important; }
+}

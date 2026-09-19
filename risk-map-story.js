@@ -42,6 +42,31 @@
   var ZOOM_KEYS = [[9.8, 0], [10.8, 1], [11.0, 1], [11.9, 2], [12.05, 2], [12.85, 3], [13.0, 3], [14.0, 4]];
   var LAYER_NAMES = ['Climate signals', 'Earth observation', 'Exposure', 'Risk', 'Financial materiality', 'Decision intelligence'];
   var NLAY = 6;
+
+  /* ═══ extended timeline ═══
+     Three analytical layers (carbon exposure · narrative intelligence · NGFS scenario modelling) and a
+     closing synthesis are played on the SAME Earth and the SAME facility view. Two holds freeze the
+     original ("base") clock at chosen moments; everything else in the original story runs unchanged.
+     te = extended clock · tb = base clock. The satellite / detection clock keeps running through the
+     first hold so the scan finishes naturally instead of freezing mid-swath. */
+  var HOLDS = [{ tb: 8.35, dur: 13.6 }, { tb: 17.9, dur: 3.4 }];
+  var PH = { carbon: [8.35, 12.55], narrative: [12.55, 17.15], scenario: [17.15, 21.95], synth: [31.5, 34.9] };
+  var TEND = T.end; HOLDS.forEach(function (h) { TEND += h.dur; });
+  function baseTime(te) {
+    var acc = 0;
+    for (var i = 0; i < HOLDS.length; i++) {
+      var h = HOLDS[i], s0 = h.tb + acc;
+      if (te < s0) return te - acc;
+      if (te < s0 + h.dur) return h.tb;
+      acc += h.dur;
+    }
+    return te - acc;
+  }
+  function teOf(tb) { var acc = 0; for (var i = 0; i < HOLDS.length; i++) { if (tb > HOLDS[i].tb) acc += HOLDS[i].dur; } return tb + acc; }
+  /* display order of the nine layers, and the data-layer id each one has in the DOM (base ids 1–6 are unchanged) */
+  var LAYER_ORDER = [1, 2, 3, 4, 7, 8, 9, 5, 6];
+  var LAYER_TITLES = ['Climate signals', 'Earth observation', 'Exposure', 'Risk', 'Carbon exposure', 'Narrative intelligence', 'Scenario modelling', 'Financial materiality', 'Decision intelligence'];
+  var EMPH_N = 9, EMPH_ALL = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
   function streamT0(i) { return i === 0 ? 3.0 : 3.6 + (i - 1) * 0.28; }
 
   /* ═══ synthetic data ═══ */
@@ -458,7 +483,7 @@
     var t = 0, playing = false, visible = true, raf = 0, last = 0, done = false, ambT = 0, ambTimer = 0;
     var stageIdx = '', layerIdx = -1, crumbIdx = -1, briefOn = false, chainLit = -2, noteOn = false, finalOn = false, scenLit = -1, panelStamp = -1;
     var emph = { layer: 0, focus: null };
-    var emphA = [1, 1, 1, 1, 1, 1, 1], emphBusy = false;
+    var emphA = EMPH_ALL.slice(), emphBusy = false, curTe = 0, intel = null;
     var streams = [], panelPt = { x: 0, y: 0 };
     var scratch = { x: 0, y: 0, z: 0 }, tmpV = { x: 0, y: 0, z: 0 };
     var zView = 4, zFrom = 4, zTo = 4, zT0 = 0, zMoving = false;
@@ -534,7 +559,7 @@
     function applyCamera(tt) {
       var z = done ? zView : zoomAt(tt);
       var rot = easeIO(seg(tt, 0, T.zoom));
-      var worldLon = lerp(10, 76, rot), worldLat = 16;
+      var worldLon = lerp(10, 76, rot) + 1.8 * smooth(seg(curTe, PH.carbon[0], PH.scenario[1])) * (1 - smooth(seg(tt, HOLDS[0].tb, T.zoom))), worldLat = 16;
       var k = Math.min(3, Math.floor(z)), u = z >= 4 ? 1 : z - k;
       var aLat, aLon, aS, bLat, bLon, bS;
       if (k === 0) { aLat = worldLat; aLon = worldLon; aS = S0; }
@@ -1489,15 +1514,15 @@
 
     /* ── frame ── */
     function targetEmph() {
-      var a = [1, 1, 1, 1, 1, 1, 1];
-      if (emph.focus === 'supply') { a = [1, 0.25, 0.25, 1, 0.55, 0.25, 0.25]; }
-      else if (emph.focus === 'physical') { a = [1, 1, 0.3, 0.3, 1, 0.3, 0.3]; }
-      else if (emph.layer) { a = [1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]; a[emph.layer] = 1; }
+      var a = EMPH_ALL.slice();
+      if (emph.focus === 'supply') { a = [1, 0.25, 0.25, 1, 0.55, 0.25, 0.25, 0.25, 0.25, 0.25]; }
+      else if (emph.focus === 'physical') { a = [1, 1, 0.3, 0.3, 1, 0.3, 0.3, 0.3, 0.3, 0.3]; }
+      else if (emph.layer) { a = [1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]; a[emph.layer] = 1; }
       return a;
     }
     function stepEmph(dt) {
       var tg = targetEmph(), busy = false;
-      for (var i = 1; i <= NLAY; i++) {
+      for (var i = 1; i <= EMPH_N; i++) {
         var d = tg[i] - emphA[i];
         if (Math.abs(d) > 0.004) { emphA[i] += d * Math.min(1, dt * 9); busy = true; } else emphA[i] = tg[i];
       }
@@ -1514,34 +1539,44 @@
       if (!done || goal === zTo) return;
       zFrom = zView; zTo = goal; zT0 = performance.now(); zMoving = true;
     }
-    function dataClock(tt) { return done ? T.end + ambT : tt; }
+    function dataClock(tt, te) { return done ? TEND + ambT : te; }
 
-    function draw(tt) {
+    function draw(te) {                                // te = extended clock; the base story is driven by tb
+      curTe = te;
+      drawBase(baseTime(te), te);
+    }
+    function satClock(te, tb) {                        // satellite / markers keep running through hold 1, then follow the base clock
+      var h = HOLDS[0];
+      if (te < h.tb) return tb;
+      return Math.max(tb, Math.min(te, h.tb + h.dur));
+    }
+    function drawBase(tt, te) {
       var z = applyCamera(tt);
+      var ts = satClock(te, tt);
       var ea = smooth(seg(tt, 0, T.earthIn));
-      var A = emphA, dt = dataClock(tt);
+      var A = emphA, dt = dataClock(tt, te);
       var r1 = smooth(seg(tt, T.layers[0], T.layers[0] + T.layerDur)), r2 = smooth(seg(tt, T.layers[1], T.layers[1] + T.layerDur));
       var a1 = r1 * A[1];
       obsAlpha = r2 * A[2];
       var dimBase = emph.layer || emph.focus ? 1 : 1 - 0.45 * smooth(seg(tt, T.layers[3], T.layers[3] + 1.2));
-      var scen = smooth(seg(tt, T.scen[0], T.scen[0] + 0.5)) * 0.4 + smooth(seg(tt, T.scen[1], T.scen[1] + 0.5)) * 0.5 + smooth(seg(tt, T.scen[2], T.scen[2] + 0.5)) * 0.7;
+      var scen = smooth(seg(tt, T.scen[0], T.scen[0] + 0.5)) * 0.4 + smooth(seg(tt, T.scen[1], T.scen[1] + 0.5)) * 0.5 + smooth(seg(tt, T.scen[2], T.scen[2] + 0.5)) * 0.7 + (intel ? intel.physScen(te) : 0);
       var texFade = EARTH.ready ? smooth((performance.now() - texReadyAt) / 700) : 0;
       if (done) texFade = EARTH.ready ? 1 : 0;
       var texAlpha = texFade * (1 - smooth(seg(z, 1.5, 2.2)));
-      var satA = FULL_SAT || tier === 'mobile' ? satAlpha(tt, z) : 0, sp = spot(tt);
-      var orbA = smooth(seg(tt, 0.9, 2.4)) * (1 - smooth(seg(tt, 10.2, 11.4))) * (1 - smooth(seg(z, 0.2, 0.9)));
+      var satA = FULL_SAT || tier === 'mobile' ? satAlpha(ts, z) : 0, sp = spot(ts);
+      var orbA = smooth(seg(ts, 0.9, 2.4)) * (1 - smooth(seg(ts, 10.2, 11.4))) * (1 - smooth(seg(z, 0.2, 0.9)));
 
       satScr.ok = false;
       drawBackdrop(z);
       drawOrbitRing(false, orbA * ea);
       if (satA > 0.02) {                                                   // behind the planet? draw first, the globe hides it
-        var thb = thAt(tt), pb = orbVec(thb); projVec([pb[0] * ORB.ro, pb[1] * ORB.ro, pb[2] * ORB.ro], 1, tmpV);
-        if (tmpV.z < 0) drawSatellite(tt, z, satA * ea, sp);
+        var thb = thAt(ts), pb = orbVec(thb); projVec([pb[0] * ORB.ro, pb[1] * ORB.ro, pb[2] * ORB.ro], 1, tmpV);
+        if (tmpV.z < 0) drawSatellite(ts, z, satA * ea, sp);
       }
       drawGlobeBase(ea, z);
       var fA = a1 * dimBase * 0.9 * ea, gainNow = (1 + 1.5 * smooth(seg(z, 2.2, 3.6))) * (1 + scen * 0.5), thNow = 0.46 - 0.05 * scen;
       var fShare = EARTH.ready ? 1 - smooth(seg(z, 1.0, 1.6)) : 0;
-      drawEarthTex(ea * texAlpha, tt, fA * fShare, gainNow, thNow);
+      drawEarthTex(ea * texAlpha, te, fA * fShare, gainNow, thNow);
       drawAtmosphere(ea, z);
       drawGraticule(ea * (1 - smooth(seg(z, 0.4, 1.2))) * (1 - 0.7 * texAlpha));
       drawLand(ea, z, texAlpha);
@@ -1556,21 +1591,22 @@
       drawStreams(tt, z, dt);
       /* satellite story on top of the surface */
       if (satA > 0.02) {
-        drawSwath(tt, satA * smooth(seg(tt, T.scan1[0], T.scan1[0] + 0.4)) * (1 - 0.6 * smooth(seg(tt, T.scan1[1] + 1, T.scan1[1] + 3))));
+        drawSwath(ts, satA * smooth(seg(ts, T.scan1[0], T.scan1[0] + 0.4)) * (1 - 0.6 * smooth(seg(ts, T.scan1[1] + 1, T.scan1[1] + 3))));
         drawOrbitRing(true, orbA * ea);
-        groundTrack(tt, satA * ea);
+        groundTrack(ts, satA * ea);
       }
-      drawMarkers(tt, z);
-      drawDetection(tt, z);
+      drawMarkers(ts, z);
+      drawDetection(ts, z);
+      if (intel) intel.draw(te, tt, z, dt);              // carbon · narrative · scenario layers, on the same Earth
       if (satA > 0.02) {
-        var thf = thAt(tt), pf2 = orbVec(thf); projVec([pf2[0] * ORB.ro, pf2[1] * ORB.ro, pf2[2] * ORB.ro], 1, tmpV);
-        if (tmpV.z >= 0) drawSatellite(tt, z, satA * ea, sp);
-        drawScan(tt, sp, satA);
-        drawDownlink(tt, satA);
+        var thf = thAt(ts), pf2 = orbVec(thf); projVec([pf2[0] * ORB.ro, pf2[1] * ORB.ro, pf2[2] * ORB.ro], 1, tmpV);
+        if (tmpV.z >= 0) drawSatellite(ts, z, satA * ea, sp);
+        drawScan(ts, sp, satA);
+        drawDownlink(ts, satA);
       }
       drawCallouts(smooth(seg(tt, T.brief, T.brief + 0.4)) * smooth(seg(z, 3.2, 4)) * (1 - smooth(seg(tt, T.final - 0.4, T.final + 0.4)) * 0.6) * (emph.layer || emph.focus ? 0 : 1), dt);
-      if (progressEl) progressEl.style.transform = 'scaleX(' + clamp(tt / T.end, 0, 1).toFixed(4) + ')';
-      syncDom(tt, z, dt);
+      if (progressEl) progressEl.style.transform = 'scaleX(' + clamp(te / TEND, 0, 1).toFixed(4) + ')';
+      syncDom(tt, z, dt, te);
     }
 
     /* ── DOM sync (only on change) ── */
@@ -1587,17 +1623,20 @@
       return 8;
     }
     var STAGE_TITLES = ['Global climate signals', 'CTX-SAT-01 enters orbit', 'Earth observation · scan', 'Data acquired · transmitted', '', 'From global to facility', 'Facility risk intelligence', 'Illustrative scenario', 'From Earth data to decision intelligence'];
-    function syncDom(tt, z, dt) {
+    function syncDom(tt, z, dt, te) {
       var stage = stageOf(tt);
       var lyr = -1;
       if (stage === 4 || (stage === 3 && tt >= T.layers[0])) { for (var i = T.layers.length - 1; i >= 0; i--) if (tt >= T.layers[i]) { lyr = i; break; } }
+      if (lyr >= 0) lyr = lyr < 4 ? lyr : lyr + 3;                                   // base index → display index (fin/decision follow the new layers)
+      if (te >= PH.carbon[0] && te < HOLDS[0].tb + HOLDS[0].dur) lyr = te < PH.narrative[0] ? 4 : te < PH.scenario[0] ? 5 : 6;
       if (stage === 3 && lyr >= 0) stage = 4;
       var lvl = stage >= 5 ? Math.min(4, Math.round(z)) : -1;
       var away = done && zView < 3.3;
-      var key = stage + ':' + lyr + ':' + away;
+      var key = stage + ':' + lyr + ':' + away + ':' + (te >= PH.synth[0] && te < PH.synth[1] + 1);
       if (key !== stageIdx) {
         stageIdx = key;
-        var title = stage === 4 ? 'Layer ' + pad(lyr + 1) + ' · ' + (LAYER_NAMES[lyr] || '') : (away && stage >= 6 ? 'Global exposure view' : STAGE_TITLES[stage]);
+        var synthOn = te >= PH.synth[0] && te < PH.synth[1] + 1;
+        var title = synthOn ? 'Intelligence synthesis · facility' : stage === 4 ? 'Layer ' + pad(lyr + 1) + ' · ' + (LAYER_TITLES[lyr] || '') : (away && stage >= 6 ? 'Global exposure view' : STAGE_TITLES[stage]);
         stageEl.textContent = title;
         subEl.textContent = (stage === 3 || stage === 2) && tier !== 'desktop' ? SOURCE_SUB : '';
         crumbEl.classList.toggle('is-on', stage >= 5);
@@ -1606,8 +1645,9 @@
       if (lstate !== layerIdx || stage !== (syncDom.lastStage || 0)) {
         layerIdx = lstate; syncDom.lastStage = stage;
         for (var j = 0; j < layerEls.length; j++) {
-          layerEls[j].classList.toggle('is-active', stage === 4 && j === lyr);
-          layerEls[j].classList.toggle('is-done', stage >= 5 || (stage === 4 && j < lyr));
+          var pos = LAYER_ORDER.indexOf(+layerEls[j].getAttribute('data-layer'));
+          layerEls[j].classList.toggle('is-active', stage === 4 && pos === lyr);
+          layerEls[j].classList.toggle('is-done', stage >= 5 || (stage === 4 && pos < lyr));
         }
       }
       if (lvl !== crumbIdx) {
@@ -1636,6 +1676,7 @@
         for (var sIdx = 0; sIdx < scenItems.length; sIdx++) scenItems[sIdx].classList.toggle('is-lit', sIdx <= sl);
       }
       syncPanel(tt, dt);
+      if (intel) intel.sync(te, stage, z);
     }
     function pad(n) { return n < 10 ? '0' + n : String(n); }
 
@@ -1646,7 +1687,7 @@
       var stamp = Math.floor(dt / 0.7);
       var on = tt >= 3.0 || done;
       if (on !== panelEl.classList.contains('is-on')) panelEl.classList.toggle('is-on', on);
-      var compact = tt >= T.zoom;
+      var compact = tt >= T.zoom || curTe >= PH.carbon[0];
       if (compact !== panelEl.classList.contains('is-compact')) panelEl.classList.toggle('is-compact', compact);
       if (stamp === panelStamp) return;
       panelStamp = stamp;
@@ -1673,7 +1714,7 @@
       var dtl = Math.min(0.1, (now - last) / 1000); last = now;
       if (playing) {
         t += dtl;
-        if (t >= T.end) { t = T.end; playing = false; done = true; root.classList.add('is-done'); startAmbient(); }
+        if (t >= TEND) { t = TEND; playing = false; done = true; root.classList.add('is-done'); startAmbient(); }
       }
       stepEmph(dtl);
       stepCam(now);
@@ -1697,12 +1738,12 @@
     }
 
     /* ── hover / focus emphasis (only once the layers exist) ── */
-    function unlocked() { return t >= T.layers[NLAY - 1] + T.layerDur || done; }
+    function unlocked() { return t >= teOf(T.layers[NLAY - 1] + T.layerDur) || done; }
     function setEmph(layer, focus) {
       if (!unlocked()) return;
       emph.layer = layer; emph.focus = focus;
       camTo(layer || focus ? 0 : 4);
-      for (var i = 0; i < layerEls.length; i++) layerEls[i].classList.toggle('is-focus', layer === i + 1);
+      for (var i = 0; i < layerEls.length; i++) layerEls[i].classList.toggle('is-focus', layer === +layerEls[i].getAttribute('data-layer'));
       var chips = root.querySelectorAll('.rim-chips li[data-focus]');
       for (var c = 0; c < chips.length; c++) chips[c].classList.toggle('is-focus', !!focus && chips[c].getAttribute('data-focus') === focus);
       kick();
@@ -1724,6 +1765,7 @@
 
     /* ── lifecycle ── */
     function resetDom() {
+      if (intel) intel.reset();
       stageIdx = ''; layerIdx = -1; crumbIdx = -1; briefOn = false; chainLit = -2; noteOn = false; finalOn = false; scenLit = -2; panelStamp = -1;
       syncDom.lastStage = -1;
       briefEl.classList.remove('is-on'); chainEl.classList.remove('is-on'); chainNote.classList.remove('is-on');
@@ -1734,30 +1776,49 @@
     function play() {
       clearInterval(ambTimer);
       done = false; t = 0; ambT = 0; playing = true; zView = zFrom = zTo = 4; zMoving = false; root.classList.remove('is-away');
-      emph.layer = 0; emph.focus = null; emphA = [1, 1, 1, 1, 1, 1, 1];
+      emph.layer = 0; emph.focus = null; emphA = EMPH_ALL.slice();
       resetDom();
       kick();
     }
     function showFinal() {
-      done = true; playing = false; t = T.end; zView = zFrom = zTo = 4; zMoving = false;
+      done = true; playing = false; t = TEND; zView = zFrom = zTo = 4; zMoving = false;
       resetDom();
-      draw(T.end);
+      draw(TEND);
       root.classList.add('is-done');
       startAmbient();
     }
     function seek(x) {                                 // QA / deep-link hook
       playing = false; clearInterval(ambTimer);
-      done = x >= T.end; t = clamp(x, 0, T.end); ambT = 0;
+      done = x >= TEND; t = clamp(x, 0, TEND); ambT = 0;
       if (done) { zView = zFrom = zTo = 4; zMoving = false; }
       texA = 1;
       draw(t);
     }
     function destroy() {
+      if (intel) intel.destroy();
       earthAlive = false; clearTimeout(earthTimer); clearInterval(ambTimer); cancelAnimationFrame(raf); raf = 0; playing = false;
       hoverBound.forEach(function (b) { b[0].removeEventListener(b[1], b[2]); }); hoverBound = [];
       if (ro) ro.disconnect(); if (stopVis) stopVis();
     }
 
+    /* ── hook for the analytical layers (rim-intel-layers.js): the same projection, palette and clock as the map itself ── */
+    function jump(te) {                                // chapter jump while the story is playing: continue from there
+      clearInterval(ambTimer); done = false; ambT = 0; t = clamp(te, 0, TEND); playing = true; root.classList.remove('is-done');
+      if (zView !== 4 || zMoving) { zView = zFrom = zTo = 4; zMoving = false; root.classList.remove('is-away'); }
+      kick();
+    }
+    if (window.CX_RIM_INTEL) {
+      intel = window.CX_RIM_INTEL.create({
+        root: root, wrap: wrap, ctx: ctx, tier: tier, C: C, MONO: MONO, TAU: TAU, D2R: D2R, SHOW_TEXT: SHOW_TEXT,
+        rgba: rgba, mix: mix, text: text, clamp: clamp, lerp: lerp, seg: seg, smooth: smooth, easeIO: easeIO, easeOut: easeOut,
+        proj: proj, size: function () { return { W: W, H: H, cx: cx, cy: cy, S: S, dpr: dpr, z: curZ }; },
+        FAC: FAC, SUP: SUP, ARCS: ARCS, field: field, HERO: HERO, PH: PH, TEND: TEND, HOLDS: HOLDS,
+        emph: function () { return emph; }, emphA: function () { return emphA; },
+        isDone: function () { return done; }, isPlaying: function () { return playing; },
+        lens: function (layerId, on) { if (done || !playing && unlocked()) setEmph(on ? layerId : 0, null); else if (on) jump(PH[layerId === 7 ? 'carbon' : layerId === 8 ? 'narrative' : 'scenario'][0]); },
+        redraw: function () { if (!playing) draw(t); kick(); }
+      });
+    }
     resize();
     var ro = null, stopVis = null;
     if ('ResizeObserver' in window) {
