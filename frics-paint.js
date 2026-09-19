@@ -1,13 +1,16 @@
 /**
- * frics-paint.js — canvas painters for the FRICS™ story stage.
+ * frics-paint.js — canvas painters for the FRICS™ marketplace film.
  *
- * Every painter is a pure function of the story clock t (seconds): the globe zoom
- * (frics-geo.js, existing Earth data), the farm (frics-scene.js), capital streams, the
- * allocation engine, the impact chart and the feedback loop. Nothing here keeps animation
- * state, so the story can be scrubbed and paused freely.
+ * Every painter is a pure function of the film clock t (seconds), so the film can be scrubbed and
+ * paused freely. Layers:
+ *   Earth (frics-geo.js, the existing Risk Intelligence Map data) with four resilience signals,
+ *   unit matrices (the FRICS in an order, in a holding), capital streams, the allocation connectors,
+ *   the farm (frics-scene.js) with intervention labels, and the food-chain resilience pulses.
  *
- *   FRICSPaint.create(env) → { frame(t, step) , pins }
- *   env: { g, W(), H(), dpr(), Art, geo, scene, rect(el), els }   (rect = px box inside the stage)
+ *   FRICSPaint.create(env) → { frame(t, step) }
+ *   env: { g, W(), H(), dpr(), Art, geo, scene, rect(el), els, mono }   (rect = px box inside the stage)
+ *
+ * No place names anywhere: the Earth is unlabelled and the farm is a generic parcel model.
  */
 (function () {
   'use strict';
@@ -31,18 +34,22 @@
   function bez(a, c, b, u) { var v = 1 - u; return [v * v * a[0] + 2 * v * u * c[0] + u * u * b[0], v * v * a[1] + 2 * v * u * c[1] + u * u * b[1]]; }
 
   var L = Math.log;
-  /* Earth camera: t, lon, lat, ln(R / H), cx, cy (stage fractions), alpha, water-stress tint */
+  /* Earth camera: t, lon, lat, ln(R / H), cx, cy (stage fractions), alpha */
   var CAM = [
-    [0, 63, 14, L(0.34), 0.72, 0.56, 0, 0], [0.8, 64, 14.5, L(0.34), 0.72, 0.56, 1, 0], [2.0, 68, 16, L(0.36), 0.72, 0.56, 1, 0],
-    [3.2, 77, 17.9, L(1.5), 0.72, 0.58, 1, 0.9], [4.6, 77, 18.1, L(1.9), 0.72, 0.6, 1, 1], [5.2, 77, 18.1, L(2.0), 0.72, 0.6, 0, 1],
-    [8.5, 62, 18, L(0.42), 0.5, 0.5, 0, 0], [9.0, 62, 18, L(0.42), 0.5, 0.5, 1, 0], [9.7, 77, 20, L(2.0), 0.5, 0.5, 1, 0.5],
-    [10.4, 75.4, 18.8, L(8), 0.5, 0.5, 1, 0.35], [11.0, 74.5, 18.5, L(32), 0.5, 0.5, 1, 0], [11.6, 74.5, 18.5, L(32), 0.5, 0.5, 0, 0]
+    [0, 36, 14, L(0.6), 0.68, 0.52, 0], [0.7, 38, 14.5, L(0.62), 0.68, 0.52, 1], [2.0, 47, 15, L(0.66), 0.68, 0.52, 1], [2.8, 51, 15.5, L(0.7), 0.68, 0.52, 0],
+    [9.3, 50, 16, L(0.5), 0.5, 0.5, 0], [9.9, 50, 16, L(0.5), 0.5, 0.5, 1], [10.6, 79, 22, L(4.6), 0.5, 0.5, 1], [11.2, 79.2, 22.2, L(9), 0.5, 0.5, 0]
   ];
-  var PUNE = [73.779, 18.605], MAHA = [76.0, 19.4], PROJECT = [74.75, 18.4];   // company facility · region · project area (lon, lat)
-  var DIM = [[0, 0], [12.4, 0], [12.8, 0.9], [13.6, 0.9], [14.0, 0.4], [15.1, 0.4], [15.5, 1]];
+  /* four resilience signals on the Earth: lon, lat, label, sub, appears at, label side */
+  var SIGNALS = [
+    [30, 12, 'Water', 'Availability and reliability', 0.55, -1],
+    [58, 26, 'Soil', 'Degradation and moisture', 0.85, 1],
+    [82, 14, 'Crop', 'Yield under stress', 1.15, -1],
+    [100, 4, 'Food system', 'Supply continuity', 1.45, -1]
+  ];
+  var DIM = [[0, 0], [11.9, 0], [12.4, 0.9], [15.0, 0.9], [15.6, 1]];
 
   function create(env) {
-    var g = env.g, pins = {}, Art = env.Art, geo = env.geo, scene = env.scene;
+    var gb = env.g, gt = env.gt || env.g, g = gb, pins = {}, Art = env.Art, geo = env.geo, scene = env.scene, mono = env.mono || 'IBM Plex Mono, monospace';
 
     function coin(x, y, d, a) {
       var sp = Art.sprite('front', 128);
@@ -50,39 +57,38 @@
     }
     function dot(x, y, r, col, a) { g.globalAlpha = a; g.fillStyle = col; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); g.globalAlpha = 1; }
     function ring(x, y, r, col, a, w) { g.globalAlpha = a; g.strokeStyle = col; g.lineWidth = w || 1; g.beginPath(); g.arc(x, y, r, 0, TAU); g.stroke(); g.globalAlpha = 1; }
+    function txt(s, x, y, size, col, a, align, sp) {
+      g.globalAlpha = a; g.fillStyle = col; g.font = '700 ' + size + 'px ' + mono; g.textAlign = align || 'left'; g.textBaseline = 'alphabetic';
+      if ('letterSpacing' in g) g.letterSpacing = (sp == null ? 1.2 : sp) + 'px';
+      g.fillText(s, x, y); if ('letterSpacing' in g) g.letterSpacing = '0px'; g.globalAlpha = 1;
+    }
 
-    /* keys() returns from index 1: [lon, lat, lnR, cx, cy, a, stress] */
-    function cam(t) { var k = keys(t, CAM), H = env.H(), W = env.W(); return { lon: k[0], lat: k[1], R: H * Math.exp(k[2]), cx: W * k[3], cy: H * k[4], a: k[5], stress: k[6] }; }
+    /* keys() returns from index 1: [lon, lat, lnR, cx, cy, a] */
+    function cam(t) { var k = keys(t, CAM), H = env.H(), W = env.W(); return { lon: k[0], lat: k[1], R: H * Math.exp(k[2]), cx: W * k[3], cy: H * k[4], a: k[5], stress: 0, plain: true }; }
 
-    /* ── Earth + markers ── */
-    function earth(t, step) {
+    /* ── Earth + resilience signals ── */
+    function earth(t) {
       if (!geo.ok) return;
       var c = cam(t); pins.cam = c;
-      if (c.a <= 0.01) { pins.pune = pins.maha = pins.project = null; return; }
+      if (c.a <= 0.01) return;
       geo.draw(g, c);
-      var depth = clamp((Math.log(c.R / env.H()) - 1) / 1.5);
+      var depth = clamp((Math.log(c.R / env.H()) - 1) / 1.4);
       if (depth > 0.01) {                                             // deep zoom: hold the eye on the centre, hide coarse coastline at the edges
         var Wd = env.W(), Hd = env.H(), vg = g.createRadialGradient(Wd / 2, Hd / 2, Hd * 0.32, Wd / 2, Hd / 2, Math.hypot(Wd, Hd) * 0.55);
         vg.addColorStop(0, 'rgba(5,8,16,0)'); vg.addColorStop(1, 'rgba(5,8,16,' + (0.93 * c.a * depth).toFixed(3) + ')');
         g.fillStyle = vg; g.fillRect(0, 0, Wd, Hd);
       }
-      var p = geo.proj(PUNE[0], PUNE[1], c), m = geo.proj(MAHA[0], MAHA[1], c), pr = geo.proj(PROJECT[0], PROJECT[1], c);
-      pins.pune = p; pins.maha = m; pins.project = pr;
-      var a = c.a;
-      if (p[2]) {                                                     // company facility
-        var pulse = (t * 0.8) % 1;
-        dot(p[0], p[1], 3.4, '#5BA3F5', a); ring(p[0], p[1], 6 + pulse * 10, '#5BA3F5', a * (1 - pulse) * 0.7, 1);
-      }
-      if (step === 6 && t > 10.3) {                                   // farming area + project
-        var za = sm(seg(t, 10.5, 11.0)) * a;
-        g.save(); g.globalAlpha = za * 0.9; g.strokeStyle = '#5BA3F5'; g.setLineDash([5, 5]); g.lineWidth = 1;
-        g.beginPath(); g.ellipse(pr[0], pr[1], c.R * 0.0075, c.R * 0.0056, -0.25, 0, TAU); g.stroke();
-        g.setLineDash([]); g.clip(); g.fillStyle = 'rgba(91,163,245,0.06)'; g.fill();                 // parcel pattern inside the farming area
-        g.strokeStyle = 'rgba(91,163,245,0.20)'; g.lineWidth = 1; g.translate(pr[0], pr[1]); g.rotate(-0.25); g.beginPath();
-        for (var gx = -320; gx <= 320; gx += 26) { g.moveTo(gx, -240); g.lineTo(gx, 240); g.moveTo(-320, gx * 0.75); g.lineTo(320, gx * 0.75); }
-        g.stroke(); g.restore();
-        dot(pr[0], pr[1], 3.6, '#E87722', za); ring(pr[0], pr[1], 8, '#E87722', za * 0.7, 1);
-      }
+      if (t < 2.9) SIGNALS.forEach(function (s) {
+        var a = sm(seg(t, s[4], s[4] + 0.35)) * c.a; if (a <= 0.01) return;
+        var p = geo.proj(s[0], s[1], c); if (!p[2]) return;
+        var x = p[0], y = p[1], side = s[5], pulse = (t * 0.9 + s[4]) % 1;
+        dot(x, y, 3.6, '#5BA3F5', a); ring(x, y, 6 + pulse * 14, '#5BA3F5', a * (1 - pulse) * 0.7, 1);
+        var lx = x + side * 26, ly = y - 24;
+        g.globalAlpha = a * 0.8; g.strokeStyle = 'rgba(91,163,245,0.7)'; g.lineWidth = 1; g.beginPath(); g.moveTo(x + side * 4, y - 4); g.lineTo(lx, ly); g.lineTo(lx + side * 16, ly); g.stroke(); g.globalAlpha = 1;
+        var al = side > 0 ? 'left' : 'right', tx = lx + side * 22;
+        txt(s[2].toUpperCase(), tx, ly + 3, 10.5, '#FFFFFF', a, al, 1.6);
+        txt(s[3], tx, ly + 17, 8.5, '#A3A3A3', a * 0.95, al, 0.4);
+      });
     }
 
     /* ── capital moving between two points, as coins along a curve ── */
@@ -104,119 +110,116 @@
       return done;
     }
 
-    /* ── 03 · the allocation engine: priorities in, allocation out ── */
-    function engine(t) {
-      var eng = env.rect(env.els.engine), pri = env.rect(env.els.prio);
-      if (!eng.w) return;
-      var a = [pri.x, pri.y + pri.h / 2], b = [eng.x + eng.w, eng.y + eng.h / 2], u = seg(t, 4.65, 5.4);
-      g.strokeStyle = 'rgba(91,163,245,' + (0.3 * sm(seg(t, 4.6, 4.9))).toFixed(3) + ')'; g.lineWidth = 1;
-      for (var i = 0; i < 3; i++) {
-        var y0 = pri.y + pri.h * (0.25 + 0.25 * i), y1 = eng.y + eng.h * (0.3 + 0.2 * i), c = [(a[0] + b[0]) / 2, (y0 + y1) / 2];
-        g.beginPath(); g.moveTo(a[0], y0); g.quadraticCurveTo(c[0], c[1], b[0], y1); g.stroke();
-        var q = bez([a[0], y0], c, [b[0], y1], (u * 1.4 - i * 0.15 + 1) % 1);
-        if (u > 0 && u < 1) dot(q[0], q[1], 2.4, '#5BA3F5', 0.9);
-      }
-      ring(eng.x + eng.w, eng.y + eng.h / 2, 5 + sm(seg(t, 5.2, 5.6)) * 14, '#5BA3F5', 0.6 * (1 - seg(t, 5.2, 5.7)), 1.2);
-    }
-
-    /* ── farm (steps 06–09 backdrop) ── */
-    var fc = null;
-    function farm(t) {
-      if (t < 10.9) return;
-      if (t >= 15.6) {                                                 // dimmed and static: build once, blit after
-        var key = env.W() + 'x' + env.H() + '@' + env.dpr();
-        if (!fc || fc.key !== key) {
-          fc = document.createElement('canvas'); fc.width = Math.round(env.W() * env.dpr()); fc.height = Math.round(env.H() * env.dpr()); fc.key = key;
-          var cg = fc.getContext('2d'); cg.setTransform(env.dpr(), 0, 0, env.dpr(), 0, 0);
-          scene.draw(cg, { t: 0, reveal: 1, stress: 0.21, recover: 1, iv: 1, dim: 1, extras: 0 });
-        }
-        g.drawImage(fc, 0, 0, env.W(), env.H()); pins.farmer = null; return;
-      }
-      var rec = sm(seg(t, 11.6, 12.6)), dim = keys(t, DIM)[0];
-      scene.draw(g, { t: t, reveal: seg(t, 10.9, 11.7), stress: 0.75 * (1 - 0.72 * rec), recover: rec, iv: seg(t, 11.5, 12.4), dim: dim, extras: 0 });
-      var f = scene.project(5.0, 3.7);
-      pins.farmer = f;
-      var fa = sm(seg(t, 11.4, 11.8)) * (1 - 0.7 * dim);
-      if (fa > 0.02) {
-        var pulse = (t * 0.7) % 1;
-        ring(f[0], f[1], 7 + pulse * 12, '#5BA3F5', fa * (1 - pulse) * 0.7, 1);
-        dot(f[0], f[1], 3, '#5BA3F5', fa);
-        g.globalAlpha = fa; g.strokeStyle = '#E6EEF9'; g.lineWidth = 1.6; g.lineCap = 'round';
-        g.beginPath(); g.arc(f[0], f[1] - 16, 3.6, 0, TAU); g.moveTo(f[0] - 6, f[1] - 4); g.quadraticCurveTo(f[0], f[1] - 12, f[0] + 6, f[1] - 4); g.stroke(); g.globalAlpha = 1;
-      }
-    }
-
-    /* ── 09 · feedback loop ── */
-    function loop(t, RING) {
-      var W = env.W(), H = env.H(), u = Math.max(0, t - 15.1), p = sm(u / 1.1), cx = W * RING.cx, cy = H * RING.cy, rx = W * RING.rx, ry = H * RING.ry;
-      g.lineWidth = 1; g.strokeStyle = 'rgba(91,163,245,0.4)';
-      g.beginPath(); g.ellipse(cx, cy, rx, ry, 0, -Math.PI / 2, -Math.PI / 2 + p * TAU); g.stroke();
-      if (p > 0.98) {
-        g.fillStyle = 'rgba(91,163,245,0.9)';
-        for (var k = 0; k < 7; k++) {
-          var m = (-90 + 51.43 * k + 25.7) * Math.PI / 180, x = cx + rx * Math.cos(m), y = cy + ry * Math.sin(m), tx = -rx * Math.sin(m), ty = ry * Math.cos(m), l = Math.hypot(tx, ty), nx = tx / l, ny = ty / l;
-          g.beginPath(); g.moveTo(x + nx * 5, y + ny * 5); g.lineTo(x - nx * 4 - ny * 3.5, y - ny * 4 + nx * 3.5); g.lineTo(x - nx * 4 + ny * 3.5, y - ny * 4 - nx * 3.5); g.closePath(); g.fill();
-        }
-        for (var c = 0; c < 3; c++) { var a = -Math.PI / 2 + (u * 0.09 + c / 3) * TAU; coin(cx + rx * Math.cos(a), cy + ry * Math.sin(a), 24, 0.95); }
-      }
-    }
-
-    /* ── 08 · impact chart: baseline vs monitored resilience (own canvas, inside the impact panel) ── */
-    function chart(t) {
-      var host = env.els.chart, cv = host && host.firstElementChild;
-      if (!cv || !host.clientWidth) return;
-      var w = host.clientWidth, h = host.clientHeight, d = env.dpr();
+    /* ── the FRICS in an order or a holding: a matrix of 1,000 dots, one per FRICS in the order.
+       Panels sit above the stage canvas, so the matrix has its own canvas inside the panel. ── */
+    function matrix(el, p) {
+      var cv = el && el.firstElementChild; if (!cv || !el.clientWidth) return;
+      var w = el.clientWidth, h = el.clientHeight, d = env.dpr();
       if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
       var c = cv.getContext('2d'); c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, w, h);
-      var p = sm(seg(t, 13.8, 14.9)), mx = w * 0.34, base = h * 0.74;
-      c.font = '700 8px "IBM Plex Mono", monospace'; c.strokeStyle = 'rgba(255,255,255,0.22)'; c.lineWidth = 1; c.setLineDash([3, 4]);
-      c.beginPath(); c.moveTo(0, base); c.lineTo(w, base); c.moveTo(mx, 6); c.lineTo(mx, h - 6); c.stroke(); c.setLineDash([]);
-      c.fillStyle = 'rgba(163,163,163,0.9)'; c.fillText('BASELINE', 6, h - 6); c.fillText('DEPLOYMENT', mx + 6, 14); c.fillText('MONITORING', w - 70, h - 6);
-      function line(col, amp, off) {
-        c.strokeStyle = col; c.lineWidth = 1.6; c.beginPath();
-        var n = 48, up = Math.floor(n * p);
-        for (var i = 0; i <= up; i++) {
-          var u = i / n, x = w * u, y = u < 0.34 ? base - 3 * Math.sin(u * 30 + off) : base - amp * (1 - Math.exp(-(u - 0.34) * 4.2)) * h * 0.9 + 2 * Math.sin(u * 22 + off);
-          if (i) c.lineTo(x, y); else c.moveTo(x, y);
+      if (p <= 0) return;
+      var total = 1000, rows = Math.max(4, Math.round(Math.sqrt(total * h / w))), cols = Math.ceil(total / rows), px = w / cols, py = h / rows, n = Math.round(p * total), rad = Math.min(px, py) * 0.32, i;
+      c.fillStyle = 'rgba(91,163,245,0.16)';
+      for (i = 0; i < total; i++) { c.beginPath(); c.arc((i % cols + 0.5) * px, (((i / cols) | 0) + 0.5) * py, rad * 0.7, 0, TAU); c.fill(); }
+      c.fillStyle = '#7DB8F8';
+      for (i = 0; i < n; i++) { c.beginPath(); c.arc((i % cols + 0.5) * px, (((i / cols) | 0) + 0.5) * py, rad, 0, TAU); c.fill(); }
+      if (p < 1 && n < total) { c.globalAlpha = 0.9; c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc((n % cols + 0.5) * px, (((n / cols) | 0) + 0.5) * py, rad * 2.2, 0, TAU); c.fill(); c.globalAlpha = 1; }
+    }
+
+    /* ── 05 · FRICS leaving the marketplace listing for the company ── */
+    function acquire(t) {
+      var a = env.rect(env.els.rowGutter), b = env.rect(env.els.coSlot);
+      if (!a.w || !b.w) return;
+      stream([a.x + a.w, a.y + a.h / 2], [b.x + b.w / 2, b.y + b.h / 2 + 30], 90, 7.0, 10, 0.07, 0.6, t, 15);
+    }
+
+    /* ── 06 · company → FRICS → resilience project ── */
+    function allocation(t) {
+      var lis = env.els.chainv, i;
+      for (i = 0; i < lis.length - 1; i++) {
+        var a = env.rect(lis[i]), b = env.rect(lis[i + 1]); if (!a.w || !b.w) continue;
+        var x = a.x + a.w / 2, y0 = a.y + a.h + 2, y1 = b.y - 2, p = sm(seg(t, 8.65 + 0.5 * i, 9.15 + 0.5 * i));
+        g.strokeStyle = 'rgba(91,163,245,0.55)'; g.lineWidth = 1.2; g.beginPath(); g.moveTo(x, y0); g.lineTo(x, y0 + (y1 - y0) * p); g.stroke();
+        if (p > 0.98) {
+          g.fillStyle = 'rgba(91,163,245,0.95)'; g.beginPath(); g.moveTo(x, y1 + 1); g.lineTo(x - 4.5, y1 - 7); g.lineTo(x + 4.5, y1 - 7); g.closePath(); g.fill();
+          for (var k = 0; k < 3; k++) { var u = ((t * 0.9 + k / 3) % 1); coin(x, y0 + (y1 - y0) * u, 12, Math.sin(u * Math.PI) * 0.9); }
         }
-        c.stroke();
       }
-      line('#5BA3F5', 0.74, 0); line('rgba(230,238,249,0.75)', 0.5, 2);
     }
 
-    /* ── 05 · units leaving the company allocation for the resilience project ── */
-    function units(t) {
-      var co = env.rect(env.els.co), tg = env.rect(env.els.ecoTgt);
-      if (!co.w || !tg.w) return 0;
-      return stream([co.x + co.w, co.y + co.h * 0.62], [tg.x, tg.y + tg.h / 2], 70, 7.65, 12, 0.09, 0.75, t, 22);
+    /* ── 07 · farm: interventions + labels ── */
+    var fc = null;
+    function label(anchor, dx, dy, title, sub, a) {
+      if (a <= 0.01) return;
+      var x = anchor[0], y = anchor[1], lx = x + dx, ly = y + dy;
+      g.globalAlpha = a; g.strokeStyle = 'rgba(91,163,245,0.85)'; g.lineWidth = 1; g.beginPath(); g.moveTo(x, y); g.lineTo(lx, ly); g.stroke();
+      dot(x, y, 3, '#5BA3F5', a); ring(x, y, 7 + ((env.tnow * 0.8) % 1) * 8, '#5BA3F5', a * 0.45, 1);
+      g.font = '700 10px ' + mono; var w = Math.max(g.measureText(title).width * 1.14, 120) + 22, right = dx >= 0, bx = right ? lx : lx - w, by = ly - 20;
+      g.fillStyle = 'rgba(10,15,26,0.94)'; g.strokeStyle = 'rgba(255,255,255,0.18)'; g.beginPath();
+      if (g.roundRect) g.roundRect(bx, by, w, 40, 6); else g.rect(bx, by, w, 40); g.fill(); g.stroke();
+      g.globalAlpha = 1; txt(title, bx + 11, by + 17, 10, '#FFFFFF', a, 'left', 1.4); txt(sub, bx + 11, by + 31, 8.5, '#A3A3A3', a, 'left', 0.3);
+    }
+    var fl = null;                                                     // offscreen layer: the scene clears its own canvas, so it never draws over the Earth directly
+    function layer(key) {
+      if (!fl || fl.key !== key) { fl = document.createElement('canvas'); fl.width = Math.round(env.W() * env.dpr()); fl.height = Math.round(env.H() * env.dpr()); fl.key = key; fl.g = fl.getContext('2d'); fl.g.setTransform(env.dpr(), 0, 0, env.dpr(), 0, 0); }
+      return fl;
+    }
+    function farm(t) {
+      if (t < 10.4) return;
+      var key = env.W() + 'x' + env.H() + '@' + env.dpr(), L = layer(key);
+      if (t >= 15.6) {                                                 // dimmed and static: build once, blit after
+        if (!fc || fc.key !== key) {
+          fc = document.createElement('canvas'); fc.width = L.width; fc.height = L.height; fc.key = key;
+          var cg = fc.getContext('2d'); cg.setTransform(env.dpr(), 0, 0, env.dpr(), 0, 0);
+          scene.draw(cg, { t: 0, reveal: 1, stress: 0.2, recover: 1, iv: 1, dim: 1, extras: 1 });
+        }
+        g.drawImage(fc, 0, 0, env.W(), env.H()); return;
+      }
+      var rec = sm(seg(t, 11.0, 12.2)), dim = keys(t, DIM)[0];
+      scene.draw(L.g, { t: t, reveal: seg(t, 10.4, 11.1), stress: 0.72 * (1 - 0.72 * rec), recover: rec, iv: seg(t, 10.9, 12.0), dim: dim, extras: 1 });
+      g.globalAlpha = sm(seg(t, 10.5, 11.2)); g.drawImage(L, 0, 0, env.W(), env.H()); g.globalAlpha = 1;
+    }
+    function farmOver(t) {
+      if (t >= 10.4 && t < 11.9) {
+        var a = 1 - seg(t, 11.7, 11.95), m = scene.metrics();
+        label(scene.project(6.4, 4.4), 52, 44, 'WATER MANAGEMENT', 'Efficiency · storage · infrastructure', sm(seg(t, 10.85, 11.15)) * a);
+        label(scene.project(3.4, 6, -m.depth * 0.32), -46, 40, 'SOIL RESILIENCE', 'Moisture retention · soil cover', sm(seg(t, 11.05, 11.35)) * a);
+        label(scene.project(2.4, 1.6), -70, -52, 'CROP ADAPTATION', 'Adapted varieties · diversification', sm(seg(t, 11.25, 11.55)) * a);
+        /* capital arrives from the company: FRICS enter the project area */
+        var pond = scene.project(6.4, 4.4);
+        stream([env.W() * 0.08, env.H() * 0.26], [pond[0], pond[1] - 8], -50, 10.35, 7, 0.08, 0.6, t, 15, false);
+      }
     }
 
-    /* ── 06 · capital: company → project on the map, then onto the farm ── */
-    function capital(t) {
-      if (pins.pune && pins.project && t >= 10.45 && t < 11.7) {
-        var a = pins.pune, b = pins.project;
-        stream([a[0], a[1]], [b[0], b[1]], 60, 10.5, 6, 0.1, 0.7, t, 14);
+    /* ── 08 · resilience signal travelling farmer → consumer ── */
+    function foodchain(t) {
+      var lis = env.els.food, bx = lis.map(function (li) { var r = env.rect(li); return r.w ? r : null; });
+      if (bx.some(function (r) { return !r; })) return;
+      var pts = bx.map(function (r) { return [r.x + r.w / 2, r.y + r.h / 2]; }), u = seg(t, 12.55, 13.3) * (pts.length - 1) + 0.0001, i;
+      for (i = 0; i < pts.length; i++) {                                // each link the signal reaches lifts an outline off its box
+        var ph = clamp((u - i) / 1.4); if (u < i || ph >= 1) continue;
+        var r = bx[i], o = 3 + ph * 12; g.globalAlpha = (1 - ph) * 0.7; g.strokeStyle = '#5BA3F5'; g.lineWidth = 1.2; g.beginPath();
+        if (g.roundRect) g.roundRect(r.x - o, r.y - o, r.w + 2 * o, r.h + 2 * o, 8 + o); else g.rect(r.x - o, r.y - o, r.w + 2 * o, r.h + 2 * o);
+        g.stroke(); g.globalAlpha = 1;
       }
-      if (pins.farmer && t >= 11.55 && t < 12.6) {
-        var top = [env.W() * 0.5, -12], f = pins.farmer;
-        stream(top, [f[0], f[1] - 10], -30, 11.6, 6, 0.09, 0.55, t, 16, false);
-      }
+      var k = Math.min(pts.length - 2, Math.floor(u)), f = u - k;
+      if (u < pts.length - 1 + 0.0001) coin(lerp(pts[k][0], pts[k + 1][0], f), lerp(pts[k][1], pts[k + 1][1], f) - bx[0].h / 2 - 12, 16, 0.95);
+      if (t > 13.25) for (i = 0; i < pts.length - 1; i++) { var s2 = ((t * 0.5 + i * 0.19) % 1); dot(lerp(pts[i][0], pts[i + 1][0], s2), pts[i][1], 1.8, '#7DB8F8', 0.85 * Math.sin(s2 * Math.PI)); }
     }
 
     function frame(t, step) {
       var W = env.W(), H = env.H();
-      g.setTransform(env.dpr(), 0, 0, env.dpr(), 0, 0);
-      g.clearRect(0, 0, W, H);
-      pins.farmer = null;
-      earth(t, step);
-      if (step === 3) engine(t);
+      env.tnow = t;
+      [gb, gt].forEach(function (c) { c.setTransform(env.dpr(), 0, 0, env.dpr(), 0, 0); c.clearRect(0, 0, W, H); });
+      g = gb;                                                          // base layer: Earth and farm, under the panels
+      if (t < 3 || (t > 9.2 && t < 11.3)) earth(t);
       farm(t);
-      var arrived = 0;
-      if (step === 5) arrived = units(t);
-      if (step === 6) capital(t);
-      if (step === 8) chart(t);
-      if (step === 9) loop(t, env.RING);
-      pins.arrived = arrived;
+      g = gt;                                                          // top layer: streams, connectors and labels, over the panels
+      if (step === 4) matrix(env.els.buyUnits, sm(seg(t, 6.3, 6.8)));
+      if (step === 5) { acquire(t); matrix(env.els.coUnits, sm(seg(t, 7.7, 8.15))); }
+      if (step === 6) allocation(t);
+      if (step === 7) farmOver(t);
+      if (step === 8) foodchain(t);
     }
 
     return { frame: frame, pins: pins };

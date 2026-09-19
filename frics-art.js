@@ -1,5 +1,5 @@
 /**
- * frics-art.js — procedural artwork for the FRICS™ concept coin.
+ * frics-art.js — procedural artwork for the FRICS™ coin (the credit unit; not a cryptocurrency).
  *
  * Everything is drawn with Canvas 2D at whatever resolution the caller asks for,
  * so the coin stays sharp on 1440p / 4K / Retina — no raster coin PNGs.
@@ -131,7 +131,7 @@
     var c = mk(S), g = c.getContext('2d'), u = S / 2048, cx = S / 2, cy = S / 2;
     g.lineJoin = g.lineCap = 'round';
     if (side === 'front') {
-      bands(g, cx, cy, u, 'MEASURABLE  ·  TRACEABLE  ·  VERIFIABLE', 'CLIMACTIX  ·  RESILIENCE UNIT');
+      bands(g, cx, cy, u, 'CAPITAL  ·  RESILIENCE  ·  IMPACT', 'CLIMACTIX  ·  IMPACT CREDIT UNIT');
       emblem(g, cx, cy - 380 * u, u);
       g.font = '700 ' + 300 * u + 'px ' + FONT; spaced(g, 'FRICS', cx - 26 * u, cy - 6 * u, 10 * u);
       g.font = '700 ' + 64 * u + 'px ' + FONT; g.textAlign = 'left'; g.fillText('™', cx + 500 * u, cy - 190 * u);

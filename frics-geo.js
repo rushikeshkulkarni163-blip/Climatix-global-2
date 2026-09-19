@@ -5,7 +5,7 @@
  * until it reads as a local map — world → India → Maharashtra → the farming area.
  *
  *   FRICSGeo.create() → { resize(W,H), draw(g, cam), proj(lon, lat, cam) → [x, y, visible] }
- *   cam = { lon, lat, R (px), cx, cy (px), a (alpha), stress (0–1 tint on Maharashtra) }
+ *   cam = { lon, lat, R (px), cx, cy (px), a (alpha), stress (0–1 tint on Maharashtra), plain (skip the India / Maharashtra highlight) }
  */
 (function () {
   'use strict';
@@ -91,8 +91,8 @@
       g.strokeStyle = 'rgba(91,163,245,0.10)'; g.lineWidth = 1; graticule(g, cam, s, step, cmax);
       g.fillStyle = '#0B1526'; g.strokeStyle = 'rgba(91,163,245,0.42)'; g.lineWidth = 0.9;
       land.forEach(function (r) { if (visible(r, s, cmax)) { g.beginPath(); ringPath(g, r, cam, s, true); g.fill(); g.stroke(); } });
-      india.forEach(function (r) { if (visible(r, s, cmax)) { g.beginPath(); ringPath(g, r, cam, s, true); g.fillStyle = '#111F3A'; g.fill(); g.strokeStyle = 'rgba(91,163,245,0.75)'; g.lineWidth = 1.1; g.stroke(); } });
-      maha.forEach(function (r) {
+      if (!cam.plain) india.forEach(function (r) { if (visible(r, s, cmax)) { g.beginPath(); ringPath(g, r, cam, s, true); g.fillStyle = '#111F3A'; g.fill(); g.strokeStyle = 'rgba(91,163,245,0.75)'; g.lineWidth = 1.1; g.stroke(); } });
+      if (!cam.plain) maha.forEach(function (r) {
         if (!visible(r, s, cmax)) return;
         g.beginPath(); ringPath(g, r, cam, s, true);
         var sx = cam.stress || 0;
