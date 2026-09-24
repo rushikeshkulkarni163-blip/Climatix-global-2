@@ -1,5 +1,5 @@
 /**
- * Climactix Enterprise Platform — Shell
+ * Climactix Enterprise Platform — Falcon Ridge Petroleum plc
  * Injects topbar + sidebar into <div id="pf-shell-root"></div> from a single
  * NAV_ITEMS config, instead of copy-pasting nav HTML on every page (deliberate
  * deviation from the rest of the repo's per-page nav convention — justified by
@@ -44,12 +44,12 @@
   const WORKSPACES = ['Corporate Workspace', 'Investor Workspace', 'Government Workspace', 'University Workspace'];
 
   const MOCK_ALERTS = [
-    { title: 'NTPC Ltd — transition risk crossed CRITICAL threshold', sub: '2 hours ago' },
-    { title: 'Shell plc — SBTi target non-aligned flag raised', sub: '1 day ago' },
+    { title: 'Northfield Energy Ltd — transition risk crossed CRITICAL threshold', sub: '2 hours ago' },
+    { title: 'Falcon Ridge Petroleum plc — SBTi target non-aligned flag raised', sub: '1 day ago' },
     { title: '3 companies missing CSRD disclosure deadline (Q1)', sub: '2 days ago' },
   ];
   const MOCK_NOTIFICATIONS = [
-    { title: 'Regulatory Intelligence report ready: ReNew Power Ltd', sub: '34 minutes ago' },
+    { title: 'Regulatory Intelligence report ready: Brightwell Renewables Ltd', sub: '34 minutes ago' },
     { title: 'New framework added to registry: TNFD v1.1', sub: '3 days ago' },
   ];
 

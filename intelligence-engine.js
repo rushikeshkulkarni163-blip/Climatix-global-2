@@ -30,7 +30,7 @@ window.INTELLIGENCE = (function () {
   // ── 20-company institutional intelligence database
   const COMPANIES = [
     {
-      id: 'CX-IND-ENE-001847', name: 'Tata Power Company Ltd', ticker: 'TATAPOWER',
+      id: 'CX-IND-ENE-001847', name: 'Meridian Power Ltd', ticker: 'MERPWR',
       industry: 'energy', industryLabel: 'Energy & Utilities', country: 'India', geography: 'South Asia',
       revenue: 14200, marketCap: 18500, employees: 34000,
       cScore: 67, credibilityScore: 72,
@@ -47,7 +47,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'energy_mixed'
     },
     {
-      id: 'CX-IND-ENE-002311', name: 'NTPC Ltd', ticker: 'NTPC',
+      id: 'CX-IND-ENE-002311', name: 'Northfield Energy Ltd', ticker: 'NRTFLD',
       industry: 'energy', industryLabel: 'Energy & Utilities', country: 'India', geography: 'South Asia',
       revenue: 18600, marketCap: 22100, employees: 20000,
       cScore: 42, credibilityScore: 48,
@@ -59,12 +59,12 @@ window.INTELLIGENCE = (function () {
       cLayers: { c_core: 38, c_fin: 32, c_risk_p: 45, c_risk_t: 22, c_capital: 35, c_supply: 48, c_adapt: 38, c_truth: 55 },
       compliance: { TCFD: 'partial', CSRD: 'missing', CDP: 'partial', SBTi: 'missing', GHG_P: 'partial', PCAF: 'n/a' },
       facilities: ['Singrauli', 'Korba', 'Ramagundam', 'Farakka', 'Vindhyachal'],
-      keyRisks: ['180Mt Scope 1 — highest carbon exposure in portfolio', 'Coal fleet stranding risk $8.4B by 2035', 'Water stress at all major thermal plants', 'No credible net zero pathway'],
+      keyRisks: ['180Mt Scope 1 — highest carbon exposure in portfolio', 'Significant coal fleet stranding risk by 2035', 'Water stress at all major thermal plants', 'No credible net zero pathway'],
       greenwashingFlags: ['2070 net zero target inconsistent with 1.5°C science', 'Renewable pledges with no decommissioning plan', 'CDP disclosure incomplete for 3 consecutive years'],
       scenarioKey: 'energy_coal'
     },
     {
-      id: 'CX-GBR-OIL-003124', name: 'Shell plc', ticker: 'SHEL',
+      id: 'CX-GBR-OIL-003124', name: 'Falcon Ridge Petroleum plc', ticker: 'FALRDG',
       industry: 'oil_gas', industryLabel: 'Oil & Gas', country: 'United Kingdom', geography: 'Global',
       revenue: 316000, marketCap: 188000, employees: 93000,
       cScore: 58, credibilityScore: 55,
@@ -81,7 +81,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'oil_gas'
     },
     {
-      id: 'CX-IND-REN-004082', name: 'ReNew Power Ltd', ticker: 'RNW',
+      id: 'CX-IND-REN-004082', name: 'Brightwell Renewables Ltd', ticker: 'BRTWEL',
       industry: 'renewables', industryLabel: 'Renewable Energy', country: 'India', geography: 'South Asia',
       revenue: 2800, marketCap: 3200, employees: 5800,
       cScore: 84, credibilityScore: 88,
@@ -98,7 +98,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'renewables'
     },
     {
-      id: 'CX-IND-STL-005218', name: 'Tata Steel Ltd', ticker: 'TATASTEEL',
+      id: 'CX-IND-STL-005218', name: 'Ashford Steel Ltd', ticker: 'ASHSTL',
       industry: 'steel', industryLabel: 'Steel & Metals', country: 'India', geography: 'South Asia / Europe',
       revenue: 28800, marketCap: 15200, employees: 78000,
       cScore: 51, credibilityScore: 62,
@@ -110,12 +110,12 @@ window.INTELLIGENCE = (function () {
       cLayers: { c_core: 58, c_fin: 52, c_risk_p: 48, c_risk_t: 40, c_capital: 55, c_supply: 50, c_adapt: 48, c_truth: 62 },
       compliance: { TCFD: 'aligned', CSRD: 'aligned', CDP: 'aligned', SBTi: 'aligned', GHG_P: 'aligned', PCAF: 'n/a' },
       facilities: ['Jamshedpur', 'Kalinganagar', 'Port Talbot (UK)', 'IJmuiden (Netherlands)'],
-      keyRisks: ['CBAM exposure on European steel exports', 'Green hydrogen availability for DRI transition', 'UK Port Talbot blast furnace transition costs $1.25B', 'Water scarcity at India operations'],
+      keyRisks: ['CBAM exposure on European steel exports', 'Green hydrogen availability for DRI transition', 'UK Port Talbot blast furnace transition carries substantial cost', 'Water scarcity at India operations'],
       greenwashingFlags: ['Green steel claims without third-party certification', 'EU operations transition pace inconsistent with SBTi 2030 milestones'],
       scenarioKey: 'steel'
     },
     {
-      id: 'CX-IND-STL-006445', name: 'JSW Steel Ltd', ticker: 'JSWSTEEL',
+      id: 'CX-IND-STL-006445', name: 'Ridgeway Steelworks Ltd', ticker: 'RDGSTL',
       industry: 'steel', industryLabel: 'Steel & Metals', country: 'India', geography: 'South Asia',
       revenue: 20400, marketCap: 12800, employees: 52000,
       cScore: 44, credibilityScore: 52,
@@ -132,7 +132,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'steel'
     },
     {
-      id: 'CX-DNK-SHP-007662', name: 'A.P. Møller-Maersk', ticker: 'MAERSK',
+      id: 'CX-DNK-SHP-007662', name: 'Harborview Shipping A/S', ticker: 'HRBSHP',
       industry: 'shipping', industryLabel: 'Shipping & Logistics', country: 'Denmark', geography: 'Global',
       revenue: 81500, marketCap: 22800, employees: 110000,
       cScore: 71, credibilityScore: 78,
@@ -144,12 +144,12 @@ window.INTELLIGENCE = (function () {
       cLayers: { c_core: 75, c_fin: 70, c_risk_p: 60, c_risk_t: 62, c_capital: 72, c_supply: 68, c_adapt: 70, c_truth: 78 },
       compliance: { TCFD: 'aligned', CSRD: 'aligned', CDP: 'aligned', SBTi: 'aligned', GHG_P: 'aligned', PCAF: 'n/a' },
       facilities: ['Copenhagen HQ', 'Singapore Hub', 'Rotterdam Port', 'Shanghai', 'Los Angeles'],
-      keyRisks: ['Fleet transition to green methanol/ammonia requires $18B investment', 'IMO 2050 regulatory pressure accelerating', 'Panama Canal water levels disrupting routes'],
+      keyRisks: ['Fleet transition to green methanol/ammonia requires substantial capital investment', 'IMO 2050 regulatory pressure accelerating', 'Panama Canal water levels disrupting routes'],
       greenwashingFlags: ['Green methanol availability at scale not proven at transition pace'],
       scenarioKey: 'shipping'
     },
     {
-      id: 'CX-IND-REI-008849', name: 'DLF Ltd', ticker: 'DLF',
+      id: 'CX-IND-REI-008849', name: 'Crestline Properties Ltd', ticker: 'CRSTLP',
       industry: 'real_estate', industryLabel: 'Real Estate', country: 'India', geography: 'South Asia',
       revenue: 2100, marketCap: 18400, employees: 5400,
       cScore: 63, credibilityScore: 68,
@@ -161,12 +161,12 @@ window.INTELLIGENCE = (function () {
       cLayers: { c_core: 65, c_fin: 62, c_risk_p: 52, c_risk_t: 68, c_capital: 60, c_supply: 58, c_adapt: 62, c_truth: 72 },
       compliance: { TCFD: 'partial', CSRD: 'n/a', CDP: 'partial', SBTi: 'missing', GHG_P: 'partial', PCAF: 'n/a' },
       facilities: ['Gurugram', 'Delhi', 'Chandigarh', 'Mumbai', 'Chennai'],
-      keyRisks: ['Asset value decline in flood-risk corridors', 'Extreme heat reducing urban liveability in key markets', 'Green building retrofitting costs $450M+ by 2030'],
+      keyRisks: ['Asset value decline in flood-risk corridors', 'Extreme heat reducing urban liveability in key markets', 'Green building retrofitting represents a material capital commitment by 2030'],
       greenwashingFlags: [],
       scenarioKey: 'real_estate'
     },
     {
-      id: 'CX-IND-BNK-009035', name: 'HDFC Bank Ltd', ticker: 'HDFCBANK',
+      id: 'CX-IND-BNK-009035', name: 'Fairmont Bank Ltd', ticker: 'FRMBNK',
       industry: 'banking', industryLabel: 'Banking & Financial Services', country: 'India', geography: 'South Asia',
       revenue: 24800, marketCap: 148000, employees: 188000,
       cScore: 69, credibilityScore: 74,
@@ -183,7 +183,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'banking'
     },
     {
-      id: 'CX-IND-BNK-010128', name: 'State Bank of India', ticker: 'SBIN',
+      id: 'CX-IND-BNK-010128', name: 'Kingsley National Bank Ltd', ticker: 'KNGBNK',
       industry: 'banking', industryLabel: 'Banking & Financial Services', country: 'India', geography: 'South Asia',
       revenue: 62800, marketCap: 58200, employees: 245000,
       cScore: 48, credibilityScore: 45,
@@ -195,12 +195,12 @@ window.INTELLIGENCE = (function () {
       cLayers: { c_core: 42, c_fin: 45, c_risk_p: 52, c_risk_t: 38, c_capital: 44, c_supply: 48, c_adapt: 45, c_truth: 55 },
       compliance: { TCFD: 'partial', CSRD: 'n/a', CDP: 'missing', SBTi: 'missing', GHG_P: 'partial', PCAF: 'missing' },
       facilities: ['Mumbai HQ', 'State HQ across India', '22,000+ branches'],
-      keyRisks: ['485Mt financed emissions — highest in Indian banking sector', 'Coal sector loans $24B at stranding risk by 2035', 'Agriculture portfolio climate credit risk — 42% of rural loan book'],
+      keyRisks: ['485Mt financed emissions — highest in Indian banking sector', 'Significant coal sector loan exposure at stranding risk by 2035', 'Agriculture portfolio climate credit risk — 42% of rural loan book'],
       greenwashingFlags: ['2055 net zero target has no disclosed interim milestones', 'No PCAF-aligned financed emissions methodology published', 'Scope 3 estimation methodology not disclosed'],
       scenarioKey: 'banking'
     },
     {
-      id: 'CX-IND-CHM-011347', name: 'Reliance Industries Ltd', ticker: 'RELIANCE',
+      id: 'CX-IND-CHM-011347', name: 'Westbrook Energy & Chemicals Ltd', ticker: 'WSTBRK',
       industry: 'chemicals', industryLabel: 'Chemicals & Petrochemicals', country: 'India', geography: 'South Asia',
       revenue: 124800, marketCap: 218000, employees: 342000,
       cScore: 55, credibilityScore: 52,
@@ -213,11 +213,11 @@ window.INTELLIGENCE = (function () {
       compliance: { TCFD: 'partial', CSRD: 'n/a', CDP: 'partial', SBTi: 'missing', GHG_P: 'partial', PCAF: 'n/a' },
       facilities: ['Jamnagar Refinery', 'Hazira', 'Patalganga', 'Nagothane', 'Dahej'],
       keyRisks: ['Jamnagar refinery coastal flood and cyclone exposure', 'Petrochemical assets stranding risk 2035–2045', 'Scope 3 product emissions 82.5Mt subject to CBAM pressure'],
-      greenwashingFlags: ['2035 net zero for "new energy" business only — core O&G excluded', '$75B green investment commitment lacks binding Scope 1/2 reduction targets'],
+      greenwashingFlags: ['2035 net zero for "new energy" business only — core O&G excluded', 'Large green investment commitment lacks binding Scope 1/2 reduction targets'],
       scenarioKey: 'chemicals'
     },
     {
-      id: 'CX-IND-CHM-012580', name: 'BASF India Ltd', ticker: 'BASFINDIA',
+      id: 'CX-IND-CHM-012580', name: 'Oakmere Chemicals Ltd', ticker: 'OAKCHM',
       industry: 'chemicals', industryLabel: 'Chemicals & Petrochemicals', country: 'India', geography: 'South Asia',
       revenue: 4200, marketCap: 1800, employees: 6200,
       cScore: 66, credibilityScore: 70,
@@ -234,7 +234,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'chemicals'
     },
     {
-      id: 'CX-GBR-MIN-013714', name: 'Vedanta Resources plc', ticker: 'VED',
+      id: 'CX-GBR-MIN-013714', name: 'Sterling Metals & Mining plc', ticker: 'STRMIN',
       industry: 'mining', industryLabel: 'Mining & Metals', country: 'India', geography: 'South Asia / Africa',
       revenue: 18200, marketCap: 8400, employees: 65000,
       cScore: 38, credibilityScore: 35,
@@ -251,7 +251,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'mining_metals'
     },
     {
-      id: 'CX-IND-COL-014882', name: 'Coal India Ltd', ticker: 'COALINDIA',
+      id: 'CX-IND-COL-014882', name: 'Highgate Coal Ltd', ticker: 'HGTCOL',
       industry: 'mining_coal', industryLabel: 'Coal Mining', country: 'India', geography: 'South Asia',
       revenue: 22800, marketCap: 28500, employees: 240000,
       cScore: 22, credibilityScore: 18,
@@ -263,12 +263,12 @@ window.INTELLIGENCE = (function () {
       cLayers: { c_core: 18, c_fin: 20, c_risk_p: 30, c_risk_t: 12, c_capital: 22, c_supply: 28, c_adapt: 20, c_truth: 32 },
       compliance: { TCFD: 'missing', CSRD: 'missing', CDP: 'missing', SBTi: 'missing', GHG_P: 'missing', PCAF: 'n/a' },
       facilities: ['Jharkhand', 'West Bengal', 'Odisha', 'Chhattisgarh', 'Madhya Pradesh'],
-      keyRisks: ['1.85Gt Scope 3 product emissions — highest single-entity risk on platform', '$22.8B asset impairment risk under 2°C scenario', 'No disclosed net zero target or transition plan', 'Political dependency creating governance risk'],
+      keyRisks: ['1.85Gt Scope 3 product emissions — highest single-entity risk on platform', 'Material asset impairment risk under 2°C scenario', 'No disclosed net zero target or transition plan', 'Political dependency creating governance risk'],
       greenwashingFlags: ['No climate disclosures — entity operates outside institutional ESG norms', 'Government protection creating false stability narrative'],
       scenarioKey: 'coal'
     },
     {
-      id: 'CX-IND-FCG-015045', name: 'ITC Ltd', ticker: 'ITC',
+      id: 'CX-IND-FCG-015045', name: 'Thornfield Consumer Group Ltd', ticker: 'THRNCG',
       industry: 'fmcg', industryLabel: 'FMCG & Consumer', country: 'India', geography: 'South Asia',
       revenue: 8400, marketCap: 52800, employees: 36000,
       cScore: 73, credibilityScore: 76,
@@ -285,7 +285,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'fmcg'
     },
     {
-      id: 'CX-IND-FCG-016188', name: 'Hindustan Unilever Ltd', ticker: 'HINDUNILVR',
+      id: 'CX-IND-FCG-016188', name: 'Meadowbrook Consumer Goods Ltd', ticker: 'MDWBCG',
       industry: 'fmcg', industryLabel: 'FMCG & Consumer', country: 'India', geography: 'South Asia',
       revenue: 7200, marketCap: 64500, employees: 21000,
       cScore: 79, credibilityScore: 82,
@@ -302,7 +302,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'fmcg'
     },
     {
-      id: 'CX-IND-ITS-017322', name: 'Infosys Ltd', ticker: 'INFY',
+      id: 'CX-IND-ITS-017322', name: 'Vantage Point Technologies Ltd', ticker: 'VNTGPT',
       industry: 'it', industryLabel: 'IT & Technology Services', country: 'India', geography: 'Global',
       revenue: 18200, marketCap: 82400, employees: 345000,
       cScore: 88, credibilityScore: 90,
@@ -319,7 +319,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'it'
     },
     {
-      id: 'CX-IND-ITS-018445', name: 'Wipro Ltd', ticker: 'WIPRO',
+      id: 'CX-IND-ITS-018445', name: 'Corestone Digital Ltd', ticker: 'CRSTND',
       industry: 'it', industryLabel: 'IT & Technology Services', country: 'India', geography: 'Global',
       revenue: 11200, marketCap: 28500, employees: 258000,
       cScore: 85, credibilityScore: 87,
@@ -336,7 +336,7 @@ window.INTELLIGENCE = (function () {
       scenarioKey: 'it'
     },
     {
-      id: 'CX-IND-INF-019558', name: 'Adani Ports & SEZ Ltd', ticker: 'ADANIPORTS',
+      id: 'CX-IND-INF-019558', name: 'Pinegate Ports & Logistics Ltd', ticker: 'PNGPRT',
       industry: 'infrastructure', industryLabel: 'Ports & Infrastructure', country: 'India', geography: 'South Asia',
       revenue: 4800, marketCap: 42800, employees: 15000,
       cScore: 49, credibilityScore: 44,
@@ -348,12 +348,12 @@ window.INTELLIGENCE = (function () {
       cLayers: { c_core: 42, c_fin: 48, c_risk_p: 38, c_risk_t: 55, c_capital: 45, c_supply: 52, c_adapt: 42, c_truth: 52 },
       compliance: { TCFD: 'partial', CSRD: 'n/a', CDP: 'missing', SBTi: 'missing', GHG_P: 'partial', PCAF: 'n/a' },
       facilities: ['Mundra (Gujarat)', 'Krishnapatnam', 'Hazira', 'Kattupalli', 'Dhamra'],
-      keyRisks: ['Highest sea-level rise exposure on platform — 9 coastal port facilities', 'Cyclone Biparjoy demonstrated $340M loss potential per event', 'ESG controversy — Hindenburg report legacy affecting institutional access'],
+      keyRisks: ['Highest sea-level rise exposure on platform — 9 coastal port facilities', 'Cyclone Biparjoy demonstrated significant loss potential per event', 'ESG controversy affecting institutional access'],
       greenwashingFlags: ['2025 net zero operations claim — third-party verification absent', 'Coal handling volumes continue despite "clean energy" positioning'],
       scenarioKey: 'infrastructure'
     },
     {
-      id: 'CX-IND-INF-020671', name: 'Larsen & Toubro Ltd', ticker: 'LT',
+      id: 'CX-IND-INF-020671', name: 'Ironbridge Engineering Ltd', ticker: 'IRNBRG',
       industry: 'infrastructure', industryLabel: 'Engineering & Construction', country: 'India', geography: 'South Asia / Middle East',
       revenue: 28200, marketCap: 52400, employees: 143000,
       cScore: 61, credibilityScore: 65,
@@ -529,7 +529,7 @@ window.INTELLIGENCE = (function () {
   const MARKET_INTEL = [
     { id: 'm001', type: 'POLICY', severity: 'CRITICAL', region: 'EU', date: '2026-05-22',
       headline: 'EU CBAM Phase 2 expansion confirmed — cement, fertilisers, hydrogen added',
-      body: 'European Commission confirms Carbon Border Adjustment Mechanism expansion from October 2026. Indian steel, cement, and chemical exporters face immediate cost impact of $8.4B annually.',
+      body: 'European Commission confirms Carbon Border Adjustment Mechanism expansion from October 2026. Indian steel, cement, and chemical exporters face immediate and material cost impact.',
       tags: ['CBAM', 'EU', 'Steel', 'Chemicals', 'Carbon Pricing'] },
     { id: 'm002', type: 'CARBON MARKET', severity: 'HIGH', region: 'EU', date: '2026-05-21',
       headline: 'EU ETS carbon price surges to €94/tCO2e following auction undersupply',
@@ -541,7 +541,7 @@ window.INTELLIGENCE = (function () {
       tags: ['SEBI', 'BRSR', 'India', 'Mandatory Reporting'] },
     { id: 'm004', type: 'CLIMATE EVENT', severity: 'HIGH', region: 'South Asia', date: '2026-05-18',
       headline: 'Pre-monsoon heat wave peaks at 48°C across Rajasthan — power demand record',
-      body: 'Extreme heat event causes record power demand surge. NTPC capacity constraints triggered. Coal plant efficiency drops 12% above 42°C. Worker safety incidents at 3 industrial facilities.',
+      body: 'Extreme heat event causes record power demand surge. Northfield Energy Ltd capacity constraints triggered. Coal plant efficiency drops 12% above 42°C. Worker safety incidents at 3 industrial facilities.',
       tags: ['Physical Risk', 'India', 'Heatwave', 'Energy'] },
     { id: 'm005', type: 'REGULATORY', severity: 'MEDIUM', region: 'IMO', date: '2026-05-16',
       headline: 'IMO FuelEU Maritime enters force — GHG intensity reduction 6% from Jan 2026',

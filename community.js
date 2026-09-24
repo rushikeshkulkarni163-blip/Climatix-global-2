@@ -230,11 +230,11 @@ export const SEED_PROFILES = [
     ],
   },
   {
-    uid: 'seed_arjun', fullName: 'Arjun Kapoor', email: 'arjun@sequoiaclimate.com',
-    role: 'investor', bio: 'Partner @ Sequoia Climate Fund · $2B+ deployed in climate tech · Board: 7 unicorns · Oxford MBA · Angel: 40+ climate startups',
+    uid: 'seed_arjun', fullName: 'Arjun Kapoor', email: 'arjun@northbridgeclimate.com',
+    role: 'investor', bio: 'Partner @ Northbridge Climate Capital · Deploys capital across climate tech · Board: 7 unicorns · Oxford MBA · Angel: 40+ climate startups',
     location: 'New Delhi, India', interests: ['Climate Finance', 'Deep Tech', 'Carbon Markets', 'Green Infrastructure'],
     climateScore: 91, followersCount: 8932, followingCount: 412, postsCount: 127,
-    verified: true, avatar: 'AK', company: 'Sequoia Climate Fund', website: 'sequoiaclimate.com',
+    verified: true, avatar: 'AK', company: 'Northbridge Climate Capital', website: 'northbridgeclimate.com',
     portfolio: [
       { name: 'Series A: GreenFuture Energy', impact: '$6M · Solar' },
       { name: 'Series B: CarbonTrace AI', impact: '$12M · MRV' },
@@ -249,10 +249,10 @@ export const SEED_PROFILES = [
   },
   {
     uid: 'seed_rahul', fullName: 'Rahul Menon', email: 'rahul.menon@tata.com',
-    role: 'corporate', bio: 'Head of ESG Strategy @ Tata Group · Net Zero 2040 program lead · CSRD & ISSB compliance · GRI Certified Practitioner · Ex-McKinsey',
+    role: 'corporate', bio: 'Head of ESG Strategy @ Crestwell Group · Net Zero 2040 program lead · CSRD & ISSB compliance · GRI Certified Practitioner · Ex-Ashcombe Partners',
     location: 'Bangalore, India', interests: ['ESG Reporting', 'Net Zero Strategy', 'CSRD', 'Supply Chain Decarbonisation'],
     climateScore: 78, followersCount: 5601, followingCount: 220, postsCount: 203,
-    verified: true, avatar: 'RM', company: 'Tata Group', portfolio: [],
+    verified: true, avatar: 'RM', company: 'Crestwell Group', portfolio: [],
   },
   {
     uid: 'seed_aisha', fullName: 'Aisha Patel', email: 'aisha@climateadvocate.in',
@@ -263,7 +263,7 @@ export const SEED_PROFILES = [
   },
   {
     uid: 'seed_dev', fullName: 'Dev Krishnan', email: 'dev@carbontrace.ai',
-    role: 'startup', bio: 'Co-founder @ CarbonTrace AI · ML engineer turned climate entrepreneur · AI-powered MRV for voluntary carbon markets · Techstars \'24',
+    role: 'startup', bio: 'Co-founder @ CarbonTrace AI · ML engineer turned climate entrepreneur · AI-powered MRV for voluntary carbon markets · Ventura Climate Accelerator \'24',
     location: 'Bangalore, India', interests: ['Carbon Markets', 'AI/ML', 'MRV Technology', 'Satellite Data'],
     climateScore: 79, followersCount: 642, followingCount: 480, postsCount: 22,
     verified: false, avatar: 'DK', company: 'CarbonTrace AI',
@@ -288,13 +288,13 @@ export const SEED_POSTS = [
   },
   {
     id: 'p002', authorId: 'seed_arjun', authorName: 'Arjun Kapoor', authorRole: 'investor',
-    authorAvatar: 'AK', authorVerified: true, authorCompany: 'Sequoia Climate Fund', type: 'funding',
-    content: `Sequoia Climate Fund is actively deploying capital in Q2 2025.\n\nWe're specifically looking for:\n\n🔋 Energy Storage: Novel chemistries, grid-scale solutions\n🌊 Blue Carbon: Mangrove/seagrass restoration with MRV\n🏗️ Green Construction: Embodied carbon reduction tech\n🚜 AgriTech Climate: Soil carbon, precision farming\n\nTicket size: $2M–$25M (Seed to Series B)\nGeography: India, SEA, MENA\nClimate Impact Score requirement: >70 on Climactix\n\nFounders: Tag your startup below or DM with 3-slide teaser.\nInvestors: Happy to co-invest on high-conviction deals.`,
+    authorAvatar: 'AK', authorVerified: true, authorCompany: 'Northbridge Climate Capital', type: 'funding',
+    content: `Northbridge Climate Capital is actively deploying capital in Q2 2025.\n\nWe're specifically looking for:\n\n🔋 Energy Storage: Novel chemistries, grid-scale solutions\n🌊 Blue Carbon: Mangrove/seagrass restoration with MRV\n🏗️ Green Construction: Embodied carbon reduction tech\n🚜 AgriTech Climate: Soil carbon, precision farming\n\nTicket size: $2M–$25M (Seed to Series B)\nGeography: India, SEA, MENA\nClimate Impact Score requirement: >70 on Climactix\n\nFounders: Tag your startup below or DM with 3-slide teaser.\nInvestors: Happy to co-invest on high-conviction deals.`,
     tags: ['ClimateVC', 'ImpactInvesting', 'GreenTech', 'SeriesA', 'ClimateFunding'],
     likes: ['seed_priya', 'seed_meera', 'seed_aisha', 'seed_dev'],
     comments: [
       { id: 'c003', authorId: 'seed_dev', authorName: 'Dev Krishnan', authorRole: 'startup', authorAvatar: 'DK',
-        content: 'CarbonTrace AI checks a few of these boxes — AI-powered MRV for voluntary carbon markets. We just closed Techstars Climate. DM sent!', timestamp: Date.now() - 7200000, likes: ['seed_arjun'] },
+        content: 'CarbonTrace AI checks a few of these boxes — AI-powered MRV for voluntary carbon markets. We just closed Ventura Climate Accelerator. DM sent!', timestamp: Date.now() - 7200000, likes: ['seed_arjun'] },
     ],
     reactions: {}, views: 9234, timestamp: Date.now() - 18000000,
   },
@@ -309,7 +309,7 @@ export const SEED_POSTS = [
   },
   {
     id: 'p004', authorId: 'seed_rahul', authorName: 'Rahul Menon', authorRole: 'corporate',
-    authorAvatar: 'RM', authorVerified: true, authorCompany: 'Tata Group', type: 'update',
+    authorAvatar: 'RM', authorVerified: true, authorCompany: 'Crestwell Group', type: 'update',
     content: `Hot take: Most corporate ESG reports are still theater.\n\nAfter reviewing 50+ reports this quarter, here's what separates leaders from laggards:\n\nLaggards:\n✗ Scope 3 completely ignored or cherry-picked\n✗ No third-party assurance\n✗ Targets without interim milestones\n\nLeaders:\n✓ Full Scope 1-2-3 disclosure with GHG Protocol methodology\n✓ ISSB IFRS S2 aligned — decision-useful for investors\n✓ Science-based targets with annual public tracking\n✓ CSRD-ready for EU market access\n✓ Board-level climate risk governance\n\nThe SEBI BRSR Core mandate is forcing Indian corporates to level up — and honestly, it's about time.\n\nWhere does your company stand? Be honest in the comments.`,
     tags: ['ESG', 'CSRDCompliance', 'SustainabilityReporting', 'ISSB', 'NetZero', 'SEBI'],
     likes: ['seed_meera', 'seed_aisha', 'seed_arjun'],
@@ -403,7 +403,7 @@ export const SEED_FUNDING = [
     tags: ['Solar', 'RuralElectrification', 'PayAsYouGo', 'SeriesA', 'WomenLed'],
     expressedInterest: 14, savedBy: 32, hasDeck: true, timestamp: Date.now() - 172800000,
     interestedUsers: ['seed_arjun'], savedByUsers: [],
-    fundingReady: true, marketSize: '$4.2B', investorViews: 47,
+    fundingReady: true, marketSize: 'Large', investorViews: 47,
   },
   {
     id: 'fr002', startupName: 'CarbonTrace AI', founderName: 'Dev Krishnan', founderAvatar: 'DK', founderRole: 'startup',
@@ -412,12 +412,12 @@ export const SEED_FUNDING = [
     problem: 'Carbon credit verification takes 18 months and costs $50K+, blocking 80% of small project developers.',
     solution: 'AI + satellite + IoT MRV platform. 30-day verification at $2K/project. Direct API with Gold Standard & Verra.',
     impact: 'Unlocking 500+ small projects · 2M tCO₂e/year newly verifiable · $40M in carbon credits democratized',
-    traction: '12 pilot projects · 2 LOIs signed · Techstars Climate \'24 · $180K pre-seed closed',
+    traction: '12 pilot projects · 2 LOIs signed · Ventura Climate Accelerator \'24 · $180K pre-seed closed',
     useOfFunds: '50% – Satellite API & model training · 30% – 3 country partnerships · 20% – Team',
     tags: ['CarbonMarkets', 'MRV', 'AI', 'Seed', 'SaaS'],
     expressedInterest: 8, savedBy: 19, hasDeck: true, timestamp: Date.now() - 259200000,
     interestedUsers: [], savedByUsers: [],
-    fundingReady: false, marketSize: '$850M', investorViews: 23,
+    fundingReady: false, marketSize: 'Growing', investorViews: 23,
   },
   {
     id: 'fr003', startupName: 'RegenSoil Tech', founderName: 'Kavita Reddy', founderAvatar: 'KR', founderRole: 'startup',
@@ -431,7 +431,7 @@ export const SEED_FUNDING = [
     tags: ['AgriTech', 'SoilCarbon', 'RegenerativeFarming', 'PreSeed', 'FPO'],
     expressedInterest: 5, savedBy: 11, hasDeck: false, timestamp: Date.now() - 432000000,
     interestedUsers: [], savedByUsers: [],
-    fundingReady: false, marketSize: '$1.1B', investorViews: 12,
+    fundingReady: false, marketSize: 'Large', investorViews: 12,
   },
   {
     id: 'fr004', startupName: 'BlueTide Marine', founderName: 'Aryan Shah', founderAvatar: 'AS', founderRole: 'startup',
@@ -445,7 +445,7 @@ export const SEED_FUNDING = [
     tags: ['BlueCarbon', 'Mangroves', 'OceanResilience', 'Seed', 'NBS'],
     expressedInterest: 11, savedBy: 24, hasDeck: true, timestamp: Date.now() - 604800000,
     interestedUsers: [], savedByUsers: [],
-    fundingReady: true, marketSize: '$2.3B', investorViews: 31,
+    fundingReady: true, marketSize: 'Large', investorViews: 31,
   },
 ];
 
