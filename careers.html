@@ -7,8 +7,15 @@
   <title>Careers · Climactix Global — Build the Future of Climate Intelligence</title>
   <meta name="description" content="Join Climactix Global. Open positions in Energy Transition, Climate Policy, AI Engineering, and Platform Infrastructure." />
   <link rel="icon" type="image/png" href="Climatix_logo.png" />
+  <link rel="stylesheet" href="style.css?v=6" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function(){
+      var t = localStorage.getItem('cx-theme') || 'dark';
+      if(t === 'light') document.documentElement.setAttribute('data-theme','light');
+    })();
+  </script>
   <style>
     /* ═══════════════════════════════════════════════════════════
        CLIMACTIX GLOBAL — CAREERS PAGE
@@ -44,6 +51,20 @@
       --t:          0.15s ease;
     }
 
+    /* ── LIGHT THEME ─────────────────────────────────────────── */
+    [data-theme="light"] {
+      --bg:         #FFFFFF;
+      --nav-bg:     #FFFFFF;
+      --surface:    #FAFAFA;
+      --surface-2:  #F4F4F4;
+      --surface-3:  #EBEBEB;
+      --border:     #D9D9D9;
+      --border-s:   #C4C4C4;
+      --text:       #111111;
+      --text-2:     #4F4F4F;
+      --text-muted: #6B7280;
+    }
+
     html { scroll-behavior: smooth; }
     body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; line-height: 1.6; }
     a { color: inherit; text-decoration: none; }
@@ -53,72 +74,39 @@
     ::-webkit-scrollbar-track { background: var(--surface); }
     ::-webkit-scrollbar-thumb { background: var(--border-s); border-radius: 3px; }
 
-    /* ── SITE HEADER ─────────────────────────────────────────── */
-    .site-header {
-      background: var(--bg);
-      color: #fff;
-      padding: 0 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 44px;
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      border-bottom: 1px solid #2C2C2C;
-      
+
+
+    /* ── SHARED CHROME (header · footer from style.css) ─────────
+       This page's :root re-maps --blue to orange and changes several
+       neutrals; restore the style.css values on the shared header and
+       footer so they render identically to index.html. */
+    .cx-util-bar, .site-header, .cx-mob-drawer, .cx-footer {
+      --blue:       #1B6EEB;
+      --blue-dim:   #1452B0;
+      --amber:      #E87722;
+      --green:      #2ECC80;
+      --t:          0.18s cubic-bezier(0.4,0,0.2,1);
     }
-    .header-brand { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
-    .cx-logo-img { width: 180px; height: 54px; object-fit: contain; display: block; }
-    .header-nav {
-      display: flex; align-items: center; gap: 2px;
-      position: absolute; left: 50%; transform: translateX(-50%);
+    :root:not([data-theme="light"]) :is(.cx-util-bar, .site-header, .cx-mob-drawer, .cx-footer) {
+      --surface:    #0D0D0D;
+      --surface-2:  #141414;
+      --surface-3:  #1C1C1C;
+      --border:     rgba(255,255,255,0.09);
+      --text-2:     #A3A3A3;
+      --text-muted: #636363;
     }
-    .nav-link {
-      font-family: 'Roboto', sans-serif;
-      font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.72);
-      text-decoration: none; padding: 5px 11px; border-radius: 4px;
-      border: none; background: none; cursor: pointer;
-      transition: var(--t); white-space: nowrap;
-      display: flex; align-items: center; gap: 4px;
+    [data-theme="light"] :is(.cx-util-bar, .site-header, .cx-mob-drawer, .cx-footer) {
+      --bg:         #FFFFFF;
+      --surface:    #FFFFFF;
+      --surface-2:  #F4F4F4;
+      --surface-3:  #EBEBEB;
+      --border:     rgba(0,0,0,0.08);
+      --text:       #0A0A0A;
+      --text-2:     #3D3D3D;
+      --text-muted: #666666;
     }
-    .nav-link:hover { color: #fff; background: #333333; }
-    .nav-link.active { color: #fff; background: rgba(255,255,255,0.14); font-weight: 500; }
-    .nav-dropdown { position: relative; }
-    .nav-dropdown-toggle {
-      font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 500;
-      color: rgba(255,255,255,0.72); background: none; border: none;
-      padding: 5px 11px; border-radius: 4px; cursor: pointer;
-      display: flex; align-items: center; gap: 4px; transition: var(--t); white-space: nowrap;
-    }
-    .nav-dropdown-toggle:hover,
-    .nav-dropdown:hover .nav-dropdown-toggle { color: #fff; background: #333333; }
-    .nav-chevron { transition: transform 0.2s ease; flex-shrink: 0; opacity: 0.6; }
-    .nav-dropdown:hover .nav-chevron { transform: rotate(180deg); }
-    .nav-dropdown-menu {
-      position: absolute; top: 100%; left: 0; min-width: 180px;
-      background: #0F0F0F; border: 1px solid #2C2C2C; border-radius: 3px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.40); padding: 6px;
-      opacity: 0; visibility: hidden; transform: translateY(-4px);
-      transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
-      z-index: 9999; pointer-events: none;
-    }
-    .nav-dropdown:hover .nav-dropdown-menu,
-    .nav-dropdown.open  .nav-dropdown-menu {
-      opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto;
-    }
-    .nav-dropdown-item {
-      display: block; font-size: 13px; color: #888888; text-decoration: none;
-      padding: 7px 12px; border-radius: 2px; transition: var(--t); white-space: nowrap;
-    }
-    .nav-dropdown-item:hover { background: rgba(255,102,0,0.08); color: #FF6600; font-weight: 500; }
-    .header-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-    .hdr-cta {
-      font-size: 13px; font-weight: 500; color: #000000; background: #FF6600;
-      text-decoration: none; padding: 7px 16px; border-radius: 4px;
-      transition: background 0.18s ease; white-space: nowrap; margin-left: 6px;
-    }
-    .hdr-cta:hover { background: #CC5200; }
+    /* style.css caps every <p> at 72ch; careers sections size their own copy */
+    :where([class^="cr-"], [class*=" cr-"]) p { max-width: none; }
 
     /* ── HERO ────────────────────────────────────────────────── */
     .cr-hero {
@@ -130,7 +118,7 @@
     }
     .cr-hero-bg {
       position: absolute; inset: 0; z-index: 0;
-      background: #000000;
+      background: var(--bg);
     }
     .cr-hero-bg::before {
       content: '';
@@ -175,7 +163,7 @@
     @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.35; } }
     .cr-hero-inner h1 {
       font-size: clamp(34px, 5vw, 54px);
-      font-weight: 700; color: #fff;
+      font-weight: 700; color: var(--text);
       line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 22px;
     }
     .cr-hero-inner h1 em { font-style: normal; color: var(--amber); }
@@ -199,7 +187,7 @@
       border: 1px solid var(--border-s); cursor: pointer; text-decoration: none;
       transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
     }
-    .cr-btn-ghost:hover { border-color: rgba(255,255,255,0.3); color: #fff; background: rgba(255,255,255,0.04); }
+    .cr-btn-ghost:hover { border-color: var(--border-s); color: var(--text); background: var(--surface-2); }
 
     /* ── MISSION STRIP ──────────────────────────────────────── */
     .cr-mission-strip {
@@ -210,9 +198,9 @@
       text-align: center;
     }
     .cr-mission-strip p {
-      font-family: var(--mono);
+      font-family: inherit;
       font-size: 15px; font-weight: 500;
-      color: var(--text-secondary);
+      color: var(--text);
       letter-spacing: 0.04em;
       margin: 0;
       line-height: 1.6;
@@ -222,7 +210,7 @@
     /* ── SHARED LAYOUT ───────────────────────────────────────── */
     .cr-inner { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
     .cr-label {
-      font-family: var(--mono);
+      font-family: inherit;
       font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--amber); margin-bottom: 12px;
     }
@@ -232,7 +220,7 @@
     }
     .cr-section-head h2 {
       font-size: clamp(24px, 3vw, 34px); font-weight: 700;
-      color: #fff; letter-spacing: -0.02em; margin-bottom: 10px; line-height: 1.2;
+      color: var(--text); letter-spacing: -0.02em; margin-bottom: 10px; line-height: 1.2;
     }
     .cr-section-head p { font-size: 14px; color: var(--text-2); max-width: 460px; line-height: 1.65; }
     .cr-section-head.centered { flex-direction: column; align-items: center; text-align: center; }
@@ -248,8 +236,8 @@
       padding: 6px 16px; cursor: pointer;
       transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
     }
-    .cr-filter:hover { color: #fff; border-color: var(--border-s); }
-    .cr-filter.active { color: #fff; background: var(--blue-t); border-color: var(--amber); }
+    .cr-filter:hover { color: var(--text); border-color: var(--border-s); }
+    .cr-filter.active { color: var(--text); background: var(--blue-t); border-color: var(--amber); }
 
     /* ── JOB CARDS ───────────────────────────────────────────── */
     .cr-jobs-grid {
@@ -276,7 +264,7 @@
     .cr-job-card.hidden { display: none; }
     .cr-job-cat {
       display: inline-block;
-      font-family: var(--mono);
+      font-family: inherit;
       font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
       padding: 3px 9px; border-radius: 100px; margin-bottom: 14px;
     }
@@ -284,7 +272,7 @@
     .cr-job-cat.policy     { color: var(--amber); background: var(--amber-t); }
     .cr-job-cat.energy     { color: var(--green); background: var(--green-t); }
     .cr-job-title {
-      font-size: 17px; font-weight: 700; color: #fff;
+      font-size: 17px; font-weight: 700; color: var(--text);
       letter-spacing: -0.01em; margin-bottom: 12px; line-height: 1.3;
     }
     .cr-job-title-sub { font-size: 13px; font-weight: 500; color: var(--text-2); }
@@ -338,13 +326,13 @@
     .cr-why-card:nth-child(2) .cr-why-icon { background: var(--blue-t); }
     .cr-why-card:nth-child(3) .cr-why-icon { background: var(--amber-t); }
     .cr-why-card:nth-child(4) .cr-why-icon { background: rgba(139,92,246,0.10); }
-    .cr-why-card h3 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 10px; letter-spacing: -0.01em; }
+    .cr-why-card h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: -0.01em; }
     .cr-why-card p  { font-size: 13px; color: var(--text-2); line-height: 1.65; }
 
     /* ── APPLY SECTION ───────────────────────────────────────── */
     .cr-apply { padding: 80px 0; }
     .cr-apply-grid { display: grid; grid-template-columns: 1fr 1.45fr; gap: 64px; align-items: start; }
-    .cr-apply-left h2 { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 14px; }
+    .cr-apply-left h2 { font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin-bottom: 14px; }
     .cr-apply-left > p { font-size: 14px; color: var(--text-2); line-height: 1.65; margin-bottom: 28px; }
     .cr-apply-meta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
     .cr-apply-meta-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-2); }
@@ -373,7 +361,7 @@
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--r); padding: 36px;
     }
-    .cr-form-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .cr-form-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
     .cr-form-sub { font-size: 13px; color: var(--text-2); margin-bottom: 28px; }
     .cr-field { margin-bottom: 18px; }
     .cr-field-label {
@@ -448,7 +436,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 28px; margin: 0 auto 20px;
     }
-    .cr-success h3 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .cr-success h3 { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
     .cr-success p { font-size: 14px; color: var(--text-2); line-height: 1.65; max-width: 360px; margin: 0 auto; }
 
     /* ── MODAL ───────────────────────────────────────────────── */
@@ -483,9 +471,9 @@
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: background 0.15s ease, color 0.15s ease;
     }
-    .cr-modal-close:hover { background: var(--surface-3); color: #fff; }
+    .cr-modal-close:hover { background: var(--surface-3); color: var(--text); }
     .cr-modal-cat-badge { margin-bottom: 10px; }
-    .cr-modal-title { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .cr-modal-title { font-size: 21px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin-bottom: 12px; }
     .cr-modal-meta { display: flex; gap: 8px; flex-wrap: wrap; }
     .cr-modal-bd { padding: 28px 32px; }
     .cr-modal-sec { margin-bottom: 28px; }
@@ -507,29 +495,6 @@
       display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
     }
 
-    /* ── FOOTER ──────────────────────────────────────────────── */
-    .cx-footer { background: #0B0B0B; color: rgba(255,255,255,0.6); border-top: 1px solid #2C2C2C; }
-    .cx-footer-inner { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
-    .footer-grid {
-      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-      gap: 48px; padding: 56px 0 40px;
-      border-bottom: 1px solid #2C2C2C;
-    }
-    .footer-logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.65; margin-bottom: 14px; }
-    .footer-founder-credit { font-size: 12px; color: rgba(255,255,255,0.35); line-height: 1.6; }
-    .footer-founder-credit strong { color: rgba(255,255,255,0.6); font-weight: 500; }
-    .footer-links-col { display: flex; flex-direction: column; gap: 8px; }
-    .footer-col-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
-    .footer-link { font-size: 13px; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.15s ease; }
-    .footer-link:hover { color: #fff; }
-    .footer-link-plain { font-size: 13px; color: rgba(255,255,255,0.4); }
-    .footer-socials { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .footer-socials a { font-size: 13px; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.15s ease; }
-    .footer-socials a:hover { color: #fff; }
-    .footer-socials span { color: rgba(255,255,255,0.2); }
-    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; font-size: 11px; letter-spacing: 0.04em; color: rgba(255,255,255,0.3); }
-
     /* ── SCROLL REVEAL ───────────────────────────────────────── */
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -539,72 +504,378 @@
       .cr-why-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
-      .site-header { padding: 0 20px; }
-      .header-nav { display: none; }
       .cr-hero { padding: 72px 24px; min-height: 480px; }
       .cr-inner { padding: 0 24px; }
       .cr-jobs-grid { grid-template-columns: 1fr; }
       .cr-section-head { flex-direction: column; }
       .cr-apply-grid { grid-template-columns: 1fr; gap: 40px; }
-      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
       .cr-modal-hd, .cr-modal-bd, .cr-modal-ft { padding-left: 20px; padding-right: 20px; }
     }
     @media (max-width: 520px) {
       .cr-why-grid { grid-template-columns: 1fr; }
       .cr-field-row { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr; }
       .cr-form-wrap { padding: 24px 20px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════ HEADER -->
-  <header class="site-header">
+  <!-- ══ UTILITY BAR ══════════════════════════════════════════════ -->
+  <div class="cx-util-bar">
+    <div class="cx-util-left"></div>
+    <div class="cx-util-right">
+      <div class="cx-util-item"><a href="terminal.html">Terminal</a></div>
+      <div class="cx-util-sep"></div>
+      <div class="cx-util-item"><a href="careers.html">Careers</a></div>
+      <div class="cx-util-sep"></div>
+      <button id="cx-theme-toggle" title="Toggle theme"
+        style="background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;font-weight: 500;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;padding:0;white-space:nowrap;"
+        onclick="(function(){var h=document.documentElement;var t=h.getAttribute('data-theme')==='light'?'dark':'light';h.setAttribute('data-theme',t);localStorage.setItem('cx-theme',t);var btn=document.getElementById('cx-theme-toggle');btn.textContent=t==='light'?'Dark':'Light';})()">
+        Light
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ SITE HEADER ══════════════════════════════════════════════ -->
+  <header class="site-header" id="site-header">
+
+    <!-- Left: Logo -->
     <a href="index.html" class="header-brand">
       <img src="Climatix_logo.png" alt="Climactix Global" class="cx-logo-img" />
     </a>
-    <nav class="header-nav">
-      <a href="index.html" class="nav-link">Home</a>
+
+    <!-- Center: Primary navigation -->
+    <nav class="header-nav" aria-label="Primary navigation">
+
+      <!-- 0. Risk OS -->
       <div class="nav-dropdown">
         <button class="nav-link nav-dropdown-toggle">
-          Platform
-          <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          Risk OS™
+          <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div class="nav-dropdown-menu">
-          <a href="index.html#vision" class="nav-dropdown-item">Vision</a>
-          <a href="index.html#solution" class="nav-dropdown-item">Solution</a>
-          <a href="generate.html" class="nav-dropdown-item">ESG Engine</a>
-          <a href="climactix-ai.html" class="nav-dropdown-item">AI Engine</a>
-          <a href="greenwashing-scanner.html" class="nav-dropdown-item">ESG Risk Intelligence</a>
+        <div class="nav-dropdown-menu wide terminal">
+          <div class="nav-dropdown-group">Risk OS™ · Climate Intelligence Operating System</div>
+          <a href="climate-risk-os.html" class="nav-dropdown-item nav-terminal-open">Explore Risk OS™ →</a>
+          <div class="nav-dropdown-divider"></div>
+          <a href="climate-risk-os.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Assessment Methodology</span>
+            <span class="ddi-desc">40+ intelligence modules, 8 scored C-LAYER pillars</span>
+          </a>
+          <a href="assessment.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Climate Intelligence Score™</span>
+            <span class="ddi-desc">The rating Risk OS™ generates for your organization</span>
+          </a>
+          <a href="login.html?redirect=climate-risk-os.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Request Enterprise Access</span>
+            <span class="ddi-desc">Members-only — for banks, insurers, investors, and governments</span>
+          </a>
         </div>
       </div>
+
+      <!-- 1. Products -->
       <div class="nav-dropdown">
         <button class="nav-link nav-dropdown-toggle">
           Products
-          <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div class="nav-dropdown-menu">
-          <a href="assessment.html" class="nav-dropdown-item">Assessment</a>
-          <a href="dashboard.html" class="nav-dropdown-item">Dashboard</a>
-          <a href="index.html#green-bonds" class="nav-dropdown-item">Green Bonds</a>
+        <div class="nav-dropdown-menu wide terminal">
+          <div class="nav-dropdown-group">The Climactix Product Architecture — powered by Risk OS™</div>
+          <a href="terminal.html" class="nav-dropdown-item nav-terminal-open">Open Climactix Terminal™ →</a>
+          <div class="nav-dropdown-divider"></div>
+          <a href="terminal.html?mod=orbit" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">ORBIT™ — Enterprise Climate Risk</span>
+            <span class="ddi-desc">Maps and interprets physical and transition risk across an enterprise, its assets, and its operations</span>
+          </a>
+          <a href="terminal.html?mod=vector" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">VECTOR™ — Scenario & Financial Simulation</span>
+            <span class="ddi-desc">NGFS-aligned scenario stress testing translated into revenue-at-risk and EBITDA impact</span>
+          </a>
+          <a href="terminal.html?mod=prism" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">PRISM™ — Disclosure & Credibility</span>
+            <span class="ddi-desc">Separates climate claims from evidence — TCFD, ISSB, CSRD, BRSR, greenwashing risk</span>
+          </a>
+          <a href="terminal.html?mod=atlas" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">ATLAS™ — Value Chain Intelligence</span>
+            <span class="ddi-desc">Maps climate exposure across the enterprise and its entire supplier and logistics network</span>
+          </a>
+          <a href="investor-terminal.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">PULSE™ — Portfolio Climate Intelligence</span>
+            <span class="ddi-desc">A live view of climate exposure across investor portfolios — benchmarking, Climate VaR, stress testing</span>
+          </a>
+          <a href="terminal.html?mod=signal" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">SIGNAL™ — Early Warning Intelligence</span>
+            <span class="ddi-desc">Detects climate, regulatory, and corporate developments before they become material risks</span>
+          </a>
+          <a href="terminal.html?mod=nexus" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">NEXUS™ — Intelligence Infrastructure</span>
+            <span class="ddi-desc">APIs and integrations connecting Climactix intelligence into institutional systems</span>
+          </a>
         </div>
       </div>
-      <a href="community.html" class="nav-link">Community</a>
-      <a href="dashboard.html" class="nav-link">Dashboard</a>
-      <a href="careers.html" class="nav-link active">Careers</a>
+
+      <!-- 2. Platform -->
+      <div class="nav-dropdown">
+        <button class="nav-link nav-dropdown-toggle">
+          Platform
+          <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-dropdown-menu wide">
+          <div class="nav-dropdown-group">Platform</div>
+          <a href="about.html#services" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Platform Overview</span>
+            <span class="ddi-desc">How the Climactix intelligence stack fits together</span>
+          </a>
+          <a href="dashboard.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Environmental Monitoring</span>
+            <span class="ddi-desc">Live emissions, hazard, and compliance tracking</span>
+          </a>
+          <a href="simulation.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Risk Intelligence Map</span>
+            <span class="ddi-desc">Geospatial physical risk across hazard layers</span>
+          </a>
+          <a href="greenwashing-scanner.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Corporate Disclosure Intelligence</span>
+            <span class="ddi-desc">Disclosure quality and evidence-coverage assessment</span>
+          </a>
+          <a href="climactix-ai.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Disclosure Analysis</span>
+            <span class="ddi-desc">AI-driven review of sustainability disclosures for gaps and inconsistencies</span>
+          </a>
+          <div class="nav-dropdown-divider"></div>
+          <div class="nav-dropdown-group">Climactix Community™</div>
+          <a href="community.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Community Network</span>
+            <span class="ddi-desc">Where climate professionals, investors, and institutions connect and collaborate</span>
+          </a>
+          <a href="leaderboard.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Climate Leaderboard</span>
+            <span class="ddi-desc">Climate Intelligence Score rankings across tracked companies</span>
+          </a>
+          <a href="funding-hub.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Funding Hub</span>
+            <span class="ddi-desc">Capital matching for climate-focused ventures</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Certifications -->
+      <div class="nav-dropdown">
+        <button class="nav-link nav-dropdown-toggle">
+          Certifications
+          <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-dropdown-menu wide">
+          <div class="nav-dropdown-group">Entertainment Sustainability Certification</div>
+          <a href="sustainable-movie-certification.html#framework" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">FRAME™ — Production Standard</span>
+            <span class="ddi-desc">Measures the sustainability performance of a production from planning to wrap</span>
+          </a>
+          <a href="sustainable-movie-certification.html#certification-levels" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">SCREEN™ — Film Certification</span>
+            <span class="ddi-desc">Certifies the verified sustainability performance of a completed film or series</span>
+          </a>
+          <a href="studio-sustainability-certification.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">STUDIO™ — Studio Certification</span>
+            <span class="ddi-desc">Certifies the sustainability maturity of a production house or entertainment organization</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 4. Insights -->
+      <div class="nav-dropdown">
+        <button class="nav-link nav-dropdown-toggle">
+          Insights
+          <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-dropdown-menu wide">
+          <div class="nav-dropdown-group">Research</div>
+          <a href="research.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Research Overview</span>
+            <span class="ddi-desc">Institutional research hub across all divisions</span>
+          </a>
+          <a href="intelligence-reports.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Intelligence Reports</span>
+            <span class="ddi-desc">Company and sector-level climate intelligence</span>
+          </a>
+          <a href="transition-risk.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Transition Risk Briefings</span>
+            <span class="ddi-desc">Policy, market, and technology risk analysis</span>
+          </a>
+          <a href="india-climate-outlook.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">India Climate Outlook</span>
+            <span class="ddi-desc">NITI ICED-aligned regional risk assessment</span>
+          </a>
+          <a href="brsr-intelligence.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">BRSR Intelligence Notes</span>
+            <span class="ddi-desc">Disclosure analysis under India's BRSR framework</span>
+          </a>
+          <div class="nav-dropdown-divider"></div>
+          <div class="nav-dropdown-group">Media &amp; Updates</div>
+          <a href="media.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Media</span>
+            <span class="ddi-desc">Press coverage and platform announcements</span>
+          </a>
+          <a href="forum.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Industry Discussion</span>
+            <span class="ddi-desc">Practitioner discussion threads on climate risk</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 5. About -->
+      <div class="nav-dropdown">
+        <button class="nav-link nav-dropdown-toggle">
+          About
+          <svg class="nav-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="nav-dropdown-menu wide">
+          <div class="nav-dropdown-group">Company</div>
+          <a href="about.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Company Overview</span>
+            <span class="ddi-desc">Mission, team, and platform history</span>
+          </a>
+          <a href="about.html#vision" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Mission</span>
+            <span class="ddi-desc">Why we built a climate risk intelligence OS</span>
+          </a>
+          <a href="methodology-brief.html" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Methodology</span>
+            <span class="ddi-desc">How our scoring and risk models are built</span>
+          </a>
+          <a href="index.html#contact" class="nav-dropdown-item has-desc">
+            <span class="ddi-title">Contact</span>
+            <span class="ddi-desc">Get in touch with the Climactix team</span>
+          </a>
+        </div>
+      </div>
+
     </nav>
+
+    <!-- Right: Actions -->
     <div class="header-actions">
-      <a href="index.html#calculator" class="nav-link">Calculator</a>
       <a href="login.html" class="nav-link">Sign In</a>
-      <a href="assessment.html" class="hdr-cta">Start Assessment</a>
+      <a href="index.html#risk-os" class="hdr-ghost">Explore Platform</a>
+      <a href="index.html#contact" class="hdr-cta-primary">Book Enterprise Demo</a>
+      <!-- Mobile toggle -->
+      <button class="cx-mob-toggle" id="cx-mob-toggle" aria-label="Open navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
+
   </header>
+
+  <!-- Mobile drawer -->
+  <div class="cx-mob-drawer" id="cx-mob-drawer" aria-hidden="true" style="display:none">
+
+    <div class="cx-mob-section">
+      <button class="cx-mob-section-toggle">
+        Risk OS™
+        <svg class="mob-chev" width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cx-mob-links">
+        <a href="climate-risk-os.html" class="cx-mob-link" style="color:var(--amber);font-weight: 500;">Explore Risk OS™ →</a>
+        <div class="cx-mob-divider"></div>
+        <a href="climate-risk-os.html" class="cx-mob-link">Assessment Methodology</a>
+        <a href="assessment.html" class="cx-mob-link">Climate Intelligence Score™</a>
+        <a href="login.html?redirect=climate-risk-os.html" class="cx-mob-link">Request Enterprise Access</a>
+      </div>
+    </div>
+
+    <div class="cx-mob-section">
+      <button class="cx-mob-section-toggle">
+        Products
+        <svg class="mob-chev" width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cx-mob-links">
+        <a href="terminal.html" class="cx-mob-link" style="color:var(--amber);font-weight: 500;">Open Climactix Terminal™ →</a>
+        <div class="cx-mob-divider"></div>
+        <a href="terminal.html?mod=orbit" class="cx-mob-link">ORBIT™ — Enterprise Climate Risk</a>
+        <a href="terminal.html?mod=vector" class="cx-mob-link">VECTOR™ — Scenario & Financial Simulation</a>
+        <a href="terminal.html?mod=prism" class="cx-mob-link">PRISM™ — Disclosure & Credibility</a>
+        <a href="terminal.html?mod=atlas" class="cx-mob-link">ATLAS™ — Value Chain Intelligence</a>
+        <a href="investor-terminal.html" class="cx-mob-link">PULSE™ — Portfolio Climate Intelligence</a>
+        <a href="terminal.html?mod=signal" class="cx-mob-link">SIGNAL™ — Early Warning Intelligence</a>
+        <a href="terminal.html?mod=nexus" class="cx-mob-link">NEXUS™ — Intelligence Infrastructure</a>
+      </div>
+    </div>
+
+    <div class="cx-mob-section">
+      <button class="cx-mob-section-toggle">
+        Platform
+        <svg class="mob-chev" width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cx-mob-links">
+        <div class="cx-mob-label">Platform</div>
+        <a href="about.html#services" class="cx-mob-link">Platform Overview</a>
+        <a href="dashboard.html" class="cx-mob-link">Environmental Monitoring</a>
+        <a href="simulation.html" class="cx-mob-link">Risk Intelligence Map</a>
+        <a href="greenwashing-scanner.html" class="cx-mob-link">Corporate Disclosure Intelligence</a>
+        <a href="climactix-ai.html" class="cx-mob-link">Disclosure Analysis</a>
+        <div class="cx-mob-divider"></div>
+        <div class="cx-mob-label">Climactix Community™</div>
+        <a href="community.html" class="cx-mob-link">Community Network</a>
+        <a href="leaderboard.html" class="cx-mob-link">Climate Leaderboard</a>
+        <a href="funding-hub.html" class="cx-mob-link">Funding Hub</a>
+      </div>
+    </div>
+
+    <div class="cx-mob-section">
+      <button class="cx-mob-section-toggle">
+        Certifications
+        <svg class="mob-chev" width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cx-mob-links">
+        <a href="sustainable-movie-certification.html#framework" class="cx-mob-link">FRAME™ — Production Standard</a>
+        <a href="sustainable-movie-certification.html#certification-levels" class="cx-mob-link">SCREEN™ — Film Certification</a>
+        <a href="studio-sustainability-certification.html" class="cx-mob-link">STUDIO™ — Studio Certification</a>
+      </div>
+    </div>
+
+    <div class="cx-mob-section">
+      <button class="cx-mob-section-toggle">
+        Insights
+        <svg class="mob-chev" width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="cx-mob-links">
+        <a href="research.html" class="cx-mob-link">Research Overview</a>
+        <a href="intelligence-reports.html" class="cx-mob-link">Intelligence Reports</a>
+        <a href="transition-risk.html" class="cx-mob-link">Transition Risk Briefings</a>
+        <a href="india-climate-outlook.html" class="cx-mob-link">India Climate Outlook</a>
+        <a href="brsr-intelligence.html" class="cx-mob-link">BRSR Intelligence Notes</a>
+        <div class="cx-mob-divider"></div>
+        <a href="media.html" class="cx-mob-link">Media</a>
+        <a href="forum.html" class="cx-mob-link">Industry Discussion</a>
+      </div>
+    </div>
+
+    <a href="about.html" class="cx-mob-link-plain">About</a>
+    <a href="methodology-brief.html" class="cx-mob-link-plain">Methodology</a>
+    <a href="login.html" class="cx-mob-link-plain">Sign In</a>
+
+    <div class="cx-mob-actions">
+      <a href="index.html#risk-os" class="hdr-ghost" style="justify-content:center;">Explore Platform</a>
+      <a href="index.html#contact" class="hdr-cta-primary" style="justify-content:center;">Book Enterprise Demo</a>
+    </div>
+
+  </div>
+
   <script>
+    /* ── Header: transparent → solid on scroll ── */
+    (function() {
+      var hdr = document.getElementById('site-header');
+      var scrollThreshold = 60;
+      function onScroll() {
+        if (window.scrollY > scrollThreshold) {
+          hdr.classList.add('scrolled');
+        } else {
+          hdr.classList.remove('scrolled');
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+
+    /* ── Nav dropdown click-toggle ── */
     (function() {
       function closeAll() {
         document.querySelectorAll('.nav-dropdown').forEach(function(d) { d.classList.remove('open'); });
@@ -620,6 +891,77 @@
       });
       document.addEventListener('click', closeAll);
       document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAll(); });
+    })();
+
+    /* ── Mobile drawer toggle ── */
+    (function() {
+      var toggle = document.getElementById('cx-mob-toggle');
+      var drawer = document.getElementById('cx-mob-drawer');
+      if (!toggle || !drawer) return;
+
+      var MOBILE_BP = 769;
+
+      function isMobile() { return window.innerWidth < MOBILE_BP; }
+
+      function openDrawer() {
+        if (!isMobile()) return;
+        drawer.style.display = 'block';
+        drawer.classList.add('open');
+        toggle.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDrawer() {
+        drawer.style.display = 'none';
+        drawer.classList.remove('open');
+        toggle.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      toggle.addEventListener('click', function() {
+        if (drawer.classList.contains('open')) { closeDrawer(); } else { openDrawer(); }
+      });
+
+      // Close on nav link click
+      drawer.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() { closeDrawer(); });
+      });
+      // Mobile accordion sections
+      drawer.querySelectorAll('.cx-mob-section-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var section = this.closest('.cx-mob-section');
+          section.classList.toggle('open');
+        });
+      });
+
+      // Auto-close and hide on desktop resize
+      window.addEventListener('resize', function() {
+        if (!isMobile()) { closeDrawer(); }
+      });
+    })();
+
+    /* ── Sync utility bar live metrics from main strip ── */
+    (function() {
+      function syncUtil() {
+        var co2 = document.getElementById('cxlm-co2');
+        var temp = document.getElementById('cxlm-temp');
+        var evts = document.getElementById('cxlm-evts');
+        var co2u = document.getElementById('cxlm-co2-util');
+        var tempu = document.getElementById('cxlm-temp-util');
+        var evtsu = document.getElementById('cxlm-evts-util');
+        if (co2 && co2u) co2u.textContent = co2.textContent;
+        if (temp && tempu) tempu.textContent = temp.textContent;
+        if (evts && evtsu) evtsu.textContent = evts.textContent;
+      }
+      var observer = new MutationObserver(syncUtil);
+      ['cxlm-co2','cxlm-temp','cxlm-evts'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) observer.observe(el, { characterData: true, childList: true, subtree: true });
+      });
     })();
   </script>
 
@@ -938,47 +1280,101 @@
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════ FOOTER -->
+  <script>
+    (function(){
+      var b = document.getElementById('cx-theme-toggle');
+      if (b) b.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? 'Dark' : 'Light';
+    })();
+  </script>
+
+  <!-- ═══════════════════════════════════════ FOOTER (shared with index.html) -->
   <footer class="cx-footer">
-    <div class="cx-footer-inner">
-      <div class="footer-grid">
-        <div class="footer-brand-col">
-          <div class="footer-logo-row">
-            <img src="Climatix_logo.png" alt="Climactix Global" style="height:56px;width:auto;object-fit:contain;" />
-          </div>
-          <p class="footer-tagline">ESG Intelligence. Disclosure Infrastructure.<br>For Financially Material Sustainability.</p>
-          <p class="footer-founder-credit">Founded by <strong>Rushikesh Kulkarni</strong><br>Oct 2025 · India</p>
+
+    <!-- Footer top: brand | nav cols | socials -->
+    <div class="footer-top">
+
+      <!-- Brand column -->
+      <div class="footer-brand">
+        <div class="footer-brand-name">Climactix Global</div>
+        <p class="footer-mission">Risk OS™ — the Climate Intelligence Operating System behind the Climate Intelligence Score™, the Climactix Terminal™, and the Climactix Community™ — for enterprises, investors, and institutions.</p>
+        <a href="index.html#contact" class="footer-cta-link">About the Climactix Mission</a>
+        <a href="community.html" class="footer-join-btn">Join Climactix Community <span class="footer-join-arrow">→</span></a>
+      </div>
+
+      <!-- Nav columns -->
+      <nav class="footer-nav-cols" aria-label="Footer navigation">
+        <div class="footer-col">
+          <div class="footer-col-title">Products</div>
+          <a href="terminal.html" class="footer-link">Climactix Terminal™</a>
+          <a href="climate-risk-os.html" class="footer-link">Risk OS™</a>
+          <a href="terminal.html?mod=orbit" class="footer-link">ORBIT™</a>
+          <a href="terminal.html?mod=vector" class="footer-link">VECTOR™</a>
+          <a href="terminal.html?mod=prism" class="footer-link">PRISM™</a>
+          <a href="terminal.html?mod=atlas" class="footer-link">ATLAS™</a>
+          <a href="investor-terminal.html" class="footer-link">PULSE™</a>
+          <a href="terminal.html?mod=signal" class="footer-link">SIGNAL™</a>
+          <a href="terminal.html?mod=nexus" class="footer-link">NEXUS™</a>
         </div>
-        <div class="footer-links-col">
-          <div class="footer-col-title">Platform</div>
-          <a href="generate.html" class="footer-link">ESG Intelligence Engine</a>
-          <a href="index.html#solution" class="footer-link">Solutions</a>
-          <a href="index.html#vision" class="footer-link">Vision &amp; Mission</a>
-        </div>
-        <div class="footer-links-col">
+        <div class="footer-col">
           <div class="footer-col-title">Frameworks</div>
-          <span class="footer-link-plain">GRI · SASB · TCFD</span>
-          <span class="footer-link-plain">CSRD · ISSB IFRS S2</span>
-          <span class="footer-link-plain">EU Taxonomy · SBTi</span>
-          <span class="footer-link-plain">SBTN · RE100 · CDP</span>
+          <a href="index.html#esg-engine" class="footer-link">GRI &amp; SASB</a>
+          <a href="index.html#esg-engine" class="footer-link">TCFD &amp; ISSB IFRS S2</a>
+          <a href="index.html#esg-engine" class="footer-link">CSRD &amp; EU Taxonomy</a>
+          <a href="index.html#esg-engine" class="footer-link">SBTi &amp; CDP</a>
+          <a href="index.html#esg-engine" class="footer-link">SBTN &amp; RE100</a>
         </div>
-        <div class="footer-links-col">
-          <div class="footer-col-title">Sunday Climate Talks</div>
-          <span class="footer-link-plain">YouTube · Spotify</span>
-          <div class="footer-socials">
-            <a href="https://www.linkedin.com/company/climactix-global" target="_blank" rel="noopener">LinkedIn</a>
-            <span>·</span>
-            <a href="https://www.instagram.com/climactix_/" target="_blank" rel="noopener">Instagram</a>
-          </div>
-          <span class="footer-link-plain">100% Carbon Neutral</span>
-          <span class="footer-link-plain">India's First Climate Podcast</span>
+        <div class="footer-col">
+          <div class="footer-col-title">Climactix Community™</div>
+          <a href="community.html" class="footer-link">Climate Feed</a>
+          <a href="leaderboard.html" class="footer-link">Leaderboard</a>
+          <a href="funding-hub.html" class="footer-link">VC Funding Hub</a>
+          <a href="solutions.html" class="footer-link">Solution Hub</a>
+          <a href="forum.html" class="footer-link">Forum</a>
+          <div class="footer-col-title" style="font-size:11px;margin-top:14px;">Certifications</div>
+          <a href="sustainable-movie-certification.html#framework" class="footer-link">FRAME™</a>
+          <a href="sustainable-movie-certification.html#certification-levels" class="footer-link">SCREEN™</a>
+          <a href="studio-sustainability-certification.html" class="footer-link">STUDIO™</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Media &amp; Talks</div>
+          <a href="index.html#sct" class="footer-link">Sunday Climate Talks</a>
+          <a href="about.html#vision" class="footer-link">Vision &amp; Mission</a>
+          <a href="index.html#contact" class="footer-link">Contact</a>
+          <a href="assessment.html" class="footer-link">Climate Assessment</a>
+        </div>
+      </nav>
+
+      <!-- Social column -->
+      <div class="footer-socials">
+        <div class="footer-social-label">Follow Climactix</div>
+        <div class="footer-social-row">
+          <a href="https://www.linkedin.com/company/climactix-global" target="_blank" rel="noopener" class="footer-social-icon" aria-label="LinkedIn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="https://www.instagram.com/climactix_/" target="_blank" rel="noopener" class="footer-social-icon" aria-label="Instagram">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@sundayclimatetalks" target="_blank" rel="noopener" class="footer-social-icon" aria-label="YouTube">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+          </a>
         </div>
       </div>
-      <div class="footer-bottom">
-        <span>© 2025 Climactix Global · Rushikesh Kulkarni · All Rights Reserved</span>
-        <span style="opacity:0.45;">Climactix Global · Oct 2025</span>
+
+    </div>
+
+    <!-- Footer bottom legal bar -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <span class="footer-legal">© 2025 Climactix Global · Rushikesh Kulkarni · All Rights Reserved</span>
+        <div class="footer-legal-links">
+          <a href="index.html#" class="footer-legal-link">Privacy Policy</a>
+          <a href="index.html#" class="footer-legal-link">Terms of Use</a>
+          <a href="index.html#contact" class="footer-legal-link">Contact</a>
+        </div>
+        <span class="footer-updated">Founded Oct 2025 · India · Serving Globally</span>
       </div>
     </div>
+
   </footer>
 
   <!-- ═══════════════════════════════════════ MODAL -->
@@ -1139,7 +1535,7 @@
     if (!j) return;
 
     document.getElementById('m-cat').innerHTML =
-      `<span style="font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${catColor[j.cat]};background:${catBg[j.cat]};padding:3px 9px;border-radius:100px;">${j.catLabel}</span>`;
+      `<span style="font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${catColor[j.cat]};background:${catBg[j.cat]};padding:3px 9px;border-radius:100px;">${j.catLabel}</span>`;
 
     document.getElementById('m-title').textContent = j.title;
 
