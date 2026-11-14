@@ -4,8 +4,10 @@
        <div data-cx-explainer></div>
    anywhere; this file injects its own styles and mounts itself.
 
-   The video (terminal-film-assets/how-it-works.mp4) is a rendered,
-   60-second, six-scene cut of the Climactix Terminal product film.
+   The video (terminal-film-assets/how-it-works.mp4) is its own rendered,
+   48-second, six-scene explainer composed in terminal-explainer-src/,
+   separate from the product film. Frame 0 and the last frame match,
+   so it loops without a visible cut.
    Behaviour:
      - loads and plays only when the section is on screen; pauses off it
      - loops, muted by default, no player controls
@@ -22,8 +24,8 @@ window.CXExplainer = (function () {
 
   var SRC = 'terminal-film-assets/how-it-works.mp4', POSTER = 'terminal-film-assets/how-it-works.jpg';
   /* scene start times in the rendered cut, seconds */
-  var SCENES = [[0, 'Fragmented information'], [8.33, 'Centralised intelligence'], [16.18, 'Assessment'], [22.98, 'Intelligence Score'], [32.18, 'Institutional decisions'], [49.68, 'Business impact']];
-  var DUR = 60.03;
+  var SCENES = [[0, 'Fragmented information'], [8, 'Centralised intelligence'], [16, 'Assessment'], [24, 'Intelligence Score'], [31, 'Institutional decisions'], [41, 'Business impact']];
+  var DUR = 48;
 
   var CSS = '.cxe{margin:0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}' +
     '.cxe *{box-sizing:border-box}' +
@@ -54,7 +56,7 @@ window.CXExplainer = (function () {
     if (!styled) { styled = true; var s = document.createElement('style'); s.textContent = CSS; document.head.appendChild(s); }
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     el.innerHTML = '<figure class="cxe"><div class="cxe-stage">' +
-      '<video muted loop playsinline preload="none" poster="' + POSTER + '" aria-label="How the Terminal works: a one-minute film in six scenes, from fragmented disclosures to institutional decisions"></video>' +
+      '<video muted loop playsinline preload="none" poster="' + POSTER + '" aria-label="How the Terminal works: a 48-second explainer in six scenes, from fragmented disclosures to institutional decisions"></video>' +
       '<button type="button" class="cxe-snd" aria-pressed="false" aria-label="Turn sound on">' + OFF + '<span>Sound off</span></button>' +
       '<button type="button" class="cxe-play" hidden>Play the film</button></div>' +
       '<ol class="cxe-scenes" aria-label="Scenes">' + SCENES.map(function (s, i) {
@@ -69,7 +71,8 @@ window.CXExplainer = (function () {
     function play() {
       load();
       var p = v.play();
-      if (p && p.then) p.then(function () { playBtn.hidden = true; }).catch(function () { playBtn.hidden = false; });
+      /* only a real autoplay refusal shows the button; an interrupted play() (scrolled away mid-load) does not */
+      if (p && p.catch) p.catch(function (e) { if (e && e.name === 'NotAllowedError') playBtn.hidden = false; });
     }
     function mark() {
       var t = v.currentTime || 0, k = 0;
@@ -87,6 +90,7 @@ window.CXExplainer = (function () {
     }
 
     v.addEventListener('timeupdate', mark);
+    v.addEventListener('playing', function () { playBtn.hidden = true; });
     snd.addEventListener('click', function () {
       v.muted = !v.muted;
       snd.setAttribute('aria-pressed', String(!v.muted));
