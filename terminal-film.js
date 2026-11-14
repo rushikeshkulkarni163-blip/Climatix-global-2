@@ -13,7 +13,7 @@
 window.CXFilm = (function () {
   'use strict';
 
-  var DUR = 108, W = 1920, H = 1080;
+  var DUR = 110, W = 1920, H = 1080, ASSET = 'terminal-film-assets/';
   var scenes = [], caps = [], cues = [], chapters = [];
   var built = false, t = 0, playing = false, lastNow = 0, raf = 0, muted = false, ended = false, scale = 1;
   var root, frameEl, stage, bg, bgx, capIn, capBar, endLayer, ctl, scrub, timeEl, btnPlay, btnMute, hideTimer = 0, returnFocus = null;
@@ -73,9 +73,9 @@ window.CXFilm = (function () {
 
   /* ── Audio: a restrained procedural score, driven by the same clock ── */
   var ac = null, master, padG, lp, shG, live;
-  var PAD = [[0, 0], [3, 0.2], [12, 0.24], [17, 0.4], [25, 0.28], [40, 0.32], [50, 0.44], [55, 0.28], [80, 0.34], [92, 0.42], [100, 0.36], [106, 0.1], [108, 0]];
-  var CUT = [[0, 220], [17, 900], [25, 480], [50, 1400], [55, 600], [90, 1200], [108, 300]];
-  var SHM = [[0, 0], [15, 0], [18, 0.03], [24, 0.012], [47, 0.012], [50.5, 0.04], [55, 0.01], [84, 0.015], [92, 0.04], [100, 0.03], [107, 0]];
+  var PAD = [[0, 0], [2, 0.22], [13, 0.26], [19, 0.42], [27, 0.28], [44, 0.32], [54, 0.44], [59, 0.28], [87, 0.36], [96, 0.42], [102, 0.36], [108, 0.1], [110, 0]];
+  var CUT = [[0, 260], [19, 950], [27, 500], [54, 1400], [59, 650], [94, 1200], [110, 300]];
+  var SHM = [[0, 0], [16, 0], [19, 0.03], [26, 0.012], [51, 0.012], [54.5, 0.04], [59, 0.01], [88, 0.015], [96, 0.04], [102, 0.03], [109, 0]];
   function graph(A) {
     var g = {};
     g.master = A.createGain(); g.master.gain.value = 0.8; g.master.connect(A.destination);
@@ -135,6 +135,53 @@ window.CXFilm = (function () {
     return A.startRendering();
   }
 
+  /* ── Footage: real video clips slaved to the film clock ──────────
+     A scene asks for a clip position each frame with ctx.clip(handle, seconds, rate).
+     While the film plays the clip runs natively and is only corrected for drift;
+     when paused, scrubbed or captured frame by frame it is seeked exactly. */
+  var vids = [];
+  function mkVideo(parent, name, cls) {
+    var v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.setAttribute('muted', '');
+    v.preload = 'auto'; v.poster = ASSET + name + '.jpg'; v.src = ASSET + name + '.mp4'; v.className = 'cxf-v ' + (cls || '');
+    parent.appendChild(v);
+    var o = { v: v, req: null, rate: 1 };
+    vids.push(o);
+    return o;
+  }
+  function want(o) { var d = o.v.duration; return !d || isNaN(d) ? null : Math.max(0, Math.min(o.req, d - 0.05)); }
+  function syncVideos() {
+    for (var i = 0; i < vids.length; i++) {
+      var o = vids[i], v = o.v;
+      if (o.req == null) { if (!v.paused) v.pause(); continue; }
+      var w = want(o); if (w == null) continue;
+      if (playing && o.req < v.duration - 0.05) {
+        if (v.playbackRate !== o.rate) v.playbackRate = o.rate;
+        if (Math.abs(v.currentTime - w) > 0.35) v.currentTime = w;
+        if (v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      } else {
+        if (!v.paused) v.pause();
+        if (!v.seeking && Math.abs(v.currentTime - w) > 0.03) v.currentTime = w;
+      }
+    }
+  }
+  /* resolves once every requested clip shows the requested frame (used by the video export) */
+  function settle() {
+    return new Promise(function (res) {
+      var n = 0;
+      (function chk() {
+        var ok = true;
+        vids.forEach(function (o) {
+          if (o.req == null) return;
+          var w = want(o);
+          if (w == null || o.v.readyState < 2 || o.v.seeking) { ok = false; return; }
+          if (Math.abs(o.v.currentTime - w) > 0.04) { ok = false; o.v.currentTime = w; }
+        });
+        if (ok || ++n > 400) res(); else setTimeout(chk, 10);
+      })();
+    });
+  }
+
   /* ── Build ─────────────────────────────────────────────────────── */
   var ICON = {
     play: '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 3.5v11l9-5.5z" fill="currentColor"/></svg>',
@@ -162,7 +209,8 @@ window.CXFilm = (function () {
     bgx = bg.getContext('2d');
 
     ctx = { stage: stage, bg: bgx, W: W, H: H, D: window.CX_TERMINAL_DEMO, u: u, el: el, st: st, rise: rise, tx: tx, css: css,
-            cue: function (time, type) { cues.push({ t: time, type: type || 'tick' }); }, term: null, endLayer: null };
+            cue: function (time, type) { cues.push({ t: time, type: type || 'tick' }); }, term: null, endLayer: null,
+            video: mkVideo, clip: function (o, time, rate) { o.req = time; o.rate = rate || 1; } };
 
     scenes.forEach(function (s) {
       s.els = [];
@@ -188,7 +236,7 @@ window.CXFilm = (function () {
     ctl = el(root, 'cxf-ctl');
     btnPlay = button(ctl, 'cxf-pp', 'Pause', ICON.pause, toggle);
     button(ctl, '', 'Replay from the start', ICON.replay, function () { seek(0); play(); });
-    timeEl = el(ctl, 'cxf-time', '0:00 / 1:48');
+    timeEl = el(ctl, 'cxf-time', '0:00 / 1:50');
     var track = el(ctl, 'cxf-track');
     scrub = document.createElement('input');
     scrub.type = 'range'; scrub.min = 0; scrub.max = DUR; scrub.step = 0.05; scrub.value = 0; scrub.className = 'cxf-scrub';
@@ -233,18 +281,20 @@ window.CXFilm = (function () {
   }
   function render() {
     bgx.clearRect(0, 0, W, H);
+    for (var q = 0; q < vids.length; q++) vids[q].req = null;
     for (var i = 0; i < scenes.length; i++) {
       var s = scenes[i], on = active(s, t);
       if (on !== s._on) { s._on = on; for (var k = 0; k < s.els.length; k++) s.els[k].style.display = on ? '' : 'none'; }
       if (on) s.frame(t, ctx);
     }
-    var text = '', op = 0;
+    syncVideos();
+    var text = '', op = 0, photo = false;
     for (var c = 0; c < caps.length; c++) {
-      if (t >= caps[c].a && t < caps[c].b) { text = caps[c].text; op = u.win(t, caps[c].a, caps[c].a + 0.5, caps[c].b - 0.5, caps[c].b); }
+      if (t >= caps[c].a && t < caps[c].b) { text = caps[c].text; photo = !!caps[c].photo; op = u.win(t, caps[c].a, caps[c].a + 0.5, caps[c].b - 0.5, caps[c].b); }
     }
-    if (text) { tx(capIn, text); tx(capBar, text); }
+    if (text) { tx(capIn, text); tx(capBar, text); if (capIn._ph !== photo) { capIn._ph = photo; capIn.classList.toggle('cxf-onphoto', photo); } }
     st(capIn, op); st(capBar, op);
-    var cta = t >= 103.4;
+    var cta = t >= 104.8;
     if (endLayer._on !== cta) { endLayer._on = cta; endLayer.classList.toggle('on', cta); }
     if (document.activeElement !== scrub) scrub.value = t;
     scrub.style.setProperty('--p', (t / DUR * 100) + '%');
@@ -332,9 +382,9 @@ window.CXFilm = (function () {
   return {
     DUR: DUR, u: u,
     scene: function (def) { scenes.push(def); if (def.chapter) chapters.push({ t: def.ranges[0][0], name: def.chapter }); },
-    caption: function (a, b, text) { caps.push({ a: a, b: b, text: text }); },
+    caption: function (a, b, text, photo) { caps.push({ a: a, b: b, text: text, photo: photo }); },
     open: open, close: close, seek: seek, play: play, pause: pause,
-    renderAudio: renderAudio,
+    renderAudio: renderAudio, settle: settle,
     time: function () { return t; }, isPlaying: function () { return playing; }, setMuted: setMuted
   };
 })();

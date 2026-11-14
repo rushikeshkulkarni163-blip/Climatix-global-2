@@ -9,10 +9,9 @@
   var on = function (root, type, sel, fn) {
     root.addEventListener(type, function (e) { var t = e.target.closest(sel); if (t && root.contains(t)) fn(t, e); });
   };
-  var HEAT = ['#F3F6FB', '#DCE6F5', '#B9C8E2', '#7F9CCB', '#0B3D91'];
   function heatCell(pct) {
     var k = pct >= 40 ? 4 : pct >= 28 ? 3 : pct >= 16 ? 2 : pct >= 6 ? 1 : 0;
-    return '<td class="h" style="background:' + HEAT[k] + ';color:' + (k >= 3 ? '#fff' : '#111') + '">' + pct + '%</td>';
+    return '<td class="h hk' + k + '" data-tip="' + pct + '% of companies in this industry fall in this score band">' + pct + '%</td>';
   }
 
   /* ── 01 · TERMINAL DASHBOARD ───────────────────────────────────── */
@@ -29,11 +28,14 @@
         'Sustainability, ESG, BRSR, net zero, climate and annual disclosures consolidated into one terminal, with an independent score for each company.',
         '<button class="btn primary" data-go="company">Search companies</button><button class="btn" data-go="score">See how the score works</button>') +
 
+      '<div class="photo-hero"><img src="terminal-film-assets/port.jpg" alt=""><div><small>Demonstration dataset</small><b>' + fmt(p.companies) + ' companies and ' + fmt(p.reports) + ' disclosures, organised in one place.</b></div></div>' +
+      '<section class="panel" style="margin-bottom:16px"><div class="panel-h"><h2>How the Terminal Works</h2><div class="sub">From fragmented disclosures to institutional decisions.</div></div><div data-cx-explainer></div></section>' +
+
       '<div class="grid">' +
-        kpi('Companies indexed', fmt(p.companies), 'Across ' + p.industries.length + ' industries') +
-        kpi('Reports available', fmt(p.reports), 'Six disclosure categories') +
-        kpi('Companies assessed', fmt(p.assessed), Math.round(p.assessed / p.companies * 100) + '% of indexed companies') +
-        kpi('Average Climactix Score', p.avgScore + '<small> / 100</small>', 'Company-weighted, ' + D.meta.currentFy) +
+        kpi('Companies indexed', X.count(p.companies), 'Across ' + p.industries.length + ' industries') +
+        kpi('Reports available', X.count(p.reports), 'Six disclosure categories') +
+        kpi('Companies assessed', X.count(p.assessed), Math.round(p.assessed / p.companies * 100) + '% of indexed companies') +
+        kpi('Average Climactix Score', X.count(p.avgScore, 1) + '<small> / 100</small>', 'Company-weighted, ' + D.meta.currentFy) +
       '</div>' +
 
       '<div class="grid">' +
@@ -128,7 +130,7 @@
     ctx.root.innerHTML =
       '<p style="margin-bottom:16px"><button class="linkbtn" data-go="company">← All companies</button></p>' +
       '<div class="ph"><div><div class="ph-eyebrow">Module 02 · Corporate intelligence profile</div>' +
-        '<h1>' + esc(c.name) + '</h1>' +
+        '<h1 class="vt-co">' + esc(c.name) + '</h1>' +
         '<p>' + esc(c.overview) + '</p>' +
         '<div class="toolbar" style="margin-top:16px">' + X.entityTag(c) + '<span class="chip">' + esc(c.industry) + '</span><span class="chip">' + esc(c.city) + ', ' + esc(c.state) + '</span><span class="chip">Assessed ' + c.assessedOn + '</span></div></div>' +
         '<div class="ph-actions"><button class="btn primary" data-go="score/' + c.id + '">Open score breakdown</button><button class="btn" data-go="reports?company=' + c.id + '">View documents</button></div></div>' +
@@ -138,8 +140,8 @@
 
       '<div class="grid">' +
         '<section class="panel c4"><div class="panel-h"><h2>Climactix Score</h2>' + X.demoTag('Illustrative') + '</div><div class="panel-b">' +
-          '<div class="score-big num">' + s.overall + '<small> / 100</small></div>' +
-          '<p style="margin:8px 0 16px">' + X.grade(s.band) + ' ' + esc(s.band.label) + ' &nbsp; ' + X.confChip(s.confidence) + '</p>' +
+          '<div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">' + X.gauge(s.overall, { size: 148, band: s.band, ticks: true }) +
+            '<div><p><b>' + esc(s.band.label) + '</b></p><p style="margin:8px 0">' + X.confChip(s.confidence) + '</p><p class="note">' + esc(X.explain(s)) + '</p></div></div>' +
           '<div class="barlist">' + s.dims.map(function (d) {
             return '<div class="barrow"><span class="lbl">' + d.name + '</span>' + X.meter(d.score).replace('class="meter"', 'class="meter" style="grid-column:span 2"') + '</div>';
           }).join('') + '</div>' +
@@ -159,6 +161,7 @@
       '<div class="grid">' +
         '<section class="panel c6"><div class="panel-h"><h2>Net zero commitment</h2>' + (c.synthetic ? X.demoTag('Synthetic') : '<span class="chip">Publicly stated target</span>') + '</div><div class="panel-b">' +
           '<dl class="meta"><dt>Commitment</dt><dd><b>' + esc(c.netZero.target) + '</b></dd><dt>Boundary</dt><dd>' + esc(c.netZero.boundary) + ' ' + X.demoTag('Illustrative') + '</dd><dt>Interim milestones</dt><dd>' + esc(c.netZero.interim) + ' ' + X.demoTag('Illustrative') + '</dd><dt>Evidence status</dt><dd>' + X.stateChip(indById.c1) + '</dd></dl>' +
+          '<p style="margin-top:16px"><button class="btn" data-go="impact/netzero?c=' + c.id + '">Open net zero intelligence</button></p>' +
           (c.synthetic ? '' : '<p class="note" style="margin-top:16px">The commitment is shown as publicly stated by the company and has not been verified in this demonstration. Check the company’s latest disclosure before relying on it.</p>') + '</div></section>' +
 
         '<section class="panel c6"><div class="panel-h"><h2>Climate disclosures</h2>' + X.demoTag('Illustrative') + '</div><div class="panel-b flush tblw"><table class="tbl"><thead><tr><th>Disclosure element</th><th>Status</th><th class="r">Score</th></tr></thead><tbody>' +
@@ -200,9 +203,19 @@
         'The score runs from 0 to 100 and maps to a rating grade. It is never pass or fail, and every point can be traced to an indicator and its evidence.',
         '<div class="toolbar"><label>Company<select class="select" id="s-co">' + X.companyOptions(c.id) + '</select></label></div>') +
 
+      '<section class="panel hero-score">' + X.gauge(s.overall, { size: 220, band: s.band, ticks: true }) +
+        '<div><h2>' + esc(c.name) + ' · ' + esc(s.band.label) + '</h2><p class="lead">' + esc(X.explain(s)) + '</p><div class="facts">' + X.entityTag(c) +
+        '<span class="chip acc">' + (ui.view === 'assessed' ? 'Assessment-informed view' : 'Public Data Score') + '</span>' + X.confChip(cf) +
+        '<span class="chip" data-tip="Indicators disclosed with traceable evidence, out of the 20 the score uses.">' + n.evidenced + ' of ' + n.total + ' indicators evidenced</span></div></div></section>' +
+
+      '<div class="dimstrip">' + s.dims.map(function (d) {
+        return '<button class="panel dimcard" data-dimjump="' + d.key + '" data-tip="' + esc(d.what) + ' Select to see the indicators.">' + X.gauge(d.score, { size: 64, stroke: 6, big: 0.34, sub: false }) +
+          '<span><b>' + d.name + '</b><span>Weight ' + d.weight + '% · ' + d.scored + ' of ' + d.of + ' evidenced</span></span></button>';
+      }).join('') + '</div>' +
+
       '<div class="tri">' +
         '<section class="panel"><div class="panel-h"><h3><span class="ix">1</span>Public Data Score</h3>' + X.demoTag('Illustrative') + '</div><div class="panel-b">' +
-          '<div class="score-big num">' + pub.overall + '<small> / 100</small></div>' +
+          '<div class="kpi-v md num">' + X.count(pub.overall) + '<small> / 100</small></div>' +
           '<p style="margin:8px 0">' + X.grade(pub.band) + ' ' + esc(pub.band.label) + '</p>' +
           '<p class="note">System-generated from publicly available information only. Company submissions never change this number.</p></div></section>' +
 
@@ -242,12 +255,13 @@
           '<p class="note" style="margin-top:8px">' + X.signed(pub.overall - hist[0].score) + ' points since ' + hist[0].fy + '. Indicators disclosed rose from ' + hist[0].disclosed + ' to ' + hist[4].disclosed + ' of 20.</p></div></section>' +
       '</div>' +
 
-      '<section class="panel"><div class="panel-h"><h2>Rating scale</h2></div><div class="panel-b flush tblw"><table class="tbl"><thead><tr>' +
+      '<section class="panel"><button class="xp" data-xp aria-expanded="' + !!ui.tech + '"><span>Technical detail<small>Rating scale and grade thresholds</small></span><span class="car" aria-hidden="true">▸</span></button>' +
+        (!ui.tech ? '' : '<div class="panel-b flush tblw" style="border-top:1px solid var(--border-soft)"><table class="tbl"><thead><tr>' +
         D.bands.map(function (b) { return '<th style="text-align:center">' + b.grade + '</th>'; }).join('') + '</tr></thead><tbody><tr>' +
         D.bands.map(function (b, i) {
           var hi = i === 0 ? 100 : D.bands[i - 1].min - 1, me = b.grade === s.band.grade;
           return '<td style="text-align:center' + (me ? ';background:var(--accent-tint)' : '') + '"><b>' + b.min + '–' + hi + '</b><br><span class="note">' + b.label + '</span></td>';
-        }).join('') + '</tr></tbody></table></div></section>';
+        }).join('') + '</tr></tbody></table></div>') + '</section>';
 
     function confRow(label, v, hint) {
       return '<div><div class="barrow" style="grid-template-columns:104px 1fr 32px"><span class="lbl">' + label + '</span><div class="meter-t"><div class="meter-f mut" style="width:' + v + '%"></div></div><span class="num" style="text-align:right">' + v + '</span></div><div class="note">' + hint + '</div></div>';
@@ -270,6 +284,11 @@
     ctx.root.querySelector('#s-co').addEventListener('change', function () { X.go('score/' + this.value); });
     on(ctx.root, 'click', '[data-view]', function (t) { ui.view = t.getAttribute('data-view'); ctx.rerender(); });
     on(ctx.root, 'click', '[data-dim]', function (t) { var k = t.getAttribute('data-dim'); ui.open[k] = !ui.open[k]; ctx.rerender(); });
+    on(ctx.root, 'click', '[data-xp]', function () { ui.tech = !ui.tech; ctx.rerender(); });
+    on(ctx.root, 'click', '[data-dimjump]', function (t) {
+      var k = t.getAttribute('data-dimjump'); ui.open[k] = true; ctx.rerender();
+      var row = document.querySelector('[data-dim="' + k + '"]'); if (row) { row.scrollIntoView({ block: 'center' }); row.focus(); }
+    });
   });
 
   /* ── 04 · REPORT REPOSITORY ────────────────────────────────────── */
@@ -280,15 +299,18 @@
     ui.a = ui.a || D.years[2]; ui.b = ui.b || D.years[4];
     var f = { company: q.company || '', category: q.category || '', fy: q.fy || '' };
     var rows = D.reports(f);
+    var pill = function (k, v, label, n) {
+      return '<button class="pill" data-fset="' + k + '" data-v="' + v + '" aria-pressed="' + (f[k] === v) + '"' + (n ? '' : ' disabled data-tip="No document located. Recorded as not located, not as a negative finding."') + '>' + esc(label) + '<span class="ct">' + n + '</span></button>';
+    };
     var setFilter = function (k, v) { var n = { company: f.company, category: f.category, fy: f.fy }; n[k] = v; X.go(X.path('reports', null, n)); };
 
     var repo =
-      '<section class="panel"><div class="panel-h"><div class="toolbar">' +
-        '<label>Company<select class="select" data-f="company">' + X.companyOptions(f.company, true) + '</select></label>' +
-        '<label>Report category<select class="select" data-f="category"><option value="">All categories</option>' + D.categories.map(function (c) { return '<option value="' + c.key + '"' + (c.key === f.category ? ' selected' : '') + '>' + esc(c.name) + '</option>'; }).join('') + '</select></label>' +
-        '<label>Financial year<select class="select" data-f="fy"><option value="">All years</option>' + D.years.slice().reverse().map(function (y) { return '<option' + (y === f.fy ? ' selected' : '') + '>' + y + '</option>'; }).join('') + '</select></label>' +
-        '<label>&nbsp;<button class="btn" data-go="reports">Reset</button></label></div>' +
-        '<span class="note">' + rows.length + ' of ' + D.reports().length + ' demonstration documents</span></div>' +
+      '<section class="panel"><div class="frow"><span>Company</span><div class="toolbar"><select class="select" data-f="company" aria-label="Company">' + X.companyOptions(f.company, true) + '</select>' +
+        '<button class="btn sm" data-go="reports">Reset filters</button><span class="note">' + rows.length + ' of ' + D.reports().length + ' demonstration documents</span></div></div>' +
+        '<div class="frow"><span>Report category</span><div class="pills" role="group" aria-label="Report category">' + pill('category', '', 'All', D.reports({ company: f.company, fy: f.fy }).length) +
+          D.categories.map(function (c) { return pill('category', c.key, c.name, D.reports({ company: f.company, fy: f.fy, category: c.key }).length); }).join('') + '</div></div>' +
+        '<div class="frow"><span>Financial year</span><div class="pills" role="group" aria-label="Financial year">' + pill('fy', '', 'All years', D.reports({ company: f.company, category: f.category }).length) +
+          D.years.slice().reverse().map(function (y) { return pill('fy', y, y, D.reports({ company: f.company, category: f.category, fy: y }).length); }).join('') + '</div></div>' +
         '<div class="panel-b flush tblw">' + (rows.length ? '<table class="tbl"><thead><tr><th>Document</th><th>Category</th><th>Year</th><th>Published</th><th class="r">Pages</th><th>Assurance</th><th></th></tr></thead><tbody>' +
           rows.slice(0, 60).map(function (r) {
             return '<tr class="click" data-doc="' + r.id + '"><td><span class="co">' + esc(r.title) + '<small>' + esc(r.company) + '</small></span></td><td><span class="chip">' + r.category + '</span></td><td>' + r.fy + '</td><td class="muted">' + r.published + '</td><td class="n">' + r.pages + '</td><td class="muted">' + (r.assurance.indexOf('No') === 0 ? 'Not located' : 'Limited') + '</td><td class="r"><span class="linkbtn">Preview</span></td></tr>';
@@ -298,7 +320,7 @@
     ctx.root.innerHTML =
       X.pageHead('Module 04 · Sustainability report repository', 'Central disclosure repository',
         'Sustainability, ESG, BRSR, net zero, climate and annual reports in one searchable library, each with metadata and extracted data points.') +
-      '<div class="tabs" role="tablist"><button role="tab" data-tab="repo" aria-selected="' + (ui.tab === 'repo') + '">Repository <span class="ct">' + D.reports().length + '</span></button><button role="tab" data-tab="cmp" aria-selected="' + (ui.tab === 'cmp') + '">Compare reporting periods</button></div>' +
+      '<div class="tabs" role="tablist"><button role="tab" data-tab="repo" aria-selected="' + (ui.tab === 'repo') + '">Repository <span class="ct">' + D.reports().length + '</span></button><button role="tab" data-tab="cmp" aria-selected="' + (ui.tab === 'cmp') + '">Compare reporting periods</button><button role="tab" data-go="impact/evidence" aria-selected="false">Research library <span class="ct">1</span></button></div>' +
       (ui.tab === 'repo' ? repo : compare());
 
     function compare() {
@@ -332,6 +354,11 @@
       var c = D.company(r.companyId), cat = D.category(r.category);
       var prior = D.reports({ company: r.companyId, category: r.category }).filter(function (x) { return x.yearIndex === r.yearIndex - 1; })[0];
       X.openDrawer(r.title,
+        '<div class="cover"><div class="cover-pg"><small>' + esc(cat.single) + '</small><b>' + esc(c.name) + '</b><span>' + r.fy + ' · ' + r.pages + ' pages</span><i>Demonstration document</i></div>' +
+        '<div><p class="note" style="margin-bottom:8px">Availability of this category for ' + esc(c.name) + '</p><div class="yrs">' + D.years.map(function (fy) {
+          var x = D.reports({ company: r.companyId, category: r.category, fy: fy })[0];
+          return x ? '<button data-doc-open="' + x.id + '"' + (x.id === r.id ? ' aria-current="true"' : '') + '>' + fy.replace('FY20', 'FY') + '</button>' : '<span data-tip="No document located for this year">' + fy.replace('FY20', 'FY') + '</span>';
+        }).join('') + '</div><p style="margin-top:16px"><b class="num" style="font-size:28px">' + r.dataPoints + '</b> <span class="muted">data points extracted</span></p><p class="note">' + esc(r.assurance) + '</p></div></div>' +
         '<section class="panel" style="margin-bottom:16px"><div class="panel-h"><h3>Document metadata</h3>' + X.demoTag(r.source) + '</div><div class="panel-b"><dl class="meta">' +
         '<dt>Company</dt><dd>' + esc(r.company) + '</dd><dt>Category</dt><dd>' + esc(cat.name) + '</dd><dt>Financial year</dt><dd>' + r.fy + '</dd><dt>Published</dt><dd>' + r.published + '</dd>' +
         '<dt>Framework reference</dt><dd>' + esc(r.frameworks) + '</dd><dt>Assurance</dt><dd>' + esc(r.assurance) + '</dd><dt>Length</dt><dd>' + r.pages + ' pages · ' + r.sizeMb + ' MB</dd>' +
@@ -349,6 +376,7 @@
     }
 
     on(ctx.root, 'change', '[data-f]', function (t) { setFilter(t.getAttribute('data-f'), t.value); });
+    on(ctx.root, 'click', '[data-fset]', function (t) { if (!t.disabled) setFilter(t.getAttribute('data-fset'), t.getAttribute('data-v')); });
     on(ctx.root, 'click', '[data-tab]', function (t) { ui.tab = t.getAttribute('data-tab'); ctx.rerender(); });
     on(ctx.root, 'click', '[data-doc]', function (t) { preview(t.getAttribute('data-doc')); });
     on(ctx.root, 'change', '[data-c]', function (t) { ui[t.getAttribute('data-c')] = t.value; ctx.rerender(); });
@@ -415,6 +443,7 @@
         return '<li class="' + (i < ui.step || ui.submitted ? 'done' : '') + '"><button data-step="' + i + '"' + (i === ui.step && !ui.submitted ? ' aria-current="step"' : '') + '><span class="sn">' + (i + 1) + '</span>' + s.t + '</button></li>';
       }).join('') + '</ol></section>' +
       '<section class="panel"><div class="panel-h"><h2>' + (ui.submitted ? 'Assessment submission status' : 'Step ' + (ui.step + 1) + ' · ' + step.t) + '</h2>' + X.demoTag('Simulated workflow') + '</div>' +
+        '<div class="prog" aria-hidden="true"><i style="transform:scaleX(' + (ui.submitted ? 1 : (ui.step + 1) / STEPS.length) + ')"></i></div>' +
         '<div class="panel-b">' + body + '</div>' +
         '<div class="panel-b" style="border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">' +
         (ui.submitted ? '<button class="btn" id="a-reset">Start a new submission</button><button class="btn primary" data-go="score/' + c.id + '">Open the score for ' + esc(c.name) + '</button>'

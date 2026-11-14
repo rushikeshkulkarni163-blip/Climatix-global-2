@@ -28,10 +28,9 @@
     var list = D.companies().map(function (c) { return c.industry; }).filter(function (v, i, a) { return a.indexOf(v) === i; }).sort();
     return '<option value="">All industries</option>' + list.map(function (i) { return '<option' + (i === sel ? ' selected' : '') + '>' + esc(i) + '</option>'; }).join('');
   }
-  var HEAT = ['#F3F6FB', '#DCE6F5', '#B9C8E2', '#7F9CCB', '#0B3D91'];
   function heatPct(v) {
     var k = v >= 70 ? 4 : v >= 50 ? 3 : v >= 30 ? 2 : v >= 15 ? 1 : 0;
-    return '<td class="h" style="background:' + HEAT[k] + ';color:' + (k >= 3 ? '#fff' : '#111') + '">' + v + '%</td>';
+    return '<td class="h hk' + k + '">' + v + '%</td>';
   }
 
   /* ── 06 · BANK INTELLIGENCE ────────────────────────────────────── */
@@ -46,15 +45,18 @@
         'Search corporate borrowers, review sustainability profiles, identify disclosure gaps and compare companies as an input to due diligence.') +
       '<div class="callout" style="margin-bottom:16px"><b>Intelligence input, not a credit decision.</b> The Climactix Score supports corporate due diligence and sustainability-related credit assessment. It is not a credit rating, and the terminal does not hold or use any confidential lending or financial information.</div>' +
 
-      '<section class="panel" style="margin-bottom:16px"><div class="panel-h"><div class="toolbar" style="flex:1">' +
+      X.idStrip('bank', 'What this view answers for a credit team', ['Which borrowers disclose enough to be assessed?', 'Where are the gaps to raise with the borrower?', 'How does a borrower compare with its peers?']) +
+      X.research('f_ecb', 'In one European Central Bank analysis, banks committed to science-based targets offered firms with declared emissions targets rates discounted by 16 basis points more than other banks. It describes European lending in the period studied, not a rate to expect.') +
+      '<div class="grid"><section class="panel c12"><div class="panel-h"><div class="toolbar" style="flex:1">' +
         '<label style="flex:1;min-width:200px">Search borrowers<input class="input" id="b-q" type="search" value="' + esc(ui.q) + '" placeholder="Company, industry or city"></label>' +
         '<label>Industry<select class="select" id="b-ind">' + industryOptions(ui.ind) + '</select></label>' +
         '<label>Score band<select class="select" id="b-band"><option value="">All scores</option><option value="hi"' + (ui.band === 'hi' ? ' selected' : '') + '>65 and above</option><option value="mid"' + (ui.band === 'mid' ? ' selected' : '') + '>45 to 64</option><option value="lo"' + (ui.band === 'lo' ? ' selected' : '') + '>Below 45</option><option value="gap"' + (ui.band === 'gap' ? ' selected' : '') + '>Five or more disclosure gaps</option></select></label>' +
         '</div>' + X.demoTag('Illustrative') + '</div><div class="panel-b flush tblw" id="b-table"></div></section>' +
+        '<section class="panel c5"><div class="panel-h"><h2>Score against evidence</h2><div class="sub">How strong is the score, and how well is it supported? Select a point to review that borrower.</div></div><div class="panel-b" id="b-scatter"></div></section><section class="panel c7" id="b-focus"></section></div>' +
 
-      '<div class="grid"><section class="panel c7" id="b-compare"></section><section class="panel c5" id="b-focus"></section></div>';
+      '<section class="panel" id="b-compare"></section>';
 
-    var $t = ctx.root.querySelector('#b-table'), $c = ctx.root.querySelector('#b-compare'), $f = ctx.root.querySelector('#b-focus');
+    var $s = ctx.root.querySelector('#b-scatter'), $t = ctx.root.querySelector('#b-table'), $c = ctx.root.querySelector('#b-compare'), $f = ctx.root.querySelector('#b-focus');
 
     function table() {
       var rows = D.search(ui.q).filter(function (c) {
@@ -62,11 +64,30 @@
         return (!ui.ind || c.industry === ui.ind) &&
           (!ui.band || (ui.band === 'hi' && s.overall >= 65) || (ui.band === 'mid' && s.overall >= 45 && s.overall < 65) || (ui.band === 'lo' && s.overall < 45) || (ui.band === 'gap' && g >= 5));
       });
-      $t.innerHTML = rows.length ? '<table class="tbl"><thead><tr><th>Compare</th><th>Borrower</th><th class="r">Score</th><th>Grade</th><th>Data confidence</th><th class="r">Not disclosed</th><th class="r">Insufficient evidence</th><th>Risk indicators</th></tr></thead><tbody>' +
+      $t.innerHTML = rows.length ? '<table class="tbl"><thead><tr><th>Compare</th><th>Borrower</th><th class="r">Score</th><th>Grade</th><th>Data confidence</th><th>Net zero target</th><th class="r">Not disclosed</th><th class="r">Insufficient evidence</th><th>Risk indicators</th></tr></thead><tbody>' +
         rows.map(function (c) {
           var s = D.score(c.id);
-          return '<tr class="click' + (c.id === ui.focus ? ' sel' : '') + '" data-focus="' + c.id + '"><td><input type="checkbox" data-cmp="' + c.id + '"' + (ui.sel.indexOf(c.id) !== -1 ? ' checked' : '') + ' aria-label="Compare ' + esc(c.name) + '"></td><td>' + X.coCell(c) + '</td><td class="n">' + s.overall + '</td><td>' + X.grade(s.band) + '</td><td>' + X.confChip(s.confidence) + '</td><td class="n">' + s.counts.missing + '</td><td class="n">' + s.counts.insufficient + '</td><td>' + X.riskChips(c.id, 1) + '</td></tr>';
+          return '<tr class="click' + (c.id === ui.focus ? ' sel' : '') + '" data-focus="' + c.id + '"><td><input type="checkbox" data-cmp="' + c.id + '"' + (ui.sel.indexOf(c.id) !== -1 ? ' checked' : '') + ' aria-label="Compare ' + esc(c.name) + '"></td><td>' + X.coCell(c) + '</td><td class="n">' + s.overall + '</td><td>' + X.grade(s.band) + '</td><td>' + X.confChip(s.confidence) + '</td><td>' + X.nzChip(c.id) + '</td><td class="n">' + s.counts.missing + '</td><td class="n">' + s.counts.insufficient + '</td><td>' + X.riskChips(c.id, 1) + '</td></tr>';
         }).join('') + '</tbody></table>' : '<div class="empty">No borrower in the demonstration dataset matches these filters.</div>';
+    }
+
+    function scatter() {
+      var W = 520, H = 340, L = 44, R = 12, T = 12, B = 40, x0 = 30, x1 = 95, y0 = 30, y1 = 100, sx = 55, sy = 65;
+      var X_ = function (v) { return L + (W - L - R) * (v - x0) / (x1 - x0); }, Y_ = function (v) { return T + (H - T - B) * (1 - (v - y0) / (y1 - y0)); };
+      var svg = '<svg class="chart scatter" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Climactix Score against data confidence for each borrower">' +
+        '<rect class="q" x="' + L + '" y="' + T + '" width="' + (X_(sx) - L) + '" height="' + (Y_(sy) - T) + '"/><rect class="q" x="' + X_(sx) + '" y="' + T + '" width="' + (W - R - X_(sx)) + '" height="' + (Y_(sy) - T) + '"/>' +
+        '<rect class="q" x="' + L + '" y="' + Y_(sy) + '" width="' + (X_(sx) - L) + '" height="' + (H - B - Y_(sy)) + '"/><rect class="q" x="' + X_(sx) + '" y="' + Y_(sy) + '" width="' + (W - R - X_(sx)) + '" height="' + (H - B - Y_(sy)) + '"/>' +
+        '<text class="ql" x="' + (L + 8) + '" y="' + (T + 18) + '">Weaker, well evidenced</text><text class="ql" x="' + (W - R - 8) + '" y="' + (T + 18) + '" text-anchor="end">Stronger, well evidenced</text>' +
+        '<text class="ql" x="' + (L + 8) + '" y="' + (H - B - 10) + '">Weaker, thin evidence</text><text class="ql" x="' + (W - R - 8) + '" y="' + (H - B - 10) + '" text-anchor="end">Stronger, thin evidence</text>' +
+        '<text x="' + (L + (W - L - R) / 2) + '" y="' + (H - 8) + '" text-anchor="middle">Climactix Score →</text><text transform="translate(14 ' + (T + (H - T - B) / 2) + ') rotate(-90)" text-anchor="middle">Data confidence →</text>';
+      [40, 55, 70, 85].forEach(function (v) { svg += '<text x="' + X_(v) + '" y="' + (H - B + 16) + '" text-anchor="middle">' + v + '</text>'; });
+      [40, 65, 90].forEach(function (v) { svg += '<text x="' + (L - 8) + '" y="' + (Y_(v) + 4) + '" text-anchor="end">' + v + '</text>'; });
+      D.companies().forEach(function (c, i) {
+        var s = D.score(c.id), cx = X_(s.overall), cy = Y_(s.confidence.value), on = c.id === ui.focus;
+        if (on) svg += '<circle class="ring" cx="' + cx + '" cy="' + cy + '" r="13"/><text class="lab" x="' + (cx > W - 150 ? cx - 18 : cx + 18) + '" y="' + (cy + 4) + '" text-anchor="' + (cx > W - 150 ? 'end' : 'start') + '">' + esc(c.name) + '</text>';
+        svg += '<circle class="dot ' + X.tone(s.overall) + '" style="--k:' + i + '" data-dot="' + c.id + '" tabindex="0" role="button" aria-label="' + esc(c.name) + '" cx="' + cx + '" cy="' + cy + '" r="' + (on ? 8 : 7) + '" data-tip="' + esc(c.name + ' · score ' + s.overall + ' · confidence ' + s.confidence.value) + '"/>';
+      });
+      $s.innerHTML = svg + '</svg><p class="note" style="margin-top:8px">A low position is not a poor borrower. It means the public evidence is thin, which is a reason to ask for more information.</p>';
     }
 
     function compare() {
@@ -105,9 +126,11 @@
     on($t, 'click', '[data-focus]', function (t, e) {
       var cb = e.target.closest('[data-cmp]');
       if (cb) { toggle(ui.sel, cb.getAttribute('data-cmp'), 4); table(); compare(); return; }
-      ui.focus = t.getAttribute('data-focus'); X.state.company = ui.focus; table(); focus();
+      ui.focus = t.getAttribute('data-focus'); X.state.company = ui.focus; table(); focus(); scatter();
     });
-    table(); compare(); focus();
+    on($s, 'click', '[data-dot]', function (t) { ui.focus = t.getAttribute('data-dot'); X.state.company = ui.focus; table(); focus(); scatter(); });
+    on($s, 'keydown', '[data-dot]', function (t, e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
+    table(); compare(); focus(); scatter();
   });
 
   /* ── 07 · INSURANCE INTELLIGENCE ───────────────────────────────── */
@@ -131,6 +154,8 @@
         'Environmental exposure indicators, climate disclosure analysis and industry comparison for corporate accounts.') +
       '<div class="callout" style="margin-bottom:16px"><b>Intelligence inputs, not actuarial outputs.</b> These indicators describe what a company has disclosed and evidenced. They are not loss estimates, pricing signals or underwriting decisions.</div>' +
 
+      X.idStrip('insurance', 'What this view answers for an underwriting team', ['Which environmental exposures has the company evidenced?', 'Where is information missing, as distinct from poor?', 'How does the account sit against its industry?']) +
+      X.research('r_reg', '72% of surveyed companies with validated targets reported better resilience against future regulatory change. That is the companies’ own perception.') +
       '<section class="panel" style="margin-bottom:16px"><div class="panel-h"><h2>Environmental exposure indicators</h2><div class="toolbar"><label>Industry<select class="select" id="i-ind">' + industryOptions(ui.ind) + '</select></label></div>' +
         '<div class="sub">Indicator score by company. Select a row to analyse the account below.</div></div>' +
         '<div class="panel-b flush tblw"><table class="tbl heat"><thead><tr><th>Company</th><th class="r">Score</th>' + EXPOSURE.map(function (e) { return '<th style="text-align:center">' + e[1] + '</th>'; }).join('') + '</tr></thead><tbody>' +
@@ -178,14 +203,21 @@
       X.pageHead('Module 08 · Investor intelligence dashboard', 'Portfolio sustainability intelligence',
         'Screen companies, compare scores, review net zero commitments and disclosure credibility across a portfolio.',
         '<button class="btn primary" id="v-report">Generate portfolio intelligence report</button>') +
+      X.idStrip('investor', 'What this view answers for an investment team', ['How does the portfolio score, and how is that changing?', 'Which holdings carry dated, evidenced net zero targets?', 'Where should engagement focus?']) +
       '<div class="callout plain" style="margin-bottom:16px"><b>Research input, not investment advice.</b> The model portfolio and its weights are a demonstration. No holdings, prices or returns data are used.</div>' +
 
+      X.research('b_investor', '76% of surveyed companies with validated targets reported a positive impact on investor confidence. Evidence on stock returns is mixed.') +
       '<div class="grid">' +
-        kpi('Portfolio Climactix Score', pf.score + '<small> / 100</small>', 'Weighted by holding · grade ' + D.band(pf.score).grade) +
-        kpi('Disclosure credibility', pf.credibility + '<small> / 100</small>', 'Weighted dimension score') +
-        kpi('Data confidence', pf.confidence + '<small> / 100</small>', 'Weighted across holdings') +
-        kpi('Dated net zero target', pf.targetWeight + '<small>% of weight</small>', pf.interimWeight + '% also disclose interim milestones') +
+        kpi('Portfolio Climactix Score', X.count(pf.score) + '<small> / 100</small>', 'Weighted by holding · grade ' + D.band(pf.score).grade) +
+        kpi('Disclosure credibility', X.count(pf.credibility) + '<small> / 100</small>', 'Weighted dimension score') +
+        kpi('Data confidence', X.count(pf.confidence) + '<small> / 100</small>', 'Weighted across holdings') +
+        kpi('Dated net zero target', X.count(pf.targetWeight) + '<small>% of weight</small>', pf.interimWeight + '% also disclose interim milestones') +
       '</div>' +
+
+      '<section class="panel" style="margin-bottom:16px"><div class="panel-h"><h2>Portfolio composition</h2>' + X.demoTag('Illustrative') +
+        '<div class="sub">Each block is a holding, sized by portfolio weight and coloured by its score.</div></div><div class="panel-b"><div class="seg-bar">' +
+        pf.holdings.map(function (h) { return '<i class="' + X.tone(h.score) + '" style="width:' + h.weight + '%" data-tip="' + esc(h.company.name + ' · weight ' + h.weight + '% · score ' + h.score) + '">' + (h.weight >= 8 ? h.score : '') + '</i>'; }).join('') +
+        '</div><div class="legend" style="margin-top:16px"><span><i class="k-pos"></i>Score 65 and above</span><span><i class="k-acc"></i>Score 40 to 64</span><span><i class="k-crit"></i>Score below 40</span></div></div></section>' +
 
       '<section class="panel" style="margin-bottom:16px"><div class="panel-h"><h2>Company screening and holdings</h2><div class="toolbar"><label>Minimum score<select class="select" id="v-min"><option value="">No minimum</option>' +
         [55, 65, 75].map(function (v) { return '<option value="' + v + '"' + (+ui.min === v ? ' selected' : '') + '>' + v + ' and above</option>'; }).join('') + '</select></label></div>' +
@@ -199,10 +231,10 @@
       '<div class="grid">' +
         '<section class="panel c6"><div class="panel-h"><h2>Historical score movement</h2>' + X.demoTag('Simulated') + '</div><div class="panel-b">' +
           X.lineChart({ labels: D.years, series: series, h: 240, label: 'Score history: portfolio and selected companies' }) + '</div></section>' +
-        '<section class="panel c6"><div class="panel-h"><h2>Net zero commitment analysis</h2>' + X.demoTag('Illustrative') + '</div><div class="panel-b flush tblw"><table class="tbl"><thead><tr><th>Company</th><th>Commitment</th><th>Target evidence</th><th>Scope 3 coverage</th></tr></thead><tbody>' +
+        '<section class="panel c6"><div class="panel-h"><h2>Net zero commitment analysis</h2>' + X.demoTag('Illustrative') + '</div><div class="panel-b flush tblw"><table class="tbl"><thead><tr><th>Company</th><th>Commitment</th><th>Target status</th><th>Target evidence</th><th>Scope 3 coverage</th></tr></thead><tbody>' +
           pf.holdings.map(function (h) {
             var c = h.company;
-            return '<tr><td><button class="linkbtn" data-go="company/' + c.id + '">' + esc(c.name) + '</button></td><td>' + esc(c.netZero.target) + '<br><span class="note">' + esc(c.netZero.interim) + '</span></td><td>' + X.stateChip(indicator(c.id, 'c1')) + '</td><td>' + X.stateChip(indicator(c.id, 'c2')) + '</td></tr>';
+            return '<tr><td><button class="linkbtn" data-go="company/' + c.id + '">' + esc(c.name) + '</button></td><td>' + esc(c.netZero.target) + '<br><span class="note">' + esc(c.netZero.interim) + '</span></td><td>' + X.nzChip(c.id) + '</td><td>' + X.stateChip(indicator(c.id, 'c1')) + '</td><td>' + X.stateChip(indicator(c.id, 'c2')) + '</td></tr>';
           }).join('') + '</tbody></table></div></section>' +
       '</div>';
 
@@ -226,10 +258,12 @@
     on(ctx.root, 'change', '[data-plot]', function (t) { toggle(ui.sel, t.getAttribute('data-plot'), 3); ctx.rerender(); });
   });
 
+  var REGION_AT = { 'Maharashtra': [75.7, 19.6], 'Delhi NCR': [77.2, 28.6], 'Gujarat': [71.6, 22.7], 'Karnataka': [75.9, 14.9], 'Tamil Nadu': [78.6, 11.0], 'Telangana': [79.1, 17.9], 'West Bengal': [87.9, 23.2] };
+
   /* ── 09 · GOVERNMENT INTELLIGENCE ──────────────────────────────── */
   X.view('government', function (ctx) {
     var ui = ctx.ui, p = D.platform();
-    ui.sort = ui.sort || 'companies';
+    ui.sort = ui.sort || 'companies'; ui.region = ui.region || 'Maharashtra';
     var inds = p.industries.slice().sort(function (a, b) { return ui.sort === 'name' ? (a.name < b.name ? -1 : 1) : b[ui.sort] - a[ui.sort]; });
     var cov = Math.round(p.industries.reduce(function (a, i) { return a + i.coverage * i.companies; }, 0) / p.companies);
     var brsr = p.participation.BRSR[4];
@@ -239,13 +273,15 @@
     ctx.root.innerHTML =
       X.pageHead('Module 09 · Government intelligence dashboard', 'Sector and regional sustainability intelligence',
         'Aggregated views of corporate disclosure coverage, reporting participation and sector-level environmental indicators.') +
+      X.idStrip('government', 'What this view answers for a policy team', ['Which sectors disclose, and which do not?', 'How is reporting participation changing?', 'Where are assessed companies concentrated?']) +
       '<div class="callout plain" style="margin-bottom:16px"><b>Synthetic aggregates.</b> Every figure on this page is demonstration data. Climactix has no integration with, data feed from, or approval by any government body, and none is implied.</div>' +
 
+      X.research('n_growth', 'Companies holding both near-term and net zero science-based targets grew 227% between the end of 2023 and June 2025, according to SBTi’s own tracker.') +
       '<div class="grid">' +
-        kpi('Companies indexed', fmt(p.companies), p.regions.length + ' regions · ' + p.industries.length + ' industries') +
-        kpi('BRSR reporting participation', brsr + '<small>%</small>', 'Of indexed companies, ' + D.meta.currentFy) +
-        kpi('Companies assessed', fmt(p.assessed), Math.round(p.assessed / p.companies * 100) + '% of indexed companies') +
-        kpi('Average disclosure coverage', cov + '<small>%</small>', 'Share of scoring indicators disclosed') +
+        kpi('Companies indexed', X.count(p.companies), p.regions.length + ' regions · ' + p.industries.length + ' industries') +
+        kpi('BRSR reporting participation', X.count(brsr) + '<small>%</small>', 'Of indexed companies, ' + D.meta.currentFy) +
+        kpi('Companies assessed', X.count(p.assessed), Math.round(p.assessed / p.companies * 100) + '% of indexed companies') +
+        kpi('Average disclosure coverage', X.count(cov) + '<small>%</small>', 'Share of scoring indicators disclosed') +
       '</div>' +
 
       '<section class="panel" style="margin-bottom:16px"><div class="panel-h"><h2>Industry-wise sustainability intelligence</h2>' + X.demoTag('Synthetic') + '<div class="sub">Select a column heading to sort.</div></div>' +
@@ -255,15 +291,12 @@
         }).join('') + '</tbody></table></div></section>' +
 
       '<div class="grid">' +
-        '<section class="panel c6"><div class="panel-h"><h2>Sustainability reporting participation</h2>' + X.demoTag('Synthetic') + '<div class="sub">Share of indexed companies publishing each disclosure type (%).</div></div><div class="panel-b">' +
+        '<section class="panel c5"><div class="panel-h"><h2>Sustainability reporting participation</h2>' + X.demoTag('Synthetic') + '<div class="sub">Share of indexed companies publishing each disclosure type (%).</div></div><div class="panel-b">' +
           X.lineChart({ labels: D.years, min: 0, max: 100, h: 240, label: 'Reporting participation by disclosure type', series: [
             { name: 'BRSR', values: p.participation.BRSR }, { name: 'Sustainability report', values: p.participation.SR },
             { name: 'Climate report', values: p.participation.CL }, { name: 'Net zero report', values: p.participation.NZ }] }) + '</div></section>' +
 
-        '<section class="panel c6"><div class="panel-h"><h2>Regional company assessment distribution</h2>' + X.demoTag('Synthetic') + '</div><div class="panel-b"><div class="barlist">' +
-          p.regions.map(function (r) {
-            return '<div class="barrow" style="grid-template-columns:minmax(96px,160px) 1fr 144px"><span class="lbl">' + esc(r.name) + '</span><div class="meter-t" style="height:16px"><div class="meter-f mut" style="width:' + (r.companies / maxReg * 100) + '%;position:absolute;inset:0 auto 0 0"></div><div class="meter-f" style="width:' + (r.assessed / maxReg * 100) + '%;position:absolute;inset:0 auto 0 0"></div></div><span style="text-align:right"><b class="num">' + r.companies + '</b> <span class="note">· ' + r.assessed + ' assessed</span></span></div>';
-          }).join('') + '</div><div class="legend" style="margin-top:16px"><span><i style="background:#8A93A0"></i>Companies indexed</span><span><i style="background:#0B3D91"></i>Companies assessed</span></div></div></section>' +
+        '<section class="panel c7"><div class="panel-h"><h2>Regional company assessment distribution</h2>' + X.demoTag('Synthetic') + '<div class="sub">Select a region on the map or in the list.</div></div><div class="panel-b">' + regionMap() + '</div></section>' +
       '</div>' +
 
       '<div class="grid">' +
@@ -280,9 +313,29 @@
           '<p class="note" style="margin-top:16px">Aggregated insight: participation is highest where reporting is mandatory. Climate and net zero disclosure remain voluntary and concentrated in a few sectors.</p></div></section>' +
       '</div>';
 
+    function regionMap() {
+      var G = window.CX_TERMINAL_GEO, W = 386, H = 400;
+      var px = function (lon) { return (lon - 67.5) / 30.5 * W; }, py = function (lat) { return (36.5 - lat) / 29.5 * H; };
+      var svg = '<svg class="geo" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Map of India showing indexed and assessed companies by region">';
+      if (G) svg += '<path class="land" d="' + G.india.map(function (p, i) { return (i ? 'L' : 'M') + px(p[0]).toFixed(1) + ' ' + py(p[1]).toFixed(1); }).join('') + 'Z"/>';
+      p.regions.forEach(function (r) {
+        var at = REGION_AT[r.name]; if (!at) return;
+        var cx = px(at[0]), cy = py(at[1]), rad = 8 + Math.sqrt(r.companies / maxReg) * 24, on = r.name === ui.region;
+        if (on) svg += '<circle class="pulse" cx="' + cx + '" cy="' + cy + '" r="' + rad + '"/>';
+        svg += '<circle class="bub' + (on ? ' sel' : '') + '" data-region="' + esc(r.name) + '" tabindex="0" role="button" aria-label="' + esc(r.name) + '" cx="' + cx + '" cy="' + cy + '" r="' + rad.toFixed(1) + '" data-tip="' + esc(r.name + ' · ' + r.companies + ' indexed · ' + r.assessed + ' assessed') + '"/>' +
+               '<circle class="bub-in" cx="' + cx + '" cy="' + cy + '" r="' + (rad * Math.sqrt(r.assessed / r.companies)).toFixed(1) + '"/>' +
+               '<text x="' + (cx + rad + 4) + '" y="' + (cy + 4) + '">' + esc(r.name) + '</text>';
+      });
+      svg += '</svg>';
+      return '<div class="geo-wrap"><div>' + svg + '<div class="legend" style="margin-top:8px"><span><i class="k-acc"></i>Companies indexed</span><span><i class="k-pos"></i>Of which assessed</span></div></div>' +
+        '<div class="geo-list">' + p.regions.map(function (r) {
+          return '<button data-region="' + esc(r.name) + '" aria-pressed="' + (r.name === ui.region) + '"><span><b>' + esc(r.name) + '</b><small>' + r.assessed + ' assessed · ' + Math.round(r.assessed / r.companies * 100) + '% of indexed</small></span><b class="num">' + r.companies + '</b></button>';
+        }).join('') + '<p class="note" style="margin-top:8px">Circle area is proportional to companies indexed. The outline is illustrative and not an authoritative depiction of boundaries.</p></div></div>';
+    }
     function kpi(label, value, sub) {
       return '<div class="panel kpi c3"><div class="kpi-l">' + label + X.demoTag() + '</div><div class="kpi-v md num">' + value + '</div><div class="kpi-s">' + sub + '</div></div>';
     }
+    on(ctx.root, 'click', '[data-region]', function (t) { ui.region = t.getAttribute('data-region'); ctx.rerender(); });
     on(ctx.root, 'click', '[data-sort]', function (t) { ui.sort = t.getAttribute('data-sort'); ctx.rerender(); });
   });
 

@@ -2074,45 +2074,66 @@
 
     <!-- ═══════════════════════════════════════════════
          SECTION: EXPERIENCE CLIMACTIX TERMINAL
-         Launch point for the product film (terminal-film*.js/css).
-         The film's code and styles are fetched only when the
-         visitor presses play — nothing is loaded with the homepage.
+         A light, photographic band: product film, the four
+         institutional applications, and the Terminal pathway.
+         The film's code, styles and footage are fetched only
+         when the visitor presses play.
     ═══════════════════════════════════════════════ -->
     <style>
+      .twx-band { background: #FAF8F3; color: #0B1F3A; }
+      .twx-band .twx-in { padding-top: 112px; padding-bottom: 112px; }
+      .twx-band .cx-eyebrow { color: #1D4FD8; }
+      .twx-band .cx-eyebrow::before { background: #1D4FD8; }
+      .twx-band .section-heading, .twx-band .twx-path-h { color: #0B1F3A; }
+      .twx-band .body-text { color: #4A5B73; }
       .twx-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px; }
       .twx-head > div { max-width: 760px; }
-      .twx-cta { display: flex; flex-wrap: wrap; gap: 16px; }
-      .twx-launch {
-        display: inline-flex; align-items: center; gap: 10px; padding: 13px 24px; border-radius: 5px; cursor: pointer;
-        background: var(--blue); border: 1px solid var(--blue); color: #fff; text-decoration: none;
-        font-family: var(--font); font-size: 14px; font-weight: 600; transition: background 0.18s ease;
+      .twx-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+      .twx-launch, .twx-ghost {
+        display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 24px; border-radius: 999px; cursor: pointer;
+        font-family: var(--font); font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
       }
-      .twx-launch:hover { background: var(--blue-dim); }
+      .twx-launch { background: #1D4FD8; border: 1px solid #1D4FD8; color: #fff; }
+      .twx-launch:hover { background: #1740B4; }
+      .twx-ghost { background: #fff; border: 1px solid #C9D1DC; color: #0B1F3A; }
+      .twx-ghost:hover { border-color: #1D4FD8; }
+      .twx-launch:active, .twx-ghost:active { transform: translateY(1px); }
       .twx-poster {
-        position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 78vh; margin-top: 48px; padding: 0;
-        background: #000; border: 1px solid var(--border-strong); border-radius: 8px; overflow: hidden; cursor: pointer;
-        color: #fff; font-family: var(--font); text-align: left;
+        position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; margin-top: 48px; padding: 0; border: 0;
+        background: #EDEAE3; border-radius: 20px; overflow: hidden; cursor: pointer; box-shadow: 0 40px 90px rgba(11, 31, 58, 0.18);
       }
-      .twx-poster:focus-visible, .twx-launch:focus-visible { outline: 2px solid var(--blue-bright); outline-offset: 3px; }
-      .twx-poster-mid { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; padding: 24px; }
-      .twx-play { width: 84px; height: 84px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; transition: background 0.18s ease, border-color 0.18s ease; }
-      .twx-poster:hover .twx-play { background: var(--blue); border-color: var(--blue); }
-      .twx-poster-t { font-size: clamp(20px, 2.6vw, 38px); font-weight: 700; letter-spacing: 0.16em; }
-      .twx-poster-s { font-size: 14px; color: rgba(255,255,255,0.66); }
-      .twx-poster-tl { position: absolute; left: 24px; top: 20px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: rgba(255,255,255,0.5); text-transform: uppercase; }
-      .twx-poster-br { position: absolute; right: 24px; bottom: 20px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: rgba(255,255,255,0.5); text-transform: uppercase; }
-      .twx-chapters { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: var(--text-2); }
-      .twx-chapters b { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--blue-bright); margin-right: 8px; font-weight: 500; }
-      @media (max-width: 768px) { #terminal-walkthrough { padding-left: 20px; padding-right: 20px; } .twx-poster { margin-top: 32px; } .twx-play { width: 60px; height: 60px; } .twx-poster-br { display: none; } }
-      @media (max-width: 600px) { .twx-cta, .twx-cta > * { width: 100%; justify-content: center; } }
+      .twx-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.25s ease; }
+      .twx-poster:hover img { transform: scale(1.015); }
+      .twx-poster:focus-visible, .twx-launch:focus-visible, .twx-ghost:focus-visible, .twx-aud a:focus-visible { outline: 2px solid #1D4FD8; outline-offset: 3px; }
+      .twx-play { position: absolute; left: 50%; top: 50%; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; background: #1D4FD8; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 18px 44px rgba(11, 31, 58, 0.35); transition: transform 0.18s ease, background 0.18s ease; }
+      .twx-poster:hover .twx-play { transform: scale(1.06); background: #1740B4; }
+      .twx-poster-s { position: absolute; left: 24px; bottom: 20px; font-family: var(--font); font-size: 13px; font-weight: 600; color: #0B1F3A; background: rgba(255,255,255,0.92); border-radius: 999px; padding: 8px 16px; }
+      .twx-chapters { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: #4A5B73; }
+      .twx-chapters b { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: #1D4FD8; margin-right: 8px; font-weight: 500; }
+      .twx-aud { list-style: none; margin: 72px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+      .twx-aud a { display: block; text-decoration: none; color: inherit; }
+      .twx-aud figure { margin: 0; aspect-ratio: 4 / 5; border-radius: 16px; overflow: hidden; background: #DDE2E9; }
+      .twx-aud img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.25s ease; }
+      .twx-aud a:hover img { transform: scale(1.04); }
+      .twx-aud small { display: block; margin-top: 16px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: #1D4FD8; }
+      .twx-aud b { display: block; margin-top: 6px; font-size: 18px; line-height: 1.3; font-weight: 700; color: #0B1F3A; }
+      .twx-aud span { display: block; margin-top: 6px; font-size: 14px; line-height: 1.5; color: #4A5B73; }
+      .twx-path { margin-top: 88px; }
+      .twx-path-h { font-family: var(--font); font-size: clamp(22px, 2.4vw, 34px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 12px; }
+      .twx-pathway { margin-top: 24px; border: 1px solid #E3E7ED; border-radius: 16px; box-shadow: 0 24px 60px rgba(11, 31, 58, 0.08); }
+      .twx-fine { margin-top: 24px; font-size: 12px; color: #7A8799; }
+      @media (max-width: 960px) { .twx-aud { grid-template-columns: repeat(2, minmax(0, 1fr)); } .twx-band .twx-in { padding-top: 72px; padding-bottom: 72px; } }
+      @media (max-width: 768px) { .twx-band .twx-in { padding-left: 20px; padding-right: 20px; } .twx-poster { margin-top: 32px; border-radius: 12px; } .twx-play { width: 64px; height: 64px; margin: -32px 0 0 -32px; } .twx-poster-s { display: none; } }
+      @media (max-width: 600px) { .twx-cta, .twx-cta > * { width: 100%; justify-content: center; } .twx-aud { gap: 16px; } .twx-aud b { font-size: 15px; } .twx-aud span { display: none; } }
     </style>
-    <section id="terminal-walkthrough" class="page-wrapper section-block" aria-labelledby="twx-title">
+    <section id="terminal-walkthrough" class="twx-band" aria-labelledby="twx-title">
+     <div class="page-wrapper twx-in">
       <div class="twx-head">
         <div>
           <div class="cx-eyebrow">Experience Climactix Terminal</div>
           <h2 class="section-heading" id="twx-title">Corporate Sustainability Intelligence. All in One Place.</h2>
           <p class="body-text" style="max-width:680px;margin-bottom:0;">
-            Watch how Climactix Terminal brings fragmented corporate sustainability disclosures into one structured, explainable intelligence layer for banks, insurers, investors and government.
+            Businesses publish their sustainability record across dozens of reports and filings. Climactix Terminal brings it together, so a bank, an insurer, an investor or a policymaker can see what a company has disclosed, how it performs, and what is still missing.
           </p>
         </div>
         <div class="twx-cta">
@@ -2120,31 +2141,44 @@
             <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9.5-5.5z" fill="currentColor"/></svg>
             Watch Product Walkthrough
           </button>
-          <a href="terminal-walkthrough.html" class="btn-ghost-platform">Explore the Terminal</a>
+          <a href="terminal-walkthrough.html" class="twx-ghost">Explore the Terminal</a>
         </div>
       </div>
-      <button type="button" class="twx-poster" data-cxf-open aria-label="Play the Climactix Terminal product walkthrough, 1 minute 48 seconds, with sound">
-        <span class="twx-poster-tl">Product walkthrough</span>
-        <span class="twx-poster-mid">
-          <span class="twx-play"><svg width="26" height="26" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 1.5v11l9-5.5z" fill="currentColor"/></svg></span>
-          <span class="twx-poster-t">CLIMACTIX TERMINAL</span>
-          <span class="twx-poster-s">1 min 48 s · with sound · opens full screen</span>
-        </span>
-        <span class="twx-poster-br">Demonstration data · illustrative</span>
+      <button type="button" class="twx-poster" data-cxf-open aria-label="Play the Climactix Terminal product walkthrough, 1 minute 50 seconds, with sound">
+        <img src="terminal-film-assets/poster.jpg" width="1600" height="900" loading="lazy" decoding="async" alt="A frame from the film: a banking professional beside the Climactix Terminal bank view">
+        <span class="twx-play"><svg width="30" height="30" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 1.5v11l9-5.5z" fill="currentColor"/></svg></span>
+        <span class="twx-poster-s">Product walkthrough · 1 min 50 s · with sound</span>
       </button>
       <ol class="twx-chapters" aria-label="Chapters">
-        <li><b>0:00</b>The problem</li>
-        <li><b>0:12</b>Climactix Terminal</li>
-        <li><b>0:25</b>Corporate intelligence</li>
-        <li><b>0:40</b>Intelligence Score</li>
-        <li><b>0:55</b>Banks, insurers, investors, government</li>
-        <li><b>1:20</b>One platform</li>
+        <li><b>0:00</b>The global challenge</li>
+        <li><b>0:14</b>The Climactix solution</li>
+        <li><b>0:29</b>The terminal</li>
+        <li><b>0:44</b>The intelligence engine</li>
+        <li><b>0:59</b>Banks, insurers, investors, government</li>
+        <li><b>1:27</b>The bigger picture</li>
       </ol>
+
+      <ul class="twx-aud" aria-label="Who the terminal serves">
+        <li><a href="terminal-walkthrough.html#/bank"><figure><img src="terminal-film-assets/banker.jpg" loading="lazy" decoding="async" alt="A banking professional carrying a tablet in a financial district"></figure><small>Banks</small><b>Lending assessment</b><span>See what a borrower has disclosed, and what it has not, before the credit decision.</span></a></li>
+        <li><a href="terminal-walkthrough.html#/insurance"><figure><img src="terminal-film-assets/engineers.jpg" loading="lazy" decoding="async" alt="Two professionals in safety vests reviewing an industrial facility"></figure><small>Insurers</small><b>Risk evaluation</b><span>Environmental exposure, organised for every corporate account.</span></a></li>
+        <li><a href="terminal-walkthrough.html#/investor"><figure><img src="terminal-film-assets/analyst.jpg" loading="lazy" decoding="async" alt="An investment analyst studying market screens"></figure><small>Investors</small><b>Portfolio review</b><span>Compare companies and see how a portfolio's score is moving.</span></a></li>
+        <li><a href="terminal-walkthrough.html#/government"><figure><img src="terminal-film-assets/skyline.jpg" loading="lazy" decoding="async" alt="A city business district at sunrise"></figure><small>Government</small><b>Policy planning</b><span>A sector and regional view of who is disclosing, and how well.</span></a></li>
+      </ul>
+
+      <div class="twx-path">
+        <div class="cx-eyebrow">Climactix Terminal Pathway</div>
+        <h3 class="twx-path-h">From fragmented disclosures to institutional decisions.</h3>
+        <p class="body-text" style="max-width:680px;">Five stages turn scattered corporate reporting into intelligence an institution can act on. Select a stage to see what happens there.</p>
+        <div data-cx-pathway data-links="site" data-tone="light" class="twx-pathway"></div>
+      </div>
+      <p class="twx-fine">The film and the terminal run on demonstration data. Scores and records shown are illustrative and are not assessments of any company.</p>
+     </div>
     </section>
+    <script src="terminal-pathway.js?v=2" defer></script>
     <script>
       /* Product film loader — fetches the film only on first play. */
       (function () {
-        var loading = false, files = ['terminal-demo-data.js?v=1', 'terminal-film.js?v=1', 'terminal-film-scenes.js?v=1', 'terminal-film-scenes-2.js?v=1'];
+        var loading = false, files = ['terminal-demo-data.js?v=1', 'terminal-film-geo.js?v=1', 'terminal-film.js?v=2', 'terminal-film-scenes.js?v=2', 'terminal-film-scenes-2.js?v=2'];
         function load(i, done) {
           if (i >= files.length) return done();
           if (i === 0 && window.CX_TERMINAL_DEMO) return load(1, done);
@@ -2155,7 +2189,7 @@
         function open() {
           if (window.CXFilm && window.CXFilm.open) return window.CXFilm.open();
           if (loading) return; loading = true;
-          var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'terminal-film.css?v=1';
+          var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'terminal-film.css?v=2';
           l.onload = function () { load(0, function () { loading = false; window.CXFilm.open(); }); };
           document.head.appendChild(l);
         }
