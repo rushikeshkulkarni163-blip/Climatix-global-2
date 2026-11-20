@@ -20,7 +20,13 @@ const nextConfig = {
   // Allow rewrites to intelligence engine in development
   async rewrites() {
     const API_ORIGIN = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+    const TERMINAL_API = process.env.TERMINAL_API_URL ?? "http://localhost:8100";
     return [
+      // Climactix Terminal service: same-origin so its httpOnly session cookie applies.
+      {
+        source: "/cxt-api/:path*",
+        destination: `${TERMINAL_API}/api/v1/:path*`,
+      },
       {
         source: "/intelligence/:path*",
         destination: `${API_ORIGIN}/:path*`,
